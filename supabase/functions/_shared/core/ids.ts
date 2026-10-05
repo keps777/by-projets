@@ -28,3 +28,6 @@ export const cleRappelBloc = (occurrenceId: string, delaiMin: number) => `${occu
 
 /** UUID aléatoire (navigateur, Deno et Node récents). */
 export const nouvelId = (): string => crypto.randomUUID();
+
+export const idSaisie = (occurrenceId: string) => uuidDeterministe(`saisie:${occurrenceId}`);
+export const idSaisieValeur = (saisieId: string, cle: string) => uuidDeterministe(`sv:${saisieId}:${cle}`);
