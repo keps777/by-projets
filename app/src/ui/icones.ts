@@ -1,0 +1,31 @@
+// Tracés d'icônes (viewBox 24, trait arrondi). Un seul chemin par icône.
+export const ICONES = {
+  fil: 'M4 6h3M4 12h3M4 18h3M10 6h10M10 12h7M10 18h10',
+  projets: 'M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5',
+  rapports: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6',
+  archive: 'M3 4h18v5H3zM5 9v11h14V9M10 13h4',
+  reglages: 'M4 7h10M18 7h2M4 17h4M12 17h8M14 5v4M8 15v4',
+  recherche: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-3.5-3.5',
+  cloche: 'M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10.3 20a2 2 0 0 0 3.4 0',
+  plus: 'M12 5v14M5 12h14',
+  moins: 'M5 12h14',
+  fermer: 'M6 6l12 12M18 6L6 18',
+  retour: 'M15 6l-6 6 6 6',
+  suivant: 'M9 6l6 6-6 6',
+  bas: 'M6 9l6 6 6-6',
+  coche: 'M5 12.5l4.5 4.5L19 7.5',
+  calendrier: 'M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM3 10h18M8 3v4M16 3v4',
+  horloge: 'M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM12 8v4l2.5 2.5',
+  reporter: 'M12 5a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM12 9v4l2.5 2.5M9 2h6',
+  focus: 'M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
+  partager: 'M12 15V3M7 8l5-5 5 5M5 14v6h14v-6',
+  copier: 'M9 9h10v10H9zM5 15V5h10',
+  poubelle: 'M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13',
+  oeil: 'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
+  telephone: 'M9 2.5h6a2.5 2.5 0 0 1 2.5 2.5v14a2.5 2.5 0 0 1-2.5 2.5H9A2.5 2.5 0 0 1 6.5 19V5A2.5 2.5 0 0 1 9 2.5zM11 18.5h2',
+  poignee: 'M8 6h.01M8 12h.01M8 18h.01M16 6h.01M16 12h.01M16 18h.01',
+  monde: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18',
+  chaine: 'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
+  cadenas: 'M6 11h12v9H6zM8 11V8a4 4 0 0 1 8 0v3'
+} as const;
+export type NomIcone = keyof typeof ICONES;

@@ -1,1 +1,69 @@
-<main><h1>Luther Life</h1></main>
+<script lang="ts">
+  import type { Component } from 'svelte';
+  import { session } from './data/auth.svelte.ts';
+  import { horloge } from './data/temps.svelte.ts';
+  import { synchro } from './data/sync.svelte.ts';
+  import { prolongerHorizon } from './data/actions/taches.ts';
+  import { routeur, interceptionLiens } from './routeur.svelte.ts';
+  import { trouverRoute } from './routes.ts';
+  import { theme } from './ui/theme.svelte.ts';
+  import Toasts from './ui/Toasts.svelte';
+
+  horloge.demarrer();
+  theme.demarrer();
+  void session.demarrer();
+
+  let synchroLancee = false;
+  $effect(() => {
+    if (session.etat !== 'connecte' || synchroLancee) return;
+    synchroLancee = true;
+    synchro.demarrer();
+    prolongerHorizon();
+  });
+
+  const cible = $derived(trouverRoute(routeur.chemin));
+
+  // Garde : sans session, seul l'écran de connexion est accessible ; connecté, on le quitte.
+  $effect(() => {
+    if (session.etat === 'demarrage') return;
+    if (session.etat === 'deconnecte' && routeur.chemin !== '/connexion') routeur.aller('/connexion', true);
+    else if (session.etat === 'connecte' && routeur.chemin === '/connexion') routeur.aller('/', true);
+  });
+
+  let ecran = $state<Component<any> | null>(null);
+  let paramsEcran = $state<Record<string, string>>({});
+  $effect(() => {
+    const c = cible;
+    if (!c) { ecran = null; return; }
+    let annule = false;
+    void c.route.charger().then((m) => { if (!annule) { ecran = m.default; paramsEcran = c.params; } });
+    return () => { annule = true; };
+  });
+
+  const pret = $derived(session.etat !== 'demarrage');
+  const Ecran = $derived(ecran);
+</script>
+
+<svelte:document onclick={interceptionLiens} />
+
+{#if !pret || (cible && !Ecran)}
+  <div class="attente" aria-busy="true"><span class="titre">Luther Life</span></div>
+{:else if cible && Ecran}
+  <Ecran params={paramsEcran} />
+{:else}
+  <div class="attente"><span class="titre">Page introuvable</span><a href="/">Retour au Fil</a></div>
+{/if}
+
+{#if session.etat === 'connecte' && synchro.etat !== 'local' && synchro.etat !== 'synchronise'}
+  <div class="synchro" class:alerte={synchro.etat === 'erreur'}>
+    {synchro.etat === 'hors_ligne' ? 'Hors ligne' : synchro.etat === 'erreur' ? 'Synchronisation interrompue' : 'Synchronisation…'}
+  </div>
+{/if}
+<Toasts />
+
+<style>
+  .attente { height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; font-size: 24px; }
+  .attente a { font-size: 14px; color: var(--accent); }
+  .synchro { position: fixed; left: 50%; bottom: calc(76px + var(--bas-sûr)); transform: translateX(-50%); z-index: 80; background: var(--surface-2); color: var(--muted); font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 14px; border: 1px solid var(--ligne); }
+  .synchro.alerte { color: var(--alerte); }
+</style>

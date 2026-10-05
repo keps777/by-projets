@@ -1,1 +1,71 @@
-body { margin: 0; background: #0e0f13; color: #f2f2f5; }
+/* Jetons de design de Luther Life : nuit par défaut, jour, auto. Source : design/maquettes-v2. */
+:root, :root[data-theme='nuit'] {
+  --fond: #0e0f13; --surface: #17181e; --surface-2: #20222a; --feuille: #16171d; --champ: #0f1015;
+  --ligne: #2a2c35; --piste: #2c2e38; --texte: #f2f2f5; --muted: #a3a6b1; --faint: #7c7f8b;
+  --inverse: #f2f2f5; --inverse-texte: #0e0f13; --voile: rgba(0, 0, 0, 0.62);
+  --maintenant: #ff4d3a; --maintenant-pastille: #d6311f; --halo: rgba(255, 77, 58, 0.25);
+  --bon: #5bd893; --bon-fond: #14321f; --alerte: #ffb547; --alerte-fond: #33260f; --mauvais: #ff6b5e; --mauvais-fond: #3a1a18;
+  --accent: #9d8cff; --accent-texte: #120e2e; --accent-encre: #bdb3ff; --accent-fond: #262143;
+  --carte-fond: #1c1d25; --carte-texte: #f2f2f5; --carte-ligne: #2e3039; --carte-piste: #2e3039; --carte-muted: #a3a6b1;
+  --jour-aujourdhui: #ff4d3a; --jour-aujourdhui-texte: #0e0f13;
+  --ombre: 0 8px 24px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
+:root[data-theme='jour'] {
+  --fond: #f5f4f0; --surface: #ffffff; --surface-2: #edebe6; --feuille: #ffffff; --champ: #faf9f6;
+  --ligne: #e3e1db; --piste: #e3e1db; --texte: #16171b; --muted: #5e6068; --faint: #8a8c93;
+  --inverse: #16171b; --inverse-texte: #ffffff; --voile: rgba(22, 23, 27, 0.45);
+  --maintenant: #e5482e; --maintenant-pastille: #c63a1f; --halo: rgba(229, 72, 46, 0.18);
+  --bon: #1e7f4f; --bon-fond: #dff2e6; --alerte: #8a5300; --alerte-fond: #fbebd0; --mauvais: #c2362b; --mauvais-fond: #fbe4e1;
+  --accent: #5b4fe0; --accent-texte: #ffffff; --accent-encre: #3f34b8; --accent-fond: #e9e6fd;
+  --carte-fond: #16171b; --carte-texte: #ffffff; --carte-ligne: #2e3039; --carte-piste: #33353f; --carte-muted: #b9bbc2;
+  --jour-aujourdhui: #c63a1f; --jour-aujourdhui-texte: #ffffff;
+  --ombre: 0 8px 24px rgba(22, 23, 27, 0.12);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: light) {
+  :root[data-theme='auto'] {
+    --fond: #f5f4f0; --surface: #ffffff; --surface-2: #edebe6; --feuille: #ffffff; --champ: #faf9f6;
+    --ligne: #e3e1db; --piste: #e3e1db; --texte: #16171b; --muted: #5e6068; --faint: #8a8c93;
+    --inverse: #16171b; --inverse-texte: #ffffff; --voile: rgba(22, 23, 27, 0.45);
+    --maintenant: #e5482e; --maintenant-pastille: #c63a1f; --halo: rgba(229, 72, 46, 0.18);
+    --bon: #1e7f4f; --bon-fond: #dff2e6; --alerte: #8a5300; --alerte-fond: #fbebd0; --mauvais: #c2362b; --mauvais-fond: #fbe4e1;
+    --accent: #5b4fe0; --accent-texte: #ffffff; --accent-encre: #3f34b8; --accent-fond: #e9e6fd;
+    --carte-fond: #16171b; --carte-texte: #ffffff; --carte-ligne: #2e3039; --carte-piste: #33353f; --carte-muted: #b9bbc2;
+    --jour-aujourdhui: #c63a1f; --jour-aujourdhui-texte: #ffffff;
+    --ombre: 0 8px 24px rgba(22, 23, 27, 0.12);
+    color-scheme: light;
+  }
+}
+
+:root {
+  --police: 'Geist Variable', 'Geist', system-ui, -apple-system, sans-serif;
+  --police-titre: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', system-ui, sans-serif;
+  --police-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --police-serif: 'Instrument Serif', Georgia, serif;
+  --rayon: 20px; --rayon-petit: 12px; --cible: 44px;
+  --haut-sûr: env(safe-area-inset-top, 0px); --bas-sûr: env(safe-area-inset-bottom, 0px);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body, #app { height: 100%; }
+body { margin: 0; background: var(--fond); color: var(--texte); font: 15px/1.45 var(--police); -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
+h1, h2, h3, p { margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+input, textarea, select { font: inherit; color: var(--texte); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+::-webkit-scrollbar { display: none; }
+* { scrollbar-width: none; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+
+/* Utilitaires partagés */
+.titre { font-family: var(--police-titre); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+.mono { font-family: var(--police-mono); font-weight: 500; }
+.serif { font-family: var(--police-serif); font-style: italic; }
+.etiquette { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.muted { color: var(--muted); }
+.carte { background: var(--surface); border: 1px solid var(--ligne); border-radius: var(--rayon); }
+.rond { display: inline-flex; align-items: center; justify-content: center; width: var(--cible); height: var(--cible); border-radius: 50%; border: 1px solid var(--ligne); background: var(--surface); color: var(--texte); flex: none; }
+.ligne-sep > * + * { border-top: 1px solid var(--ligne); }
+.visuellement-cache { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

@@ -37,7 +37,12 @@ export default defineConfig({
   resolve: { alias: { '@core': core } },
   server: { fs: { allow: ['..'] } },
   test: {
-    include: ['src/**/*.test.ts', '../supabase/functions/_shared/core/**/*.test.ts'],
+    include: [
+      'src/**/*.test.ts',
+      '../supabase/functions/_shared/core/**/*.test.ts',
+      '../supabase/tests/**/*.test.ts',
+      '../supabase/functions/**/*.test.ts'
+    ],
     environment: 'node'
   }
 });
