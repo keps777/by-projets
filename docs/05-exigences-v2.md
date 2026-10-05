@@ -48,3 +48,30 @@ Format de référence :
 
 ## À confirmer
 - Codes des points 6 à 12 (FAST, GTG, GTM, EV, SW, DM, BRO) : proposés, à valider.
+
+## Décisions du 5 oct. 2026 (suite aux retours sur la v2)
+
+### Plusieurs sous-projets par projet
+- Un **projet** contient **0 à N sous-projets** (ex. « La lecture de la Bible » : « 7 chapitres par jour » et « Étudier le Nouveau Testament en octobre »).
+- Le **% d'un projet = moyenne de ses sous-projets**. Un projet sans sous-projet affiche « à définir ».
+- **Une saisie, plusieurs objectifs** : ce qui est noté dans un bloc (chapitres lus, temps, personnes rencontrées…) alimente **tous** les sous-projets du projet, sans double saisie.
+- Dans le volet d'un bloc : la liste de tous les sous-projets alimentés, chacun avec sa barre et le trait « où je devrais être aujourd'hui ».
+- Écran Sous-projet : sélecteur des sous-projets du projet ; chacun a son propre objectif quotidien dérivé (ex. 260 ch. en octobre = 8,4 ch./jour).
+- Mode « Modifier » : ajouter/retirer un projet, un sous-projet, une rubrique.
+
+### Données sur un serveur (Supabase)
+- **Source de vérité = base Supabase** (PostgreSQL + authentification + règles d'accès par utilisateur). Un cache local permet de consulter et saisir hors ligne ; les saisies se synchronisent au retour du réseau.
+- **Principe de `CLAUDE.md` modifié** : « données locales par défaut » est remplacé par « données sur le serveur, cache hors ligne ».
+- Chaque utilisateur ne voit que ses données (règles d'accès au niveau des lignes). Titre de l'app = « {Prénom} Life ».
+
+### Application web installée sur l'iPhone
+- PWA ajoutée à l'écran d'accueil. Les notifications push fonctionnent sur iPhone (iOS 16.4 ou plus) **si l'app est installée sur l'écran d'accueil** et que l'autorisation est donnée dans l'app. Elles sont envoyées par un **serveur** (Web Push).
+- **Plan B : e-mail de rappel** vers l'adresse de l'utilisateur (saisie dans Réglages), avec titre explicite, programmé **à l'heure, 5 min ou 10 min avant** le bloc. Même contenu que la notification, avec boutons « Lancer » et « Reporter ».
+- Un minuteur ne peut pas s'afficher en direct sur l'écran verrouillé avec une app web.
+
+### Envoi des rappels et des rapports (serveur)
+- Une tâche planifiée du serveur (toutes les minutes) cherche les rappels à envoyer, puis envoie la notification push et/ou l'e-mail.
+- Le **rapport du jour** est généré par le serveur à l'heure choisie (ex. 21:15), même app fermée, puis annoncé par notification.
+
+### Modèle de données (esquisse)
+`profiles` · `rubriques` · `projets` (rubrique_id) · `sous_projets` (projet_id, période, mesure, cible) · `blocs` (créneaux, récurrence, projet_id) · `saisies` (bloc, date, quantité, minutes, détail JSON ; **rattachée au projet**, lue par tous ses sous-projets) · `points_rapport` (code, projet, mesures activées, ordre) · `exports` (préréglages) · `rapports` (jour, texte) · `rappels` (bloc, canal, délai, état) · `abonnements_push`.
