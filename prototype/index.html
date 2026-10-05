@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f1a14">
+<title>By Projets — Maquette</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f1e9; --surface:#fffdf9; --surface-2:#efe7da; --ink:#231d16; --muted:#7a6e60; --line:#e3d8c7;
+  --accent:#b7791f; --ok:#2f855a; --warn:#c05621; --paper:#fffefb; --shadow:0 1px 2px rgba(60,40,10,.06),0 6px 20px rgba(60,40,10,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16130f; --surface:#211c16; --surface-2:#2b241c; --ink:#f1e9dc; --muted:#a89a87; --line:#3a3127;
+    --accent:#e0a54a; --ok:#68d391; --warn:#f6ad55; --paper:#fffefb; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16130f; --surface:#211c16; --surface-2:#2b241c; --ink:#f1e9dc; --muted:#a89a87; --line:#3a3127;
+  --accent:#e0a54a; --ok:#68d391; --warn:#f6ad55; --paper:#fffefb; --shadow:none;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.app{max-width:480px;margin:0 auto;min-height:100vh;padding:0 16px 96px}
+header.top{position:sticky;top:0;z-index:5;background:var(--bg);padding:14px 0 10px;display:flex;align-items:center;gap:10px}
+header.top h1{font:700 22px/1.15 Fraunces,serif;margin:0;flex:1;letter-spacing:-.01em}
+.back{border:0;background:var(--surface-2);color:var(--ink);width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer}
+.sub{color:var(--muted);font-size:13px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow);margin:10px 0}
+.verse{font:500 15px/1.4 Fraunces,serif;font-style:italic;color:var(--muted);margin:4px 0 14px}
+.section-title{font:600 12px Inter;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:22px 0 6px}
+.row{display:flex;align-items:center;gap:12px}
+.grow{flex:1;min-width:0}
+.dot{width:10px;height:10px;border-radius:50%;flex:none}
+.chk{width:28px;height:28px;border-radius:9px;border:2px solid var(--line);background:var(--surface);flex:none;cursor:pointer;display:grid;place-items:center;font-size:16px;color:#fff;transition:.15s}
+.chk.on{background:var(--ok);border-color:var(--ok)}
+.time{font:600 13px Inter;color:var(--muted);width:44px;flex:none}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:99px;background:var(--surface-2);color:var(--muted)}
+.tag.late{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.link{cursor:pointer}
+.link:active{opacity:.7}
+.themes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.theme{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;cursor:pointer;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.theme .ico{font-size:24px}
+.theme b{display:block;font:600 14px/1.25 Inter;margin-top:8px}
+.ring{position:absolute;top:10px;right:10px}
+.bar{height:6px;border-radius:9px;background:var(--surface-2);overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;border-radius:9px;background:var(--accent)}
+.tabs{display:flex;background:var(--surface-2);border-radius:12px;padding:3px;margin:6px 0 10px}
+.tabs button{flex:1;border:0;background:none;padding:9px;border-radius:10px;font:600 13px Inter;color:var(--muted);cursor:pointer}
+.tabs button.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+table.track{width:100%;border-collapse:collapse;font-size:14px}
+table.track th{font:600 11px Inter;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:6px 4px;border-bottom:1px solid var(--line)}
+table.track td{padding:8px 4px;border-bottom:1px solid var(--line);vertical-align:middle}
+table.track tr.today td{background:color-mix(in srgb,var(--accent) 10%,transparent)}
+table.track tr.edit td{background:var(--surface-2)}
+.cm{color:var(--muted);font-size:12px}
+input.f,textarea.f{width:100%;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:8px 10px;font:inherit}
+.btn{border:0;border-radius:12px;padding:11px 14px;font:600 14px Inter;cursor:pointer;background:var(--surface-2);color:var(--ink)}
+.btn.primary{background:var(--accent);color:#1f1a14}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.qq{display:grid;grid-template-columns:96px 1fr;gap:6px 12px;font-size:14px}
+.qq dt{font-weight:600;color:var(--muted)}
+.qq dd{margin:0}
+nav.bottom{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--line);display:flex;justify-content:center;padding:6px 0 calc(6px + env(safe-area-inset-bottom));z-index:9}
+nav.bottom div{display:flex;max-width:480px;width:100%}
+nav.bottom button{flex:1;border:0;background:none;color:var(--muted);font:500 11px Inter;padding:6px;cursor:pointer}
+nav.bottom button span{display:block;font-size:20px}
+nav.bottom button.on{color:var(--accent)}
+/* Document (fiche imprimable) */
+.paper{background:var(--paper);color:#1d1a16;border-radius:6px;padding:22px 20px;box-shadow:0 4px 30px rgba(0,0,0,.18);font:13px/1.45 Georgia,serif}
+.paper h2{font:700 19px Fraunces,serif;margin:2px 0 2px}
+.paper .meta{font:11px Inter;color:#7a6e60;text-transform:uppercase;letter-spacing:.08em}
+.paper table{width:100%;border-collapse:collapse;margin:10px 0;font-size:12px}
+.paper th,.paper td{border:1px solid #d9cfbf;padding:4px 6px;text-align:left}
+.paper th{background:#f3ece0}
+.paper .sig{display:flex;justify-content:space-between;align-items:flex-end;margin-top:18px;gap:16px}
+.paper .sig div{flex:1;border-top:1px solid #1d1a16;padding-top:4px;font:11px Inter;color:#7a6e60;min-height:20px}
+.paper .sig img{max-height:60px;display:block}
+.pad{width:100%;height:180px;background:#fff;border-radius:12px;border:1px dashed var(--muted);touch-action:none}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:grid;place-items:end center;z-index:20}
+.modal>div{background:var(--surface);width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
+.stone{display:flex;gap:12px;align-items:flex-start}
+.stone .s{width:38px;height:38px;border-radius:12px;background:var(--surface-2);display:grid;place-items:center;font-size:20px;flex:none}
+.empty{color:var(--muted);text-align:center;padding:26px 10px}
+.big{font:700 30px Fraunces,serif}
+@media print{
+  body{background:#fff}
+  .app>*:not(.print-me), nav.bottom, header.top{display:none!important}
+  .app{padding:0;max-width:none}
+  .print-me{display:block!important}
+  .print-me>*:not(.paper){display:none!important}
+  .paper{box-shadow:none;padding:0}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<nav class="bottom"><div id="nav"></div></nav>
+<div id="modal"></div>
+
+<script>
+/* ============ Données de démonstration ============ */
+const TODAY = new Date(); TODAY.setHours(0,0,0,0);
+const Y = TODAY.getFullYear(), M = TODAY.getMonth();
+const DIM = new Date(Y, M+1, 0).getDate();
+const day = d => new Date(Y, M, d);
+const iso = d => d.toISOString().slice(0,10);
+const fmt = d => d.toLocaleDateString('fr-CA',{weekday:'short',day:'numeric',month:'short'});
+const sameDay = (a,b) => iso(a)===iso(b);
+const uid = () => Math.random().toString(36).slice(2,9);
+const moisNom = TODAY.toLocaleDateString('fr-CA',{month:'long'});
+
+const THEMES = [
+  {id:'dieu',     nom:'Ma relation avec Dieu', ico:'✝️', c:'#b7791f', verset:'« Ta parole est une lampe à mes pieds. » — Ps 119:105'},
+  {id:'service',  nom:'Mon service à Dieu',    ico:'🕊️', c:'#3182ce', verset:'« Allez, faites de toutes les nations des disciples. » — Mt 28:19'},
+  {id:'temps',    nom:'Utilisation du temps',  ico:'⏳', c:'#805ad5', verset:'« Rachetez le temps, car les jours sont mauvais. » — Ép 5:16'},
+  {id:'travail',  nom:'Mon travail',           ico:'💼', c:'#2c7a7b', verset:'« Tout ce que vous faites, faites-le de bon cœur. » — Col 3:23'},
+  {id:'finances', nom:'Mes finances',          ico:'💰', c:'#2f855a', verset:'« Le plan de l’homme diligent mène à l’abondance. » — Pr 21:5'},
+  {id:'maison',   nom:'Entretien de ma maison',ico:'🏠', c:'#c05621', verset:'« Si l’Éternel ne bâtit la maison… » — Ps 127:1'},
+  {id:'mariage',  nom:'Préparation au mariage',ico:'💍', c:'#d53f8c', verset:'« L’amour est patient, il est plein de bonté. » — 1 Co 13:4'},
+];
+
+// Nouveau Testament : 260 chapitres répartis sur le mois
+const NT = [['Mt',28],['Mc',16],['Lc',24],['Jn',21],['Ac',28],['Rm',16],['1 Co',16],['2 Co',13],['Ga',6],['Ép',6],['Ph',4],['Col',4],['1 Th',5],['2 Th',3],['1 Tm',6],['2 Tm',4],['Tt',3],['Phm',1],['Hé',13],['Jc',5],['1 P',5],['2 P',3],['1 Jn',5],['2 Jn',1],['3 Jn',1],['Jd',1],['Ap',22]];
+const ntRef = n => { for (const [b,c] of NT){ if (n < c) return [b, n+1]; n -= c; } };
+function ntRows(){
+  const rows=[];
+  for (let i=0;i<DIM;i++){
+    const a=Math.floor(i*260/DIM), z=Math.floor((i+1)*260/DIM)-1;
+    const [b1,c1]=ntRef(a), [b2,c2]=ntRef(z);
+    rows.push(row(b1===b2?`${b1} ${c1}–${c2}`:`${b1} ${c1} – ${b2} ${c2}`, day(i+1), `${z-a+1} ch.`));
+  }
+  return rows;
+}
+function row(label, date, prevu, extra={}){ return {id:uid(), label, date, prevu, done:false, doneAt:null, val:'', comment:'', ...extra}; }
+function dailyRows(prevu){ return Array.from({length:DIM},(_,i)=>row(fmt(day(i+1)), day(i+1), prevu)); }
+// Passé : coché (avec un jour manqué, commenté)
+function seedPast(rows, missIdx=2){
+  rows.forEach((r,i)=>{ if (r.date && r.date < TODAY){ r.done = i!==missIdx; r.doneAt = r.done ? r.date : null; r.val = r.done ? String(parseFloat(r.prevu)||'') : ''; } });
+  if (rows[missIdx] && rows[missIdx].date < TODAY) rows[missIdx].comment = 'Journée chargée — à rattraper';
+  return rows;
+}
+
+const SP = [
+  {id:'nt', theme:'dieu', projet:'Lecture de la Bible', titre:`Terminer le Nouveau Testament en ${moisNom}`, mode:'etapes', unite:'chapitres', cible:260,
+   fiche:{quoi:'Lire les 260 chapitres du Nouveau Testament.', pourquoi:'Connaître Christ plus profondément et nourrir ma foi.', qui:'Moi ; compte rendu hebdomadaire à mon discipleur.', ou:'À la maison, et dans le métro.', quand:`Du 1er au ${DIM} ${moisNom}, chaque matin.`, comment:'Bible papier, un cahier de notes, un verset retenu par jour.', combien:`≈ ${(260/DIM).toLocaleString('fr-CA',{maximumFractionDigits:1})} chapitres par jour.`},
+   rows: seedPast(ntRows(), 99)},
+  {id:'3ch', theme:'dieu', projet:'Lecture de la Bible', titre:'Lire 3 chapitres chaque jour', mode:'recurrent', unite:'chapitres',
+   fiche:{quoi:'Lire 3 chapitres de l’Ancien Testament chaque jour.', pourquoi:'Construire une habitude durable de la Parole.', qui:'Moi.', ou:'À la maison.', quand:'Chaque jour, après la prière du matin.', comment:'Plan de lecture suivi dans l’ordre.', combien:'3 chapitres / jour.'},
+   rows: seedPast(dailyRows('3 ch.'), 2)},
+  {id:'priere', theme:'dieu', projet:'Prière', titre:'30 minutes de prière chaque matin', mode:'recurrent', unite:'min',
+   fiche:{quoi:'Un temps de prière quotidien de 30 minutes.', pourquoi:'Demeurer en lui (Jn 15:5).', qui:'Moi.', ou:'Chambre, porte fermée (Mt 6:6).', quand:'5 h 30 – 6 h 00.', comment:'Adoration, confession, action de grâce, intercession.', combien:'30 min / jour.'},
+   rows: seedPast(dailyRows('30 min'), 4)},
+  {id:'evang', theme:'service', projet:'Évangélisation', titre:'5 heures d’évangélisation par semaine', mode:'quantitatif', unite:'h', cible:5,
+   fiche:{quoi:'Consacrer du temps à gagner des âmes et à faire des disciples.', pourquoi:'Obéir au grand mandat.', qui:'Moi et l’équipe d’évangélisation de l’église.', ou:'Quartier, campus, centre-ville.', quand:'Mardi soir, samedi après-midi.', comment:'Porte-à-porte, partage de témoignage, suivi des nouveaux.', combien:'5 h / semaine.'},
+   rows:[row('Porte-à-porte — quartier', day(Math.max(1,TODAY.getDate()-2)), '2 h',{done:true,val:'2',doneAt:TODAY}),
+         row('Suivi d’un nouveau converti', day(Math.max(1,TODAY.getDate()-1)), '1 h',{done:true,val:'1.5',doneAt:TODAY,comment:'Très ouvert, revoir jeudi'})]},
+  {id:'sdb', theme:'maison', projet:'Rénovations', titre:'Rafraîchir la salle de bain', mode:'budget', unite:'$', cible:600,
+   fiche:{quoi:'Peinture, joints, nouveaux accessoires.', pourquoi:'Prendre soin de ce qui m’est confié.', qui:'Moi + un ami le samedi.', ou:'Salle de bain.', quand:'Ce mois-ci, les fins de semaine.', comment:'Liste d’achats, une tâche par samedi.', combien:'Budget 600 $.'},
+   rows:[row('Peinture', null, '180',{done:true,val:'165'}), row('Joints & silicone', null, '60',{done:true,val:'72'}), row('Accessoires', null, '250'), row('Imprévus', null, '110')]},
+  {id:'budget', theme:'finances', projet:'Budget mensuel', titre:`Tenir mon budget de ${moisNom}`, mode:'budget', unite:'$', cible:2400,
+   fiche:{quoi:'Suivre chaque poste du budget du mois.', pourquoi:'Être un intendant fidèle.', qui:'Moi.', ou:'—', quand:`${moisNom} ${Y}.`, comment:'Saisie hebdomadaire des dépenses.', combien:'2 400 $.'},
+   rows:[row('Dîme & offrandes', null, '300',{done:true,val:'300'}), row('Loyer', null, '1100',{done:true,val:'1100'}), row('Épicerie', null, '450'), row('Transport', null, '100',{done:true,val:'97'}), row('Épargne mariage', null, '450')]},
+];
+const PROJETS_VIDES = {service:['Formation de disciples','Prière'], temps:['Comptes rendus'], travail:['Objectifs du trimestre'], mariage:['Préparation spirituelle','Budget du mariage']};
+
+// Emploi du temps du jour : chaque activité sert un sous-projet
+const AGENDA = [
+  {h:'05:30', t:'Prière du matin', sp:'priere'},
+  {h:'06:00', t:'Lecture — Ancien Testament', sp:'3ch'},
+  {h:'06:20', t:'Lecture — Nouveau Testament', sp:'nt'},
+  {h:'18:30', t:'Évangélisation — quartier', sp:'evang'},
+  {h:'21:00', t:'Compte rendu de la journée', sp:null},
+];
+
+const EBENEZER = [
+  {titre:'Lire les Psaumes en un mois', theme:'dieu', date:new Date(Y,M,0), note:'150 psaumes, 31 jours. Ps 23 appris par cœur.'},
+  {titre:'Fonds d’urgence : 1 000 $', theme:'finances', date:new Date(Y,M-1,15), note:'Atteint 2 semaines avant l’échéance.'},
+];
+
+/* ============ Calculs ============ */
+const th = id => THEMES.find(t=>t.id===id);
+const sp = id => SP.find(s=>s.id===id);
+const num = v => parseFloat(String(v).replace(',','.'))||0;
+function progress(s){
+  if (s.mode==='quantitatif'){ const tot=s.rows.reduce((a,r)=>a+(r.done?num(r.val||r.prevu):0),0); return {pct:Math.min(1,tot/s.cible), label:`${tot} / ${s.cible} ${s.unite} cette semaine`}; }
+  if (s.mode==='budget'){ const reel=s.rows.reduce((a,r)=>a+num(r.val),0); return {pct:Math.min(1,reel/s.cible), label:`${reel} $ dépensés sur ${s.cible} $`}; }
+  const d=s.rows.filter(r=>r.done).length; return {pct:d/s.rows.length, label:`${d} / ${s.rows.length} lignes accomplies`};
+}
+function themeProgress(tid){ const l=SP.filter(s=>s.theme===tid); return l.length? l.reduce((a,s)=>a+progress(s).pct,0)/l.length : 0; }
+const todayRow = s => s.rows.find(r=>r.date && sameDay(r.date,TODAY));
+const lateRows = s => s.rows.filter(r=>r.date && r.date<TODAY && !r.done);
+
+/* ============ Navigation ============ */
+let stack=[{v:'today'}], tab='suivi', editing=null;
+const go = st => { stack.push(st); tab=st.tab||'suivi'; editing=st.focus||null; render(); scrollTo(0,0); };
+const back = () => { stack.pop(); render(); };
+const root = v => { stack=[{v}]; render(); scrollTo(0,0); };
+const cur = () => stack[stack.length-1];
+const esc = s => String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function ringSvg(p,c,size=34){ const r=size/2-3, L=2*Math.PI*r;
+  return `<svg class="ring" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="4"/><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${c}" stroke-width="4" stroke-linecap="round" stroke-dasharray="${L*p} ${L}" transform="rotate(-90 ${size/2} ${size/2})"/></svg>`; }
+const header = (title, sub='') => `<header class="top">${stack.length>1?'<button class="back" onclick="back()">‹</button>':''}<div class="grow"><h1>${title}</h1>${sub?`<div class="sub">${sub}</div>`:''}</div></header>`;
+
+/* ============ Vues ============ */
+const V = {};
+V.today = () => {
+  const dateLong = TODAY.toLocaleDateString('fr-CA',{weekday:'long',day:'numeric',month:'long'});
+  let h = header('Aujourd’hui', dateLong.charAt(0).toUpperCase()+dateLong.slice(1));
+  h += `<div class="verse">« Voici le jour que l’Éternel a fait. » — Ps 118:24</div>`;
+  h += `<div class="section-title">Emploi du temps</div><div class="card">`;
+  AGENDA.forEach((a,i)=>{ const s=a.sp&&sp(a.sp), r=s&&todayRow(s);
+    h += `<div class="row" style="padding:8px 0;${i?'border-top:1px solid var(--line)':''}">
+      <div class="time">${a.h}</div>
+      <div class="grow link" onclick="${s?`go({v:'sp',id:'${s.id}',focus:'${r?r.id:''}'})`:''}">
+        <div style="font-weight:600">${a.t}</div>
+        <div class="sub">${s?`<span class="dot" style="display:inline-block;background:${th(s.theme).c};margin-right:6px"></span>${esc(s.titre)}${r?` · ${esc(s.mode==='etapes'?r.label:r.prevu)}`:''}`:'Utilisation du temps · Comptes rendus'}</div>
+      </div>
+      ${r?`<div class="chk ${r.done?'on':''}" onclick="toggle('${s.id}','${r.id}')">${r.done?'✓':''}</div>`:''}
+    </div>`; });
+  h += `</div>`;
+  const late = SP.flatMap(s=>lateRows(s).map(r=>({s,r})));
+  if (late.length){
+    h += `<div class="section-title">À rattraper</div><div class="card">`;
+    late.forEach(({s,r},i)=>{ h += `<div class="row" style="padding:6px 0;${i?'border-top:1px solid var(--line)':''}">
+      <div class="grow link" onclick="go({v:'sp',id:'${s.id}',focus:'${r.id}'})"><div style="font-weight:500">${esc(r.label)}</div><div class="sub">${esc(s.titre)} <span class="tag late">en retard</span></div></div>
+      <div class="chk" onclick="toggle('${s.id}','${r.id}')"></div></div>`; });
+    h += `</div>`;
+  }
+  h += `<div class="section-title">Vision d’ensemble</div><div class="card">`;
+  THEMES.filter(t=>SP.some(s=>s.theme===t.id)).forEach(t=>{ const p=themeProgress(t.id);
+    h += `<div class="link" style="padding:6px 0" onclick="go({v:'theme',id:'${t.id}'})"><div class="row"><span>${t.ico}</span><div class="grow" style="font-weight:500">${t.nom}</div><span class="sub">${Math.round(p*100)} %</span></div><div class="bar"><i style="width:${p*100}%;background:${t.c}"></i></div></div>`; });
+  return h + `</div>`;
+};
+
+V.themes = () => {
+  let h = header('Ma vie par projets', 'Chaque domaine de ma vie, une vision claire');
+  h += `<div class="themes">`;
+  THEMES.forEach(t=>{ const n=SP.filter(s=>s.theme===t.id).length, p=themeProgress(t.id);
+    h += `<div class="theme" onclick="go({v:'theme',id:'${t.id}'})">${n?ringSvg(p,t.c):''}<div class="ico">${t.ico}</div><b>${t.nom}</b><div class="sub">${n} sous-projet${n>1?'s':''} actif${n>1?'s':''}</div></div>`; });
+  return h + `</div><div class="btns"><button class="btn" onclick="alert('Maquette : création de thème à venir')">＋ Nouveau thème</button></div>`;
+};
+
+V.theme = ({id}) => {
+  const t=th(id); let h = header(`${t.ico} ${t.nom}`);
+  h += `<div class="verse">${t.verset}</div>`;
+  const projets=[...new Set(SP.filter(s=>s.theme===id).map(s=>s.projet)), ...(PROJETS_VIDES[id]||[])];
+  if (!projets.length) h += `<div class="empty">Aucun projet pour l’instant.<br>Commence par définir ta vision pour ce domaine.</div>`;
+  projets.forEach(p=>{ const list=SP.filter(s=>s.theme===id&&s.projet===p);
+    h += `<div class="section-title">Projet · ${p}</div>`;
+    if (!list.length) h += `<div class="card sub">Pas encore de sous-projet.</div>`;
+    list.forEach(s=>{ const pr=progress(s);
+      h += `<div class="card link" onclick="go({v:'sp',id:'${s.id}'})"><div style="font-weight:600">${esc(s.titre)}</div><div class="sub">${modeLabel(s.mode)} · ${pr.label}</div><div class="bar"><i style="width:${pr.pct*100}%;background:${t.c}"></i></div></div>`; });
+  });
+  return h + `<div class="btns"><button class="btn" onclick="alert('Maquette : création de projet à venir')">＋ Projet</button><button class="btn" onclick="alert('Maquette : assistant de sous-projet (fiche QQOQCCP + génération des lignes) à venir')">＋ Sous-projet</button></div>`;
+};
+const modeLabel = m => ({etapes:'Étapes', recurrent:'Récurrent', quantitatif:'Quantitatif', budget:'Budget'})[m];
+
+V.sp = ({id}) => {
+  const s=sp(id), t=th(s.theme), pr=progress(s);
+  let h = header(esc(s.titre), `${t.ico} ${t.nom} › ${esc(s.projet)}`);
+  h += `<div class="card"><div class="row"><div class="grow"><div class="big">${Math.round(pr.pct*100)} %</div><div class="sub">${pr.label}</div></div>${ringSvg(pr.pct,t.c,56).replace('class="ring"','')}</div></div>`;
+  h += `<div class="tabs">${['suivi','fiche','document'].map(k=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';render()">${{suivi:'Suivi',fiche:'Fiche',document:'Document'}[k]}</button>`).join('')}</div>`;
+  if (tab==='suivi') h += suivi(s);
+  if (tab==='fiche') h += fiche(s);
+  if (tab==='document') h += `<div class="print-me">${documentHtml(s)}<div class="btns">${s.signature?'':`<button class="btn primary" onclick="openSign('${s.id}')">✍️ Signer</button>`}<button class="btn" onclick="print()">⬇︎ Exporter en PDF</button></div><p class="sub">Dans la vraie app, ce document est généré à partir de ton gabarit LaTeX.</p></div>`;
+  return h;
+};
+
+function suivi(s){
+  const budget = s.mode==='budget', quanti = s.mode==='quantitatif';
+  let h = `<div class="card" style="padding:6px 10px"><table class="track"><thead><tr><th style="width:36px">✓</th><th>${budget?'Poste':quanti?'Séance':'Ligne'}</th><th>${budget?'Prévu / Réel':'Prévu'}</th><th style="width:24px"></th></tr></thead><tbody>`;
+  s.rows.forEach(r=>{
+    const isToday = r.date && sameDay(r.date,TODAY);
+    h += `<tr class="${isToday?'today':''} ${editing===r.id?'edit':''}">
+      <td><div class="chk ${r.done?'on':''}" onclick="toggle('${s.id}','${r.id}')">${r.done?'✓':''}</div></td>
+      <td class="link" onclick="editing=editing==='${r.id}'?null:'${r.id}';render()"><div style="font-weight:500">${esc(r.label)}</div>${r.comment?`<div class="cm">💬 ${esc(r.comment)}</div>`:''}</td>
+      <td class="sub">${budget?`${r.prevu} $ / ${r.val?r.val+' $':'—'}`:quanti?`${r.val||r.prevu} ${s.unite}`:(s.mode==='etapes'&&r.date?`${fmt(r.date)} · ${r.prevu}`:esc(r.prevu))}</td>
+      <td class="link sub" onclick="editing=editing==='${r.id}'?null:'${r.id}';render()">✎</td></tr>`;
+    if (editing===r.id) h += `<tr class="edit"><td></td><td colspan="3">
+      <div style="display:grid;gap:6px;padding:4px 0">
+        <label class="sub">Valeur réalisée${s.unite?` (${s.unite})`:''}<input class="f" value="${esc(r.val)}" oninput="setVal('${s.id}','${r.id}','val',this.value)"></label>
+        <label class="sub">Commentaire<textarea class="f" rows="2" oninput="setVal('${s.id}','${r.id}','comment',this.value)">${esc(r.comment)}</textarea></label>
+        ${r.doneAt?`<span class="sub">Coché le ${fmt(r.doneAt)}</span>`:''}
+      </div></td></tr>`;
+  });
+  h += `</tbody></table></div>`;
+  if (budget||quanti) h += `<div class="btns"><button class="btn" onclick="addRow('${s.id}')">＋ ${budget?'Dépense':'Séance'}</button></div>`;
+  return h;
+}
+
+const QQ = [['quoi','Quoi ?'],['pourquoi','Pourquoi ?'],['qui','Qui ?'],['ou','Où ?'],['quand','Quand ?'],['comment','Comment ?'],['combien','Combien ?']];
+function fiche(s){
+  return `<div class="card"><div class="section-title" style="margin-top:0">Fiche QQOQCCP</div><dl class="qq">${QQ.map(([k,l])=>`<dt>${l}</dt><dd>${esc(s.fiche[k])}</dd>`).join('')}</dl></div>
+  <div class="card"><dl class="qq"><dt>Mode</dt><dd>${modeLabel(s.mode)}</dd>${s.cible?`<dt>Cible</dt><dd>${s.cible} ${s.unite}</dd>`:''}<dt>Lignes</dt><dd>${s.rows.length}</dd></dl></div>`;
+}
+
+function documentHtml(s){
+  const t=th(s.theme), pr=progress(s), budget=s.mode==='budget';
+  return `<div class="paper">
+    <div class="meta">Fiche de suivi · ${t.nom} · ${esc(s.projet)}</div>
+    <h2>${esc(s.titre)}</h2>
+    <div style="font-style:italic;color:#7a6e60;margin-bottom:8px">${t.verset}</div>
+    <table>${QQ.map(([k,l])=>`<tr><th style="width:90px">${l}</th><td>${esc(s.fiche[k])}</td></tr>`).join('')}</table>
+    <table><tr><th>${budget?'Poste':'Ligne'}</th><th>Prévu</th><th>✓</th><th>${budget?'Réel':'Réalisé'}</th><th>Commentaire</th></tr>
+    ${s.rows.map(r=>`<tr><td>${esc(r.label)}</td><td>${r.date&&s.mode==='etapes'?fmt(r.date):esc(r.prevu)}</td><td style="text-align:center">${r.done?'✔':''}</td><td>${esc(r.val)}</td><td>${esc(r.comment)}</td></tr>`).join('')}</table>
+    <div><b>Bilan :</b> ${Math.round(pr.pct*100)} % — ${pr.label}</div>
+    <div class="sig"><div>Fait à ${s.signature?esc(s.signature.lieu):'…………'}, le ${s.signature?fmt(s.signature.date):'…………'}</div>
+      <div>${s.signature?`<img src="${s.signature.img}" alt="Signature">`:''}Signature</div></div>
+  </div>`;
+}
+
+V.ebenezer = () => {
+  let h = header('Ebenezer', 'Mes pierres de souvenir');
+  h += `<div class="verse">« Jusqu’ici l’Éternel nous a secourus. » — 1 S 7:12</div>`;
+  const signed = SP.filter(s=>s.signature).map(s=>({titre:s.titre, theme:s.theme, date:s.signature.date, note:`Signé à ${s.signature.lieu}`, id:s.id}));
+  [...signed, ...EBENEZER].sort((a,b)=>b.date-a.date).forEach(e=>{ const t=th(e.theme);
+    h += `<div class="card stone ${e.id?'link':''}" ${e.id?`onclick="go({v:'sp',id:'${e.id}',tab:'document'})"`:''}><div class="s">🪨</div><div class="grow"><div style="font-weight:600">${esc(e.titre)}</div><div class="sub">${t.ico} ${t.nom} · ${e.date.toLocaleDateString('fr-CA',{day:'numeric',month:'long',year:'numeric'})}</div><div style="margin-top:4px">${esc(e.note)}</div></div></div>`; });
+  return h;
+};
+
+/* ============ Actions ============ */
+function toggle(sid, rid){ const r=sp(sid).rows.find(x=>x.id===rid); r.done=!r.done; r.doneAt=r.done?new Date():null; if (r.done && !r.val && sp(sid).mode!=='budget') r.val=String(num(r.prevu)||''); render(); }
+function setVal(sid, rid, k, v){ sp(sid).rows.find(x=>x.id===rid)[k]=v; }
+function addRow(sid){ const s=sp(sid), label=prompt(s.mode==='budget'?'Poste de dépense :':'Séance :'); if(!label) return;
+  const v=prompt(s.mode==='budget'?'Montant prévu ($) :':'Durée (h) :','1')||''; const r=row(label, s.mode==='budget'?null:TODAY, v); s.rows.push(r); editing=r.id; render(); }
+
+function openSign(sid){
+  document.getElementById('modal').innerHTML = `<div class="modal" onclick="if(event.target===this)closeSign()"><div>
+    <div style="font:700 18px Fraunces,serif;margin-bottom:8px">Signer la fiche</div>
+    <canvas class="pad" id="pad"></canvas>
+    <label class="sub">Lieu<input class="f" id="lieu" value="Montréal"></label>
+    <div class="btns"><button class="btn" onclick="clearPad()">Effacer</button><button class="btn" onclick="closeSign()">Annuler</button><button class="btn primary" onclick="saveSign('${sid}')">Valider la signature</button></div>
+  </div></div>`;
+  const c=document.getElementById('pad'), r=c.getBoundingClientRect(), dpr=devicePixelRatio||1;
+  c.width=r.width*dpr; c.height=r.height*dpr; const x=c.getContext('2d'); x.scale(dpr,dpr); x.lineWidth=2.2; x.lineCap='round'; x.strokeStyle='#1d1a16';
+  let drawing=false; c.dataset.ink='';
+  const pt=e=>{ const b=c.getBoundingClientRect(); return [e.clientX-b.left, e.clientY-b.top]; };
+  c.onpointerdown=e=>{ drawing=true; c.setPointerCapture(e.pointerId); x.beginPath(); x.moveTo(...pt(e)); };
+  c.onpointermove=e=>{ if(!drawing) return; x.lineTo(...pt(e)); x.stroke(); c.dataset.ink='1'; };
+  c.onpointerup=()=>drawing=false;
+}
+function clearPad(){ const c=document.getElementById('pad'); c.getContext('2d').clearRect(0,0,c.width,c.height); c.dataset.ink=''; }
+function closeSign(){ document.getElementById('modal').innerHTML=''; }
+function saveSign(sid){ const c=document.getElementById('pad'); if(!c.dataset.ink){ alert('Dessine ta signature d’abord.'); return; }
+  sp(sid).signature={img:c.toDataURL('image/png'), date:new Date(), lieu:document.getElementById('lieu').value||'—'}; closeSign(); render(); }
+
+/* ============ Rendu ============ */
+function render(){
+  const st=cur(); document.getElementById('app').innerHTML = V[st.v](st);
+  const rootV = stack[0].v;
+  document.getElementById('nav').innerHTML = [['today','☀️','Aujourd’hui'],['themes','🧭','Thèmes'],['ebenezer','🪨','Ebenezer']]
+    .map(([v,i,l])=>`<button class="${rootV===v?'on':''}" onclick="root('${v}')"><span>${i}</span>${l}</button>`).join('');
+}
+render();
+</script>
+</body>
+</html>

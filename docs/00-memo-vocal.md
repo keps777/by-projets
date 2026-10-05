@@ -1,0 +1,88 @@
+# 00 — Mémo vocal d'origine (transcription automatique)
+
+> Transcription automatique (Whisper) du mémo vocal enregistré le 17 août 2026 (≈ 8 min). Elle contient des erreurs de reconnaissance : par exemple « ma fille » pour **« ma vie »**, « respect-driven » pour **« spec-driven »**, « onglais » pour **« onglet »**. Elle sert de source ; la référence est `01-vision.md`.
+
+- **[0.9 s]** J'ai enfoncé une app qui va faire... En fait, j'ai enfoncé une app un peu de... une app d'exécution de ma fille, en fait, dans une app de telle mesure que, lorsque ça affiche, ma première place qui s'affiche, c'est un peu comme des onglets, c'est-à-dire que c'est une application mobile, une application web, donc qui pourra être, qui pourra se mettre en mode téléchargeable, voilà, une application web qui pourra se télécharger comme un...
+- **[30.9 s]** comme une application mobile sur ce téléphone. Et, en fait, l'idée de l'application mobile, c'est vraiment que, en fait, qu'à partir de l'application, que j'ai puissé avoir un répectoire d'injection de ma fille, en fait, que l'application puisse être, en fait, l'outil à main, mon outil à main, où je pourra, en fait, avoir un bon contrôle sur ma vie, pouvoir le suivre et être bien discipliné que d'avoir plusieurs outils, ici, voilà, avec l'agent IA,
+- **[60.9 s]** l'agent IA, l'agent IA, que je peux voir ici et là, et même le respect-driven migration, respect-driven dev, ou une migration que j'ai pu travailler dessus.
+- **[73.5 s]** Donc, j'ai envie de pouvoir construire cette app-là, me faire une bonne application, bien propre, et une application solide, qui va pouvoir répondre à ce besoin entièrement.
+- **[85.6 s]** Donc, l'idée, c'est quoi ? C'est que, par exemple, il y a plusieurs, deux différents aspects dans ma vie.
+- **[93.7 s]** Il y a différents aspects dans ma vie.
+- **[96.8 s]** Donc, par exemple, disons, par exemple, que j'ai un aspect qui est ma relation avec Dieu.
+- **[103.8 s]** Et moi, je vais aussi partir ma vie en projet.
+- **[107.1 s]** Donc, je veux que, un, donc, en fait, un aspect, donc, qui est comme un grand anglais, il a différents projets à l'intérieur.
+- **[119.9 s]** Et chaque, donc, il y a un peu comme le thème, le thème, il y a le projet, il y a le thème, il y a le projet parent, donc, et ensuite, il y a des sous-projets.
+- **[129.3 s]** Donc, par exemple, si je prends un projet dans ma relation avec Dieu, c'est la lecture de la vie.
+- **[134.6 s]** Et à l'intérieur de ce projet-là, je pourrais, je pourrais, je pourrais créer, à l'intérieur de ce projet-là, je pourrais créer plusieurs sous-projets.
+- **[143.8 s]** Donc, par exemple, un sous-projet, c'est que je pourrais dire que, ce mois-ci, je donne mon nouveau testament à la matine, je dois terminer mon nouveau testament.
+- **[152.1 s]** Un autre projet, c'est que chaque jour, je donne trois chapitres de la vie.
+- **[154.7 s]** Et donc, ça, c'est, par exemple, des sous-projets.
+- **[162.2 s]** Et le truc, c'est que je veux que, je veux avoir, en fait, quand je clique sur un sous-projet, par exemple, quand je clique sur un sous-projet,
+- **[170.0 s]** je peux voir l'état, en fait, un peu comme ce qui est prévu, un peu comme un tableau divisé en deux, en trois.
+- **[179.6 s]** Et maintenant, il y a la première colonne qui définit, en fait, qui définit la première colonne, dont le nom de la colonne, en fait, le nom des lignes.
+- **[187.8 s]** Et ensuite, maintenant, il y a ce qui est prévu, ce qui doit être accompli.
+- **[191.5 s]** Et en fait, ça représente, en fait, le suivi du projet.
+- **[199.0 s]** Tu vois.
+- **[200.0 s]** Donc, c'est un peu ça.
+- **[200.7 s]** Et à chaque fois que j'accomplis un projet, je coche, et il peut avoir une colonne commentée.
+- **[206.2 s]** À chaque fois que j'accomplis un projet, je coche, et il peut avoir une colonne commentée, par exemple, qui peut être un commentaire.
+- **[215.6 s]** Bref.
+- **[217.2 s]** Et bien, à chaque fois que je finis une colonne, j'ai entre la valeur, si c'est, par exemple, qui correspond à une valeur, mais je dois pouvoir suivre cela.
+- **[223.4 s]** Et pour chaque sous-projet aussi, je veux que, par exemple, un sous-projet, je dois avoir une page d'information.
+- **[231.5 s]** Dans cette page d'information-là, elle reconçue des signes, des signes double, donc le who, le what, le when, le well, le who, le why.
+- **[244.1 s]** Et c'est ça qui définit, en fait, c'est ça qui permet de définir ce qu'est le projet.
+- **[248.9 s]** Voilà, donc, qu'est-ce que le projet fait, de quoi est-ce qu'il s'agit, en fait, du sous-projet.
+- **[254.2 s]** Donc, c'est ça.
+- **[256.6 s]** Et je veux que, quand je puisse remplir, en fait, les cases, dans les cases de suivi, là, que je puisse extraire, par exemple, un fichier.
+- **[266.4 s]** Donc, j'ai déjà un modèle de fichier, là, que je pourrais envoyer pour que tu puisses voir.
+- **[269.6 s]** J'ai déjà un modèle de fichier, là, en latex, que je veux extraire.
+- **[276.1 s]** En fait, ça va remplir ce fichier, ça va remplir les données, au fur et à mesure que je coche.
+- **[281.4 s]** En fait, au fur et à mesure que je coche, je dois pouvoir avoir une vue de ce fichier-là.
+- **[286.3 s]** Parce que c'est ce fichier-là que je dois pouvoir extraire, peut-être à la fin du projet, en PDF, que je pourrais, peut-être, signer.
+- **[292.8 s]** Et avoir aussi un suivi, un suivi en physique.
+- **[295.2 s]** Tu vois, ça fait qu'un témoignage aux autres et tout.
+- **[298.3 s]** Donc, c'est un peu ça.
+- **[300.9 s]** C'est un peu ça l'idée, le projet.
+- **[304.5 s]** Donc, c'est un peu ça.
+- **[305.2 s]** Ça fait que, maintenant, un autre thème, ça fait mon service à Dieu.
+- **[310.1 s]** Et dans mon service à Dieu, je peux avoir, peut-être, un onglet évangélisation.
+- **[314.1 s]** Et dans cet onglet évangélisation, par exemple, il peut y avoir simplement le nombre d'oeuvres que je veux consacrer, par exemple,
+- **[324.3 s]** au alimentation et au gainement des âmes, de l'administration et des disciples, en moyenne par semaine.
+- **[331.2 s]** Pardon, ou bien en moyenne par jour, à partir de la semaine et tout.
+- **[336.4 s]** Et pouvoir checker l'emploi à chaque fois.
+- **[339.3 s]** Alors, je peux avoir un autre projet sur lequel je peux, par exemple,
+- **[347.4 s]** je peux avoir un autre projet, par exemple, sur lequel je peux dire que, ok,
+- **[354.7 s]** je veux, je veux, je veux, je veux, dans ces frais, c'est un peu ça.
+- **[358.5 s]** Ou bien, donc, je peux avoir un autre projet, par exemple, dans mon service à Dieu,
+- **[360.7 s]** je peux avoir un autre projet, donc, des frais.
+- **[362.6 s]** Et ça peut être, maintenant, de la même manière, toujours en sous-projet,
+- **[367.4 s]** tel sous-projet, etc.
+- **[370.2 s]** Je peux avoir un autre projet, Utilisation du temps.
+- **[374.0 s]** Ça, ça peut être un autre projet, un autre thème, Utilisation du temps.
+- **[378.2 s]** Et là, je peux avoir une objection du temps.
+- **[381.9 s]** Donc, je peux avoir l'utilisation du temps.
+- **[384.5 s]** Et là-dessus, je peux avoir un projet sur les comptes rendus,
+- **[389.6 s]** un projet sur l'utilisation du temps quotidien.
+- **[392.0 s]** Donc, Utilisation du temps quotidien, par exemple,
+- **[394.9 s]** c'est qu'en cliquant là-dessus, je peux voir les activités que je dois faire.
+- **[399.1 s]** Et à chaque fois que je clique sur une activité,
+- **[404.7 s]** une activité doit correspondre à un projet par an.
+- **[413.2 s]** Et quand je clique dessus, ça doit m'envoyer vers un projet,
+- **[416.1 s]** un sous-projet que je dois couvrir quand on va aider à faire.
+- **[419.2 s]** Donc, c'est un peu ça, l'idée.
+- **[420.8 s]** Donc, ici, il me faut que l'idée.
+- **[421.6 s]** Et je peux voir aussi d'autres thèmes, par exemple, mon travail,
+- **[430.0 s]** par exemple, mes finances, par exemple, l'entretien de ma maison,
+- **[433.5 s]** par exemple, la préparation pour le mariage.
+- **[437.0 s]** Donc, c'est un peu ça, l'idée.
+- **[438.0 s]** Est-ce que tu arrives à voir?
+- **[441.6 s]** Donc, je veux faire une telle application solide.
+- **[448.0 s]** Merci beaucoup.
+- **[448.5 s]** Donc, lorsqu'on a une telle idée,
+- **[453.8 s]** quelle est la suivante étape de l'éjection d'un projet?
+- **[457.1 s]** Donc, comprend l'idée et précisez-moi,
+- **[462.3 s]** l'étape, c'est à quoi correspondre cette étape d'éjection d'un projet
+- **[467.5 s]** et qu'est-ce que je dois faire maintenant
+- **[469.5 s]** pour mêler minutieusement ce projet-ci à l'exécution.
+- **[474.4 s]** Merci.
+- **[474.9 s]** Merci.
