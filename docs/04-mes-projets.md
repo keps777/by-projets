@@ -6,11 +6,11 @@
 
 | # | Projet |
 |---|---|
-| 1 | La lecture de la Bible **(?)** — mot écrit peu lisible (« le chere de la Bible ») |
-| 2 | RDQD **(?)** — sigle à expliciter |
-| 3 | La prière seule |
-| 4 | LLC **(?)** — sigle à expliciter |
-| 5 | PWO **(?)** — sigle à expliciter |
+| 1 | La lecture de la Bible — code rapport **BR** (*Bible Reading*) |
+| 2 | RDQD — Rencontre dynamique quotidienne avec Dieu — code rapport **DDEWG** |
+| 3 | La prière seule — code rapport **PA** (*Prayer Alone*) |
+| 4 | LLC — lecture de littérature chrétienne — code rapport **CL** **(?)** |
+| 5 | PWO — *Prayer With Others*, prière avec d'autres |
 | 6 | Le jeûne |
 | 7 | Le don à Dieu |
 | 8 | Le don à l'homme |

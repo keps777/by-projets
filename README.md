@@ -13,10 +13,11 @@ Une application web installable (PWA) pour **piloter toute sa vie par projets** 
 | [`docs/02-specification.md`](docs/02-specification.md) | Le quoi : modèle de données, écrans, histoires utilisateur du MVP |
 | [`docs/03-feuille-de-route.md`](docs/03-feuille-de-route.md) | Où on en est, prochaines étapes, questions et décisions ouvertes |
 | [`docs/04-mes-projets.md`](docs/04-mes-projets.md) | Mes 4 thèmes et 25 projets, relevés du carnet « Luther Life » |
+| [`docs/05-exigences-v2.md`](docs/05-exigences-v2.md) | Exigences issues des retours sur les maquettes : Le Fil minuté, report intelligent, rapport quotidien exportable |
 
 ## Maquettes
 
-Maquettes haute fidélité (9 écrans, dont « Le Fil », l'écran principal façon calendrier avec la ligne de l'heure en direct) : https://claude.ai/artifact/5ZgqUjisYTEMRLL3w6d2F6
+Maquettes haute fidélité v2 (nuit et jour : Le Fil minuté, report, Focus, rapports, projets, réglages ; la v1 reste dans la page « Version 1 ») : https://claude.ai/artifact/5ZgqUjisYTEMRLL3w6d2F6
 
 Ancienne maquette :
 
