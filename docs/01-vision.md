@@ -1,4 +1,6 @@
-# 01 — Vision : *By Projets*, ma vie par projets
+# 01 — Vision : *Luther Life* (nom de travail : By Projets), ma vie par projets
+
+> **Mise à jour du 5 oct. 2026.** L'esprit de la vision ne change pas. Le vocabulaire et les fonctions sont désormais définis par `02-specification.md` (v2) : « thème » devient **rubrique**, « Ebenezer » devient **Archive**, les 4 modes de suivi sont remplacés par des **métriques personnalisables**, et **Le Fil** (calendrier du jour avec minuteur) est l'écran principal.
 
 > « Écris la vision, grave-la sur des tables, afin qu'on la lise couramment. » — Habacuc 2:2
 
@@ -53,28 +55,9 @@ Chaque sous-projet a une page d'information qui le définit sans ambiguïté :
 | **Comment ?** (*How*) | Méthode, moyens |
 | **Combien ?** (*How much*) | Quantité, objectif chiffré, budget |
 
-### 4. Le Tableau de suivi : le cœur battant
+### 4. Les métriques : le cœur battant
 
-Quand j'ouvre un sous-projet, je vois un tableau :
-
-| Ligne (étape / jour) | Prévu | Accompli ✓ | Valeur réalisée | Commentaire |
-|---|---|---|---|---|
-| Matthieu 1–3 | 01/10 | ✅ | 3 ch. | Très riche, ch. 5 à relire |
-| Matthieu 4–6 | 02/10 | ✅ | 3 ch. | |
-| Matthieu 7–9 | 03/10 | ⬜ | | |
-
-Je coche au fur et à mesure, je saisis une valeur si besoin, j'ajoute un commentaire.
-
-**Magnification : 4 modes de suivi**, parce que tes exemples ne se suivent pas tous de la même façon :
-
-| Mode | Exemple | Lignes générées |
-|---|---|---|
-| **Étapes** (checklist) | Terminer le NT ce mois | Une ligne par livre ou bloc de chapitres, réparties sur la période |
-| **Récurrent** (habitude) | 3 chapitres par jour | Une ligne par jour (ou par semaine), avec un objectif par ligne |
-| **Quantitatif** (cumul vers une cible) | X heures d'évangélisation par semaine | Une ligne par séance, avec un total cumulé comparé à la cible |
-| **Budget** (montants) | Frais, finances, maison | Une ligne par dépense, prévu comparé au réel |
-
-L'application **génère automatiquement les lignes** à partir de la fiche (par exemple « 260 chapitres sur 30 jours » donne 30 lignes). Tu n'as plus qu'à cocher.
+Chaque sous-projet suit des **métriques** que l'on choisit et règle : temps, nombre de fois, nombre (chapitres, pages, personnes…), dollars (entrées, sorties, épargne), oui/non, choix (jeûne complet ou partiel), distance, poids, note, pourcentage, heure, référence. On note **une seule fois** ce qu'on a fait ; tout le reste se calcule (progression, solde, rapport, document). Voir `02-specification.md` §4 et §5.
 
 ### 5. Le Document vivant : du suivi au témoignage
 
@@ -85,21 +68,15 @@ C'est ce qui rend le projet unique : **tu as déjà un modèle LaTeX** de fiche 
 - À la fin du sous-projet, on **exporte en PDF**, on **signe** (signature dessinée à l'écran, ou impression puis signature à la main) et on garde un **suivi physique**.
 - Le document devient un **témoignage** qu'on peut partager avec d'autres.
 
-### 6. Aujourd'hui : l'emploi du temps qui exécute la vision
+### 6. Le Fil : l'écran principal
 
-Le thème « Utilisation du temps » relie tout le reste :
+Une journée de 24 h, avec la ligne de l'heure qui descend en direct. Chaque bloc appartient à un projet ; on le **lance** (il se remplit), on le coche, on corrige ce qui a été fait, on le reporte. Un bouton **+** ajoute une tâche, avec sa récurrence, et dit quels sous-projets elle alimente. Chaque soir, un **rapport** se génère, avec ses récapitulatifs de semaine et de mois, que l'on peut envoyer en choisissant les points à partager.
 
-- L'**emploi du temps quotidien** liste les activités du jour (par exemple 6 h 00–6 h 30 : lecture de la Bible).
-- **Chaque activité est rattachée à un sous-projet.** Un tap sur l'activité ouvre directement la ligne du jour dans le tableau de suivi : je coche, c'est fait.
-- Les **comptes rendus** (quotidiens ou hebdomadaires) font le bilan : ce qui a été fait, ce qui a glissé, ce que j'ajuste.
-
-> La vue **Aujourd'hui** est la porte d'entrée naturelle de l'app : *voici ce que ta vision te demande aujourd'hui.*
-
-### 7. Ebenezer : le mémorial des projets accomplis
+### 7. Archive : le mémorial des projets accomplis
 
 > « Jusqu'ici l'Éternel nous a secourus. » — 1 Samuel 7:12
 
-Chaque sous-projet terminé et signé entre dans **Ebenezer**, une archive chronologique de pierres de souvenir (Josué 4). Avec les années, c'est **le livre de ta fidélité et de celle de Dieu**, consultable, imprimable et transmissible.
+Chaque sous-projet terminé et signé entre dans l'**Archive** (anciennement Ebenezer), une archive chronologique de pierres de souvenir (Josué 4). Avec les années, c'est **le livre de ta fidélité et de celle de Dieu**, consultable, imprimable et transmissible.
 
 ### 8. Plus tard : l'agent IA et la redevabilité
 

@@ -66,7 +66,7 @@ Format de référence :
 
 ### Application web installée sur l'iPhone
 - PWA ajoutée à l'écran d'accueil. Les notifications push fonctionnent sur iPhone (iOS 16.4 ou plus) **si l'app est installée sur l'écran d'accueil** et que l'autorisation est donnée dans l'app. Elles sont envoyées par un **serveur** (Web Push).
-- **Plan B : e-mail de rappel** vers l'adresse de l'utilisateur (saisie dans Réglages), avec titre explicite, programmé **à l'heure, 5 min ou 10 min avant** le bloc. Même contenu que la notification, avec boutons « Lancer » et « Reporter ».
+- **Pas d'e-mail de rappel** : la décision d'origine (plan B par e-mail) est abandonnée. Seule la gestion du compte (mot de passe) peut envoyer un e-mail, sans aucune donnée de l'app.
 - Un minuteur ne peut pas s'afficher en direct sur l'écran verrouillé avec une app web.
 
 ### Envoi des rappels et des rapports (serveur)
@@ -92,7 +92,7 @@ Format de référence :
 - Parcours : **Quoi** (titre, ex. « Rencontre avec Christopher ») → **Projet associé** → **sous-projets alimentés** (interrupteurs) → **ce que la tâche enregistre** (métriques proposées, valeur prévue) → **Quand** (récurrence : une fois, tous les jours, jours choisis, chaque semaine, chaque mois ; heure ; durée ; **vérification de disponibilité** avec créneaux libres juste avant et juste après) → **Rappel** (à l'heure, 5, 10 ou 15 min avant).
 
 ### Rappels
-- **Phase 1 : e-mail** envoyé par le serveur (rappels et rapport). **Phase 2 : notifications push** avec boutons **Lancer**, **Reporter** et **Envoyer** (le rapport), une fois l'app installée sur l'écran d'accueil.
+- **Notifications push uniquement** (décision du 5 oct. 2026 : aucun e-mail, pour protéger les données spirituelles et financières). La notification s'ouvre sur l'écran Action rapide (Lancer · Reporter) ; sur iPhone, une app web ne peut pas afficher de boutons d'action sur la notification.
 
 ### Rapport : toutes les métriques visibles, séparées par des points-virgules
 Pour chaque point : fait / attendu ; référence ; temps fait / temps attendu. Exemples :
@@ -107,3 +107,8 @@ Codes des points 6 à 12, **explicites et modifiables** dans Réglages : JEÛNE,
 - L'onglet **« Ebenezer » devient « Archive »** : projets accomplis (avec le verset de 1 Samuel 7:12) et rapports.
 - Projet **24** retiré. Le thème 4 s'appelle **« Ma vie personnelle »**.
 - Écrans de sous-projet ajoutés : **Fiche** (QQOQCCP, métriques, tâches liées), **Document** (aperçu vivant, PDF, signature), **Temps** (à venir, historique), **Finances**.
+
+
+## Décisions du 5 oct. 2026 (suite 3)
+
+La spécification détaillée est dans `02-specification.md` (v2). Points ajoutés : connexion par e-mail et mot de passe ; installation guidée et autorisation des notifications ; tâche sans projet ; récurrences complètes (jours choisis, mensuel, fin) ; métriques élargies (Oui/Non, Choix, Pourcentage, Heure) ; reprise du passé à la création d'un sous-projet ; vues Semaine et Mois ; recherche ; aucun jour de repos par défaut ; progression mensuelle par règle de trois ; valider un sous-projet à la fin.

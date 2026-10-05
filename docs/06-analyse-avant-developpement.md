@@ -11,10 +11,10 @@
 | A3 | **Règles de progression** | Les barres sont mensuelles, mais les objectifs sont par jour, semaine, mois, total ou sur 40 jours. | Écrire un tableau de règles (prorata d'un projet à cheval sur deux mois, mois de 28 à 31 jours, dépassement au-delà de 100 %, jours de pause, trait « où je devrais être ») et le tester. |
 | A4 | **Récurrence** | « Chaque jeudi », « sauf cette semaine », « changer toute la série » : sans règles, les blocs deviennent incohérents. | Modèle de récurrence standard (RRULE), exceptions par occurrence, fuseau America/Toronto avec heure d'été. Vocabulaire fixe : *tâche* → *occurrence* → *saisie*. |
 | A5 | **Qui alimente quoi** | Une saisie est lue par plusieurs sous-projets. Cas limites : unités différentes, sous-projet créé en cours de mois, saisie corrigée après coup, saisie sans tâche (imprévu). | Saisie rattachée au **projet** ; chaque sous-projet calcule ce qu'il lit. Un sous-projet créé en cours de mois peut compter ou non le passé (choix à la création). |
-| A6 | **Comptes et accès** | Le titre « {Prénom} Life » suggère plusieurs utilisateurs possibles. | Connexion par lien magique envoyé par e-mail ; règles d'accès par ligne dès le départ ; un seul rôle en v1. |
+| A6 | **Comptes et accès** | Le titre « {Prénom} Life » suggère plusieurs utilisateurs possibles. | Connexion par e-mail et mot de passe (décidé) ; règles d'accès par ligne dès le départ ; un seul rôle en v1. |
 | A7 | **Hors ligne et synchronisation** | À 5 h du matin, il peut ne pas y avoir de réseau. Les données vivent sur le serveur. | Cache local ; file d'attente des saisies ; en cas de conflit, le dernier écrit gagne champ par champ. **Le minuteur enregistre l'heure de départ**, pas des secondes comptées. |
-| A8 | **Rappels côté serveur** | Plusieurs pièges : doublons, fuseau, app fermée, pause pendant les vacances. | Tâche planifiée chaque minute ; chaque rappel envoyé une seule fois ; liens profonds (« Lancer » ouvre le bon bloc) ; interrupteur « pause des rappels ». E-mail d'abord, push ensuite. |
-| A9 | **Fournisseur d'e-mails** | Un expéditeur fiable est nécessaire pour ne pas finir dans les courriers indésirables. | Service d'envoi (Resend, offre gratuite) ; idéalement un nom de domaine à toi, sinon l'expéditeur de test, limité à ton adresse. |
+| A8 | **Rappels côté serveur** | Plusieurs pièges : doublons, fuseau, app fermée, pause pendant les vacances. | Tâche planifiée chaque minute ; chaque rappel envoyé une seule fois ; liens profonds (« Lancer » ouvre le bon bloc) ; interrupteur « pause des rappels ». Notifications push uniquement. |
+| A9 | **Notifications push sur iPhone** | Les boutons d'action ne sont pas pris en charge pour les apps web sur iPhone ; la livraison dépend d'Apple. | Vérifier dès le départ sur l'iPhone de l'utilisateur (installation, autorisation, délai de livraison). Un toucher ouvre l'écran Action rapide. |
 | A10 | **Données de départ et premier lancement** | Les 24 projets et les modèles doivent exister dès la première ouverture. | Données initiales fournies (voir `04`) ; parcours : prénom → installer sur l'écran d'accueil → autoriser les notifications → vérifier les rappels. |
 
 ## B. À prévoir pendant la construction
@@ -25,7 +25,7 @@
 - Modifier une tâche récurrente : « cette occurrence » ou « toute la série ».
 - Recherche ; vue **Semaine** ou **Mois** du calendrier (présente en v1, retirée en v2) ; alerte de surcharge d'une journée.
 - Détail d'un projet accompli dans l'Archive ; clôture de fin de mois (reporter ou archiver les sous-projets).
-- Jours de repos, vacances, maladie : une pause globale qui ne compte pas comme retard.
+- Jours de repos : aucun par défaut, l'utilisateur gère lui-même ses tâches.
 - Export et sauvegarde des données, suppression du compte.
 
 **Rapport**
@@ -48,12 +48,13 @@
 - Journal d'erreurs pour savoir ce qui casse sur ton téléphone.
 
 **Vie privée et sécurité**
-- Données spirituelles et financières : règles d'accès strictes, aucun traceur tiers, e-mails **sans notes privées**.
+- Données spirituelles et financières : règles d'accès strictes, aucun traceur tiers, aucun e-mail contenant des données de l'app.
 - Loi 25 (Québec) / RGPD : export et suppression des données à la demande.
 
 ## C. Peut attendre
 - Import en lecture seule d'Apple Calendar (question toujours ouverte : tes rendez-vous sont-ils déjà ailleurs ?).
 - Partage avec un mentor ou discipleur, co-signature.
+- Boutons d'action sur la notification (app native).
 - Formules libres pour les métriques, objectifs annuels détaillés.
 - Widget d'écran d'accueil, minuteur en direct sur l'écran verrouillé (demanderait une app native).
 - Assistant IA qui crée un sous-projet à partir d'une phrase.
@@ -64,7 +65,7 @@
 2. Le Fil : blocs, minuteur, saisies, volet, report.
 3. Projets, sous-projets, modèles, ajout de tâche.
 4. Rapports : jour, semaine, mois, export.
-5. Rappels et rapport par e-mail (serveur).
-6. Application installable, hors ligne, notifications push.
+5. Rappels et rapport du soir par notifications push (serveur), avec vérification sur l'iPhone.
+6. Application installable, hors ligne, finitions des notifications.
 7. Document, signature, Archive.
 8. Finitions : accessibilité, performance, sauvegardes.
