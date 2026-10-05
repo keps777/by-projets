@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Projets</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: {{k.bg}}; color: {{k.ink}}; font-family: Geist, system-ui, sans-serif; display: flex; flex-direction: column">
+  <div style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding: 20px 16px 24px; display: flex; flex-direction: column; gap: 16px">
+    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 10px">
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -0.02em">Projets</h1>
+        <span style="font-family: 'Instrument Serif', serif; font-style: italic; font-size: 17px; color: {{k.muted}}">Diviser ma vie en plusieurs projets.</span>
+      </div>
+      <button onClick="{{toggleEdit}}" style="flex: none; height: 44px; padding: 0 16px; border-radius: 22px; border: 1px solid {{editBorder}}; background: {{editBg}}; color: {{editFg}}; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">{{editLabel}}</button>
+    </div>
+
+    <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 22px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline">
+        <span style="font-size: 14px; font-weight: 600">{{monthLabel}} · progression du mois</span>
+        <span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: {{k.muted}}">jour {{dayN}}/{{dayMax}}</span>
+      </div>
+      <sc-for list="{{summary}}" as="r" hint-placeholder-count="5">
+        <div style="display: grid; grid-template-columns: 112px minmax(0, 1fr) 40px; gap: 10px; align-items: center">
+          <span style="font-size: 12px; color: {{k.muted}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.short}}</span>
+          <span style="position: relative; height: 8px; border-radius: 4px; background: {{k.track}}">
+            <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{r.pct}}%; border-radius: 4px; background: {{r.c}}"></span>
+            <span style="position: absolute; top: -3px; bottom: -3px; left: {{expected}}%; width: 2px; background: {{k.ink}}; opacity: 0.45"></span>
+          </span>
+          <span style="font-family: 'Geist Mono', monospace; font-size: 12px; text-align: right">{{r.pct}} %</span>
+        </div>
+      </sc-for>
+      <span style="font-size: 12px; color: {{k.muted}}">Le trait vertical marque où tu devrais être aujourd’hui. Le pourcentage d’un projet est la moyenne de ses sous-projets.</span>
+    </div>
+
+    <sc-for list="{{rubriques}}" as="r" hint-placeholder-count="5">
+      <section style="display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: center; gap: 10px">
+          <span style="flex: none; width: 26px; height: 26px; border-radius: 8px; background: {{r.c}}; color: {{r.on}}; font-family: 'Geist Mono', monospace; font-size: 12px; display: flex; align-items: center; justify-content: center">{{r.n}}</span>
+          <h2 style="margin: 0; flex: 1; font-size: 17px; font-weight: 600">{{r.nom}}</h2>
+          <span style="font-size: 12px; color: {{k.muted}}">{{r.count}}</span>
+        </div>
+        <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 20px; overflow: hidden">
+          <sc-for list="{{r.projets}}" as="p" hint-placeholder-count="4">
+            <div style="border-bottom: 1px solid {{k.line}}">
+              <div style="display: flex; align-items: center; gap: 10px; padding: 12px 14px">
+                <sc-if value="{{editing}}" hint-placeholder-val="{{false}}">
+                  <button onClick="{{p.remove}}" aria-label="Retirer le projet {{p.nom}}" style="flex: none; width: 32px; height: 32px; border-radius: 16px; border: 0; background: {{k.bad}}; color: #FFFFFF; font: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14"></path></svg>
+                  </button>
+                </sc-if>
+                <a href="{{p.href}}" style="flex: 1; min-width: 0; text-decoration: none; color: {{k.ink}}; display: flex; flex-direction: column; gap: 6px">
+                  <span style="display: flex; align-items: baseline; gap: 8px">
+                    <span style="flex: none; font-family: 'Geist Mono', monospace; font-size: 11px; color: {{k.muted}}">{{p.n}}</span>
+                    <span style="flex: 1; min-width: 0; font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.nom}}</span>
+                    <span style="flex: none; font-family: 'Geist Mono', monospace; font-size: 13px; color: {{p.pc}}">{{p.pctLabel}}</span>
+                  </span>
+                  <span style="font-size: 12px; color: {{k.muted}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.line}}</span>
+                  <span style="position: relative; height: 6px; border-radius: 3px; background: {{k.track}}">
+                    <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{p.pct}}%; border-radius: 3px; background: {{p.bar}}"></span>
+                    <sc-if value="{{p.hasMarker}}" hint-placeholder-val="{{true}}">
+                      <span style="position: absolute; top: -3px; bottom: -3px; left: {{expected}}%; width: 2px; background: {{k.ink}}; opacity: 0.45"></span>
+                    </sc-if>
+                  </span>
+                </a>
+                <sc-if value="{{p.canToggle}}" hint-placeholder-val="{{false}}">
+                  <button onClick="{{p.toggle}}" aria-expanded="{{p.expanded}}" aria-label="{{p.toggleAria}}" style="flex: none; min-width: 52px; height: 44px; border-radius: 14px; border: 1px solid {{k.line}}; background: {{p.togBg}}; color: {{k.ink}}; font: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px">
+                    <span style="font-family: 'Geist Mono', monospace; font-size: 12px">{{p.nSubs}}</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="transform: rotate({{p.rot}}deg); transition: transform 0.2s"><path d="M6 9l6 6 6-6"></path></svg>
+                  </button>
+                </sc-if>
+              </div>
+              <sc-if value="{{p.expanded}}" hint-placeholder-val="{{false}}">
+                <div style="padding: 0 14px 10px 24px; display: flex; flex-direction: column">
+                  <sc-for list="{{p.subs}}" as="x" hint-placeholder-count="2">
+                    <div style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; margin-bottom: 6px; border-radius: 14px; background: {{k.surf2}}">
+                      <sc-if value="{{editing}}" hint-placeholder-val="{{false}}">
+                        <button onClick="{{x.remove}}" aria-label="Retirer le sous-projet {{x.nom}}" style="flex: none; width: 28px; height: 28px; border-radius: 14px; border: 0; background: {{k.bad}}; color: #FFFFFF; font: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14"></path></svg>
+                        </button>
+                      </sc-if>
+                      <a href="{{x.href}}" style="flex: 1; min-width: 0; text-decoration: none; color: {{k.ink}}; display: flex; flex-direction: column; gap: 5px; min-height: 44px; justify-content: center">
+                        <span style="display: flex; align-items: baseline; gap: 8px">
+                          <span style="flex: 1; min-width: 0; font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{x.nom}}</span>
+                          <span style="flex: none; font-family: 'Geist Mono', monospace; font-size: 12px">{{x.pctLabel}}</span>
+                        </span>
+                        <span style="position: relative; height: 5px; border-radius: 3px; background: {{k.track}}">
+                          <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{x.pct}}%; border-radius: 3px; background: {{x.bar}}"></span>
+                        </span>
+                        <span style="font-size: 12px; color: {{k.muted}}">{{x.obj}}</span>
+                      </a>
+                    </div>
+                  </sc-for>
+                  <sc-if value="{{editing}}" hint-placeholder-val="{{false}}">
+                    <a href="{{nouveauHref}}" style="text-decoration: none; min-height: 44px; border-radius: 14px; border: 1.5px dashed {{k.line}}; background: transparent; color: {{r.ink}}; font: inherit; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Sous-projet</a>
+                  </sc-if>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+          <sc-if value="{{editing}}" hint-placeholder-val="{{false}}">
+            <button onClick="{{r.add}}" style="width: 100%; min-height: 48px; border: 0; background: transparent; color: {{r.ink}}; font: inherit; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Projet dans cette rubrique</button>
+          </sc-if>
+        </div>
+      </section>
+    </sc-for>
+
+    <sc-if value="{{editing}}" hint-placeholder-val="{{false}}">
+      <button onClick="{{addRubrique}}" style="min-height: 56px; border-radius: 20px; border: 2px dashed {{k.line}}; background: transparent; color: {{k.ink}}; font: inherit; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+        Nouvelle rubrique
+      </button>
+    </sc-if>
+  </div>
+
+  <nav style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 6px 4px 14px; border-top: 1px solid {{k.line}}">
+    <sc-for list="{{tabs}}" as="t" hint-placeholder-count="5">
+      <a href="{{t.href}}" style="text-decoration: none; color: {{t.color}}; display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; justify-content: center; font-size: 11px; font-weight: {{t.fw}}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{t.icon}}"></path></svg>
+        {{t.label}}
+      </a>
+    </sc-for>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"scene":{"editor":null,"default":""},"$preview":{"width":390,"height":844}}'>
+var TOK = {
+  nuit: { bg: '#0E0F13', surf: '#17181E', surf2: '#20222A', line: '#2A2C35', track: '#2C2E38', ink: '#F2F2F5', muted: '#A3A6B1', inv: '#F2F2F5', invInk: '#0E0F13', good: '#5BD893', bad: '#E5483A' },
+  jour: { bg: '#F5F4F0', surf: '#FFFFFF', surf2: '#F1EFEA', line: '#E3E1DB', track: '#E3E1DB', ink: '#16171B', muted: '#5E6068', inv: '#16171B', invInk: '#FFFFFF', good: '#1E7F4F', bad: '#C2362B' }
+};
+var TC = {
+  nuit: { dieu: ['#9D8CFF', '#120E2E', '#BDB3FF'], service: ['#34D1B6', '#04241F', '#7FE6D3'], travail: ['#5EA6FF', '#06182E', '#9CC8FF'], vie: ['#FF8F66', '#2E1006', '#FFB89C'], trans: ['#F5B843', '#2A1C00', '#F8CF7A'], neuf: ['#A3A6B1', '#0E0F13', '#C9CAD2'] },
+  jour: { dieu: ['#5B4FE0', '#FFFFFF', '#3F34B8'], service: ['#0B7F72', '#FFFFFF', '#08524A'], travail: ['#2B67A8', '#FFFFFF', '#183F6A'], vie: ['#B4542F', '#FFFFFF', '#6E2E14'], trans: ['#A66D00', '#FFFFFF', '#5E3E00'], neuf: ['#5E6068', '#FFFFFF', '#3A3B42'] }
+};
+function S(nom, obj, pct, flag) { return [nom, obj, pct, flag || '']; }
+function P(n, nom, subs) { return { n: n, nom: nom, subs: subs }; }
+var DATA = [
+  { n: 1, t: 'dieu', nom: 'Ma relation avec Dieu', short: 'Relation avec Dieu', projets: [
+    P(1, 'La lecture de la Bible', [S('7 chapitres par jour', '23 / 217 ch.', 11), S('Étudier le Nouveau Testament · octobre', '23 / 260 ch.', 9)]),
+    P(2, 'RDQD', [S('3 rencontres par jour', '62 / 93', 67)]),
+    P(3, 'La prière seule', [S('2 h par jour', '36 h / 62 h', 58), S('Une nuit de prière par mois', '0 / 1', 0)]),
+    P(4, 'LLC · littérature chrétienne', [S('L’agressivité spirituelle (ZTF)', '166 / 417 p.', 40), S('Lire 12 livres en 2026', '7 / 12 livres', 58)]),
+    P(5, 'PWO · prière avec d’autres', [S('1 h par jour', '2 h / 9 h à ce jour', 22)]),
+    P(6, 'Le jeûne', [S('40 jours · du 15 oct. au 23 nov.', 'octobre : 0 / 17 j', 0, 'futur')]),
+    P(7, 'Le don à Dieu', [S('Chaque semaine', '1 / 1', 100)]),
+    P(8, 'Le don à l’homme', [S('4 actes par mois', '2 / 4', 50)]), ] },
+  { n: 2, t: 'service', nom: 'Mon service à Dieu', short: 'Service à Dieu', projets: [
+    P(9, 'L’évangélisation', [S('5 heures par semaine', '11 h / 21 h', 54), S('Parler à 20 personnes ce mois', '11 / 20', 55)]),
+    P(10, 'Le gagnement des âmes', [S('2 âmes par mois', '0 / 2', 0)]),
+    P(11, 'La formation des disciples', [S('8 rencontres ce mois', '4 / 8', 50)]),
+    P(15, 'Dons aux frères', [S('2 dons par mois', '1 / 2', 50)]) ] },
+  { n: 3, t: 'travail', nom: 'Mon travail et mes études', short: 'Travail et études', projets: [
+    P(12, 'L’excellence professionnelle', [S('Livrer le rapport T3', '4 / 10 sections', 40)]),
+    P(13, 'Mon projet d’entrepreneuriat', [S('4 h par semaine', '3 h / 17 h', 18)]),
+    P(14, 'L’excellence académique', [S('Réussir la session d’automne', '5 / 11 chapitres', 45)]) ] },
+  { n: 4, t: 'vie', nom: 'Ma vie personnelle', short: 'Vie personnelle', projets: [
+    P(16, 'La gestion de mes finances', [S('Budget d’octobre', '4 / 4 suivis', 100)]),
+    P(17, 'Ma garde-robe', [S('Objectif à définir', '', -1)]),
+    P(18, 'L’entretien de mon logement', [S('1 pièce par jour', '4 / 31', 13)]),
+    P(19, 'La forme physique', [S('3 séances par semaine', '4 / 13', 31)]),
+    P(20, 'L’achat d’une maison', [S('Épargne du mois', '60 % de l’objectif', 60)]),
+    P(21, 'La préparation pour le mariage', [S('Lire un livre à deux', '3 / 10 chapitres', 30)]),
+    P(22, 'Le mariage', [S('À venir', '', -1)]),
+    P(23, 'La relation avec ma famille', [S('1 appel par semaine', '1 / 4', 25)]) ] },
+  { n: '∞', t: 'trans', nom: 'Transversal', short: 'Transversal', projets: [
+    P(25, 'Le suivi de tous les projets', [S('1 rapport par jour', '4 / 5', 80)]) ] }
+];
+var ICONS = {
+  fil: 'M4 6h3M4 12h3M4 18h3M10 6h10M10 12h7M10 18h10',
+  projets: 'M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5',
+  rapports: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6',
+  ebenezer: 'M3 4h18v5H3zM5 9v11h14V9M10 13h4',
+  reglages: 'M4 7h10M18 7h2M4 17h4M12 17h8M14 5v4M8 15v4'
+};
+function avg(subs) {
+  var v = subs.filter(function (x) { return x[2] >= 0; });
+  return v.length ? Math.round(v.reduce(function (a, x) { return a + Math.min(100, x[2]); }, 0) / v.length) : -1;
+}
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { editing: props.scene === 'edition', data: JSON.parse(JSON.stringify(DATA)), open: { 1: true, 4: false }, nextN: 26 };
+  }
+  mutate(fn) {
+    var d = JSON.parse(JSON.stringify(this.state.data));
+    fn(d);
+    this.setState({ data: d });
+  }
+  renderVals() {
+    var self = this, s = this.state;
+    var mode = this.props.dark === false ? 'jour' : 'nuit';
+    var k = TOK[mode];
+    var now = new Date();
+    var dayMax = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    var expected = Math.round(now.getDate() / dayMax * 100);
+    var links = mode === 'nuit'
+      ? { fil: 'Main.dc.html', projets: 'Projets.dc.html', rapports: 'Rapport.dc.html', reglages: 'Reglages.dc.html', sp: 'SousProjet.dc.html' }
+      : { fil: 'JourFil.dc.html', projets: 'JourProjets.dc.html', rapports: 'JourRapport.dc.html', reglages: 'JourReglages.dc.html', sp: 'JourSousProjet.dc.html' };
+    var rubriques = s.data.map(function (r, ri) {
+      var tc = TC[mode][r.t];
+      var pcts = r.projets.map(function (p) { return avg(p.subs); }).filter(function (x) { return x >= 0; });
+      return {
+        n: r.n, nom: r.nom, c: tc[0], on: tc[1], ink: tc[2], short: r.short,
+        count: r.projets.length + (r.projets.length > 1 ? ' projets' : ' projet'),
+        avg: pcts.length ? Math.round(pcts.reduce(function (a, x) { return a + x; }, 0) / pcts.length) : 0,
+        add: function () {
+          var n = s.nextN;
+          self.mutate(function (d) { d[ri].projets.push({ n: n, nom: 'Nouveau projet', subs: [] }); });
+          self.setState({ nextN: n + 1, open: Object.assign({}, s.open, (function () { var o = {}; o[n] = true; return o; })()) });
+        },
+        projets: r.projets.map(function (p, pi) {
+          var pct = avg(p.subs), nSubs = p.subs.length;
+          var futur = nSubs > 0 && p.subs.every(function (x) { return x[3] === 'futur'; });
+          var expanded = s.editing || !!s.open[p.n];
+          return {
+            n: p.n, nom: p.nom, pct: Math.max(0, Math.min(100, pct)),
+            pctLabel: pct < 0 ? '—' : pct + ' %', pc: pct >= 100 ? k.good : (pct >= 0 && pct < expected * 0.5 ? k.muted : k.ink),
+            bar: pct >= 100 ? k.good : tc[0], hasMarker: pct >= 0 && !futur, href: p.n === 16 ? 'SousProjetFinances.dc.html' : links.sp,
+            line: nSubs === 0 ? 'Aucun sous-projet · ajoutes-en un' : (nSubs === 1 ? p.subs[0][0] + (p.subs[0][1] ? ' · ' + p.subs[0][1] : '') : nSubs + ' sous-projets'),
+            canToggle: nSubs > 1 && !s.editing, expanded: expanded, nSubs: nSubs, rot: expanded ? 180 : 0,
+            togBg: expanded ? k.surf2 : 'transparent', toggleAria: (expanded ? 'Replier' : 'Voir') + ' les sous-projets de ' + p.nom,
+            toggle: function () { var o = Object.assign({}, s.open); o[p.n] = !o[p.n]; self.setState({ open: o }); },
+            remove: function () { self.mutate(function (d) { d[ri].projets.splice(pi, 1); }); },
+            addSub: function () { self.mutate(function (d) { d[ri].projets[pi].subs.push(S('Nouveau sous-projet', 'Fixe un objectif chiffré', -1)); }); },
+            subs: p.subs.map(function (x, xi) {
+              return { nom: x[0], obj: x[1] || 'Objectif à définir', pct: Math.max(0, Math.min(100, x[2])), pctLabel: x[2] < 0 ? '—' : x[2] + ' %',
+                bar: x[2] >= 100 ? k.good : tc[0], href: p.n === 16 ? 'SousProjetFinances.dc.html' : links.sp,
+                remove: function () { self.mutate(function (d) { d[ri].projets[pi].subs.splice(xi, 1); }); } };
+            })
+          };
+        })
+      };
+    });
+    return {
+      k: k, nouveauHref: 'NouveauSousProjet.dc.html', editing: s.editing, expected: expected, dayN: now.getDate(), dayMax: dayMax,
+      monthLabel: now.toLocaleDateString('fr-CA', { month: 'long' }).replace(/^./, function (c) { return c.toUpperCase(); }),
+      editLabel: s.editing ? 'Terminé' : 'Modifier',
+      editBg: s.editing ? k.inv : 'transparent', editFg: s.editing ? k.invInk : k.ink, editBorder: s.editing ? k.inv : k.line,
+      toggleEdit: function () { self.setState({ editing: !s.editing }); },
+      summary: rubriques.map(function (r) { return { short: r.short, pct: r.avg, c: r.c }; }),
+      rubriques: rubriques,
+      addRubrique: function () { self.mutate(function (d) { d.push({ n: d.length, t: 'neuf', nom: 'Nouvelle rubrique', short: 'Nouvelle rubrique', projets: [] }); }); },
+      tabs: [
+        { label: 'Le Fil', href: links.fil, icon: ICONS.fil, color: k.muted, fw: 500 },
+        { label: 'Projets', href: links.projets, icon: ICONS.projets, color: k.ink, fw: 600 },
+        { label: 'Rapports', href: links.rapports, icon: ICONS.rapports, color: k.muted, fw: 500 },
+        { label: 'Archive', href: (mode === 'nuit' ? 'Archive.dc.html' : 'JourArchive.dc.html'), icon: ICONS.ebenezer, color: k.muted, fw: 500 },
+        { label: 'Réglages', href: links.reglages, icon: ICONS.reglages, color: k.muted, fw: 500 }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

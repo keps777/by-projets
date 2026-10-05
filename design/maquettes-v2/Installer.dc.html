@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Installer sur l’iPhone</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; overflow: hidden; background: #0E0F13; color: #F2F2F5; font-family: Geist, system-ui, sans-serif; display: flex; flex-direction: column">
+  <div style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding: 56px 20px 16px; display: flex; flex-direction: column; gap: 18px">
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #9D8CFF">Étape 1 sur 2</span>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 32px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.08">Ajoute l’app à l’écran d’accueil</h1>
+      <span style="font-size: 15px; line-height: 1.45; color: #C9CAD6">Les notifications ne fonctionnent que depuis l’icône de l’écran d’accueil. Ça prend 20 secondes.</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <sc-for list="{{steps}}" as="st" hint-placeholder-count="4">
+        <button onClick="{{st.flip}}" aria-pressed="{{st.done}}" style="width: 100%; border: 1px solid {{st.border}}; background: {{st.bg}}; color: #F2F2F5; font: inherit; text-align: left; border-radius: 20px; padding: 14px; min-height: 64px; display: flex; align-items: center; gap: 12px; cursor: pointer">
+          <span style="flex: none; width: 32px; height: 32px; border-radius: 16px; background: {{st.dotBg}}; color: {{st.dotFg}}; font-family: 'Geist Mono', monospace; font-size: 14px; display: flex; align-items: center; justify-content: center">
+            <sc-if value="{{st.done}}" hint-placeholder-val="{{false}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></sc-if>
+            <sc-if value="{{st.todo}}" hint-placeholder-val="{{true}}"><span>{{st.n}}</span></sc-if>
+          </span>
+          <span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">{{st.titre}}</span><span style="font-size: 13px; color: #A3A6B1">{{st.sous}}</span></span>
+          <span style="flex: none; width: 44px; height: 44px; border-radius: 12px; background: #20222A; display: flex; align-items: center; justify-content: center; color: #C9CAD6">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{st.icon}}"></path></svg>
+          </span>
+        </button>
+      </sc-for>
+    </div>
+
+    <div style="background: #1A1B22; border-radius: 18px; padding: 12px 14px; font-size: 13px; line-height: 1.5; color: #A3A6B1">Ouvre ce lien dans <b style="color: #F2F2F5">Safari</b>. Dans un autre navigateur, l’option « Sur l’écran d’accueil » peut manquer.</div>
+  </div>
+  <div style="padding: 10px 20px 22px; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #23252E">
+    <a href="AutoriserNotifications.dc.html" style="height: 56px; border-radius: 18px; background: #9D8CFF; color: #120E2E; text-decoration: none; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center">{{cta}}</a>
+    <a href="AutoriserNotifications.dc.html" style="color: #A3A6B1; font-size: 13px; text-decoration: none; min-height: 44px; display: flex; align-items: center; justify-content: center">Plus tard</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { done: [true, false, false, false] }; }
+  renderVals() {
+    var self = this, s = this.state;
+    var data = [
+      ['Ouvre l’app dans Safari', 'À l’adresse que tu as reçue', 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18'],
+      ['Touche le bouton Partager', 'La flèche vers le haut, en bas de l’écran', 'M12 15V3M7 8l5-5 5 5M5 14v6h14v-6'],
+      ['Choisis « Sur l’écran d’accueil »', 'Fais défiler la liste vers le bas', 'M4 4h16v16H4zM12 8v8M8 12h8'],
+      ['Ouvre l’app depuis son icône', 'Pas depuis Safari : c’est ce qui active les notifications', 'M7 2.5h10a2.5 2.5 0 0 1 2.5 2.5v14a2.5 2.5 0 0 1-2.5 2.5H7A2.5 2.5 0 0 1 4.5 19V5A2.5 2.5 0 0 1 7 2.5zM11 18.5h2']
+    ];
+    var all = s.done.every(function (x) { return x; });
+    return {
+      cta: all ? 'C’est fait, continuer' : 'Continuer',
+      steps: data.map(function (d, i) {
+        var done = s.done[i];
+        return { n: i + 1, titre: d[0], sous: d[1], icon: d[2], done: done, todo: !done, border: done ? '#3C3568' : '#23252E', bg: done ? '#1B1A2E' : '#14151B', dotBg: done ? '#9D8CFF' : '#2A2C35', dotFg: done ? '#120E2E' : '#F2F2F5',
+          flip: function () { var a = s.done.slice(); a[i] = !a[i]; self.setState({ done: a }); } };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

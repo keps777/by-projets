@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Notifications</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; overflow: hidden; box-sizing: border-box; background: #0A0A12; color: #F2F2F5; font-family: Geist, system-ui, sans-serif; padding: 64px 14px 24px; display: flex; flex-direction: column; gap: 10px; position: relative">
+  <div style="position: absolute; left: -80px; top: -60px; width: 420px; height: 420px; border-radius: 210px; background: #1D1840; opacity: 0.7"></div>
+  <div style="position: absolute; right: -120px; top: 260px; width: 360px; height: 360px; border-radius: 180px; background: #0F2A30; opacity: 0.6"></div>
+
+  <div style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 0; margin-bottom: 26px">
+    <span style="font-size: 17px; font-weight: 600; color: #D7D8E0">Lundi 5 octobre</span>
+    <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 92px; font-weight: 700; letter-spacing: -0.04em; line-height: 1">4:55</span>
+  </div>
+
+  <div style="position: relative; background: rgba(40, 40, 58, 0.78); border: 1px solid rgba(255,255,255,0.08); border-radius: 22px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px">
+    <div style="display: flex; align-items: center; gap: 8px">
+      <span style="width: 22px; height: 22px; border-radius: 6px; background: #9D8CFF; color: #120E2E; font-family: 'Bricolage Grotesque', sans-serif; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center">LL</span>
+      <span style="flex: 1; font-size: 12px; font-weight: 600; color: #C9CAD6; letter-spacing: 0.04em; text-transform: uppercase">Luther Life</span>
+      <span style="font-size: 12px; color: #A3A6B1">maintenant</span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 2px">
+      <span style="font-size: 15px; font-weight: 600">Dans 5 min : RDQD du matin</span>
+      <span style="font-size: 14px; color: #C9CAD6">05:00 – 05:30 · Ma relation avec Dieu</span>
+    </div>
+    <a href="ActionRapide.dc.html" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; color: #BDB3FF; text-decoration: none; font-size: 14px; font-weight: 600"><span>Toucher pour lancer ou reporter</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></a>
+  </div>
+
+  <div style="position: relative; background: rgba(40, 40, 58, 0.78); border: 1px solid rgba(255,255,255,0.08); border-radius: 22px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px">
+    <div style="display: flex; align-items: center; gap: 8px">
+      <span style="width: 22px; height: 22px; border-radius: 6px; background: #9D8CFF; color: #120E2E; font-family: 'Bricolage Grotesque', sans-serif; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center">LL</span>
+      <span style="flex: 1; font-size: 12px; font-weight: 600; color: #C9CAD6; letter-spacing: 0.04em; text-transform: uppercase">Luther Life</span>
+      <span style="font-size: 12px; color: #A3A6B1">hier, 21:15</span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 2px">
+      <span style="font-size: 15px; font-weight: 600">Ton rapport du 4 octobre est prêt</span>
+      <span style="font-size: 14px; color: #C9CAD6">5 points pour « Groupe de prière » · 5 atteints sur 12</span>
+    </div>
+    <a href="RapportExport.dc.html" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; color: #BDB3FF; text-decoration: none; font-size: 14px; font-weight: 600"><span>Toucher pour relire et envoyer</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></a>
+  </div>
+
+  <div style="position: relative; background: rgba(40, 40, 58, 0.62); border: 1px solid rgba(255,255,255,0.06); border-radius: 22px; padding: 12px 14px; display: flex; gap: 10px; align-items: center">
+    <span style="width: 22px; height: 22px; border-radius: 6px; background: #9D8CFF; color: #120E2E; font-family: 'Bricolage Grotesque', sans-serif; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex: none">LL</span>
+    <span style="flex: 1; display: flex; flex-direction: column; gap: 1px">
+      <span style="font-size: 14px; font-weight: 600">Lecture de la Bible : 0/7 hier</span>
+      <span style="font-size: 13px; color: #C9CAD6">Reprendre ce matin à 05:30 ? Objectif du mois : 23/217.</span>
+    </span>
+  </div>
+
+  <div style="position: relative; background: rgba(40, 40, 58, 0.5); border: 1px solid rgba(255,255,255,0.05); border-radius: 22px; padding: 12px 14px; display: flex; gap: 10px; align-items: center">
+    <span style="width: 22px; height: 22px; border-radius: 6px; background: #9D8CFF; color: #120E2E; font-family: 'Bricolage Grotesque', sans-serif; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex: none">LL</span>
+    <span style="flex: 1; display: flex; flex-direction: column; gap: 1px">
+      <span style="font-size: 14px; font-weight: 600">Récap de la semaine 40 : 74 %</span>
+      <span style="font-size: 13px; color: #C9CAD6">Meilleur point : DDEWG 16/21. À renforcer : PWO 2h30/7h.</span>
+    </span>
+  </div>
+
+  <span style="position: relative; margin-top: auto; align-self: center; font-size: 12px; color: #8C8FA0">Sur iPhone, une notification d’app web s’ouvre d’un appui : pas de boutons sur l’écran verrouillé</span>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

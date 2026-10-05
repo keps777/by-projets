@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Toucher un bloc</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#16171B}a:hover{color:#000}
+button{font:inherit;color:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #F5F4F0; color: #16171B; font-family: Geist, system-ui, sans-serif">
+
+  <div style="padding: 22px 20px 0; display: flex; flex-direction: column; gap: 2px">
+    <div style="font-size: 13px; font-weight: 600; color: #C63A1F">Octobre 2026</div>
+    <div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.02em">Lundi 5 octobre</div>
+  </div>
+  <div style="position: absolute; left: 66px; right: 12px; top: 130px; height: 44px; border-radius: 12px; background: #E6E6FA"></div>
+  <div style="position: absolute; left: 66px; right: 12px; top: 178px; height: 30px; border-radius: 12px; background: #E6E6FA; outline: 3px solid #4446C9; outline-offset: 1px"></div>
+  <div style="position: absolute; left: 66px; right: 12px; top: 212px; height: 30px; border-radius: 12px; background: #E6E6FA"></div>
+  <div style="position: absolute; left: 66px; right: 12px; top: 256px; height: 30px; border-radius: 12px; background: #F5E2D9"></div>
+  <div style="position: absolute; left: 0; right: 0; top: 0; bottom: 0; background: rgba(22, 23, 27, 0.42)"></div>
+
+  <div style="position: absolute; left: 0; right: 0; bottom: 0; background: #FFFFFF; border-radius: 28px 28px 0 0; padding: 10px 20px 26px; display: flex; flex-direction: column; gap: 16px">
+    <span style="align-self: center; width: 40px; height: 5px; border-radius: 3px; background: #D6D4CE"></span>
+
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #25267A">
+      <span style="width: 8px; height: 8px; border-radius: 4px; background: #4446C9"></span>
+      <span>Ma relation avec Dieu</span><span style="color: #9A9CA3">›</span>
+      <span>La lecture de la Bible</span><span style="color: #9A9CA3">›</span>
+      <span>Matthieu, 3 chapitres par jour</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1">Matthieu 7–9</h1>
+      <div style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #5E6068">05:45 – 06:15 · 30 min · ligne 3 sur 10</div>
+    </div>
+
+    <div style="display: flex; align-items: center; justify-content: space-between; background: #F5F4F0; border-radius: 16px; padding: 8px 8px 8px 14px">
+      <div style="display: flex; flex-direction: column">
+        <span style="font-size: 12px; color: #5E6068">Valeur réalisée · prévu 3</span>
+        <span style="font-size: 18px; font-weight: 600">3 chapitres</span>
+      </div>
+      <div style="display: flex; gap: 6px">
+        <button aria-label="Diminuer" style="width: 44px; height: 44px; border-radius: 14px; border: 1px solid #E3E1DB; background: #FFFFFF; font-size: 20px">−</button>
+        <button aria-label="Augmenter" style="width: 44px; height: 44px; border-radius: 14px; border: 1px solid #E3E1DB; background: #FFFFFF; font-size: 20px">+</button>
+      </div>
+    </div>
+
+    <button style="height: 54px; border-radius: 18px; border: 0; background: #16171B; color: #FFFFFF; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+      Marquer comme fait
+    </button>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: -6px">
+      <button style="height: 44px; border-radius: 14px; border: 1px solid #E3E1DB; background: #FFFFFF; font-size: 13px; font-weight: 600">Reporter</button>
+      <button style="height: 44px; border-radius: 14px; border: 1px solid #E3E1DB; background: #FFFFFF; font-size: 13px; font-weight: 600">Avec grâce</button>
+      <a href="Focus.dc.html" style="height: 44px; border-radius: 14px; border: 1px solid #E3E1DB; background: #FFFFFF; font-size: 13px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Focus</a>
+    </div>
+
+    <label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #5E6068">
+      Note
+      <textarea rows="2" style="font: 15px Geist, sans-serif; color: #16171B; border: 1px solid #E3E1DB; border-radius: 14px; padding: 10px 12px; resize: none; background: #FFFFFF">Mt 7:24 : bâtir sur le roc. À méditer toute la semaine.</textarea>
+    </label>
+
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <div style="display: flex; justify-content: space-between; font-size: 12px; color: #5E6068"><span>Sous-projet : 20 %</span><span>À jour</span></div>
+      <div style="height: 8px; border-radius: 4px; background: #EDEBE6; overflow: hidden"><div style="height: 8px; width: 20%; background: #4446C9; border-radius: 4px"></div></div>
+    </div>
+
+    <div style="font-family: 'Instrument Serif', serif; font-style: italic; font-size: 18px; line-height: 1.3; color: #3A3B42">« Ta parole est une lampe à mes pieds. » Psaume 119:105</div>
+
+    <a href="SousProjet.dc.html" style="align-self: flex-start; font-size: 14px; font-weight: 600; min-height: 44px; display: flex; align-items: center; gap: 6px">Ouvrir le sous-projet
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+    </a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

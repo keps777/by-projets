@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Mois</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; overflow: hidden; background: {{k.bg}}; color: {{k.ink}}; font-family: Geist, system-ui, sans-serif; display: flex; flex-direction: column">
+  <div style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding: 18px 12px 20px; display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 6px">
+      <div style="display: flex; flex-direction: column">
+        <span style="font-size: 13px; font-weight: 600; color: {{k.now}}">{{year}}</span>
+        <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1">{{monthName}}</h1>
+      </div>
+      <div style="display: flex; gap: 6px">
+        <button aria-label="Mois précédent" style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid {{k.line}}; background: {{k.surf}}; color: {{k.ink}}; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button>
+        <button aria-label="Mois suivant" style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid {{k.line}}; background: {{k.surf}}; color: {{k.ink}}; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></button>
+      </div>
+    </div>
+
+    <div style="padding: 0 6px; display: flex; flex-direction: column; gap: 8px">
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: {{k.surf2}}; border-radius: 12px; padding: 3px; gap: 2px">
+        <a href="{{links.fil}}" style="height: 36px; font-size: 13px; font-weight: 500; color: {{k.muted}}; text-decoration: none; display: flex; align-items: center; justify-content: center">Jour</a>
+        <a href="{{links.semaine}}" style="height: 36px; font-size: 13px; font-weight: 500; color: {{k.muted}}; text-decoration: none; display: flex; align-items: center; justify-content: center">Semaine</a>
+        <span style="height: 36px; border-radius: 9px; background: {{k.surf}}; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center">Mois</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px">
+        <sc-for list="{{layers}}" as="l" hint-placeholder-count="2">
+          <button onClick="{{l.pick}}" aria-pressed="{{l.on}}" style="height: 40px; border-radius: 12px; border: 1px solid {{l.border}}; background: {{l.bg}}; color: {{l.fg}}; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer">{{l.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px">
+      <sc-for list="{{heads}}" as="h" hint-placeholder-count="7">
+        <span style="text-align: center; font-size: 11px; font-weight: 600; color: {{k.muted}}">{{h}}</span>
+      </sc-for>
+      <sc-for list="{{cells}}" as="c" hint-placeholder-count="35">
+        <a href="{{links.fil}}" aria-label="{{c.aria}}" style="text-decoration: none; color: {{k.ink}}; height: 66px; border-radius: 10px; background: {{c.bg}}; border: 1px solid {{c.border}}; padding: 4px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; opacity: {{c.op}}">
+          <span style="align-self: flex-start; min-width: 22px; height: 22px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; background: {{c.numBg}}; color: {{c.numFg}}">{{c.num}}</span>
+          <sc-if value="{{c.showBars}}" hint-placeholder-val="{{true}}">
+            <span style="display: flex; flex-direction: column-reverse; height: {{c.barH}}px; border-radius: 3px; overflow: hidden; gap: 1px">
+              <sc-for list="{{c.segs}}" as="g" hint-placeholder-count="4">
+                <span style="flex: {{g.f}}; background: {{g.c}}"></span>
+              </sc-for>
+            </span>
+          </sc-if>
+          <sc-if value="{{c.showPct}}" hint-placeholder-val="{{false}}">
+            <span style="font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500; color: {{c.pctC}}">{{c.pct}}</span>
+          </sc-if>
+        </a>
+      </sc-for>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 10px 14px; padding: 0 6px; font-size: 11px; color: {{k.muted}}">
+      <sc-for list="{{legend}}" as="g" hint-placeholder-count="5">
+        <span style="display: flex; align-items: center; gap: 5px"><span style="width: 10px; height: 10px; border-radius: 3px; background: {{g.c}}"></span>{{g.nom}}</span>
+      </sc-for>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0 4px">
+      <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 700">{{avgLoad}}</span><span style="font-size: 11px; color: {{k.muted}}">charge moyenne / jour</span></div>
+      <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 700">{{doneAvg}} %</span><span style="font-size: 11px; color: {{k.muted}}">accompli à ce jour</span></div>
+      <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 700">{{peak}}</span><span style="font-size: 11px; color: {{k.muted}}">jour le plus chargé</span></div>
+    </div>
+
+    <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 22px; padding: 14px; display: flex; flex-direction: column; gap: 10px; margin: 0 4px">
+      <span style="font-size: 14px; font-weight: 600">Progression du mois par rubrique</span>
+      <sc-for list="{{prog}}" as="r" hint-placeholder-count="5">
+        <div style="display: grid; grid-template-columns: 108px minmax(0, 1fr) 38px; gap: 10px; align-items: center">
+          <span style="font-size: 12px; color: {{k.muted}}">{{r.nom}}</span>
+          <span style="position: relative; height: 8px; border-radius: 4px; background: {{k.track}}">
+            <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{r.pct}}%; border-radius: 4px; background: {{r.c}}"></span>
+            <span style="position: absolute; top: -3px; bottom: -3px; left: {{expected}}%; width: 2px; background: {{k.ink}}; opacity: 0.45"></span>
+          </span>
+          <span style="font-family: 'Geist Mono', monospace; font-size: 12px; text-align: right">{{r.pct}} %</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <nav style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 6px 4px 14px; border-top: 1px solid {{k.line}}">
+    <sc-for list="{{tabs}}" as="t" hint-placeholder-count="5">
+      <a href="{{t.href}}" style="text-decoration: none; color: {{t.color}}; display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; justify-content: center; font-size: 11px; font-weight: {{t.fw}}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{t.icon}}"></path></svg>
+        {{t.label}}
+      </a>
+    </sc-for>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"couche":{"editor":"enum","options":["charge","accompli"],"default":"charge"},"$preview":{"width":390,"height":844}}'>
+var TOK = {
+  nuit: { bg: '#0E0F13', surf: '#17181E', surf2: '#20222A', line: '#2A2C35', track: '#2C2E38', ink: '#F2F2F5', muted: '#A3A6B1', faint: '#7C7F8B', now: '#FF4D3A', inv: '#F2F2F5', invInk: '#0E0F13', today: '#FF4D3A', todayInk: '#0E0F13', cell: '#14151B', good: [91, 216, 147] },
+  jour: { bg: '#F5F4F0', surf: '#FFFFFF', surf2: '#EDEBE6', line: '#E3E1DB', track: '#E3E1DB', ink: '#16171B', muted: '#5E6068', faint: '#8A8C93', now: '#E5482E', inv: '#16171B', invInk: '#FFFFFF', today: '#C63A1F', todayInk: '#FFFFFF', cell: '#FFFFFF', good: [30, 127, 79] }
+};
+var RC = {
+  nuit: { dieu: '#9D8CFF', service: '#34D1B6', travail: '#5EA6FF', vie: '#FF8F66', trans: '#F5B843' },
+  jour: { dieu: '#5B4FE0', service: '#0B7F72', travail: '#2B67A8', vie: '#B4542F', trans: '#A66D00' }
+};
+var RN = { dieu: 'Relation avec Dieu', service: 'Service à Dieu', travail: 'Travail et études', vie: 'Vie personnelle', trans: 'Transversal' };
+var MIX = {
+  wk: { dieu: 235, travail: 410, service: 75, vie: 75, trans: 15 },
+  sat: { dieu: 215, service: 200, vie: 150, trans: 0 },
+  sun: { dieu: 345, vie: 120, trans: 15 }
+};
+var ICONS = {
+  fil: 'M4 6h3M4 12h3M4 18h3M10 6h10M10 12h7M10 18h10',
+  projets: 'M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5',
+  rapports: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6',
+  archive: 'M3 4h18v5H3zM5 9v11h14V9M10 13h4',
+  reglages: 'M4 7h10M18 7h2M4 17h4M12 17h8M14 5v4M8 15v4'
+};
+function rnd(seed) { var x = Math.sin(seed) * 10000; return x - Math.floor(x); }
+function hlabel(m) { var h = Math.floor(m / 60), r = Math.round(m % 60); return h + ' h' + (r ? ' ' + (r < 10 ? '0' : '') + r : ''); }
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { couche: props.couche || 'charge' }; }
+  renderVals() {
+    var self = this, s = this.state;
+    var mode = this.props.dark === false ? 'jour' : 'nuit';
+    var k = TOK[mode], rc = RC[mode];
+    var now = new Date(), y = now.getFullYear(), mo = now.getMonth(), today = now.getDate();
+    var first = new Date(y, mo, 1), nDays = new Date(y, mo + 1, 0).getDate(), lead = (first.getDay() + 6) % 7;
+    var cells = [], totalLoad = 0, nLoad = 0, doneSum = 0, nDone = 0, peak = { v: 0, d: 1 };
+    for (var i = 0; i < lead; i++) cells.push({ num: '', aria: '', bg: 'transparent', border: 'transparent', op: 1, numBg: 'transparent', numFg: k.ink, showBars: false, showPct: false, segs: [], barH: 0, pct: '', pctC: k.ink });
+    for (var d = 1; d <= nDays; d++) {
+      var wd = (new Date(y, mo, d).getDay() + 6) % 7;
+      var mix = wd === 5 ? MIX.sat : (wd === 6 ? MIX.sun : MIX.wk);
+      var j = 0.85 + rnd(d * 7.3) * 0.3;
+      var load = 0, segs = Object.keys(mix).filter(function (kk) { return mix[kk] > 0; }).map(function (kk) { load += mix[kk] * j; return { f: Math.round(mix[kk] * j), c: rc[kk] }; });
+      var isToday = d === today, isPast = d < today, pctN = isPast ? Math.round(55 + rnd(d * 3.1) * 42) : (isToday ? 62 : 0);
+      if (isPast || isToday) { doneSum += pctN; nDone++; }
+      totalLoad += load; nLoad++; if (load > peak.v) peak = { v: load, d: d };
+      var charge = s.couche === 'charge';
+      var tint = isPast || isToday ? 0.16 + pctN / 100 * 0.5 : 0;
+      cells.push({
+        num: d, aria: d + ' ' + now.toLocaleDateString('fr-CA', { month: 'long' }), op: 1,
+        bg: charge ? k.cell : (tint ? 'rgba(' + k.good.join(',') + ',' + tint.toFixed(2) + ')' : k.cell),
+        border: isToday ? k.now : k.line, numBg: isToday ? k.today : 'transparent', numFg: isToday ? k.todayInk : k.ink,
+        showBars: charge, showPct: !charge, segs: segs, barH: Math.max(8, Math.round(load / 720 * 34)),
+        pct: tint ? pctN + ' %' : '·', pctC: tint ? k.ink : k.faint
+      });
+    }
+    var expected = Math.round(today / nDays * 100);
+    var links = mode === 'nuit'
+      ? { fil: 'Main.dc.html', semaine: 'Semaine.dc.html', projets: 'Projets.dc.html', rapports: 'Rapport.dc.html', archive: 'Archive.dc.html', reglages: 'Reglages.dc.html' }
+      : { fil: 'JourFil.dc.html', semaine: 'JourSemaine.dc.html', projets: 'JourProjets.dc.html', rapports: 'JourRapport.dc.html', archive: 'JourArchive.dc.html', reglages: 'JourReglages.dc.html' };
+    return {
+      k: k, links: links, year: y, monthName: now.toLocaleDateString('fr-CA', { month: 'long' }).replace(/^./, function (c) { return c.toUpperCase(); }),
+      heads: ['L', 'M', 'M', 'J', 'V', 'S', 'D'], cells: cells, expected: expected,
+      layers: [['charge', 'Charge du jour'], ['accompli', 'Accompli']].map(function (l) {
+        var on = l[0] === s.couche;
+        return { label: l[1], bg: on ? k.inv : 'transparent', fg: on ? k.invInk : k.ink, border: on ? k.inv : k.line, on: on, pick: function () { self.setState({ couche: l[0] }); } };
+      }),
+      legend: s.couche === 'charge' ? Object.keys(rc).map(function (kk) { return { nom: RN[kk], c: rc[kk] }; }) : [{ nom: 'Plus foncé = plus accompli', c: 'rgba(' + k.good.join(',') + ',0.6)' }, { nom: 'Jour rouge = aujourd’hui', c: k.now }],
+      avgLoad: hlabel(totalLoad / nLoad), doneAvg: nDone ? Math.round(doneSum / nDone) : 0,
+      peak: peak.d + ' ' + now.toLocaleDateString('fr-CA', { month: 'short' }).replace('.', ''),
+      prog: [['dieu', 62], ['service', 49], ['travail', 38], ['vie', 41], ['trans', 80]].map(function (r) { return { nom: RN[r[0]], c: rc[r[0]], pct: r[1] }; }),
+      tabs: [
+        { label: 'Le Fil', href: links.fil, icon: ICONS.fil, color: k.ink, fw: 600 },
+        { label: 'Projets', href: links.projets, icon: ICONS.projets, color: k.muted, fw: 500 },
+        { label: 'Rapports', href: links.rapports, icon: ICONS.rapports, color: k.muted, fw: 500 },
+        { label: 'Archive', href: links.archive, icon: ICONS.archive, color: k.muted, fw: 500 },
+        { label: 'Réglages', href: links.reglages, icon: ICONS.reglages, color: k.muted, fw: 500 }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

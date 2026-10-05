@@ -1,0 +1,685 @@
+{
+ "v": 3,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-10-05T14:00:00Z"
+ },
+ "title": "By Projets — Maquettes",
+ "launch": {
+  "view": "canvas",
+  "page": "nuit"
+ },
+ "pages": [
+  {
+   "id": "nuit",
+   "name": "Version 2 · Nuit"
+  },
+  {
+   "id": "jour",
+   "name": "Version 2 · Jour"
+  },
+  {
+   "id": "v1",
+   "name": "Version 1"
+  }
+ ],
+ "boards": {
+  "Main.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Le Fil — écran principal (▶ sur un bloc, + pour une tâche)",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "FilLance.dc.html": {
+   "x": 470,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Bloc lancé : il se remplit",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "FilConfirmer.dc.html": {
+   "x": 940,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Fin du minuteur : « As-tu terminé ? »",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "FilVolet.dc.html": {
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Volet : corriger ce qui a été fait",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "FilReporter.dc.html": {
+   "x": 1880,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Reporter : créneau occupé, créneaux libres",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "Notifications.dc.html": {
+   "x": 2350,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Rappel : notification iPhone",
+   "page": "nuit",
+   "radius": 44
+  },
+  "Focus.dc.html": {
+   "x": 0,
+   "y": 1264,
+   "w": 390,
+   "h": 844,
+   "title": "Mode Focus : passages saisis librement",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "Rapport.dc.html": {
+   "x": 470,
+   "y": 1264,
+   "w": 390,
+   "h": 844,
+   "title": "Rapport du jour",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "RapportSemaine.dc.html": {
+   "x": 940,
+   "y": 1264,
+   "w": 390,
+   "h": 844,
+   "title": "Récap de la semaine",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "RapportMois.dc.html": {
+   "x": 1410,
+   "y": 1264,
+   "w": 390,
+   "h": 844,
+   "title": "Récap du mois",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "RapportExport.dc.html": {
+   "x": 1880,
+   "y": 1264,
+   "w": 390,
+   "h": 844,
+   "title": "Exporter : choisir les points",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "Archives.dc.html": {
+   "x": 2350,
+   "y": 1264,
+   "w": 390,
+   "h": 844,
+   "title": "Archives des rapports",
+   "page": "nuit",
+   "radius": 44
+  },
+  "Reglages.dc.html": {
+   "x": 2820,
+   "y": 1264,
+   "w": 390,
+   "h": 844,
+   "title": "Réglages : points, mesures, canaux de rappel",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "Projets.dc.html": {
+   "x": 0,
+   "y": 2528,
+   "w": 390,
+   "h": 844,
+   "title": "Projets : un projet, plusieurs sous-projets",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "ProjetsEdition.dc.html": {
+   "x": 470,
+   "y": 2528,
+   "w": 390,
+   "h": 844,
+   "title": "Projets : ajouter projet, sous-projet, rubrique",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "SousProjet.dc.html": {
+   "x": 940,
+   "y": 2528,
+   "w": 390,
+   "h": 844,
+   "title": "Sous-projet : choisir parmi ceux du projet",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "JourFil.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Le Fil — jour",
+   "page": "jour",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "JourVolet.dc.html": {
+   "x": 470,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Volet — jour",
+   "page": "jour",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "JourRapport.dc.html": {
+   "x": 940,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Rapport — jour",
+   "page": "jour",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "JourProjets.dc.html": {
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Projets — jour",
+   "page": "jour",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "JourSousProjet.dc.html": {
+   "x": 1880,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Sous-projet — jour",
+   "page": "jour",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "JourReglages.dc.html": {
+   "x": 2350,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Réglages — jour",
+   "page": "jour",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "v1/Main.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Le Fil (v1)",
+   "page": "v1",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "v1/Bloc.dc.html": {
+   "x": 470,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Toucher un bloc (v1)",
+   "page": "v1",
+   "radius": 44
+  },
+  "v1/Focus.dc.html": {
+   "x": 940,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Mode Focus (v1)",
+   "page": "v1",
+   "radius": 44
+  },
+  "v1/Bilan.dc.html": {
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Bilan du soir (v1)",
+   "page": "v1",
+   "radius": 44
+  },
+  "v1/Semaine.dc.html": {
+   "x": 0,
+   "y": 1264,
+   "w": 390,
+   "h": 844,
+   "title": "Semaine (v1)",
+   "page": "v1",
+   "radius": 44
+  },
+  "v1/Projets.dc.html": {
+   "x": 470,
+   "y": 1264,
+   "w": 390,
+   "h": 844,
+   "title": "Projets (v1)",
+   "page": "v1",
+   "radius": 44
+  },
+  "v1/SousProjet.dc.html": {
+   "x": 940,
+   "y": 1264,
+   "w": 390,
+   "h": 844,
+   "title": "Sous-projet (v1)",
+   "page": "v1",
+   "radius": 44
+  },
+  "v1/Document.dc.html": {
+   "x": 1410,
+   "y": 1264,
+   "w": 390,
+   "h": 844,
+   "title": "Document et signature (v1)",
+   "page": "v1",
+   "radius": 44
+  },
+  "v1/Ebenezer.dc.html": {
+   "x": 1880,
+   "y": 1264,
+   "w": 390,
+   "h": 844,
+   "title": "Ebenezer (v1)",
+   "page": "v1",
+   "radius": 44
+  },
+  "SousProjetNT.dc.html": {
+   "x": 1410,
+   "y": 2528,
+   "w": 390,
+   "h": 844,
+   "title": "Sous-projet : 2e objectif, même lecture",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "JourSousProjetNT.dc.html": {
+   "x": 2820,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Sous-projet NT — jour",
+   "page": "jour",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "AjouterTache.dc.html": {
+   "x": 0,
+   "y": 3792,
+   "w": 390,
+   "h": 844,
+   "title": "Ajouter une tâche : projet, métriques, récurrence",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "NouveauSousProjet.dc.html": {
+   "x": 470,
+   "y": 3792,
+   "w": 390,
+   "h": 844,
+   "title": "Nouveau sous-projet : modèles et métriques",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "NouveauSousProjetFinances.dc.html": {
+   "x": 940,
+   "y": 3792,
+   "w": 390,
+   "h": 844,
+   "title": "Nouveau sous-projet : budget en dollars",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "SousProjetFiche.dc.html": {
+   "x": 1410,
+   "y": 3792,
+   "w": 390,
+   "h": 844,
+   "title": "Sous-projet · Fiche",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "SousProjetDocument.dc.html": {
+   "x": 1880,
+   "y": 3792,
+   "w": 390,
+   "h": 844,
+   "title": "Sous-projet · Document",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "SousProjetTemps.dc.html": {
+   "x": 2350,
+   "y": 3792,
+   "w": 390,
+   "h": 844,
+   "title": "Sous-projet · Temps",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "SousProjetFinances.dc.html": {
+   "x": 2820,
+   "y": 3792,
+   "w": 390,
+   "h": 844,
+   "title": "Sous-projet : finances (entrées, sorties, solde)",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "Archive.dc.html": {
+   "x": 1880,
+   "y": 2528,
+   "w": 390,
+   "h": 844,
+   "title": "Archive : projets accomplis",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "ArchiveRapports.dc.html": {
+   "x": 2350,
+   "y": 2528,
+   "w": 390,
+   "h": 844,
+   "title": "Archive : rapports",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "JourArchive.dc.html": {
+   "x": 3290,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Archive — jour",
+   "page": "jour",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "JourAjouterTache.dc.html": {
+   "x": 3760,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Ajouter une tâche — jour",
+   "page": "jour",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "Connexion.dc.html": {
+   "x": 0,
+   "y": 5056,
+   "w": 390,
+   "h": 844,
+   "title": "Connexion : e-mail et mot de passe",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "Installer.dc.html": {
+   "x": 470,
+   "y": 5056,
+   "w": 390,
+   "h": 844,
+   "title": "Installer sur l’écran d’accueil",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "AutoriserNotifications.dc.html": {
+   "x": 940,
+   "y": 5056,
+   "w": 390,
+   "h": 844,
+   "title": "Autoriser les notifications",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "Semaine.dc.html": {
+   "x": 1410,
+   "y": 5056,
+   "w": 390,
+   "h": 844,
+   "title": "Calendrier · Semaine",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "Mois.dc.html": {
+   "x": 1880,
+   "y": 5056,
+   "w": 390,
+   "h": 844,
+   "title": "Calendrier · Mois (charge et accompli)",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "Recherche.dc.html": {
+   "x": 2350,
+   "y": 5056,
+   "w": 390,
+   "h": 844,
+   "title": "Recherche",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "AjouterTacheSansProjet.dc.html": {
+   "x": 2820,
+   "y": 5056,
+   "w": 390,
+   "h": 844,
+   "title": "Rendez-vous sans projet",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "JourSemaine.dc.html": {
+   "x": 4230,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Semaine — jour",
+   "page": "jour",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "JourMois.dc.html": {
+   "x": 4700,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Mois — jour",
+   "page": "jour",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "JourRecherche.dc.html": {
+   "x": 5170,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Recherche — jour",
+   "page": "jour",
+   "radius": 44,
+   "is_interactive": true
+  },
+  "ActionRapide.dc.html": {
+   "x": 2820,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Ouverture depuis la notification : Lancer · Reporter",
+   "page": "nuit",
+   "radius": 44,
+   "is_interactive": true
+  }
+ },
+ "order": [
+  "Main.dc.html",
+  "FilLance.dc.html",
+  "FilConfirmer.dc.html",
+  "FilVolet.dc.html",
+  "FilReporter.dc.html",
+  "Notifications.dc.html",
+  "Focus.dc.html",
+  "Rapport.dc.html",
+  "RapportSemaine.dc.html",
+  "RapportMois.dc.html",
+  "RapportExport.dc.html",
+  "Archives.dc.html",
+  "Reglages.dc.html",
+  "Projets.dc.html",
+  "ProjetsEdition.dc.html",
+  "SousProjet.dc.html",
+  "JourFil.dc.html",
+  "JourVolet.dc.html",
+  "JourRapport.dc.html",
+  "JourProjets.dc.html",
+  "JourSousProjet.dc.html",
+  "JourReglages.dc.html",
+  "v1/Main.dc.html",
+  "v1/Bloc.dc.html",
+  "v1/Focus.dc.html",
+  "v1/Bilan.dc.html",
+  "v1/Semaine.dc.html",
+  "v1/Projets.dc.html",
+  "v1/SousProjet.dc.html",
+  "v1/Document.dc.html",
+  "v1/Ebenezer.dc.html",
+  "SousProjetNT.dc.html",
+  "JourSousProjetNT.dc.html",
+  "AjouterTache.dc.html",
+  "NouveauSousProjet.dc.html",
+  "NouveauSousProjetFinances.dc.html",
+  "SousProjetFiche.dc.html",
+  "SousProjetDocument.dc.html",
+  "SousProjetTemps.dc.html",
+  "SousProjetFinances.dc.html",
+  "Archive.dc.html",
+  "ArchiveRapports.dc.html",
+  "JourArchive.dc.html",
+  "JourAjouterTache.dc.html",
+  "Connexion.dc.html",
+  "Installer.dc.html",
+  "AutoriserNotifications.dc.html",
+  "Semaine.dc.html",
+  "Mois.dc.html",
+  "Recherche.dc.html",
+  "AjouterTacheSansProjet.dc.html",
+  "JourSemaine.dc.html",
+  "JourMois.dc.html",
+  "JourRecherche.dc.html",
+  "ActionRapide.dc.html"
+ ],
+ "notes": {
+  "nuitA": {
+   "x": 0,
+   "y": -300,
+   "text": "Le Fil : un regard, un geste",
+   "kind": "title1",
+   "maxW": 3210,
+   "page": "nuit"
+  },
+  "nuitB": {
+   "x": 0,
+   "y": 964,
+   "text": "Focus, rapports et réglages",
+   "kind": "title1",
+   "maxW": 3210,
+   "page": "nuit"
+  },
+  "nuitC": {
+   "x": 0,
+   "y": 2228,
+   "text": "Projets et suivi chiffré",
+   "kind": "title1",
+   "maxW": 1300,
+   "page": "nuit"
+  },
+  "jourA": {
+   "x": 0,
+   "y": -300,
+   "text": "Les mêmes écrans, version jour",
+   "kind": "title1",
+   "maxW": 5560,
+   "page": "jour"
+  },
+  "v1A": {
+   "x": 0,
+   "y": -300,
+   "text": "Version 1 (archive)",
+   "kind": "title1",
+   "maxW": 1800,
+   "page": "v1"
+  },
+  "nuitD": {
+   "x": 0,
+   "y": 3492,
+   "text": "Tâches, métriques et sous-projets",
+   "kind": "title1",
+   "maxW": 3210,
+   "page": "nuit"
+  },
+  "nuitE": {
+   "x": 0,
+   "y": 4756,
+   "text": "Démarrage, calendrier et recherche",
+   "kind": "title1",
+   "maxW": 3210,
+   "page": "nuit"
+  }
+ },
+ "designSystems": [],
+ "attachments": {}
+}

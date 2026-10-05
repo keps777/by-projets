@@ -10,7 +10,7 @@
 | 1 | Vision | `01-vision.md` | ✅ mis à jour |
 | 2 | Spécification | `02-specification.md` (v2), `04`, `05`, `06` | 🟡 **rédigée, à valider par toi** |
 | 2b | Maquettes | 54 planches (nuit, jour, version 1 archivée) | ✅ à valider |
-| 3 | Conception technique | `07-architecture.md` | ⬜ (première tâche du code) |
+| 3 | Conception technique | `07-architecture.md`, `08-methode-de-travail.md` | ✅ rédigée, à confirmer par l'essai T0 |
 | 4 | Construction par tranches | Code, tests, déploiement | ⬜ |
 | 5 | Usage réel et amélioration | Retours, v1.1 | ⬜ |
 
@@ -23,7 +23,7 @@
 | Hors ligne | Cache IndexedDB et file d'attente d'écritures |
 | Rappels et rapport | Fonctions Supabase + tâche planifiée chaque minute ; Web Push |
 | Notifications | Push uniquement, aucun e-mail |
-| Hébergement | À choisir (Cloudflare Pages, Vercel ou Netlify) |
+| Hébergement | **Vercel** (app) + Supabase (données et fonctions) — décidé le 5 oct. 2026 |
 | Tests | Fonctions de calcul testées à l'unité ; parcours clés en bout en bout |
 
 ## Ordre de construction
@@ -44,4 +44,4 @@ Chaque tranche finit par une version **utilisable** sur ton téléphone. T2 est 
 
 ## Questions ouvertes
 
-Voir `02-specification.md` §17 et `06-analyse-avant-developpement.md`.
+Voir `docs/spec/17-decisions-et-questions-ouvertes.md` et `06-analyse-avant-developpement.md`.

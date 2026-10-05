@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Archive</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; overflow: hidden; background: {{k.bg}}; color: {{k.ink}}; font-family: Geist, system-ui, sans-serif; display: flex; flex-direction: column">
+  <div style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding: 24px 16px 20px; display: flex; flex-direction: column; gap: 16px">
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 34px; font-weight: 700; letter-spacing: -0.02em">Archive</h1>
+      <span style="font-family: 'Instrument Serif', serif; font-style: italic; font-size: 19px; color: {{k.muted}}">« Jusqu’ici l’Éternel nous a secourus. » 1 Samuel 7:12</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); background: {{k.surf2}}; border-radius: 14px; padding: 4px; gap: 2px">
+      <sc-for list="{{tabsA}}" as="t" hint-placeholder-count="2">
+        <button onClick="{{t.pick}}" style="height: 40px; border: 0; border-radius: 10px; background: {{t.bg}}; color: {{t.fg}}; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer">{{t.label}}</button>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{showDone}}" hint-placeholder-val="{{true}}">
+      <div style="display: flex; flex-direction: column; gap: 14px">
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+          <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 24px; font-weight: 700">12</span><span style="font-size: 11px; color: {{k.muted}}">accomplis</span></div>
+          <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 24px; font-weight: 700">4</span><span style="font-size: 11px; color: {{k.muted}}">rubriques</span></div>
+          <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 24px; font-weight: 700">2026</span><span style="font-size: 11px; color: {{k.muted}}">depuis</span></div>
+        </div>
+        <div style="display: flex; flex-direction: column">
+          <sc-for list="{{items}}" as="it" hint-placeholder-count="6">
+            <sc-if value="{{it.isMonth}}" hint-placeholder-val="{{false}}">
+              <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: {{k.muted}}; padding: 10px 0 6px">{{it.label}}</span>
+            </sc-if>
+            <sc-if value="{{it.isStone}}" hint-placeholder-val="{{true}}">
+              <div style="display: flex; gap: 12px; align-items: stretch">
+                <div style="width: 22px; display: flex; flex-direction: column; align-items: center">
+                  <span style="width: 16px; height: 14px; margin-top: 14px; border-radius: 7px 9px 5px 6px; background: {{it.c}}"></span>
+                  <span style="flex: 1; width: 2px; background: {{k.line}}"></span>
+                </div>
+                <div style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 8px 0 12px">
+                  <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">{{it.titre}}</span><span style="font-size: 12px; color: {{k.muted}}">{{it.meta}}</span></div>
+                  <button aria-label="Ouvrir le PDF signé" style="flex: none; height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid {{k.line}}; background: transparent; color: {{k.ink}}; font: inherit; font-family: 'Geist Mono', monospace; font-size: 11px; cursor: pointer">PDF</button>
+                </div>
+              </div>
+            </sc-if>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{showRap}}" hint-placeholder-val="{{false}}">
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <a href="RapportMois.dc.html" style="text-decoration: none; color: {{k.ink}}; background: {{k.surf2}}; border: 1px solid {{k.line}}; border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 4px">
+          <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: {{c.ink}}">Rapport mensuel</span>
+          <span style="font-size: 17px; font-weight: 600">Septembre 2026</span>
+          <span style="font-size: 12px; color: {{k.muted}}">30 rapports · 78 % des points atteints</span>
+        </a>
+        <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 20px; overflow: hidden">
+          <sc-for list="{{weeks}}" as="w" hint-placeholder-count="4">
+            <a href="RapportSemaine.dc.html" style="text-decoration: none; color: {{k.ink}}; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; border-bottom: 1px solid {{k.line}}; min-height: 52px">
+              <span style="display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">{{w.titre}}</span><span style="font-size: 12px; color: {{k.muted}}">{{w.meta}}</span></span>
+              <span style="font-family: 'Geist Mono', monospace; font-size: 13px">{{w.pct}}</span>
+            </a>
+          </sc-for>
+        </div>
+        <a href="Archives.dc.html" style="text-decoration: none; color: {{c.ink}}; font-size: 14px; font-weight: 600; min-height: 48px; display: flex; align-items: center; justify-content: center">Voir tous les rapports quotidiens</a>
+      </div>
+    </sc-if>
+  </div>
+
+  <nav style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 6px 4px 14px; border-top: 1px solid {{k.line}}">
+    <sc-for list="{{tabs}}" as="t" hint-placeholder-count="5">
+      <a href="{{t.href}}" style="text-decoration: none; color: {{t.color}}; display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; justify-content: center; font-size: 11px; font-weight: {{t.fw}}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{t.icon}}"></path></svg>
+        {{t.label}}
+      </a>
+    </sc-for>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"onglet":{"editor":"enum","options":["accomplis","rapports"],"default":"accomplis"},"$preview":{"width":390,"height":844}}'>
+var TOK = {
+  nuit: { bg: '#0E0F13', surf: '#17181E', surf2: '#20222A', line: '#2A2C35', ink: '#F2F2F5', muted: '#A3A6B1', inv: '#F2F2F5', invInk: '#0E0F13' },
+  jour: { bg: '#F5F4F0', surf: '#FFFFFF', surf2: '#EDEBE6', line: '#E3E1DB', ink: '#16171B', muted: '#5E6068', inv: '#16171B', invInk: '#FFFFFF' }
+};
+var CL = { nuit: { dieu: '#9D8CFF', service: '#34D1B6', travail: '#5EA6FF', vie: '#FF8F66' }, jour: { dieu: '#5B4FE0', service: '#0B7F72', travail: '#2B67A8', vie: '#B4542F' } };
+var C = { nuit: { ink: '#BDB3FF' }, jour: { ink: '#3F34B8' } };
+var ICONS = {
+  fil: 'M4 6h3M4 12h3M4 18h3M10 6h10M10 12h7M10 18h10',
+  projets: 'M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5',
+  rapports: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6',
+  archive: 'M3 4h18v5H3zM5 9v11h14V9M10 13h4',
+  reglages: 'M4 7h10M18 7h2M4 17h4M12 17h8M14 5v4M8 15v4'
+};
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { onglet: props.onglet || 'accomplis' }; }
+  renderVals() {
+    var self = this, s = this.state;
+    var mode = this.props.dark === false ? 'jour' : 'nuit';
+    var k = TOK[mode], cl = CL[mode];
+    function M(l) { return { isMonth: true, isStone: false, label: l }; }
+    function S(c, titre, meta) { return { isMonth: false, isStone: true, c: cl[c], titre: titre, meta: meta }; }
+    var l = mode === 'nuit'
+      ? { fil: 'Main.dc.html', projets: 'Projets.dc.html', rapports: 'Rapport.dc.html', archive: 'Archive.dc.html', reglages: 'Reglages.dc.html' }
+      : { fil: 'JourFil.dc.html', projets: 'JourProjets.dc.html', rapports: 'JourRapport.dc.html', archive: 'JourArchive.dc.html', reglages: 'JourReglages.dc.html' };
+    return {
+      k: k, c: C[mode], showDone: s.onglet === 'accomplis', showRap: s.onglet === 'rapports',
+      tabsA: [['accomplis', 'Accomplis'], ['rapports', 'Rapports']].map(function (t) {
+        var on = t[0] === s.onglet;
+        return { label: t[1], bg: on ? k.surf : 'transparent', fg: on ? k.ink : k.muted, pick: function () { self.setState({ onglet: t[0] }); } };
+      }),
+      items: [
+        M('Septembre 2026'),
+        S('dieu', 'Les Psaumes en 30 jours', 'La lecture de la Bible · signé le 30 sept.'),
+        S('dieu', 'Trois jours de jeûne', 'Le jeûne · signé le 21 sept.'),
+        S('service', 'Former deux disciples : étape 1', 'La formation des disciples · co-signé le 14 sept.'),
+        M('Août 2026'),
+        S('vie', 'Fonds d’urgence constitué', 'La gestion de mes finances · signé le 31 août'),
+        S('travail', 'Certification obtenue', 'L’excellence professionnelle · signé le 22 août')
+      ],
+      weeks: [
+        { titre: 'Semaine 40 · 28 sept. – 4 oct.', meta: '7 rapports · 6 envoyés', pct: '74 %' },
+        { titre: 'Semaine 39 · 21 – 27 sept.', meta: '7 rapports · 7 envoyés', pct: '81 %' },
+        { titre: 'Semaine 38 · 14 – 20 sept.', meta: '7 rapports · 5 envoyés', pct: '69 %' },
+        { titre: 'Semaine 37 · 7 – 13 sept.', meta: '7 rapports · 7 envoyés', pct: '85 %' }
+      ],
+      tabs: [
+        { label: 'Le Fil', href: l.fil, icon: ICONS.fil, color: k.muted, fw: 500 },
+        { label: 'Projets', href: l.projets, icon: ICONS.projets, color: k.muted, fw: 500 },
+        { label: 'Rapports', href: l.rapports, icon: ICONS.rapports, color: k.muted, fw: 500 },
+        { label: 'Archive', href: l.archive, icon: ICONS.archive, color: k.ink, fw: 600 },
+        { label: 'Réglages', href: l.reglages, icon: ICONS.reglages, color: k.muted, fw: 500 }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

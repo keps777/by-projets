@@ -11,7 +11,7 @@
 | A3 | **Règles de progression** | Les barres sont mensuelles, mais les objectifs sont par jour, semaine, mois, total ou sur 40 jours. | Écrire un tableau de règles (prorata d'un projet à cheval sur deux mois, mois de 28 à 31 jours, dépassement au-delà de 100 %, jours de pause, trait « où je devrais être ») et le tester. |
 | A4 | **Récurrence** | « Chaque jeudi », « sauf cette semaine », « changer toute la série » : sans règles, les blocs deviennent incohérents. | Modèle de récurrence standard (RRULE), exceptions par occurrence, fuseau America/Toronto avec heure d'été. Vocabulaire fixe : *tâche* → *occurrence* → *saisie*. |
 | A5 | **Qui alimente quoi** | Une saisie est lue par plusieurs sous-projets. Cas limites : unités différentes, sous-projet créé en cours de mois, saisie corrigée après coup, saisie sans tâche (imprévu). | Saisie rattachée au **projet** ; chaque sous-projet calcule ce qu'il lit. Un sous-projet créé en cours de mois peut compter ou non le passé (choix à la création). |
-| A6 | **Comptes et accès** | Le titre « {Prénom} Life » suggère plusieurs utilisateurs possibles. | Connexion par e-mail et mot de passe (décidé) ; règles d'accès par ligne dès le départ ; un seul rôle en v1. |
+| A6 | **Comptes et accès** | Le titre « {Prénom} Life » suggère plusieurs utilisateurs possibles. | Décidé : e-mail et mot de passe, un seul utilisateur, inscription fermée ensuite, aucune récupération par e-mail. Règles d'accès par ligne conservées (elles protègent aussi contre les erreurs). |
 | A7 | **Hors ligne et synchronisation** | À 5 h du matin, il peut ne pas y avoir de réseau. Les données vivent sur le serveur. | Cache local ; file d'attente des saisies ; en cas de conflit, le dernier écrit gagne champ par champ. **Le minuteur enregistre l'heure de départ**, pas des secondes comptées. |
 | A8 | **Rappels côté serveur** | Plusieurs pièges : doublons, fuseau, app fermée, pause pendant les vacances. | Tâche planifiée chaque minute ; chaque rappel envoyé une seule fois ; liens profonds (« Lancer » ouvre le bon bloc) ; interrupteur « pause des rappels ». Notifications push uniquement. |
 | A9 | **Notifications push sur iPhone** | Les boutons d'action ne sont pas pris en charge pour les apps web sur iPhone ; la livraison dépend d'Apple. | Vérifier dès le départ sur l'iPhone de l'utilisateur (installation, autorisation, délai de livraison). Un toucher ouvre l'écran Action rapide. |
@@ -44,7 +44,7 @@
 - Deux environnements Supabase (développement et production) ; migrations SQL versionnées ; secrets hors du dépôt.
 - Sauvegardes : offre payante de Supabase, ou export quotidien automatique.
 - PWA : icône, écran de lancement, mise à jour du service worker avec message « nouvelle version disponible », éviction du stockage sur iOS.
-- Hébergement (Cloudflare Pages, Vercel ou Netlify), HTTPS, nom de domaine.
+- Hébergement : Vercel (décidé). Nom de domaine : facultatif au départ.
 - Journal d'erreurs pour savoir ce qui casse sur ton téléphone.
 
 **Vie privée et sécurité**

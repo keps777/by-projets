@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Semaine</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#16171B}a:hover{color:#000}
+button{font:inherit;color:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; overflow: hidden; background: #F5F4F0; color: #16171B; font-family: Geist, system-ui, sans-serif; display: flex; flex-direction: column">
+  <div style="flex: 1; min-height: 0; overflow: hidden; padding: 22px 20px 0; display: flex; flex-direction: column; gap: 16px">
+    <div style="display: flex; flex-direction: column; gap: 2px">
+      <span style="font-size: 13px; font-weight: 600; color: #C63A1F">Semaine 41 · 5 au 11 octobre</span>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -0.02em">Intention et réalité</h1>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; height: 132px">
+      <sc-for list="{{days}}" as="d" hint-placeholder-count="7">
+        <div style="display: flex; flex-direction: column; gap: 4px; align-items: stretch">
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 2px; border-radius: 8px; overflow: hidden; background: #EDEBE6; outline: {{d.outline}}; outline-offset: 2px">
+            <sc-for list="{{d.segs}}" as="s" hint-placeholder-count="4">
+              <span style="flex: {{s.f}}; background: {{s.c}}; opacity: {{s.op}}"></span>
+            </sc-for>
+          </div>
+          <span style="text-align: center; font-size: 11px; font-weight: 600; color: #5E6068">{{d.l}}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #5E6068">Ce que tes projets demandent</span>
+      <div style="background: #FFFFFF; border: 1px solid #E3E1DB; border-radius: 20px; padding: 6px 16px">
+        <sc-for list="{{needs}}" as="n" hint-placeholder-count="5">
+          <div style="display: flex; flex-direction: column; gap: 6px; padding: 10px 0; border-bottom: {{n.border}}">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px">
+              <span style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; min-width: 0">
+                <span style="flex: none; width: 8px; height: 8px; border-radius: 4px; background: {{n.c}}"></span>{{n.nom}}</span>
+              <span style="flex: none; font-family: 'Geist Mono', monospace; font-size: 12px; color: {{n.vc}}">{{n.v}}</span>
+            </div>
+            <div style="height: 6px; border-radius: 3px; background: #EDEBE6; overflow: hidden"><div style="height: 6px; width: {{n.pct}}%; background: {{n.c}}"></div></div>
+            <sc-if value="{{n.alert}}" hint-placeholder-val="{{false}}">
+              <span style="font-size: 12px; font-weight: 600; color: #8A4B00">Aucun créneau cette semaine</span>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="background: #16171B; color: #FFFFFF; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 16px; font-weight: 600">Remplis ma semaine</span>
+        <span style="font-size: 13px; color: #B9BBC2">3 créneaux libres trouvés pour ce qui manque</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px">
+        <div style="display: flex; justify-content: space-between; gap: 8px"><span>Mar. 19:00 · Mon projet d’entrepreneuriat</span><span style="font-family: 'Geist Mono', monospace; color: #B9BBC2">2 h</span></div>
+        <div style="display: flex; justify-content: space-between; gap: 8px"><span>Jeu. 20:00 · Préparation pour le mariage</span><span style="font-family: 'Geist Mono', monospace; color: #B9BBC2">1 h</span></div>
+      </div>
+      <button style="height: 46px; border-radius: 14px; border: 0; background: #FFFFFF; color: #16171B; font-size: 15px; font-weight: 600">Placer les 3 créneaux</button>
+    </div>
+  </div>
+
+  <nav style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 8px 8px 18px; background: #F5F4F0; border-top: 1px solid #E3E1DB">
+    <a href="Main.dc.html" style="text-decoration: none; color: #5E6068; display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 44px; justify-content: center; font-size: 11px; font-weight: 500">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h3M4 12h3M4 18h3"></path><path d="M10 6h10M10 12h7M10 18h10"></path></svg>Le Fil</a>
+    <a href="Semaine.dc.html" style="text-decoration: none; color: #16171B; display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 44px; justify-content: center; font-size: 11px; font-weight: 600">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"></rect><path d="M3.5 10h17M8 3v4M16 3v4"></path></svg>Semaine</a>
+    <a href="Projets.dc.html" style="text-decoration: none; color: #5E6068; display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 44px; justify-content: center; font-size: 11px; font-weight: 500">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"></path><path d="M3 13l9 5 9-5"></path></svg>Projets</a>
+    <a href="Ebenezer.dc.html" style="text-decoration: none; color: #5E6068; display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 44px; justify-content: center; font-size: 11px; font-weight: 500">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20h14"></path><path d="M7 20l1.5-9L12 6l3.5 5L17 20"></path></svg>Ebenezer</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+var C = { dieu: '#4446C9', service: '#0B7F72', travail: '#2B67A8', vie: '#B4542F', trans: '#B07400' };
+class Component extends DCLogic {
+  renderVals() {
+    var plan = [
+      [['dieu', 3], ['travail', 7], ['service', 2], ['vie', 2]],
+      [['dieu', 3], ['travail', 8], ['vie', 1], ['trans', 1]],
+      [['dieu', 3], ['travail', 7], ['service', 2], ['vie', 1]],
+      [['dieu', 3], ['travail', 8], ['vie', 2]],
+      [['dieu', 3], ['travail', 6], ['service', 1], ['trans', 1]],
+      [['dieu', 4], ['service', 4], ['vie', 4]],
+      [['dieu', 3], ['service', 5], ['vie', 1], ['trans', 1]]
+    ];
+    var letters = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+    var days = plan.map(function (p, i) {
+      return {
+        l: letters[i],
+        outline: i === 0 ? '2px solid #C63A1F' : 'none',
+        segs: p.map(function (s) { return { c: C[s[0]], f: s[1], op: i === 0 ? 1 : 0.45 }; })
+      };
+    });
+    var raw = [
+      { nom: 'RDQD', c: C.dieu, v: '5 h 15 / 5 h 15', pct: 100 },
+      { nom: 'L’évangélisation', c: C.service, v: '2,7 / 5 h', pct: 54 },
+      { nom: 'La forme physique', c: C.vie, v: '1 / 3 séances', pct: 33 },
+      { nom: 'Mon projet d’entrepreneuriat', c: C.travail, v: '0 / 4 h', pct: 0, alert: true },
+      { nom: 'La préparation pour le mariage', c: C.vie, v: '0,75 / 2 h', pct: 37 }
+    ];
+    var needs = raw.map(function (n, i) {
+      return Object.assign({ alert: false }, n, { border: i < raw.length - 1 ? '1px solid #EDEBE6' : '0', vc: n.alert ? '#8A4B00' : '#5E6068' });
+    });
+    return { days: days, needs: needs };
+  }
+}
+</script>
+</body>
+</html>

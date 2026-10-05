@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Rapport du jour</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: {{k.bg}}; color: {{k.ink}}; font-family: Geist, system-ui, sans-serif; display: flex; flex-direction: column">
+  <div style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding: 20px 16px 96px; display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -0.02em">Rapports</h1>
+      <div style="display: flex; gap: 6px">
+        <a href="{{links.archives}}" style="height: 44px; padding: 0 14px; border-radius: 22px; background: {{k.surf}}; border: 1px solid {{k.line}}; color: {{k.ink}}; text-decoration: none; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; box-sizing: border-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5" rx="1.5"></rect><path d="M5 9v10h14V9M10 13h4"></path></svg>
+          Archives</a>
+        <a href="{{links.reglages}}" aria-label="Paramétrer les points du rapport" style="width: 44px; height: 44px; border-radius: 22px; background: {{k.surf}}; border: 1px solid {{k.line}}; color: {{k.ink}}; display: flex; align-items: center; justify-content: center; box-sizing: border-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8M14 5v4M8 15v4"></path></svg>
+        </a>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: {{k.surf2}}; border-radius: 14px; padding: 4px; gap: 2px">
+      <sc-for list="{{tabsP}}" as="t" hint-placeholder-count="3">
+        <button onClick="{{t.pick}}" style="height: 38px; border: 0; border-radius: 10px; background: {{t.bg}}; color: {{t.fg}}; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer">{{t.label}}</button>
+      </sc-for>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 8px">
+      <button aria-label="Période précédente" style="width: 44px; height: 44px; border-radius: 14px; border: 1px solid {{k.line}}; background: transparent; color: {{k.ink}}; font: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button>
+      <div style="flex: 1; display: flex; flex-direction: column; align-items: center">
+        <span style="font-size: 15px; font-weight: 600">{{periode}}</span>
+        <span style="font-size: 12px; color: {{k.muted}}">{{resume}}</span>
+      </div>
+      <button aria-label="Période suivante" style="width: 44px; height: 44px; border-radius: 14px; border: 1px solid {{k.line}}; background: transparent; color: {{k.ink}}; font: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></button>
+    </div>
+
+    <div style="display: flex; height: 8px; border-radius: 4px; overflow: hidden; gap: 2px">
+      <sc-for list="{{strip}}" as="x" hint-placeholder-count="12">
+        <span style="flex: 1; background: {{x}}"></span>
+      </sc-for>
+    </div>
+
+    <sc-for list="{{cards}}" as="p" hint-placeholder-count="6">
+      <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 20px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; align-items: center; gap: 10px">
+          <span style="flex: none; width: 26px; height: 26px; border-radius: 8px; background: {{p.tbg}}; color: {{p.tink}}; font-family: 'Geist Mono', monospace; font-size: 12px; display: flex; align-items: center; justify-content: center">{{p.n}}</span>
+          <span style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+            <span style="font-size: 15px; font-weight: 700; letter-spacing: 0.01em">{{p.code}}</span>
+            <span style="font-size: 12px; color: {{k.muted}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.nom}}</span>
+          </span>
+          <span style="flex: none; text-align: right; display: flex; flex-direction: column; align-items: flex-end">
+            <span style="font-family: 'Geist Mono', monospace; font-size: 15px; font-weight: 500; color: {{p.vc}}">{{p.value}}</span>
+            <span style="font-size: 11px; color: {{k.muted}}">{{p.sub}}</span>
+          </span>
+        </div>
+
+        <sc-if value="{{p.isDay}}" hint-placeholder-val="{{true}}">
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <sc-if value="{{p.hasDots}}" hint-placeholder-val="{{false}}">
+              <div style="display: flex; align-items: center; gap: 6px">
+                <sc-for list="{{p.dots}}" as="d" hint-placeholder-count="3">
+                  <span style="width: 22px; height: 22px; border-radius: 11px; border: 2px solid {{p.c}}; background: {{d}}; box-sizing: border-box"></span>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{p.hasBook}}" hint-placeholder-val="{{false}}">
+              <span style="font-family: 'Instrument Serif', serif; font-style: italic; font-size: 17px">{{p.book}}</span>
+            </sc-if>
+            <sc-if value="{{p.hasBar}}" hint-placeholder-val="{{true}}">
+              <span style="position: relative; height: 8px; border-radius: 4px; background: {{k.track}}">
+                <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{p.w}}%; border-radius: 4px; background: {{p.barC}}"></span>
+                <span style="position: absolute; left: {{p.w0}}%; top: 0; bottom: 0; width: {{p.wNew}}%; border-radius: 0 4px 4px 0; background: {{p.c}}; opacity: 0.55"></span>
+              </span>
+            </sc-if>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center">
+              <sc-for list="{{p.metrics}}" as="m" hint-placeholder-count="3">
+                <span style="font-family: 'Geist Mono', monospace; font-size: 12px; padding: 5px 8px; border-radius: 8px; background: {{k.surf2}}; color: {{k.ink}}">{{m}}</span>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{p.isWeek}}" hint-placeholder-val="{{false}}">
+          <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; align-items: end; height: 54px">
+            <sc-for list="{{p.cols}}" as="c" hint-placeholder-count="7">
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; height: 54px; justify-content: flex-end">
+                <span style="width: 100%; height: {{c.h}}px; border-radius: 4px; background: {{c.c}}"></span>
+                <span style="font-size: 10px; color: {{k.muted}}">{{c.l}}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{p.isMonth}}" hint-placeholder-val="{{false}}">
+          <div style="display: grid; grid-template-columns: repeat(15, minmax(0, 1fr)); gap: 3px">
+            <sc-for list="{{p.cells}}" as="c" hint-placeholder-count="30">
+              <span style="aspect-ratio: 1; border-radius: 3px; background: {{c}}"></span>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="position: absolute; left: 16px; right: 16px; bottom: 76px; display: flex; gap: 8px">
+    <button onClick="{{openExport}}" style="flex: 1; height: 54px; border-radius: 18px; border: 0; background: {{k.inv}}; color: {{k.invInk}}; font: inherit; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.35); cursor: pointer">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M5 14v6h14v-6"></path></svg>
+      Exporter le rapport
+    </button>
+  </div>
+
+  <nav style="position: absolute; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 6px 4px 14px; background: {{k.bg}}; border-top: 1px solid {{k.line}}">
+    <sc-for list="{{tabs}}" as="t" hint-placeholder-count="5">
+      <a href="{{t.href}}" style="text-decoration: none; color: {{t.color}}; display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; justify-content: center; font-size: 11px; font-weight: {{t.fw}}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{t.icon}}"></path></svg>
+        {{t.label}}
+      </a>
+    </sc-for>
+  </nav>
+
+  <sc-if value="{{exportOpen}}" hint-placeholder-val="{{false}}">
+    <div style="position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; justify-content: flex-end">
+      <button aria-label="Fermer" onClick="{{closeExport}}" style="position: absolute; inset: 0; border: 0; background: {{k.scrim}}; padding: 0; cursor: pointer"></button>
+      <div style="position: relative; max-height: 94%; overflow-y: auto; scrollbar-width: none; background: {{k.sheet}}; border-radius: 28px 28px 0 0; padding: 10px 16px 20px; display: flex; flex-direction: column; gap: 12px; box-sizing: border-box">
+        <span style="align-self: center; width: 40px; height: 5px; border-radius: 3px; background: {{k.line}}"></span>
+        <div style="display: flex; justify-content: space-between; align-items: baseline">
+          <h2 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 700">Exporter</h2>
+          <span style="font-size: 13px; color: {{k.muted}}">{{nSel}} point(s) sur {{nAll}}</span>
+        </div>
+
+        <div style="display: flex; gap: 6px; flex-wrap: wrap">
+          <sc-for list="{{presets}}" as="pr" hint-placeholder-count="3">
+            <button onClick="{{pr.pick}}" style="height: 40px; padding: 0 12px; border-radius: 12px; border: 1px solid {{pr.border}}; background: {{pr.bg}}; color: {{pr.fg}}; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer">{{pr.label}}</button>
+          </sc-for>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+          <sc-for list="{{toggles}}" as="tg" hint-placeholder-count="12">
+            <button onClick="{{tg.flip}}" aria-pressed="{{tg.on}}" style="height: 40px; border-radius: 12px; border: 1px solid {{tg.border}}; background: {{tg.bg}}; color: {{tg.fg}}; font: inherit; font-family: 'Geist Mono', monospace; font-size: 12px; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer">{{tg.label}}</button>
+          </sc-for>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">Aperçu du message</span>
+          <div style="background: {{k.bubble}}; color: {{k.bubbleInk}}; border-radius: 18px 18px 4px 18px; padding: 12px 14px; font-size: 14px; line-height: 1.45; white-space: pre-wrap; font-family: Geist, sans-serif">{{preview}}</div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+          <button onClick="{{copy}}" style="height: 50px; border-radius: 16px; border: 1px solid {{k.line}}; background: {{k.surf}}; color: {{k.ink}}; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">{{copyLabel}}</button>
+          <button onClick="{{share}}" style="height: 50px; border-radius: 16px; border: 0; background: {{k.inv}}; color: {{k.invInk}}; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Partager…</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"onglet":{"editor":"enum","options":["jour","semaine","mois"],"default":"jour"},"scene":{"editor":null,"default":""},"$preview":{"width":390,"height":844}}'>
+var TOK = {
+  nuit: { bg: '#0E0F13', surf: '#17181E', surf2: '#20222A', sheet: '#16171D', line: '#2A2C35', track: '#2C2E38', ink: '#F2F2F5', muted: '#A3A6B1', inv: '#F2F2F5', invInk: '#0E0F13', scrim: 'rgba(0,0,0,0.62)', good: '#5BD893', bad: '#FF6B5E', empty: '#24262F', bubble: '#1F3B2E', bubbleInk: '#E8F5EC' },
+  jour: { bg: '#F5F4F0', surf: '#FFFFFF', surf2: '#EDEBE6', sheet: '#FFFFFF', line: '#E3E1DB', track: '#E3E1DB', ink: '#16171B', muted: '#5E6068', inv: '#16171B', invInk: '#FFFFFF', scrim: 'rgba(22,23,27,0.45)', good: '#1E7F4F', bad: '#C2362B', empty: '#E6E4DE', bubble: '#DCF5D3', bubbleInk: '#14261A' }
+};
+var TC = {
+  nuit: { dieu: ['#9D8CFF', '#262143', '#DCD5FF'], service: ['#34D1B6', '#102D29', '#B4F1E6'] },
+  jour: { dieu: ['#5B4FE0', '#E9E6FD', '#2C2380'], service: ['#0B7F72', '#DCF0EC', '#08524A'] }
+};
+var POINTS = [
+  { n: 1, code: 'DDEWG', nom: 'RDQD · rencontre dynamique quotidienne avec Dieu', t: 'dieu', kind: 'fois', fois: 2, obj: 3, min: 28, chips: [], ms: ['2/3 rencontres', '~0h28 (0h12; ~0h16)'], exp: '2/3; ~0h28 (0h12; ~0h16)', sub: '~0h28', wk: '16/21; 4h01', mo: '71/90; 17h20', lvl: 0.8 },
+  { n: 2, code: 'PA', nom: 'Prière seule', t: 'dieu', kind: 'temps', min: 135, objMin: 120, ms: ['2h15 / 2h00'], exp: '~2h15/2h00', value: '~2h15', sub: 'objectif 2h00', wk: '13h05/14h', mo: '52h/60h', lvl: 0.85 },
+  { n: 3, code: 'BR', nom: 'Lecture de la Bible', t: 'dieu', kind: 'qte', q: 0, obj: 7, unite: 'ch', ms: ['0/7 ch', 'réf. —', '0h00 / 0h45'], exp: '0/7 ch; réf. —; 0h00/0h45', value: '0/7 ch', sub: '0h00', wk: '31/49 ch; 4h12/5h15', mo: '164/210 ch; 22h10/22h30', lvl: 0.7 },
+  { n: 4, code: 'CL', nom: 'Littérature chrétienne', t: 'dieu', kind: 'livre', book: 'L’agressivité spirituelle (ZTF)', p: 166, pTot: 417, today: 24, ms: ['166/417 p.', '+24 p.', '0h35 / 0h30'], exp: ':\n   • _L’agressivité spirituelle_ (ZTF) : 166/417 p.; +24 p.; 0h35/0h30', value: '166/417 p.', sub: '+24 aujourd’hui', wk: '+98 p.; 3h10/3h30', mo: '1 livre fini; +412 p.; 11h/14h', lvl: 0.65 },
+  { n: 5, code: 'PWO', nom: 'Prière avec d’autres', t: 'dieu', kind: 'temps', min: 0, objMin: 60, ms: ['0h00 / 1h00'], exp: '0h00/1h00', value: '0h00', sub: 'objectif 1h00', wk: '2h30/7h', mo: '9h/30h', lvl: 0.35 },
+  { n: 6, code: 'JEÛNE', nom: 'Le jeûne', t: 'dieu', kind: 'fois', fois: 1, obj: 1, chips: [], ms: ['1/1 jour'], exp: '1/1 jour', sub: 'jeûne du dimanche', wk: '1/1 j', mo: '4/4 j', lvl: 0.9 },
+  { n: 7, code: 'DON-DIEU', nom: 'Don à Dieu', t: 'dieu', kind: 'fois', fois: 1, obj: 1, chips: [], ms: ['1/1', '50 $ / 50 $'], exp: '1/1; 50 $/50 $', sub: 'mis de côté', wk: '1/1; 50 $', mo: '4/4; 200 $/200 $', lvl: 0.95 },
+  { n: 8, code: 'DON-HOMME', nom: 'Don à l’homme', t: 'dieu', kind: 'fois', fois: 0, obj: 1, chips: [], ms: ['0/1', '0 $ / 20 $'], exp: '0/1; 0 $/20 $', sub: '', wk: '3/7; 45 $', mo: '11/30; 190 $', lvl: 0.4 },
+  { n: 9, code: 'EVANG', nom: 'Évangélisation', t: 'service', kind: 'temps', min: 75, objMin: 60, ms: ['1h15 / 1h00', '5/5 pers.'], exp: '1h15/1h00; 5/5 pers.', value: '1h15', sub: '5 personnes', wk: '4h10/5h; 17 pers.', mo: '18h/21h; 63 pers.', lvl: 0.6 },
+  { n: 10, code: 'ÂMES', nom: 'Gagnement des âmes', t: 'service', kind: 'qte', q: 0, obj: 1, unite: 'âme', ms: ['0/1 âme'], exp: '0/1 âme', value: '0/1', sub: '', wk: '1 âme', mo: '3 âmes', lvl: 0.2 },
+  { n: 11, code: 'DISCIPLES', nom: 'Formation des disciples', t: 'service', kind: 'fois', fois: 1, obj: 1, chips: [], ms: ['1/1', '0h45 / 0h45'], exp: '1/1; 0h45/0h45', sub: '0h45', wk: '2/2; 1h30', mo: '8/8; 6h', lvl: 0.85 },
+  { n: 12, code: 'FRÈRES', nom: 'Dons aux frères', t: 'service', kind: 'fois', fois: 0, obj: 1, chips: [], ms: ['0/1', '0 $ / 25 $'], exp: '0/1; 0 $/25 $', sub: '', wk: '1/2; 25 $', mo: '3/8; 75 $', lvl: 0.45 }
+];
+var PRESETS = [
+  { label: 'Groupe de prière · 5', pts: [1, 2, 3, 4, 5] },
+  { label: 'Mentor · 12', pts: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] },
+  { label: 'Service · 3', pts: [9, 10, 11] }
+];
+var ICONS = {
+  fil: 'M4 6h3M4 12h3M4 18h3M10 6h10M10 12h7M10 18h10',
+  projets: 'M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5',
+  rapports: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6',
+  ebenezer: 'M3 4h18v5H3zM5 9v11h14V9M10 13h4',
+  reglages: 'M4 7h10M18 7h2M4 17h4M12 17h8M14 5v4M8 15v4'
+};
+function rnd(seed) { var x = Math.sin(seed) * 10000; return x - Math.floor(x); }
+function ratio(p) {
+  if (p.kind === 'fois') return p.fois / p.obj;
+  if (p.kind === 'temps') return p.min / p.objMin;
+  if (p.kind === 'qte') return p.q / p.obj;
+  if (p.kind === 'livre') return p.today > 0 ? 1 : 0;
+  return 0;
+}
+function sameSet(a, b) { return a.length === b.length && a.every(function (x) { return b.indexOf(x) >= 0; }); }
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { onglet: props.onglet || 'jour', exportOpen: props.scene === 'export', sel: [1, 2, 3, 4, 5], copied: false };
+  }
+  renderVals() {
+    var self = this, s = this.state;
+    var mode = this.props.dark === false ? 'jour' : 'nuit';
+    var k = TOK[mode];
+    var links = mode === 'nuit'
+      ? { archives: 'Archives.dc.html', reglages: 'Reglages.dc.html', fil: 'Main.dc.html', projets: 'Projets.dc.html', rapports: 'Rapport.dc.html' }
+      : { archives: 'Archives.dc.html', reglages: 'JourReglages.dc.html', fil: 'JourFil.dc.html', projets: 'JourProjets.dc.html', rapports: 'JourRapport.dc.html' };
+    var on = s.onglet;
+    var letters = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+    function colorFor(r, c) { return r >= 1 ? k.good : (r > 0 ? c : k.bad); }
+
+    var cards = POINTS.map(function (p) {
+      var tc = TC[mode][p.t], c = tc[0], r = ratio(p);
+      var card = { n: p.n, code: p.code, nom: p.nom, c: c, tbg: tc[1], tink: tc[2], isDay: on === 'jour', isWeek: on === 'semaine', isMonth: on === 'mois',
+        hasDots: false, dots: [], chips: [], metrics: p.ms || [], hasBook: false, book: '', hasBar: false, w: 0, w0: 0, wNew: 0, barC: c, cols: [], cells: [] };
+      if (on === 'jour') {
+        card.vc = colorFor(r, k.ink);
+        card.sub = p.sub;
+        if (p.kind === 'fois') {
+          card.value = p.fois + '/' + p.obj; card.hasDots = true; card.chips = p.chips;
+          for (var i = 0; i < p.obj; i++) card.dots.push(i < p.fois ? c : 'transparent');
+        } else if (p.kind === 'livre') {
+          card.value = p.value; card.hasBook = true; card.book = p.book; card.hasBar = true; card.vc = k.ink;
+          card.w0 = (p.p - p.today) / p.pTot * 100; card.w = card.w0; card.wNew = p.today / p.pTot * 100; card.barC = c;
+        } else {
+          card.value = p.value; card.hasBar = true; card.w = Math.min(100, r * 100); card.barC = colorFor(r, c);
+          if (r === 0) { card.w = 3; }
+        }
+      } else if (on === 'semaine') {
+        card.value = p.wk; card.vc = k.ink; card.sub = 'semaine 40';
+        card.cols = letters.map(function (l, i) {
+          var v = Math.min(1.15, rnd(p.n * 31 + i) * 0.6 + p.lvl * 0.7);
+          if (rnd(p.n * 7 + i * 3) > p.lvl + 0.25) v = 0;
+          return { l: l, h: Math.max(4, Math.round(v * 36)), c: v >= 1 ? k.good : (v > 0 ? c : k.bad) };
+        });
+      } else {
+        card.value = p.mo; card.vc = k.ink; card.sub = 'septembre';
+        for (var d = 0; d < 30; d++) {
+          var v2 = rnd(p.n * 97 + d * 13) * 0.7 + p.lvl * 0.6;
+          card.cells.push(v2 >= 1 ? k.good : (v2 > 0.55 ? c : (v2 > 0.35 ? tc[1] : k.empty)));
+        }
+      }
+      return card;
+    });
+
+    var reached = POINTS.filter(function (p) { return ratio(p) >= 1; }).length;
+    var strip = POINTS.map(function (p) { var r = ratio(p); return r >= 1 ? k.good : (r > 0 ? TC[mode][p.t][0] : k.bad); });
+    var periode = on === 'jour' ? 'Dimanche 4 octobre 2026' : (on === 'semaine' ? 'Semaine 40 · 28 sept. – 4 oct.' : 'Septembre 2026');
+    var resume = on === 'jour' ? (reached + ' points atteints sur ' + POINTS.length) : (on === 'semaine' ? 'Récapitulatif de 7 rapports' : 'Récapitulatif de 30 rapports');
+
+    var header = on === 'jour' ? '*Report · October 4, 2026 · Luther Kevin K.*' : (on === 'semaine' ? '*Weekly report · Sept 28 – Oct 4, 2026 · Luther Kevin K.*' : '*Monthly report · September 2026 · Luther Kevin K.*');
+    var chosen = POINTS.filter(function (p) { return s.sel.indexOf(p.n) >= 0; });
+    var lines = chosen.map(function (p, i) {
+      var val = on === 'jour' ? p.exp : (on === 'semaine' ? p.wk : p.mo);
+      return (i + 1) + '. *' + p.code + '* ' + (val.charAt(0) === ':' ? val : ': ' + val);
+    });
+    var preview = header + '\n\n' + lines.join('\n\n');
+
+    return {
+      k: k, links: links,
+      tabsP: [['jour', 'Jour'], ['semaine', 'Semaine'], ['mois', 'Mois']].map(function (t) {
+        var act = t[0] === on;
+        return { label: t[1], bg: act ? k.surf : 'transparent', fg: act ? k.ink : k.muted, pick: function () { self.setState({ onglet: t[0] }); } };
+      }),
+      periode: periode, resume: resume, strip: strip, cards: cards,
+      tabs: [
+        { label: 'Le Fil', href: links.fil, icon: ICONS.fil, color: k.muted, fw: 500 },
+        { label: 'Projets', href: links.projets, icon: ICONS.projets, color: k.muted, fw: 500 },
+        { label: 'Rapports', href: links.rapports, icon: ICONS.rapports, color: k.ink, fw: 600 },
+        { label: 'Archive', href: (mode === 'nuit' ? 'Archive.dc.html' : 'JourArchive.dc.html'), icon: ICONS.ebenezer, color: k.muted, fw: 500 },
+        { label: 'Réglages', href: links.reglages, icon: ICONS.reglages, color: k.muted, fw: 500 }
+      ],
+      exportOpen: s.exportOpen,
+      openExport: function () { self.setState({ exportOpen: true }); },
+      closeExport: function () { self.setState({ exportOpen: false, copied: false }); },
+      nSel: s.sel.length, nAll: POINTS.length,
+      presets: PRESETS.map(function (pr) {
+        var act = sameSet(pr.pts, s.sel);
+        return { label: pr.label, bg: act ? k.inv : 'transparent', fg: act ? k.invInk : k.ink, border: act ? k.inv : k.line, pick: function () { self.setState({ sel: pr.pts.slice(), copied: false }); } };
+      }),
+      toggles: POINTS.map(function (p) {
+        var act = s.sel.indexOf(p.n) >= 0, c = TC[mode][p.t][0];
+        return { label: p.n + '. ' + p.code, on: act, bg: act ? TC[mode][p.t][1] : 'transparent', fg: act ? TC[mode][p.t][2] : k.muted, border: act ? c : k.line,
+          flip: function () { var n = act ? s.sel.filter(function (x) { return x !== p.n; }) : s.sel.concat([p.n]).sort(function (a, b) { return a - b; }); self.setState({ sel: n, copied: false }); } };
+      }),
+      preview: preview,
+      copyLabel: s.copied ? 'Copié ✓' : 'Copier le texte',
+      copy: function () { try { navigator.clipboard.writeText(preview); } catch (e) {} self.setState({ copied: true }); },
+      share: function () { try { if (navigator.share) { navigator.share({ text: preview }); return; } navigator.clipboard.writeText(preview); } catch (e) {} self.setState({ copied: true }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

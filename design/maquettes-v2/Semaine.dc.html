@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Semaine</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; overflow: hidden; background: {{k.bg}}; color: {{k.ink}}; font-family: Geist, system-ui, sans-serif; display: flex; flex-direction: column">
+  <div style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding: 18px 12px 20px; display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 6px">
+      <div style="display: flex; flex-direction: column">
+        <span style="font-size: 13px; font-weight: 600; color: {{k.now}}">{{weekRange}}</span>
+        <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1">Semaine {{weekNum}}</h1>
+      </div>
+      <div style="display: flex; gap: 6px">
+        <button aria-label="Semaine précédente" style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid {{k.line}}; background: {{k.surf}}; color: {{k.ink}}; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button>
+        <button aria-label="Semaine suivante" style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid {{k.line}}; background: {{k.surf}}; color: {{k.ink}}; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></button>
+      </div>
+    </div>
+
+    <div style="padding: 0 6px">
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: {{k.surf2}}; border-radius: 12px; padding: 3px; gap: 2px">
+        <a href="{{links.fil}}" style="height: 36px; font-size: 13px; font-weight: 500; color: {{k.muted}}; text-decoration: none; display: flex; align-items: center; justify-content: center">Jour</a>
+        <span style="height: 36px; border-radius: 9px; background: {{k.surf}}; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center">Semaine</span>
+        <a href="{{links.mois}}" style="height: 36px; font-size: 13px; font-weight: 500; color: {{k.muted}}; text-decoration: none; display: flex; align-items: center; justify-content: center">Mois</a>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 26px repeat(7, minmax(0, 1fr)); gap: 3px">
+      <span></span>
+      <sc-for list="{{cols}}" as="c" hint-placeholder-count="7">
+        <a href="{{links.fil}}" aria-label="Ouvrir {{c.full}}" style="text-decoration: none; color: {{k.ink}}; display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 44px">
+          <span style="font-size: 11px; font-weight: 600; color: {{k.muted}}">{{c.l}}</span>
+          <span style="width: 30px; height: 30px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; background: {{c.numBg}}; color: {{c.numFg}}">{{c.num}}</span>
+        </a>
+      </sc-for>
+
+      <div style="position: relative; height: {{gridH}}px">
+        <sc-for list="{{hourMarks}}" as="h" hint-placeholder-count="6">
+          <span style="position: absolute; right: 2px; top: {{h.top}}px; font-family: 'Geist Mono', monospace; font-size: 9px; color: {{k.faint}}">{{h.label}}</span>
+        </sc-for>
+      </div>
+      <sc-for list="{{cols}}" as="c" hint-placeholder-count="7">
+        <div style="position: relative; height: {{gridH}}px; border-radius: 8px; background: {{c.colBg}}; overflow: hidden">
+          <sc-for list="{{hourLines}}" as="h" hint-placeholder-count="6">
+            <span style="position: absolute; left: 0; right: 0; top: {{h}}px; height: 1px; background: {{k.line}}"></span>
+          </sc-for>
+          <sc-for list="{{c.blocks}}" as="b" hint-placeholder-count="10">
+            <span style="position: absolute; left: 2px; right: 2px; top: {{b.top}}px; height: {{b.h}}px; border-radius: 4px; background: {{b.bg}}; border: 1.5px solid {{b.c}}; box-sizing: border-box"></span>
+          </sc-for>
+          <sc-if value="{{c.isToday}}" hint-placeholder-val="{{false}}">
+            <span style="position: absolute; left: 0; right: 0; top: {{nowTop}}px; height: 2px; background: {{k.now}}"></span>
+            <span style="position: absolute; left: -1px; top: {{nowDot}}px; width: 7px; height: 7px; border-radius: 4px; background: {{k.now}}"></span>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display: flex; gap: 12px; flex-wrap: wrap; padding: 0 6px; font-size: 11px; color: {{k.muted}}">
+      <span style="display: flex; align-items: center; gap: 5px"><span style="width: 12px; height: 12px; border-radius: 3px; background: {{k.ink}}"></span>Fait</span>
+      <span style="display: flex; align-items: center; gap: 5px"><span style="width: 12px; height: 12px; border-radius: 3px; border: 1.5px solid {{k.ink}}; box-sizing: border-box"></span>Prévu</span>
+      <span style="display: flex; align-items: center; gap: 5px"><span style="width: 12px; height: 12px; border-radius: 3px; background: {{k.faint}}; opacity: 0.4"></span>Non fait</span>
+      <span style="margin-left: auto; font-family: 'Geist Mono', monospace">{{totalDone}} / {{totalPlan}}</span>
+    </div>
+
+    <div style="background: {{k.cardBg}}; color: {{k.cardInk}}; border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 10px; margin: 0 4px; border: 1px solid {{k.line}}">
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 16px; font-weight: 600">Remplis ma semaine</span>
+        <span style="font-size: 13px; opacity: 0.75">2 créneaux libres trouvés pour ce qui manque</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px; font-size: 13px">
+        <div style="display: flex; justify-content: space-between; gap: 8px"><span>Mar. 19:00 · Mon projet d’entrepreneuriat</span><span style="font-family: 'Geist Mono', monospace; opacity: 0.75">2 h</span></div>
+        <div style="display: flex; justify-content: space-between; gap: 8px"><span>Jeu. 20:00 · La préparation pour le mariage</span><span style="font-family: 'Geist Mono', monospace; opacity: 0.75">1 h</span></div>
+      </div>
+      <button style="height: 46px; border-radius: 14px; border: 0; background: {{k.inv}}; color: {{k.invInk}}; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Placer les 2 créneaux</button>
+    </div>
+  </div>
+
+  <nav style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 6px 4px 14px; border-top: 1px solid {{k.line}}">
+    <sc-for list="{{tabs}}" as="t" hint-placeholder-count="5">
+      <a href="{{t.href}}" style="text-decoration: none; color: {{t.color}}; display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; justify-content: center; font-size: 11px; font-weight: {{t.fw}}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{t.icon}}"></path></svg>
+        {{t.label}}
+      </a>
+    </sc-for>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"$preview":{"width":390,"height":844}}'>
+var TOK = {
+  nuit: { bg: '#0E0F13', surf: '#17181E', surf2: '#20222A', line: '#2A2C35', track: '#2C2E38', ink: '#F2F2F5', muted: '#A3A6B1', faint: '#7C7F8B', now: '#FF4D3A', warn: '#FFB547', inv: '#F2F2F5', invInk: '#0E0F13', cardBg: '#1C1D25', cardInk: '#F2F2F5', today: '#FF4D3A', todayInk: '#0E0F13', colBg: '#13141A', colToday: '#1A1B24' },
+  jour: { bg: '#F5F4F0', surf: '#FFFFFF', surf2: '#EDEBE6', line: '#E3E1DB', track: '#E3E1DB', ink: '#16171B', muted: '#5E6068', faint: '#8A8C93', now: '#E5482E', warn: '#8A5300', inv: '#16171B', invInk: '#FFFFFF', cardBg: '#16171B', cardInk: '#FFFFFF', today: '#C63A1F', todayInk: '#FFFFFF', colBg: '#EFEDE8', colToday: '#FFFFFF' }
+};
+var RC = {
+  nuit: { dieu: '#9D8CFF', service: '#34D1B6', travail: '#5EA6FF', vie: '#FF8F66', trans: '#F5B843', none: '#A3A6B1' },
+  jour: { dieu: '#5B4FE0', service: '#0B7F72', travail: '#2B67A8', vie: '#B4542F', trans: '#A66D00', none: '#6B6E76' }
+};
+var RN = { dieu: 'Relation avec Dieu', service: 'Service à Dieu', travail: 'Travail et études', vie: 'Vie personnelle', trans: 'Transversal', none: 'Rendez-vous' };
+var WEEKDAY = [[300, 330, 'dieu'], [330, 375, 'dieu'], [375, 420, 'dieu'], [420, 450, 'vie'], [510, 720, 'travail'], [720, 740, 'dieu'], [750, 780, 'dieu'], [780, 990, 'travail'], [990, 1020, 'none'], [1020, 1080, 'travail'], [1095, 1170, 'service'], [1185, 1230, 'dieu'], [1230, 1275, 'vie'], [1275, 1290, 'trans'], [1290, 1310, 'dieu']];
+var SAT = [[300, 330, 'dieu'], [330, 375, 'dieu'], [375, 420, 'dieu'], [540, 660, 'service'], [720, 780, 'vie'], [840, 900, 'vie'], [1080, 1170, 'service'], [1230, 1290, 'dieu']];
+var SUN = [[300, 330, 'dieu'], [330, 375, 'dieu'], [375, 420, 'dieu'], [480, 720, 'dieu'], [840, 900, 'vie'], [1140, 1200, 'vie'], [1275, 1290, 'trans']];
+function dayPlan(i) {
+  if (i === 5) return SAT; if (i === 6) return SUN;
+  if (i === 2) return WEEKDAY.filter(function (b) { return b[0] !== 1185; });
+  if (i === 4) return WEEKDAY.filter(function (b) { return b[0] !== 420; });
+  return WEEKDAY;
+}
+function hmin(m) { var h = Math.floor(m / 60), r = Math.round(m % 60); return h + 'h' + (r < 10 ? '0' : '') + r; }
+var ICONS = {
+  fil: 'M4 6h3M4 12h3M4 18h3M10 6h10M10 12h7M10 18h10',
+  projets: 'M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5',
+  rapports: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6',
+  archive: 'M3 4h18v5H3zM5 9v11h14V9M10 13h4',
+  reglages: 'M4 7h10M18 7h2M4 17h4M12 17h8M14 5v4M8 15v4'
+};
+class Component extends DCLogic {
+  renderVals() {
+    var mode = this.props.dark === false ? 'jour' : 'nuit';
+    var k = TOK[mode], rc = RC[mode];
+    var now = new Date(), nowMin = now.getHours() * 60 + now.getMinutes();
+    var mon = new Date(now); mon.setHours(0, 0, 0, 0); mon.setDate(mon.getDate() - ((mon.getDay() + 6) % 7));
+    var todayIdx = (now.getDay() + 6) % 7;
+    var sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+    var jan1 = new Date(mon.getFullYear(), 0, 1), weekNum = Math.ceil((((mon - jan1) / 86400000) + jan1.getDay() + 1) / 7);
+    var S0 = 300, SC = 20 / 60, H = Math.round((1380 - S0) * SC);
+    var letters = ['L', 'M', 'M', 'J', 'V', 'S', 'D'], full = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
+    var plan = {}, done = {};
+    Object.keys(rc).forEach(function (key) { plan[key] = 0; done[key] = 0; });
+    var cols = letters.map(function (l, i) {
+      var d = new Date(mon); d.setDate(mon.getDate() + i);
+      var isToday = i === todayIdx;
+      var blocks = dayPlan(i).map(function (b, j) {
+        var isDone = i < todayIdx ? Math.abs(Math.sin((i + 1) * 13 + j * 7 + b[0])) < 0.8 : (i === todayIdx ? b[1] <= nowMin : false);
+        var past = i < todayIdx || (i === todayIdx && b[1] <= nowMin);
+        plan[b[2]] += b[1] - b[0]; if (isDone) done[b[2]] += b[1] - b[0];
+        var c = rc[b[2]];
+        return { top: Math.round((b[0] - S0) * SC), h: Math.max(3, Math.round((b[1] - b[0]) * SC) - 1), c: c, bg: isDone ? c : (past ? 'transparent' : 'transparent'), };
+      });
+      blocks = blocks.map(function (b, j) { var p = dayPlan(i)[j], isDone = i < todayIdx ? Math.abs(Math.sin((i + 1) * 13 + j * 7 + p[0])) < 0.8 : (i === todayIdx ? p[1] <= nowMin : false); var past = i < todayIdx || (i === todayIdx && p[1] <= nowMin); return { top: b.top, h: b.h, c: (past && !isDone) ? k.faint : b.c, bg: isDone ? b.c : 'transparent' }; });
+      return { l: l, full: full[i], num: d.getDate(), isToday: isToday, numBg: isToday ? k.today : 'transparent', numFg: isToday ? k.todayInk : k.ink, colBg: isToday ? k.colToday : k.colBg, blocks: blocks };
+    });
+    var totalPlan = 0, totalDone = 0;
+    var rubs = Object.keys(rc).filter(function (x) { return plan[x] > 0; }).map(function (key) {
+      totalPlan += plan[key]; totalDone += done[key];
+      return { nom: RN[key], c: rc[key], donePct: plan[key] ? Math.round(done[key] / plan[key] * 100) : 0, txt: hmin(done[key]) + ' / ' + hmin(plan[key]) };
+    });
+    var fmt = function (d) { return d.getDate() + ' ' + d.toLocaleDateString('fr-CA', { month: 'short' }).replace('.', ''); };
+    var links = mode === 'nuit'
+      ? { fil: 'Main.dc.html', mois: 'Mois.dc.html', projets: 'Projets.dc.html', rapports: 'Rapport.dc.html', archive: 'Archive.dc.html', reglages: 'Reglages.dc.html' }
+      : { fil: 'JourFil.dc.html', mois: 'JourMois.dc.html', projets: 'JourProjets.dc.html', rapports: 'JourRapport.dc.html', archive: 'JourArchive.dc.html', reglages: 'JourReglages.dc.html' };
+    return {
+      k: k, links: links, weekNum: weekNum, weekRange: fmt(mon) + ' – ' + fmt(sun), cols: cols, gridH: H,
+      hourMarks: [6, 9, 12, 15, 18, 21].map(function (h) { return { label: (h < 10 ? '0' : '') + h, top: Math.round((h * 60 - S0) * SC) - 6 }; }),
+      hourLines: [6, 9, 12, 15, 18, 21].map(function (h) { return Math.round((h * 60 - S0) * SC); }),
+      nowTop: Math.round((Math.min(1380, Math.max(S0, nowMin)) - S0) * SC), nowDot: Math.round((Math.min(1380, Math.max(S0, nowMin)) - S0) * SC) - 3,
+      rubs: rubs, totalPlan: hmin(totalPlan), totalDone: hmin(totalDone),
+      needs: [
+        { nom: 'RDQD', c: rc.dieu, v: '5 h 15 / 5 h 15', pct: 100, vc: k.ink, alert: false },
+        { nom: 'L’évangélisation', c: rc.service, v: '2,7 / 5 h', pct: 54, vc: k.ink, alert: false },
+        { nom: 'La forme physique', c: rc.vie, v: '1 / 3 séances', pct: 33, vc: k.ink, alert: false },
+        { nom: 'Mon projet d’entrepreneuriat', c: rc.travail, v: '0 / 4 h', pct: 0, vc: k.warn, alert: true },
+        { nom: 'La préparation pour le mariage', c: rc.vie, v: '0,75 / 2 h', pct: 37, vc: k.ink, alert: false }
+      ],
+      tabs: [
+        { label: 'Le Fil', href: links.fil, icon: ICONS.fil, color: k.ink, fw: 600 },
+        { label: 'Projets', href: links.projets, icon: ICONS.projets, color: k.muted, fw: 500 },
+        { label: 'Rapports', href: links.rapports, icon: ICONS.rapports, color: k.muted, fw: 500 },
+        { label: 'Archive', href: links.archive, icon: ICONS.archive, color: k.muted, fw: 500 },
+        { label: 'Réglages', href: links.reglages, icon: ICONS.reglages, color: k.muted, fw: 500 }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

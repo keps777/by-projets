@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Sous-projet — temps</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; overflow: hidden; background: {{k.bg}}; color: {{k.ink}}; font-family: Geist, system-ui, sans-serif; display: flex; flex-direction: column">
+  <div style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding: 20px 16px 24px; display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; align-items: center; gap: 10px">
+      <a href="SousProjet.dc.html" aria-label="Retour au suivi" style="flex: none; width: 44px; height: 44px; border-radius: 22px; background: {{k.surf}}; border: 1px solid {{k.line}}; color: {{k.ink}}; display: flex; align-items: center; justify-content: center; box-sizing: border-box">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>
+      </a>
+      <span style="font-size: 12px; font-weight: 600; color: {{c.ink}}; line-height: 1.35">Ma relation avec Dieu ›<br>Projet 1 · La lecture de la Bible</span>
+      <span style="margin-left: auto; font-family: 'Geist Mono', monospace; font-size: 11px; padding: 5px 8px; border-radius: 8px; background: {{c.bg}}; color: {{c.ink}}">BR</span>
+    </div>
+    <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.12">7 chapitres par jour</h1>
+
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: {{k.surf2}}; border-radius: 14px; padding: 4px; gap: 2px">
+      <a href="SousProjet.dc.html" style="height: 38px; font-size: 13px; color: {{k.muted}}; text-decoration: none; display: flex; align-items: center; justify-content: center">Suivi</a>
+      <a href="SousProjetFiche.dc.html" style="height: 38px; font-size: 13px; color: {{k.muted}}; text-decoration: none; display: flex; align-items: center; justify-content: center">Fiche</a>
+      <a href="SousProjetDocument.dc.html" style="height: 38px; font-size: 13px; color: {{k.muted}}; text-decoration: none; display: flex; align-items: center; justify-content: center">Document</a>
+      <span style="height: 38px; border-radius: 10px; background: {{k.surf}}; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center">Temps</span>
+    </div>
+
+    <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end">
+        <div style="display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">Temps donné en octobre</span>
+          <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 34px; font-weight: 700; letter-spacing: -0.02em; line-height: 1">2 h 30 <span style="font-size: 18px; color: {{k.muted}}">/ 22 h 30</span></span>
+        </div>
+        <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 700; color: {{c.c}}">11 %</span>
+      </div>
+      <span style="position: relative; height: 10px; border-radius: 5px; background: {{k.track}}">
+        <span style="position: absolute; left: 0; top: 0; bottom: 0; width: 11%; border-radius: 5px; background: {{c.c}}"></span>
+        <span style="position: absolute; top: -4px; bottom: -4px; left: 16%; width: 2px; background: {{k.ink}}; opacity: 0.6"></span>
+      </span>
+      <span style="font-size: 12px; color: {{k.muted}}">Temps moyen par chapitre : 6 min 30 s. Il alimente aussi « Étudier le Nouveau Testament ».</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">À venir</span>
+      <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 20px; overflow: hidden">
+        <sc-for list="{{next}}" as="n" hint-placeholder-count="3">
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid {{k.line}}; min-height: 56px">
+            <span style="flex: none; width: 56px; font-size: 12px; color: {{k.muted}}">{{n.day}}</span>
+            <span style="flex: 1; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">{{n.titre}}</span><span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: {{k.muted}}">{{n.heures}}</span></span>
+            <a href="FilReporter.dc.html" style="flex: none; height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid {{k.line}}; color: {{k.ink}}; text-decoration: none; font-size: 13px; font-weight: 600; display: flex; align-items: center; box-sizing: border-box">Reporter</a>
+          </div>
+        </sc-for>
+        <a href="AjouterTache.dc.html" style="text-decoration: none; color: {{c.ink}}; font-size: 14px; font-weight: 600; min-height: 50px; display: flex; align-items: center; justify-content: center; gap: 6px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Ajouter une tâche</a>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">Historique des séances</span>
+      <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 20px; overflow: hidden">
+        <sc-for list="{{past}}" as="p" hint-placeholder-count="5">
+          <div style="display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 14px; border-bottom: 1px solid {{k.line}}; min-height: 56px">
+            <span style="font-size: 12px; color: {{k.muted}}">{{p.day}}</span>
+            <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.passages}}</span><span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: {{k.muted}}">{{p.heures}}</span></span>
+            <span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-family: 'Geist Mono', monospace; font-size: 13px">{{p.ch}}</span><span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: {{k.muted}}">{{p.min}}</span></span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"$preview":{"width":390,"height":844}}'>
+var TOK = {
+  nuit: { bg: '#0E0F13', surf: '#17181E', surf2: '#20222A', line: '#2A2C35', track: '#2C2E38', ink: '#F2F2F5', muted: '#A3A6B1' },
+  jour: { bg: '#F5F4F0', surf: '#FFFFFF', surf2: '#EDEBE6', line: '#E3E1DB', track: '#E3E1DB', ink: '#16171B', muted: '#5E6068' }
+};
+var C = { nuit: { c: '#9D8CFF', bg: '#262143', ink: '#BDB3FF' }, jour: { c: '#5B4FE0', bg: '#E9E6FD', ink: '#3F34B8' } };
+class Component extends DCLogic {
+  renderVals() {
+    var mode = this.props.dark === false ? 'jour' : 'nuit';
+    return {
+      k: TOK[mode], c: C[mode],
+      next: [
+        { day: 'Demain', titre: 'Lecture de la Bible', heures: '05:30 – 06:15' },
+        { day: 'Mer. 7', titre: 'Lecture de la Bible', heures: '05:30 – 06:15' },
+        { day: 'Mer. 7', titre: 'Lecture du soir', heures: '21:50 – 22:10' }
+      ],
+      past: [
+        { day: '5 oct.', passages: 'Matthieu 8–10', heures: '05:30 – 05:52 · en cours', ch: '3 ch.', min: '22 min' },
+        { day: '4 oct.', passages: 'Aucune lecture', heures: '—', ch: '0 ch.', min: '0 min' },
+        { day: '3 oct.', passages: 'Matthieu 4–7', heures: '05:30 – 06:01', ch: '4 ch.', min: '31 min' },
+        { day: '2 oct.', passages: 'Marc 1–9', heures: '05:35 – 06:27', ch: '9 ch.', min: '52 min' },
+        { day: '1 oct.', passages: 'Matthieu 1–3 · Luc 1–4', heures: '05:30 – 06:15', ch: '7 ch.', min: '45 min' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

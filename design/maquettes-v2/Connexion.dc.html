@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Connexion</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0E0F13; color: #F2F2F5; font-family: Geist, system-ui, sans-serif">
+  <div style="position: absolute; left: -90px; top: -110px; width: 420px; height: 420px; border-radius: 210px; background: #1C1840; opacity: 0.8"></div>
+  <div style="position: absolute; right: -140px; bottom: 60px; width: 340px; height: 340px; border-radius: 170px; background: #0F2A30; opacity: 0.55"></div>
+
+  <div style="position: relative; height: 100%; box-sizing: border-box; padding: 64px 24px 28px; display: flex; flex-direction: column; gap: 22px">
+    <div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-start">
+      <span style="width: 56px; height: 56px; border-radius: 18px; background: #9D8CFF; color: #120E2E; font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 700; display: flex; align-items: center; justify-content: center">{{initiales}}</span>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 40px; font-weight: 700; letter-spacing: -0.03em; line-height: 1">{{titre}}</h1>
+      <span style="font-family: 'Instrument Serif', serif; font-style: italic; font-size: 20px; color: #C9CAD6">Diviser ma vie en plusieurs projets.</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); background: #1A1B22; border-radius: 14px; padding: 4px; gap: 2px">
+      <sc-for list="{{modes}}" as="m" hint-placeholder-count="2">
+        <button onClick="{{m.pick}}" aria-pressed="{{m.on}}" style="height: 44px; border: 0; border-radius: 10px; background: {{m.bg}}; color: {{m.fg}}; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">{{m.label}}</button>
+      </sc-for>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px">
+      <sc-if value="{{creating}}" hint-placeholder-val="{{false}}">
+        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #A3A6B1">Ton prénom
+          <input value="{{prenom}}" onChange="{{setPrenom}}" autocomplete="given-name" style="height: 52px; box-sizing: border-box; border-radius: 14px; border: 1px solid #2E3039; background: #14151B; color: #F2F2F5; font: inherit; font-size: 16px; padding: 0 14px">
+          <span style="font-size: 12px; font-weight: 400; color: #8C8FA0">Il devient le titre de l’app : « {{titre}} ».</span>
+        </label>
+      </sc-if>
+      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #A3A6B1">Adresse e-mail
+        <input type="email" autocomplete="email" placeholder="toi@exemple.com" style="height: 52px; box-sizing: border-box; border-radius: 14px; border: 1px solid #2E3039; background: #14151B; color: #F2F2F5; font: inherit; font-size: 16px; padding: 0 14px">
+      </label>
+      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #A3A6B1">Mot de passe
+        <span style="display: flex; align-items: center; height: 52px; border-radius: 14px; border: 1px solid #2E3039; background: #14151B; padding: 0 4px 0 14px">
+          <input type="{{pwType}}" autocomplete="current-password" value="motdepasse" style="flex: 1; min-width: 0; border: 0; background: transparent; color: #F2F2F5; font: inherit; font-size: 16px; outline: none">
+          <button onClick="{{flipPw}}" aria-pressed="{{showPw}}" aria-label="Afficher le mot de passe" style="width: 44px; height: 44px; border: 0; background: transparent; color: #A3A6B1; cursor: pointer; display: flex; align-items: center; justify-content: center">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </button>
+        </span>
+        <sc-if value="{{creating}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; font-weight: 400; color: #8C8FA0">12 caractères ou plus. Une phrase de passe fonctionne très bien.</span></sc-if>
+      </label>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: auto">
+      <a href="Installer.dc.html" style="height: 56px; border-radius: 18px; background: #9D8CFF; color: #120E2E; text-decoration: none; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center">{{cta}}</a>
+            <span style="font-size: 12px; line-height: 1.5; color: #8C8FA0; text-align: center">Tes données sont privées et protégées par ton compte. Aucune publicité, aucun suivi, aucun e-mail envoyé. Un seul compte : l’inscription se ferme après sa création.</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"creer":{"editor":"boolean","default":false},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { creating: !!props.creer, prenom: 'Luther', showPw: false }; }
+  renderVals() {
+    var self = this, s = this.state;
+    var p = s.prenom.trim();
+    return {
+      creating: s.creating, prenom: s.prenom, setPrenom: function (e) { self.setState({ prenom: e.target.value }); },
+      titre: (s.creating ? (p || 'Mon') : 'Luther') + ' Life', initiales: (s.creating ? (p.charAt(0) || 'M') : 'L').toUpperCase() + 'L',
+      showPw: s.showPw, pwType: s.showPw ? 'text' : 'password', flipPw: function () { self.setState({ showPw: !s.showPw }); },
+      cta: s.creating ? 'Créer mon compte' : 'Se connecter',
+      modes: [[false, 'Se connecter'], [true, 'Créer un compte']].map(function (m) {
+        var on = m[0] === s.creating;
+        return { label: m[1], on: on, bg: on ? '#2A2C35' : 'transparent', fg: on ? '#F2F2F5' : '#A3A6B1', pick: function () { self.setState({ creating: m[0] }); } };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

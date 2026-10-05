@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Sous-projet — suivi chiffré</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; overflow: hidden; background: {{k.bg}}; color: {{k.ink}}; font-family: Geist, system-ui, sans-serif; display: flex; flex-direction: column">
+  <div style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding: 20px 16px 24px; display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; align-items: center; gap: 10px">
+      <a href="{{back}}" aria-label="Retour aux projets" style="flex: none; width: 44px; height: 44px; border-radius: 22px; background: {{k.surf}}; border: 1px solid {{k.line}}; color: {{k.ink}}; display: flex; align-items: center; justify-content: center; box-sizing: border-box">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>
+      </a>
+      <span style="font-size: 12px; font-weight: 600; color: {{c.ink}}; line-height: 1.35">Ma relation avec Dieu ›<br>Projet 1 · La lecture de la Bible</span>
+      <span style="margin-left: auto; font-family: 'Geist Mono', monospace; font-size: 11px; padding: 5px 8px; border-radius: 8px; background: {{c.bg}}; color: {{c.ink}}">BR</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">Sous-projets de ce projet · {{nChips}}</span>
+      <div style="display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px">
+        <sc-for list="{{chips}}" as="ch" hint-placeholder-count="2">
+          <button onClick="{{ch.pick}}" aria-pressed="{{ch.on}}" style="flex: none; height: 44px; padding: 0 14px; border-radius: 22px; border: 1px solid {{ch.border}}; background: {{ch.bg}}; color: {{ch.fg}}; font: inherit; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer">
+            {{ch.label}} <span style="font-family: 'Geist Mono', monospace; font-size: 12px; opacity: 0.85">{{ch.pct}} %</span>
+          </button>
+        </sc-for>
+        <a href="NouveauSousProjet.dc.html" aria-label="Ajouter un sous-projet" style="text-decoration: none; flex: none; height: 44px; padding: 0 14px; border-radius: 22px; border: 1.5px dashed {{k.line}}; background: transparent; color: {{c.ink}}; font: inherit; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Sous-projet</a>
+      </div>
+    </div>
+
+    <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.12">{{cur.nom}}</h1>
+
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: {{k.surf2}}; border-radius: 14px; padding: 4px; gap: 2px">
+      <span style="height: 38px; border-radius: 10px; background: {{k.surf}}; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center">Suivi</span>
+      <a href="SousProjetFiche.dc.html" style="height: 38px; font-size: 13px; color: {{k.muted}}; text-decoration: none; display: flex; align-items: center; justify-content: center">Fiche</a>
+      <a href="SousProjetDocument.dc.html" style="height: 38px; font-size: 13px; color: {{k.muted}}; text-decoration: none; display: flex; align-items: center; justify-content: center">Document</a>
+      <a href="SousProjetTemps.dc.html" style="height: 38px; font-size: 13px; color: {{k.muted}}; text-decoration: none; display: flex; align-items: center; justify-content: center">Temps</a>
+    </div>
+
+    <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 10px">
+        <div style="display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">Octobre</span>
+          <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 34px; font-weight: 700; letter-spacing: -0.02em; line-height: 1">{{cur.done}} <span style="font-size: 18px; color: {{k.muted}}">/ {{cur.total}} ch.</span></span>
+        </div>
+        <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 26px; font-weight: 700; color: {{c.c}}">{{cur.pct}} %</span>
+      </div>
+      <span style="position: relative; height: 12px; border-radius: 6px; background: {{k.track}}">
+        <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{cur.pct}}%; border-radius: 6px; background: {{c.c}}"></span>
+        <span style="position: absolute; top: -4px; bottom: -4px; left: {{cur.expectedPct}}%; width: 2px; background: {{k.ink}}; opacity: 0.6"></span>
+      </span>
+      <span style="font-size: 13px; color: {{k.muted}}">{{cur.lineA}} <span style="color: {{k.warn}}; font-weight: 600">{{cur.late}}</span>{{cur.lineB}}</span>
+
+      <div style="position: relative; height: 104px; margin-top: 6px">
+        <span style="position: absolute; left: 0; right: 0; top: {{goalTop}}px; border-top: 1.5px dashed {{k.muted}}; opacity: 0.7"></span>
+        <span style="position: absolute; right: 0; top: {{goalLabelTop}}px; font-family: 'Geist Mono', monospace; font-size: 10px; color: {{k.muted}}">obj. {{cur.goalTxt}}</span>
+        <div style="position: absolute; inset: 0; display: grid; grid-template-columns: repeat(31, minmax(0, 1fr)); gap: 2px; align-items: end">
+          <sc-for list="{{bars}}" as="b" hint-placeholder-count="31">
+            <span title="{{b.title}}" style="height: {{b.h}}px; border-radius: 2px; background: {{b.c}}; opacity: {{b.op}}"></span>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-family: 'Geist Mono', monospace; font-size: 10px; color: {{k.muted}}"><span>1</span><span>10</span><span>20</span><span>31</span></div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+      <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 700">4,6</span><span style="font-size: 11px; color: {{k.muted}}">ch. par jour</span></div>
+      <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 700">{{cur.hits}} / 4</span><span style="font-size: 11px; color: {{k.muted}}">jours atteints</span></div>
+      <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 700">2 h 30</span><span style="font-size: 11px; color: {{k.muted}}">de lecture</span></div>
+    </div>
+
+    <div style="display: flex; gap: 10px; align-items: flex-start; background: {{c.bg}}; color: {{c.ink}}; border-radius: 16px; padding: 12px 14px; font-size: 13px; line-height: 1.4">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 1px"><circle cx="9" cy="12" r="5"></circle><circle cx="15" cy="12" r="5"></circle></svg>
+      <span>Même lecture, deux objectifs : les chapitres lus comptent dans les deux sous-projets, sans double saisie.</span>
+    </div>
+
+    <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 22px; overflow: hidden">
+      <div style="display: grid; grid-template-columns: 58px 44px 64px minmax(0, 1fr); gap: 8px; padding: 10px 14px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}; border-bottom: 1px solid {{k.line}}">
+        <span>Date</span><span>Obj.</span><span>Lu</span><span>Passages · temps</span>
+      </div>
+      <sc-for list="{{rows}}" as="r" hint-placeholder-count="5">
+        <div style="display: grid; grid-template-columns: 58px 44px 64px minmax(0, 1fr); gap: 8px; padding: 10px 14px; align-items: center; border-bottom: 1px solid {{k.line}}; background: {{r.bg}}; min-height: 44px">
+          <span style="display: flex; flex-direction: column"><span style="font-size: 13px; font-weight: 600">{{r.date}}</span><span style="font-size: 10px; color: {{k.muted}}">{{r.tag}}</span></span>
+          <span style="font-family: 'Geist Mono', monospace; font-size: 13px; color: {{k.muted}}">{{cur.goalTxt}}</span>
+          <span style="display: flex; align-items: center; gap: 4px">
+            <span style="min-width: 28px; height: 28px; padding: 0 6px; box-sizing: border-box; border-radius: 9px; background: {{r.pillBg}}; color: {{r.pillFg}}; font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 500; display: flex; align-items: center; justify-content: center">{{r.lu}}</span>
+            <span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: {{r.deltaC}}">{{r.delta}}</span>
+          </span>
+          <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.passages}}</span><span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: {{k.muted}}">{{r.temps}}</span></span>
+        </div>
+      </sc-for>
+      <button style="width: 100%; border: 0; background: transparent; color: {{c.ink}}; font: inherit; font-size: 14px; font-weight: 600; min-height: 50px; cursor: pointer">+ Saisir un autre jour</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"sp":{"editor":null,"default":0},"$preview":{"width":390,"height":844}}'>
+var TOK = {
+  nuit: { bg: '#0E0F13', surf: '#17181E', surf2: '#20222A', line: '#2A2C35', track: '#2C2E38', ink: '#F2F2F5', muted: '#A3A6B1', good: '#5BD893', goodBg: '#14321F', bad: '#FF6B5E', badBg: '#3A1A18', warn: '#FFB547', today: '#1B1930', inv: '#F2F2F5', invInk: '#0E0F13' },
+  jour: { bg: '#F5F4F0', surf: '#FFFFFF', surf2: '#EDEBE6', line: '#E3E1DB', track: '#E3E1DB', ink: '#16171B', muted: '#5E6068', good: '#1E7F4F', goodBg: '#DFF2E6', bad: '#C2362B', badBg: '#FBE4E1', warn: '#8A5300', today: '#F1EFFD', inv: '#16171B', invInk: '#FFFFFF' }
+};
+var C = { nuit: { c: '#9D8CFF', bg: '#262143', ink: '#BDB3FF' }, jour: { c: '#5B4FE0', bg: '#E9E6FD', ink: '#3F34B8' } };
+var VALS = [7, 9, 4, 0, 3];
+var SPS = [
+  { nom: '7 chapitres par jour', short: 'Chapitres par jour', done: 23, total: 217 },
+  { nom: 'Étudier le Nouveau Testament · octobre', short: 'Nouveau Testament', done: 23, total: 260 }
+];
+function fr(n) { return String(Math.round(n * 10) / 10).replace('.', ','); }
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { idx: props.sp || 0 };
+  }
+  renderVals() {
+    var self = this, s = this.state;
+    var mode = this.props.dark === false ? 'jour' : 'nuit';
+    var k = TOK[mode], c = C[mode];
+    var sp = SPS[s.idx], goal = sp.total / 31;
+    var H = 104, MAX = 10;
+    var bars = [];
+    for (var d = 0; d < 31; d++) {
+      var v = d < VALS.length ? VALS[d] : null;
+      if (v === null) bars.push({ h: 4, c: k.track, op: 1, title: (d + 1) + ' oct. · à venir' });
+      else if (v === 0) bars.push({ h: 4, c: k.bad, op: 1, title: (d + 1) + ' oct. · 0 ch.' });
+      else bars.push({ h: Math.round(v / MAX * H), c: d === 4 ? c.c : (v >= goal ? k.good : c.c), op: d === 4 ? 0.55 : 1, title: (d + 1) + ' oct. · ' + v + ' ch.' });
+    }
+    var rows = [
+      ['5 oct.', 'aujourd’hui', 3, 'Matthieu 8–10', '22 min · en cours'],
+      ['4 oct.', 'dimanche', 0, '—', '0 min'],
+      ['3 oct.', 'samedi', 4, 'Matthieu 4–7', '31 min'],
+      ['2 oct.', 'vendredi', 9, 'Marc 1–9', '52 min'],
+      ['1 oct.', 'jeudi', 7, 'Matthieu 1–3 · Luc 1–4', '45 min']
+    ].map(function (r, i) {
+      var v = r[2], diff = Math.round(v - goal);
+      var ok = v >= goal, zero = v === 0;
+      return {
+        date: r[0], tag: r[1], lu: v, passages: r[3], temps: r[4], bg: i === 0 ? k.today : 'transparent',
+        pillBg: ok ? k.goodBg : (zero ? k.badBg : c.bg), pillFg: ok ? k.good : (zero ? k.bad : c.ink),
+        delta: diff === 0 ? '' : (diff > 0 ? '+' + diff : String(diff).replace('-', '−')), deltaC: diff > 0 ? k.good : k.muted
+      };
+    });
+    var pct = Math.round(sp.done / sp.total * 100);
+    var expected = Math.round(5 / 31 * sp.total), late = expected - sp.done;
+    var need = (sp.total - sp.done) / 26;
+    var hits = VALS.slice(0, 4).filter(function (x) { return x >= goal; }).length;
+    return {
+      k: k, c: c, bars: bars, rows: rows,
+      cur: { nom: sp.nom, done: sp.done, total: sp.total, pct: pct, expectedPct: Math.round(5 / 31 * 100), goalTxt: fr(goal), hits: hits,
+        lineA: expected + ' chapitres attendus au 5 oct. ·', late: late + ' de retard', lineB: ', à rattraper à ' + fr(need) + ' ch. par jour' },
+      goalTop: Math.round(H - goal / MAX * H), goalLabelTop: Math.round(H - goal / MAX * H) - 14,
+      nChips: SPS.length,
+      chips: SPS.map(function (x, i) {
+        var on = i === s.idx;
+        return { label: x.short, pct: Math.round(x.done / x.total * 100), on: on, bg: on ? c.c : 'transparent', fg: on ? (mode === 'nuit' ? '#120E2E' : '#FFFFFF') : k.ink, border: on ? c.c : k.line,
+          pick: function () { self.setState({ idx: i }); } };
+      }),
+      back: mode === 'nuit' ? 'Projets.dc.html' : 'JourProjets.dc.html'
+    };
+  }
+}
+</script>
+</body>
+</html>

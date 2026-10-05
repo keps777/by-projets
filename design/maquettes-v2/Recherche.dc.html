@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Recherche</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; overflow: hidden; background: {{k.bg}}; color: {{k.ink}}; font-family: Geist, system-ui, sans-serif; display: flex; flex-direction: column">
+  <div style="padding: 16px 16px 8px; display: flex; flex-direction: column; gap: 12px">
+    <div style="display: flex; align-items: center; gap: 10px">
+      <a href="{{back}}" aria-label="Retour au Fil" style="flex: none; width: 44px; height: 44px; border-radius: 22px; background: {{k.surf}}; border: 1px solid {{k.line}}; color: {{k.ink}}; display: flex; align-items: center; justify-content: center; box-sizing: border-box">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>
+      </a>
+      <label style="flex: 1; display: flex; align-items: center; gap: 8px; height: 48px; border-radius: 16px; background: {{k.surf}}; border: 1px solid {{k.line}}; padding: 0 12px; color: {{k.muted}}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+        <input value="{{q}}" onChange="{{setQ}}" aria-label="Rechercher" placeholder="Projet, tâche, note, rapport…" style="flex: 1; min-width: 0; border: 0; background: transparent; color: {{k.ink}}; font: inherit; font-size: 16px; outline: none">
+      </label>
+    </div>
+    <div style="display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px">
+      <sc-for list="{{filters}}" as="f" hint-placeholder-count="6">
+        <button onClick="{{f.pick}}" aria-pressed="{{f.on}}" style="flex: none; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid {{f.border}}; background: {{f.bg}}; color: {{f.fg}}; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer">{{f.label}}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding: 4px 16px 24px; display: flex; flex-direction: column; gap: 14px">
+    <sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">Recherches récentes</span>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px">
+          <sc-for list="{{recents}}" as="r" hint-placeholder-count="4">
+            <button onClick="{{r.pick}}" style="height: 44px; padding: 0 14px; border-radius: 22px; border: 1px solid {{k.line}}; background: {{k.surf}}; color: {{k.ink}}; font: inherit; font-size: 14px; cursor: pointer">{{r.label}}</button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{noResult}}" hint-placeholder-val="{{false}}">
+      <span style="font-size: 14px; color: {{k.muted}}">Aucun résultat pour « {{q}} ».</span>
+    </sc-if>
+
+    <sc-for list="{{groups}}" as="g" hint-placeholder-count="3">
+      <section style="display: flex; flex-direction: column; gap: 6px">
+        <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">{{g.titre}} · {{g.n}}</span>
+        <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 20px; overflow: hidden">
+          <sc-for list="{{g.items}}" as="it" hint-placeholder-count="3">
+            <a href="{{it.href}}" style="text-decoration: none; color: {{k.ink}}; display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid {{k.line}}; min-height: 56px">
+              <span style="flex: none; width: 8px; height: 32px; border-radius: 4px; background: {{it.c}}"></span>
+              <span style="flex: 1; min-width: 0; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.titre}}</span><span style="font-size: 12px; color: {{k.muted}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sous}}</span></span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="{{k.muted}}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+            </a>
+          </sc-for>
+        </div>
+      </section>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"$preview":{"width":390,"height":844}}'>
+var TOK = {
+  nuit: { bg: '#0E0F13', surf: '#17181E', line: '#2A2C35', ink: '#F2F2F5', muted: '#A3A6B1', inv: '#F2F2F5', invInk: '#0E0F13' },
+  jour: { bg: '#F5F4F0', surf: '#FFFFFF', line: '#E3E1DB', ink: '#16171B', muted: '#5E6068', inv: '#16171B', invInk: '#FFFFFF' }
+};
+var RC = {
+  nuit: { dieu: '#9D8CFF', service: '#34D1B6', travail: '#5EA6FF', vie: '#FF8F66', trans: '#F5B843', none: '#A3A6B1' },
+  jour: { dieu: '#5B4FE0', service: '#0B7F72', travail: '#2B67A8', vie: '#B4542F', trans: '#A66D00', none: '#6B6E76' }
+};
+function I(type, r, titre, sous, tags, to) { return { type: type, r: r, titre: titre, sous: sous, tags: tags || '', to: to || 'sp' }; }
+var INDEX = [
+  I('projets', 'dieu', 'La lecture de la Bible', 'Relation avec Dieu · 2 sous-projets · 10 %', 'bible lecture chapitres'),
+  I('projets', 'dieu', 'RDQD', 'Relation avec Dieu · 1 sous-projet · 67 %', 'rencontre dynamique ddewg'),
+  I('projets', 'service', 'L’évangélisation', 'Service à Dieu · 2 sous-projets · 54 %', 'evangelisation personnes'),
+  I('projets', 'vie', 'La gestion de mes finances', 'Vie personnelle · 1 sous-projet · 100 %', 'budget argent depenses', 'fin'),
+  I('sous', 'dieu', '7 chapitres par jour', 'La lecture de la Bible · 23 / 217 ch. · 11 %', 'bible chapitres'),
+  I('sous', 'dieu', 'Étudier le Nouveau Testament · octobre', 'La lecture de la Bible · 23 / 260 ch. · 9 %', 'bible nouveau testament'),
+  I('sous', 'vie', 'Budget d’octobre', 'La gestion de mes finances · solde +1 380 $', 'budget finances argent', 'fin'),
+  I('taches', 'dieu', 'Lecture de la Bible', 'Tous les jours · 05:30 – 06:15', 'bible lecture'),
+  I('taches', 'service', 'Rencontre avec Christopher', 'Chaque jeudi · 19:00 – 19:45 · La formation des disciples', 'christopher disciple', 'tache'),
+  I('taches', 'none', 'Réunion d’équipe', 'Aujourd’hui · 16:30 – 17:00 · sans projet', 'reunion equipe', 'fil'),
+  I('notes', 'dieu', 'Mt 7:24 : bâtir sur le roc', '5 oct. · Lecture de la Bible · note', 'bible matthieu roc'),
+  I('notes', 'dieu', 'Marc 1–9 · 52 min', '2 oct. · Lecture de la Bible · saisie', 'bible marc'),
+  I('notes', 'service', 'Deux conversations, un numéro échangé', '4 oct. · L’évangélisation · note', 'evangelisation'),
+  I('notes', 'vie', 'Épicerie −68,40 $', '5 oct. · Budget d’octobre · saisie', 'budget epicerie argent', 'fin'),
+  I('rapports', 'trans', 'Rapport du 4 octobre', 'DDEWG 2/3; PA ~2h15/2h00; BR 0/7 ch…', 'rapport bible'),
+  I('rapports', 'trans', 'Semaine 40', '28 sept. – 4 oct. · 74 %', 'rapport semaine bible', 'rap'),
+  I('rapports', 'trans', 'Septembre 2026', '30 rapports · 78 %', 'rapport mois bible', 'rap')
+];
+var TITRES = { projets: 'Projets', sous: 'Sous-projets', taches: 'Tâches', notes: 'Saisies et notes', rapports: 'Rapports' };
+function norm(t) { return String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { q: 'bible', f: 'tout' }; }
+  renderVals() {
+    var self = this, s = this.state;
+    var mode = this.props.dark === false ? 'jour' : 'nuit';
+    var k = TOK[mode], rc = RC[mode];
+    var j = mode === 'jour';
+    var route = { sp: j ? 'JourSousProjet.dc.html' : 'SousProjet.dc.html', fin: 'SousProjetFinances.dc.html', tache: 'AjouterTache.dc.html', fil: j ? 'JourFil.dc.html' : 'Main.dc.html', rap: j ? 'JourRapport.dc.html' : 'RapportSemaine.dc.html' };
+    var toks = norm(s.q).split(/\s+/).filter(Boolean);
+    var hits = INDEX.filter(function (it) {
+      if (s.f !== 'tout' && it.type !== s.f) return false;
+      var hay = norm(it.titre + ' ' + it.sous + ' ' + it.tags);
+      return toks.length > 0 && toks.every(function (t) { return hay.indexOf(t) >= 0; });
+    });
+    var groups = Object.keys(TITRES).map(function (key) {
+      var items = hits.filter(function (it) { return it.type === key; });
+      return { titre: TITRES[key], n: items.length, items: items.map(function (it) { return { titre: it.titre, sous: it.sous, c: rc[it.r], href: route[it.to] }; }) };
+    }).filter(function (g) { return g.n > 0; });
+    return {
+      k: k, q: s.q, setQ: function (e) { self.setState({ q: e.target.value }); }, back: j ? 'JourFil.dc.html' : 'Main.dc.html',
+      empty: toks.length === 0, noResult: toks.length > 0 && hits.length === 0, groups: groups,
+      recents: ['bible', 'christopher', 'budget', 'rapport'].map(function (r) { return { label: r, pick: function () { self.setState({ q: r }); } }; }),
+      filters: [['tout', 'Tout'], ['projets', 'Projets'], ['sous', 'Sous-projets'], ['taches', 'Tâches'], ['notes', 'Notes'], ['rapports', 'Rapports']].map(function (f) {
+        var on = f[0] === s.f;
+        return { label: f[1], on: on, bg: on ? k.inv : 'transparent', fg: on ? k.invInk : k.ink, border: on ? k.inv : k.line, pick: function () { self.setState({ f: f[0] }); } };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

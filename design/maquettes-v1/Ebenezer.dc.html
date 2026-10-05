@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Ebenezer</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#F3F1EA}a:hover{color:#FFFFFF}
+button{font:inherit;color:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; overflow: hidden; background: #1A1915; color: #F3F1EA; font-family: Geist, system-ui, sans-serif; display: flex; flex-direction: column">
+  <div style="flex: 1; min-height: 0; overflow: hidden; padding: 26px 20px 0; display: flex; flex-direction: column; gap: 18px">
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <h1 style="margin: 0; font-family: 'Instrument Serif', serif; font-weight: 400; font-size: 52px; line-height: 1; letter-spacing: -0.01em">Ebenezer</h1>
+      <span style="font-family: 'Instrument Serif', serif; font-style: italic; font-size: 19px; color: #CFCABB">« Jusqu’ici l’Éternel nous a secourus. »</span>
+      <span style="font-size: 12px; color: #A39E90">1 Samuel 7:12</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+      <div style="border: 1px solid #36342D; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 24px; font-weight: 700">12</span><span style="font-size: 11px; color: #A39E90">pierres posées</span></div>
+      <div style="border: 1px solid #36342D; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 24px; font-weight: 700">4</span><span style="font-size: 11px; color: #A39E90">thèmes</span></div>
+      <div style="border: 1px solid #36342D; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 24px; font-weight: 700">2026</span><span style="font-size: 11px; color: #A39E90">depuis</span></div>
+    </div>
+
+    <div style="display: flex; flex-direction: column">
+      <sc-for list="{{items}}" as="it" hint-placeholder-count="6">
+        <sc-if value="{{it.isMonth}}" hint-placeholder-val="{{false}}">
+          <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #A39E90; padding: 10px 0 6px">{{it.label}}</span>
+        </sc-if>
+        <sc-if value="{{it.isStone}}" hint-placeholder-val="{{true}}">
+          <div style="display: flex; gap: 12px; align-items: stretch">
+            <div style="width: 22px; display: flex; flex-direction: column; align-items: center">
+              <span style="width: 16px; height: 14px; margin-top: 14px; border-radius: 7px 9px 5px 6px; background: {{it.c}}"></span>
+              <span style="flex: 1; width: 2px; background: #36342D"></span>
+            </div>
+            <div style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 8px 0 12px">
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+                <span style="font-size: 15px; font-weight: 600">{{it.titre}}</span>
+                <span style="font-size: 12px; color: #A39E90">{{it.meta}}</span>
+              </div>
+              <button aria-label="Ouvrir le PDF signé" style="flex: none; height: 36px; padding: 0 10px; border-radius: 10px; border: 1px solid #45423A; background: transparent; font-family: 'Geist Mono', monospace; font-size: 11px">PDF</button>
+            </div>
+          </div>
+        </sc-if>
+      </sc-for>
+    </div>
+  </div>
+
+  <nav style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 8px 8px 18px; background: #1A1915; border-top: 1px solid #36342D">
+    <a href="Main.dc.html" style="text-decoration: none; color: #A39E90; display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 44px; justify-content: center; font-size: 11px; font-weight: 500">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h3M4 12h3M4 18h3"></path><path d="M10 6h10M10 12h7M10 18h10"></path></svg>Le Fil</a>
+    <a href="Semaine.dc.html" style="text-decoration: none; color: #A39E90; display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 44px; justify-content: center; font-size: 11px; font-weight: 500">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"></rect><path d="M3.5 10h17M8 3v4M16 3v4"></path></svg>Semaine</a>
+    <a href="Projets.dc.html" style="text-decoration: none; color: #A39E90; display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 44px; justify-content: center; font-size: 11px; font-weight: 500">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"></path><path d="M3 13l9 5 9-5"></path></svg>Projets</a>
+    <a href="Ebenezer.dc.html" style="text-decoration: none; color: #F3F1EA; display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 44px; justify-content: center; font-size: 11px; font-weight: 600">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20h14"></path><path d="M7 20l1.5-9L12 6l3.5 5L17 20"></path></svg>Ebenezer</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    function M(l) { return { isMonth: true, isStone: false, label: l }; }
+    function S(c, titre, meta) { return { isMonth: false, isStone: true, c: c, titre: titre, meta: meta }; }
+    return {
+      items: [
+        M('Septembre 2026'),
+        S('#4446C9', 'Les Psaumes en 30 jours', 'La lecture de la Bible · signé le 30 sept.'),
+        S('#4446C9', 'Trois jours de jeûne', 'Le jeûne · signé le 21 sept.'),
+        S('#0B7F72', 'Former deux disciples : étape 1', 'La formation des disciples · co-signé le 14 sept.'),
+        M('Août 2026'),
+        S('#B4542F', 'Fonds d’urgence constitué', 'La gestion de mes finances · signé le 31 août'),
+        S('#2B67A8', 'Certification obtenue', 'L’excellence professionnelle · signé le 22 août')
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

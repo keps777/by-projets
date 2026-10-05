@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Nouveau sous-projet</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: {{k.bg}}; color: {{k.ink}}; font-family: Geist, system-ui, sans-serif; display: flex; flex-direction: column">
+  <div style="display: flex; align-items: center; gap: 10px; padding: 16px 16px 8px">
+    <a href="Projets.dc.html" aria-label="Fermer" style="flex: none; width: 44px; height: 44px; border-radius: 22px; background: {{k.surf}}; border: 1px solid {{k.line}}; color: {{k.ink}}; display: flex; align-items: center; justify-content: center; box-sizing: border-box">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </a>
+    <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 700">Nouveau sous-projet</span>
+  </div>
+
+  <div style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding: 4px 16px 20px; display: flex; flex-direction: column; gap: 18px">
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">Partir d’un modèle · {{rubNom}}</span>
+      <div style="display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px">
+        <sc-for list="{{rubs}}" as="r" hint-placeholder-count="4">
+          <button onClick="{{r.pick}}" aria-pressed="{{r.on}}" style="flex: none; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid {{r.border}}; background: {{r.bg}}; color: {{r.fg}}; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer">{{r.nom}}</button>
+        </sc-for>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <sc-for list="{{tpls}}" as="t" hint-placeholder-count="4">
+          <button onClick="{{t.pick}}" aria-pressed="{{t.on}}" style="width: 100%; border: 1px solid {{t.border}}; background: {{t.bg}}; color: {{k.ink}}; font: inherit; text-align: left; border-radius: 18px; padding: 10px 14px; min-height: 56px; display: flex; flex-direction: column; gap: 6px; cursor: pointer">
+            <span style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><span style="font-size: 14px; font-weight: 600">{{t.nom}}</span><span style="flex: none; font-size: 11px; color: {{k.muted}}">{{t.n}} métriques</span></span>
+            <span style="font-size: 12px; color: {{k.muted}}">{{t.resume}}</span>
+          </button>
+        </sc-for>
+        <button style="min-height: 48px; border-radius: 18px; border: 1.5px dashed {{k.line}}; background: transparent; color: {{k.ink}}; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Partir de zéro</button>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">Identité</span>
+      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: {{k.muted}}">Nom du sous-projet
+        <input value="{{name}}" onChange="{{setName}}" style="height: 50px; box-sizing: border-box; border-radius: 14px; border: 1px solid {{k.line}}; background: {{k.surf}}; color: {{k.ink}}; font: inherit; font-size: 17px; font-weight: 600; padding: 0 14px">
+      </label>
+      <div style="display: flex; justify-content: space-between; align-items: center; background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 14px; padding: 10px 14px; min-height: 48px">
+        <span style="font-size: 13px; color: {{k.muted}}">Projet</span><span style="font-size: 14px; font-weight: 600">{{projet}}</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px">
+        <sc-for list="{{periods}}" as="p" hint-placeholder-count="4">
+          <button onClick="{{p.pick}}" style="height: 44px; border-radius: 12px; border: 1px solid {{p.border}}; background: {{p.bg}}; color: {{p.fg}}; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer">{{p.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 20px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px">
+        <span style="font-size: 14px; font-weight: 600">Reprendre les saisies existantes</span>
+        <button onClick="{{flipBf}}" aria-pressed="{{bfOn}}" aria-label="Reprendre les saisies existantes" style="flex: none; width: 44px; height: 26px; border-radius: 13px; border: 0; background: {{bfSwBg}}; position: relative; padding: 0; cursor: pointer"><span style="position: absolute; top: 3px; left: {{bfSwX}}px; width: 20px; height: 20px; border-radius: 10px; background: #FFFFFF; transition: left 0.2s"></span></button>
+      </div>
+      <span style="font-size: 12px; line-height: 1.45; color: {{k.muted}}">{{pastText}}</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline">
+        <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">Métriques · {{nMetrics}}</span>
+        <span style="font-size: 12px; color: {{k.muted}}">tout est modifiable</span>
+      </div>
+
+      <sc-for list="{{metrics}}" as="m" hint-placeholder-count="3">
+        <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 20px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px">
+          <div style="display: flex; align-items: center; gap: 8px">
+            <span style="flex: none; font-size: 11px; font-weight: 600; padding: 5px 9px; border-radius: 9px; background: {{m.tbg}}; color: {{m.tfg}}">{{m.typeNom}}</span>
+            <input value="{{m.nom}}" onChange="{{m.setNom}}" aria-label="Nom de la métrique" style="flex: 1; min-width: 0; height: 44px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{k.line}}; background: {{k.field}}; color: {{k.ink}}; font: inherit; font-size: 15px; font-weight: 600; padding: 0 10px">
+            <button onClick="{{m.remove}}" aria-label="Retirer {{m.nom}}" style="flex: none; width: 44px; height: 44px; border-radius: 14px; border: 1px solid {{k.line}}; background: transparent; color: {{k.bad}}; font: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"></path></svg>
+            </button>
+          </div>
+          <div style="display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 8px; align-items: end">
+            <label style="display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: {{k.muted}}">Unité
+              <input value="{{m.unite}}" onChange="{{m.setUnite}}" style="height: 44px; width: 76px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{k.line}}; background: {{k.field}}; color: {{k.ink}}; font: inherit; font-size: 15px; padding: 0 10px">
+            </label>
+            <div style="display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: {{k.muted}}">Objectif
+              <div style="display: flex; align-items: center; justify-content: space-between; height: 44px; border-radius: 12px; border: 1px solid {{k.line}}; background: {{k.field}}">
+                <button onClick="{{m.dec}}" aria-label="Diminuer l’objectif" style="width: 44px; height: 44px; border: 0; background: transparent; color: {{k.ink}}; font: inherit; font-size: 20px; cursor: pointer">−</button>
+                <span style="font-family: 'Geist Mono', monospace; font-size: 15px; color: {{k.ink}}">{{m.cible}}</span>
+                <button onClick="{{m.inc}}" aria-label="Augmenter l’objectif" style="width: 44px; height: 44px; border: 0; background: transparent; color: {{k.ink}}; font: inherit; font-size: 20px; cursor: pointer">+</button>
+              </div>
+            </div>
+          </div>
+          <sc-if value="{{m.isNombre}}" hint-placeholder-val="{{false}}">
+            <div style="display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 0 -14px; padding: 0 14px">
+              <sc-for list="{{m.unitPresets}}" as="u" hint-placeholder-count="6">
+                <button onClick="{{u.pick}}" style="flex: none; height: 40px; padding: 0 12px; border-radius: 20px; border: 1px solid {{u.border}}; background: {{u.bg}}; color: {{u.fg}}; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer">{{u.label}}</button>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{m.hasOptions}}" hint-placeholder-val="{{false}}">
+            <span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: {{k.muted}}">Valeurs : {{m.options}}</span>
+          </sc-if>
+          <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px">
+            <sc-for list="{{m.pers}}" as="p" hint-placeholder-count="4">
+              <button onClick="{{p.pick}}" style="height: 40px; border-radius: 10px; border: 1px solid {{p.border}}; background: {{p.bg}}; color: {{p.fg}}; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer">{{p.label}}</button>
+            </sc-for>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+            <button onClick="{{m.flipSens}}" style="height: 40px; padding: 0 12px; border-radius: 10px; border: 1px solid {{k.line}}; background: transparent; color: {{k.ink}}; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer">{{m.sensLabel}}</button>
+            <button onClick="{{m.flipRapport}}" aria-pressed="{{m.rapport}}" style="display: flex; align-items: center; gap: 8px; border: 0; background: transparent; color: {{k.ink}}; font: inherit; font-size: 12px; font-weight: 600; min-height: 44px; cursor: pointer">
+              <span style="width: 40px; height: 24px; border-radius: 12px; background: {{m.swBg}}; position: relative"><span style="position: absolute; top: 2px; left: {{m.swX}}px; width: 20px; height: 20px; border-radius: 10px; background: #FFFFFF; transition: left 0.2s"></span></span>Dans le rapport
+            </button>
+          </div>
+        </div>
+      </sc-for>
+
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <span style="font-size: 12px; color: {{k.muted}}">Ajouter une métrique</span>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px">
+          <sc-for list="{{palette}}" as="t" hint-placeholder-count="8">
+            <button onClick="{{t.add}}" style="height: 44px; padding: 0 12px; border-radius: 22px; border: 1.5px dashed {{k.line}}; background: transparent; color: {{k.ink}}; font: inherit; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>{{t.nom}}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <sc-if value="{{hasCalc}}" hint-placeholder-val="{{false}}">
+        <div style="background: {{k.surf2}}; border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px">
+          <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">Calculs automatiques</span>
+          <sc-for list="{{calcs}}" as="c" hint-placeholder-count="3">
+            <span style="font-family: 'Geist Mono', monospace; font-size: 13px">{{c}}</span>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <div style="padding: 10px 16px 18px; border-top: 1px solid {{k.line}}; background: {{k.bg}}; display: flex; flex-direction: column; gap: 8px">
+    <span style="font-size: 12px; color: {{k.muted}}; line-height: 1.4">{{summary}}</span>
+    <a href="{{createHref}}" style="height: 54px; border-radius: 18px; background: {{k.inv}}; color: {{k.invInk}}; text-decoration: none; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center">Créer le sous-projet</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"rub":{"editor":null,"default":"dieu"},"tpl":{"editor":null,"default":0},"$preview":{"width":390,"height":844}}'>
+var TOK = {
+  nuit: { bg: '#0E0F13', surf: '#17181E', surf2: '#20222A', field: '#0F1015', line: '#2A2C35', ink: '#F2F2F5', muted: '#A3A6B1', inv: '#F2F2F5', invInk: '#0E0F13', bad: '#FF7A6E', track: '#33353F' },
+  jour: { bg: '#F5F4F0', surf: '#FFFFFF', surf2: '#EDEBE6', field: '#FAFAF8', line: '#E3E1DB', ink: '#16171B', muted: '#5E6068', inv: '#16171B', invInk: '#FFFFFF', bad: '#B42318', track: '#D6D4CE' }
+};
+var RUBS = {
+  dieu: { nom: 'Relation avec Dieu', nuit: ['#9D8CFF', '#120E2E', '#262143', '#DCD5FF'], jour: ['#5B4FE0', '#FFFFFF', '#E9E6FD', '#2C2380'] },
+  service: { nom: 'Service à Dieu', nuit: ['#34D1B6', '#04241F', '#102D29', '#B4F1E6'], jour: ['#0B7F72', '#FFFFFF', '#DCF0EC', '#08524A'] },
+  travail: { nom: 'Travail et études', nuit: ['#5EA6FF', '#06182E', '#14253D', '#CFE3FF'], jour: ['#2B67A8', '#FFFFFF', '#DFEAF6', '#183F6A'] },
+  vie: { nom: 'Vie personnelle', nuit: ['#FF8F66', '#2E1006', '#381F17', '#FFD9CA'], jour: ['#B4542F', '#FFFFFF', '#F5E2D9', '#6E2E14'] }
+};
+var TYPES = {
+  temps: { nom: 'Temps', step: 5, u: 'min' }, fois: { nom: 'Fois', step: 1, u: '' }, nombre: { nom: 'Nombre', step: 1, u: 'unités' }, montant: { nom: 'Montant ($)', step: 50, u: '$' },
+  oui_non: { nom: 'Oui / Non', step: 1, u: '' }, choix: { nom: 'Choix', step: 1, u: '' }, distance: { nom: 'Distance', step: 0.5, u: 'km' }, poids: { nom: 'Poids', step: 0.5, u: 'kg' },
+  note: { nom: 'Note /10', step: 1, u: '/10' }, pct: { nom: 'Pourcentage', step: 5, u: '%' }, heure: { nom: 'Heure', step: 5, u: '' }, ref: { nom: 'Référence', step: 0, u: '' }
+};
+var UNITS = ['chapitres', 'pages', 'versets', 'personnes', 'âmes', 'séances', 'pièces', 'articles'];
+var CHOIX = 'Complet = 1 · Partiel = 0,5 · Aucun = 0';
+var PAST = {
+  'Lecture biblique': '5 jours de saisies trouvés du 1er au 5 oct. : 23 chapitres, 2 h 30. Ils seront comptés ici sans être ressaisis.',
+  'Rencontre quotidienne': '5 jours de saisies : 11 rencontres, 6 h 10.',
+  'Prière': '5 jours de saisies : 7 h 45.',
+  'Évangélisation': '3 sorties du 1er au 5 oct. : 3 h 40, 11 personnes.',
+  'Suivi de disciple': '2 rencontres : 1 h 30.',
+  'Livrable à rendre': '4 jours de saisies : 4 sections, 11 h 20.',
+  'Budget du mois': '9 mouvements trouvés : 2 900 $ d’entrées, 1 520 $ de sorties.',
+  'Sport': '2 séances : 9 km, 1 h 05.'
+};
+var PERS = [['jour', 'par jour'], ['semaine', 'par sem.'], ['mois', 'par mois'], ['total', 'au total']];
+function X(type, nom, unite, cible, per, sens, rapport) { return { type: type, nom: nom, unite: unite, cible: cible, per: per, sens: sens || 'plus', rapport: rapport !== false }; }
+var TPL = {
+  dieu: [
+    { nom: 'Lecture biblique', projet: 'La lecture de la Bible', sp: '7 chapitres par jour', period: 'mois', ms: [X('nombre', 'Chapitres lus', 'ch.', 7, 'jour'), X('ref', 'Passages', '', 0, 'jour'), X('temps', 'Temps de lecture', 'min', 45, 'jour')], calcs: ['Progression = chapitres lus ÷ objectif du mois', 'Rythme = chapitres lus ÷ jours écoulés'] },
+    { nom: 'Rencontre quotidienne', projet: 'RDQD', sp: '3 rencontres par jour', period: 'mois', ms: [X('fois', 'Rencontres', '', 3, 'jour'), X('temps', 'Temps', 'min', 90, 'jour')], calcs: ['Durée moyenne = temps ÷ rencontres'] },
+    { nom: 'Prière', projet: 'La prière seule', sp: '2 heures par jour', period: 'mois', ms: [X('temps', 'Temps de prière', 'min', 120, 'jour')], calcs: [] },
+    { nom: 'Mémorisation de versets', projet: 'La lecture de la Bible', sp: 'Un verset par semaine', period: 'mois', ms: [X('nombre', 'Versets mémorisés', 'versets', 1, 'semaine'), X('ref', 'Références', '', 0, 'semaine')], calcs: [] },
+    { nom: 'Jeûne', projet: 'Le jeûne', sp: '40 jours', period: 'dates', ms: [Object.assign(X('choix', 'Type de jeûne', '', 1, 'jour'), { options: CHOIX }), X('temps', 'Temps de prière', 'min', 60, 'jour')], calcs: ['Jours de jeûne = complets + 0,5 × partiels', 'Part du mois = jours dans le mois ÷ 40'] },
+    { nom: 'Don à Dieu', projet: 'Le don à Dieu', sp: 'Chaque semaine', period: 'mois', ms: [X('oui_non', 'Don fait', '', 1, 'semaine'), X('montant', 'Montant donné', '$', 50, 'semaine')], calcs: ['Total donné = somme des montants'] }
+  ],
+  service: [
+    { nom: 'Évangélisation', projet: 'L’évangélisation', sp: '5 heures par semaine', period: 'mois', ms: [X('temps', 'Temps', 'min', 300, 'semaine'), X('nombre', 'Personnes rencontrées', 'pers.', 5, 'semaine')], calcs: ['Personnes par heure = personnes ÷ temps'] },
+    { nom: 'Suivi de disciple', projet: 'La formation des disciples', sp: '8 rencontres ce mois', period: 'mois', ms: [X('fois', 'Rencontres', '', 8, 'mois'), X('temps', 'Temps', 'min', 45, 'jour')], calcs: [] },
+    { nom: 'Dons', projet: 'Dons aux frères', sp: '2 dons par mois', period: 'mois', ms: [X('fois', 'Dons faits', '', 2, 'mois'), X('montant', 'Montant donné', '$', 50, 'mois')], calcs: ['Total donné = somme des montants'] }
+  ],
+  travail: [
+    { nom: 'Livrable à rendre', projet: 'L’excellence professionnelle', sp: 'Livrer le rapport', period: 'dates', ms: [X('nombre', 'Sections terminées', 'sections', 10, 'total'), X('temps', 'Heures de travail', 'min', 240, 'semaine')], calcs: ['Avancement = sections ÷ 10'] },
+    { nom: 'Étude / cours', projet: 'L’excellence académique', sp: 'Réussir la session', period: 'dates', ms: [X('nombre', 'Chapitres révisés', 'ch.', 11, 'total'), X('temps', 'Temps d’étude', 'min', 60, 'jour'), X('note', 'Note obtenue', '/10', 8, 'total')], calcs: [] },
+    { nom: 'Entrepreneuriat', projet: 'Mon projet d’entrepreneuriat', sp: 'Lancer l’offre', period: 'mois', ms: [X('temps', 'Heures investies', 'min', 240, 'semaine'), X('montant', 'Chiffre d’affaires', '$', 1000, 'mois'), X('nombre', 'Contacts', 'contacts', 10, 'semaine')], calcs: ['CA par heure = chiffre d’affaires ÷ heures'] }
+  ],
+  vie: [
+    { nom: 'Budget du mois', projet: 'La gestion de mes finances', sp: 'Budget d’octobre', period: 'mois', ms: [X('montant', 'Entrées', '$', 3800, 'mois', 'plus'), X('montant', 'Sorties', '$', 2400, 'mois', 'moins'), X('montant', 'Épargne', '$', 600, 'mois', 'plus')], calcs: ['Solde = Entrées − Sorties', 'Reste du budget = 2 400 $ − Sorties', 'Taux d’épargne = Épargne ÷ Entrées'] },
+    { nom: 'Sport', projet: 'La forme physique', sp: '3 séances par semaine', period: 'mois', ms: [X('fois', 'Séances', '', 3, 'semaine'), X('distance', 'Distance', 'km', 15, 'semaine'), X('temps', 'Durée', 'min', 90, 'semaine')], calcs: ['Allure = durée ÷ distance'] },
+    { nom: 'Poids / santé', projet: 'La forme physique', sp: 'Atteindre 75 kg', period: 'dates', ms: [X('poids', 'Poids', 'kg', 75, 'total', 'moins'), X('note', 'Énergie', '/10', 8, 'jour')], calcs: ['Écart = poids − 75 kg'] },
+    { nom: 'Épargne maison', projet: 'L’achat d’une maison', sp: 'Mise de fonds', period: 'dates', ms: [X('montant', 'Montant épargné', '$', 60000, 'total', 'plus')], calcs: ['Reste à épargner = objectif − épargné'] },
+    { nom: 'Rangement du logement', projet: 'L’entretien de mon logement', sp: 'Une pièce par jour', period: 'mois', ms: [X('nombre', 'Pièces faites', 'pièces', 1, 'jour'), X('temps', 'Temps', 'min', 30, 'jour')], calcs: [] },
+    { nom: 'Réveil et sommeil', projet: 'La forme physique', sp: 'Se lever à 5 h', period: 'mois', ms: [X('heure', 'Heure du lever', '', 300, 'jour', 'moins'), X('temps', 'Sommeil', 'min', 420, 'jour')], calcs: ['Écart au lever = heure du lever − 05:00'] },
+    { nom: 'Garde-robe', projet: 'Ma garde-robe', sp: 'Trier et compléter', period: 'dates', ms: [X('nombre', 'Articles triés', 'articles', 40, 'total'), X('montant', 'Achats', '$', 150, 'total', 'moins')], calcs: [] }
+  ]
+};
+function hmm(m) { return (m < 600 ? '0' : '') + Math.floor(m / 60) + ':' + ((m % 60) < 10 ? '0' : '') + (m % 60); }
+function fr(n) { return String(Math.round(n * 10) / 10).replace('.', ','); }
+function perLabel(p) { return { jour: '/ jour', semaine: '/ semaine', mois: '/ mois', total: 'au total' }[p]; }
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    var rub = props.rub || 'dieu', t = TPL[rub][props.tpl || 0];
+    this.state = { bf: true, rub: rub, tpl: props.tpl || 0, name: t.sp, period: t.period, ms: JSON.parse(JSON.stringify(t.ms)) };
+  }
+  load(rub, i) {
+    var t = TPL[rub][i];
+    this.setState({ rub: rub, tpl: i, name: t.sp, period: t.period, ms: JSON.parse(JSON.stringify(t.ms)) });
+  }
+  renderVals() {
+    var self = this, s = this.state;
+    var mode = this.props.dark === false ? 'jour' : 'nuit';
+    var k = TOK[mode], R = RUBS[s.rub][mode], t = TPL[s.rub][s.tpl];
+    function upd(i, patch) { var a = s.ms.map(function (x, j) { return j === i ? Object.assign({}, x, patch) : x; }); self.setState({ ms: a }); }
+    return {
+      k: k, rubNom: RUBS[s.rub].nom, name: s.name, setName: function (e) { self.setState({ name: e.target.value }); },
+      projet: t.projet, createHref: (s.rub === 'vie' && s.tpl === 0) ? 'SousProjetFinances.dc.html' : 'Projets.dc.html',
+      rubs: Object.keys(RUBS).map(function (key) {
+        var on = key === s.rub, c = RUBS[key][mode];
+        return { nom: RUBS[key].nom, on: on, bg: on ? c[0] : 'transparent', fg: on ? c[1] : k.ink, border: on ? c[0] : k.line, pick: function () { self.load(key, 0); } };
+      }),
+      tpls: TPL[s.rub].map(function (x, i) {
+        var on = i === s.tpl;
+        return { nom: x.nom, n: x.ms.length, on: on, bg: on ? R[2] : 'transparent', border: on ? R[0] : k.line,
+          resume: x.ms.map(function (m) { return m.nom; }).join(' · '), pick: function () { self.load(s.rub, i); } };
+      }),
+      periods: [['semaine', 'Semaine'], ['mois', 'Ce mois'], ['dates', 'Dates'], ['sans', 'Sans fin']].map(function (p) {
+        var on = p[0] === s.period;
+        return { label: p[1], bg: on ? R[0] : 'transparent', fg: on ? R[1] : k.ink, border: on ? R[0] : k.line, pick: function () { self.setState({ period: p[0] }); } };
+      }),
+      nMetrics: s.ms.length,
+      metrics: s.ms.map(function (m, i) {
+        var T = TYPES[m.type], isRef = m.type === 'ref';
+        return {
+          typeNom: T.nom, tbg: R[2], tfg: R[3], nom: m.nom, unite: m.unite,
+          cible: m.type === 'ref' ? '—' : (m.type === 'heure' ? hmm(m.cible) : fr(m.cible)), rapport: m.rapport, swBg: m.rapport ? R[0] : k.track, swX: m.rapport ? 18 : 2,
+          sensLabel: m.type === 'ref' ? 'Texte libre' : (m.type === 'heure' ? (m.sens === 'moins' ? 'Plus tôt = mieux' : 'Plus tard = mieux') : (m.sens === 'plus' ? 'Plus = mieux' : 'Moins = mieux')),
+          isNombre: m.type === 'nombre', hasOptions: m.type === 'choix', options: m.options || CHOIX,
+          unitPresets: UNITS.map(function (u) { var on = u === m.unite; return { label: u, bg: on ? R[0] : 'transparent', fg: on ? R[1] : k.ink, border: on ? R[0] : k.line, pick: function () { upd(i, { unite: u }); } }; }),
+          setNom: function (e) { upd(i, { nom: e.target.value }); }, setUnite: function (e) { upd(i, { unite: e.target.value }); },
+          dec: function () { if (T.step) upd(i, { cible: Math.max(0, Math.round((m.cible - (m.type === 'montant' && m.cible >= 1000 ? 100 : T.step)) * 10) / 10) }); },
+          inc: function () { if (T.step) upd(i, { cible: Math.round((m.cible + (m.type === 'montant' && m.cible >= 1000 ? 100 : T.step)) * 10) / 10 }); },
+          flipSens: function () { if (m.type !== 'ref') upd(i, { sens: m.sens === 'plus' ? 'moins' : 'plus' }); },
+          flipRapport: function () { upd(i, { rapport: !m.rapport }); },
+          remove: function () { self.setState({ ms: s.ms.filter(function (_, j) { return j !== i; }) }); },
+          pers: PERS.map(function (p) { var on = p[0] === m.per; return { label: p[1], bg: on ? k.inv : 'transparent', fg: on ? k.invInk : k.ink, border: on ? k.inv : k.line, pick: function () { upd(i, { per: p[0] }); } }; })
+        };
+      }),
+      palette: Object.keys(TYPES).map(function (key) {
+        var T = TYPES[key], def = { heure: 300, pct: 100, montant: 100, temps: 30, ref: 0 }[key];
+        return { nom: T.nom, add: function () { var x = X(key, 'Nouvelle métrique', T.u, def != null ? def : 1, 'jour', 'plus', false); if (key === 'choix') x.options = CHOIX; self.setState({ ms: s.ms.concat([x]) }); } };
+      }),
+      hasPast: !!PAST[t.nom], bfOn: s.bf && !!PAST[t.nom], bfSwBg: (s.bf && !!PAST[t.nom]) ? R[0] : k.track, bfSwX: (s.bf && !!PAST[t.nom]) ? 21 : 3,
+      flipBf: function () { self.setState({ bf: !s.bf }); },
+      pastText: !PAST[t.nom] ? 'Aucune saisie antérieure sur cette période : le sous-projet commence à zéro.' : (s.bf ? PAST[t.nom] : 'Les saisies déjà faites ne seront pas comptées dans ce sous-projet.'),
+      hasCalc: t.calcs.length > 0, calcs: t.calcs,
+      summary: s.name + ' · ' + s.ms.length + ' métrique' + (s.ms.length > 1 ? 's' : '') + ' · ' + s.ms.filter(function (m) { return m.rapport; }).length + ' dans le rapport'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Autoriser les notifications</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0E0F13; color: #F2F2F5; font-family: Geist, system-ui, sans-serif; display: flex; flex-direction: column">
+  <div style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding: 56px 20px 16px; display: flex; flex-direction: column; gap: 18px">
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #9D8CFF">Étape 2 sur 2</span>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 32px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.08">Reçois tes rappels au bon moment</h1>
+      <span style="font-size: 15px; line-height: 1.45; color: #C9CAD6">Une notification avant chaque bloc, un bouton pour le lancer ou le reporter, et ton rapport prêt chaque soir.</span>
+    </div>
+
+    <div style="background: rgba(40, 40, 58, 0.78); border: 1px solid rgba(255,255,255,0.08); border-radius: 22px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; align-items: center; gap: 8px">
+        <span style="width: 22px; height: 22px; border-radius: 6px; background: #9D8CFF; color: #120E2E; font-family: 'Bricolage Grotesque', sans-serif; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center">LL</span>
+        <span style="flex: 1; font-size: 12px; font-weight: 600; color: #C9CAD6; letter-spacing: 0.04em; text-transform: uppercase">Luther Life</span>
+        <span style="font-size: 12px; color: #A3A6B1">maintenant</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 15px; font-weight: 600">{{previewTitle}}</span>
+        <span style="font-size: 14px; color: #C9CAD6">{{previewSub}}</span>
+      </div>
+      <span style="font-size: 13px; font-weight: 600; color: #BDB3FF">Toucher la notification ouvre directement le bloc : Lancer ou Reporter en un geste.</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <span style="font-size: 13px; font-weight: 600; color: #A3A6B1">Me prévenir</span>
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px">
+        <sc-for list="{{leads}}" as="l" hint-placeholder-count="4">
+          <button onClick="{{l.pick}}" style="height: 44px; border-radius: 12px; border: 1px solid {{l.border}}; background: {{l.bg}}; color: {{l.fg}}; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer">{{l.label}}</button>
+        </sc-for>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #14151B; border: 1px solid #23252E; border-radius: 16px; padding: 10px 14px; min-height: 56px">
+        <span style="display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">Afficher les titres à l’écran verrouillé</span><span style="font-size: 12px; color: #A3A6B1">Désactivé : « un bloc commence dans 10 min »</span></span>
+        <button onClick="{{flipTitles}}" aria-pressed="{{titles}}" aria-label="Afficher les titres" style="flex: none; width: 44px; height: 26px; border-radius: 13px; border: 0; background: {{swBg}}; position: relative; padding: 0; cursor: pointer"><span style="position: absolute; top: 3px; left: {{swX}}px; width: 20px; height: 20px; border-radius: 10px; background: #FFFFFF; transition: left 0.2s"></span></button>
+      </div>
+    </div>
+
+    <sc-if value="{{granted}}" hint-placeholder-val="{{false}}">
+      <div style="display: flex; align-items: center; gap: 10px; background: #14321F; color: #7BE3A8; border-radius: 16px; padding: 12px 14px; font-size: 14px; font-weight: 600">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Notifications activées sur cet iPhone
+      </div>
+    </sc-if>
+  </div>
+
+  <div style="padding: 10px 20px 22px; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #23252E">
+    <sc-if value="{{!granted}}" hint-placeholder-val="{{true}}">
+      <button onClick="{{ask}}" style="height: 56px; border-radius: 18px; border: 0; background: #9D8CFF; color: #120E2E; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer">Autoriser les notifications</button>
+    </sc-if>
+    <sc-if value="{{granted}}" hint-placeholder-val="{{false}}">
+      <a href="Main.dc.html" style="height: 56px; border-radius: 18px; background: #F2F2F5; color: #0E0F13; text-decoration: none; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center">Ouvrir mon Fil</a>
+    </sc-if>
+    <a href="Main.dc.html" style="color: #A3A6B1; font-size: 13px; text-decoration: none; min-height: 44px; display: flex; align-items: center; justify-content: center">Plus tard dans les Réglages</a>
+  </div>
+
+  <sc-if value="{{prompt}}" hint-placeholder-val="{{false}}">
+    <div style="position: absolute; inset: 0; z-index: 10; display: flex; align-items: center; justify-content: center; padding: 36px; box-sizing: border-box; background: rgba(0,0,0,0.55)">
+      <div style="width: 100%; background: #2B2C33; border-radius: 22px; overflow: hidden; text-align: center">
+        <div style="padding: 20px 18px 16px; display: flex; flex-direction: column; gap: 6px">
+          <span style="font-size: 17px; font-weight: 600; line-height: 1.3">« Luther Life » souhaite vous envoyer des notifications</span>
+          <span style="font-size: 13px; color: #B9BBC2; line-height: 1.4">Les notifications peuvent inclure des alertes, des sons et des pastilles.</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid #44454E">
+          <button onClick="{{deny}}" style="height: 48px; border: 0; background: transparent; color: #9AA0FF; font: inherit; font-size: 17px; cursor: pointer; border-right: 1px solid #44454E">Ne pas autoriser</button>
+          <button onClick="{{allow}}" style="height: 48px; border: 0; background: transparent; color: #9AA0FF; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">Autoriser</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { lead: 10, titles: true, prompt: false, granted: false }; }
+  renderVals() {
+    var self = this, s = this.state;
+    var lead = s.lead === 0 ? 'maintenant' : 'dans ' + s.lead + ' min';
+    return {
+      previewTitle: s.titles ? (s.lead === 0 ? 'RDQD du matin · maintenant' : 'Dans ' + s.lead + ' min : RDQD du matin') : 'Un bloc commence ' + lead,
+      previewSub: s.titles ? '05:00 – 05:30 · Ma relation avec Dieu' : 'Ouvre l’app pour voir lequel',
+      leads: [[0, 'À l’heure'], [5, '5 min'], [10, '10 min'], [15, '15 min']].map(function (l) {
+        var on = l[0] === s.lead;
+        return { label: l[1], bg: on ? '#9D8CFF' : 'transparent', fg: on ? '#120E2E' : '#F2F2F5', border: on ? '#9D8CFF' : '#2E3039', pick: function () { self.setState({ lead: l[0] }); } };
+      }),
+      titles: s.titles, swBg: s.titles ? '#9D8CFF' : '#33353F', swX: s.titles ? 21 : 3, flipTitles: function () { self.setState({ titles: !s.titles }); },
+      prompt: s.prompt, granted: s.granted,
+      ask: function () { self.setState({ prompt: true }); },
+      allow: function () { self.setState({ prompt: false, granted: true }); },
+      deny: function () { self.setState({ prompt: false }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -112,3 +112,11 @@ Codes des points 6 à 12, **explicites et modifiables** dans Réglages : JEÛNE,
 ## Décisions du 5 oct. 2026 (suite 3)
 
 La spécification détaillée est dans `02-specification.md` (v2). Points ajoutés : connexion par e-mail et mot de passe ; installation guidée et autorisation des notifications ; tâche sans projet ; récurrences complètes (jours choisis, mensuel, fin) ; métriques élargies (Oui/Non, Choix, Pourcentage, Heure) ; reprise du passé à la création d'un sous-projet ; vues Semaine et Mois ; recherche ; aucun jour de repos par défaut ; progression mensuelle par règle de trois ; valider un sous-projet à la fin.
+
+
+## Décisions du 5 oct. 2026 (suite 4)
+
+- **Rendez-vous** : pas d'import de calendrier ; ce sont des tâches sans projet.
+- **Compte** : e-mail et mot de passe seulement ; ni confirmation d'adresse ni récupération de mot de passe pour l'instant ; **un seul utilisateur**, inscription fermée après la création du compte.
+- **Document PDF** : un **format type** commun à tous les sous-projets, dont les blocs et colonnes s'adaptent au contenu (spec §6.1). Pas de reproduction à l'identique du modèle LaTeX.
+- **Hébergement** : Vercel pour l'app ; architecture complète dans `07-architecture.md`.

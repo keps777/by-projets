@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Sous-projet — fiche</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; overflow: hidden; background: {{k.bg}}; color: {{k.ink}}; font-family: Geist, system-ui, sans-serif; display: flex; flex-direction: column">
+  <div style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding: 20px 16px 24px; display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; align-items: center; gap: 10px">
+      <a href="SousProjet.dc.html" aria-label="Retour au suivi" style="flex: none; width: 44px; height: 44px; border-radius: 22px; background: {{k.surf}}; border: 1px solid {{k.line}}; color: {{k.ink}}; display: flex; align-items: center; justify-content: center; box-sizing: border-box">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>
+      </a>
+      <span style="font-size: 12px; font-weight: 600; color: {{c.ink}}; line-height: 1.35">Ma relation avec Dieu ›<br>Projet 1 · La lecture de la Bible</span>
+      <span style="margin-left: auto; font-family: 'Geist Mono', monospace; font-size: 11px; padding: 5px 8px; border-radius: 8px; background: {{c.bg}}; color: {{c.ink}}">BR</span>
+    </div>
+    <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.12">7 chapitres par jour</h1>
+
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: {{k.surf2}}; border-radius: 14px; padding: 4px; gap: 2px">
+      <a href="SousProjet.dc.html" style="height: 38px; font-size: 13px; color: {{k.muted}}; text-decoration: none; display: flex; align-items: center; justify-content: center">Suivi</a>
+      <span style="height: 38px; border-radius: 10px; background: {{k.surf}}; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center">Fiche</span>
+      <a href="SousProjetDocument.dc.html" style="height: 38px; font-size: 13px; color: {{k.muted}}; text-decoration: none; display: flex; align-items: center; justify-content: center">Document</a>
+      <a href="SousProjetTemps.dc.html" style="height: 38px; font-size: 13px; color: {{k.muted}}; text-decoration: none; display: flex; align-items: center; justify-content: center">Temps</a>
+    </div>
+
+    <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 22px; padding: 6px 14px">
+      <sc-for list="{{fields}}" as="f" hint-placeholder-count="7">
+        <label style="display: flex; flex-direction: column; gap: 4px; padding: 10px 0; border-bottom: 1px solid {{k.line}}">
+          <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.04em; color: {{c.ink}}">{{f.q}}</span>
+          <textarea rows="2" aria-label="{{f.q}}" style="font: 15px/1.4 Geist, sans-serif; color: {{k.ink}}; background: transparent; border: 0; padding: 0; resize: none; outline: none">{{f.v}}</textarea>
+        </label>
+      </sc-for>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline">
+        <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">Métriques suivies</span>
+        <a href="NouveauSousProjet.dc.html" style="color: {{c.ink}}; font-size: 13px; font-weight: 600; text-decoration: none; min-height: 44px; display: flex; align-items: center">Modifier</a>
+      </div>
+      <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 20px; overflow: hidden">
+        <sc-for list="{{metrics}}" as="m" hint-placeholder-count="3">
+          <div style="display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid {{k.line}}; min-height: 56px">
+            <span style="flex: none; font-size: 11px; font-weight: 600; padding: 5px 9px; border-radius: 9px; background: {{c.bg}}; color: {{c.ink}}; min-width: 56px; text-align: center">{{m.type}}</span>
+            <span style="flex: 1; min-width: 0; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">{{m.nom}}</span><span style="font-size: 12px; color: {{k.muted}}">{{m.obj}}</span></span>
+            <span style="flex: none; font-family: 'Geist Mono', monospace; font-size: 11px; color: {{m.rc}}">{{m.rapport}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">Tâches qui l’alimentent</span>
+      <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 20px; overflow: hidden">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid {{k.line}}; min-height: 56px">
+          <span style="width: 8px; height: 32px; border-radius: 4px; background: {{c.c}}"></span>
+          <span style="flex: 1; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">Lecture de la Bible</span><span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: {{k.muted}}">tous les jours · 05:30–06:15</span></span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid {{k.line}}; min-height: 56px">
+          <span style="width: 8px; height: 32px; border-radius: 4px; background: {{c.c}}"></span>
+          <span style="flex: 1; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">Lecture du soir</span><span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: {{k.muted}}">lun, mer, ven · 21:50–22:10</span></span>
+        </div>
+        <a href="AjouterTache.dc.html" style="text-decoration: none; color: {{c.ink}}; font-size: 14px; font-weight: 600; min-height: 50px; display: flex; align-items: center; justify-content: center; gap: 6px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Ajouter une tâche</a>
+      </div>
+    </div>
+
+    <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; justify-content: space-between; font-size: 14px"><span style="color: {{k.muted}}">Période</span><span style="font-weight: 600">1er – 31 octobre 2026</span></div>
+      <div style="display: flex; justify-content: space-between; font-size: 14px"><span style="color: {{k.muted}}">Statut</span><span style="font-weight: 600; color: {{k.good}}">En cours</span></div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+        <button style="height: 46px; border-radius: 14px; border: 1px solid {{k.line}}; background: transparent; color: {{k.ink}}; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Mettre en pause</button>
+        <button style="height: 46px; border-radius: 14px; border: 0; background: {{k.inv}}; color: {{k.invInk}}; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Terminer et archiver</button>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"$preview":{"width":390,"height":844}}'>
+var TOK = {
+  nuit: { bg: '#0E0F13', surf: '#17181E', surf2: '#20222A', line: '#2A2C35', ink: '#F2F2F5', muted: '#A3A6B1', inv: '#F2F2F5', invInk: '#0E0F13', good: '#5BD893' },
+  jour: { bg: '#F5F4F0', surf: '#FFFFFF', surf2: '#EDEBE6', line: '#E3E1DB', ink: '#16171B', muted: '#5E6068', inv: '#16171B', invInk: '#FFFFFF', good: '#1E7F4F' }
+};
+var C = { nuit: { c: '#9D8CFF', bg: '#262143', ink: '#BDB3FF' }, jour: { c: '#5B4FE0', bg: '#E9E6FD', ink: '#3F34B8' } };
+class Component extends DCLogic {
+  renderVals() {
+    var mode = this.props.dark === false ? 'jour' : 'nuit';
+    var k = TOK[mode], c = C[mode];
+    return {
+      k: k, c: c,
+      fields: [
+        ['Quoi ?', 'Lire sept chapitres de la Bible chaque jour, en suivant le Nouveau Testament.'],
+        ['Pourquoi ?', 'Connaître Dieu par sa Parole et nourrir ma journée dès le matin.'],
+        ['Qui ?', 'Moi ; compte rendu hebdomadaire à mon discipleur.'],
+        ['Où ?', 'À la maison, avant de partir au travail.'],
+        ['Quand ?', 'Tous les jours à 05:30, du 1er au 31 octobre.'],
+        ['Comment ?', 'Un livre à la fois, une note par lecture, passages notés dans le Mode Focus.'],
+        ['Combien ?', '7 chapitres par jour, 217 au total pour octobre.']
+      ].map(function (f) { return { q: f[0], v: f[1] }; }),
+      metrics: [
+        { type: 'Nombre', nom: 'Chapitres lus', obj: 'Objectif : 7 ch. par jour', rapport: 'BR', rc: c.ink },
+        { type: 'Texte', nom: 'Passages', obj: 'Référence libre : Mt 8–10, Lc 22', rapport: 'BR', rc: c.ink },
+        { type: 'Temps', nom: 'Temps de lecture', obj: 'Objectif : 45 min par jour', rapport: 'BR', rc: c.ink }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

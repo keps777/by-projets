@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Ajouter une tâche</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: {{k.bg}}; color: {{k.ink}}; font-family: Geist, system-ui, sans-serif; display: flex; flex-direction: column">
+  <div style="display: flex; align-items: center; gap: 10px; padding: 16px 16px 8px">
+    <a href="{{back}}" aria-label="Fermer" style="flex: none; width: 44px; height: 44px; border-radius: 22px; background: {{k.surf}}; border: 1px solid {{k.line}}; color: {{k.ink}}; display: flex; align-items: center; justify-content: center; box-sizing: border-box">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </a>
+    <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 700">Nouvelle tâche</span>
+  </div>
+
+  <div style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding: 4px 16px 20px; display: flex; flex-direction: column; gap: 18px">
+    <label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: {{k.muted}}">Quoi ?
+      <input value="{{title}}" onChange="{{setTitle}}" aria-label="Titre de la tâche" style="height: 56px; box-sizing: border-box; border-radius: 16px; border: 1px solid {{k.line}}; background: {{k.surf}}; color: {{k.ink}}; font: inherit; font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 700; padding: 0 14px; letter-spacing: -0.01em">
+    </label>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px">
+        <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">1 · Projet associé</span>
+        <button onClick="{{flipProj}}" aria-pressed="{{hasProj}}" aria-label="Associer à un projet" style="flex: none; width: 44px; height: 26px; border-radius: 13px; border: 0; background: {{projSwBg}}; position: relative; padding: 0; cursor: pointer"><span style="position: absolute; top: 3px; left: {{projSwX}}px; width: 20px; height: 20px; border-radius: 10px; background: #FFFFFF; transition: left 0.2s"></span></button>
+      </div>
+      <sc-if value="{{noProj}}" hint-placeholder-val="{{false}}">
+        <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 18px; padding: 12px 14px; font-size: 13px; line-height: 1.45; color: {{k.muted}}">Rendez-vous ou réunion : la tâche apparaît dans Le Fil et te rappelle l’heure, sans alimenter aucun sous-projet. Tu pourras l’associer à un projet plus tard.</div>
+      </sc-if>
+      <sc-if value="{{hasProj}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <div style="display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px">
+            <sc-for list="{{rubs}}" as="r" hint-placeholder-count="4">
+              <button onClick="{{r.pick}}" aria-pressed="{{r.on}}" style="flex: none; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid {{r.border}}; background: {{r.bg}}; color: {{r.fg}}; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer">{{r.nom}}</button>
+            </sc-for>
+          </div>
+          <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 20px; overflow: hidden">
+            <sc-for list="{{projets}}" as="p" hint-placeholder-count="4">
+              <button onClick="{{p.pick}}" aria-pressed="{{p.on}}" style="width: 100%; border: 0; border-bottom: 1px solid {{k.line}}; background: {{p.bg}}; color: {{k.ink}}; font: inherit; text-align: left; display: flex; align-items: center; gap: 10px; padding: 10px 14px; min-height: 48px; cursor: pointer">
+                <span style="flex: none; width: 22px; height: 22px; border-radius: 11px; border: 2px solid {{p.c}}; background: {{p.dot}}; box-sizing: border-box; display: flex; align-items: center; justify-content: center">
+                  <sc-if value="{{p.on}}" hint-placeholder-val="{{false}}"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="{{p.check}}" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></sc-if>
+                </span>
+                <span style="flex: 1; min-width: 0; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">{{p.nom}}</span><span style="font-size: 12px; color: {{k.muted}}">{{p.nSubs}}</span></span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+
+    <sc-if value="{{hasProj}}" hint-placeholder-val="{{true}}">
+      <div style="display: flex; flex-direction: column; gap: 18px">
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">2 · Sous-projets alimentés</span>
+          <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 20px; overflow: hidden">
+            <sc-for list="{{subs}}" as="x" hint-placeholder-count="2">
+              <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid {{k.line}}; min-height: 56px">
+                <span style="flex: 1; min-width: 0; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">{{x.nom}}</span><span style="font-size: 12px; color: {{k.muted}}">Mesure : {{x.mesures}}</span></span>
+                <button onClick="{{x.flip}}" aria-pressed="{{x.on}}" aria-label="Alimenter {{x.nom}}" style="flex: none; width: 44px; height: 26px; border-radius: 13px; border: 0; background: {{x.swBg}}; position: relative; padding: 0; cursor: pointer"><span style="position: absolute; top: 3px; left: {{x.swX}}px; width: 20px; height: 20px; border-radius: 10px; background: #FFFFFF; transition: left 0.2s"></span></button>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">3 · Ce que cette tâche enregistre</span>
+          <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 20px; padding: 4px 14px">
+            <sc-for list="{{metrics}}" as="m" hint-placeholder-count="2">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 0; border-bottom: 1px solid {{k.line}}; min-height: 56px">
+                <span style="display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">{{m.label}}</span><span style="font-size: 12px; color: {{k.muted}}">{{m.feeds}}</span></span>
+                <span style="display: flex; align-items: center; gap: 6px">
+                  <button onClick="{{m.dec}}" aria-label="Diminuer {{m.label}}" style="width: 44px; height: 44px; border-radius: 14px; border: 1px solid {{k.line}}; background: {{k.surf2}}; color: {{k.ink}}; font: inherit; font-size: 20px; cursor: pointer">−</button>
+                  <span style="min-width: 62px; text-align: center; font-family: 'Geist Mono', monospace; font-size: 15px">{{m.value}}</span>
+                  <button onClick="{{m.inc}}" aria-label="Augmenter {{m.label}}" style="width: 44px; height: 44px; border-radius: 14px; border: 1px solid {{k.line}}; background: {{k.surf2}}; color: {{k.ink}}; font: inherit; font-size: 20px; cursor: pointer">+</button>
+                </span>
+              </div>
+            </sc-for>
+            <span style="display: block; padding: 10px 0 8px; font-size: 12px; color: {{k.muted}}">Valeur prévue à chaque occurrence. La saisie réelle se fait ensuite dans le volet du bloc, une seule fois : tous les sous-projets la lisent.</span>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">{{whenNum}} · Quand</span>
+
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <span style="font-size: 12px; color: {{k.muted}}">{{dayHint}}</span>
+        <div style="display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px">
+          <sc-for list="{{startDays}}" as="d" hint-placeholder-count="8">
+            <button onClick="{{d.pick}}" aria-pressed="{{d.on}}" style="flex: none; height: 44px; padding: 0 14px; border-radius: 14px; border: 1px solid {{d.border}}; background: {{d.bg}}; color: {{d.fg}}; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer">{{d.label}}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px">
+        <sc-for list="{{recs}}" as="r" hint-placeholder-count="4">
+          <button onClick="{{r.pick}}" aria-pressed="{{r.on}}" style="height: 44px; border-radius: 14px; border: 1px solid {{r.border}}; background: {{r.bg}}; color: {{r.fg}}; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">{{r.label}}</button>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{isWeek}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex; flex-direction: column; gap: 8px; background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 18px; padding: 12px">
+          <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px">
+            <sc-for list="{{days}}" as="d" hint-placeholder-count="7">
+              <button onClick="{{d.flip}}" aria-pressed="{{d.on}}" aria-label="{{d.full}}" style="height: 44px; border-radius: 12px; border: 1px solid {{d.border}}; background: {{d.bg}}; color: {{d.fg}}; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">{{d.l}}</button>
+            </sc-for>
+          </div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap">
+            <sc-for list="{{dayPresets}}" as="p" hint-placeholder-count="3">
+              <button onClick="{{p.pick}}" style="height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid {{k.line}}; background: transparent; color: {{k.ink}}; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer">{{p.label}}</button>
+            </sc-for>
+          </div>
+          <span style="font-size: 13px; font-weight: 600">{{weekCount}}</span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isMonth}}" hint-placeholder-val="{{false}}">
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px">
+          <sc-for list="{{monthModes}}" as="m" hint-placeholder-count="2">
+            <button onClick="{{m.pick}}" aria-pressed="{{m.on}}" style="min-height: 52px; border-radius: 14px; border: 1px solid {{m.border}}; background: {{m.bg}}; color: {{m.fg}}; font: inherit; font-size: 13px; font-weight: 600; padding: 6px 10px; cursor: pointer">{{m.label}}</button>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{repeats}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-size: 12px; color: {{k.muted}}">Jusqu’à quand ?</span>
+          <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+            <sc-for list="{{ends}}" as="e" hint-placeholder-count="3">
+              <button onClick="{{e.pick}}" aria-pressed="{{e.on}}" style="min-height: 44px; border-radius: 12px; border: 1px solid {{e.border}}; background: {{e.bg}}; color: {{e.fg}}; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer">{{e.label}}</button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="display: flex; align-items: center; justify-content: space-between; background: {{k.surf2}}; border-radius: 18px; padding: 8px">
+        <button onClick="{{m15}}" aria-label="15 minutes plus tôt" style="width: 52px; height: 44px; border-radius: 14px; border: 0; background: {{k.surf}}; color: {{k.ink}}; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer">−15</button>
+        <div style="display: flex; flex-direction: column; align-items: center">
+          <span style="font-family: 'Geist Mono', monospace; font-size: 26px; font-weight: 500; letter-spacing: -0.02em">{{startLabel}}</span>
+          <span style="font-size: 11px; color: {{k.muted}}">jusqu’à {{endLabel}}</span>
+        </div>
+        <button onClick="{{p15}}" aria-label="15 minutes plus tard" style="width: 52px; height: 44px; border-radius: 14px; border: 0; background: {{k.surf}}; color: {{k.ink}}; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer">+15</button>
+      </div>
+      <div style="display: flex; gap: 6px">
+        <sc-for list="{{durs}}" as="u" hint-placeholder-count="5">
+          <button onClick="{{u.pick}}" style="flex: 1; height: 44px; border-radius: 14px; border: 1px solid {{u.border}}; background: {{u.bg}}; color: {{u.fg}}; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer">{{u.label}}</button>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{free}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex; align-items: center; gap: 10px; background: {{k.goodBg}}; color: {{k.good}}; border-radius: 16px; padding: 12px 14px; font-size: 14px; font-weight: 600">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Créneau libre
+        </div>
+      </sc-if>
+      <sc-if value="{{busy}}" hint-placeholder-val="{{false}}">
+        <div style="display: flex; flex-direction: column; gap: 10px; background: {{k.warnBg}}; border-radius: 16px; padding: 12px 14px">
+          <span style="font-size: 13px; font-weight: 600; color: {{k.warn}}">Occupé par « {{occ}} »</span>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px">
+            <sc-for list="{{sugg}}" as="s" hint-placeholder-count="2">
+              <button onClick="{{s.pick}}" style="min-height: 52px; border-radius: 12px; border: 0; background: {{k.surf}}; color: {{k.ink}}; font: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; cursor: pointer">
+                <span style="font-size: 11px; color: {{k.muted}}">{{s.kind}}</span><span style="font-family: 'Geist Mono', monospace; font-size: 14px; font-weight: 500">{{s.label}}</span>
+              </button>
+            </sc-for>
+          </div>
+          <span style="font-size: 12px; color: {{k.warn}}">Tu peux aussi garder cette heure : les deux tâches se chevauchent.</span>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">{{rappelNum}} · Rappel</span>
+      <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 20px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px">
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px">
+          <sc-for list="{{leads}}" as="l" hint-placeholder-count="4">
+            <button onClick="{{l.pick}}" style="height: 44px; border-radius: 12px; border: 1px solid {{l.border}}; background: {{l.bg}}; color: {{l.fg}}; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer">{{l.label}}</button>
+          </sc-for>
+        </div>
+        <span style="font-size: 12px; color: {{k.muted}}">Notification sur ton iPhone, avec les boutons Lancer et Reporter.</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding: 10px 16px 18px; border-top: 1px solid {{k.line}}; background: {{k.bg}}; display: flex; flex-direction: column; gap: 8px">
+    <span style="font-size: 12px; color: {{k.muted}}; line-height: 1.4">{{summary}}</span>
+    <a href="{{back}}" style="height: 54px; border-radius: 18px; background: {{k.inv}}; color: {{k.invInk}}; text-decoration: none; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center">Ajouter au Fil</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"sansProjet":{"editor":null,"default":false},"$preview":{"width":390,"height":844}}'>
+var TOK = {
+  nuit: { bg: '#0E0F13', surf: '#17181E', surf2: '#20222A', line: '#2A2C35', ink: '#F2F2F5', muted: '#A3A6B1', inv: '#F2F2F5', invInk: '#0E0F13', good: '#5BD893', goodBg: '#14321F', warn: '#FFB547', warnBg: '#33260F', track: '#33353F' },
+  jour: { bg: '#F5F4F0', surf: '#FFFFFF', surf2: '#EDEBE6', line: '#E3E1DB', ink: '#16171B', muted: '#5E6068', inv: '#16171B', invInk: '#FFFFFF', good: '#1E7F4F', goodBg: '#DFF2E6', warn: '#8A5300', warnBg: '#FBEBD0', track: '#D6D4CE' }
+};
+var RUBS = {
+  dieu: { nom: 'Relation avec Dieu', nuit: ['#9D8CFF', '#120E2E'], jour: ['#5B4FE0', '#FFFFFF'] },
+  service: { nom: 'Service à Dieu', nuit: ['#34D1B6', '#04241F'], jour: ['#0B7F72', '#FFFFFF'] },
+  travail: { nom: 'Travail et études', nuit: ['#5EA6FF', '#06182E'], jour: ['#2B67A8', '#FFFFFF'] },
+  vie: { nom: 'Vie personnelle', nuit: ['#FF8F66', '#2E1006'], jour: ['#B4542F', '#FFFFFF'] },
+  none: { nom: 'Sans projet', nuit: ['#A3A6B1', '#16171D'], jour: ['#6B6E76', '#FFFFFF'] }
+};
+function M(id, label, unit, def, step) { return { id: id, label: label, unit: unit, def: def, step: step }; }
+var CAT = [
+  { id: 'bible', rub: 'dieu', nom: 'La lecture de la Bible', subs: [
+    { id: 'b7', nom: '7 chapitres par jour', ms: [M('ch', 'Chapitres lus', 'ch.', 3, 1), M('min', 'Temps', 'min', 45, 5), M('ref', 'Passages', '', 0, 0)] },
+    { id: 'nt', nom: 'Étudier le Nouveau Testament · octobre', ms: [M('ch', 'Chapitres lus', 'ch.', 3, 1)] } ] },
+  { id: 'rdqd', rub: 'dieu', nom: 'RDQD', subs: [{ id: 'r3', nom: '3 rencontres par jour', ms: [M('fois', 'Rencontres', '', 1, 1), M('min', 'Temps', 'min', 30, 5)] }] },
+  { id: 'pa', rub: 'dieu', nom: 'La prière seule', subs: [{ id: 'p2', nom: '2 h par jour', ms: [M('min', 'Temps', 'min', 45, 5)] }] },
+  { id: 'jeune', rub: 'dieu', nom: 'Le jeûne', subs: [{ id: 'j40', nom: '40 jours', ms: [M('jeune', 'Jeûne (complet = 1, partiel = 0,5)', '', 1, 0.5), M('min', 'Prière', 'min', 60, 5)] }] },
+  { id: 'disc', rub: 'service', nom: 'La formation des disciples', subs: [{ id: 'd8', nom: '8 rencontres ce mois', ms: [M('fois', 'Rencontres', '', 1, 1), M('min', 'Temps', 'min', 45, 5)] }] },
+  { id: 'evang', rub: 'service', nom: 'L’évangélisation', subs: [
+    { id: 'e5', nom: '5 heures par semaine', ms: [M('min', 'Temps', 'min', 60, 5), M('pers', 'Personnes rencontrées', 'pers.', 3, 1)] },
+    { id: 'e20', nom: 'Parler à 20 personnes ce mois', ms: [M('pers', 'Personnes rencontrées', 'pers.', 3, 1)] } ] },
+  { id: 'pro', rub: 'travail', nom: 'L’excellence professionnelle', subs: [{ id: 't3', nom: 'Livrer le rapport T3', ms: [M('pages', 'Pages écrites', 'p.', 4, 1), M('min', 'Temps', 'min', 120, 15)] }] },
+  { id: 'etud', rub: 'travail', nom: 'L’excellence académique', subs: [{ id: 'ses', nom: 'Réussir la session d’automne', ms: [M('ch', 'Chapitres révisés', 'ch.', 1, 1), M('min', 'Temps', 'min', 60, 15)] }] },
+  { id: 'fin', rub: 'vie', nom: 'La gestion de mes finances', subs: [{ id: 'bud', nom: 'Budget d’octobre', ms: [M('sortie', 'Dépenses saisies', '$', 0, 10), M('entree', 'Entrées saisies', '$', 0, 50)] }] },
+  { id: 'forme', rub: 'vie', nom: 'La forme physique', subs: [{ id: 'f3', nom: '3 séances par semaine', ms: [M('km', 'Distance', 'km', 5, 0.5), M('min', 'Temps', 'min', 30, 5)] }] },
+  { id: 'mar', rub: 'vie', nom: 'La préparation pour le mariage', subs: [{ id: 'm10', nom: 'Lire un livre à deux', ms: [M('ch', 'Chapitres', 'ch.', 1, 1), M('min', 'Temps', 'min', 45, 5)] }] }
+];
+var BUSY = [[300, 330, 'RDQD du matin'], [330, 375, 'Lecture de la Bible'], [375, 420, 'Prière seule'], [420, 450, 'Course de 5 km'], [510, 720, 'Rédiger la section 2'], [720, 740, 'RDQD de midi'], [750, 780, 'Littérature chrétienne'], [780, 990, 'Revue avec l’équipe'], [990, 1020, 'Réunion d’équipe'], [1020, 1080, 'Réviser le chapitre 3'], [1095, 1170, 'Sortie dans le quartier'], [1185, 1230, 'Prière avec les frères'], [1230, 1275, 'Lecture à deux'], [1275, 1290, 'Rapport du jour'], [1290, 1310, 'RDQD du soir']];
+var DAYS = [['L', 'lundi', 'lun.'], ['M', 'mardi', 'mar.'], ['M', 'mercredi', 'mer.'], ['J', 'jeudi', 'jeu.'], ['V', 'vendredi', 'ven.'], ['S', 'samedi', 'sam.'], ['D', 'dimanche', 'dim.']];
+var NTH = ['1er', '2ᵉ', '3ᵉ', '4ᵉ', '5ᵉ'];
+function pad(n) { return (n < 10 ? '0' : '') + n; }
+function hm(m) { return pad(Math.floor(m / 60)) + ':' + pad(m % 60); }
+function isFree(s, e) { return !BUSY.some(function (b) { return b[0] < e && s < b[1]; }); }
+function occupant(s, e) { return BUSY.filter(function (b) { return b[0] < e && s < b[1]; })[0]; }
+function fmtVal(m, v) { return (m.id === 'ref' ? 'à saisir' : String(Math.round(v * 10) / 10).replace('.', ',') + (m.unit ? ' ' + m.unit : '')); }
+function wdOf(d) { return (d.getDay() + 6) % 7; }
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    var base = new Date(); base.setHours(0, 0, 0, 0);
+    var off = 3, wd = wdOf(new Date(base.getFullYear(), base.getMonth(), base.getDate() + off)), dd = {}; dd[wd] = true;
+    this.state = { title: 'Rencontre avec Christopher', rub: 'service', proj: 'disc', assoc: !props.sansProjet, off: {}, vals: {}, startOff: off, rec: 'week', days: dd, monthMode: 'date', end: 'none', start: 19 * 60, dur: 45, lead: 10 };
+  }
+  renderVals() {
+    var self = this, s = this.state;
+    var mode = this.props.dark === false ? 'jour' : 'nuit';
+    var k = TOK[mode];
+    var base = new Date(); base.setHours(0, 0, 0, 0);
+    var startDate = new Date(base.getFullYear(), base.getMonth(), base.getDate() + s.startOff);
+    var startWd = wdOf(startDate);
+    var proj = CAT.filter(function (p) { return p.id === s.proj; })[0] || CAT[0];
+    var rub = (s.assoc ? RUBS[proj.rub] : RUBS.none)[mode];
+    var on = proj.subs.filter(function (x) { return !s.off[x.id]; });
+    var seen = {}, metrics = [];
+    on.forEach(function (x) { x.ms.forEach(function (m) { if (!seen[m.id]) { seen[m.id] = { m: m, subs: [] }; metrics.push(seen[m.id]); } seen[m.id].subs.push(x.nom); }); });
+    var end = s.start + s.dur;
+    var occ = occupant(s.start, end), free = !occ;
+    function after() { for (var t = s.start; t + s.dur <= 1440; t += 5) if (isFree(t, t + s.dur)) return t; return null; }
+    function before() { for (var t = s.start; t >= 0; t -= 5) if (isFree(t, t + s.dur)) return t; return null; }
+    var a = after(), b = before(), sugg = [];
+    if (a !== null) sugg.push({ kind: 'Juste après', label: hm(a) + ' – ' + hm(a + s.dur), pick: function () { self.setState({ start: a }); } });
+    if (b !== null) sugg.push({ kind: 'Juste avant', label: hm(b) + ' – ' + hm(b + s.dur), pick: function () { self.setState({ start: b }); } });
+
+    var dayKeys = Object.keys(s.days).map(Number).sort();
+    var dateTxt = startDate.toLocaleDateString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long' });
+    var endTxt = s.end === 'none' ? '' : (s.end === 'date' ? ' · jusqu’au 31 oct.' : ' · 10 fois');
+    var recTxt = { once: 'ce jour seulement (' + dateTxt + ')',
+      daily: 'tous les jours à partir du ' + startDate.getDate() + endTxt,
+      week: (dayKeys.length === 1 ? 'chaque ' + DAYS[dayKeys[0]][1] : dayKeys.length + ' fois par semaine (' + dayKeys.map(function (i) { return DAYS[i][2]; }).join(', ') + ')') + endTxt,
+      month: (s.monthMode === 'date' ? 'le ' + startDate.getDate() + ' de chaque mois' : 'le ' + NTH[Math.ceil(startDate.getDate() / 7) - 1] + ' ' + DAYS[startWd][1] + ' du mois') + endTxt }[s.rec];
+    var nSel = s.assoc ? on.length : 0;
+    var offsetLabels = [];
+    for (var i = 0; i < 9; i++) {
+      var dt = new Date(base.getFullYear(), base.getMonth(), base.getDate() + i);
+      offsetLabels.push(i === 0 ? 'Aujourd’hui' : (i === 1 ? 'Demain' : DAYS[wdOf(dt)][2].replace(/^./, function (c) { return c.toUpperCase(); }) + ' ' + dt.getDate()));
+    }
+    var setDays = function (arr) { var o = {}; arr.forEach(function (x) { o[x] = true; }); self.setState({ days: o }); };
+    return {
+      k: k, back: mode === 'nuit' ? 'Main.dc.html' : 'JourFil.dc.html',
+      title: s.title, setTitle: function (e) { self.setState({ title: e.target.value }); },
+      hasProj: s.assoc, noProj: !s.assoc, projSwBg: s.assoc ? rub[0] : k.track, projSwX: s.assoc ? 21 : 3,
+      flipProj: function () { self.setState({ assoc: !s.assoc }); },
+      whenNum: s.assoc ? '4' : '1', rappelNum: s.assoc ? '5' : '2',
+      rubs: Object.keys(RUBS).filter(function (x) { return x !== 'none'; }).map(function (key) {
+        var act = key === proj.rub, c = RUBS[key][mode];
+        return { nom: RUBS[key].nom, on: act, bg: act ? c[0] : 'transparent', fg: act ? c[1] : k.ink, border: act ? c[0] : k.line,
+          pick: function () { var first = CAT.filter(function (p) { return p.rub === key; })[0]; self.setState({ rub: key, proj: first.id, off: {}, vals: {} }); } };
+      }),
+      projets: CAT.filter(function (p) { return p.rub === proj.rub; }).map(function (p) {
+        var act = p.id === proj.id, c = RUBS[p.rub][mode];
+        return { nom: p.nom, nSubs: p.subs.length + (p.subs.length > 1 ? ' sous-projets' : ' sous-projet'), on: act, c: c[0], dot: act ? c[0] : 'transparent', check: c[1], bg: act ? k.surf2 : 'transparent',
+          pick: function () { self.setState({ proj: p.id, off: {}, vals: {} }); } };
+      }),
+      subs: proj.subs.map(function (x) {
+        var act = !s.off[x.id];
+        return { nom: x.nom, mesures: x.ms.map(function (m) { return m.label.toLowerCase(); }).join(', '), on: act, swBg: act ? rub[0] : k.track, swX: act ? 21 : 3,
+          flip: function () { var o = Object.assign({}, s.off); if (act) o[x.id] = true; else delete o[x.id]; self.setState({ off: o }); } };
+      }),
+      metrics: metrics.map(function (e) {
+        var m = e.m, v = s.vals[m.id] != null ? s.vals[m.id] : m.def;
+        return { label: m.label, value: fmtVal(m, v), feeds: e.subs.length > 1 ? 'compte dans ' + e.subs.length + ' sous-projets' : 'compte dans 1 sous-projet',
+          dec: function () { if (!m.step) return; var o = Object.assign({}, s.vals); o[m.id] = Math.max(0, Math.round((v - m.step) * 10) / 10); self.setState({ vals: o }); },
+          inc: function () { if (!m.step) return; var o = Object.assign({}, s.vals); o[m.id] = Math.round((v + m.step) * 10) / 10; self.setState({ vals: o }); } };
+      }),
+      dayHint: s.rec === 'once' ? 'Quel jour ?' : 'À partir de quel jour ?',
+      startDays: offsetLabels.map(function (label, i) {
+        var act = i === s.startOff;
+        return { label: label, on: act, bg: act ? rub[0] : 'transparent', fg: act ? rub[1] : k.ink, border: act ? rub[0] : k.line,
+          pick: function () { var d2 = new Date(base.getFullYear(), base.getMonth(), base.getDate() + i), o = {}; o[wdOf(d2)] = true; self.setState({ startOff: i, days: s.rec === 'week' ? o : s.days }); } };
+      }),
+      recs: [['once', 'Ce jour seulement'], ['daily', 'Tous les jours'], ['week', 'Chaque semaine'], ['month', 'Chaque mois']].map(function (r) {
+        var act = r[0] === s.rec;
+        return { label: r[1], on: act, bg: act ? k.inv : 'transparent', fg: act ? k.invInk : k.ink, border: act ? k.inv : k.line, pick: function () { var o = {}; o[startWd] = true; self.setState({ rec: r[0], days: r[0] === 'week' && !dayKeys.length ? o : s.days }); } };
+      }),
+      isWeek: s.rec === 'week', isMonth: s.rec === 'month', repeats: s.rec !== 'once',
+      days: DAYS.map(function (d, i) {
+        var act = !!s.days[i];
+        return { l: d[0], full: d[1], on: act, bg: act ? rub[0] : 'transparent', fg: act ? rub[1] : k.ink, border: act ? rub[0] : k.line,
+          flip: function () { var o = Object.assign({}, s.days); if (act) { if (Object.keys(o).length > 1) delete o[i]; } else o[i] = true; self.setState({ days: o }); } };
+      }),
+      dayPresets: [['Lun. – Ven.', [0, 1, 2, 3, 4]], ['Week-end', [5, 6]], ['Tous les jours', [0, 1, 2, 3, 4, 5, 6]]].map(function (p) { return { label: p[0], pick: function () { setDays(p[1]); } }; }),
+      weekCount: dayKeys.length + (dayKeys.length > 1 ? ' fois par semaine' : ' fois par semaine') + ' · ' + dayKeys.map(function (i) { return DAYS[i][2]; }).join(', '),
+      monthModes: [['date', 'Le ' + startDate.getDate() + ' de chaque mois'], ['nth', 'Le ' + NTH[Math.ceil(startDate.getDate() / 7) - 1] + ' ' + DAYS[startWd][1] + ' du mois']].map(function (m) {
+        var act = m[0] === s.monthMode;
+        return { label: m[1], on: act, bg: act ? rub[0] : 'transparent', fg: act ? rub[1] : k.ink, border: act ? rub[0] : k.line, pick: function () { self.setState({ monthMode: m[0] }); } };
+      }),
+      ends: [['none', 'Sans fin'], ['date', 'Jusqu’au 31 oct.'], ['count', 'Après 10 fois']].map(function (e) {
+        var act = e[0] === s.end;
+        return { label: e[1], on: act, bg: act ? k.inv : 'transparent', fg: act ? k.invInk : k.ink, border: act ? k.inv : k.line, pick: function () { self.setState({ end: e[0] }); } };
+      }),
+      startLabel: hm(s.start), endLabel: hm(end),
+      m15: function () { self.setState({ start: Math.max(0, s.start - 15) }); },
+      p15: function () { self.setState({ start: Math.min(1440 - s.dur, s.start + 15) }); },
+      durs: [15, 30, 45, 60, 90].map(function (d) {
+        var act = d === s.dur;
+        return { label: d >= 60 ? (d / 60 === 1 ? '1 h' : '1 h 30') : d + ' min', bg: act ? k.inv : 'transparent', fg: act ? k.invInk : k.ink, border: act ? k.inv : k.line, pick: function () { self.setState({ dur: d }); } };
+      }),
+      free: free, busy: !free, occ: occ ? occ[2] : '', sugg: sugg,
+      leads: [[0, 'À l’heure'], [5, '5 min'], [10, '10 min'], [15, '15 min']].map(function (l) {
+        var act = l[0] === s.lead;
+        return { label: l[1], bg: act ? rub[0] : 'transparent', fg: act ? rub[1] : k.ink, border: act ? rub[0] : k.line, pick: function () { self.setState({ lead: l[0] }); } };
+      }),
+      summary: (s.title || 'Tâche') + ' · ' + hm(s.start) + '–' + hm(end) + ' · ' + recTxt + (nSel ? ' · alimente ' + nSel + (nSel > 1 ? ' sous-projets' : ' sous-projet') : ' · sans projet') + (s.lead === 0 ? ' · rappel à l’heure' : ' · rappel ' + s.lead + ' min avant')
+    };
+  }
+}
+</script>
+</body>
+</html>

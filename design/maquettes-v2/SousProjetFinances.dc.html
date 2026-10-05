@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Sous-projet — finances en dollars</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; overflow: hidden; background: {{k.bg}}; color: {{k.ink}}; font-family: Geist, system-ui, sans-serif; display: flex; flex-direction: column">
+  <div style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding: 20px 16px 24px; display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; align-items: center; gap: 10px">
+      <a href="Projets.dc.html" aria-label="Retour aux projets" style="flex: none; width: 44px; height: 44px; border-radius: 22px; background: {{k.surf}}; border: 1px solid {{k.line}}; color: {{k.ink}}; display: flex; align-items: center; justify-content: center; box-sizing: border-box">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>
+      </a>
+      <span style="font-size: 12px; font-weight: 600; color: {{c.ink}}; line-height: 1.35">Ma vie personnelle ›<br>Projet 16 · La gestion de mes finances</span>
+      <span style="margin-left: auto; font-family: 'Geist Mono', monospace; font-size: 11px; padding: 5px 8px; border-radius: 8px; background: {{c.bg}}; color: {{c.ink}}">FINANCES</span>
+    </div>
+    <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.12">Budget d’octobre</h1>
+
+    <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 14px">
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">Solde du mois</span>
+        <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 40px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; color: {{k.good}}">+1 380,00 $</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <span style="display: flex; justify-content: space-between; font-size: 13px"><span>Entrées</span><span style="font-family: 'Geist Mono', monospace">2 900 $ / 3 800 $</span></span>
+        <span style="height: 8px; border-radius: 4px; background: {{k.track}}; overflow: hidden"><span style="display: block; height: 8px; width: 76%; background: {{k.good}}; border-radius: 4px"></span></span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <span style="display: flex; justify-content: space-between; font-size: 13px"><span>Sorties</span><span style="font-family: 'Geist Mono', monospace">1 520 $ / 2 400 $</span></span>
+        <span style="height: 8px; border-radius: 4px; background: {{k.track}}; overflow: hidden"><span style="display: block; height: 8px; width: 63%; background: {{c.c}}; border-radius: 4px"></span></span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <span style="display: flex; justify-content: space-between; font-size: 13px"><span>Épargne</span><span style="font-family: 'Geist Mono', monospace">300 $ / 600 $</span></span>
+        <span style="height: 8px; border-radius: 4px; background: {{k.track}}; overflow: hidden"><span style="display: block; height: 8px; width: 50%; background: {{c.c}}; border-radius: 4px"></span></span>
+      </div>
+      <div style="background: {{k.surf2}}; border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px">
+        <span style="font-family: 'Geist Mono', monospace; font-size: 12px">Solde = Entrées − Sorties</span>
+        <span style="font-family: 'Geist Mono', monospace; font-size: 12px">Reste du budget = 2 400 $ − Sorties = 880 $</span>
+        <span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: {{k.muted}}">soit 33,85 $ par jour jusqu’au 31 oct.</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">Sorties par catégorie</span>
+      <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 20px; padding: 6px 14px">
+        <sc-for list="{{cats}}" as="x" hint-placeholder-count="6">
+          <div style="display: flex; flex-direction: column; gap: 6px; padding: 10px 0; border-bottom: 1px solid {{k.line}}">
+            <span style="display: flex; justify-content: space-between; align-items: baseline; font-size: 14px"><span style="font-weight: 600">{{x.nom}}</span><span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: {{x.vc}}">{{x.spent}} / {{x.budget}}</span></span>
+            <span style="height: 6px; border-radius: 3px; background: {{k.track}}; overflow: hidden"><span style="display: block; height: 6px; width: {{x.pct}}%; background: {{x.bar}}; border-radius: 3px"></span></span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline">
+        <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">Mouvements</span>
+        <span style="font-size: 12px; color: {{k.muted}}">saisis via « Saisir les dépenses »</span>
+      </div>
+      <div style="background: {{k.surf}}; border: 1px solid {{k.line}}; border-radius: 20px; overflow: hidden">
+        <sc-for list="{{moves}}" as="m" hint-placeholder-count="5">
+          <div style="display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 14px; border-bottom: 1px solid {{k.line}}; min-height: 52px">
+            <span style="font-size: 12px; color: {{k.muted}}">{{m.d}}</span>
+            <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 14px; font-weight: 600">{{m.nom}}</span><span style="font-size: 12px; color: {{k.muted}}">{{m.cat}}</span></span>
+            <span style="font-family: 'Geist Mono', monospace; font-size: 14px; color: {{m.c}}">{{m.v}}</span>
+          </div>
+        </sc-for>
+        <a href="AjouterTache.dc.html" style="text-decoration: none; color: {{c.ink}}; font-size: 14px; font-weight: 600; min-height: 50px; display: flex; align-items: center; justify-content: center; gap: 6px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Saisir un mouvement</a>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"$preview":{"width":390,"height":844}}'>
+var TOK = {
+  nuit: { bg: '#0E0F13', surf: '#17181E', surf2: '#20222A', line: '#2A2C35', track: '#2C2E38', ink: '#F2F2F5', muted: '#A3A6B1', good: '#5BD893', bad: '#FF6B5E' },
+  jour: { bg: '#F5F4F0', surf: '#FFFFFF', surf2: '#EDEBE6', line: '#E3E1DB', track: '#E3E1DB', ink: '#16171B', muted: '#5E6068', good: '#1E7F4F', bad: '#C2362B' }
+};
+var C = { nuit: { c: '#FF8F66', bg: '#381F17', ink: '#FFB89C' }, jour: { c: '#B4542F', bg: '#F5E2D9', ink: '#6E2E14' } };
+class Component extends DCLogic {
+  renderVals() {
+    var mode = this.props.dark === false ? 'jour' : 'nuit';
+    var k = TOK[mode], c = C[mode];
+    var cats = [['Logement', 900, 900], ['Alimentation', 214, 500], ['Dons et dîme', 190, 380], ['Transport', 96, 220], ['Loisirs', 38, 150], ['Divers', 82, 250]];
+    function money(n) { return n.toLocaleString('fr-CA') + ' $'; }
+    return {
+      k: k, c: c,
+      cats: cats.map(function (x) {
+        var pct = Math.min(100, Math.round(x[1] / x[2] * 100));
+        return { nom: x[0], spent: money(x[1]), budget: money(x[2]), pct: pct, bar: pct >= 100 ? k.good : c.c, vc: k.ink };
+      }),
+      moves: [
+        { d: '5 oct.', nom: 'Épicerie', cat: 'Alimentation', v: '−68,40 $', c: k.ink },
+        { d: '4 oct.', nom: 'Essence', cat: 'Transport', v: '−46,20 $', c: k.ink },
+        { d: '3 oct.', nom: 'Loyer', cat: 'Logement', v: '−900,00 $', c: k.ink },
+        { d: '2 oct.', nom: 'Don à l’église', cat: 'Dons et dîme', v: '−190,00 $', c: k.ink },
+        { d: '1 oct.', nom: 'Salaire', cat: 'Entrée', v: '+2 900,00 $', c: k.good }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

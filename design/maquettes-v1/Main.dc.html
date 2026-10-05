@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Le Fil</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#16171B}a:hover{color:#000}
+button{font:inherit;color:inherit;cursor:pointer}
+.tl::-webkit-scrollbar{display:none}
+.blk:hover{filter:brightness(0.97)}
+.tab:hover{color:#16171B}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #F5F4F0; color: #16171B; font-family: Geist, system-ui, sans-serif; display: flex; flex-direction: column">
+
+  <div style="padding: 22px 20px 6px; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px">
+    <div style="display: flex; flex-direction: column; gap: 2px">
+      <div style="font-size: 13px; font-weight: 600; color: #C63A1F; letter-spacing: 0.02em">{{monthLabel}}</div>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; line-height: 1.05; letter-spacing: -0.02em">{{dayLabel}}</h1>
+      <div style="font-size: 13px; color: #5E6068">{{statLabel}}</div>
+    </div>
+    <div style="display: flex; gap: 8px">
+      <button aria-label="Tâches à placer aujourd'hui" style="height: 44px; padding: 0 14px; border-radius: 22px; border: 1px solid #E3E1DB; background: #FFFFFF; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600">
+        <span style="width: 20px; height: 20px; border-radius: 10px; background: #16171B; color: #FFFFFF; font-size: 11px; display: flex; align-items: center; justify-content: center">2</span>
+        à placer
+      </button>
+      <button aria-label="Ajouter un bloc" style="width: 44px; height: 44px; border-radius: 22px; border: 0; background: #16171B; color: #FFFFFF; display: flex; align-items: center; justify-content: center">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+      </button>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); padding: 8px 12px 10px; border-bottom: 1px solid #E3E1DB">
+    <sc-for list="{{week}}" as="d" hint-placeholder-count="7">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 4px">
+        <div style="font-size: 11px; font-weight: 600; color: #5E6068">{{d.letter}}</div>
+        <div style="width: 34px; height: 34px; border-radius: 17px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; background: {{d.bg}}; color: {{d.fg}}">{{d.num}}</div>
+        <div style="display: flex; gap: 3px; height: 6px">
+          <sc-for list="{{d.dots}}" as="c" hint-placeholder-count="2">
+            <span style="width: 6px; height: 6px; border-radius: 3px; background: {{c}}"></span>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div class="tl" ref="{{scrollRef}}" style="flex: 1; overflow-y: auto; position: relative; scrollbar-width: none">
+    <div style="position: relative; height: {{totalH}}px; margin: 10px 0 24px">
+      <sc-for list="{{hours}}" as="h" hint-placeholder-count="19">
+        <div style="position: absolute; left: 0; right: 0; top: {{h.top}}px; display: flex; align-items: center; gap: 8px">
+          <span style="width: 52px; text-align: right; font-family: 'Geist Mono', monospace; font-size: 11px; color: #5E6068; opacity: {{h.op}}">{{h.label}}</span>
+          <span style="flex: 1; height: 1px; background: #E3E1DB"></span>
+        </div>
+      </sc-for>
+
+      <sc-for list="{{blocs}}" as="b" hint-placeholder-count="8">
+        <button class="blk" onClick="{{b.open}}" aria-label="{{b.aria}}" style="position: absolute; left: 66px; right: 12px; top: {{b.top}}px; height: {{b.h}}px; border: 0; border-radius: 12px; background: {{b.bg}}; color: {{b.ink}}; opacity: {{b.op}}; text-align: left; padding: {{b.pad}}; display: flex; gap: 10px; align-items: flex-start; overflow: hidden; box-sizing: border-box">
+          <span style="flex: none; width: 20px; height: 20px; margin-top: 1px; border-radius: 10px; border: 2px solid {{b.c}}; background: {{b.ringBg}}; display: flex; align-items: center; justify-content: center; box-sizing: border-box">
+            <sc-if value="{{b.done}}" hint-placeholder-val="{{false}}">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+            </sc-if>
+          </span>
+          <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+            <span style="font-size: 14px; font-weight: 600; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-decoration: {{b.deco}}">{{b.etape}}</span>
+            <sc-if value="{{b.tall}}" hint-placeholder-val="{{true}}">
+              <span style="font-size: 12px; line-height: 1.25; opacity: 0.85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{b.projet}} · {{b.heures}}</span>
+            </sc-if>
+            <sc-if value="{{b.late}}" hint-placeholder-val="{{false}}">
+              <span style="font-size: 11px; font-weight: 600; color: #8A4B00">à rattraper, sans culpabilité</span>
+            </sc-if>
+          </span>
+        </button>
+      </sc-for>
+
+      <sc-if value="{{nowVisible}}" hint-placeholder-val="{{true}}">
+        <div style="position: absolute; left: 0; right: 0; top: {{nowTop}}px; height: 0; display: flex; align-items: center; z-index: 3; pointer-events: none">
+          <span style="width: 56px; display: flex; justify-content: flex-end; padding-right: 4px; box-sizing: border-box">
+            <span style="background: #D2401F; color: #FFFFFF; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500; padding: 2px 6px; border-radius: 8px; transform: translateY(0)">{{nowLabel}}</span>
+          </span>
+          <span style="width: 9px; height: 9px; border-radius: 5px; background: #E5482E; margin-left: 2px"></span>
+          <span style="flex: 1; height: 2px; background: #E5482E"></span>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <div style="padding: 10px 12px 0">
+    <div style="background: #16171B; color: #FFFFFF; border-radius: 20px; padding: 14px 14px 14px 16px; display: flex; align-items: center; gap: 12px">
+      <span style="flex: none; width: 10px; height: 44px; border-radius: 5px; background: {{card.c}}"></span>
+      <button onClick="{{card.open}}" style="flex: 1; min-width: 0; border: 0; background: none; color: #FFFFFF; text-align: left; padding: 0; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #F2A08F">{{card.kicker}}</span>
+        <span style="font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{card.title}}</span>
+        <span style="font-size: 12px; color: #B9BBC2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{card.sub}}</span>
+      </button>
+      <sc-if value="{{card.hasAction}}" hint-placeholder-val="{{true}}">
+        <button onClick="{{card.toggle}}" style="flex: none; height: 44px; padding: 0 16px; border-radius: 22px; border: 0; background: {{card.btnBg}}; color: {{card.btnFg}}; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+          {{card.btnLabel}}
+        </button>
+      </sc-if>
+    </div>
+  </div>
+
+  <nav style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 8px 8px 18px">
+    <a href="Main.dc.html" class="tab" style="text-decoration: none; color: #16171B; display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 44px; justify-content: center; font-size: 11px; font-weight: 600">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h3M4 12h3M4 18h3"></path><path d="M10 6h10M10 12h7M10 18h10"></path><circle cx="9" cy="12" r="0.5"></circle></svg>
+      Le Fil
+    </a>
+    <a href="Semaine.dc.html" class="tab" style="text-decoration: none; color: #5E6068; display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 44px; justify-content: center; font-size: 11px; font-weight: 500">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"></rect><path d="M3.5 10h17M8 3v4M16 3v4"></path></svg>
+      Semaine
+    </a>
+    <a href="Projets.dc.html" class="tab" style="text-decoration: none; color: #5E6068; display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 44px; justify-content: center; font-size: 11px; font-weight: 500">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"></path><path d="M3 13l9 5 9-5"></path></svg>
+      Projets
+    </a>
+    <a href="Ebenezer.dc.html" class="tab" style="text-decoration: none; color: #5E6068; display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 44px; justify-content: center; font-size: 11px; font-weight: 500">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20h14"></path><path d="M7 20l1.5-9L12 6l3.5 5L17 20"></path></svg>
+      Ebenezer
+    </a>
+  </nav>
+
+  <sc-if value="{{sheetOpen}}" hint-placeholder-val="{{false}}">
+    <div style="position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; justify-content: flex-end">
+      <button aria-label="Fermer" onClick="{{close}}" style="position: absolute; inset: 0; border: 0; background: rgba(22, 23, 27, 0.42); padding: 0"></button>
+      <div style="position: relative; background: #FFFFFF; border-radius: 28px 28px 0 0; padding: 10px 20px 26px; display: flex; flex-direction: column; gap: 16px">
+        <span style="align-self: center; width: 40px; height: 5px; border-radius: 3px; background: #D6D4CE"></span>
+
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: {{sel.ink}}">
+          <span style="width: 8px; height: 8px; border-radius: 4px; background: {{sel.c}}"></span>
+          <span>{{sel.themeNom}}</span><span style="color: #9A9CA3">›</span>
+          <span>{{sel.projet}}</span><span style="color: #9A9CA3">›</span>
+          <span>{{sel.sp}}</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <h2 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1">{{sel.etape}}</h2>
+          <div style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #5E6068">{{sel.heures}} · {{sel.duree}}</div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; background: #F5F4F0; border-radius: 16px; padding: 8px 8px 8px 14px">
+          <div style="display: flex; flex-direction: column">
+            <span style="font-size: 12px; color: #5E6068">Valeur réalisée · prévu {{sel.prevu}}</span>
+            <span style="font-size: 18px; font-weight: 600">{{selVal}} {{sel.unite}}</span>
+          </div>
+          <div style="display: flex; gap: 6px">
+            <button aria-label="Diminuer" onClick="{{dec}}" style="width: 44px; height: 44px; border-radius: 14px; border: 1px solid #E3E1DB; background: #FFFFFF; font-size: 20px">−</button>
+            <button aria-label="Augmenter" onClick="{{inc}}" style="width: 44px; height: 44px; border-radius: 14px; border: 1px solid #E3E1DB; background: #FFFFFF; font-size: 20px">+</button>
+          </div>
+        </div>
+
+        <button onClick="{{toggleSel}}" style="height: 54px; border-radius: 18px; border: 0; background: {{selBtnBg}}; color: #FFFFFF; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+          {{selBtnLabel}}
+        </button>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: -6px">
+          <button style="height: 44px; border-radius: 14px; border: 1px solid #E3E1DB; background: #FFFFFF; font-size: 14px; font-weight: 600">Reporter à ce soir</button>
+          <button style="height: 44px; border-radius: 14px; border: 1px solid #E3E1DB; background: #FFFFFF; font-size: 14px; font-weight: 600">Passer avec grâce</button>
+        </div>
+
+        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #5E6068">
+          Note
+          <textarea rows="2" placeholder="Ce que j'ai retenu, ce qui m'a touché…" style="font: 15px Geist, sans-serif; color: #16171B; border: 1px solid #E3E1DB; border-radius: 14px; padding: 10px 12px; resize: none; background: #FFFFFF"></textarea>
+        </label>
+
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <div style="display: flex; justify-content: space-between; font-size: 12px; color: #5E6068"><span>Sous-projet : {{sel.pct}} %</span><span>{{sel.rythme}}</span></div>
+          <div style="height: 8px; border-radius: 4px; background: #EDEBE6; overflow: hidden"><div style="height: 8px; width: {{sel.pct}}%; background: {{sel.c}}; border-radius: 4px"></div></div>
+        </div>
+
+        <div style="font-family: 'Instrument Serif', serif; font-style: italic; font-size: 18px; line-height: 1.3; color: #3A3B42">{{sel.pourquoi}}</div>
+
+        <a href="SousProjet.dc.html" style="align-self: flex-start; font-size: 14px; font-weight: 600; min-height: 44px; display: flex; align-items: center; gap: 6px">Ouvrir le sous-projet
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+        </a>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+var THEMES = {
+  dieu: { nom: 'Ma relation avec Dieu', c: '#4446C9', bg: '#E6E6FA', ink: '#25267A' },
+  service: { nom: 'Mon service à Dieu', c: '#0B7F72', bg: '#DCF0EC', ink: '#08524A' },
+  travail: { nom: 'Mon travail et mes études', c: '#2B67A8', bg: '#DFEAF6', ink: '#183F6A' },
+  vie: { nom: 'Ma vie personnelle', c: '#B4542F', bg: '#F5E2D9', ink: '#6E2E14' },
+  trans: { nom: 'Transversal', c: '#B07400', bg: '#F7ECD2', ink: '#5E3E00' }
+};
+var BLOCS = [
+  { id: 'rdqd', t: 'dieu', d: '05:00', f: '05:45', projet: 'RDQD', sp: '45 minutes chaque matin', etape: 'RDQD du matin', unite: 'min', prevu: 45, step: 5, pct: 84, rythme: '21 matins sur 25', pourquoi: '« Approchez-vous de Dieu, et il s’approchera de vous. » Jacques 4:8' },
+  { id: 'bible', t: 'dieu', d: '05:45', f: '06:15', projet: 'La lecture de la Bible', sp: 'Matthieu, 3 chapitres par jour', etape: 'Matthieu 7–9', unite: 'chapitres', prevu: 3, step: 1, pct: 20, rythme: 'À jour · ligne 3 sur 10', pourquoi: '« Ta parole est une lampe à mes pieds. » Psaume 119:105' },
+  { id: 'priere', t: 'dieu', d: '06:15', f: '06:45', projet: 'La prière seule', sp: '30 minutes chaque matin', etape: 'Prière seule : la famille', unite: 'min', prevu: 30, step: 5, pct: 71, rythme: '2 matins à rattraper', pourquoi: '« Priez sans cesse. » 1 Thessaloniciens 5:17' },
+  { id: 'forme', t: 'vie', d: '07:00', f: '07:30', projet: 'La forme physique', sp: '3 séances par semaine', etape: 'Course de 5 km', unite: 'km', prevu: 5, step: 0.5, pct: 50, rythme: '1 séance sur 3 cette semaine', pourquoi: '« Votre corps est le temple du Saint-Esprit. » 1 Corinthiens 6:19' },
+  { id: 'rapport', t: 'travail', d: '08:30', f: '12:00', projet: 'L’excellence professionnelle', sp: 'Livrer le rapport T3', etape: 'Rédiger la section 2', unite: 'pages', prevu: 4, step: 1, pct: 40, rythme: 'Échéance vendredi', pourquoi: '« Tout ce que vous faites, faites-le de bon cœur. » Colossiens 3:23' },
+  { id: 'finances', t: 'vie', d: '12:30', f: '13:00', projet: 'La gestion de mes finances', sp: 'Budget d’octobre', etape: 'Saisir les dépenses', unite: 'reçus', prevu: 6, step: 1, pct: 35, rythme: '35 % du budget utilisé', pourquoi: 'Être un intendant fidèle de ce qui m’est confié.' },
+  { id: 'revue', t: 'travail', d: '13:30', f: '16:00', projet: 'L’excellence professionnelle', sp: 'Livrer le rapport T3', etape: 'Revue avec l’équipe', unite: 'points', prevu: 5, step: 1, pct: 40, rythme: 'Échéance vendredi', pourquoi: '« Tout ce que vous faites, faites-le de bon cœur. » Colossiens 3:23' },
+  { id: 'etudes', t: 'travail', d: '16:30', f: '17:30', projet: 'L’excellence académique', sp: 'Réussir la session d’automne', etape: 'Réviser le chapitre 3', unite: 'chapitre', prevu: 1, step: 1, pct: 45, rythme: 'Examen dans 12 jours', pourquoi: '« L’homme habile dans son ouvrage se tient auprès des rois. » Proverbes 22:29' },
+  { id: 'evang', t: 'service', d: '18:00', f: '19:30', projet: 'L’évangélisation', sp: '5 heures par semaine', etape: 'Sortie dans le quartier', unite: 'h', prevu: 1.5, step: 0.5, pct: 54, rythme: '2,7 h sur 5 cette semaine', pourquoi: '« Allez, faites de toutes les nations des disciples. » Matthieu 28:19' },
+  { id: 'mariage', t: 'vie', d: '20:00', f: '20:45', projet: 'La préparation pour le mariage', sp: 'Lire un livre à deux', etape: 'Chapitre 4, puis échange', unite: 'chapitre', prevu: 1, step: 1, pct: 30, rythme: 'Chapitre 4 sur 12', pourquoi: '« La corde à trois brins ne se rompt pas facilement. » Ecclésiaste 4:12' },
+  { id: 'bilan', t: 'trans', d: '21:00', f: '21:30', projet: 'Le suivi de tous les projets', sp: 'Bilan du soir', etape: 'Bilan de la journée', unite: 'min', prevu: 5, step: 1, pct: 80, rythme: '20 bilans sur 25', pourquoi: '« Examinez-vous vous-mêmes. » 2 Corinthiens 13:5' }
+];
+var START = 5 * 60, END = 24 * 60, PX = 64 / 60;
+function mins(s) { var p = s.split(':'); return parseInt(p[0], 10) * 60 + parseInt(p[1], 10); }
+function fmtDur(m) { var h = Math.floor(m / 60), r = m % 60; return h ? (h + ' h' + (r ? ' ' + (r < 10 ? '0' : '') + r : '')) : (r + ' min'); }
+function pad(n) { return (n < 10 ? '0' : '') + n; }
+function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { now: new Date(), done: { rdqd: true, bible: true, forme: true }, sel: null, vals: {} };
+  }
+  componentDidMount() {
+    this._t = setInterval(() => this.setState({ now: new Date() }), 20000);
+  }
+  componentWillUnmount() { clearInterval(this._t); }
+  toggle(id) {
+    var d = Object.assign({}, this.state.done);
+    d[id] = !d[id];
+    this.setState({ done: d });
+  }
+  renderVals() {
+    var now = this.state.now;
+    var nowMin = now.getHours() * 60 + now.getMinutes();
+    var done = this.state.done;
+    var self = this;
+
+    var hours = [];
+    for (var h = 5; h <= 23; h++) {
+      var near = Math.abs(h * 60 - nowMin) < 14;
+      hours.push({ top: (h * 60 - START) * PX - 7, label: pad(h) + ':00', op: near ? 0 : 1 });
+    }
+
+    var blocs = BLOCS.map(function (b) {
+      var th = THEMES[b.t];
+      var s = mins(b.d), e = mins(b.f);
+      var hgt = Math.max((e - s) * PX - 3, 26);
+      var isDone = !!done[b.id];
+      var past = e <= nowMin;
+      return {
+        id: b.id, top: (s - START) * PX + 1, h: hgt, bg: th.bg, ink: th.ink, c: th.c,
+        ringBg: isDone ? th.c : 'transparent', done: isDone,
+        op: past && !isDone ? 0.62 : 1, deco: isDone ? 'line-through' : 'none',
+        tall: hgt >= 44, late: past && !isDone && hgt >= 60,
+        pad: hgt >= 44 ? '9px 12px' : '4px 12px',
+        etape: b.etape, projet: b.projet, heures: b.d + '–' + b.f,
+        aria: b.etape + ', ' + b.projet + ', ' + b.d + ' à ' + b.f,
+        open: function () { self.setState({ sel: b.id }); }
+      };
+    });
+
+    var cur = null, next = null;
+    BLOCS.forEach(function (b) {
+      var s = mins(b.d), e = mins(b.f);
+      if (!cur && s <= nowMin && nowMin < e) cur = b;
+      if (!next && s > nowMin) next = b;
+    });
+    var card;
+    var target = cur || next;
+    if (target) {
+      var th = THEMES[target.t];
+      var isDone = !!done[target.id];
+      card = {
+        c: th.c,
+        kicker: cur ? 'En ce moment · reste ' + fmtDur(mins(target.f) - nowMin) : 'Ensuite · dans ' + fmtDur(mins(target.d) - nowMin),
+        title: target.etape,
+        sub: target.projet + ' · ' + target.sp,
+        hasAction: true,
+        btnLabel: isDone ? 'Fait' : 'Fait ?',
+        btnBg: isDone ? th.c : '#FFFFFF',
+        btnFg: isDone ? '#FFFFFF' : '#16171B',
+        toggle: function () { self.toggle(target.id); },
+        open: function () { self.setState({ sel: target.id }); }
+      };
+    } else {
+      card = { c: '#E5482E', kicker: 'Journée accomplie', title: 'Prends deux minutes pour ton bilan', sub: 'Ce qui est fait, ce qui glisse à demain', hasAction: false, open: function () {} };
+    }
+
+    var monday = new Date(now); monday.setHours(0, 0, 0, 0);
+    monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+    var letters = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+    var dotSets = [['#4446C9', '#2B67A8', '#0B7F72'], ['#4446C9', '#2B67A8', '#B4542F'], ['#4446C9', '#2B67A8', '#0B7F72'], ['#4446C9', '#B4542F'], ['#4446C9', '#2B67A8', '#B07400'], ['#4446C9', '#0B7F72', '#B4542F'], ['#4446C9', '#0B7F72']];
+    var week = letters.map(function (l, i) {
+      var d = new Date(monday); d.setDate(monday.getDate() + i);
+      var isToday = d.toDateString() === now.toDateString();
+      return { letter: l, num: d.getDate(), bg: isToday ? '#C63A1F' : 'transparent', fg: isToday ? '#FFFFFF' : '#16171B', dots: dotSets[i] };
+    });
+
+    var nDone = BLOCS.filter(function (b) { return done[b.id]; }).length;
+    var themesServed = {};
+    BLOCS.forEach(function (b) { if (done[b.id]) themesServed[b.t] = 1; });
+    var nThemes = Object.keys(themesServed).length;
+
+    var selB = BLOCS.filter(function (b) { return b.id === self.state.sel; })[0];
+    var sel = null, selVal = 0;
+    if (selB) {
+      var st = THEMES[selB.t];
+      var sm = mins(selB.d), em = mins(selB.f);
+      sel = Object.assign({}, selB, { c: st.c, ink: st.ink, themeNom: st.nom, heures: selB.d + ' – ' + selB.f, duree: fmtDur(em - sm) });
+      selVal = self.state.vals[selB.id] != null ? self.state.vals[selB.id] : selB.prevu;
+    }
+    var selDone = selB ? !!done[selB.id] : false;
+
+    return {
+      monthLabel: cap(now.toLocaleDateString('fr-CA', { month: 'long', year: 'numeric' })),
+      dayLabel: cap(now.toLocaleDateString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long' })),
+      statLabel: nDone + ' sur ' + BLOCS.length + ' accomplis · ' + nThemes + (nThemes > 1 ? ' thèmes servis' : ' thème servi'),
+      week: week,
+      hours: hours,
+      blocs: blocs,
+      totalH: (END - START) * PX,
+      nowVisible: nowMin >= START && nowMin <= END,
+      nowTop: (nowMin - START) * PX,
+      nowLabel: pad(now.getHours()) + ':' + pad(now.getMinutes()),
+      scrollRef: function (el) {
+        if (el && !self._scrolled) { self._scrolled = true; el.scrollTop = Math.max(0, (nowMin - START) * PX - 150); }
+      },
+      card: card,
+      sheetOpen: !!selB,
+      sel: sel || { c: '#000', ink: '#000' },
+      selVal: String(selVal).replace('.', ','),
+      selBtnBg: selDone ? '#2F7D4A' : '#16171B',
+      selBtnLabel: selDone ? 'Fait · toucher pour annuler' : 'Marquer comme fait',
+      toggleSel: function () { if (selB) self.toggle(selB.id); },
+      dec: function () { if (!selB) return; var v = Math.max(0, selVal - selB.step); var o = Object.assign({}, self.state.vals); o[selB.id] = Math.round(v * 10) / 10; self.setState({ vals: o }); },
+      inc: function () { if (!selB) return; var v = selVal + selB.step; var o = Object.assign({}, self.state.vals); o[selB.id] = Math.round(v * 10) / 10; self.setState({ vals: o }); },
+      close: function () { self.setState({ sel: null }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

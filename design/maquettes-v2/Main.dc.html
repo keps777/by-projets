@@ -1,0 +1,744 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Le Fil</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: {{k.bg}}; color: {{k.ink}}; font-family: Geist, system-ui, sans-serif; display: flex; flex-direction: column">
+
+  <div style="padding: 20px 18px 4px; display: flex; flex-direction: column; gap: 6px">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.01em">{{appTitle}}</span>
+      <div style="display: flex; gap: 6px">
+        <a href="{{links.recherche}}" aria-label="Rechercher" style="width: 44px; height: 44px; border-radius: 22px; background: {{k.surf}}; border: 1px solid {{k.line}}; color: {{k.ink}}; display: flex; align-items: center; justify-content: center; box-sizing: border-box">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+        </a>
+        <a href="{{links.notifs}}" aria-label="Notifications" style="width: 44px; height: 44px; border-radius: 22px; background: {{k.surf}}; border: 1px solid {{k.line}}; color: {{k.ink}}; display: flex; align-items: center; justify-content: center; box-sizing: border-box; position: relative">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"></path><path d="M10.3 20a2 2 0 0 0 3.4 0"></path></svg>
+          <span style="position: absolute; top: 9px; right: 10px; width: 8px; height: 8px; border-radius: 4px; background: {{k.now}}"></span>
+        </a>
+        <a href="{{links.ajouter}}" aria-label="Ajouter une tâche" style="text-decoration: none; width: 44px; height: 44px; border-radius: 22px; border: 0; background: {{k.inv}}; color: {{k.invInk}}; display: flex; align-items: center; justify-content: center; font: inherit; cursor: pointer">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+        </a>
+      </div>
+    </div>
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px">
+      <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+        <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; line-height: 1.05; letter-spacing: -0.02em">{{dayLabel}}</h1>
+        <span style="font-size: 13px; color: {{k.muted}}">{{statLabel}}</span>
+      </div>
+      <div style="flex: none; width: 92px; display: flex; flex-direction: column; gap: 5px; align-items: flex-end">
+        <span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: {{k.muted}}">jour {{dayPct}} %</span>
+        <span style="width: 92px; height: 6px; border-radius: 3px; background: {{k.surf2}}; overflow: hidden; display: flex">
+          <sc-for list="{{daySegs}}" as="s" hint-placeholder-count="4">
+            <span style="width: {{s.w}}%; background: {{s.c}}"></span>
+          </sc-for>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding: 2px 18px 6px">
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: {{k.surf2}}; border-radius: 12px; padding: 3px; gap: 2px">
+      <span style="height: 36px; border-radius: 9px; background: {{k.surf}}; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center">Jour</span>
+      <a href="{{links.semaine}}" style="height: 36px; font-size: 13px; font-weight: 500; color: {{k.muted}}; text-decoration: none; display: flex; align-items: center; justify-content: center">Semaine</a>
+      <a href="{{links.mois}}" style="height: 36px; font-size: 13px; font-weight: 500; color: {{k.muted}}; text-decoration: none; display: flex; align-items: center; justify-content: center">Mois</a>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); padding: 4px 10px 8px; border-bottom: 1px solid {{k.line}}">
+    <sc-for list="{{week}}" as="d" hint-placeholder-count="7">
+      <button onClick="{{d.pick}}" aria-label="{{d.aria}}" aria-pressed="{{d.sel}}" style="border: 0; background: transparent; color: inherit; font: inherit; padding: 0; min-height: 44px; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer">
+        <span style="font-size: 11px; font-weight: 600; color: {{k.muted}}">{{d.letter}}</span>
+        <span style="width: 34px; height: 34px; border-radius: 17px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; background: {{d.bg}}; color: {{d.fg}}">{{d.num}}</span>
+        <span style="width: 24px; height: 3px; border-radius: 2px; background: {{k.surf2}}; overflow: hidden"><span style="display: block; height: 3px; width: {{d.pct}}%; background: {{d.bar}}"></span></span>
+      </button>
+    </sc-for>
+  </div>
+
+  <div ref="{{scrollRef}}" style="flex: 1; min-height: 0; overflow-y: auto; position: relative; scrollbar-width: none">
+    <div style="position: relative; height: {{totalH}}px; margin: 12px 0 28px">
+      <sc-for list="{{hours}}" as="h" hint-placeholder-count="24">
+        <div style="position: absolute; left: 0; right: 0; top: {{h.top}}px; display: flex; align-items: center; gap: 6px">
+          <span style="width: 46px; text-align: right; font-family: 'Geist Mono', monospace; font-size: 11px; color: {{k.faint}}; opacity: {{h.op}}">{{h.label}}</span>
+          <span style="flex: 1; height: 1px; background: {{k.line}}"></span>
+        </div>
+      </sc-for>
+
+      <sc-for list="{{blocs}}" as="b" hint-placeholder-count="12">
+        <div style="position: absolute; left: 56px; right: 10px; top: {{b.top}}px; height: {{b.h}}px; border-radius: 10px; background: {{b.bg}}; overflow: hidden; display: flex; align-items: stretch; opacity: {{b.op}}; box-shadow: {{b.shadow}}">
+          <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{b.fillPct}}%; background: {{b.fill}}; transition: width 0.9s linear"></span>
+          <span style="position: absolute; top: 0; bottom: 0; left: {{b.fillPct}}%; width: 2px; margin-left: -2px; background: {{b.edge}}"></span>
+          <span style="position: absolute; left: 0; bottom: 0; height: 2px; width: {{b.pct}}%; background: {{b.c}}; opacity: 0.85"></span>
+          <button onClick="{{b.open}}" aria-label="{{b.aria}}" style="position: relative; flex: 1; min-width: 0; border: 0; background: transparent; color: {{b.ink}}; font: inherit; text-align: left; padding: {{b.pad}}; display: flex; gap: 8px; align-items: {{b.align}}; cursor: pointer">
+            <span style="flex: none; width: 18px; height: 18px; margin-top: {{b.circleTop}}; border-radius: 9px; border: 2px solid {{b.c}}; background: {{b.ringBg}}; display: flex; align-items: center; justify-content: center; box-sizing: border-box">
+              <sc-if value="{{b.done}}" hint-placeholder-val="{{false}}">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="{{b.checkInk}}" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+              </sc-if>
+            </span>
+            <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px">
+              <span style="font-size: {{b.fs}}px; font-weight: 600; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: {{b.titleOp}}">{{b.etape}}</span>
+              <sc-if value="{{b.tall}}" hint-placeholder-val="{{true}}">
+                <span style="font-size: 12px; line-height: 1.25; opacity: 0.8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{b.sub}}</span>
+              </sc-if>
+            </span>
+          </button>
+          <sc-if value="{{b.showPlay}}" hint-placeholder-val="{{true}}">
+            <button onClick="{{b.play}}" aria-label="{{b.playAria}}" style="position: relative; flex: none; width: 44px; border: 0; background: transparent; color: {{b.playInk}}; font: inherit; display: flex; align-items: center; justify-content: center; cursor: pointer">
+              <span style="width: 28px; height: 28px; border-radius: 14px; background: {{b.c}}; display: flex; align-items: center; justify-content: center">
+                <sc-if value="{{b.running}}" hint-placeholder-val="{{false}}">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="4" width="5" height="16" rx="1.5"></rect><rect x="14" y="4" width="5" height="16" rx="1.5"></rect></svg>
+                </sc-if>
+                <sc-if value="{{b.notRunning}}" hint-placeholder-val="{{true}}">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.9l12-7.5a1 1 0 0 0 0-1.7l-12-7.5A1 1 0 0 0 7 4.5z"></path></svg>
+                </sc-if>
+              </span>
+            </button>
+          </sc-if>
+          <sc-if value="{{b.showReal}}" hint-placeholder-val="{{false}}">
+            <span style="position: relative; flex: none; align-self: {{b.align}}; padding: {{b.realPad}}; font-family: 'Geist Mono', monospace; font-size: 11px; color: {{b.ink}}; opacity: 0.85">{{b.realLabel}}</span>
+          </sc-if>
+        </div>
+      </sc-for>
+
+      <div style="position: absolute; left: 0; right: 0; top: {{nowTop}}px; height: 0; display: flex; align-items: center; z-index: 4; pointer-events: none; opacity: {{nowOp}}">
+        <span style="width: 52px; display: flex; justify-content: flex-end; padding-right: 2px; box-sizing: border-box">
+          <span style="background: {{k.nowPill}}; color: #FFFFFF; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500; padding: 3px 6px; border-radius: 9px; letter-spacing: -0.02em">{{nowLabel}}</span>
+        </span>
+        <span style="width: 10px; height: 10px; border-radius: 5px; background: {{k.now}}; margin-left: 1px; box-shadow: 0 0 0 3px {{k.nowHalo}}"></span>
+        <span style="flex: 1; height: 2px; background: {{k.now}}"></span>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding: 10px 10px 0">
+    <div style="background: {{k.cardBg}}; color: {{k.cardInk}}; border-radius: 22px; padding: 12px 12px 12px 14px; display: flex; flex-direction: column; gap: 10px; border: 1px solid {{k.cardLine}}">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <button onClick="{{card.open}}" style="flex: 1; min-width: 0; border: 0; background: none; color: {{k.cardInk}}; font: inherit; text-align: left; padding: 0; display: flex; flex-direction: column; gap: 2px; cursor: pointer">
+          <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: {{card.kc}}">{{card.kicker}}</span>
+          <span style="font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{card.title}}</span>
+          <span style="font-size: 12px; color: {{k.cardMuted}}; font-family: {{card.subFont}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{card.sub}}</span>
+        </button>
+        <sc-if value="{{card.isRun}}" hint-placeholder-val="{{false}}">
+          <button onClick="{{card.finish}}" aria-label="Terminer" style="flex: none; width: 44px; height: 44px; border-radius: 22px; border: 1px solid {{k.cardLine}}; background: transparent; color: {{k.cardInk}}; font: inherit; display: flex; align-items: center; justify-content: center; cursor: pointer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="2.5"></rect></svg>
+          </button>
+        </sc-if>
+        <sc-if value="{{card.hasAction}}" hint-placeholder-val="{{true}}">
+          <button onClick="{{card.action}}" aria-label="{{card.actionAria}}" style="flex: none; height: 44px; padding: 0 16px; border-radius: 22px; border: 0; background: {{card.btnBg}}; color: {{card.btnFg}}; font: inherit; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer">
+            <sc-if value="{{card.isPause}}" hint-placeholder-val="{{false}}">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="4" width="5" height="16" rx="1.5"></rect><rect x="14" y="4" width="5" height="16" rx="1.5"></rect></svg>
+            </sc-if>
+            <sc-if value="{{card.isPlay}}" hint-placeholder-val="{{true}}">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.9l12-7.5a1 1 0 0 0 0-1.7l-12-7.5A1 1 0 0 0 7 4.5z"></path></svg>
+            </sc-if>
+            {{card.btnLabel}}
+          </button>
+        </sc-if>
+      </div>
+      <sc-if value="{{card.isRun}}" hint-placeholder-val="{{false}}">
+        <span style="height: 6px; border-radius: 3px; background: {{k.cardTrack}}; overflow: hidden"><span style="display: block; height: 6px; width: {{card.pct}}%; background: {{card.c}}; border-radius: 3px; transition: width 0.9s linear"></span></span>
+      </sc-if>
+    </div>
+  </div>
+
+  <nav style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 6px 4px 14px">
+    <sc-for list="{{tabs}}" as="t" hint-placeholder-count="5">
+      <a href="{{t.href}}" style="text-decoration: none; color: {{t.color}}; display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; justify-content: center; font-size: 11px; font-weight: {{t.fw}}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{t.icon}}"></path></svg>
+        {{t.label}}
+      </a>
+    </sc-for>
+  </nav>
+
+  <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
+    <div style="position: absolute; top: 14px; left: 50%; transform: translateX(-50%); z-index: 30; background: {{k.inv}}; color: {{k.invInk}}; font-size: 13px; font-weight: 600; padding: 10px 16px; border-radius: 20px; white-space: nowrap; box-shadow: 0 8px 24px rgba(0,0,0,0.3)">{{toast}}</div>
+  </sc-if>
+
+  <sc-if value="{{sheetOpen}}" hint-placeholder-val="{{false}}">
+    <div style="position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; justify-content: flex-end">
+      <button aria-label="Fermer" onClick="{{close}}" style="position: absolute; inset: 0; border: 0; background: {{k.scrim}}; padding: 0; cursor: pointer"></button>
+      <div style="position: relative; max-height: 92%; overflow-y: auto; scrollbar-width: none; background: {{k.sheet}}; border-radius: 28px 28px 0 0; padding: 10px 18px 22px; display: flex; flex-direction: column; gap: 14px; box-sizing: border-box">
+        <span style="align-self: center; width: 40px; height: 5px; border-radius: 3px; background: {{k.line}}"></span>
+
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: {{sel.tink}}">
+          <span style="width: 8px; height: 8px; border-radius: 4px; background: {{sel.c}}"></span>
+          <span>{{sel.themeNom}}</span><span style="color: {{k.faint}}">›</span>
+          <span>{{sel.projet}}</span><span style="color: {{k.faint}}">›</span>
+          <span>{{sel.sp}}</span>
+        </div>
+
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 10px">
+          <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+            <h2 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1">{{sel.etape}}</h2>
+            <span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: {{k.muted}}">{{sel.heures}} · {{sel.duree}}</span>
+          </div>
+          <sc-if value="{{sel.hasCode}}" hint-placeholder-val="{{true}}">
+            <span style="flex: none; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500; padding: 4px 8px; border-radius: 8px; background: {{sel.bg}}; color: {{sel.tink}}">{{sel.code}}</span>
+          </sc-if>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 12px; background: {{k.surf2}}; border-radius: 18px; padding: 8px 8px 8px 14px">
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0">
+            <span style="font-family: 'Geist Mono', monospace; font-size: 20px; font-weight: 500">{{sel.timer}}</span>
+            <span style="height: 4px; border-radius: 2px; background: {{k.track}}; overflow: hidden"><span style="display: block; height: 4px; width: {{sel.runPct}}%; background: {{sel.c}}"></span></span>
+          </div>
+          <button onClick="{{selPlay}}" style="flex: none; height: 48px; padding: 0 18px; border-radius: 16px; border: 0; background: {{sel.c}}; color: {{sel.onC}}; font: inherit; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer">
+            <sc-if value="{{sel.isRunning}}" hint-placeholder-val="{{false}}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="4" width="5" height="16" rx="1.5"></rect><rect x="14" y="4" width="5" height="16" rx="1.5"></rect></svg>
+            </sc-if>
+            <sc-if value="{{sel.notRunning}}" hint-placeholder-val="{{true}}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.9l12-7.5a1 1 0 0 0 0-1.7l-12-7.5A1 1 0 0 0 7 4.5z"></path></svg>
+            </sc-if>
+            {{sel.playLabel}}
+          </button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">Réalisé · corrigeable à la main</span>
+          <sc-for list="{{sel.metrics}}" as="m" hint-placeholder-count="2">
+            <div style="display: flex; flex-direction: column; gap: 8px; padding: 10px 0; border-bottom: 1px solid {{k.line}}">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+                <div style="display: flex; flex-direction: column; min-width: 0">
+                  <span style="font-size: 13px; color: {{k.muted}}">{{m.label}}</span>
+                  <span style="font-size: 19px; font-weight: 600">{{m.value}} <span style="font-size: 13px; font-weight: 500; color: {{k.muted}}">{{m.of}}</span></span>
+                </div>
+                <div style="display: flex; gap: 6px">
+                  <button aria-label="Diminuer" onClick="{{m.dec}}" style="width: 44px; height: 44px; border-radius: 14px; border: 1px solid {{k.line}}; background: {{k.surf}}; color: {{k.ink}}; font: inherit; font-size: 20px; cursor: pointer">−</button>
+                  <button aria-label="Augmenter" onClick="{{m.inc}}" style="width: 44px; height: 44px; border-radius: 14px; border: 1px solid {{k.line}}; background: {{k.surf}}; color: {{k.ink}}; font: inherit; font-size: 20px; cursor: pointer">+</button>
+                </div>
+              </div>
+              <span style="position: relative; height: 8px; border-radius: 4px; background: {{k.track}}">
+                <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{m.w}}%; border-radius: 4px; background: {{m.color}}; transition: width 0.25s ease"></span>
+                <span style="position: absolute; top: -3px; bottom: -3px; left: {{m.goalAt}}%; width: 2px; background: {{k.ink}}; opacity: 0.55"></span>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+
+        <button onClick="{{toggleSel}}" style="height: 52px; border-radius: 18px; border: 0; background: {{selBtnBg}}; color: {{selBtnFg}}; font: inherit; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+          {{selBtnLabel}}
+        </button>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: -4px">
+          <button onClick="{{openRep}}" style="height: 46px; border-radius: 14px; border: 1px solid {{k.line}}; background: {{k.surf}}; color: {{k.ink}}; font: inherit; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2.5M9 2h6"></path></svg>
+            Reporter</button>
+          <a href="Focus.dc.html" style="height: 46px; border-radius: 14px; border: 1px solid {{k.line}}; background: {{k.surf}}; color: {{k.ink}}; font-size: 14px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"></circle><circle cx="12" cy="12" r="3"></circle></svg>
+            Mode Focus</a>
+        </div>
+
+        <sc-if value="{{sel.hasSps}}" hint-placeholder-val="{{true}}">
+        <div style="background: {{k.surf2}}; border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 12px">
+          <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.muted}}">Sous-projets alimentés · {{monthName}}</span>
+          <sc-for list="{{sel.sps}}" as="x" hint-placeholder-count="2">
+            <a href="{{links.sp}}" style="text-decoration: none; color: {{k.ink}}; display: flex; flex-direction: column; gap: 6px; min-height: 44px; justify-content: center">
+              <span style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px">
+                <span style="font-size: 14px; font-weight: 600; min-width: 0">{{x.nom}}</span>
+                <span style="flex: none; font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 700; color: {{sel.tink}}">{{x.pct}} %</span>
+              </span>
+              <span style="position: relative; height: 8px; border-radius: 4px; background: {{k.track}}; overflow: hidden">
+                <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{x.pct}}%; background: {{sel.c}}; border-radius: 4px"></span>
+                <span style="position: absolute; top: 0; bottom: 0; left: {{monthAt}}%; width: 2px; background: {{k.ink}}; opacity: 0.5"></span>
+              </span>
+              <span style="font-size: 12px; color: {{k.muted}}">{{x.mois}}</span>
+            </a>
+        </sc-if>
+          </sc-for>
+          <sc-if value="{{sel.multi}}" hint-placeholder-val="{{false}}">
+            <span style="font-size: 12px; color: {{k.muted}}">Ce que tu notes ici compte dans tous ces sous-projets. Le trait marque où tu devrais être aujourd’hui.</span>
+          </sc-if>
+        </div>
+
+        <a href="{{links.sp}}" style="align-self: flex-start; color: {{k.ink}}; font-size: 14px; font-weight: 600; min-height: 44px; display: flex; align-items: center; gap: 6px">Ouvrir le sous-projet
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+        </a>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{repOpen}}" hint-placeholder-val="{{false}}">
+    <div style="position: absolute; inset: 0; z-index: 12; display: flex; flex-direction: column; justify-content: flex-end">
+      <button aria-label="Fermer" onClick="{{closeRep}}" style="position: absolute; inset: 0; border: 0; background: {{k.scrim}}; padding: 0; cursor: pointer"></button>
+      <div style="position: relative; background: {{k.sheet}}; border-radius: 28px 28px 0 0; padding: 10px 18px 22px; display: flex; flex-direction: column; gap: 14px">
+        <span style="align-self: center; width: 40px; height: 5px; border-radius: 3px; background: {{k.line}}"></span>
+        <div style="display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; font-weight: 600; color: {{rep.tink}}">Reporter · {{rep.duree}}</span>
+          <h2 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 24px; font-weight: 700; letter-spacing: -0.02em">{{rep.etape}}</h2>
+        </div>
+
+        <div style="display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 0 -18px; padding: 0 18px">
+          <sc-for list="{{rep.days}}" as="d" hint-placeholder-count="6">
+            <button onClick="{{d.pick}}" style="flex: none; height: 44px; padding: 0 14px; border-radius: 14px; border: 1px solid {{d.border}}; background: {{d.bg}}; color: {{d.fg}}; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">{{d.label}}</button>
+          </sc-for>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; background: {{k.surf2}}; border-radius: 18px; padding: 8px">
+          <button onClick="{{rep.m60}}" aria-label="Une heure plus tôt" style="width: 44px; height: 44px; border-radius: 14px; border: 0; background: {{k.surf}}; color: {{k.ink}}; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer">−1 h</button>
+          <button onClick="{{rep.m15}}" aria-label="15 minutes plus tôt" style="width: 44px; height: 44px; border-radius: 14px; border: 0; background: {{k.surf}}; color: {{k.ink}}; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer">−15</button>
+          <div style="display: flex; flex-direction: column; align-items: center">
+            <span style="font-family: 'Geist Mono', monospace; font-size: 28px; font-weight: 500; letter-spacing: -0.02em">{{rep.start}}</span>
+            <span style="font-size: 11px; color: {{k.muted}}">jusqu’à {{rep.end}}</span>
+          </div>
+          <button onClick="{{rep.p15}}" aria-label="15 minutes plus tard" style="width: 44px; height: 44px; border-radius: 14px; border: 0; background: {{k.surf}}; color: {{k.ink}}; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer">+15</button>
+          <button onClick="{{rep.p60}}" aria-label="Une heure plus tard" style="width: 44px; height: 44px; border-radius: 14px; border: 0; background: {{k.surf}}; color: {{k.ink}}; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer">+1 h</button>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px">
+          <button onClick="{{rep.toggleRappel}}" aria-pressed="{{rep.rappel}}" style="flex: none; display: flex; align-items: center; gap: 10px; border: 0; background: transparent; color: {{k.ink}}; font: inherit; font-size: 14px; font-weight: 600; padding: 0; min-height: 44px; cursor: pointer">
+            <span style="width: 44px; height: 26px; border-radius: 13px; background: {{rep.swBg}}; position: relative; transition: background 0.2s"><span style="position: absolute; top: 3px; left: {{rep.swX}}px; width: 20px; height: 20px; border-radius: 10px; background: #FFFFFF; transition: left 0.2s"></span></span>
+            Me rappeler
+          </button>
+          <div style="display: flex; gap: 6px; opacity: {{rep.avOp}}">
+            <sc-for list="{{rep.avances}}" as="a" hint-placeholder-count="3">
+              <button onClick="{{a.pick}}" style="height: 40px; padding: 0 10px; border-radius: 12px; border: 1px solid {{a.border}}; background: {{a.bg}}; color: {{a.fg}}; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer">{{a.label}}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <sc-if value="{{rep.free}}" hint-placeholder-val="{{true}}">
+          <div style="display: flex; align-items: center; gap: 10px; background: {{k.goodBg}}; color: {{k.goodInk}}; border-radius: 16px; padding: 12px 14px; font-size: 14px; font-weight: 600">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+            {{rep.freeLabel}}
+          </div>
+        </sc-if>
+        <sc-if value="{{rep.busy}}" hint-placeholder-val="{{false}}">
+          <div style="display: flex; flex-direction: column; gap: 10px; background: {{k.warnBg}}; border-radius: 16px; padding: 12px 14px">
+            <span style="font-size: 13px; font-weight: 600; color: {{k.warnInk}}">Ce créneau est déjà occupé par :</span>
+            <div style="display: flex; align-items: center; gap: 10px; background: {{rep.occBg}}; color: {{rep.occInk}}; border-radius: 12px; padding: 10px 12px">
+              <span style="width: 8px; height: 30px; border-radius: 4px; background: {{rep.occC}}"></span>
+              <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 14px; font-weight: 600">{{rep.occTitre}}</span><span style="font-family: 'Geist Mono', monospace; font-size: 11px; opacity: 0.85">{{rep.occHeures}}</span></span>
+            </div>
+            <span style="font-size: 12px; color: {{k.warnInk}}">Créneaux libres les plus proches pour {{rep.duree}} :</span>
+            <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px">
+              <sc-for list="{{rep.sugg}}" as="s" hint-placeholder-count="2">
+                <button onClick="{{s.pick}}" style="min-height: 52px; border-radius: 12px; border: 0; background: {{k.surf}}; color: {{k.ink}}; font: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; cursor: pointer">
+                  <span style="font-size: 11px; color: {{k.muted}}">{{s.kind}}</span>
+                  <span style="font-family: 'Geist Mono', monospace; font-size: 14px; font-weight: 500">{{s.label}}</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <button onClick="{{rep.validate}}" style="height: 54px; border-radius: 18px; border: 0; background: {{k.inv}}; color: {{k.invInk}}; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer">{{rep.validateLabel}}</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{confirmOpen}}" hint-placeholder-val="{{false}}">
+    <div style="position: absolute; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box">
+      <div style="position: absolute; inset: 0; background: {{k.scrim}}"></div>
+      <div style="position: relative; width: 100%; background: {{k.sheet}}; border-radius: 28px; padding: 24px 20px 18px; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center">
+        <span style="width: 72px; height: 72px; border-radius: 36px; background: {{conf.bg}}; display: flex; align-items: center; justify-content: center; position: relative">
+          <svg width="72" height="72" viewBox="0 0 72 72" style="position: absolute; inset: 0"><circle cx="36" cy="36" r="33" fill="none" stroke="{{conf.c}}" stroke-width="4"></circle></svg>
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="{{conf.c}}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+        </span>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <span style="font-family: 'Geist Mono', monospace; font-size: 13px; color: {{k.muted}}">{{conf.temps}} écoulées</span>
+          <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2">As-tu terminé « {{conf.etape}} » ?</span>
+        </div>
+        <button onClick="{{confYes}}" style="width: 100%; height: 52px; border-radius: 16px; border: 0; background: {{conf.c}}; color: {{conf.onC}}; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer">Oui, c’est fait</button>
+        <div style="width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+          <button onClick="{{confFix}}" style="height: 46px; border-radius: 14px; border: 1px solid {{k.line}}; background: transparent; color: {{k.ink}}; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Corriger le temps</button>
+          <button onClick="{{confNo}}" style="height: 46px; border-radius: 14px; border: 1px solid {{k.line}}; background: transparent; color: {{k.ink}}; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Pas encore</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"prenom":{"editor":"text","default":"Luther"},"vitesse":{"editor":"enum","options":["demo","reelle"],"default":"demo"},"scene":{"editor":null,"default":""},"$preview":{"width":390,"height":844}}'>
+var TOK = {
+  nuit: { bg: '#0E0F13', surf: '#1A1B22', surf2: '#1F2129', sheet: '#16171D', line: '#2C2E38', track: '#2C2E38', ink: '#F2F2F5', muted: '#A3A6B1', faint: '#6C6F7B', inv: '#F2F2F5', invInk: '#0E0F13', scrim: 'rgba(0,0,0,0.62)', now: '#FF4D3A', nowPill: '#D6311F', nowHalo: 'rgba(255,77,58,0.25)', cardBg: '#1C1D25', cardInk: '#F2F2F5', cardMuted: '#A3A6B1', cardLine: '#2E3039', cardTrack: '#2E3039', goodBg: '#12301F', goodInk: '#7BE3A8', warnBg: '#33260F', warnInk: '#FFCB7A', today: '#FF4D3A', todayInk: '#0E0F13' },
+  jour: { bg: '#F5F4F0', surf: '#FFFFFF', surf2: '#EDEBE6', sheet: '#FFFFFF', line: '#E3E1DB', track: '#E3E1DB', ink: '#16171B', muted: '#5E6068', faint: '#8A8C93', inv: '#16171B', invInk: '#FFFFFF', scrim: 'rgba(22,23,27,0.45)', now: '#E5482E', nowPill: '#C63A1F', nowHalo: 'rgba(229,72,46,0.18)', cardBg: '#16171B', cardInk: '#FFFFFF', cardMuted: '#B9BBC2', cardLine: '#2E3039', cardTrack: '#33353F', goodBg: '#DFF2E6', goodInk: '#17623A', warnBg: '#FBEBD0', warnInk: '#6E4300', today: '#C63A1F', todayInk: '#FFFFFF' }
+};
+var THEMES = {
+  nuit: {
+    dieu: { nom: 'Ma relation avec Dieu', c: '#9D8CFF', bg: '#262143', ink: '#DCD5FF', fill: 'rgba(157,140,255,0.36)', on: '#120E2E' },
+    service: { nom: 'Mon service à Dieu', c: '#34D1B6', bg: '#102D29', ink: '#B4F1E6', fill: 'rgba(52,209,182,0.30)', on: '#04241F' },
+    travail: { nom: 'Mon travail et mes études', c: '#5EA6FF', bg: '#14253D', ink: '#CFE3FF', fill: 'rgba(94,166,255,0.30)', on: '#06182E' },
+    vie: { nom: 'Ma vie personnelle', c: '#FF8F66', bg: '#381F17', ink: '#FFD9CA', fill: 'rgba(255,143,102,0.30)', on: '#2E1006' },
+    trans: { nom: 'Transversal', c: '#F5B843', bg: '#33280F', ink: '#FBE4B2', fill: 'rgba(245,184,67,0.28)', on: '#2A1C00' },
+    none: { nom: 'Rendez-vous', c: '#A3A6B1', bg: '#2A2C35', ink: '#E3E4EA', fill: 'rgba(163,166,177,0.28)', on: '#16171D' }
+  },
+  jour: {
+    dieu: { nom: 'Ma relation avec Dieu', c: '#5B4FE0', bg: '#E9E6FD', ink: '#2C2380', fill: 'rgba(91,79,224,0.24)', on: '#FFFFFF' },
+    service: { nom: 'Mon service à Dieu', c: '#0B7F72', bg: '#DCF0EC', ink: '#08524A', fill: 'rgba(11,127,114,0.22)', on: '#FFFFFF' },
+    travail: { nom: 'Mon travail et mes études', c: '#2B67A8', bg: '#DFEAF6', ink: '#183F6A', fill: 'rgba(43,103,168,0.22)', on: '#FFFFFF' },
+    vie: { nom: 'Ma vie personnelle', c: '#B4542F', bg: '#F5E2D9', ink: '#6E2E14', fill: 'rgba(180,84,47,0.22)', on: '#FFFFFF' },
+    trans: { nom: 'Transversal', c: '#A66D00', bg: '#F7ECD2', ink: '#5E3E00', fill: 'rgba(176,116,0,0.24)', on: '#FFFFFF' },
+    none: { nom: 'Rendez-vous', c: '#6B6E76', bg: '#E7E5E0', ink: '#3A3B42', fill: 'rgba(107,110,118,0.22)', on: '#FFFFFF' }
+  }
+};
+var BLOCS = [
+  { id: 'rdqd1', t: 'dieu', d: '05:00', f: '05:30', code: 'DDEWG', projet: 'RDQD', sp: '3 rencontres par jour', etape: 'RDQD du matin', mes: ['fois', 'temps'], qLabel: 'Rencontres', unite: 'rencontre', prevuQ: 1, pct: 67, mois: '62 rencontres sur 93' },
+  { id: 'bible', t: 'dieu', d: '05:30', f: '06:15', code: 'BR', projet: 'La lecture de la Bible', sp: '7 chapitres par jour', etape: 'Lecture de la Bible', mes: ['qte', 'temps'], qLabel: 'Chapitres lus', unite: 'ch.', prevuQ: 7, pct: 11, mois: '23 chapitres sur 217' },
+  { id: 'pa1', t: 'dieu', d: '06:15', f: '07:00', code: 'PA', projet: 'La prière seule', sp: '2 heures par jour', etape: 'Prière seule', mes: ['temps'], pct: 58, mois: '36 h sur 62 h' },
+  { id: 'forme', t: 'vie', d: '07:00', f: '07:30', projet: 'La forme physique', sp: '3 séances par semaine', etape: 'Course de 5 km', mes: ['qte', 'temps'], qLabel: 'Distance', unite: 'km', prevuQ: 5, pct: 31, mois: '4 séances sur 13' },
+  { id: 'rapport', t: 'travail', d: '08:30', f: '12:00', projet: 'L’excellence professionnelle', sp: 'Livrer le rapport T3', etape: 'Rédiger la section 2', mes: ['qte', 'temps'], qLabel: 'Pages', unite: 'pages', prevuQ: 4, pct: 40, mois: '4 sections sur 10' },
+  { id: 'rdqd2', t: 'dieu', d: '12:00', f: '12:20', code: 'DDEWG', projet: 'RDQD', sp: '3 rencontres par jour', etape: 'RDQD de midi', mes: ['fois', 'temps'], qLabel: 'Rencontres', unite: 'rencontre', prevuQ: 1, pct: 67, mois: '62 rencontres sur 93' },
+  { id: 'cl', t: 'dieu', d: '12:30', f: '13:00', code: 'CL', projet: 'LLC', sp: 'L’agressivité spirituelle (ZTF)', etape: 'Littérature chrétienne', mes: ['qte', 'temps'], qLabel: 'Pages lues', unite: 'pages', prevuQ: 25, pct: 40, mois: '166 pages sur 417' },
+  { id: 'revue', t: 'travail', d: '13:00', f: '16:30', projet: 'L’excellence professionnelle', sp: 'Livrer le rapport T3', etape: 'Revue avec l’équipe', mes: ['temps'], pct: 40, mois: '4 sections sur 10' },
+  { id: 'rdv', t: 'none', d: '16:30', f: '17:00', projet: 'Sans projet', sp: '', etape: 'Réunion d’équipe', mes: ['temps'], pct: 0, mois: '' },
+  { id: 'etudes', t: 'travail', d: '17:00', f: '18:00', projet: 'L’excellence académique', sp: 'Réussir la session d’automne', etape: 'Réviser le chapitre 3', mes: ['qte', 'temps'], qLabel: 'Chapitres', unite: 'ch.', prevuQ: 1, pct: 45, mois: '5 chapitres sur 11' },
+  { id: 'evang', t: 'service', d: '18:15', f: '19:30', projet: 'L’évangélisation', sp: '5 heures par semaine', etape: 'Sortie dans le quartier', mes: ['qte', 'temps'], qLabel: 'Personnes rencontrées', unite: 'pers.', prevuQ: 5, pct: 54, mois: '11 h sur 21 h' },
+  { id: 'pwo', t: 'dieu', d: '19:45', f: '20:30', code: 'PWO', projet: 'PWO', sp: 'Prier avec d’autres', etape: 'Prière avec les frères', mes: ['temps'], pct: 22, mois: '2 h sur 9 h' },
+  { id: 'mariage', t: 'vie', d: '20:30', f: '21:15', projet: 'La préparation pour le mariage', sp: 'Lire un livre à deux', etape: 'Lecture à deux, chapitre 4', mes: ['qte', 'temps'], qLabel: 'Chapitres', unite: 'ch.', prevuQ: 1, pct: 30, mois: '3 chapitres sur 10' },
+  { id: 'bilan', t: 'trans', d: '21:15', f: '21:30', projet: 'Le suivi de tous les projets', sp: 'Rapport chaque soir', etape: 'Rapport du jour', mes: ['temps'], pct: 80, mois: '4 rapports sur 5' },
+  { id: 'rdqd3', t: 'dieu', d: '21:30', f: '21:50', code: 'DDEWG', projet: 'RDQD', sp: '3 rencontres par jour', etape: 'RDQD du soir', mes: ['fois', 'temps'], qLabel: 'Rencontres', unite: 'rencontre', prevuQ: 1, pct: 67, mois: '62 rencontres sur 93' }
+];
+var EXTRA_SPS = {
+  bible: [{ nom: 'Étudier le Nouveau Testament · octobre', pct: 9, mois: '23 ch. sur 260' }],
+  cl: [{ nom: 'Lire 12 livres en 2026', pct: 58, mois: '7 livres sur 12' }],
+  evang: [{ nom: 'Parler à 20 personnes ce mois', pct: 55, mois: '11 personnes sur 20' }]
+};
+function spsOf(b) { if (b.t === 'none') return []; return [{ nom: b.sp, pct: b.pct, mois: b.mois }].concat(EXTRA_SPS[b.id] || []); }
+function projPct(b) { var a = spsOf(b); if (!a.length) return 0; return Math.round(a.reduce(function (n, x) { return n + x.pct; }, 0) / a.length); }
+function spLabel(b) { var a = spsOf(b); if (!a.length) return 'Sans projet'; return a.length > 1 ? a.length + ' sous-projets' : a[0].nom; }
+var PX = 72 / 60;
+var ICONS = {
+  fil: 'M4 6h3M4 12h3M4 18h3M10 6h10M10 12h7M10 18h10',
+  projets: 'M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5',
+  rapports: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6',
+  ebenezer: 'M3 4h18v5H3zM5 9v11h14V9M10 13h4',
+  reglages: 'M4 7h10M18 7h2M4 17h4M12 17h8M14 5v4M8 15v4'
+};
+function mins(s) { var p = s.split(':'); return parseInt(p[0], 10) * 60 + parseInt(p[1], 10); }
+var DAYS_FR = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
+function pad(n) { return (n < 10 ? '0' : '') + n; }
+function hm(m) { m = ((m % 1440) + 1440) % 1440; return pad(Math.floor(m / 60)) + ':' + pad(m % 60); }
+function dur(m) { var h = Math.floor(m / 60), r = m % 60; return h ? (h + ' h' + (r ? ' ' + pad(r) : '')) : (r + ' min'); }
+function clock(sec) { sec = Math.max(0, Math.round(sec)); return pad(Math.floor(sec / 60)) + ':' + pad(sec % 60); }
+function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    var now = new Date();
+    var nowMin = now.getHours() * 60 + now.getMinutes();
+    var done = {}, real = {};
+    BLOCS.forEach(function (b) {
+      if (mins(b.f) <= nowMin && b.id !== 'pa1' && b.id !== 'pwo') {
+        done[b.id] = true;
+        real[b.id] = { min: mins(b.f) - mins(b.d), q: b.id === 'bible' ? 3 : (b.prevuQ || 0) };
+      }
+    });
+    var st = { now: now, done: done, real: real, run: null, sel: null, rep: null, confirm: null, moved: {}, hidden: {}, toast: '' };
+    var sc = props.scene || '';
+    if (sc === 'lance') { st.run = { id: 'rdqd1', el: 19 * 60 + 12, paused: false }; delete st.done.rdqd1; }
+    if (sc === 'volet') { st.done.rdqd1 = true; st.real.rdqd1 = { min: 20, q: 1 }; st.sel = 'rdqd1'; }
+    if (sc === 'reporter') { st.rep = { id: 'pa1', day: 0, start: 8 * 60 + 45, rappel: true, avance: 10 }; }
+    if (sc === 'confirmer') { st.run = { id: 'rdqd1', el: 30 * 60, paused: true }; st.confirm = 'rdqd1'; delete st.done.rdqd1; }
+    this.state = st;
+  }
+  componentDidMount() {
+    var self = this;
+    this._t = setInterval(function () {
+      var s = self.state, patch = { now: new Date() };
+      if (s.run && !s.run.paused) {
+        var b = self.bloc(s.run.id);
+        var total = (mins(b.f) - mins(b.d)) * 60;
+        var el = s.run.el + (self.props.vitesse === 'reelle' ? 1 : 60);
+        if (el >= total) { patch.run = { id: s.run.id, el: total, paused: true }; patch.confirm = s.run.id; }
+        else patch.run = { id: s.run.id, el: el, paused: false };
+      }
+      self.setState(patch);
+    }, 1000);
+  }
+  componentWillUnmount() { clearInterval(this._t); clearTimeout(this._toastT); }
+  bloc(id) { return BLOCS.filter(function (b) { return b.id === id; })[0]; }
+  times(b) {
+    var m = this.state.moved[b.id];
+    return m ? { s: m.s, e: m.s + (mins(b.f) - mins(b.d)) } : { s: mins(b.d), e: mins(b.f) };
+  }
+  say(msg) {
+    var self = this;
+    clearTimeout(this._toastT);
+    this.setState({ toast: msg });
+    this._toastT = setTimeout(function () { self.setState({ toast: '' }); }, 2800);
+  }
+  getReal(b) {
+    var r = this.state.real[b.id];
+    return r ? r : { min: 0, q: 0 };
+  }
+  setReal(id, patch) {
+    var b = this.bloc(id);
+    var r = Object.assign({}, this.getReal(b), patch);
+    var o = Object.assign({}, this.state.real); o[id] = r;
+    this.setState({ real: o });
+  }
+  togglePlay(id) {
+    var run = this.state.run;
+    if (run && run.id === id) { this.setState({ run: Object.assign({}, run, { paused: !run.paused }) }); return; }
+    var b = this.bloc(id);
+    var start = this.getReal(b).min * 60;
+    var d = Object.assign({}, this.state.done); delete d[id];
+    this.setState({ run: { id: id, el: start, paused: false }, done: d });
+  }
+  markDone(id, on) {
+    var b = this.bloc(id);
+    var d = Object.assign({}, this.state.done);
+    if (on) d[id] = true; else delete d[id];
+    var patch = { done: d };
+    if (on) {
+      var r = this.getReal(b);
+      var o = Object.assign({}, this.state.real);
+      o[id] = { min: r.min || (mins(b.f) - mins(b.d)), q: r.q || b.prevuQ || 0 };
+      patch.real = o;
+      if (this.state.run && this.state.run.id === id) patch.run = null;
+    }
+    this.setState(patch);
+  }
+  daySchedule(day, exceptId) {
+    var self = this;
+    return BLOCS.filter(function (b) { return b.id !== exceptId && !(day === 0 && self.state.hidden[b.id]); })
+      .map(function (b) { var t = day === 0 ? self.times(b) : { s: mins(b.d), e: mins(b.f) }; return { b: b, s: t.s, e: t.e }; })
+      .sort(function (a, c) { return a.s - c.s; });
+  }
+
+  renderVals() {
+    var self = this, s = this.state;
+    var mode = this.props.dark === false ? 'jour' : 'nuit';
+    var k = TOK[mode], TH = THEMES[mode];
+    var now = s.now, nowMin = now.getHours() * 60 + now.getMinutes();
+    var mon0 = new Date(now); mon0.setHours(0, 0, 0, 0); mon0.setDate(mon0.getDate() - ((mon0.getDay() + 6) % 7));
+    var todayIdx = (now.getDay() + 6) % 7, selIdx = s.day == null ? todayIdx : s.day, viewToday = selIdx === todayIdx;
+    var viewDate = new Date(mon0); viewDate.setDate(mon0.getDate() + selIdx);
+    var D = {};
+    if (viewToday) D = s.done; else if (selIdx < todayIdx) BLOCS.forEach(function (b) { if (Math.abs(Math.sin((selIdx + 1) * 13 + b.id.length * 7 + b.id.charCodeAt(0))) < 0.8) D[b.id] = true; });
+    var links = mode === 'nuit'
+      ? { notifs: 'Notifications.dc.html', sp: 'SousProjet.dc.html', ajouter: 'AjouterTache.dc.html', semaine: 'Semaine.dc.html', mois: 'Mois.dc.html', recherche: 'Recherche.dc.html', projets: 'Projets.dc.html', rapports: 'Rapport.dc.html', reglages: 'Reglages.dc.html' }
+      : { notifs: 'Notifications.dc.html', sp: 'JourSousProjet.dc.html', ajouter: 'JourAjouterTache.dc.html', semaine: 'JourSemaine.dc.html', mois: 'JourMois.dc.html', recherche: 'JourRecherche.dc.html', projets: 'JourProjets.dc.html', rapports: 'JourRapport.dc.html', reglages: 'JourReglages.dc.html' };
+
+    var hours = [];
+    for (var h = 0; h <= 24; h++) hours.push({ top: h * 60 * PX - 7, label: pad(h % 24) + ':00', op: Math.abs(h * 60 - nowMin) < 13 ? 0 : 1 });
+
+    var visible = BLOCS.filter(function (b) { return !s.hidden[b.id]; });
+    var blocs = visible.map(function (b) {
+      var th = TH[b.t], t = self.times(b), len = t.e - t.s;
+      var hgt = Math.max(len * PX - 3, 22);
+      var isDone = !!D[b.id];
+      var running = viewToday && s.run && s.run.id === b.id;
+      var runPct = running ? Math.min(100, s.run.el / (len * 60) * 100) : 0;
+      var r = self.getReal(b);
+      var past = viewToday ? t.e <= nowMin : selIdx < todayIdx;
+      var tall = hgt >= 48;
+      var realLabel = '';
+      if (isDone) realLabel = b.mes.indexOf('qte') >= 0 ? (r.q + '/' + b.prevuQ + ' ' + b.unite) : dur(r.min);
+      return {
+        top: t.s * PX + 1, h: hgt, bg: th.bg, ink: th.ink, c: th.c,
+        fill: th.fill, fillPct: isDone ? 100 : runPct,
+        edge: running ? th.c : 'transparent',
+        shadow: running ? ('0 0 0 1.5px ' + th.c + ', 0 6px 18px ' + th.fill) : 'none',
+        ringBg: isDone ? th.c : 'transparent', checkInk: mode === 'nuit' ? th.on : '#FFFFFF', done: isDone,
+        op: past && !isDone && !running ? 0.55 : 1, titleOp: isDone ? 0.78 : 1,
+        tall: tall, fs: hgt < 30 ? 12 : 14, pad: tall ? '9px 4px 9px 10px' : '0 4px 0 10px',
+        align: tall ? 'flex-start' : 'center', circleTop: tall ? '1px' : '0',
+        sub: b.projet + ' · ' + hm(t.s) + '–' + hm(t.e) + (b.t === 'none' ? '' : ' · mois ' + projPct(b) + ' %'),
+        etape: b.etape, pct: projPct(b),
+        showPlay: viewToday && !isDone && hgt >= 28, running: !!(running && !s.run.paused), notRunning: !(running && !s.run.paused),
+        playInk: th.on, playAria: (running && !s.run.paused ? 'Mettre en pause ' : 'Lancer ') + b.etape,
+        showReal: isDone, realLabel: realLabel, realPad: tall ? '11px 10px 0 4px' : '0 10px 0 4px',
+        aria: b.etape + ', ' + hm(t.s) + ' à ' + hm(t.e),
+        open: function () { self.setState({ sel: b.id }); },
+        play: function () { self.togglePlay(b.id); }
+      };
+    });
+
+    var cur = null, next = null;
+    visible.forEach(function (b) {
+      var t = self.times(b);
+      if (!cur && t.s <= nowMin && nowMin < t.e) cur = b;
+      if (!next && t.s > nowMin) next = b;
+    });
+    var card;
+    if (s.run) {
+      var rb = this.bloc(s.run.id), rt = this.times(rb), rlen = (rt.e - rt.s) * 60;
+      card = {
+        kicker: s.run.paused ? 'En pause' : 'En cours', kc: TH[rb.t].c, title: rb.etape,
+        sub: clock(s.run.el) + ' / ' + clock(rlen), subFont: "'Geist Mono', monospace",
+        isRun: true, pct: Math.min(100, s.run.el / rlen * 100), c: TH[rb.t].c,
+        hasAction: true, isPause: !s.run.paused, isPlay: s.run.paused,
+        btnLabel: s.run.paused ? 'Reprendre' : 'Pause', actionAria: s.run.paused ? 'Reprendre' : 'Mettre en pause',
+        btnBg: TH[rb.t].c, btnFg: TH[rb.t].on,
+        action: function () { self.togglePlay(rb.id); },
+        finish: function () { self.setState({ run: Object.assign({}, s.run, { paused: true }), confirm: rb.id }); },
+        open: function () { self.setState({ sel: rb.id }); }
+      };
+    } else {
+      var tg = cur || next;
+      if (tg) {
+        var tt = this.times(tg), th2 = TH[tg.t], dn = !!D[tg.id];
+        card = {
+          kicker: cur ? 'En ce moment · reste ' + dur(tt.e - nowMin) : 'Ensuite · dans ' + dur(tt.s - nowMin), kc: th2.c,
+          title: tg.etape, sub: tg.projet + ' · ' + hm(tt.s) + '–' + hm(tt.e), subFont: 'inherit',
+          isRun: false, pct: 0, c: th2.c, hasAction: !dn, isPause: false, isPlay: true,
+          btnLabel: 'Lancer', actionAria: 'Lancer ' + tg.etape, btnBg: th2.c, btnFg: th2.on,
+          action: function () { self.togglePlay(tg.id); }, finish: function () {},
+          open: function () { self.setState({ sel: tg.id }); }
+        };
+      } else {
+        card = { kicker: 'Journée accomplie', kc: k.now, title: 'Ton rapport du jour est prêt', sub: 'Touche pour le relire et l’envoyer', subFont: 'inherit', isRun: false, hasAction: false, isPause: false, isPlay: false, pct: 0, c: k.now, action: function () {}, finish: function () {}, open: function () {} };
+      }
+    }
+
+    if (!viewToday) {
+      var fut = selIdx > todayIdx, nd0 = visible.filter(function (b) { return D[b.id]; }).length;
+      card = { kicker: cap(viewDate.toLocaleDateString('fr-CA', { weekday: 'long' })), kc: k.muted, title: fut ? visible.length + ' blocs prévus' : nd0 + ' sur ' + visible.length + ' accomplis',
+        sub: fut ? 'Planifié · touche un bloc pour le modifier' : 'Rapport du jour disponible dans Rapports', subFont: 'inherit', isRun: false, pct: 0, c: k.muted, hasAction: false, isPause: false, isPlay: false, btnLabel: '', actionAria: '', btnBg: 'transparent', btnFg: k.ink, action: function () {}, finish: function () {}, open: function () {} };
+    }
+    var monday = new Date(now); monday.setHours(0, 0, 0, 0);
+    monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+    var letters = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+    var nDone = visible.filter(function (b) { return D[b.id]; }).length;
+    var dayPct = Math.round(nDone / visible.length * 100);
+    var week = letters.map(function (l, i) {
+      var d = new Date(monday); d.setDate(monday.getDate() + i);
+      var isToday = d.toDateString() === now.toDateString();
+      var isPast = d < now && !isToday;
+      var pcts = [86, 74, 91, 64, 80, 70, 88];
+      var isSel = i === selIdx;
+      return { letter: l, num: d.getDate(), sel: isSel, aria: DAYS_FR[i] + ' ' + d.getDate(), pick: function () { self.setState({ day: i, sel: null }); }, bg: isToday ? k.today : (isSel ? k.surf2 : 'transparent'), fg: isToday ? k.todayInk : k.ink, pct: isToday ? dayPct : (isPast ? pcts[i] : 0), bar: isToday ? k.now : k.muted };
+    });
+    var segCount = {};
+    visible.forEach(function (b) { if (D[b.id]) segCount[b.t] = (segCount[b.t] || 0) + 1; });
+    var daySegs = Object.keys(segCount).map(function (key) { return { c: TH[key].c, w: segCount[key] / visible.length * 100 }; });
+    var served = Object.keys(segCount).length;
+
+    var selB = s.sel ? this.bloc(s.sel) : null, sel = { c: '#000', tink: '#000', metrics: [], sps: [], hasSps: true };
+    if (selB) {
+      var sth = TH[selB.t], st2 = this.times(selB), slen = st2.e - st2.s, sr = this.getReal(selB);
+      var srun = s.run && s.run.id === selB.id;
+      var el = srun ? s.run.el : sr.min * 60;
+      var metrics = [];
+      if (selB.mes.indexOf('fois') >= 0) metrics.push({ label: selB.qLabel, value: String(sr.q), of: '/ ' + selB.prevuQ, w: Math.min(100, sr.q / selB.prevuQ * 100), goalAt: 100, color: sth.c,
+        dec: function () { self.setReal(selB.id, { q: Math.max(0, sr.q - 1) }); }, inc: function () { self.setReal(selB.id, { q: sr.q + 1 }); } });
+      if (selB.mes.indexOf('qte') >= 0) metrics.push({ label: selB.qLabel, value: String(sr.q), of: '/ ' + selB.prevuQ + ' ' + selB.unite, w: Math.min(100, sr.q / (selB.prevuQ * 1.25) * 100), goalAt: 80, color: sr.q >= selB.prevuQ ? k.goodInk : sth.c,
+        dec: function () { self.setReal(selB.id, { q: Math.max(0, sr.q - 1) }); }, inc: function () { self.setReal(selB.id, { q: sr.q + 1 }); } });
+      if (selB.mes.indexOf('temps') >= 0) metrics.push({ label: 'Temps passé', value: dur(sr.min), of: 'sur ' + dur(slen) + ' prévus', w: Math.min(100, sr.min / (slen * 1.25) * 100), goalAt: 80, color: sth.c,
+        dec: function () { self.setReal(selB.id, { min: Math.max(0, sr.min - 5) }); }, inc: function () { self.setReal(selB.id, { min: sr.min + 5 }); } });
+      sel = {
+        c: sth.c, bg: sth.bg, tink: mode === 'nuit' ? sth.c : sth.ink, onC: sth.on, themeNom: sth.nom, projet: selB.projet, sp: spLabel(selB), etape: selB.etape,
+        hasCode: !!selB.code, code: selB.code || '', heures: hm(st2.s) + ' – ' + hm(st2.e), duree: dur(slen),
+        timer: clock(el) + ' / ' + clock(slen * 60), runPct: Math.min(100, el / (slen * 60) * 100),
+        isRunning: !!(srun && !s.run.paused), notRunning: !(srun && !s.run.paused),
+        playLabel: srun ? (s.run.paused ? 'Reprendre' : 'Pause') : (sr.min > 0 ? 'Relancer' : 'Lancer'),
+        metrics: metrics, pct: projPct(selB), multi: spsOf(selB).length > 1, hasSps: spsOf(selB).length > 0,
+        sps: spsOf(selB).map(function (x) { return { nom: x.nom, pct: x.pct, mois: x.mois }; })
+      };
+    }
+    var selDone = selB ? !!D[selB.id] : false;
+
+    var rep = { days: [], avances: [], sugg: [] }, repOpen = !!(s.rep && this.bloc(s.rep.id));
+    if (repOpen) {
+      var rb2 = this.bloc(s.rep.id), rth = TH[rb2.t], rlen2 = mins(rb2.f) - mins(rb2.d);
+      var sched = this.daySchedule(s.rep.day, rb2.id);
+      var st0 = s.rep.start, en0 = st0 + rlen2;
+      var occ = sched.filter(function (x) { return x.s < en0 && st0 < x.e; })[0];
+      function fits(x) { return x >= 0 && x + rlen2 <= 1440 && !sched.some(function (y) { return y.s < x + rlen2 && x < y.e; }); }
+      var after = null, before = null;
+      var cA = [st0].concat(sched.map(function (y) { return y.e; })).filter(function (x) { return x >= st0; }).sort(function (a, c) { return a - c; });
+      for (var i = 0; i < cA.length; i++) if (fits(cA[i])) { after = cA[i]; break; }
+      var cB = [st0].concat(sched.map(function (y) { return y.s - rlen2; })).filter(function (x) { return x <= st0; }).sort(function (a, c) { return c - a; });
+      for (var j = 0; j < cB.length; j++) if (fits(cB[j])) { before = cB[j]; break; }
+      var nextBusy = sched.filter(function (y) { return y.s >= en0; })[0];
+      var dayNames = ['Aujourd’hui', 'Demain'];
+      for (var dd = 2; dd < 6; dd++) { var dt = new Date(now); dt.setDate(now.getDate() + dd); dayNames.push(cap(dt.toLocaleDateString('fr-CA', { weekday: 'short', day: 'numeric' }))); }
+      var setRep = function (patch) { self.setState({ rep: Object.assign({}, s.rep, patch) }); };
+      var mv = function (delta) { setRep({ start: Math.max(0, Math.min(1440 - rlen2, st0 + delta)) }); };
+      rep = {
+        etape: rb2.etape, duree: dur(rlen2), tink: mode === 'nuit' ? rth.c : rth.ink,
+        days: dayNames.map(function (n, idx) { var on = idx === s.rep.day; return { label: n, bg: on ? k.inv : k.surf, fg: on ? k.invInk : k.ink, border: on ? k.inv : k.line, pick: function () { setRep({ day: idx }); } }; }),
+        start: hm(st0), end: hm(en0),
+        m60: function () { mv(-60); }, m15: function () { mv(-15); }, p15: function () { mv(15); }, p60: function () { mv(60); },
+        rappel: s.rep.rappel, swBg: s.rep.rappel ? rth.c : k.track, swX: s.rep.rappel ? 21 : 3, avOp: s.rep.rappel ? 1 : 0.4,
+        toggleRappel: function () { setRep({ rappel: !s.rep.rappel }); },
+        avances: [5, 10, 15].map(function (a) { var on = a === s.rep.avance; return { label: a + ' min', bg: on ? rth.c : 'transparent', fg: on ? rth.on : k.ink, border: on ? rth.c : k.line, pick: function () { setRep({ avance: a, rappel: true }); } }; }),
+        free: !occ, busy: !!occ,
+        freeLabel: 'Libre' + (nextBusy ? ' jusqu’à ' + hm(nextBusy.s) : ' pour le reste de la journée'),
+        occTitre: occ ? occ.b.etape : '', occHeures: occ ? (hm(occ.s) + ' – ' + hm(occ.e) + ' · ' + occ.b.projet) : '',
+        occC: occ ? TH[occ.b.t].c : 'transparent', occBg: occ ? TH[occ.b.t].bg : 'transparent', occInk: occ ? TH[occ.b.t].ink : k.ink,
+        sugg: [after !== null ? { kind: 'Juste après', label: hm(after) + ' – ' + hm(after + rlen2), pick: function () { setRep({ start: after }); } } : null,
+               before !== null ? { kind: 'Juste avant', label: hm(before) + ' – ' + hm(before + rlen2), pick: function () { setRep({ start: before }); } } : null].filter(Boolean),
+        validateLabel: occ ? 'Chevaucher quand même' : 'Valider le report',
+        validate: function () {
+          var msg = (s.rep.day === 0 ? 'Reporté à ' : 'Reporté ' + dayNames[s.rep.day].toLowerCase() + ' à ') + hm(st0) + (s.rep.rappel ? ' · rappel ' + s.rep.avance + ' min avant' : '');
+          var mvd = Object.assign({}, s.moved), hid = Object.assign({}, s.hidden), dn2 = Object.assign({}, s.done);
+          delete dn2[rb2.id];
+          if (s.rep.day === 0) mvd[rb2.id] = { s: st0 }; else hid[rb2.id] = true;
+          self.setState({ rep: null, sel: null, moved: mvd, hidden: hid, done: dn2 });
+          self.say(msg);
+        }
+      };
+    }
+
+    var conf = {}, confB = s.confirm ? this.bloc(s.confirm) : null;
+    if (confB) {
+      var cth = TH[confB.t];
+      conf = { etape: confB.etape, c: cth.c, onC: cth.on, bg: cth.bg, temps: dur(Math.round((s.run ? s.run.el : 0) / 60)) };
+    }
+    var finishRun = function (keepOpen) {
+      if (!s.confirm) return;
+      var id = s.confirm, b = self.bloc(id), m = Math.round((s.run ? s.run.el : 0) / 60);
+      var o = Object.assign({}, s.real); var prev = self.getReal(b);
+      o[id] = { min: m, q: b.mes.indexOf('qte') >= 0 || b.mes.indexOf('fois') >= 0 ? Math.max(prev.q, b.mes.indexOf('fois') >= 0 ? 1 : prev.q) : 0 };
+      var d = Object.assign({}, s.done); d[id] = true;
+      self.setState({ real: o, done: d, run: null, confirm: null, sel: keepOpen ? id : null });
+      if (!keepOpen) self.say('« ' + b.etape + ' » cochée · ' + dur(m));
+    };
+
+    return {
+      k: k, links: links,
+      appTitle: (this.props.prenom || 'Luther') + ' Life',
+      dayLabel: cap(viewDate.toLocaleDateString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long' })),
+      nowOp: viewToday ? 1 : 0,
+      statLabel: (!viewToday && selIdx > todayIdx) ? visible.length + ' blocs prévus' : nDone + ' sur ' + visible.length + ' accomplis · ' + served + (served > 1 ? ' thèmes servis' : ' thème servi'),
+      dayPct: dayPct, daySegs: daySegs, week: week, hours: hours, blocs: blocs,
+      totalH: 24 * 60 * PX, nowTop: nowMin * PX, nowLabel: pad(now.getHours()) + ':' + pad(now.getMinutes()),
+      scrollRef: function (el) {
+        if (el && !self._scrolled) {
+          self._scrolled = true;
+          var focusMin = s.run ? self.times(self.bloc(s.run.id)).s : (s.rep ? mins('06:15') : nowMin);
+          el.scrollTop = Math.max(0, focusMin * PX - 140);
+        }
+      },
+      card: card,
+      tabs: [
+        { label: 'Le Fil', href: mode === 'nuit' ? 'Main.dc.html' : 'JourFil.dc.html', icon: ICONS.fil, color: k.ink, fw: 600 },
+        { label: 'Projets', href: links.projets, icon: ICONS.projets, color: k.muted, fw: 500 },
+        { label: 'Rapports', href: links.rapports, icon: ICONS.rapports, color: k.muted, fw: 500 },
+        { label: 'Archive', href: (mode === 'nuit' ? 'Archive.dc.html' : 'JourArchive.dc.html'), icon: ICONS.ebenezer, color: k.muted, fw: 500 },
+        { label: 'Réglages', href: links.reglages, icon: ICONS.reglages, color: k.muted, fw: 500 }
+      ],
+      toastOn: !!s.toast, toast: s.toast,
+      sheetOpen: !!selB && !s.rep && !s.confirm, sel: sel, monthName: cap(now.toLocaleDateString('fr-CA', { month: 'long' })),
+      monthAt: Math.round(now.getDate() / new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() * 100),
+      selPlay: function () { if (selB) self.togglePlay(selB.id); },
+      selBtnBg: selDone ? sel.c : k.inv, selBtnFg: selDone ? sel.onC : k.invInk,
+      selBtnLabel: selDone ? 'Fait · toucher pour annuler' : 'Marquer comme fait',
+      toggleSel: function () { if (selB) self.markDone(selB.id, !selDone); },
+      openRep: function () { if (selB) { var t0 = self.times(selB); self.setState({ rep: { id: selB.id, day: 0, start: t0.s, rappel: true, avance: 10 } }); } },
+      close: function () { self.setState({ sel: null }); },
+      repOpen: repOpen, rep: rep, closeRep: function () { self.setState({ rep: null }); },
+      confirmOpen: !!confB, conf: conf,
+      confYes: function () { finishRun(false); },
+      confFix: function () { finishRun(true); },
+      confNo: function () { self.setState({ confirm: null }); }
+    };
+  }
+}
+</script>
+</body>
+</html>
