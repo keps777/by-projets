@@ -110,7 +110,7 @@
   .ouvert { background: var(--surface-2); }
   .ligne { width: 100%; border: 0; background: transparent; text-align: left; display: flex; align-items: center; gap: 10px; padding: 10px 12px; min-height: 52px; }
   .poignee { color: var(--faint); display: flex; }
-  .code { flex: none; width: 84px; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .code { flex: none; width: 94px; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .noms { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
   .nom { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .inactif .nom, .inactif .code { opacity: 0.55; }

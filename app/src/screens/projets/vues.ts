@@ -71,6 +71,12 @@ export function realiseSurCible(m: Pick<Metrique, 'type' | 'unite' | 'options'>,
   return `${valeurTexte(m, realise ?? 0, true)} / ${valeurTexte(m, cible, true)}`;
 }
 
+/** Résumé d'une progression du mois. Pour une Heure, le noyau compte les jours à l'heure : « 3 j à l'heure ». */
+export function resumeProgression(m: Pick<Metrique, 'type' | 'unite' | 'options'>, p: { realise: number | null; cible: number | null }): string {
+  if (m.type === 'heure') return `${nombre(p.realise ?? 0)} j à l’heure`;
+  return realiseSurCible(m, p.realise, p.cible);
+}
+
 export const PERIODES: { valeur: PeriodeCible; label: string; texte: string }[] = [
   { valeur: 'jour', label: 'par jour', texte: 'par jour' },
   { valeur: 'semaine', label: 'par sem.', texte: 'par semaine' },

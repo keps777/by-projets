@@ -16,7 +16,7 @@
   import { progressionProjet, progressionRubrique, progressionSousProjet, projetsDe, rubriques, sousProjetsDe } from '../../data/requetes.ts';
   import { aujourdhui } from '../../data/temps.svelte.ts';
   import { ajouterProjet, ajouterRubrique, archiverSousProjet, retirerProjet, retirerRubrique } from '../../data/actions/projets.ts';
-  import { jourCourt, nomMois, realiseSurCible } from './vues.ts';
+  import { jourCourt, nomMois, resumeProgression } from './vues.ts';
 
   let { params: _ = {} }: { params?: Record<string, string> } = $props();
 
@@ -38,7 +38,7 @@
   function vueSousProjet(sp: SousProjetLigne) {
     const { pilote, progression: p } = progressionSousProjet(sp, mois, jour);
     let obj = 'Objectif à définir';
-    if (pilote && p && p.cible != null) obj = realiseSurCible(pilote, p.realise, p.cible);
+    if (pilote && p && p.cible != null) obj = resumeProgression(pilote, p);
     if (p?.etat === 'a_venir') obj = `dès le ${jourCourt(sp.debut)}${p.cible != null ? ' · ' + obj : ''}`;
     if (sp.statut === 'brouillon') obj = `En pause · ${obj}`;
     const pct = sp.statut === 'brouillon' ? null : p?.pct ?? null;

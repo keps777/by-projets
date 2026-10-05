@@ -14,7 +14,7 @@
   import { valeursDuSousProjet } from '../../data/requetes.ts';
   import { validerSousProjet } from '../../data/actions/projets.ts';
   import { enregistrerSignature, lireSignature } from './donnees.ts';
-  import { jourChiffres, jourCourt, MOIS_COURTS, parJour, periodeTexte, realiseSurCible, textesParJour, valeurTexte } from './vues.ts';
+  import { jourChiffres, jourCourt, MOIS_COURTS, parJour, periodeTexte, resumeProgression, textesParJour, valeurTexte } from './vues.ts';
 
   let { sp, projet, rubrique, metriques, code, mois, jour }: {
     sp: SousProjetLigne; projet: Projet; rubrique: Rubrique | undefined; metriques: Metrique[]; code: string | null; mois: string; jour: Jour;
@@ -51,7 +51,7 @@
     return champs;
   });
   const totaux = $derived([
-    ...metriques.filter((m) => m.type !== 'reference').slice(0, 2).map((m, i) => ({ l: i === 0 ? 'Total' : m.nom, v: realiseSurCible(m, progs.get(m.id)?.realise ?? 0, progs.get(m.id)?.cible ?? null) })),
+    ...metriques.filter((m) => m.type !== 'reference').slice(0, 2).map((m, i) => ({ l: i === 0 ? 'Total' : m.nom, v: resumeProgression(m, { realise: progs.get(m.id)?.realise ?? 0, cible: progs.get(m.id)?.cible ?? null }) })),
     ...(pilote ? [{ l: 'Avancement', v: `${progs.get(pilote.id)?.pct ?? 0} %` }] : [])
   ]);
 
@@ -99,7 +99,7 @@
     </div>
   {/if}
   {#if colonnes.length}
-    <div class="table" style:--cols="38px 28px {colonnes.map((m) => (m.type === 'reference' ? 'minmax(0, 1.6fr)' : 'minmax(0, 1fr)')).join(' ')}">
+    <div class="table" style:--cols="38px 34px {colonnes.map((m) => (m.type === 'reference' ? 'minmax(0, 1.6fr)' : 'minmax(0, 1fr)')).join(' ')}">
       <div class="rang tete mono"><span>Date</span><span>Obj.</span>{#each colonnes as m (m.id)}<span class="coupe">{m.nom.split(/\s+/)[0]}</span>{/each}</div>
       {#each lignes as l (l.j)}
         <div class="rang" class:aujourdhui={l.j === jour}><span class="mono">{jourChiffres(l.j)}</span><span>{l.obj}</span>{#each l.cells as c, i (i)}<span class="coupe">{c}</span>{/each}</div>

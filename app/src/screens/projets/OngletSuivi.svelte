@@ -6,7 +6,7 @@
   import { doitEtreValide, fenetreDuMois, joursEcoules, metriquePilote, progressionDuMois } from '@core/progression.ts';
   import { attenduDuJour } from '@core/rapport.ts';
   import { rythme } from '@core/calculs.ts';
-  import { nombre } from '@core/units.ts';
+  import { formatHeure, nombre } from '@core/units.ts';
   import type { Jour, Metrique } from '@core/types.ts';
   import type { SousProjetLigne } from '@core/lignes.ts';
   import Bouton from '../../ui/Bouton.svelte';
@@ -67,6 +67,9 @@
     if (somme) {
       const r = rythme(prog.realise ?? 0, ecoules) ?? 0;
       res.push({ v: compte ? nombre(r) : valeurTexte(pilote, r, true), l: `${compte && pilote.type === 'nombre' ? uniteCourte(pilote.unite) + ' ' : ''}par jour` });
+    } else if (pilote.type === 'heure') {
+      const vs = [...parJ.values()];
+      res.push({ v: vs.length ? formatHeure(vs.reduce((s, x) => s + x, 0) / vs.length) : '—', l: 'heure moyenne' });
     } else res.push({ v: valeurTexte(pilote, prog.realise, true), l: 'valeur actuelle' });
     res.push({ v: `${passes.filter((j) => atteint(parJ.get(j))).length} / ${passes.length}`, l: 'jours atteints' });
     const temps = metriques.find((m) => m.type === 'temps' && m.id !== pilote.id);
@@ -138,7 +141,7 @@
     <div class="haut">
       <div class="col">
         <span class="etiquette">{nomMois(mois)}</span>
-        <span class="titre grand">{court(prog.realise)} <span class="sur">/ {pilote.type === 'heure' ? `${joursEcoules(f!, jour)} j` : valeurTexte(pilote, prog.cible, true)}</span></span>
+        <span class="titre grand">{pilote.type === 'heure' ? nombre(prog.realise ?? 0) : court(prog.realise)} <span class="sur">/ {pilote.type === 'heure' ? `${joursEcoules(f!, jour)} j` : valeurTexte(pilote, prog.cible, true)}</span></span>
       </div>
       <span class="titre pct">{prog.pct ?? 0} %</span>
     </div>

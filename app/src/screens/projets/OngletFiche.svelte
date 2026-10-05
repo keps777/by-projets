@@ -132,15 +132,15 @@
   <div class="rang"><span class="muted">Reprise du passé</span><span class="gras">{sp.reprise_passe ? 'Oui' : 'Non'}</span></div>
   <div class="deux">
     {#if sp.statut === 'termine' || sp.statut === 'archive'}
-      <Bouton variante="secondaire" onclick={() => { rouvrirSousProjet(sp.id); dire('Sous-projet rouvert'); }}>Rouvrir</Bouton>
-      <Bouton onclick={() => routeur.definir('onglet', 'document')}>Voir le document</Bouton>
+      <button type="button" class="action" onclick={() => { rouvrirSousProjet(sp.id); dire('Sous-projet rouvert'); }}>Rouvrir</button>
+      <button type="button" class="action plein" onclick={() => routeur.definir('onglet', 'document')}>Voir le document</button>
     {:else}
       {#if sp.statut === 'brouillon'}
-        <Bouton variante="secondaire" onclick={() => { rouvrirSousProjet(sp.id); dire('Sous-projet repris'); }}>Reprendre</Bouton>
+        <button type="button" class="action" onclick={() => { rouvrirSousProjet(sp.id); dire('Sous-projet repris'); }}>Reprendre</button>
       {:else}
-        <Bouton variante="secondaire" onclick={() => { mettreEnPause(sp.id); dire('En pause · il sort des moyennes'); }}>Mettre en pause</Bouton>
+        <button type="button" class="action" onclick={() => { mettreEnPause(sp.id); dire('En pause · il sort des moyennes'); }}>Mettre en pause</button>
       {/if}
-      <Bouton onclick={() => (validation = true)}>Terminer et archiver</Bouton>
+      <button type="button" class="action plein" onclick={() => (validation = true)}>Terminer et archiver</button>
     {/if}
   </div>
   <Bouton variante="discret" onclick={() => (suppression = true)}>Supprimer ce sous-projet</Bouton>
@@ -183,6 +183,8 @@
   .palette { display: flex; flex-wrap: wrap; gap: 6px; }
   .palette button { height: 44px; padding: 0 12px; border-radius: 22px; border: 1.5px dashed var(--ligne); background: transparent; font-size: 13px; font-weight: 600; }
   .statut { border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .action { height: 46px; border-radius: 14px; border: 1px solid var(--ligne); background: transparent; font-size: 14px; font-weight: 600; padding: 0 8px; }
+  .action.plein { border: 0; background: var(--inverse); color: var(--inverse-texte); }
   .deux { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   h2 { font-size: 22px; }
 </style>

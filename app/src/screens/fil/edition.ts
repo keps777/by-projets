@@ -28,7 +28,8 @@ function remplacerLiens(tacheId: string, n: NouvelleTache): void {
 export function modifierSerie(tacheId: string, n: NouvelleTache, aujourdhui: Jour): void {
   magasin.ecrire('taches', { id: tacheId, titre: n.titre.trim() || 'Sans titre', projet_id: n.projetId, regle: n.regle, heure_debut: n.heureDebut, duree_min: n.dureeMin, rappel_min: n.rappelMin, actif: true });
   remplacerLiens(tacheId, n);
-  retirerPrevues(tacheId, aujourdhui);
+  // Une tâche « ce jour seulement » n'a qu'une occurrence : on la recrée même si elle avait été reportée.
+  retirerPrevues(tacheId, aujourdhui, n.regle.frequence !== 'une_fois');
   materialiserTache(tacheId, aujourdhui > n.regle.debut ? aujourdhui : n.regle.debut);
 }
 

@@ -43,7 +43,7 @@
     const ms = metriquesDe(s.id).map(enMetrique);
     const p = metriquePilote(ms, s.metrique_pilote_id);
     const pct = p ? progressionDuMois(p, s, valeursDuSousProjet(s), mois, jour).pct : null;
-    return { s, pct, court: s.nom.length > 22 ? s.nom.split(/\s+·\s+/)[0].slice(0, 22) : s.nom };
+    return { s, pct, court: s.nom.split(/\s+·\s+/)[0] };
   }));
 
   const choisir = (o: Onglet) => routeur.definir('onglet', o === 'suivi' ? null : o);
