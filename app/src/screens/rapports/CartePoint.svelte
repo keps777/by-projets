@@ -19,7 +19,8 @@
 
   const valeur = $derived.by(() => {
     if (!premiere) return '—';
-    if (vue !== 'jour') return formaterMesures(p.mesures, langue);
+    // Récapitulatif : valeur compacte, sans les références (le texte WhatsApp, lui, les garde).
+    if (vue !== 'jour') return formaterMesures(p.mesures.filter((m) => m.type !== 'reference'), langue) || '—';
     if (premiere.type === 'temps' && premiere.attendu != null && premiere.fait != null) return formatTemps(premiere.fait, premiere.approx);
     return formaterMesure(premiere, langue);
   });

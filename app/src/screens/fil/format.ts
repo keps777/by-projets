@@ -13,6 +13,8 @@ const fmt = (j: Jour, o: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(
 export const dateLongue = (j: Jour) => fmt(j, { weekday: 'long', day: 'numeric', month: 'long' });
 /** « 5 oct. » */
 export const dateCourte = (j: Jour) => fmt(j, { day: 'numeric', month: 'short' });
+/** « 4 octobre » */
+export const dateJourMois = (j: Jour) => fmt(j, { day: 'numeric', month: 'long' });
 /** « lundi » */
 export const nomDuJour = (j: Jour) => fmt(j, { weekday: 'long' });
 /** « octobre » */

@@ -128,7 +128,7 @@
   .libelle { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; text-align: center; }
   .nom { font-size: 15px; font-weight: 600; }
   .resume { font-size: 12px; }
-  .bande { display: flex; height: 8px; border-radius: 4px; overflow: hidden; gap: 2px; }
+  .bande { flex: none; display: flex; height: 8px; border-radius: 4px; overflow: hidden; gap: 2px; }
   .bande span { flex: 1; background: var(--piste); }
   .bande .bon { background: var(--bon); }
   .bande .partiel { background: var(--c); }
