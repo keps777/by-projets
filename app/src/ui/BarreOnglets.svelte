@@ -20,7 +20,7 @@
 </nav>
 
 <style>
-  nav { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 6px 4px calc(10px + var(--bas-sûr)); border-top: 1px solid var(--ligne); background: var(--fond); flex: none; }
+  nav { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 6px 4px max(14px, calc(var(--bas-sûr) + 2px)); border-top: 1px solid var(--ligne); background: var(--fond); flex: none; }
   a { min-height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 500; color: var(--muted); }
   a.actif { color: var(--texte); font-weight: 600; }
 </style>

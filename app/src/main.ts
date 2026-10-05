@@ -1,5 +1,5 @@
 import { mount } from 'svelte';
-import '@fontsource-variable/bricolage-grotesque';
+import '@fontsource-variable/bricolage-grotesque/opsz.css';
 import '@fontsource-variable/geist';
 import '@fontsource/geist-mono/500.css';
 import '@fontsource/instrument-serif/400.css';
