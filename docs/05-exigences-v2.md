@@ -75,3 +75,35 @@ Format de référence :
 
 ### Modèle de données (esquisse)
 `profiles` · `rubriques` · `projets` (rubrique_id) · `sous_projets` (projet_id, période, mesure, cible) · `blocs` (créneaux, récurrence, projet_id) · `saisies` (bloc, date, quantité, minutes, détail JSON ; **rattachée au projet**, lue par tous ses sous-projets) · `points_rapport` (code, projet, mesures activées, ordre) · `exports` (préréglages) · `rapports` (jour, texte) · `rappels` (bloc, canal, délai, état) · `abonnements_push`.
+
+## Décisions du 5 oct. 2026 (suite 2)
+
+### Métriques personnalisables par sous-projet
+- Chaque sous-projet a **N métriques** choisies parmi : **Nombre** (unité libre : pages, chapitres, personnes…), **Temps**, **Montant** ($), **Fois**, **Distance**, **Poids**, **Note /10**, **Référence** (texte : passages, livre et auteur).
+- Par métrique : nom, unité, **objectif** et **période** (jour, semaine, mois, total), sens (**plus = mieux** ou **moins = mieux**), et **« dans le rapport »** (avec le code du point).
+- **Calculs automatiques** : le solde = entrées − sorties ; le reste du budget ; le taux d'épargne ; l'allure ; la progression. Catalogue de calculs prédéfinis en v1.
+- **Modèles proposés par rubrique** (lecture biblique, rencontre quotidienne, prière, mémorisation, jeûne ; évangélisation, suivi de disciple, dons ; livrable, étude, entrepreneuriat ; budget du mois, sport, poids, épargne maison, rangement, garde-robe), à ajuster en quelques touches ou à remplacer par « partir de zéro ».
+- Exemple finances : entrées, sorties, épargne en **dollars** ; le solde, le reste du budget et les sorties par catégorie se calculent seuls.
+
+### Une seule saisie, tout est alimenté
+- On note **une fois** (dans le volet du bloc, le Mode Focus ou la tâche) ; la saisie est rattachée au **projet** et **tous** ses sous-projets la lisent selon leurs métriques. Le rapport lit ensuite les mêmes données.
+
+### Ajouter une tâche depuis Le Fil (bouton +)
+- Parcours : **Quoi** (titre, ex. « Rencontre avec Christopher ») → **Projet associé** → **sous-projets alimentés** (interrupteurs) → **ce que la tâche enregistre** (métriques proposées, valeur prévue) → **Quand** (récurrence : une fois, tous les jours, jours choisis, chaque semaine, chaque mois ; heure ; durée ; **vérification de disponibilité** avec créneaux libres juste avant et juste après) → **Rappel** (à l'heure, 5, 10 ou 15 min avant).
+
+### Rappels
+- **Phase 1 : e-mail** envoyé par le serveur (rappels et rapport). **Phase 2 : notifications push** avec boutons **Lancer**, **Reporter** et **Envoyer** (le rapport), une fois l'app installée sur l'écran d'accueil.
+
+### Rapport : toutes les métriques visibles, séparées par des points-virgules
+Pour chaque point : fait / attendu ; référence ; temps fait / temps attendu. Exemples :
+```
+3. *BR* : 0/7 ch; réf. —; 0h00/0h45
+4. *CL* :
+   • _L’agressivité spirituelle_ (ZTF) : 166/417 p.; +24 p.; 0h35/0h30
+```
+Codes des points 6 à 12, **explicites et modifiables** dans Réglages : JEÛNE, DON-DIEU, DON-HOMME, EVANG, ÂMES, DISCIPLES, FRÈRES.
+
+### Divers
+- L'onglet **« Ebenezer » devient « Archive »** : projets accomplis (avec le verset de 1 Samuel 7:12) et rapports.
+- Projet **24** retiré. Le thème 4 s'appelle **« Ma vie personnelle »**.
+- Écrans de sous-projet ajoutés : **Fiche** (QQOQCCP, métriques, tâches liées), **Document** (aperçu vivant, PDF, signature), **Temps** (à venir, historique), **Finances**.

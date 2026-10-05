@@ -1,6 +1,6 @@
 # 04 — Mes thèmes et projets (relevé du carnet « Luther Life »)
 
-> Transcription des trois photos du carnet (5 oct. 2026). Titre du carnet : **Luther Life** — « Diviser ma vie en plusieurs projets. » Les points marqués **(?)** sont à confirmer.
+> Transcription des trois photos du carnet (5 oct. 2026). Titre du carnet : **Luther Life** — « Diviser ma vie en plusieurs projets. » Ces projets sont les **projets par défaut** de l'application ; chacun peut être retiré, et on peut en ajouter.
 
 ## 1. Ma relation avec Dieu
 
@@ -34,7 +34,7 @@ Un ancien « Projet 9 » de ce thème a été barré.
 | 13 | Mon projet d'entrepreneuriat |
 | 14 | L'excellence académique |
 
-## 4. (thème sans nom — provisoirement « Ma vie personnelle ») **(?)**
+## 4. Ma vie personnelle
 
 | # | Projet |
 |---|---|
@@ -47,12 +47,13 @@ Un ancien « Projet 9 » de ce thème a été barré.
 | 22 | Le mariage |
 | 23 | La relation avec ma famille |
 
-## Hors thème
+## Transversal
 
 | # | Projet | Remarque |
 |---|---|---|
-| 24 | Ma conformité au Message de Base | Thème de rattachement à confirmer **(?)** |
-| 25 | Le suivi de tous les projets | C'est le rôle de l'application elle-même : bilans du soir, revue de semaine |
+| 25 | Le suivi de tous les projets | C'est le rôle de l'application elle-même : rapport du soir, revue de semaine |
+
+Le projet 24 (« Ma conformité au Message de Base ») a été **retiré** le 5 oct. 2026.
 
 ## Conséquences pour la spécification
 
