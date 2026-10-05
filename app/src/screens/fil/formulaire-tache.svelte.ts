@@ -79,6 +79,17 @@ export class FormulaireTache {
     this.rappelsAvant = [...(t.rappels_avant_min ?? [])];
   }
 
+  /**
+   * Reprend les réglages d'une tâche déjà créée (titre, projet et sous-projets alimentés, valeurs prévues, durée, rappels).
+   * Le jour, l'heure de début et la récurrence restent ceux qui sont choisis.
+   */
+  appliquerModele(t: Tache): void {
+    const garde = { debut: this.debut, rec: this.rec, jours: this.jours, mensuel: this.mensuel, fin: this.fin, finDate: this.finDate, finFois: this.finFois, heure: this.heure };
+    this.charger(t);
+    Object.assign(this, garde);
+    this.heure = Math.min(garde.heure, 1440 - this.duree);
+  }
+
   choisirRubrique(id: string): void {
     this.rubriqueId = id;
     this.projetId = null;

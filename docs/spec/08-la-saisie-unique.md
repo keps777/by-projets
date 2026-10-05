@@ -18,3 +18,6 @@
 - Anneau de temps, Pause, Terminer.
 - **Passages lus** : livre (liste de suggestions), chapitre de début, chapitre de fin ; plusieurs entrées (ex. Matthieu 8–10, Luc 22). Le total de chapitres est calculé et comparé à l'objectif ; chaque entrée peut être retirée.
 - Champ « Ce que Dieu me dit » (note).
+
+## Plusieurs minuteurs à la fois (5 oct. 2026)
+Chaque bloc a **son propre minuteur** : on peut lancer ▶ plusieurs blocs en même temps, sans que l'un mette l'autre en pause. Chacun enregistre son temps réel ; deux blocs qui se chevauchent comptent donc tous les deux leur temps. La carte du bas indique « N en cours en même temps » et liste chaque bloc avec sa barre, sa pause et son arrêt. Quand la fin prévue de plusieurs blocs est atteinte, « As-tu terminé ? » est posé bloc après bloc.

@@ -70,7 +70,10 @@
         el.scrollTo({ top: Math.max(0, y - Math.round(el.clientHeight * 0.3535)), behavior: 'smooth' });
     };
     document.addEventListener('visibilitychange', revenir);
-    return () => document.removeEventListener('visibilitychange', revenir);
+    // La zone se réduit quand la carte du bas grandit (plusieurs minuteurs) : « maintenant » doit rester visible.
+    const obs = typeof ResizeObserver !== 'undefined' && defile ? new ResizeObserver(() => revenir()) : null;
+    if (obs && defile) obs.observe(defile);
+    return () => { document.removeEventListener('visibilitychange', revenir); obs?.disconnect(); };
   });
 </script>
 

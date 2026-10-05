@@ -23,7 +23,7 @@
   import VoletBloc from './VoletBloc.svelte';
   import Reporter from './Reporter.svelte';
   import Confirmer from './Confirmer.svelte';
-  import { basculerMinuteur, occurrenceActive, statsJour } from './vue-blocs.ts';
+  import { basculerMinuteur, occurrencesActives, statsJour } from './vue-blocs.ts';
   import { cap, dateLongue, dureeMin } from './format.ts';
   import { jourValide } from './navigation.ts';
 
@@ -34,7 +34,8 @@
   const estAujourdhui = $derived(jour === aujourdhui);
   const blocs = $derived(blocsDuJour(jour));
   const stats = $derived(statsJour(blocs));
-  const actif = $derived(occurrenceActive());
+  const actifs = $derived(occurrencesActives());
+  const actif = $derived(actifs[0]);
   const prenom = $derived(profil()?.prenom ?? 'Luther');
   const mode = $derived(theme.mode);
 
@@ -81,10 +82,11 @@
   });
 
   // Fin prévue atteinte : « As-tu terminé ? » (aussi à l'ouverture si l'app était fermée).
+  // Avec plusieurs minuteurs, on les passe un par un : la question suivante vient quand la précédente est répondue.
   $effect(() => {
-    const a = actif;
-    if (!a || a.etat !== 'en_cours' || confirmId || refuses.has(a.id)) return;
-    if (estArrive(minuteurDe(a), horloge.maintenant, (Date.parse(a.fin) - Date.parse(a.debut)) / 1000)) confirmId = a.id;
+    if (confirmId) return;
+    const fini = actifs.find((a) => a.etat === 'en_cours' && !refuses.has(a.id) && estArrive(minuteurDe(a), horloge.maintenant, (Date.parse(a.fin) - Date.parse(a.debut)) / 1000));
+    if (fini) confirmId = fini.id;
   });
 
   // Sens du dernier changement de jour (1 = vers demain) : la journée entre du côté d'où l'on vient.
@@ -173,7 +175,7 @@
     {/key}
   </div>
 
-  <CarteBas {blocs} {jour} {aujourdhui} {actif} onouvrir={(id) => (selId = id)} onjouer={basculerMinuteur} onterminer={(id) => (confirmId = id)} />
+  <CarteBas {blocs} {jour} {aujourdhui} {actifs} onouvrir={(id) => (selId = id)} onjouer={basculerMinuteur} onterminer={(id) => (confirmId = id)} />
 
   <BarreOnglets filet={false} />
 </div>

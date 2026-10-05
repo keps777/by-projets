@@ -17,6 +17,7 @@
   import { modifierOccurrence, modifierSerie, modifierSuivantes } from './edition.ts';
   import { jourValide } from './navigation.ts';
   import { heureProposee, resume } from './tache.ts';
+  import { suggerer, type Suggestion } from './suggestions.ts';
   import { hm, puceJour } from './format.ts';
 
   /** Formulaire « Nouvelle tâche » / « Modifier la tâche » (spec §7, US-09 à US-13). Monté par NouvelleTache.svelte. */
@@ -46,6 +47,15 @@
   const RAPPELS = [{ v: 0, l: 'À l’heure' }, { v: 5, l: '5 min' }, { v: 10, l: '10 min' }, { v: 15, l: '15 min' }];
 
   let choixPortee = $state<'modifier' | 'supprimer' | null>(null);
+
+  // Propositions de titre : tâches déjà créées (elles reprennent leurs réglages) et titres génériques.
+  let champTitre: HTMLInputElement | undefined = $state();
+  const propositions = $derived(id ? [] : suggerer(f.titre, magasin.lignes.taches));
+  function choisirProposition(s: Suggestion) {
+    const modele = s.tacheId ? magasin.trouver('taches', s.tacheId) : undefined;
+    if (modele) { f.appliquerModele(modele); dire('Réglages repris de « ' + modele.titre + ' »'); }
+    else { f.titre = s.texte; champTitre?.focus(); }
+  }
 
   function valide(): boolean {
     if (!f.titre.trim()) { dire('Donne un titre à la tâche'); return false; }
@@ -103,9 +113,20 @@
         {#if id}<button type="button" class="supprimer" aria-label="Supprimer la tâche" onclick={() => (recurrente && occ ? (choixPortee = 'supprimer') : supprimer('toute'))}><Icone nom="poubelle" taille={18} /></button>{/if}
       </div>
 
-      <label class="quoi">Quoi ?
-        <input class="titre" bind:value={f.titre} aria-label="Titre de la tâche" placeholder="Ex. Rencontre avec Christopher" />
-      </label>
+      <div class="quoi">
+        <label>Quoi ?
+          <input class="titre" bind:this={champTitre} bind:value={f.titre} aria-label="Titre de la tâche" placeholder="Ex. Rencontre avec Christopher" autocomplete="off" />
+        </label>
+        {#if !id && propositions.length}
+          <div class="propositions" role="group" aria-label="Propositions de titre">
+            {#each propositions as s (s.origine + s.texte)}
+              <button type="button" class="prop" class:deja={s.origine === 'deja'} onclick={() => choisirProposition(s)}>
+                {#if s.origine === 'deja'}<Icone nom="reporter" taille={13} trait={2.2} />{/if}{s.texte.trim()}{#if s.texte.endsWith(' ')}…{/if}
+              </button>
+            {/each}
+          </div>
+        {/if}
+      </div>
 
       <SectionProjet {f} />
       <SectionQuand {f} numero={f.assoc ? 4 : 2} {aujourdhui} tacheId={id} />
@@ -157,7 +178,12 @@
   .formulaire :global(.pied) { padding-bottom: calc(18px + var(--bas-sûr)); }
   .tete .titre { font-size: 20px; flex: 1; }
   .supprimer { width: 44px; height: 44px; border-radius: 22px; border: 1px solid var(--ligne); background: var(--surface); color: var(--mauvais); display: flex; align-items: center; justify-content: center; }
-  .quoi { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: var(--muted); }
+  .quoi { display: flex; flex-direction: column; gap: 10px; }
+  .quoi label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: var(--muted); }
+  .propositions { display: flex; gap: 6px; overflow-x: auto; margin: 0 -16px; padding: 0 16px; }
+  .prop { position: relative; flex: none; height: 38px; padding: 0 13px; border-radius: 19px; border: 1px dashed var(--ligne); background: transparent; color: var(--texte); font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .prop.deja { border-style: solid; background: var(--surface); }
+  .prop::after { content: ''; position: absolute; inset: -4px 0; }
   .quoi input { height: 56px; border-radius: 16px; border: 1px solid var(--ligne); background: var(--surface); font-size: 22px; letter-spacing: -0.01em; padding: 0 14px; color: var(--texte); transition: border-color 0.18s ease; }
   .quoi input:focus { outline: none; border-color: var(--c); }
   .section { display: flex; flex-direction: column; gap: 8px; }

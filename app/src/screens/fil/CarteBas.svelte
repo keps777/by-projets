@@ -12,12 +12,24 @@
   import { styleTeinte } from './teintes.ts';
 
   /** Carte du bas : bloc en cours (Pause, Terminer), sinon « En ce moment » / « Ensuite » avec Lancer. */
-  let { blocs, jour, aujourdhui, actif, onouvrir, onjouer, onterminer }: {
-    blocs: BlocVue[]; jour: string; aujourdhui: string; actif: Occurrence | undefined;
+  let { blocs, jour, aujourdhui, actifs, onouvrir, onjouer, onterminer }: {
+    blocs: BlocVue[]; jour: string; aujourdhui: string; actifs: Occurrence[];
     onouvrir: (id: string) => void; onjouer: (id: string) => void; onterminer: (id: string) => void;
   } = $props();
 
   const maintenant = $derived(maintenantLocal().minutes);
+  const actif = $derived(actifs[0]);
+
+  /** Plusieurs minuteurs en même temps : une ligne par bloc, chacun avec sa pause et son arrêt. */
+  const plusieurs = $derived(jour === aujourdhui && actifs.length > 1);
+  const lignes = $derived(actifs.map((o) => {
+    const tache = magasin.trouver('taches', o.tache_id);
+    const projet = tache?.projet_id ? magasin.trouver('projets', tache.projet_id) : undefined;
+    const rubrique = projet ? magasin.trouver('rubriques', projet.rubrique_id) : undefined;
+    const totalS = Math.max(60, (Date.parse(o.fin) - Date.parse(o.debut)) / 1000);
+    const el = ecouleOccurrence(o, horloge.maintenant);
+    return { o, titre: tache?.titre ?? 'Bloc', couleur: rubrique?.couleur ?? COULEUR_SANS_PROJET, pause: o.etat === 'pause', el, totalS, pct: Math.min(100, (el / totalS) * 100) };
+  }));
 
   /** Bloc du minuteur actif (titre, couleur, durée prévue). */
   const actifInfo = $derived.by(() => {
@@ -31,7 +43,7 @@
   type Carte = { kicker: string; titre: string; sous: string; mono?: boolean; couleur: string | null; action?: { label: string; aria: string; pause?: boolean; faire: () => void }; terminer?: () => void; pct?: number; ouvrir?: () => void };
 
   // Journée vide, aujourd'hui ou à venir : la carte devient une invitation (premier bloc, ou rendez-vous sans projet).
-  const invitation = $derived(!blocs.length && jour >= aujourdhui && !actif);
+  const invitation = $derived(!blocs.length && jour >= aujourdhui && !actifs.length);
   const suffixeJour = $derived(jour === aujourdhui ? '' : `jour=${jour}`);
 
   const carte = $derived.by((): Carte => {
@@ -86,6 +98,31 @@
         <a class="rdv" href="/tache/nouvelle?sans-projet=1{suffixeJour ? `&${suffixeJour}` : ''}"><Icone nom="calendrier" taille={15} />Rendez-vous</a>
       </div>
     </div>
+  {:else if plusieurs}
+  <div class="carte-bas multi" role="group" aria-label="{actifs.length} blocs en cours">
+    <span class="kicker maintenant">{actifs.length} en cours en même temps</span>
+    <ul class="liste-actifs">
+      {#each lignes as l (l.o.id)}
+        <li style={styleTeinte(l.couleur, theme.mode)}>
+          <button type="button" class="texte" onclick={() => onouvrir(l.o.id)}>
+            <span class="titre-carte">{l.titre}{l.pause ? ' · en pause' : ''}</span>
+            <span class="sous mono">{chrono(l.el)} / {chrono(l.totalS)}</span>
+            <span class="piste"><span class="barre" style:width="{l.pct}%"></span></span>
+          </button>
+          <button type="button" class="terminer" aria-label="Terminer {l.titre}" onclick={() => onterminer(l.o.id)}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5" /></svg>
+          </button>
+          <button type="button" class="action rond-action" aria-label="{l.pause ? 'Reprendre' : 'Mettre en pause'} {l.titre}" onclick={() => onjouer(l.o.id)}>
+            {#if !l.pause}
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="4" width="5" height="16" rx="1.5" /><rect x="14" y="4" width="5" height="16" rx="1.5" /></svg>
+            {:else}
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.9l12-7.5a1 1 0 0 0 0-1.7l-12-7.5A1 1 0 0 0 7 4.5z" /></svg>
+            {/if}
+          </button>
+        </li>
+      {/each}
+    </ul>
+  </div>
   {:else}
   <div class="carte-bas" {style}>
     <div class="rang">
@@ -130,6 +167,11 @@
   .terminer { flex: none; width: 44px; height: 44px; border-radius: 22px; border: 1px solid var(--carte-ligne); background: transparent; color: var(--carte-texte); display: flex; align-items: center; justify-content: center; }
   .action { flex: none; height: 44px; padding: 0 16px; border-radius: 22px; border: 0; background: var(--c); color: var(--c-sur); font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
   .piste { height: 6px; border-radius: 3px; background: var(--carte-piste); overflow: hidden; }
+  .multi { gap: 8px; }
+  .liste-actifs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; max-height: 188px; overflow-y: auto; }
+  .liste-actifs li { display: flex; align-items: center; gap: 10px; }
+  .liste-actifs .texte { gap: 3px; }
+  .rond-action { width: 44px; padding: 0; justify-content: center; }
   .invitation { gap: 12px; padding: 14px 12px 12px 14px; animation: invit-entre 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
   .texte-invit { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
   .titre-invit { font-family: var(--police-titre); font-size: 21px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }

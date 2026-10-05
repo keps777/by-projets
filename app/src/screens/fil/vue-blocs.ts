@@ -85,23 +85,21 @@ export function mesuresDuBloc(b: BlocVue, now?: number): MesureBloc[] {
   return res.sort((a, z) => ORDRE_TYPE(a.type) - ORDRE_TYPE(z.type));
 }
 
-/** Occurrence dont le minuteur tourne (ou, à défaut, est en pause). */
-export function occurrenceActive(): Occurrence | undefined {
-  const o = magasin.lignes.occurrences;
-  return o.find((x) => x.etat === 'en_cours') ?? o.find((x) => x.etat === 'pause');
+/** Occurrences dont le minuteur tourne ou est en pause, celles qui tournent d'abord (plusieurs blocs peuvent tourner en même temps). */
+export function occurrencesActives(): Occurrence[] {
+  const o = magasin.lignes.occurrences.filter((x) => x.etat === 'en_cours' || x.etat === 'pause');
+  return o.sort((a, z) => (a.etat === z.etat ? Date.parse(a.debut) - Date.parse(z.debut) : a.etat === 'en_cours' ? -1 : 1));
 }
 
-function pauserLesAutres(sauf: string): void {
-  for (const x of magasin.lignes.occurrences) if (x.etat === 'en_cours' && x.id !== sauf) pauseBloc(x.id);
-}
+/** La première occurrence active (celle qui tourne, sinon en pause). */
+export function occurrenceActive(): Occurrence | undefined { return occurrencesActives()[0]; }
 
-/** ▶ / ⏸ : un seul minuteur tourne à la fois ; lancer un bloc met l'autre en pause. */
+/** ▶ / ⏸ : chaque bloc a son minuteur, plusieurs peuvent tourner en même temps (spec §8). */
 export function basculerMinuteur(occId: string): void {
   const o = magasin.trouver('occurrences', occId);
   if (!o) return;
-  if (o.etat === 'en_cours') { pauseBloc(occId); return; }
-  pauserLesAutres(occId);
-  if (o.etat === 'pause') reprendreBloc(occId);
+  if (o.etat === 'en_cours') pauseBloc(occId);
+  else if (o.etat === 'pause') reprendreBloc(occId);
   else lancerBloc(occId);
 }
 

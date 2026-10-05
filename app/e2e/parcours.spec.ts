@@ -233,3 +233,59 @@ test('ajout de tâche : durée libre (3h45, 4 h) en plus des durées courantes',
   await page.getByLabel('Durée de la tâche').blur();
   await expect(page.locator('.debut')).toHaveText('21:00');
 });
+
+test('plusieurs blocs peuvent tourner en même temps ; la carte du bas les liste', async ({ page }) => {
+  for (const [titre, heure] of [['Étude A', 60], ['Étude B', 120]] as const) {
+    await page.goto(`/tache/nouvelle?sans-projet=1&heure=${heure}`);
+    await page.getByLabel('Titre de la tâche').fill(titre);
+    await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+  }
+  for (const titre of ['Étude A', 'Étude B']) {
+    await page.locator('.bloc').filter({ hasText: titre }).getByRole('button', { name: new RegExp(`Lancer ${titre}`) }).click();
+  }
+  await expect(page.locator('.bloc.tourne')).toHaveCount(2);
+  await expect(page.getByText('2 en cours en même temps')).toBeVisible();
+  // Mettre l'un en pause laisse l'autre tourner.
+  await page.getByRole('group', { name: /blocs en cours/ }).getByRole('button', { name: /Mettre en pause Étude A/ }).click();
+  await expect(page.getByText('Étude A · en pause')).toBeVisible();
+  await expect(page.getByText('Étude B · en pause')).toHaveCount(0);
+});
+
+test.describe('Propositions de titre', () => {
+  test('reprennent les réglages d’une tâche déjà créée, et proposent des titres génériques', async ({ page }) => {
+    await page.goto('/tache/nouvelle?sans-projet=1&heure=600');
+    await page.getByLabel('Titre de la tâche').fill('Rencontre avec Christopher');
+    await page.getByLabel('Durée de la tâche').fill('3h45');
+    await page.getByLabel('Durée de la tâche').blur();
+    await page.getByRole('button', { name: '2 h avant', exact: true }).click();
+    await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+
+    await page.goto('/tache/nouvelle?sans-projet=1&heure=1200');
+    const prop = page.getByRole('group', { name: 'Propositions de titre' });
+    await expect(prop.getByRole('button', { name: /Rencontre avec Christopher/ })).toBeVisible();
+    await page.getByLabel('Titre de la tâche').fill('renc');
+    await expect(prop.getByRole('button', { name: /^Rencontre avec Christopher/ })).toBeVisible();
+    await expect(prop.getByRole('button', { name: /^Rencontre avec…/ })).toBeVisible();
+    await prop.getByRole('button', { name: /^Rencontre avec Christopher/ }).click();
+    await expect(page.getByLabel('Titre de la tâche')).toHaveValue('Rencontre avec Christopher');
+    await expect(page.locator('.debut')).toHaveText('20:00'); // l’heure choisie reste
+    await expect(page.locator('.fin').first()).toHaveText('jusqu’à 23:45'); // la durée est reprise
+    await expect(page.getByRole('button', { name: '2 h avant', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  });
+});
+
+test('modifier la durée d’une tâche agrandit son bloc sur le Fil', async ({ page }) => {
+  await page.goto('/tache/nouvelle?sans-projet=1&heure=480');
+  await page.getByLabel('Titre de la tâche').fill('Atelier');
+  await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+  await page.waitForSelector('.bloc');
+  const avant = (await page.locator('.bloc').first().boundingBox())!.height;
+  await page.locator('.bloc .ouvrir').first().click();
+  await page.getByRole('link', { name: /Modifier la tâche/ }).click();
+  await page.getByLabel('Durée de la tâche').fill('3h');
+  await page.getByLabel('Durée de la tâche').blur();
+  await page.getByRole('button', { name: 'Enregistrer' }).click();
+  await page.waitForSelector('.bloc');
+  const apres = (await page.locator('.bloc').first().boundingBox())!.height;
+  expect(apres).toBeGreaterThan(avant * 3);
+});
