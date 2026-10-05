@@ -45,7 +45,10 @@ export function valeursDuProjet(projetId: string): ValeurSaisie[] {
 /** Valeurs lues par un sous-projet : celles de son projet, sans le passé s'il n'a pas demandé la reprise (spec §6). */
 export function valeursDuSousProjet(sp: SousProjetLigne): ValeurSaisie[] {
   const v = valeursDuProjet(sp.projet_id);
-  return sp.reprise_passe ? v : v.filter((x) => x.jour >= sp.created_at.slice(0, 10));
+  if (sp.reprise_passe) return v;
+  // Jour de création dans le fuseau de l'utilisateur (created_at est en UTC).
+  const creation = utcVersLocal(Date.parse(sp.created_at), fuseau()).jour;
+  return v.filter((x) => x.jour >= creation);
 }
 
 // ------------------------------------------------------------------ progression
