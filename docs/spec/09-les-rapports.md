@@ -34,3 +34,8 @@
 - **Modifier à la main** : dans l'onglet Jour, toucher la carte d'un point ouvre la saisie du jour (comme « Saisir un autre jour » d'un sous-projet) avec les mesures du point ; l'enregistrement met à jour la saisie manuelle du projet, donc tous ses sous-projets, les barres et le rapport. Un point sans projet ou sans mesure explique comment le régler.
 - Archive et Archives ne comptent pas le jour en cours avant l'heure du rapport.
 - Le jour en cours n'est jamais présenté comme un échec : un zéro s'affiche en encre normale et le résumé dit « Journée en cours · rapport à 21:15 ».
+
+## Chrono sur chaque point (onglet Jour, 5 oct. 2026)
+- Chaque carte de point qui a une mesure de **temps** et un projet porte un petit bouton **▶**. Le toucher **lance une session** : le chrono tourne sur la carte (et une pastille rouge marque l'onglet Rapports depuis les autres écrans) ; il survit au rechargement de l'app.
+- Toucher **■** arrête la session et ouvre la **pop-up de fin** : le temps y est déjà noté ; on peut remplir les **autres mesures** du point (nombre de fois — proposé à 1 —, chapitres, pages, références ; pour la Bible, les passages se choisissent par les menus et donnent le nombre de chapitres) ou **valider tel quel**. « Plus tard » garde la session arrêtée, « à valider » ; « Annuler la session » l'oublie.
+- Valider écrit une **saisie du projet** (source « minuteur »). Les sessions d'un même jour **s'additionnent** au total du point et de ses sous-projets ; la correction manuelle du jour reste possible. Un seul chrono par point à la fois ; plusieurs points peuvent chronométrer en même temps. Réservé à la journée en cours.

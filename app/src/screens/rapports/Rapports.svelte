@@ -8,16 +8,19 @@
   import { theme } from '../../ui/theme.svelte.ts';
   import { dire } from '../../ui/toast.svelte.ts';
   import { routeur } from '../../routeur.svelte.ts';
-  import { aujourdhui, maintenantLocal } from '../../data/temps.svelte.ts';
+  import { aujourdhui, horloge, maintenantLocal } from '../../data/temps.svelte.ts';
   import { COULEUR_SANS_PROJET, profil } from '../../data/requetes.ts';
   import { moisDe } from '@core/dates.ts';
-  import { TYPES } from '@core/metriques.ts';
-  import { atteint, calculerPoints, configDeMesure, contenuDuJour, modifieDepuis, preparer, texteDuContenu, type PointCalcule } from './calcul.ts';
+  import { atteint, calculerPoints, contenuDuJour, modifieDepuis, preparer, texteDuContenu, type PointCalcule } from './calcul.ts';
   import { donneesRapport, rapportDuJour } from './donnees.ts';
   import { calculerJours, ratiosDuPoint } from './syntheses.ts';
   import { decaler, estVue, libellePeriode, nomMois, periodeDe, semaineIso, type Vue } from './periodes.ts';
   import { styleCouleur } from '../../ui/couleurs.ts';
   import VoletSaisie from '../projets/VoletSaisie.svelte';
+  import VoletSession from './VoletSession.svelte';
+  import { chronos } from '../../data/chronos.svelte.ts';
+  import { enregistrerSession, type ValeurSession } from './session.ts';
+  import { mesuresDuPoint } from './mesures-point.ts';
   import CartePoint from './CartePoint.svelte';
   import PanneauExport from './PanneauExport.svelte';
 
@@ -64,18 +67,36 @@
 
   // Modifier à la main les valeurs d'un point (jour) : même saisie manuelle que dans les sous-projets, qui se mettent à jour d'eux-mêmes.
   let edition = $state<PointCalcule | null>(null);
-  const configsEdition = $derived(edition ? (edition.point.mesures ?? []).map((m) => configDeMesure(m, edition!.point, d, periode.debut, periode.fin)) : []);
-  const metriquesEdition = $derived.by(() => {
-    const vus = new Set<string>();
-    return configsEdition.map((c) => ({ ...c.metrique, id: c.metrique.id || c.metrique.cle, nom: c.metrique.id ? c.metrique.nom : nomLisible(c.metrique.type, c.metrique.cle) })).filter((m) => (vus.has(m.cle) ? false : (vus.add(m.cle), true)));
-  });
-  const periodeEdition = $derived(configsEdition[0]?.sousProjet ? { debut: configsEdition[0].sousProjet.debut, fin: configsEdition[0].sousProjet.fin ?? null } : { debut: periode.debut, fin: null });
-  /** Nom d'une mesure sans sous-projet : « Nombre de fois », « Temps », « Chapitres »… (la clé « nombre:chapitres » donne « Chapitres »). */
-  function nomLisible(type: string, cle: string): string {
-    if (type === 'fois') return 'Nombre de fois';
-    if (type === 'nombre') { const u = cle.split(':')[1] ?? 'nombre'; return u.charAt(0).toUpperCase() + u.slice(1); }
-    return TYPES[type as keyof typeof TYPES]?.nom ?? cle;
+  const mesuresEdition = $derived(edition ? mesuresDuPoint(edition.point, d, periode.debut, periode.fin) : null);
+  const metriquesEdition = $derived(mesuresEdition?.metriques ?? []);
+  const periodeEdition = $derived(mesuresEdition?.periode ?? { debut: periode.debut, fin: null });
+  // Chrono d'un point (jour en cours seulement) : ▶ lance, ■ arrête et ouvre la pop-up des autres mesures, puis on valide.
+  const chronometrable = $derived(vue === 'jour' && periode.debut === auj);
+  const peutChronometrer = (x: PointCalcule) => chronometrable && !!x.point.projet_id && (x.point.mesures ?? []).some((m) => m.cle === 'temps');
+  let sessionPour = $state<PointCalcule | null>(null);
+  const mesuresSession = $derived(sessionPour ? mesuresDuPoint(sessionPour.point, d, periode.debut, periode.fin) : null);
+  function chronoDe(x: PointCalcule) { return { etat: chronos.etat(x.point.id), secondes: chronos.secondes(x.point.id, horloge.maintenant) }; }
+  function toucherChrono(x: PointCalcule): void {
+    const etat = chronos.etat(x.point.id);
+    if (etat === 'repos') { chronos.demarrer(x.point.id); return; }
+    if (etat === 'cours') chronos.arreter(x.point.id);
+    sessionPour = x;
   }
+  function validerSession(autres: ValeurSession[]): void {
+    const x = sessionPour;
+    const s = x && chronos.sessions[x.point.id];
+    if (!x || !s || !x.point.projet_id) return;
+    enregistrerSession(x.point.projet_id, s.jour, chronos.secondes(x.point.id), autres);
+    chronos.oublier(x.point.id);
+    sessionPour = null;
+    dire(`Session ajoutée à ${x.point.code}`);
+  }
+  function annulerSession(): void {
+    if (sessionPour) chronos.oublier(sessionPour.point.id);
+    sessionPour = null;
+    dire('Session annulée');
+  }
+
   function modifier(x: PointCalcule): void {
     if (!x.point.projet_id) { dire('Ce point n’est lié à aucun projet : choisis-en un dans les Réglages pour y saisir des valeurs.'); return; }
     if (!x.point.mesures?.length) { dire('Ce point n’a aucune mesure : choisis-les dans les Réglages.'); return; }
@@ -127,7 +148,8 @@
 
   {#each points as x, i (x.point.id)}
     <CartePoint p={x} n={i + 1} {vue} {langue} {enCours} couleur={couleur(x.couleur)} ratios={vue === 'jour' ? [] : ratiosDuPoint(jours, x.point.id)}
-      lettres={vue === 'semaine' ? LETTRES : []} {sousTitre} onmodifier={vue === 'jour' ? () => modifier(x) : undefined} />
+      lettres={vue === 'semaine' ? LETTRES : []} {sousTitre} onmodifier={vue === 'jour' ? () => modifier(x) : undefined}
+      chrono={peutChronometrer(x) ? chronoDe(x) : undefined} onchrono={peutChronometrer(x) ? () => toucherChrono(x) : undefined} />
   {/each}
 
   <div class="flottant">
@@ -137,6 +159,11 @@
 
 <div style={edition ? styleCouleur(couleur(edition.couleur)) : ''}>
   <VoletSaisie ouvert={edition != null} onfermer={() => (edition = null)} projetId={edition?.point.projet_id ?? ''} metriques={metriquesEdition} jour={periode.debut} aujourdhui={auj} periode={periodeEdition} />
+</div>
+
+<div style={sessionPour ? styleCouleur(couleur(sessionPour.couleur)) : ''}>
+  <VoletSession ouvert={sessionPour != null} titre={sessionPour ? `${sessionPour.point.code} · ${sessionPour.point.libelle}` : ''} secondes={sessionPour ? chronos.secondes(sessionPour.point.id, horloge.maintenant) : 0}
+    metriques={mesuresSession?.metriques ?? []} onvalider={validerSession} onannuler={annulerSession} onfermer={() => (sessionPour = null)} />
 </div>
 
 <Volet ouvert={exportOuvert} onfermer={() => (exportOuvert = false)} label="Exporter le rapport">

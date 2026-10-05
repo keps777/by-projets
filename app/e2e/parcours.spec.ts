@@ -343,3 +343,76 @@ test('Bible : depuis le rapport, la saisie du jour utilise les menus et met le n
   await expect(br).toContainText('4 chapitres');
   await expect(br).toContainText('Jean 3 · Jean 5–7');
 });
+
+test.describe('Chrono sur les points du rapport', () => {
+  /** Recule le début de la session d’un point (sans attendre vraiment) ; la session est relue au rechargement. */
+  async function reculer(page: import('@playwright/test').Page, minutes: number) {
+    await page.evaluate((m) => {
+      const v = JSON.parse(localStorage.getItem('luther-life:chronos') ?? '{}');
+      for (const k of Object.keys(v)) v[k].debut -= m * 60_000;
+      localStorage.setItem('luther-life:chronos', JSON.stringify(v));
+    }, minutes);
+    await page.reload();
+  }
+
+  test('lancer, arrêter, valider : le temps s’ajoute au total, les sessions se cumulent', async ({ page }) => {
+    await page.goto('/rapports');
+    await page.getByRole('button', { name: 'Lancer un chrono pour DDEWG' }).click();
+    await expect(page.getByRole('timer', { name: /Session de DDEWG/ })).toBeVisible();
+    // Une pastille sur l’onglet Rapports signale le chrono depuis les autres écrans.
+    await expect(page.getByRole('img', { name: 'Chrono en cours' })).toBeVisible();
+    await reculer(page, 25); // 25 minutes plus tard (la session survit au rechargement)
+    await expect(page.getByRole('timer', { name: /Session de DDEWG/ })).toContainText('25:');
+    await page.getByRole('button', { name: 'Arrêter le chrono de DDEWG' }).click();
+    const pop = page.getByRole('dialog', { name: 'Fin de la session' });
+    await expect(pop).toContainText('25:0');
+    await expect(pop.getByRole('textbox', { name: 'Nombre de fois' })).toHaveValue('1'); // une séance = une rencontre
+    await pop.getByRole('button', { name: 'Valider la session' }).click();
+    const carte = page.getByRole('button', { name: /DDEWG : modifier les valeurs/ });
+    await expect(carte).toContainText('0h25');
+    await expect(carte).toContainText('1');
+
+    // Deuxième session : elle s’ajoute.
+    await page.getByRole('button', { name: 'Lancer un chrono pour DDEWG' }).click();
+    await reculer(page, 10);
+    await page.getByRole('button', { name: 'Arrêter le chrono de DDEWG' }).click();
+    await page.getByRole('dialog', { name: 'Fin de la session' }).getByRole('button', { name: 'Valider la session' }).click();
+    await expect(page.getByRole('button', { name: /DDEWG : modifier les valeurs/ })).toContainText('0h35');
+    await expect(page.getByRole('img', { name: 'Chrono en cours' })).toHaveCount(0);
+  });
+
+  test('étude de la Bible : à l’arrêt, la pop-up demande les chapitres lus (menus) ; on peut aussi annuler', async ({ page }) => {
+    await page.goto('/rapports');
+    await page.getByRole('button', { name: 'Lancer un chrono pour BR' }).click();
+    await reculer(page, 40);
+    await page.getByRole('button', { name: 'Arrêter le chrono de BR' }).click();
+    const pop = page.getByRole('dialog', { name: 'Fin de la session' });
+    await pop.getByLabel('Livre de la Bible').selectOption('Jean');
+    await pop.getByLabel('Du chapitre').selectOption('3');
+    await pop.getByLabel('Au chapitre').selectOption('5');
+    await pop.getByRole('button', { name: /Ajouter le passage Jean 3–5/ }).click();
+    await expect(pop.getByRole('textbox', { name: 'Chapitres' })).toHaveValue('3');
+    await pop.getByRole('button', { name: 'Valider la session' }).click();
+    const br = page.getByRole('button', { name: /BR : modifier les valeurs/ });
+    await expect(br).toContainText('3 chapitres');
+    await expect(br).toContainText('Jean 3–5');
+    await expect(br).toContainText('0h40');
+
+    // Annuler une session : rien n’est ajouté.
+    await page.getByRole('button', { name: 'Lancer un chrono pour PA' }).click();
+    await reculer(page, 30);
+    await page.getByRole('button', { name: 'Arrêter le chrono de PA' }).click();
+    await page.getByRole('dialog', { name: 'Fin de la session' }).getByRole('button', { name: 'Annuler la session' }).click();
+    await expect(page.getByRole('button', { name: /PA : modifier les valeurs/ })).toContainText('0h00');
+  });
+
+  test('fermer la pop-up sans valider garde la session à valider', async ({ page }) => {
+    await page.goto('/rapports');
+    await page.getByRole('button', { name: 'Lancer un chrono pour PA' }).click();
+    await page.getByRole('button', { name: 'Arrêter le chrono de PA' }).click();
+    await page.getByRole('dialog', { name: 'Fin de la session' }).getByRole('button', { name: 'Plus tard' }).click();
+    await expect(page.getByRole('timer', { name: /Session de PA/ })).toContainText('à valider');
+    await page.getByRole('button', { name: 'Valider la session de PA' }).click();
+    await expect(page.getByRole('dialog', { name: 'Fin de la session' })).toBeVisible();
+  });
+});

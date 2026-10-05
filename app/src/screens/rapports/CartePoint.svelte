@@ -4,11 +4,12 @@
   import { formatTemps } from '@core/units.ts';
   import { styleCouleur } from '../../ui/couleurs.ts';
   import Icone from '../../ui/Icone.svelte';
+  import { chrono as formaterChrono } from '../fil/format.ts';
   import type { PointCalcule } from './calcul.ts';
   import { niveau } from './syntheses.ts';
   import type { Vue } from './periodes.ts';
 
-  let { p, n, vue, langue, couleur, ratios = [], lettres = [], sousTitre = '', enCours = false, onmodifier }: {
+  let { p, n, vue, langue, couleur, ratios = [], lettres = [], sousTitre = '', enCours = false, onmodifier, chrono, onchrono }: {
     p: PointCalcule; n: number; vue: Vue; langue: Langue; couleur: string;
     /** Journée pas encore close : un zéro n'est pas un échec, on le montre sans rouge. */
     enCours?: boolean;
@@ -16,6 +17,10 @@
     ratios?: (number | null)[]; lettres?: string[]; sousTitre?: string;
     /** Toucher la carte (jour) : modifier les valeurs à la main. */
     onmodifier?: () => void;
+    /** Chrono du point (jour) : repos, en cours ou arrêté à valider, avec les secondes écoulées. */
+    chrono?: { etat: 'repos' | 'cours' | 'arret'; secondes: number };
+    /** Toucher le chrono : lancer, arrêter (ouvre la pop-up) ou valider. */
+    onchrono?: () => void;
   } = $props();
 
   const premiere = $derived(p.mesures[0]);
@@ -52,7 +57,27 @@
       <span class="valeur mono {vue === 'jour' ? etat : ''}">{valeur}</span>
       {#if sous}<span class="sous muted">{sous}</span>{/if}
     </span>
+    {#if onchrono && chrono}
+      <button type="button" class="chrono" class:cours={chrono.etat === 'cours'} class:arret={chrono.etat === 'arret'}
+        aria-label={chrono.etat === 'repos' ? `Lancer un chrono pour ${p.point.code}` : chrono.etat === 'cours' ? `Arrêter le chrono de ${p.point.code}` : `Valider la session de ${p.point.code}`}
+        onclick={(e) => { e.stopPropagation(); onchrono(); }} onkeydown={(e) => e.stopPropagation()}>
+        {#if chrono.etat === 'cours'}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5" /></svg>
+        {:else if chrono.etat === 'arret'}
+          <Icone nom="coche" taille={18} trait={2.6} />
+        {:else}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.9l12-7.5a1 1 0 0 0 0-1.7l-12-7.5A1 1 0 0 0 7 4.5z" /></svg>
+        {/if}
+      </button>
+    {/if}
   </div>
+  {#if vue === 'jour' && chrono && chrono.etat !== 'repos'}
+    <div class="session" class:fige={chrono.etat === 'arret'} role="timer" aria-label="Session de {p.point.code}">
+      <span class="point-vif" aria-hidden="true"></span>
+      <span class="mono temps">{formaterChrono(chrono.secondes)}</span>
+      <span class="muted">{chrono.etat === 'cours' ? 'session en cours' : 'session arrêtée : à valider'}</span>
+    </div>
+  {/if}
 
   {#if vue === 'jour'}
     <div class="jour">
@@ -90,6 +115,16 @@
 </article>
 
 <style>
+  .chrono { position: relative; flex: none; width: 40px; height: 40px; border-radius: 20px; border: 1.5px solid var(--c); background: transparent; color: var(--c); display: inline-flex; align-items: center; justify-content: center; }
+  .chrono::after { content: ''; position: absolute; inset: -4px; }
+  .chrono.cours { background: var(--c); color: var(--c-sur); }
+  .chrono.arret { background: var(--bon); border-color: var(--bon); color: var(--fond); }
+  .session { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 12px; background: var(--c-fond); font-size: 12px; animation: session-entre 0.25s ease both; }
+  .session .temps { font-size: 17px; color: var(--c-encre); letter-spacing: -0.01em; }
+  .point-vif { width: 8px; height: 8px; border-radius: 4px; background: var(--c); animation: battre 1.2s ease-in-out infinite; }
+  .session.fige .point-vif { animation: none; background: var(--bon); }
+  @keyframes battre { 50% { opacity: 0.25; } }
+  @keyframes session-entre { from { opacity: 0; transform: translateY(-4px); } }
   .cliquable { cursor: pointer; }
   .cliquable:active { transform: scale(0.985); }
   .modifier { display: inline-flex; align-items: center; gap: 5px; align-self: flex-start; font-size: 12px; font-weight: 600; color: var(--c-encre, var(--muted)); opacity: 0.85; }
