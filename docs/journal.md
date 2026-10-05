@@ -12,6 +12,9 @@
 **Revue critique faite** : 9 défauts corrigés avec test (synchro bloquée par une contrainte d'unicité, lignes refusées, tirage manqué, blocs supprimés qui revenaient, suppression vs modification ancienne, inscription fermée par la base, heure d'été…). Migrations ajoutées : `0600_rappels_recus`, `0700_synchronisation_et_inscription` — à appliquer avant de déployer l'app avec Supabase.
 Restent ouverts : lignes refusées sans écran de consultation ; signature seulement sur l'appareil ; « réf. » ou « ref. » dans le rapport anglais ; fenêtre de rattrapage du rapport après 22 h.
 
+**Passe de fidélité aux maquettes (même jour)** : les maquettes sont rendues avec le moteur de Claude Design (dc-runtime) et comparées à l'app écran par écran, en nuit et en jour. Causes de l'effet « zoomé » corrigées : zoom automatique d'iOS sur les champs < 16 px (viewport `maximum-scale=1` et champs à 16 px), interligne 1,45 global (désormais `normal`), Bricolage sans taille optique (désormais `opsz.css`). Teintes exactes des rubriques dans `ui/couleurs.ts`. État vide du Fil (bloc fantôme + invitation). Transitions et retour tactile.
+Outil de comparaison : voir la méthode dans ce journal ; relancer une passe à chaque nouvelle maquette.
+
 **Reste à faire (dans l'ordre)**
 1. Brancher le vrai Supabase (voir `supabase/README.md`) : appliquer les migrations, déployer les 3 fonctions, secrets VAPID, variables Vercel `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_VAPID_PUBLIC_KEY`, fermer les inscriptions après la création du compte.
    - Blocage : le jeton `SUPABACE_ACCES_TOKEN` (sic) ne voit que le projet `le-chemin` (autre application, ne pas y toucher). Il faut un jeton qui voit le projet `by-projets`.
