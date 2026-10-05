@@ -3,6 +3,7 @@ import { uuidDeterministe } from '@core/ids.ts';
 import type { RapportLigne } from '@core/lignes.ts';
 import type { Jour } from '@core/types.ts';
 import { magasin } from '../../data/magasin.svelte.ts';
+import { profil } from '../../data/requetes.ts';
 import type { ContenuRapport, DonneesRapport } from './calcul.ts';
 
 export function donneesRapport(): DonneesRapport {
@@ -11,7 +12,8 @@ export function donneesRapport(): DonneesRapport {
 }
 
 /** Identifiant stable du rapport d'un jour : un seul rapport par jour, même créé sur deux appareils. */
-export const idRapport = (jour: Jour) => uuidDeterministe(`rapport:${jour}`);
+// Même formule que generer-rapports côté serveur : l'app et le serveur n'écrivent jamais deux rapports pour un même jour.
+export const idRapport = (jour: Jour) => uuidDeterministe(`rapport:${profil()?.id}:${jour}`);
 
 export function rapportDuJour(jour: Jour): RapportLigne | undefined {
   const l = magasin.lignes.rapports.filter((r) => r.jour === jour);

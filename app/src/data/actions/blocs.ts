@@ -66,7 +66,8 @@ export function terminerBloc(occId: string): void {
   const m = minuteurDe(o);
   const fini = m.demarreeA == null ? { ...initial(), etat: 'faite' as const, demarreeA: Date.parse(o.debut), termineeA: Date.parse(o.fin) } : terminer(m, Date.now());
   appliquer(occId, fini);
-  const sec = m.demarreeA == null ? tache.duree_min * 60 : ecouleS(fini, Date.now());
+  // Bloc jamais lancé : durée de cette occurrence (elle peut différer de la tâche après un report).
+  const sec = m.demarreeA == null ? Math.max(0, Math.round((Date.parse(o.fin) - Date.parse(o.debut)) / 1000)) : ecouleS(fini, Date.now());
   const existantes = new Set(magasin.lignes.saisie_valeurs.filter((v) => v.saisie_id === idSaisie(occId)).map((v) => v.cle));
   const valeurs: ValeurEntree[] = [{ cle: 'temps', num: sec }];
   for (const a of attendusDe(tache.id)) if (a.cle !== 'temps' && !existantes.has(a.cle)) valeurs.push({ cle: a.cle, num: a.valeur_prevue });
@@ -82,4 +83,9 @@ export function basculerFait(occId: string): void {
 }
 
 /** Correction manuelle d'une valeur (volet du bloc). */
-export function corrigerValeur(occId: string, cle: string, num: number): void { saisirBloc(occId, [{ cle, num }], { source: 'bloc' }); }
+export function corrigerValeur(occId: string, cle: string, num: number): void {
+  saisirBloc(occId, [{ cle, num }], { source: 'bloc' });
+  // Spec §8 : une saisie confirme le bloc. Un minuteur en cours reste maître de son état.
+  const o = magasin.trouver('occurrences', occId);
+  if (o && o.etat === 'prevue' && num > 0) magasin.ecrire('occurrences', { id: occId, etat: 'faite', terminee_a: new Date().toISOString() });
+}
