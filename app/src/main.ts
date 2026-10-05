@@ -5,5 +5,8 @@ import '@fontsource/geist-mono/500.css';
 import '@fontsource/instrument-serif/400-italic.css';
 import './ui/tokens.css';
 import App from './App.svelte';
+import { demarrerPwa } from './pwa.ts';
 
 mount(App, { target: document.getElementById('app')! });
+
+demarrerPwa();
