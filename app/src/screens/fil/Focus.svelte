@@ -122,7 +122,7 @@
       </div>
 
       <div class="anneau">
-        <Anneau pct={totalS ? (ecoule / totalS) * 100 : 0} taille={216} epaisseur={12} couleur="var(--c)">
+        <Anneau piste="var(--piste-anneau)" pct={totalS ? (ecoule / totalS) * 100 : 0} taille={216} epaisseur={12} couleur="var(--c)">
           <span class="centre-focus">
             <span class="mono temps">{chrono(ecoule)}</span>
             <span class="muted sur">sur {chrono(totalS)}</span>

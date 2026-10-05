@@ -56,7 +56,7 @@
     </div>
 
     <div class="anneau">
-      <Anneau {pct} taille={198} epaisseur={10} couleur="var(--c)">
+      <Anneau piste="var(--piste-anneau)" {pct} taille={198} epaisseur={10} couleur="var(--c)">
         <span class="muted petit">{libelle}</span>
         <span class="mono compteur">{compteur}</span>
       </Anneau>

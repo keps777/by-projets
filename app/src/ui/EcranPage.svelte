@@ -7,7 +7,7 @@
 
 <div class="ecran">
   <div class="defile" style:gap="{gap}px">{@render children?.()}</div>
-  {#if pied}<div class="pied">{@render pied()}</div>{/if}
+  {#if pied}<div class="pied" class:bas={!onglets}>{@render pied()}</div>{/if}
   {#if onglets}<BarreOnglets />{/if}
 </div>
 
@@ -15,4 +15,6 @@
   .ecran { height: 100dvh; max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; background: var(--fond); }
   .defile { flex: 1; min-height: 0; overflow-y: auto; padding: calc(20px + var(--haut-sûr)) 16px 24px; display: flex; flex-direction: column; }
   .pied { flex: none; padding: 10px 16px 14px; border-top: 1px solid var(--ligne-douce); background: var(--fond); display: flex; flex-direction: column; gap: 8px; }
+  /* Sans barre d'onglets, le pied est collé au bas de l'écran : il évite la barre d'accueil de l'iPhone. */
+  .pied.bas { padding-bottom: calc(18px + var(--bas-sûr)); }
 </style>

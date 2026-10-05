@@ -139,7 +139,7 @@
 
   <CarteBas {blocs} {jour} {aujourdhui} {actif} onouvrir={(id) => (selId = id)} onjouer={basculerMinuteur} onterminer={(id) => (confirmId = id)} />
 
-  <BarreOnglets />
+  <BarreOnglets filet={false} />
 </div>
 
 <VoletBloc b={selBloc} {aujourdhui} onfermer={() => (selId = null)} onjouer={basculerMinuteur} onterminer={(id) => (confirmId = id)} onreporter={(id) => (reportId = id)} />
@@ -174,5 +174,4 @@
   .segments { width: 92px; height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; display: flex; }
   .vues { padding: 2px 18px 6px; flex: none; }
   /* Sur la maquette du Fil, la barre d'onglets n'a pas de filet (la carte du bas la sépare déjà). */
-  .ecran-fil :global(nav) { border-top: 0; }
 </style>
