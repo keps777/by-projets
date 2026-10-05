@@ -21,3 +21,6 @@
 
 ## Plusieurs minuteurs à la fois (5 oct. 2026)
 Chaque bloc a **son propre minuteur** : on peut lancer ▶ plusieurs blocs en même temps, sans que l'un mette l'autre en pause. Chacun enregistre son temps réel ; deux blocs qui se chevauchent comptent donc tous les deux leur temps. La carte du bas indique « N en cours en même temps » et liste chaque bloc avec sa barre, sa pause et son arrêt. Quand la fin prévue de plusieurs blocs est atteinte, « As-tu terminé ? » est posé bloc après bloc.
+
+## Passages de la Bible par menus déroulants (5 oct. 2026)
+Partout où l'on note ce qui a été lu (Mode Focus, volet d'un bloc, « Saisir un jour » d'un sous-projet, saisie depuis un point du rapport), les passages se choisissent dans trois **menus déroulants** : **Livre** (66 livres, groupés Ancien / Nouveau Testament), **Du chapitre**, **Au chapitre** (jamais avant « du chapitre »), puis « Ajouter ». Après un ajout, le chapitre suivant est déjà prêt (Luc 22–24 → Luc 24… ou Matthieu 1–2 → Matthieu 3) et le dernier livre utilisé est retenu. « Livre entier » remplit tous les chapitres. Chaque passage ajouté ou retiré met à jour la référence écrite (« Luc 22–24 · Matthieu 1–2 ») et le **nombre de chapitres lus**. Les anciennes saisies écrites à la main (« Mt 8–10 ») sont relues en passages.

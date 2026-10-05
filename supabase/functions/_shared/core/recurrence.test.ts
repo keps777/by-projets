@@ -117,3 +117,20 @@ describe('Bible', () => {
     expect(formaterPassages(ps, true)).toBe('Mt 8–10 · Lc 22');
   });
 });
+
+import { lirePassages, NB_LIVRES_AT } from './bible.ts';
+
+describe('lecture de références écrites à la main', () => {
+  it('relit les passages, les formes courtes et les séparateurs variés', () => {
+    expect(lirePassages('Matthieu 8–10 · Luc 22')).toEqual([{ livre: 'Matthieu', de: 8, a: 10 }, { livre: 'Luc', de: 22, a: 22 }]);
+    expect(lirePassages('Jn 3; Ps 23, 1 Co 13-14')).toEqual([{ livre: 'Jean', de: 3, a: 3 }, { livre: 'Psaumes', de: 23, a: 23 }, { livre: '1 Corinthiens', de: 13, a: 14 }]);
+  });
+  it('ignore ce qu’on ne comprend pas ou qui sort du livre', () => {
+    expect(lirePassages('bientôt · Jude 5 · Marc 2')).toEqual([{ livre: 'Marc', de: 2, a: 2 }]);
+    expect(lirePassages('')).toEqual([]);
+  });
+  it('les 39 premiers livres sont l’Ancien Testament', () => {
+    expect(LIVRES[NB_LIVRES_AT - 1].nom).toBe('Malachie');
+    expect(LIVRES[NB_LIVRES_AT].nom).toBe('Matthieu');
+  });
+});

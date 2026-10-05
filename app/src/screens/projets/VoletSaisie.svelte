@@ -2,6 +2,7 @@
   // « Saisir un autre jour » et correction d'une journée depuis un sous-projet (spec §8, sources manuel et rattrapage).
   // Chaque champ montre le total de la journée ; le modifier ajuste la saisie manuelle de ce jour, sans toucher aux blocs.
   import { agreger, TYPES } from '@core/metriques.ts';
+  import { compterChapitres, formaterPassages, lirePassages, type Passage } from '@core/bible.ts';
   import { attenduDuJour } from '@core/rapport.ts';
   import { formatHeure, parseHeure } from '@core/units.ts';
   import type { Jour, Metrique } from '@core/types.ts';
@@ -9,6 +10,7 @@
   import Bouton from '../../ui/Bouton.svelte';
   import Interrupteur from '../../ui/Interrupteur.svelte';
   import Puces from '../../ui/Puces.svelte';
+  import PassagesLus from '../../ui/PassagesLus.svelte';
   import { dire } from '../../ui/toast.svelte.ts';
   import { magasin } from '../../data/magasin.svelte.ts';
   import { contenuDuJour, idSaisieManuelle, saisirJour } from './donnees.ts';
@@ -24,6 +26,8 @@
   let textes = $state<Record<string, string>>({});
   let autresTextes = $state<Record<string, string>>({});
   let note = $state('');
+  /** Passages de la Bible choisis dans les menus, par clé de référence. */
+  let passagesPar = $state<Record<string, Passage[]>>({});
 
   $effect(() => { if (ouvert) j = jour; });
 
@@ -42,6 +46,7 @@
       ch[m.cle] = champTexte(m.type, v);
     }
     nums = n; champs = ch; textes = t; autresTextes = at;
+    passagesPar = Object.fromEntries(Object.entries(t).map(([cle, txt]) => [cle, lirePassages(txt)]));
     note = magasin.trouver('saisies', idSaisieManuelle(projetId, j))?.note ?? '';
   });
 
@@ -54,11 +59,20 @@
   }
   function lire(m: Metrique) { const v = lireChamp(m.type, champs[m.cle] ?? ''); regler(m, v ?? (champs[m.cle]?.trim() ? nums[m.cle] : null)); }
 
+  /** Passages choisis dans les menus : le texte de la référence suit, et le nombre de chapitres du jour varie de la même quantité. */
+  function changerPassages(m: Metrique, ps: Passage[]) {
+    const avant = compterChapitres(passagesPar[m.cle] ?? []);
+    passagesPar[m.cle] = ps;
+    textes[m.cle] = ps.length ? formaterPassages(ps) : '';
+    const chap = metriques.find((x) => x.cle === 'nombre:chapitres');
+    if (chap) regler(chap, Math.max(0, (nums[chap.cle] ?? 0) + compterChapitres(ps) - avant));
+  }
+
   const horsPeriode = $derived(!!j && (j < periode.debut || (periode.fin != null && j > periode.fin)));
 
   function enregistrer() {
     if (!j || j > aujourdhui) { dire('Choisis un jour passé ou aujourd’hui.'); return; }
-    saisirJour(projetId, j, metriques.map((m) => ({ cle: m.cle, type: m.type, num: nums[m.cle], txt: textes[m.cle] })), aujourdhui, note);
+    saisirJour(projetId, j, metriques.map((m) => ({ cle: m.cle, type: m.type, num: nums[m.cle], txt: textes[m.cle], detail: m.type === 'reference' && passagesPar[m.cle] ? (passagesPar[m.cle] as unknown[]) : undefined })), aujourdhui, note);
     dire(j === aujourdhui ? 'Saisie enregistrée' : `Saisie du ${jourCourt(j)} enregistrée`);
     onfermer();
   }
@@ -75,7 +89,10 @@
     {@const prevu = attenduDuJour(m, periode, j)}
     <div class="champ">
       <span class="libelle"><span>{m.nom}</span>{#if prevu != null && m.type !== 'reference'}<span class="muted mono petit">prévu {valeurTexte(m, prevu, true)}</span>{/if}</span>
-      {#if m.type === 'reference'}
+      {#if m.type === 'reference' && m.cle === 'reference:passages'}
+        <PassagesLus passages={passagesPar[m.cle] ?? []} onchange={(ps) => changerPassages(m, ps)} />
+        {#if autresTextes[m.cle]}<span class="muted petit">Déjà noté dans les blocs : {autresTextes[m.cle]}</span>{/if}
+      {:else if m.type === 'reference'}
         <input class="texte" bind:value={textes[m.cle]} placeholder="Ex. Matthieu 8–10" aria-label={m.nom} />
         {#if autresTextes[m.cle]}<span class="muted petit">Déjà noté dans les blocs : {autresTextes[m.cle]}</span>{/if}
       {:else if m.type === 'oui_non'}

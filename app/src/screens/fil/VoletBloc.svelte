@@ -10,6 +10,8 @@
   import { cap, chrono, dureeMin, formatValeur, hm, nomDuMois } from './format.ts';
   import { abreger, codeDuProjet, mesuresDuBloc, progressionsDe, tempsDuBloc, type MesureBloc } from './vue-blocs.ts';
   import { depuisAffichage, versAffichage } from './saisie.ts';
+  import { CLE_CHAPITRES, CLE_PASSAGES, enregistrerPassages, passagesEnregistres } from './passages.ts';
+  import PassagesLus from '../../ui/PassagesLus.svelte';
   import { styleTeinte } from './teintes.ts';
 
   /** Volet d'un bloc : minuteur, valeurs réalisées corrigeables, Fait, Reporter, Focus, sous-projets alimentés (spec §8, §12). */
@@ -99,7 +101,11 @@
         <span class="etiquette">Réalisé · corrigeable à la main</span>
         {#each mesures as m (m.cle)}
           <div class="mesure">
-            {#if m.type === 'reference'}
+            {#if m.type === 'reference' && m.cle === CLE_PASSAGES}
+              <div class="bible">
+                <PassagesLus passages={passagesEnregistres(b.occ.id)} onchange={(ps) => enregistrerPassages(b.occ.id, ps, mesures.some((x) => x.cle === CLE_CHAPITRES))} />
+              </div>
+            {:else if m.type === 'reference'}
               <label class="col texte-ref"><span class="muted petit">{m.label}</span>
                 <input value={m.texte ?? ''} placeholder="Ex. Matthieu 8–10" onchange={(e) => saisirBloc(b.occ.id, [{ cle: m.cle, txt: e.currentTarget.value.trim() || null }])} />
               </label>
@@ -167,6 +173,7 @@
 </Volet>
 
 <style>
+  .bible { padding: 4px 0; }
   .volet { display: flex; flex-direction: column; gap: 14px; }
   .col { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
   .grandit { flex: 1; gap: 6px; }

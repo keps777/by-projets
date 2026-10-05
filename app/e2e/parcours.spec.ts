@@ -289,3 +289,57 @@ test('modifier la durée d’une tâche agrandit son bloc sur le Fil', async ({ 
   const apres = (await page.locator('.bloc').first().boundingBox())!.height;
   expect(apres).toBeGreaterThan(avant * 3);
 });
+
+test('Bible : choisir le livre et les chapitres dans des menus (Focus), puis les retrouver au rapport', async ({ page }) => {
+  await page.goto('/tache/nouvelle?heure=60');
+  await page.getByLabel('Titre de la tâche').fill('Lecture du soir');
+  await page.getByRole('button', { name: /La lecture de la Bible/ }).first().click();
+  await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+  await page.getByText('Lecture du soir').first().click();
+  await page.getByRole('dialog').getByRole('button', { name: /Lancer/ }).first().click();
+  await page.getByRole('link', { name: /Mode Focus/ }).click();
+
+  // Menus déroulants : livre, du chapitre, au chapitre.
+  await page.getByLabel('Livre de la Bible').selectOption('Luc');
+  await page.getByLabel('Du chapitre').selectOption('22');
+  await page.getByLabel('Au chapitre').selectOption('24');
+  await page.getByRole('button', { name: /Ajouter le passage Luc 22–24/ }).click();
+  await expect(page.getByText('Luc 22–24')).toBeVisible();
+  await expect(page.locator('.compte')).toContainText('3');
+  // Le suivant est prêt : le chapitre d’après (Luc 24 était le dernier, on reste sur 24).
+  await expect(page.getByLabel('Du chapitre')).toHaveValue('24');
+  // « Au chapitre » ne propose pas de chapitre avant « Du chapitre ».
+  await page.getByLabel('Livre de la Bible').selectOption('Jude');
+  await expect(page.getByLabel('Au chapitre').locator('option')).toHaveCount(1);
+  await page.getByLabel('Livre de la Bible').selectOption('Matthieu');
+  await page.getByLabel('Du chapitre').selectOption('1');
+  await page.getByLabel('Au chapitre').selectOption('2');
+  await page.getByRole('button', { name: /Ajouter le passage Matthieu 1–2/ }).click();
+  await expect(page.locator('.compte')).toContainText('5');
+  await expect(page.getByLabel('Du chapitre')).toHaveValue('3');
+
+  await page.getByRole('button', { name: 'Terminer', exact: true }).click();
+  await page.getByRole('button', { name: /Oui, enregistrer et cocher/ }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await page.getByRole('navigation', { name: 'Navigation principale' }).getByRole('link', { name: 'Rapports' }).click();
+  const br = page.getByRole('button', { name: /BR : modifier les valeurs/ });
+  await expect(br).toContainText('5 chapitres');
+  await expect(br).toContainText('Luc 22–24 · Matthieu 1–2');
+});
+
+test('Bible : depuis le rapport, la saisie du jour utilise les menus et met le nombre de chapitres à jour', async ({ page }) => {
+  await page.goto('/rapports');
+  await page.getByRole('button', { name: /BR : modifier les valeurs/ }).click();
+  const volet = page.getByRole('dialog', { name: 'Saisir un jour' });
+  await volet.getByLabel('Livre de la Bible').selectOption('Jean');
+  await volet.getByLabel('Du chapitre').selectOption('3');
+  await volet.getByRole('button', { name: /Ajouter le passage Jean 3/ }).click();
+  await volet.getByLabel('Du chapitre').selectOption('5');
+  await volet.getByLabel('Au chapitre').selectOption('7');
+  await volet.getByRole('button', { name: /Ajouter le passage Jean 5–7/ }).click();
+  await expect(volet.getByText('Jean 5–7')).toBeVisible();
+  await volet.getByRole('button', { name: 'Enregistrer' }).click();
+  const br = page.getByRole('button', { name: /BR : modifier les valeurs/ });
+  await expect(br).toContainText('4 chapitres');
+  await expect(br).toContainText('Jean 3 · Jean 5–7');
+});

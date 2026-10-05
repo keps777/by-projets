@@ -1,6 +1,6 @@
 <script lang="ts">
   import { SvelteSet } from 'svelte/reactivity';
-  import { LIVRES, compterChapitres, formaterPassage, formaterPassages, validerPassage, type ErreurPassage, type Passage } from '@core/bible.ts';
+  import { compterChapitres, formaterPassages, type Passage } from '@core/bible.ts';
   import { estArrive } from '@core/minuteur.ts';
   import { nombre } from '@core/units.ts';
   import { magasin } from '../../data/magasin.svelte.ts';
@@ -12,6 +12,7 @@
   import { theme } from '../../ui/theme.svelte.ts';
   import { dire } from '../../ui/toast.svelte.ts';
   import Anneau from '../../ui/Anneau.svelte';
+  import PassagesLus from '../../ui/PassagesLus.svelte';
   import Icone from '../../ui/Icone.svelte';
   import Confirmer from './Confirmer.svelte';
   import { basculerMinuteur, codeDuProjet, mesuresDuBloc, occurrenceActive, type MesureBloc } from './vue-blocs.ts';
@@ -61,7 +62,6 @@
     if (n) { brouillonNote = ''; try { localStorage.removeItem(cleBrouillon(b.occ.id) + ':note'); } catch { /* stockage indisponible */ } }
   }
   function memoriserNote() { if (b) try { localStorage.setItem(cleBrouillon(b.occ.id) + ':note', brouillonNote); } catch { /* stockage indisponible */ } }
-  let livre = $state(''), de = $state(''), a = $state('');
   const cleBrouillon = (id: string) => `luther-life:focus:${id}`;
   let chargePour: string | null = null;
   $effect(() => {
@@ -79,16 +79,7 @@
   }
 
   const compte = $derived(compterChapitres(passages));
-  const ERREURS: Record<ErreurPassage, string> = { livre_inconnu: 'Livre inconnu', chapitre_invalide: 'Chapitre hors du livre', ordre_inverse: 'Le chapitre de fin précède le début' };
-  function ajouterPassage() {
-    const d = parseInt(de, 10), f = parseInt(a || de, 10);
-    const r = validerPassage(livre, d, f);
-    if (!r.ok) { dire(ERREURS[r.erreur]); return; }
-    passages = [...passages, r.passage];
-    livre = ''; de = ''; a = '';
-    memoriser();
-  }
-  function retirer(i: number) { passages = passages.filter((_, j) => j !== i); memoriser(); }
+  function changerPassages(ps: Passage[]) { passages = ps; memoriser(); }
 
   // Fin : à la fin prévue, ou en touchant Terminer.
   let confirme = $state(false);
@@ -157,24 +148,7 @@
 
       {#if lecture}
         <div class="carte-f">
-          <div class="rang"><span class="fort">Passages lus</span><span class="mono compte" class:bon={compte >= objectif}>{compte} / {nombre(objectif)} ch.</span></div>
-          <span class="piste"><span class:bon={compte >= objectif} style:width="{Math.min(100, (compte / Math.max(1, objectif)) * 100)}%"></span></span>
-          {#if passages.length}
-            <div class="puces">
-              {#each passages as p, i (i)}
-                <span class="puce">{formaterPassage(p)} <span class="leger">· {p.a - p.de + 1} ch.</span>
-                  <button type="button" aria-label="Retirer {formaterPassage(p)}" onclick={() => retirer(i)}><Icone nom="fermer" taille={12} trait={2.6} /></button>
-                </span>
-              {/each}
-            </div>
-          {/if}
-          <div class="formulaire">
-            <label>Livre<input list="livres-focus" bind:value={livre} placeholder="Luc" autocomplete="off" /></label>
-            <label>Du ch.<input inputmode="numeric" bind:value={de} placeholder="22" class="ch" /></label>
-            <label>Au ch.<input inputmode="numeric" bind:value={a} placeholder={de || '22'} class="ch" onkeydown={(e) => e.key === 'Enter' && ajouterPassage()} /></label>
-            <button type="button" class="ajouter" aria-label="Ajouter le passage" onclick={ajouterPassage}><Icone nom="plus" taille={18} trait={2.4} /></button>
-          </div>
-          <datalist id="livres-focus">{#each LIVRES as l (l.nom)}<option value={l.nom}></option>{/each}</datalist>
+          <PassagesLus {passages} onchange={changerPassages} {objectif} couleur="var(--c)" />
         </div>
       {:else if autres.length}
         <div class="carte-f">
@@ -244,24 +218,6 @@
   .col { display: flex; flex-direction: column; }
   .fort { font-size: 13px; font-weight: 600; }
   .petit { font-size: 12px; }
-  .compte { font-size: 13px; color: var(--c); }
-  .compte.bon { color: var(--bon); }
-  .piste { height: 8px; border-radius: 4px; background: var(--piste); overflow: hidden; }
-  .piste span { display: block; height: 8px; border-radius: 4px; background: var(--c); transition: width 0.3s ease; }
-  .piste span.bon { background: var(--bon); }
-  .puces { display: flex; flex-wrap: wrap; gap: 6px; }
-  .puce { animation: puce-entre 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
-  @keyframes puce-entre { from { opacity: 0; transform: scale(0.85); } }
-  .puce { display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 0 4px 0 12px; border-radius: 18px; background: var(--c-fond); color: var(--c-encre); font-size: 13px; font-weight: 600; }
-  .puce .leger { font-weight: 400; opacity: 0.8; }
-  .puce button { position: relative; width: 28px; height: 28px; border-radius: 14px; border: 0; background: transparent; color: inherit; display: flex; align-items: center; justify-content: center; }
-  /* Zone d'appui de 44 px sans changer le dessin. */
-  .puce button::after { content: ''; position: absolute; inset: -8px; }
-  .formulaire { display: grid; grid-template-columns: minmax(0, 1fr) 56px 56px 50px; gap: 6px; align-items: end; }
-  .formulaire label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: var(--muted); }
-  .formulaire input { height: 44px; min-width: 0; border-radius: 12px; border: 1px solid var(--ligne); background: var(--champ); font-size: 16px; padding: 0 10px; }
-  .formulaire input.ch { width: 56px; padding: 0 8px; text-align: center; }
-  .ajouter { height: 44px; border-radius: 12px; border: 0; background: var(--inverse); color: var(--inverse-texte); display: flex; align-items: center; justify-content: center; }
   .pas { display: flex; gap: 6px; }
   .pas button { width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--surface-2); font-size: 20px; }
   .carnet { display: flex; flex-direction: column; gap: 10px; background: var(--surface); border: 1px solid var(--ligne); border-radius: 20px; padding: 14px; }

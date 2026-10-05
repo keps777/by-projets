@@ -62,7 +62,7 @@ export function saisiesDuProjet(projetId: string, debut: Jour, fin: Jour): Saisi
 export const idSaisieManuelle = (projetId: string, jour: Jour) => uuidDeterministe(`manuel:${projetId}:${jour}`);
 const idValeur = (saisieId: string, cle: string) => uuidDeterministe(`sv:${saisieId}:${cle}`);
 
-export interface ValeurJour { cle: string; type: TypeMetrique; num?: number | null; txt?: string | null }
+export interface ValeurJour { cle: string; type: TypeMetrique; num?: number | null; txt?: string | null; /** Détail structuré d’une référence (passages de la Bible). */ detail?: unknown[] }
 
 /** Ce que contient la journée pour une clé : total (selon l'agrégation du type) et texte. */
 export function contenuDuJour(projetId: string, jour: Jour): Map<string, { nums: number[]; textes: string[]; manuel: number | null; manuelTxt: string | null }> {
@@ -95,7 +95,7 @@ export function saisirJour(projetId: string, jour: Jour, valeurs: ValeurJour[], 
     if (v.type === 'reference') {
       const txt = v.txt?.trim() || null;
       if ((c?.manuelTxt ?? null) === txt) continue;
-      ops.push(['saisie_valeurs', { id: idValeur(sid, v.cle), saisie_id: sid, cle: v.cle, valeur_num: null, valeur_txt: txt, detail: null }]);
+      ops.push(['saisie_valeurs', { id: idValeur(sid, v.cle), saisie_id: sid, cle: v.cle, valeur_num: null, valeur_txt: txt, detail: v.detail ?? null }]);
       continue;
     }
     if (v.num == null) continue;

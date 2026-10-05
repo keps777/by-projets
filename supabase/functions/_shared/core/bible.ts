@@ -66,3 +66,21 @@ export function formaterPassage(p: Passage, abrege = false): string {
 }
 
 export const formaterPassages = (ps: Passage[], abrege = false) => ps.map((p) => formaterPassage(p, abrege)).join(' · ');
+
+/** Nombre de livres de l'Ancien Testament (les 39 premiers de LIVRES) ; les 27 suivants forment le Nouveau Testament. */
+export const NB_LIVRES_AT = 39;
+
+/**
+ * Relit des références écrites à la main : « Matthieu 8–10 · Luc 22 », « Jn 3; Ps 23 ». Les morceaux qu'on ne comprend pas sont ignorés.
+ * Sert à retrouver les passages d'une saisie qui n'en a gardé que le texte.
+ */
+export function lirePassages(texte: string): Passage[] {
+  const res: Passage[] = [];
+  for (const morceau of texte.split(/[·;,\n]/)) {
+    const m = morceau.trim().match(/^(.+?)\s+(\d+)(?:\s*[–—-]\s*(\d+))?$/);
+    if (!m) continue;
+    const r = validerPassage(m[1], +m[2], m[3] ? +m[3] : +m[2]);
+    if (r.ok) res.push(r.passage);
+  }
+  return res;
+}
