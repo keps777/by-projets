@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": [
+      "ES2023",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "types": [
+      "vite/client"
+    ],
+    "strict": true,
+    "noUncheckedIndexedAccess": false,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@core/*": [
+        "../supabase/functions/_shared/core/*"
+      ],
+      "vitest": [
+        "./node_modules/vitest"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.svelte",
+    "../supabase/functions/_shared/core/**/*.ts"
+  ],
+  "exclude": [
+    "src/sw/**"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "luther-life",
+  "private": true,
+  "description": "Luther Life : pilotage de vie par projets (PWA)",
+  "scripts": {
+    "dev": "npm --prefix app run dev",
+    "build": "npm --prefix app run build",
+    "check": "npm --prefix app run check",
+    "test": "npm --prefix app run test",
+    "e2e": "npm --prefix app run e2e"
+  }
+}
