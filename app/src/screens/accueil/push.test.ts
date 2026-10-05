@@ -6,7 +6,8 @@ const etat = vi.hoisted(() => ({
   lignes: { abonnements_push: [] as { id: string; endpoint: string; dernier_succes: string | null }[], profils: [{ id: 'u' }], taches: [], occurrences: [], rappels: [] },
   ecrits: [] as [string, Record<string, unknown>][]
 }));
-vi.mock('../../data/config.ts', () => ({ get VAPID_PUBLIQUE() { return etat.vapid; } }));
+vi.mock('../../data/config.ts', () => ({ get VAPID_PUBLIQUE() { return etat.vapid; }, modeServeur: false, SUPABASE_URL: undefined, SUPABASE_CLE: undefined }));
+vi.mock('../../data/sync.svelte.ts', () => ({ synchro: { synchroniser: async () => {} } }));
 vi.mock('../../data/magasin.svelte.ts', () => ({
   magasin: {
     userId: 'u',
@@ -23,8 +24,9 @@ const sub = { endpoint: 'https://push.apple.com/abc', toJSON: () => ({ endpoint:
 function navigateur(o: { permission: NotificationPermission; reponse?: NotificationPermission; sw?: boolean; existant?: boolean; echec?: boolean }) {
   const subscribe = vi.fn(async () => { if (o.echec) throw new Error('refusé par le service'); return sub; });
   const pushManager = { getSubscription: vi.fn(async () => (o.existant ? sub : null)), subscribe };
-  const requestPermission = vi.fn(async () => o.reponse ?? o.permission);
-  vi.stubGlobal('Notification', { permission: o.permission, requestPermission });
+  const notification = { permission: o.permission, requestPermission: vi.fn(async () => { notification.permission = o.reponse ?? o.permission; return notification.permission; }) };
+  const requestPermission = notification.requestPermission;
+  vi.stubGlobal('Notification', notification);
   vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 (iPhone)', standalone: true, serviceWorker: o.sw === false ? undefined : { getRegistration: async () => ({ pushManager }), ready: new Promise(() => {}) } });
   vi.stubGlobal('localStorage', { getItem: (k: string) => stockage.get(k) ?? null, setItem: (k: string, v: string) => void stockage.set(k, v) });
   vi.stubGlobal('matchMedia', () => ({ matches: false }));
@@ -99,5 +101,52 @@ describe('état des notifications et clé VAPID', () => {
   });
   it('décode le base64url', () => {
     expect([...base64UrlVersOctets('AQID_w')]).toEqual([1, 2, 3, 255]);
+  });
+});
+
+describe('finaliserAbonnement : dit pourquoi, au lieu d’échouer en silence', () => {
+  it('dans Safari (pas d’icône d’écran d’accueil), explique quoi faire', async () => {
+    etat.vapid = 'AAAA';
+    vi.stubGlobal('Notification', undefined);
+    vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 (iPhone)', standalone: false });
+    vi.stubGlobal('matchMedia', () => ({ matches: false }));
+    const { finaliserAbonnement } = await import('./push.ts');
+    const r = await finaliserAbonnement();
+    expect(r.ok).toBe(false);
+    expect(r.detail).toMatch(/icône d’écran d’accueil/);
+  });
+
+  it('notifications refusées : renvoie vers les réglages de l’iPhone', async () => {
+    etat.vapid = 'AAAA';
+    navigateur({ permission: 'denied' });
+    const { finaliserAbonnement } = await import('./push.ts');
+    expect((await finaliserAbonnement()).detail).toMatch(/Réglages de l’iPhone/);
+  });
+
+  it('sans pushManager (iPhone hors app installée), le dit au lieu de répondre « accordé »', async () => {
+    etat.vapid = 'AAAA';
+    navigateur({ permission: 'granted' });
+    vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 (iPhone)', standalone: false, serviceWorker: { getRegistration: async () => ({}), ready: new Promise(() => {}) } });
+    const { finaliserAbonnement } = await import('./push.ts');
+    const r = await finaliserAbonnement();
+    expect(r.ok).toBe(false);
+    expect(r.detail).toMatch(/icône d’écran d’accueil/);
+  });
+
+  it('abonne et enregistre l’appareil quand tout est en place', async () => {
+    etat.vapid = 'BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U';
+    navigateur({ permission: 'granted' });
+    const { finaliserAbonnement } = await import('./push.ts');
+    expect((await finaliserAbonnement()).ok).toBe(true);
+    expect(etat.ecrits.some(([t]) => t === 'abonnements_push')).toBe(true);
+  });
+
+  it('un échec de l’iPhone est rapporté avec son message', async () => {
+    etat.vapid = 'BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U';
+    navigateur({ permission: 'granted', echec: true });
+    const { finaliserAbonnement } = await import('./push.ts');
+    const r = await finaliserAbonnement();
+    expect(r.ok).toBe(false);
+    expect(r.detail).toContain('refusé par le service');
   });
 });

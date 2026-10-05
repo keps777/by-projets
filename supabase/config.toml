@@ -61,3 +61,7 @@ verify_jwt = false
 
 [functions.materialiser-occurrences]
 verify_jwt = false
+
+# Test de notification depuis l'app : l'identité vient du jeton de l'utilisateur, vérifié dans la fonction.
+[functions.tester-notification]
+verify_jwt = false

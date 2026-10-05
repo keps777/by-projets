@@ -17,7 +17,7 @@
   import { formaterMesures } from '@core/rapport.ts';
   import { calculerPoint, preparer } from '../rapports/calcul.ts';
   import { donneesRapport } from '../rapports/donnees.ts';
-  import { etatNotifications, type EtatNotifications } from '../accueil/push.ts';
+  import { envoyerNotificationTest, etatNotifications, verifications, type EtatNotifications } from '../accueil/push.ts';
   import LignePoint from './LignePoint.svelte';
   import { rappelsRecus, reprendreAnciensChoix, type TypeRappelChoisi } from './rappels.svelte.ts';
 
@@ -72,6 +72,14 @@
   const notif = $derived<EtatNotifications>(etatNotifications(magasin.lignes.abonnements_push));
   const appareil = typeof navigator !== 'undefined' && /iPhone/.test(navigator.userAgent) ? 'Cet iPhone' : 'Cet appareil';
   const BADGE: Record<EtatNotifications['statut'], string> = { actif: 'Actif', autorise: 'Autorisé', a_activer: 'À activer', bloque: 'Bloqué', indisponible: 'Indisponible' };
+  const controles = $derived(verifications(magasin.lignes.abonnements_push));
+  let diagnosticOuvert = $state(false);
+  let essaiEnCours = $state(false);
+  let resultatEssai = $state<{ ok: boolean; message: string } | null>(null);
+  async function tester() {
+    essaiEnCours = true; resultatEssai = null; diagnosticOuvert = true;
+    try { resultatEssai = await envoyerNotificationTest(); } finally { essaiEnCours = false; }
+  }
   const titres = $derived(p?.titres_visibles ?? true);
   const delai = $derived(p?.rappel_defaut_min ?? 10);
 
@@ -172,6 +180,19 @@
           <a class="badge action" href="/autoriser-notifications">{notif.statut === 'bloque' || notif.statut === 'indisponible' ? BADGE[notif.statut] : 'Activer'}</a>
         {/if}
       </div>
+      <div class="ligne colonne serre">
+        <div class="rangee">
+          <span class="col grow"><span class="fort">Vérifier et tester</span><span class="muted petit">Envoie une notification d’essai à cet appareil.</span></span>
+          <button type="button" class="badge action test" disabled={essaiEnCours} onclick={tester}>{essaiEnCours ? 'Envoi…' : 'Tester'}</button>
+        </div>
+        {#if diagnosticOuvert}
+          <ul class="controles" aria-label="Vérifications des notifications">
+            {#each controles as c (c.libelle)}<li class:ko={!c.ok}><span class="pastille-c" aria-hidden="true">{c.ok ? '✓' : '✕'}</span>{c.libelle}</li>{/each}
+          </ul>
+        {/if}
+        {#if resultatEssai}<p class="essai" class:ko={!resultatEssai.ok} role="status">{resultatEssai.message}</p>{/if}
+        {#if !diagnosticOuvert}<button type="button" class="lien-diag" onclick={() => (diagnosticOuvert = true)}>Voir les vérifications</button>{/if}
+      </div>
       <div class="ligne haute">
         <span class="col grow"><span class="fort">Afficher les titres à l’écran verrouillé</span>
           <span class="muted petit">{titres ? `Ex. : Dans ${delai} min · RDQD du matin` : `Ex. : ${prenom || 'Mon'} Life · un bloc commence dans ${delai} min`}</span></span>
@@ -266,6 +287,16 @@
   .icone { flex: none; width: 36px; height: 36px; border-radius: 12px; background: var(--surface-2); display: flex; align-items: center; justify-content: center; }
   .badge { flex: none; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 8px; }
   .badge.bon { background: var(--bon-fond); color: var(--bon); }
+  .badge.test { border: 0; font-family: inherit; cursor: pointer; }
+  .badge.test:disabled { opacity: 0.5; }
+  .controles { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+  .controles li { display: flex; gap: 8px; align-items: baseline; }
+  .controles li.ko { color: var(--mauvais); }
+  .pastille-c { flex: none; width: 16px; font-weight: 700; color: var(--bon); }
+  .controles li.ko .pastille-c { color: var(--mauvais); }
+  .essai { margin: 2px 0 0; font-size: 13px; line-height: 1.4; color: var(--bon); }
+  .essai.ko { color: var(--mauvais); }
+  .lien-diag { align-self: flex-start; min-height: 36px; border: 0; background: none; padding: 0; color: var(--accent-encre); font-size: 13px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
   .badge.action { background: var(--accent-fond); color: var(--accent-encre); min-height: 32px; display: flex; align-items: center; padding: 0 10px; }
   .note { line-height: 1.45; }
   .delais :global(.puces button) { padding: 0 4px; font-size: 12px; }

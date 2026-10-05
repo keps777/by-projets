@@ -6,7 +6,7 @@
   import Interrupteur from '../../ui/Interrupteur.svelte';
   import Puces from '../../ui/Puces.svelte';
   import { profil } from '../../data/requetes.ts';
-  import { activerNotifications, estInstallee, type ResultatActivation } from './push.ts';
+  import { activerNotifications, estInstallee, raisonEchecActivation, type ResultatActivation } from './push.ts';
 
   let { params: _ = {} }: { params?: Record<string, string> } = $props();
 
@@ -72,7 +72,7 @@
   {:else if resultat === 'refuse'}
     <div class="bandeau alerte">Notifications refusées. Pour les réactiver : Réglages du téléphone › Notifications › {nomApp}.</div>
   {:else if resultat === 'indisponible'}
-    <div class="bandeau alerte">{estInstallee() ? 'Les notifications ne sont pas disponibles ici.' : 'Ouvre l’app depuis son icône d’écran d’accueil (iOS 16.4 ou plus), puis réessaie.'}</div>
+    <div class="bandeau alerte">{raisonEchecActivation() || (estInstallee() ? 'Les notifications ne sont pas disponibles ici.' : 'Ouvre l’app depuis son icône d’écran d’accueil (iOS 16.4 ou plus), puis réessaie.')}</div>
   {/if}
 
   <div class="exemples">

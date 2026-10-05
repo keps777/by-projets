@@ -29,3 +29,8 @@
 - Le toucher d'une notification n'ouvre que des adresses de l'app.
 - Se réabonner sur le même appareil réutilise la ligne `abonnements_push` existante (`supprime_le` remis à nul).
 - **Plusieurs rappels par tâche** : le rappel principal (À l'heure, 5, 10 ou 15 min) plus des rappels « plus tôt » cumulables — 1 h, 2 h, 1 jour, 1 jour et 2 h, 2 jours avant (`taches.rappels_avant_min`, minutes avant le début). Chaque délai donne un rappel distinct par occurrence (clé `occurrence:délai`) ; un rappel dont l'heure est passée n'est pas créé. Le texte de la notification écrit le délai comme on le dit (« Dans 2 h », « Dans 1 jour et 2 h »). Reporter une occurrence garde ses rappels plus tôt.
+
+## Vérifier et réparer les notifications (5 oct. 2026)
+- **Réparation automatique** : à chaque ouverture de l'app (et au retour dans l'app), si les notifications sont autorisées mais que l'appareil n'est pas enregistré sur le serveur (ou l'est avec une autre clé), l'app l'abonne de nouveau, sans rien demander.
+- **Jamais de « réussi » sans abonnement** : l'activation ne répond « activées » que si l'appareil est réellement enregistré ; sinon elle dit pourquoi (pas ouverte depuis l'icône d'écran d'accueil, refusées dans les réglages de l'iPhone, service worker pas prêt, refus d'Apple…).
+- **Réglages → Notifications → Tester** : liste les vérifications (icône d'écran d'accueil, autorisation, clé d'envoi, service worker, appareil enregistré) et envoie tout de suite une notification d'essai (fonction serveur `tester-notification`, identité vérifiée par le jeton de l'utilisateur ; seuls ses appareils reçoivent l'envoi). En cas de refus du service de notifications d'Apple, son code est affiché.
