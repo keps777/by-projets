@@ -86,7 +86,7 @@
   .champ input::-webkit-search-cancel-button { display: none; }
   .effacer { width: 36px; height: 36px; border-radius: 18px; border: 0; background: transparent; color: var(--muted); display: flex; align-items: center; justify-content: center; }
   .filtres { display: flex; gap: 6px; overflow-x: auto; margin: 0 -16px; padding: 0 16px; }
-  .filtres button { flex: none; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid var(--ligne); background: transparent; font-size: 13px; font-weight: 600; }
+  .filtres button { flex: none; height: 44px; padding: 0 14px; border-radius: 20px; border: 1px solid var(--ligne); background: transparent; font-size: 13px; font-weight: 600; }
   .filtres button.actif { background: var(--inverse); border-color: var(--inverse); color: var(--inverse-texte); }
   .resultats { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 16px calc(24px + var(--bas-sûr)); display: flex; flex-direction: column; gap: 14px; }
   .bloc-recents, section { display: flex; flex-direction: column; gap: 10px; }

@@ -67,3 +67,16 @@ test('cocher un bloc depuis son volet, le garder après rechargement', async ({ 
   await page.getByText('Appel important').first().click();
   await expect(page.getByRole('button', { name: /Fait · toucher pour annuler/ })).toBeVisible();
 });
+
+test('reporter un bloc avec un rappel « à l’heure », sans débordement à l’écran', async ({ page }) => {
+  await page.goto('/tache/nouvelle?sans-projet=1');
+  await page.getByLabel('Titre de la tâche').fill('Bloc à déplacer');
+  await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+  await page.getByText('Bloc à déplacer').first().click();
+  await page.getByRole('button', { name: /Reporter/ }).first().click();
+  const aLHeure = page.getByRole('button', { name: 'À l’heure' });
+  await aLHeure.click();
+  const boite = await aLHeure.boundingBox();
+  expect(boite!.height).toBeGreaterThanOrEqual(44);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+});

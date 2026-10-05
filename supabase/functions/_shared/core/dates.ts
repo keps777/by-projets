@@ -49,12 +49,19 @@ function decalageMinutes(utcMs: number, fuseau: string): number {
   return Math.round((commeUtc - utcMs) / 60000);
 }
 
-/** Heure locale (minutes depuis minuit) d'un jour dans un fuseau → instant UTC en ms. L'heure d'été est respectée. */
+/**
+ * Heure locale (minutes depuis minuit) d'un jour dans un fuseau → instant UTC en ms. L'heure d'été est respectée.
+ * Heure qui n'existe pas (passage à l'heure d'été, ex. 02:30 le 14 mars 2027 à Toronto) : on avance (03:30).
+ * Heure qui existe deux fois (retour à l'heure normale, ex. 01:30 le 1er novembre 2026) : la première.
+ */
 export function localVersUtc(j: Jour, minutes: number, fuseau: string): number {
   const naif = versUtc(j) + minutes * 60000;
-  let t = naif - decalageMinutes(naif, fuseau) * 60000;
-  t = naif - decalageMinutes(t, fuseau) * 60000;
-  return t;
+  const a = naif - decalageMinutes(naif, fuseau) * 60000;
+  const b = naif - decalageMinutes(a, fuseau) * 60000;
+  const exact = (t: number) => t + decalageMinutes(t, fuseau) * 60000 === naif;
+  if (exact(b)) return Math.min(b, exact(a) ? a : b);
+  if (exact(a)) return a;
+  return Math.max(a, b);
 }
 
 /** Instant UTC → jour et minutes locales dans un fuseau. */

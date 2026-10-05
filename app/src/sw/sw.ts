@@ -30,7 +30,9 @@ self.addEventListener('push', (e) => {
 // Sur iPhone, une notification d'app web n'a pas de boutons : un appui ouvre directement le bloc (/action-rapide?occ=…).
 self.addEventListener('notificationclick', (e) => {
   e.notification.close();
-  const url = new URL((e.notification.data?.url as string | undefined) ?? '/', self.location.origin).href;
+  // Seule une adresse de l'app est ouverte, quelle que soit la charge reçue.
+  const cible = new URL((e.notification.data?.url as string | undefined) ?? '/', self.location.origin);
+  const url = (cible.origin === self.location.origin ? cible : new URL('/', self.location.origin)).href;
   e.waitUntil((async () => {
     const fenetres = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
     for (const f of fenetres) {

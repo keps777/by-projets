@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // Faux magasin et fausse configuration : on teste la logique d'activation sans navigateur ni serveur.
 const etat = vi.hoisted(() => ({
   vapid: undefined as string | undefined,
-  lignes: { abonnements_push: [] as { id: string; endpoint: string; dernier_succes: string | null }[], profils: [{ id: 'u' }] },
+  lignes: { abonnements_push: [] as { id: string; endpoint: string; dernier_succes: string | null }[], profils: [{ id: 'u' }], taches: [], occurrences: [], rappels: [] },
   ecrits: [] as [string, Record<string, unknown>][]
 }));
 vi.mock('../../data/config.ts', () => ({ get VAPID_PUBLIQUE() { return etat.vapid; } }));

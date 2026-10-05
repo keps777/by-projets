@@ -1,12 +1,12 @@
 <script lang="ts">
-  // Connexion (planche Connexion) : se connecter ou créer le compte (une seule fois). En mode local, une page « mode local ».
+  // Connexion (planche Connexion) : se connecter ou créer le compte (une seule fois). Sans serveur (mode local), l'app
+  // s'ouvre directement sur Le Fil : cet écran n'est jamais montré.
   import EcranPage from '../../ui/EcranPage.svelte';
   import Icone from '../../ui/Icone.svelte';
   import { couleurRubrique } from '../../ui/couleurs.ts';
   import { theme } from '../../ui/theme.svelte.ts';
   import { routeur } from '../../routeur.svelte.ts';
   import { session } from '../../data/auth.svelte.ts';
-  import { modeServeur } from '../../data/config.ts';
   import { estInstallee } from './push.ts';
 
   let { params: _ = {} }: { params?: Record<string, string> } = $props();
@@ -42,52 +42,40 @@
 
   <div class="scene">
     <div class="marque">
-      <span class="avatar titre">{modeServeur ? initiales : 'LL'}</span>
-      <h1 class="titre">{modeServeur ? titre : 'Luther Life'}</h1>
+      <span class="avatar titre">{initiales}</span>
+      <h1 class="titre">{titre}</h1>
       <span class="serif devise">Diviser ma vie en plusieurs projets.</span>
     </div>
 
-    {#if !modeServeur}
-      <div class="carte local">
-        <span class="etiquette">Mode local</span>
-        <p>Aucun serveur n’est configuré : tes données restent sur cet appareil, sans compte ni connexion.</p>
-        <p class="muted">Les notifications push et la synchronisation entre appareils demandent le serveur (Supabase).</p>
-      </div>
-      <div class="bas">
-        <button type="button" class="cta" onclick={() => routeur.aller('/', true)}>Continuer</button>
-        <span class="muted note">Aucune publicité, aucun suivi, aucun e-mail envoyé.</span>
-      </div>
-    {:else}
-      <div class="modes" role="tablist">
-        <button type="button" role="tab" aria-selected={!creation} class:actif={!creation} onclick={() => (creation = false)}>Se connecter</button>
-        <button type="button" role="tab" aria-selected={creation} class:actif={creation} onclick={() => (creation = true)}>Créer un compte</button>
-      </div>
+    <div class="modes" role="tablist">
+      <button type="button" role="tab" aria-selected={!creation} class:actif={!creation} onclick={() => (creation = false)}>Se connecter</button>
+      <button type="button" role="tab" aria-selected={creation} class:actif={creation} onclick={() => (creation = true)}>Créer un compte</button>
+    </div>
 
-      <form class="champs" id="connexion" onsubmit={valider}>
-        {#if creation}
-          <label>Ton prénom
-            <input bind:value={prenom} autocomplete="given-name" required />
-            <span class="aide">Il devient le titre de l’app : « {titre} ».</span>
-          </label>
-        {/if}
-        <label>Adresse e-mail
-          <input type="email" bind:value={email} autocomplete="email" placeholder="toi@exemple.com" required />
+    <form class="champs" id="connexion" onsubmit={valider}>
+      {#if creation}
+        <label>Ton prénom
+          <input bind:value={prenom} autocomplete="given-name" required />
+          <span class="aide">Il devient le titre de l’app : « {titre} ».</span>
         </label>
-        <label>Mot de passe
-          <span class="mdp">
-            <input type={voir ? 'text' : 'password'} bind:value={motDePasse} autocomplete={creation ? 'new-password' : 'current-password'} minlength={creation ? 12 : undefined} required />
-            <button type="button" aria-pressed={voir} aria-label="Afficher le mot de passe" onclick={() => (voir = !voir)}><Icone nom="oeil" taille={20} /></button>
-          </span>
-          {#if creation}<span class="aide">12 caractères ou plus. Une phrase de passe fonctionne très bien.</span>{/if}
-        </label>
-        {#if session.erreur}<p class="erreur" role="alert">{session.erreur}</p>{/if}
-      </form>
+      {/if}
+      <label>Adresse e-mail
+        <input type="email" bind:value={email} autocomplete="email" placeholder="toi@exemple.com" required />
+      </label>
+      <label>Mot de passe
+        <span class="mdp">
+          <input type={voir ? 'text' : 'password'} bind:value={motDePasse} autocomplete={creation ? 'new-password' : 'current-password'} minlength={creation ? 12 : undefined} required />
+          <button type="button" aria-pressed={voir} aria-label="Afficher le mot de passe" onclick={() => (voir = !voir)}><Icone nom="oeil" taille={20} /></button>
+        </span>
+        {#if creation}<span class="aide">12 caractères ou plus. Une phrase de passe fonctionne très bien.</span>{/if}
+      </label>
+      {#if session.erreur}<p class="erreur" role="alert">{session.erreur}</p>{/if}
+    </form>
 
-      <div class="bas">
-        <button type="submit" form="connexion" class="cta" disabled={!pret || occupe}>{occupe ? 'Un instant…' : creation ? 'Créer mon compte' : 'Se connecter'}</button>
-        <span class="muted note">Tes données sont privées et protégées par ton compte. Aucune publicité, aucun suivi, aucun e-mail envoyé. Un seul compte : l’inscription se ferme après sa création.</span>
-      </div>
-    {/if}
+    <div class="bas">
+      <button type="submit" form="connexion" class="cta" disabled={!pret || occupe}>{occupe ? 'Un instant…' : creation ? 'Créer mon compte' : 'Se connecter'}</button>
+      <span class="muted note">Tes données sont privées et protégées par ton compte. Aucune publicité, aucun suivi, aucun e-mail envoyé. Un seul compte : l’inscription se ferme après sa création.</span>
+    </div>
   </div>
 </EcranPage>
 
@@ -112,8 +100,6 @@
   .mdp button { width: 44px; height: 44px; border: 0; background: transparent; color: var(--muted); display: flex; align-items: center; justify-content: center; }
   .aide { font-size: 12px; font-weight: 400; color: var(--faint); }
   .erreur { color: var(--mauvais); font-size: 14px; font-weight: 600; }
-  .local { padding: 16px; display: flex; flex-direction: column; gap: 8px; font-size: 15px; line-height: 1.45; }
-  .local .muted { font-size: 13px; }
   .bas { margin-top: auto; display: flex; flex-direction: column; gap: 10px; }
   .cta { height: 56px; border-radius: 18px; border: 0; background: var(--accent); color: var(--accent-texte); font-size: 16px; font-weight: 600; }
   .cta:disabled { opacity: 0.5; }

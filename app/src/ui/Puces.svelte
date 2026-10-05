@@ -16,6 +16,6 @@
   .puces.grille { display: grid; }
   .puces.defile { flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px; padding: 0 16px; }
   button { flex: none; min-height: 44px; padding: 0 14px; border-radius: 14px; border: 1px solid var(--ligne); background: transparent; color: var(--texte); font-size: 13px; font-weight: 600; }
-  button.petit { min-height: 40px; }
+  button.petit { min-height: 44px; }
   button.actif { background: var(--c); border-color: var(--c); color: var(--t); }
 </style>

@@ -15,16 +15,16 @@ beforeAll(async () => {
 const occ = (id: string, jour: string, debut: string) => ({ id, user_id: A, tache_id: a.tache, jour, debut, fin: debut });
 
 describe('inserer_occurrences', () => {
-  it('ignore tout conflit (identifiant ou jour déjà pris) et rend les identifiants créés', async () => {
+  it('ignore un identifiant déjà pris, même jour permis (série intacte), et rend les identifiants créés', async () => {
     // a.occurrence existe déjà le 5 ; on la modifie pour en faire une exception.
     await comme(db, A, 'update occurrences set debut = $2, exception = true where id = $1', [a.occurrence, '2026-10-05T12:00:00Z']);
     const lignes = [
       occ(a.occurrence, '2026-10-05', '2026-10-05T09:00:00Z'), // même identifiant
-      occ(uid(301), '2026-10-05', '2026-10-05T09:00:00Z'), // même tâche, même jour
+      occ(uid(301), '2026-10-05', '2026-10-05T09:00:00Z'), // même tâche, même jour : permis
       occ(uid(302), '2026-10-06', '2026-10-06T09:00:00Z')
     ];
     const crees = await comme<{ id: string }>(db, 'service', 'select inserer_occurrences($1) as id', [JSON.stringify(lignes)]);
-    expect(crees.map((r) => r.id)).toEqual([uid(302)]);
+    expect(crees.map((r) => r.id)).toEqual([uid(301), uid(302)]);
     const [o] = await comme<{ debut: Date; exception: boolean }>(db, A, 'select debut, exception from occurrences where id = $1', [a.occurrence]);
     expect(o.debut.toISOString()).toBe('2026-10-05T12:00:00.000Z');
     expect(o.exception).toBe(true);

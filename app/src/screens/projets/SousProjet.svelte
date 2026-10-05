@@ -115,7 +115,7 @@
   .puce.ajout { border: 1.5px dashed var(--ligne); color: var(--c-encre); gap: 6px; }
   h1 { font-size: 26px; line-height: 1.12; }
   .onglets { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: var(--surface-2); border-radius: 14px; padding: 4px; gap: 2px; }
-  .onglets button { height: 38px; border: 0; border-radius: 10px; background: transparent; color: var(--muted); font-size: 13px; }
+  .onglets button { min-height: 44px; border: 0; border-radius: 10px; background: transparent; color: var(--muted); font-size: 13px; }
   .onglets button.actif { background: var(--surface); color: var(--texte); font-weight: 600; }
   .lien { color: var(--accent-encre); font-weight: 600; }
 </style>

@@ -1,7 +1,7 @@
 // Vie d'un bloc : lancer, pause, terminer, saisie unique et correction (spec §8).
 import { idSaisie, idSaisieValeur } from '@core/ids.ts';
 import { ecouleS, initial, lancer, pause, reprendre, terminer, type Minuteur } from '@core/minuteur.ts';
-import type { Occurrence, Saisie, SourceSaisie } from '@core/lignes.ts';
+import type { Occurrence, Saisie, SaisieValeur, SourceSaisie } from '@core/lignes.ts';
 import { magasin } from '../magasin.svelte.ts';
 import { horloge } from '../temps.svelte.ts';
 
@@ -33,7 +33,7 @@ export function lancerBloc(occId: string): void {
 export function pauseBloc(occId: string): void { const o = magasin.trouver('occurrences', occId); if (o) appliquer(occId, pause(minuteurDe(o), Date.now())); }
 export function reprendreBloc(occId: string): void { const o = magasin.trouver('occurrences', occId); if (o) appliquer(occId, reprendre(minuteurDe(o), Date.now())); }
 
-export interface ValeurEntree { cle: string; num?: number | null; txt?: string | null; detail?: unknown }
+export interface ValeurEntree { cle: string; num?: number | null; txt?: string | null; detail?: SaisieValeur['detail'] }
 
 /** Écrit (ou corrige) la saisie d'une occurrence : un seul endroit, lu par tous les sous-projets du projet. */
 export function saisirBloc(occId: string, valeurs: ValeurEntree[], opts: { source?: SourceSaisie; note?: string | null; approx?: boolean } = {}): Saisie | undefined {

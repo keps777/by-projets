@@ -121,7 +121,7 @@
   .option { display: flex; align-items: center; gap: 4px; font-size: 12px; }
   .option input { width: 56px; height: 40px; text-align: center; font-size: 13px; }
   .periodes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
-  .periodes button { height: 40px; border-radius: 10px; border: 1px solid var(--ligne); background: transparent; font-size: 12px; font-weight: 600; }
+  .periodes button { min-height: 44px; border-radius: 10px; border: 1px solid var(--ligne); background: transparent; font-size: 12px; font-weight: 600; }
   .periodes button.on { background: var(--inverse); border-color: var(--inverse); color: var(--inverse-texte); }
   .bas { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .sens { height: 40px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--ligne); background: transparent; font-size: 12px; font-weight: 600; }

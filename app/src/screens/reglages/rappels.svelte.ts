@@ -1,20 +1,35 @@
-// « Quels rappels recevoir » : choix par type de rappel. Le profil n'a pas encore de colonne pour ces choix ;
-// en attendant, ils sont gardés sur l'appareil (voir le rapport de session : lacune du modèle de données).
+// « Quels rappels recevoir » : un choix par type de rappel, gardé dans le profil (colonnes recevoir_*) pour que le
+// serveur le respecte. Les choix faits avant ces colonnes (gardés sur l'appareil) sont repris une fois, puis oubliés.
+import type { Profil } from '@core/lignes.ts';
+import { magasin } from '../../data/magasin.svelte.ts';
+import { majProfil } from '../../data/actions/reglages.ts';
+
 export type TypeRappelChoisi = 'bloc' | 'rapport' | 'recap_semaine' | 'recap_mois';
 export type ChoixRappels = Record<TypeRappelChoisi, boolean>;
 
-const CLE = 'luther-life:rappels-recus';
-const DEFAUT: ChoixRappels = { bloc: true, rapport: true, recap_semaine: true, recap_mois: true };
+const ANCIENNE_CLE = 'luther-life:rappels-recus';
+const colonne = (t: TypeRappelChoisi) => `recevoir_${t}` as const satisfies keyof Profil;
 
-function lire(): ChoixRappels {
-  try { return { ...DEFAUT, ...(JSON.parse(localStorage.getItem(CLE) ?? '{}') as Partial<ChoixRappels>) }; } catch { return { ...DEFAUT }; }
+/** Choix du profil (vrai par défaut, y compris pour un profil enregistré avant ces colonnes). */
+export function choixRappels(p: Partial<Profil> | undefined): ChoixRappels {
+  return { bloc: p?.recevoir_bloc ?? true, rapport: p?.recevoir_rapport ?? true, recap_semaine: p?.recevoir_recap_semaine ?? true, recap_mois: p?.recevoir_recap_mois ?? true };
 }
 
-class Rappels {
-  choix = $state<ChoixRappels>(lire());
-  basculer(t: TypeRappelChoisi): void {
-    this.choix = { ...this.choix, [t]: !this.choix[t] };
-    try { localStorage.setItem(CLE, JSON.stringify(this.choix)); } catch { /* stockage indisponible */ }
-  }
+/** Reprend une seule fois les choix gardés sur l'appareil par l'ancienne version. */
+export function reprendreAnciensChoix(): void {
+  let brut: string | null = null;
+  try { brut = localStorage.getItem(ANCIENNE_CLE); } catch { return; }
+  if (!brut || !magasin.lignes.profils[0]) return;
+  try {
+    const ancien = JSON.parse(brut) as Partial<ChoixRappels>;
+    const patch: Partial<Profil> = {};
+    for (const t of ['bloc', 'rapport', 'recap_semaine', 'recap_mois'] as const) if (typeof ancien[t] === 'boolean') patch[colonne(t)] = ancien[t];
+    if (Object.keys(patch).length) majProfil(patch);
+  } catch { /* contenu illisible : on l'oublie */ }
+  try { localStorage.removeItem(ANCIENNE_CLE); } catch { /* stockage indisponible */ }
 }
-export const rappelsRecus = new Rappels();
+
+export const rappelsRecus = {
+  get choix(): ChoixRappels { return choixRappels(magasin.lignes.profils[0]); },
+  basculer(t: TypeRappelChoisi): void { majProfil({ [colonne(t)]: !this.choix[t] }); }
+};

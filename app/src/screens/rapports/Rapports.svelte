@@ -136,7 +136,7 @@
   .envoi { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--bon); background: var(--bon-fond); border-radius: 12px; padding: 8px 12px; }
   .envoi.modifie { color: var(--alerte); background: var(--alerte-fond); }
   .envoi span { flex: 1; }
-  .envoi button { min-height: 32px; border: 0; background: none; color: inherit; font-size: 13px; font-weight: 700; text-decoration: underline; padding: 0; }
+  .envoi button { min-height: 44px; margin: -8px 0; border: 0; background: none; color: inherit; font-size: 13px; font-weight: 700; text-decoration: underline; padding: 0; }
   .vide { padding: 16px; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
   .vide a { color: var(--accent-encre); font-weight: 600; min-height: 44px; display: flex; align-items: center; }
   .flottant { position: sticky; bottom: 0; margin-top: auto; padding-top: 8px; display: flex; }

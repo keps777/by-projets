@@ -17,15 +17,21 @@ class Magasin {
   db: BaseLocale | null = null;
   #file: Promise<unknown> = Promise.resolve();
   #auChangement = new Set<() => void>();
+  /** Lignes supprimées (pierres tombales) : on ne les ressuscite jamais par mégarde. */
+  #tombes = new Map<NomTable, Set<string>>();
+  /** Écritures locales faites en mémoire mais pas encore dans IndexedDB : la synchronisation ne doit pas les écraser. */
+  #sales = new Map<string, number>();
 
   /** Ouvre la base de cet utilisateur et charge ses lignes en mémoire. */
   async ouvrir(userId: string): Promise<void> {
     if (this.db) this.db.close();
     this.db = new BaseLocale(nomBase(userId));
     const tout = vide();
+    this.#tombes = new Map();
     for (const t of TABLES) {
       const rows = await this.db.lignes(t).toArray();
       (tout[t] as unknown[]) = rows.filter((r) => !r.supprime_le);
+      this.#tombes.set(t, new Set(rows.filter((r) => r.supprime_le).map((r) => r.id)));
     }
     this.userId = userId;
     this.lignes = tout;
@@ -41,7 +47,12 @@ class Magasin {
     this.userId = null;
     this.lignes = vide();
     this.enAttente = 0;
+    this.#tombes = new Map();
   }
+
+  /** Vrai si la ligne a été supprimée (ici ou sur un autre appareil). */
+  estSupprime(t: NomTable, id: string): boolean { return this.#tombes.get(t)?.has(id) ?? false; }
+  #tombe(t: NomTable): Set<string> { let s = this.#tombes.get(t); if (!s) this.#tombes.set(t, (s = new Set())); return s; }
 
   surChangement(fn: () => void): () => void { this.#auChangement.add(fn); return () => this.#auChangement.delete(fn); }
 
@@ -52,12 +63,19 @@ class Magasin {
   /** Crée ou modifie une ligne. La mémoire change tout de suite ; IndexedDB et la file suivent. */
   ecrire<K extends NomTable>(t: K, b: Brouillon<K>): LignesParTable[K] { return this.ecrireLot([[t, b]])[0] as LignesParTable[K]; }
 
-  ecrireLot(ops: { [K in NomTable]: [K, Brouillon<K>] }[NomTable][]): unknown[] {
+  /** `ressusciter` : identifiants supprimés qu'on recrée exprès (ex. occurrences d'une série modifiée). */
+  ecrireLot(ops: { [K in NomTable]: [K, Brouillon<K>] }[NomTable][], ressusciter: ReadonlySet<string> = new Set()): unknown[] {
     if (!this.userId) throw new Error('Aucun utilisateur ouvert');
     const maintenant = new Date().toISOString();
     const copie: Tout = { ...this.lignes };
     const finales: { t: NomTable; ligne: LignesParTable[NomTable] }[] = [];
     for (const [t, b] of ops) {
+      // Écrire sur une ligne supprimée la ferait renaître, souvent incomplète : on l'ignore.
+      // Seule exception : l'abonnement push d'un appareil, qu'on réactive en se réabonnant (spec §10).
+      if (this.estSupprime(t, b.id) && !b.supprime_le) {
+        if (t !== 'abonnements_push' && !ressusciter.has(b.id)) continue;
+        this.#tombe(t).delete(b.id);
+      }
       const liste = [...(copie[t] as LignesParTable[NomTable][])];
       const i = liste.findIndex((l) => l.id === b.id);
       const ancien = i >= 0 ? liste[i] : undefined;
@@ -80,6 +98,7 @@ class Magasin {
     const restantes = (copie[t] as LignesParTable[NomTable][]).filter((l) => {
       if (!liste.includes(l.id)) return true;
       tombes.push({ t, ligne: { ...l, supprime_le: maintenant, updated_at: maintenant } });
+      this.#tombe(t).add(l.id);
       return false;
     });
     (copie[t] as unknown[]) = restantes;
@@ -89,7 +108,9 @@ class Magasin {
 
   #persister(items: { t: NomTable; ligne: LignesParTable[NomTable] }[]): void {
     const db = this.db;
-    if (!db) return;
+    if (!db || !items.length) return;
+    const cles = items.map(({ t, ligne }) => `${t}:${ligne.id}`);
+    for (const c of cles) this.#sales.set(c, (this.#sales.get(c) ?? 0) + 1);
     this.#file = this.#file.then(async () => {
       await db.transaction('rw', [...TABLES.map((t) => db.lignes(t)), db.sortie], async () => {
         for (const { t, ligne } of items) {
@@ -99,26 +120,42 @@ class Magasin {
       });
       this.enAttente = await db.sortie.count();
       for (const fn of this.#auChangement) fn();
-    }).catch((e) => console.error('Écriture locale impossible', e));
+    }).catch((e) => console.error('Écriture locale impossible', e)).finally(() => {
+      for (const c of cles) { const n = (this.#sales.get(c) ?? 1) - 1; if (n > 0) this.#sales.set(c, n); else this.#sales.delete(c); }
+    });
   }
 
   /** Attend que toutes les écritures locales soient terminées (tests, fermeture). */
   async terminerEcritures(): Promise<void> { await this.#file; }
 
-  /** Applique des lignes venues du serveur (synchronisation). Les lignes avec une écriture locale en attente sont gardées. */
-  async appliquerDuServeur(t: NomTable, rows: LignesParTable[NomTable][]): Promise<void> {
+  /**
+   * Applique des lignes venues du serveur (synchronisation). Passe dans la même file que les écritures locales, et
+   * garde toute ligne qui a une écriture locale en attente (dans la file d'envoi ou encore en mémoire seulement).
+   */
+  appliquerDuServeur(t: NomTable, rows: LignesParTable[NomTable][]): Promise<void> {
     const db = this.db;
-    if (!db || !rows.length) return;
-    const enAttente = new Set((await db.sortie.where('table').equals(t).toArray()).map((s) => s.id));
-    const aprendre = rows.filter((r) => !enAttente.has(r.id));
-    if (!aprendre.length) return;
-    await db.lignes(t).bulkPut(aprendre as never[]);
-    const copie: Tout = { ...this.lignes };
-    const par = new Map((copie[t] as LignesParTable[NomTable][]).map((l) => [l.id, l]));
-    for (const r of aprendre) { if (r.supprime_le) par.delete(r.id); else par.set(r.id, r); }
-    (copie[t] as unknown[]) = [...par.values()];
-    this.lignes = copie;
-    for (const fn of this.#auChangement) fn();
+    if (!db || !rows.length) return Promise.resolve();
+    const tache = this.#file.then(async () => {
+      const enAttente = new Set((await db.sortie.where('table').equals(t).toArray()).map((s) => s.id));
+      const local = (id: string) => enAttente.has(id) || this.#sales.has(`${t}:${id}`);
+      const memoire = new Map((this.lignes[t] as LignesParTable[NomTable][]).map((l) => [l.id, l]));
+      // Déjà connues telles quelles (le tirage relit une marge de temps) : rien à faire.
+      const aprendre = rows.filter((r) => !local(r.id) && !(r.supprime_le ? this.estSupprime(t, r.id) : memoire.get(r.id)?.updated_at === r.updated_at));
+      if (!aprendre.length) return;
+      await db.lignes(t).bulkPut(aprendre as never[]);
+      // Une écriture locale a pu arriver pendant l'attente : elle garde la main en mémoire (IndexedDB suivra).
+      const copie: Tout = { ...this.lignes };
+      const par = new Map((copie[t] as LignesParTable[NomTable][]).map((l) => [l.id, l]));
+      for (const r of aprendre) {
+        if (this.#sales.has(`${t}:${r.id}`)) continue;
+        if (r.supprime_le) { par.delete(r.id); this.#tombe(t).add(r.id); } else { par.set(r.id, r); this.#tombe(t).delete(r.id); }
+      }
+      (copie[t] as unknown[]) = [...par.values()];
+      this.lignes = copie;
+      for (const fn of this.#auChangement) fn();
+    });
+    this.#file = tache.catch(() => undefined);
+    return tache;
   }
 }
 

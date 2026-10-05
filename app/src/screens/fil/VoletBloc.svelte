@@ -199,7 +199,7 @@
   .pas button:disabled { opacity: 0.4; cursor: not-allowed; }
   .texte-ref input { height: 44px; border-radius: 12px; border: 1px solid var(--ligne); background: var(--champ); padding: 0 12px; font-size: 15px; }
   .choix { display: flex; gap: 6px; flex-wrap: wrap; }
-  .choix button { min-height: 40px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--ligne); background: transparent; font-size: 13px; font-weight: 600; }
+  .choix button { min-height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--ligne); background: transparent; font-size: 13px; font-weight: 600; }
   .choix button.actif { background: var(--c); border-color: var(--c); color: var(--c-sur); }
   .fait { height: 52px; border-radius: 18px; border: 0; background: var(--inverse); color: var(--inverse-texte); font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .fait.actif { background: var(--c); color: var(--c-sur); }

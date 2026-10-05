@@ -98,7 +98,7 @@
   .petit { font-size: 12px; }
   .info { border-radius: 18px; padding: 12px 14px; font-size: 13px; line-height: 1.45; color: var(--muted); }
   .rubriques { display: flex; gap: 6px; overflow-x: auto; margin: 0 -16px; padding: 0 16px; }
-  .rubriques button { flex: none; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid var(--ligne); background: transparent; font-size: 13px; font-weight: 600; }
+  .rubriques button { flex: none; height: 44px; padding: 0 14px; border-radius: 20px; border: 1px solid var(--ligne); background: transparent; font-size: 13px; font-weight: 600; }
   .rubriques button.actif { background: var(--c); border-color: var(--c); color: var(--c-sur); }
   .liste { border-radius: 20px; overflow: hidden; }
   .projet { width: 100%; border: 0; background: transparent; text-align: left; display: flex; align-items: center; gap: 10px; padding: 10px 14px; min-height: 48px; }

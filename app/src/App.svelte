@@ -13,12 +13,16 @@
   theme.demarrer();
   void session.demarrer();
 
+  // À chaque ouverture de session : synchroniser, puis prolonger l'horizon des occurrences. Avec le serveur, on attend
+  // la première synchronisation réussie : un appareil resté longtemps fermé écraserait sinon des blocs déjà faits ailleurs.
   let synchroLancee = false;
   $effect(() => {
+    if (session.etat === 'deconnecte') synchroLancee = false;
     if (session.etat !== 'connecte' || synchroLancee) return;
     synchroLancee = true;
     synchro.demarrer();
-    prolongerHorizon();
+    synchro.apresSynchro(prolongerHorizon);
+    void synchro.synchroniser();
   });
 
   const cible = $derived(trouverRoute(routeur.chemin));

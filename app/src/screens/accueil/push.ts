@@ -4,7 +4,7 @@ import { uuidDeterministe } from '@core/ids.ts';
 import type { AbonnementPush } from '@core/lignes.ts';
 import { VAPID_PUBLIQUE } from '../../data/config.ts';
 import { magasin } from '../../data/magasin.svelte.ts';
-import { majProfil } from '../../data/actions/reglages.ts';
+import { changerDelaiDefaut } from '../../data/actions/reglages.ts';
 
 export type ResultatActivation = 'accorde' | 'refuse' | 'indisponible';
 const CLE_ENDPOINT = 'luther-life:push-endpoint';
@@ -42,16 +42,25 @@ async function enregistrementSw(): Promise<ServiceWorkerRegistration | undefined
   return Promise.race([sw.ready, new Promise<undefined>((r) => setTimeout(() => r(undefined), 4000))]);
 }
 
-/** Écrit (ou met à jour) la ligne de cet appareil dans `abonnements_push`. */
-export function enregistrerAbonnement(sub: PushSubscription): AbonnementPush | null {
+/** Lignes `abonnements_push` de l'appareil, y compris celles retirées (abonnement déclaré mort par le serveur). */
+async function toutesLesLignes(): Promise<AbonnementPush[]> {
+  try { return (await magasin.db?.lignes('abonnements_push').toArray()) ?? []; } catch { return []; }
+}
+
+/**
+ * Écrit (ou met à jour) la ligne de cet appareil dans `abonnements_push`. Se réabonner sur le même appareil réutilise
+ * sa ligne, même retirée par le serveur, et la réactive (supprime_le remis à null) : jamais de doublon d'adresse.
+ */
+export async function enregistrerAbonnement(sub: PushSubscription): Promise<AbonnementPush | null> {
   const json = sub.toJSON();
   const endpoint = json.endpoint ?? sub.endpoint;
   const p256dh = json.keys?.p256dh, auth = json.keys?.auth;
   if (!endpoint || !p256dh || !auth || !magasin.userId) return null;
-  const existant = magasin.lignes.abonnements_push.find((a) => a.endpoint === endpoint);
+  const existant = magasin.lignes.abonnements_push.find((a) => a.endpoint === endpoint)
+    ?? (await toutesLesLignes()).find((a) => a.endpoint === endpoint);
   const ligne = magasin.ecrire('abonnements_push', {
     id: existant?.id ?? uuidDeterministe(`push:${magasin.userId}:${endpoint}`),
-    endpoint, cle_p256dh: p256dh, cle_auth: auth, appareil: nomAppareil(), dernier_succes: existant?.dernier_succes ?? null
+    endpoint, cle_p256dh: p256dh, cle_auth: auth, appareil: nomAppareil(), dernier_succes: existant?.dernier_succes ?? null, supprime_le: null
   });
   ecrireLocal(CLE_ENDPOINT, endpoint);
   return ligne;
@@ -62,7 +71,7 @@ export function enregistrerAbonnement(sub: PushSubscription): AbonnementPush | n
  * l'appareil au Web Push quand une clé VAPID est configurée.
  */
 export async function activerNotifications(delaiMin: number, titresVisibles: boolean): Promise<ResultatActivation> {
-  try { if (magasin.userId) majProfil({ rappel_defaut_min: delaiMin, titres_visibles: titresVisibles }); } catch { /* profil indisponible */ }
+  try { if (magasin.userId) changerDelaiDefaut(delaiMin, { titres_visibles: titresVisibles }); } catch { /* profil indisponible */ }
   if (typeof Notification === 'undefined' || typeof Notification.requestPermission !== 'function') return 'indisponible';
   let permission: NotificationPermission;
   try { permission = await Notification.requestPermission(); } catch { return 'indisponible'; }
@@ -73,7 +82,7 @@ export async function activerNotifications(delaiMin: number, titresVisibles: boo
     if (!reg?.pushManager) return 'accorde';
     const sub = (await reg.pushManager.getSubscription())
       ?? (await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: base64UrlVersOctets(VAPID_PUBLIQUE) }));
-    enregistrerAbonnement(sub);
+    await enregistrerAbonnement(sub);
     return 'accorde';
   } catch (e) {
     console.error('Abonnement push impossible', e);

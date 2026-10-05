@@ -33,6 +33,7 @@ export function donneesDeDepart(userId: string, prenom: string): Depart {
   }));
   const idPoint = new Map(points.map((p) => [p.code, p.id]));
   const presets = PRESETS_DEFAUT.map((p, i) => ({ id: nouvelId(), nom: p.nom, ordre: i, points: p.points.map((c) => idPoint.get(c)!).filter(Boolean) }));
-  const profil = { id: userId, prenom, nom_rapport: prenom, langue_rapport: 'fr' as const, fuseau: 'America/Toronto', apparence: 'nuit' as const, heure_rapport: '21:15', rappel_defaut_min: 10, titres_visibles: true, devise: 'CAD', initialise: true };
+  const profil = { id: userId, prenom, nom_rapport: prenom, langue_rapport: 'fr' as const, fuseau: 'America/Toronto', apparence: 'nuit' as const, heure_rapport: '21:15', rappel_defaut_min: 10, titres_visibles: true, devise: 'CAD', initialise: true,
+    recevoir_bloc: true, recevoir_rapport: true, recevoir_recap_semaine: true, recevoir_recap_mois: true };
   return { profil, rubriques, projets, points, presets };
 }

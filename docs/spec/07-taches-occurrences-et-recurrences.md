@@ -32,3 +32,8 @@ Le tout apparaît dans les vues Jour, Semaine et Mois.
 - Le créneau choisi est comparé à **toutes** les occurrences du jour. S'il est libre : « Créneau libre ».
 - S'il est occupé : l'app nomme la tâche en conflit et propose le créneau libre **le plus proche après** et **le plus proche avant**, de même durée, au pas de 5 min, dans la même journée. L'utilisateur peut accepter une suggestion ou **garder l'heure** (chevauchement permis).
 - Une journée de plus de 12 h planifiées déclenche une alerte douce (« journée très chargée »).
+
+## Précisions issues de la construction (5 oct. 2026)
+- « Celle-ci et les suivantes » termine la série la veille de l'occurrence choisie. « Toute la série » recrée les occurrences à venir (y compris celles supprimées une à une) ; les faites, en cours et reportées restent intactes.
+- Une occurrence supprimée n'est jamais recréée par la matérialisation.
+- Une saisie (§8) confirme le bloc ; un bloc jamais lancé prend la durée de **son occurrence** (pas celle de la tâche).

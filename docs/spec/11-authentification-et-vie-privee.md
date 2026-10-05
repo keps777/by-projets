@@ -8,3 +8,6 @@
 - **Règles d'accès par ligne** sur toutes les tables : chaque utilisateur lit et écrit uniquement ses lignes. La clé de service n'est utilisée que par les fonctions du serveur.
 - Aucun traceur ni statistique d'usage. Polices hébergées par l'app. Journal d'erreurs **sans contenu personnel**.
 - **Export complet** des données (JSON) et **suppression du compte** sur demande, depuis les Réglages (Loi 25 du Québec et RGPD).
+
+## Précisions issues de la construction (5 oct. 2026)
+- La base elle-même refuse un deuxième compte (déclencheur sur `auth.users`) : l'inscription reste fermée même si le réglage du tableau de bord est oublié.

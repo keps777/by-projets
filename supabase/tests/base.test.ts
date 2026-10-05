@@ -109,8 +109,8 @@ describe('initialiser_compte', () => {
 });
 
 describe('unicités', () => {
-  it('une occurrence par tâche et par jour, un rappel par clé, un abonnement par adresse', async () => {
-    expect(await erreur(db, A, 'insert into occurrences (id, tache_id, jour, debut, fin) values ($1, $2, $3, now(), now())', [uid(911), a.tache, '2026-10-05'])).toMatch(/unique/);
+  it('un rappel par clé, un abonnement par adresse ; une occurrence reportée peut rejoindre un jour déjà pris', async () => {
+    expect(await erreur(db, A, 'insert into occurrences (id, tache_id, jour, debut, fin) values ($1, $2, $3, now(), now())', [uid(911), a.tache, '2026-10-05'])).toBeNull();
     expect(await erreur(db, A, 'insert into rappels (id, type, envoyer_a, cle_unique) values ($1, $2, now(), $3)', [uid(912), 'rapport', `${a.occurrence}:10`])).toMatch(/unique/);
     expect(await erreur(db, A, 'insert into abonnements_push (id, endpoint, cle_p256dh, cle_auth) values ($1, $2, $3, $3)', [uid(913), 'https://push.example/1', 'k'])).toMatch(/unique/);
     // La même clé chez un autre utilisateur est permise.

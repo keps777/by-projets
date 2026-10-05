@@ -5,7 +5,7 @@ import type { Envoyeur, ResultatPush } from '../_shared/envoi.ts';
 const rappel = (r: Partial<RappelReserve> = {}): RappelReserve => ({
   id: 'r1', user_id: 'u1', type: 'bloc', occurrence_id: 'o1', rapport_id: null, envoyer_a: '2026-10-05T08:50:00Z', cle_unique: 'o1:10',
   tentatives: 1, titre: 'RDQD du matin', debut: '2026-10-05T09:00:00Z', fin: '2026-10-05T09:30:00Z', occ_etat: 'prevue', bloc_annule: false,
-  rubrique: 'Ma relation avec Dieu', titres_visibles: true, fuseau: 'America/Toronto', rapport_jour: null, ...r
+  rubrique: 'Ma relation avec Dieu', titres_visibles: true, fuseau: 'America/Toronto', rapport_jour: null, recu: true, ...r
 });
 
 describe('composerNotification', () => {
@@ -103,6 +103,15 @@ describe('envoyerRappels', () => {
     expect(m.etats.get('r2')?.etat).toBe('echec');
   });
 
+  it('annule sans envoyer un rappel d’un type que l’utilisateur ne veut plus recevoir', async () => {
+    const m = depotMemoire([rappel({ recu: false }), rappel({ id: 'r2', type: 'rapport', occurrence_id: null, rapport_jour: '2026-10-04' })], [abo('a1')]);
+    const e = envoyeur({});
+    const bilan = await envoyerRappels(m.depot, e);
+    expect(m.etats.get('r1')?.etat).toBe('annule');
+    expect(m.etats.get('r2')?.etat).toBe('envoye');
+    expect(e.envois).toHaveLength(1);
+    expect(bilan).toMatchObject({ annules: 1, envoyes: 1 });
+  });
   it('annule sans envoyer le rappel d’un bloc devenu sans objet', async () => {
     const m = depotMemoire([rappel({ bloc_annule: true })], [abo('a1')]);
     const e = envoyeur({});

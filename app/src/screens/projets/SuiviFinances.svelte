@@ -153,7 +153,7 @@
   {#if role === 'sorties'}
     <div class="champ">Catégorie
       <Puces options={categoriesConnues.map((c) => ({ valeur: c, label: c }))} valeur={categorie || null} couleur="var(--c)" texte="var(--c-sur)" petit onchoisir={(v) => (categorie = v)} />
-      <input bind:value={categorie} placeholder="Ou tape une catégorie" />
+      <input bind:value={categorie} placeholder="Ou tape une catégorie" aria-label="Catégorie" />
     </div>
   {/if}
   <label class="champ">Jour

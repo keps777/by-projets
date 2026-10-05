@@ -22,3 +22,9 @@
 - Si le téléphone refuse la livraison (abonnement expiré), l'abonnement est supprimé et l'app affiche un bandeau « Notifications désactivées ».
 - **Parcours de départ** : connexion → installation sur l'écran d'accueil (pas à pas) → demande d'autorisation (déclenchée par un appui) → test.
 - Rappel de la contrainte iPhone : les notifications ne fonctionnent que si l'app est ouverte depuis son icône d'écran d'accueil (iOS 16.4 ou plus).
+
+## Précisions issues de la construction (5 oct. 2026)
+- Changer le délai de rappel par défaut met à jour les tâches qui suivaient l'ancien délai : les rappels futurs sont annulés puis recréés.
+- Reporter propose « À l'heure », 5, 10 et 15 min.
+- Le toucher d'une notification n'ouvre que des adresses de l'app.
+- Se réabonner sur le même appareil réutilise la ligne `abonnements_push` existante (`supprime_le` remis à nul).

@@ -2,10 +2,25 @@
 import { nouvelId } from '@core/ids.ts';
 import type { MesurePoint, PointRapportLigne, Profil } from '@core/lignes.ts';
 import { magasin } from '../magasin.svelte.ts';
+import { replanifierRappels } from './taches.ts';
 
 export function majProfil(patch: Partial<Omit<Profil, 'id'>>): void {
   const p = magasin.lignes.profils[0];
   if (p) magasin.ecrire('profils', { id: p.id, ...patch });
+}
+
+/**
+ * Change le délai de rappel par défaut (et d'autres champs du profil au passage). Les tâches actives qui suivaient
+ * l'ancien défaut prennent le nouveau : leurs rappels à venir sont annulés et recréés au nouveau délai.
+ */
+export function changerDelaiDefaut(min: number, autres: Partial<Omit<Profil, 'id'>> = {}): void {
+  const ancien = magasin.lignes.profils[0]?.rappel_defaut_min;
+  majProfil({ rappel_defaut_min: min, ...autres });
+  if (ancien == null || ancien === min) return;
+  for (const t of magasin.lignes.taches.filter((x) => x.actif && x.rappel_min === ancien)) {
+    magasin.ecrire('taches', { id: t.id, rappel_min: min });
+    replanifierRappels(t.id);
+  }
 }
 
 export function ajouterPoint(code: string, libelle: string, projetId: string | null, mesures: MesurePoint[]): string {

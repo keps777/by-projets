@@ -30,8 +30,16 @@ export function ajouterTache(n: NouvelleTache): string {
   return id;
 }
 
-/** Crée les occurrences manquantes des HORIZON_JOURS prochains jours, et leurs rappels. N'écrase jamais une occurrence existante. */
-export function materialiserTache(tacheId: string, depuis: Jour = aujourdhui()): number {
+/** Identifiants des occurrences que la règle de la tâche prévoit sur l'horizon. */
+export function idsPrevus(tache: Pick<Tache, 'id' | 'regle'>, depuis: Jour): string[] {
+  return occurrencesEntre(tache.regle, depuis, ajouterJours(depuis, HORIZON_JOURS)).map((j) => idOccurrence(tache.id, j));
+}
+
+/**
+ * Crée les occurrences manquantes des HORIZON_JOURS prochains jours, et leurs rappels. N'écrase jamais une occurrence
+ * existante et ne recrée jamais une occurrence supprimée (« cette occurrence »), sauf celles de `remplacer`.
+ */
+export function materialiserTache(tacheId: string, depuis: Jour = aujourdhui(), remplacer: ReadonlySet<string> = new Set()): number {
   const tache = magasin.trouver('taches', tacheId);
   if (!tache || !tache.actif) return 0;
   const tz = fuseau();
@@ -39,14 +47,14 @@ export function materialiserTache(tacheId: string, depuis: Jour = aujourdhui()):
   const ops: Parameters<typeof magasin.ecrireLot>[0] = [];
   for (const jour of occurrencesEntre(tache.regle, depuis, ajouterJours(depuis, HORIZON_JOURS))) {
     const id = idOccurrence(tacheId, jour);
-    if (existantes.has(id)) continue;
+    if (!remplacer.has(id) && (existantes.has(id) || magasin.estSupprime('occurrences', id))) continue;
     const debut = localVersUtc(jour, tache.heure_debut, tz);
     const fin = debut + tache.duree_min * 60000;
     ops.push(['occurrences', { id, tache_id: tacheId, jour, debut: new Date(debut).toISOString(), fin: new Date(fin).toISOString(), etat: 'prevue', demarree_a: null, pause_depuis: null, pause_cumulee_s: 0, terminee_a: null, exception: false }]);
     const rappel = rappelPour(tache, id, debut);
     if (rappel) ops.push(['rappels', rappel]);
   }
-  if (ops.length) magasin.ecrireLot(ops);
+  if (ops.length) magasin.ecrireLot(ops, remplacer);
   return ops.filter((o) => o[0] === 'occurrences').length;
 }
 
@@ -93,5 +101,34 @@ export function supprimerOccurrences(tacheId: string, portee: Portee, occId?: st
   for (const rp of magasin.lignes.rappels) if (rp.occurrence_id && ids.has(rp.occurrence_id) && rp.etat === 'en_attente') ops.push(['rappels', { id: rp.id, etat: 'annule' }]);
   if (ops.length) magasin.ecrireLot(ops);
   magasin.supprimer('occurrences', [...ids]);
-  if (portee === 'toute' || (portee === 'suivantes' && ref && ref.jour <= (magasin.trouver('taches', tacheId)?.regle.debut ?? ''))) magasin.ecrire('taches', { id: tacheId, actif: false });
+  const tache = magasin.trouver('taches', tacheId);
+  if (portee === 'toute' || (portee === 'suivantes' && ref && ref.jour <= (tache?.regle.debut ?? ''))) magasin.ecrire('taches', { id: tacheId, actif: false });
+  // « Celle-ci et les suivantes » : la série s'arrête la veille, sinon elle reviendrait au-delà de l'horizon.
+  else if (portee === 'suivantes' && ref && tache) magasin.ecrire('taches', { id: tacheId, regle: { ...tache.regle, fin: { type: 'date', date: ajouterJours(ref.jour, -1) } } });
+}
+
+/**
+ * Remet les rappels des occurrences à venir d'une tâche en accord avec son délai : annule ceux qui ne correspondent
+ * plus et crée les nouveaux. Rend le nombre de rappels créés.
+ */
+export function replanifierRappels(tacheId: string): number {
+  const tache = magasin.trouver('taches', tacheId);
+  if (!tache) return 0;
+  const occs = magasin.lignes.occurrences.filter((o) => o.tache_id === tacheId && o.etat === 'prevue' && Date.parse(o.debut) > horloge.maintenant);
+  const ids = new Set(occs.map((o) => o.id));
+  const voulus = new Map<string, Partial<Rappel> & { id: string }>();
+  if (tache.actif) for (const o of occs) { const r = rappelPour(tache, o.id, Date.parse(o.debut)); if (r) voulus.set(r.id, r); }
+  const ops: Parameters<typeof magasin.ecrireLot>[0] = [];
+  for (const r of magasin.lignes.rappels) {
+    if (r.type === 'bloc' && r.occurrence_id && ids.has(r.occurrence_id) && r.etat === 'en_attente' && !voulus.has(r.id)) ops.push(['rappels', { id: r.id, etat: 'annule' }]);
+  }
+  let crees = 0;
+  for (const r of voulus.values()) {
+    const ex = magasin.trouver('rappels', r.id);
+    if (ex && ex.etat === 'en_attente' && ex.envoyer_a === r.envoyer_a) continue;
+    ops.push(['rappels', r]);
+    crees++;
+  }
+  if (ops.length) magasin.ecrireLot(ops);
+  return crees;
 }

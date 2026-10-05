@@ -22,4 +22,18 @@ describe('dates', () => {
     expect(new Date(hiver).toISOString()).toBe('2026-11-05T10:00:00.000Z');
     expect(utcVersLocal(ete, 'America/Toronto')).toEqual({ jour: '2026-10-05', minutes: 300 });
   });
+  it('passages d’heure 2026-2027 à Toronto : heure absente avancée, heure double prise la première fois', () => {
+    const tz = 'America/Toronto';
+    const iso = (j: string, m: number) => new Date(localVersUtc(j, m, tz)).toISOString();
+    expect(iso('2026-11-01', 90)).toBe('2026-11-01T05:30:00.000Z'); // 01:30 HAE (la première)
+    expect(iso('2026-11-01', 120)).toBe('2026-11-01T07:00:00.000Z'); // 02:00 HNE
+    expect(iso('2027-03-14', 150)).toBe('2027-03-14T07:30:00.000Z'); // 02:30 n'existe pas → 03:30 HAE
+    expect(iso('2027-03-14', 180)).toBe('2027-03-14T07:00:00.000Z'); // 03:00 HAE
+    expect(utcVersLocal(Date.parse('2027-03-14T07:30:00Z'), tz)).toEqual({ jour: '2027-03-14', minutes: 210 });
+    for (const j of ['2026-11-01', '2027-03-14']) for (let m = 0; m < 1440; m += 15) {
+      const loc = utcVersLocal(localVersUtc(j, m, tz), tz);
+      expect(loc.jour).toBe(j);
+      if (!(j === '2027-03-14' && m >= 120 && m < 180)) expect(loc.minutes).toBe(m);
+    }
+  });
 });

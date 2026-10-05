@@ -135,7 +135,7 @@
   .jours { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
   .jours .puce { padding: 0; border-radius: 12px; font-size: 14px; }
   .raccourcis { display: flex; gap: 6px; flex-wrap: wrap; }
-  .raccourcis button { height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--ligne); background: transparent; font-size: 12px; font-weight: 600; }
+  .raccourcis button { min-height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--ligne); background: transparent; font-size: 12px; font-weight: 600; }
   .rang-fin { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; color: var(--muted); }
   .rang-fin input { height: 44px; border-radius: 12px; border: 1px solid var(--ligne); background: var(--surface); padding: 0 10px; }
   .pas { display: flex; align-items: center; gap: 8px; color: var(--texte); }

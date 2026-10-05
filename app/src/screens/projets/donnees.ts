@@ -4,7 +4,7 @@ import { nouvelId, uuidDeterministe } from '@core/ids.ts';
 import { TYPES } from '@core/metriques.ts';
 import { formatHeure } from '@core/units.ts';
 import type { Jour, TypeMetrique } from '@core/types.ts';
-import type { Occurrence, Saisie, SaisieValeur, Tache } from '@core/lignes.ts';
+import type { DetailMouvement, Occurrence, Saisie, SaisieValeur, Tache } from '@core/lignes.ts';
 import { magasin } from '../../data/magasin.svelte.ts';
 import { fuseau } from '../../data/temps.svelte.ts';
 
@@ -112,14 +112,18 @@ export function saisirJour(projetId: string, jour: Jour, valeurs: ValeurJour[], 
 
 // ------------------------------------------------------------------ finances
 
-export interface DetailMouvement { libelle?: string; categorie?: string }
+/** Ce que l'utilisateur tape pour un mouvement ; enregistré sous la forme `DetailMouvement` du noyau. */
+export interface MouvementSaisi { libelle?: string; categorie?: string }
+
+const texteOuNull = (x: unknown): string | null => (typeof x === 'string' && x.trim() ? x.trim() : null);
 
 /** Un mouvement d'argent = une saisie à part, avec son libellé et sa catégorie (dans `detail`). */
-export function ajouterMouvement(projetId: string, jour: Jour, cle: string, centimes: number, detail: DetailMouvement, aujourdhui: Jour): void {
+export function ajouterMouvement(projetId: string, jour: Jour, cle: string, centimes: number, saisi: MouvementSaisi, aujourdhui: Jour): void {
   const sid = nouvelId();
+  const detail: DetailMouvement = { libelle: texteOuNull(saisi.libelle), categorie: texteOuNull(saisi.categorie) };
   magasin.ecrireLot([
-    ['saisies', { id: sid, projet_id: projetId, occurrence_id: null, jour, source: jour < aujourdhui ? 'rattrapage' : 'manuel', note: detail.libelle?.trim() || null, approx: false }],
-    ['saisie_valeurs', { id: idValeur(sid, cle), saisie_id: sid, cle, valeur_num: centimes, valeur_txt: null, detail: { libelle: detail.libelle?.trim() || null, categorie: detail.categorie?.trim() || null } }]
+    ['saisies', { id: sid, projet_id: projetId, occurrence_id: null, jour, source: jour < aujourdhui ? 'rattrapage' : 'manuel', note: detail.libelle, approx: false }],
+    ['saisie_valeurs', { id: idValeur(sid, cle), saisie_id: sid, cle, valeur_num: centimes, valeur_txt: null, detail }]
   ]);
 }
 
@@ -128,12 +132,11 @@ export function retirerMouvement(saisieId: string, valeurId: string): void {
   magasin.supprimer('saisies', saisieId);
 }
 
-/** Lit la catégorie et le libellé d'une valeur (formes tolérées : `categorie`, `catégorie`, `libelle`, `nom`). */
+/** Lit le détail d'un mouvement (forme `DetailMouvement` ; anciennes formes `catégorie` et `nom` tolérées). */
 export function lireDetail(d: unknown): DetailMouvement {
-  if (!d || typeof d !== 'object') return {};
+  if (!d || typeof d !== 'object' || Array.isArray(d)) return { libelle: null, categorie: null };
   const o = d as Record<string, unknown>;
-  const s = (x: unknown) => (typeof x === 'string' && x.trim() ? x.trim() : undefined);
-  return { categorie: s(o.categorie) ?? s(o['catégorie']), libelle: s(o.libelle) ?? s(o.nom) };
+  return { categorie: texteOuNull(o.categorie) ?? texteOuNull(o['catégorie']), libelle: texteOuNull(o.libelle) ?? texteOuNull(o.nom) };
 }
 
 // ------------------------------------------------------------------ sous-projet

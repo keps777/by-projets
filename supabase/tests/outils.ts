@@ -25,8 +25,9 @@ export const B = '0b0b0b0b-0000-4000-8000-00000000000b';
 export async function creerBase(): Promise<PGlite> {
   const db = new PGlite();
   await db.exec(PREAMBULE);
-  for (const f of MIGRATIONS) await db.exec(readFileSync(DOSSIER + f, 'utf8'));
+  // Les deux comptes de test existent avant les migrations : la base refuse ensuite toute nouvelle inscription.
   await db.query('insert into auth.users (id) values ($1), ($2)', [A, B]);
+  for (const f of MIGRATIONS) await db.exec(readFileSync(DOSSIER + f, 'utf8'));
   return db;
 }
 

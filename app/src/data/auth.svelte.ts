@@ -77,7 +77,8 @@ function traduire(message?: string): string {
   if (!message) return 'Une erreur est survenue.';
   if (/invalid login/i.test(message)) return 'Adresse e-mail ou mot de passe incorrect.';
   if (/already registered|already been registered/i.test(message)) return 'Cette adresse a déjà un compte.';
-  if (/signups? not allowed|disabled/i.test(message)) return 'Les inscriptions sont fermées.';
+  // « Database error saving new user » : la base refuse un deuxième compte (migration 0700).
+  if (/signups? not allowed|disabled|database error saving new user|inscriptions sont fermées/i.test(message)) return 'Les inscriptions sont fermées.';
   if (/network|fetch/i.test(message)) return 'Pas de connexion réseau.';
   return message;
 }

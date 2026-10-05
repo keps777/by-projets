@@ -222,7 +222,9 @@
   .puces { display: flex; flex-wrap: wrap; gap: 6px; }
   .puce { display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 0 4px 0 12px; border-radius: 18px; background: var(--c-fond); color: var(--c-encre); font-size: 13px; font-weight: 600; }
   .puce .leger { font-weight: 400; opacity: 0.8; }
-  .puce button { width: 28px; height: 28px; border-radius: 14px; border: 0; background: transparent; color: inherit; display: flex; align-items: center; justify-content: center; }
+  .puce button { position: relative; width: 28px; height: 28px; border-radius: 14px; border: 0; background: transparent; color: inherit; display: flex; align-items: center; justify-content: center; }
+  /* Zone d'appui de 44 px sans changer le dessin. */
+  .puce button::after { content: ''; position: absolute; inset: -8px; }
   .formulaire { display: grid; grid-template-columns: minmax(0, 1fr) 56px 56px 50px; gap: 6px; align-items: end; }
   .formulaire label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: var(--muted); }
   .formulaire input { height: 44px; min-width: 0; border-radius: 12px; border: 1px solid var(--ligne); background: var(--champ); font-size: 15px; padding: 0 10px; }

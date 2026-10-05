@@ -8,6 +8,8 @@ export interface RappelReserve {
   envoyer_a: string; cle_unique: string; tentatives: number;
   titre: string | null; debut: string | null; fin: string | null; occ_etat: string | null; bloc_annule: boolean | null;
   rubrique: string | null; titres_visibles: boolean | null; fuseau: string | null; rapport_jour: string | null;
+  /** Faux si l'utilisateur a désactivé ce type de rappel (Réglages · Quels rappels recevoir). */
+  recu: boolean | null;
 }
 
 export interface Abonnement extends CiblePush { id: string; user_id: string }
@@ -75,7 +77,7 @@ export async function envoyerRappels(depot: DepotRappels, envoyeur: Envoyeur, li
   const morts = new Set<string>();
 
   for (const r of rappels) {
-    if (r.type === 'bloc' && r.bloc_annule) {
+    if ((r.type === 'bloc' && r.bloc_annule) || r.recu === false) {
       await depot.marquerRappel(r.id, 'annule', null);
       bilan.annules++;
       continue;

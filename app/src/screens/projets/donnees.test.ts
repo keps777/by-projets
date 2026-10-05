@@ -7,7 +7,7 @@ import { session } from '../../data/auth.svelte.ts';
 import { horloge } from '../../data/temps.svelte.ts';
 import { creerDepuisModele } from '../../data/actions/projets.ts';
 import { progressionSousProjet, valeursDuProjet } from '../../data/requetes.ts';
-import { ajouterMouvement, contenuDuJour, saisiesDuProjet, saisirJour } from './donnees.ts';
+import { ajouterMouvement, contenuDuJour, lireDetail, saisiesDuProjet, saisirJour } from './donnees.ts';
 
 beforeEach(async () => {
   await magasin.fermer();
@@ -60,5 +60,9 @@ describe('finances', () => {
     expect(s).toHaveLength(2);
     expect(s[0].valeurs[0].detail).toEqual({ libelle: 'Épicerie', categorie: 'Alimentation' });
     expect(total(p.id, 'montant:entrees', '2026-10-01')).toBe(290000);
+    // Forme fixe { libelle, categorie } : champ absent = null ; anciennes formes relues.
+    expect(s[1].valeurs[0].detail).toEqual({ libelle: 'Salaire', categorie: null });
+    expect(lireDetail({ nom: 'Loyer', 'catégorie': 'Logement' })).toEqual({ libelle: 'Loyer', categorie: 'Logement' });
+    expect(lireDetail([{ livre: 'Mt' }])).toEqual({ libelle: null, categorie: null });
   });
 });

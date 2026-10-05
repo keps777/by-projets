@@ -1,6 +1,6 @@
 <script lang="ts">
   // Réglages (planches Reglages, JourReglages) : profil, points du rapport, exports, notifications, rappels, apparence, compte.
-  import { tick } from 'svelte';
+  import { tick, untrack } from 'svelte';
   import EcranPage from '../../ui/EcranPage.svelte';
   import Icone from '../../ui/Icone.svelte';
   import Interrupteur from '../../ui/Interrupteur.svelte';
@@ -13,13 +13,13 @@
   import { modeServeur } from '../../data/config.ts';
   import { aujourdhui } from '../../data/temps.svelte.ts';
   import { profil } from '../../data/requetes.ts';
-  import { ajouterPoint, majProfil, modifierPoint, retirerPreset } from '../../data/actions/reglages.ts';
+  import { ajouterPoint, changerDelaiDefaut, majProfil, modifierPoint, retirerPreset } from '../../data/actions/reglages.ts';
   import { formaterMesures } from '@core/rapport.ts';
   import { calculerPoint, preparer } from '../rapports/calcul.ts';
   import { donneesRapport } from '../rapports/donnees.ts';
   import { etatNotifications, type EtatNotifications } from '../accueil/push.ts';
   import LignePoint from './LignePoint.svelte';
-  import { rappelsRecus, type TypeRappelChoisi } from './rappels.svelte.ts';
+  import { rappelsRecus, reprendreAnciensChoix, type TypeRappelChoisi } from './rappels.svelte.ts';
 
   let { params: _ = {} }: { params?: Record<string, string> } = $props();
 
@@ -74,6 +74,8 @@
   const BADGE: Record<EtatNotifications['statut'], string> = { actif: 'Actif', autorise: 'Autorisé', a_activer: 'À activer', bloque: 'Bloqué', indisponible: 'Indisponible' };
   const titres = $derived(p?.titres_visibles ?? true);
   const delai = $derived(p?.rappel_defaut_min ?? 10);
+
+  $effect(() => { if (p) untrack(reprendreAnciensChoix); });
 
   const RAPPELS: { t: TypeRappelChoisi; label: string }[] = [
     { t: 'bloc', label: 'Avant chaque bloc' }, { t: 'rapport', label: 'Rapport du soir' },
@@ -178,7 +180,7 @@
       <div class="ligne colonne delais">
         <span class="fort">Me prévenir par défaut</span>
         <Puces colonnes={4} petit options={[{ valeur: 0, label: 'À l’heure' }, { valeur: 5, label: '5 min' }, { valeur: 10, label: '10 min' }, { valeur: 15, label: '15 min' }]}
-          valeur={delai} onchoisir={(v) => majProfil({ rappel_defaut_min: v })} couleur="var(--accent)" texte="var(--accent-texte)" />
+          valeur={delai} onchoisir={(v) => changerDelaiDefaut(v)} couleur="var(--accent)" texte="var(--accent-texte)" />
       </div>
       <div class="ligne colonne">
         <span class="fort">En touchant une notification</span>
@@ -244,7 +246,7 @@
   label input { height: 44px; min-width: 0; border-radius: 12px; border: 1px solid var(--ligne); background: var(--champ); font-size: 15px; padding: 0 12px; }
   .rangee { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .choix { display: flex; background: var(--surface-2); border-radius: 12px; padding: 3px; }
-  .choix button { min-height: 38px; padding: 0 14px; border: 0; border-radius: 10px; background: transparent; color: var(--muted); font-size: 13px; font-weight: 600; }
+  .choix button { min-height: 44px; padding: 0 14px; border: 0; border-radius: 10px; background: transparent; color: var(--muted); font-size: 13px; font-weight: 600; }
   .choix button.actif { background: var(--surface); color: var(--texte); }
   .groupe { display: flex; flex-direction: column; gap: 8px; scroll-margin-top: 16px; }
   .tete { display: flex; justify-content: space-between; align-items: baseline; }

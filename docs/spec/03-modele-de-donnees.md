@@ -23,3 +23,9 @@ Toutes les tables ont `id uuid` (généré par le client pour permettre la saisi
 | `rappels` | `type` (`bloc`/`rapport`/`recap_semaine`/`recap_mois`), `occurrence_id`, `envoyer_a`, `etat` (`en_attente`/`envoye`/`echec`/`annule`), `cle_unique` | Clé unique : un rappel ne part qu'une seule fois. |
 | `abonnements_push` | `endpoint`, `cle_p256dh`, `cle_auth`, `appareil`, `dernier_succes` | Un par appareil autorisé. |
 | `modeles` | `rubrique`, `nom`, `definition` (json : sous-projet + métriques + calculs) | Fournis par l'app, en lecture seule. Le choix d'un modèle **copie** ses valeurs dans un nouveau sous-projet. |
+
+## Précisions issues de la construction (5 oct. 2026)
+- `profils` porte `recevoir_bloc`, `recevoir_rapport`, `recevoir_recap_semaine`, `recevoir_recap_mois` (quels rappels recevoir) ; le serveur annule sans envoyer un rappel d'un type désactivé.
+- `saisie_valeurs.detail` d'un mouvement d'argent vaut `{libelle, categorie}` (un champ vide vaut `null`).
+- Les occurrences ne sont **plus uniques par (tâche, jour)** : un bloc reporté peut rejoindre un jour qui a déjà son bloc régulier. L'identifiant déterministe évite les doublons.
+- `rapports.id` est déterministe : `uuid(rapport:<utilisateur>:<jour>)`, identique côté app et côté serveur.

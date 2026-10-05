@@ -27,6 +27,11 @@ export interface Profil extends Base {
   devise: string;
   /** Vrai une fois les rubriques, projets et points par défaut créés. */
   initialise: boolean;
+  /** Quels rappels recevoir (Réglages). Un rappel d'un type désactivé est annulé par le serveur sans être envoyé. */
+  recevoir_bloc: boolean;
+  recevoir_rapport: boolean;
+  recevoir_recap_semaine: boolean;
+  recevoir_recap_mois: boolean;
 }
 
 export interface Rubrique extends Base { cle: string | null; nom: string; couleur: string; ordre: number; archivee: boolean }
@@ -104,9 +109,11 @@ export interface SaisieValeur extends Base {
   cle: string;
   valeur_num: number | null;
   valeur_txt: string | null;
-  /** Passages `[{livre, de, a}]`, séances `[{min, approx}]`, catégorie d'un montant… */
-  detail: unknown | null;
+  /** Passages `[{livre, de, a}]` (référence), ou `DetailMouvement` pour un mouvement d'argent (montant). */
+  detail: DetailMouvement | unknown[] | null;
 }
+/** Détail d'un mouvement d'argent (suivi des finances) : son libellé et sa catégorie. */
+export interface DetailMouvement { libelle: string | null; categorie: string | null }
 
 export interface MesurePoint { cle: string; sous_projet_id: string | null }
 export interface PointRapportLigne extends Base { ordre: number; code: string; libelle: string; projet_id: string | null; mesures: MesurePoint[]; actif: boolean }

@@ -39,7 +39,7 @@
     debut = loc.minutes;
     const r = tache?.rappel_min ?? profil()?.rappel_defaut_min ?? 10;
     rappel = tache?.rappel_min != null;
-    avance = [5, 10, 15].includes(r) ? r : 10;
+    avance = [0, 5, 10, 15].includes(r) ? r : 10;
   });
 
   const creneaux = $derived(occId && jour ? creneauxDuJour(jour, occId) : []);
@@ -52,7 +52,7 @@
     if (!occId) return;
     reporter(occId, { jour, debutMin: debut, rappelMin: rappel ? avance : null });
     const quand = jour === aujourdhui ? 'Reporté à ' : `Reporté ${puceJour(jour, aujourdhui).toLowerCase()} à `;
-    dire(quand + hm(debut) + (rappel ? ` · rappel ${avance} min avant` : ''));
+    dire(quand + hm(debut) + (rappel ? (avance ? ` · rappel ${avance} min avant` : ' · rappel à l’heure') : ''));
     onvalide();
   }
 </script>
@@ -88,8 +88,8 @@
           Me rappeler
         </button>
         <div class="avances" class:eteint={!rappel}>
-          {#each [5, 10, 15] as a (a)}
-            <button type="button" class:actif={rappel && a === avance} onclick={() => { avance = a; rappel = true; }}>{a} min</button>
+          {#each [0, 5, 10, 15] as a (a)}
+            <button type="button" class:actif={rappel && a === avance} onclick={() => { avance = a; rappel = true; }}>{a ? `${a} min` : 'À l’heure'}</button>
           {/each}
         </div>
       </div>
@@ -114,7 +114,7 @@
   .heure button { width: 44px; height: 44px; border-radius: 14px; border: 0; background: var(--surface); font-size: 12px; font-weight: 600; }
   .debut { font-size: 28px; letter-spacing: -0.02em; }
   .fin { font-size: 11px; }
-  .rappel { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .rappel { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
   .bascule { flex: none; display: flex; align-items: center; gap: 10px; border: 0; background: transparent; font-size: 14px; font-weight: 600; padding: 0; min-height: 44px; }
   .sw { width: 44px; height: 26px; border-radius: 13px; background: var(--piste); position: relative; transition: background 0.2s; }
   .sw.on { background: var(--c); }
@@ -122,7 +122,7 @@
   .sw.on span { left: 21px; }
   .avances { display: flex; gap: 6px; }
   .avances.eteint { opacity: 0.4; }
-  .avances button { height: 40px; padding: 0 10px; border-radius: 12px; border: 1px solid var(--ligne); background: transparent; font-size: 13px; font-weight: 600; }
+  .avances button { min-height: 44px; padding: 0 10px; border-radius: 12px; border: 1px solid var(--ligne); background: transparent; font-size: 13px; font-weight: 600; }
   .avances button.actif { background: var(--c); border-color: var(--c); color: var(--c-sur); }
   .valider { height: 54px; border-radius: 18px; border: 0; background: var(--inverse); color: var(--inverse-texte); font-size: 16px; font-weight: 600; }
 </style>
