@@ -61,6 +61,9 @@ supabase.com. Ne jamais écrire une clé secrète dans le dépôt ni dans un cha
    select vault.create_secret('<même valeur que CRON_SECRET>', 'cron_secret');
    ```
    Vérifier ensuite : `select * from cron.job;` puis, après une minute, `select * from net._http_response order by id desc limit 5;`.
+   **État du projet `by-projets`** : étapes 1 à 5 et 7 faites ; celle-ci reste à faire. La valeur de `CRON_SECRET`
+   posée à l'étape 4 n'a pas été conservée : en choisir une nouvelle, la remplacer dans Edge Functions → Secrets
+   (`CRON_SECRET`), puis la mettre dans le coffre ci-dessus. Un 401 dans `net._http_response` = valeurs différentes.
 7. **Réglages du tableau de bord** (Authentication) :
    - Sign In / Providers → Email : **Confirm email désactivé** (aucun e-mail envoyé).
    - **Longueur minimale du mot de passe : 12**.
