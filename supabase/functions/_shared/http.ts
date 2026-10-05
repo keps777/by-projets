@@ -31,11 +31,15 @@ export async function lireCorps<T extends object>(req: Request): Promise<Partial
   } catch { return {}; }
 }
 
+export type SourceSecret = string | undefined | (() => Promise<string | undefined>);
+
 /** Enveloppe d'une fonction serveur : POST seulement, secret vérifié, réponse JSON, erreurs sans contenu personnel. */
-export function servir(secret: string | undefined, traiter: (req: Request) => Promise<unknown>): (req: Request) => Promise<Response> {
+export function servir(secret: SourceSecret, traiter: (req: Request) => Promise<unknown>): (req: Request) => Promise<Response> {
   return async (req) => {
     if (req.method !== 'POST') return json({ erreur: 'Méthode non permise.' }, 405);
-    if (!secretValide(req, secret)) return json({ erreur: 'Accès refusé.' }, 401);
+    let attendu: string | undefined;
+    try { attendu = typeof secret === 'function' ? await secret() : secret; } catch { attendu = undefined; }
+    if (!secretValide(req, attendu)) return json({ erreur: 'Accès refusé.' }, 401);
     try {
       return json({ ok: true, ...((await traiter(req)) as object) });
     } catch (e) {

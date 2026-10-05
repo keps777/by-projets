@@ -16,3 +16,18 @@ export function verifier<T>(r: { data: T; error: { message: string } | null }, q
   if (r.error) throw new Error(`${quoi} : ${r.error.message}`);
   return r.data;
 }
+
+let secretEnCache: Promise<string | undefined> | null = null;
+
+/**
+ * Secret partagé avec pg_cron, lu dans le coffre de la base (migration 0800) puis gardé en mémoire.
+ * Repli sur la variable CRON_SECRET si le coffre ne répond pas (installations antérieures).
+ */
+export function secretCron(): Promise<string | undefined> {
+  secretEnCache ??= clientAdmin().rpc('secret_cron').then((r) => {
+    const v = typeof r.data === 'string' && !r.error ? r.data : undefined;
+    if (!v) secretEnCache = null;
+    return v ?? Deno.env.get('CRON_SECRET');
+  }, () => { secretEnCache = null; return Deno.env.get('CRON_SECRET'); });
+  return secretEnCache;
+}

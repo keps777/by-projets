@@ -39,4 +39,12 @@ describe('outils HTTP', () => {
     expect(journal).toHaveBeenCalledOnce();
     journal.mockRestore();
   });
+
+  it('lit le secret de façon asynchrone (coffre de la base) et refuse si la lecture échoue', async () => {
+    const f = servir(async () => SECRET, async () => ({}));
+    expect((await f(req({ 'x-cron-secret': SECRET }))).status).toBe(200);
+    expect((await f(req({ 'x-cron-secret': 'faux' }))).status).toBe(401);
+    const panne = servir(async () => { throw new Error('coffre indisponible'); }, async () => ({}));
+    expect((await panne(req({ 'x-cron-secret': SECRET }))).status).toBe(401);
+  });
 });

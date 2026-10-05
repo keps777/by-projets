@@ -55,11 +55,13 @@ supabase.com. Ne jamais écrire une clé secrète dans le dépôt ni dans un cha
    supabase functions deploy materialiser-occurrences --no-verify-jwt
    ```
    (`config.toml` les déclare déjà avec `verify_jwt = false` : elles vérifient elles-mêmes l'en-tête `x-cron-secret`.)
-6. **Donner à pg_cron l'adresse du projet et le secret**, une seule fois, dans l'éditeur SQL du tableau de bord :
+6. **Donner à pg_cron l'adresse du projet**, une seule fois, dans l'éditeur SQL du tableau de bord :
    ```sql
    select vault.create_secret('https://<ref-du-projet>.supabase.co', 'project_url');
-   select vault.create_secret('<même valeur que CRON_SECRET>', 'cron_secret');
    ```
+   Le secret partagé `cron_secret` est créé **dans la base** par la migration `0800_planification_secret_interne`
+   (sa valeur ne sort jamais de Postgres) ; les fonctions le lisent par `public.secret_cron()`. Le secret
+   `CRON_SECRET` des fonctions n'est plus nécessaire (il ne sert que de repli si le coffre ne répond pas).
    Vérifier ensuite : `select * from cron.job;` puis, après une minute, `select * from net._http_response order by id desc limit 5;`.
    **État du projet `by-projets`** : étapes 1 à 5 et 7 faites ; celle-ci reste à faire. La valeur de `CRON_SECRET`
    posée à l'étape 4 n'a pas été conservée : en choisir une nouvelle, la remplacer dans Edge Functions → Secrets
