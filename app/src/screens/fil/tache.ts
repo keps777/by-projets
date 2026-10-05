@@ -91,3 +91,22 @@ export function heureProposee(jour: Jour, aujourdhui: Jour, maintenantMin: numbe
   if (jour !== aujourdhui) return 9 * 60;
   return Math.min(1440 - duree, Math.ceil((maintenantMin + 1) / 15) * 15);
 }
+
+export const DUREE_MIN = 5;
+export const DUREE_MAX = 24 * 60;
+
+/**
+ * Durée tapée à la main, en minutes : « 3h45 », « 3 h 45 », « 3:45 », « 4h », « 4 heures », « 225 », « 45 min », « 1,5 h ».
+ * Un nombre seul vaut des minutes. Rend null si le texte n'est pas une durée, sinon une valeur bornée à 5 min – 24 h.
+ */
+export function lireDuree(texte: string): number | null {
+  const t = texte.trim().toLowerCase().replace(',', '.').replace(/\s+/g, '');
+  if (!t) return null;
+  let min: number | null = null;
+  let m: RegExpMatchArray | null;
+  if ((m = t.match(/^(\d+):(\d{1,2})$/))) min = +m[1] * 60 + +m[2];
+  else if ((m = t.match(/^(\d+(?:\.\d+)?)(?:h|heures?)(\d{1,2})?(?:min|m)?$/))) min = Math.round(+m[1] * 60) + (m[2] ? +m[2] : 0);
+  else if ((m = t.match(/^(\d+(?:\.\d+)?)(?:min|minutes?|m)?$/))) min = Math.round(+m[1]);
+  if (min == null || !Number.isFinite(min)) return null;
+  return Math.max(DUREE_MIN, Math.min(DUREE_MAX, min));
+}

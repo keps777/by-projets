@@ -195,3 +195,41 @@ test('Mode Focus : les notes écrites pendant un bloc vont au Carnet, numéroté
   await expect(page.locator('.note')).toHaveCount(2);
   await expect(page.getByText(/Focus · Étude du soir/).first()).toBeVisible();
 });
+
+test.describe('Rapports', () => {
+  test('s’ouvre sur la journée en cours (onglet Jour) ; une carte se modifie à la main', async ({ page }) => {
+    await page.goto('/rapports');
+    const jourNum = await page.evaluate(() => new Date().toLocaleDateString('fr-CA', { timeZone: 'America/Toronto', day: 'numeric' }));
+    await expect(page.locator('.nom').first()).toContainText(jourNum);
+    await expect(page.getByRole('tab', { name: 'Jour' })).toHaveAttribute('aria-selected', 'true');
+
+    await page.getByRole('button', { name: /DDEWG : modifier les valeurs/ }).click();
+    const volet = page.getByRole('dialog', { name: 'Saisir un jour' });
+    await expect(volet).toBeVisible();
+    await volet.locator('input.mono').first().fill('2');
+    await volet.getByRole('button', { name: 'Enregistrer' }).click();
+    await expect(volet).toBeHidden();
+    await expect(page.getByRole('button', { name: /DDEWG : modifier les valeurs/ }).locator('.valeur')).toContainText('2');
+  });
+});
+
+test('ajout de tâche : durée libre (3h45, 4 h) en plus des durées courantes', async ({ page }) => {
+  await page.goto('/tache/nouvelle?sans-projet=1&heure=480'); // 08:00
+  await page.getByLabel('Titre de la tâche').fill('Atelier');
+  const champ = page.getByLabel('Durée de la tâche');
+  await champ.fill('3h45');
+  await champ.blur();
+  await expect(page.locator('.fin').first()).toHaveText('jusqu’à 11:45');
+  await page.getByRole('button', { name: '15 minutes de plus' }).click();
+  await expect(page.locator('.fin').first()).toHaveText('jusqu’à 12:00');
+  await page.getByRole('button', { name: '4 h', exact: true }).click();
+  await expect(page.locator('.fin').first()).toHaveText('jusqu’à 12:00');
+  await champ.fill('1:30');
+  await champ.press('Enter');
+  await expect(page.locator('.fin').first()).toHaveText('jusqu’à 09:30');
+  // Une durée qui dépasserait minuit fait commencer la tâche plus tôt.
+  await page.goto('/tache/nouvelle?sans-projet=1&heure=1380'); // 23:00
+  await page.getByLabel('Durée de la tâche').fill('3h');
+  await page.getByLabel('Durée de la tâche').blur();
+  await expect(page.locator('.debut')).toHaveText('21:00');
+});

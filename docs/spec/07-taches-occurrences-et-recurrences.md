@@ -42,3 +42,4 @@ Le tout apparaît dans les vues Jour, Semaine et Mois.
 - **Glisser la journée** vers la gauche (jour suivant) ou vers la droite (jour précédent) ; la journée glisse du côté d'où l'on vient.
 - **Toucher un espace libre** de la journée ouvre l'ajout de tâche, avec le jour affiché et l'heure touchée **arrondie à la demi-heure inférieure** (toucher à 1 h 40 → 1 h 30).
 - **Choisir l'heure d'un coup** : toucher l'heure (grand affichage) ouvre la roue de l'iPhone ; des raccourcis « Matin 8 h · Midi 12 h · Après-midi 15 h · Soir 18 h · Nuit 21 h » complètent −15 / +15.
+- **Durée libre** : la durée d'une tâche n'est pas limitée aux durées courantes (15 min à 4 h en raccourcis). Elle se règle par −15 / +15 ou se tape (« 3h45 », « 1:30 », « 90 min », « 4 heures »), de 5 min à 24 h ; une durée qui dépasserait minuit fait commencer la tâche plus tôt. Les valeurs prévues par défaut suivent la durée.

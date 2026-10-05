@@ -6,7 +6,7 @@
   import type { FormulaireTache } from './formulaire-tache.svelte.ts';
   import Disponibilite from './Disponibilite.svelte';
   import { dateCourte, dureeMin, hm, puceJour } from './format.ts';
-  import { choixMensuels, texteJours, type Recurrence, type TypeFin } from './tache.ts';
+  import { choixMensuels, DUREE_MAX, DUREE_MIN, lireDuree, texteJours, type Recurrence, type TypeFin } from './tache.ts';
 
   /** Étape « Quand » : jour de début, récurrence, heure, durée et vérification de disponibilité (spec §7.1, §7.3). */
   let { f, numero, aujourdhui, tacheId }: { f: FormulaireTache; numero: number; aujourdhui: string; tacheId?: string } = $props();
@@ -16,7 +16,7 @@
     { valeur: 'une_fois', label: 'Ce jour seulement' }, { valeur: 'quotidien', label: 'Tous les jours' },
     { valeur: 'hebdo', label: 'Chaque semaine' }, { valeur: 'mensuel', label: 'Chaque mois' }
   ];
-  const DUREES = [15, 30, 45, 60, 90];
+  const DUREES = [15, 30, 45, 60, 90, 120, 180, 240];
 
   const debuts = $derived.by(() => {
     const l = Array.from({ length: 9 }, (_, i) => ajouterJours(aujourdhui, i));
@@ -47,6 +47,17 @@
     if (Number.isFinite(h) && Number.isFinite(m)) f.heure = borner(h * 60 + m);
   }
   const valeurHeure = $derived(`${String(Math.floor(f.heure / 60)).padStart(2, '0')}:${String(f.heure % 60).padStart(2, '0')}`);
+  /** Change la durée (5 min – 24 h) ; si la tâche débordait minuit, elle commence plus tôt. */
+  function regler(d: number) {
+    f.duree = Math.max(DUREE_MIN, Math.min(DUREE_MAX, Math.round(d)));
+    f.heure = Math.min(f.heure, 1440 - f.duree);
+  }
+  let brouillonDuree = $state<string | null>(null);
+  function validerDuree() {
+    const d = lireDuree(brouillonDuree ?? '');
+    if (d != null) regler(d);
+    brouillonDuree = null;
+  }
   const deplacer = (d: number) => { f.heure = Math.max(0, Math.min(1440 - f.duree, f.heure + d)); };
 </script>
 
@@ -123,9 +134,20 @@
       <button type="button" class="puce petite" class:inverse={f.heure === borner(r.m)} aria-pressed={f.heure === borner(r.m)} onclick={() => (f.heure = borner(r.m))}>{r.l} · {hm(r.m)}</button>
     {/each}
   </div>
-  <div class="durees">
+  <div class="duree-libre">
+    <button type="button" aria-label="15 minutes de moins" disabled={f.duree <= DUREE_MIN} onclick={() => regler(f.duree - 15)}>−15</button>
+    <label class="col centre">
+      <span class="etiquette">Durée</span>
+      <input class="mono" type="text" inputmode="text" autocomplete="off" aria-label="Durée de la tâche" placeholder="3h45"
+        value={brouillonDuree ?? dureeMin(f.duree)} onfocus={(e) => { brouillonDuree = ''; e.currentTarget.select(); }}
+        oninput={(e) => (brouillonDuree = e.currentTarget.value)} onblur={validerDuree} onkeydown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }} />
+      <span class="indice">tape 3h45, 1:30 ou 90 min</span>
+    </label>
+    <button type="button" aria-label="15 minutes de plus" disabled={f.duree >= DUREE_MAX} onclick={() => regler(f.duree + 15)}>+15</button>
+  </div>
+  <div class="durees" role="group" aria-label="Durées courantes">
     {#each DUREES as d (d)}
-      <button type="button" class="puce" class:inverse={d === f.duree} aria-pressed={d === f.duree} onclick={() => { f.duree = d; f.heure = Math.min(f.heure, 1440 - d); }}>{dureeMin(d)}</button>
+      <button type="button" class="puce" class:inverse={d === f.duree} aria-pressed={d === f.duree} onclick={() => regler(d)}>{dureeMin(d)}</button>
     {/each}
   </div>
 
@@ -168,8 +190,15 @@
   .heure button { width: 52px; height: 44px; border-radius: 14px; border: 0; background: var(--surface); font-size: 13px; font-weight: 600; }
   .debut { font-size: 26px; letter-spacing: -0.02em; }
   .fin { font-size: 11px; }
-  .durees { display: flex; gap: 6px; }
-  .durees .puce { flex: 1; padding: 0; }
+  .durees { display: flex; gap: 6px; overflow-x: auto; margin: 0 -16px; padding: 0 16px; }
+  .durees .puce { flex: none; padding: 0 14px; }
+  .duree-libre { display: flex; align-items: center; justify-content: space-between; background: var(--surface-2); border-radius: 18px; padding: 8px; gap: 8px; }
+  .duree-libre > button { width: 52px; height: 44px; border-radius: 14px; border: 0; background: var(--surface); font-size: 13px; font-weight: 600; flex: none; }
+  .duree-libre > button:disabled { opacity: 0.35; }
+  .duree-libre label { flex: 1; min-width: 0; gap: 2px; }
+  .duree-libre input { width: 100%; max-width: 160px; height: 44px; text-align: center; font-size: 22px; font-weight: 500; background: transparent; border: 1px solid transparent; border-radius: 12px; color: var(--texte); }
+  .duree-libre input:focus { outline: none; border-color: var(--c, var(--accent)); background: var(--surface); }
+  .duree-libre .indice { font-size: 11px; color: var(--faint); }
   .chargee { font-size: 12px; color: var(--alerte); background: var(--alerte-fond); border-radius: 12px; padding: 10px 12px; }
   /* Dessin de la maquette (40 px ou 36 px), zone d'appui portée à 44 px (spec §14). */
   .raccourcis button::after { content: ''; position: absolute; inset: -4px 0; }

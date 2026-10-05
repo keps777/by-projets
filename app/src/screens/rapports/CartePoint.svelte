@@ -3,16 +3,19 @@
   import { formaterMesure, formaterMesures, type Langue } from '@core/rapport.ts';
   import { formatTemps } from '@core/units.ts';
   import { styleCouleur } from '../../ui/couleurs.ts';
+  import Icone from '../../ui/Icone.svelte';
   import type { PointCalcule } from './calcul.ts';
   import { niveau } from './syntheses.ts';
   import type { Vue } from './periodes.ts';
 
-  let { p, n, vue, langue, couleur, ratios = [], lettres = [], sousTitre = '', enCours = false }: {
+  let { p, n, vue, langue, couleur, ratios = [], lettres = [], sousTitre = '', enCours = false, onmodifier }: {
     p: PointCalcule; n: number; vue: Vue; langue: Langue; couleur: string;
     /** Journée pas encore close : un zéro n'est pas un échec, on le montre sans rouge. */
     enCours?: boolean;
     /** Ratios jour par jour (semaine, mois) ; null = futur ou sans objectif. */
     ratios?: (number | null)[]; lettres?: string[]; sousTitre?: string;
+    /** Toucher la carte (jour) : modifier les valeurs à la main. */
+    onmodifier?: () => void;
   } = $props();
 
   const premiere = $derived(p.mesures[0]);
@@ -36,7 +39,9 @@
   const largeur = $derived(r == null ? 0 : r <= 0 ? (enCours ? 0 : 3) : Math.min(100, r * 100));
 </script>
 
-<article class="carte" style={styleCouleur(couleur)}>
+<!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_noninteractive_element_interactions -->
+<article class="carte" class:cliquable={!!onmodifier} style={styleCouleur(couleur)} role={onmodifier ? 'button' : undefined} tabindex={onmodifier ? 0 : undefined}
+  aria-label={onmodifier ? `${p.point.code} : modifier les valeurs` : undefined} onclick={onmodifier} onkeydown={(e) => { if (onmodifier && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); onmodifier(); } }}>
   <div class="tete">
     <span class="n mono">{n}</span>
     <span class="noms">
@@ -65,6 +70,7 @@
     {:else}
       <span class="muted vide">Aucune mesure : choisis-les dans les Réglages.</span>
     {/if}
+    {#if onmodifier && p.mesures.length}<span class="modifier"><Icone nom="crayon" taille={13} />Toucher pour modifier les valeurs</span>{/if}
     </div>
   {:else if vue === 'semaine'}
     <div class="semaine">
@@ -84,6 +90,9 @@
 </article>
 
 <style>
+  .cliquable { cursor: pointer; }
+  .cliquable:active { transform: scale(0.985); }
+  .modifier { display: inline-flex; align-items: center; gap: 5px; align-self: flex-start; font-size: 12px; font-weight: 600; color: var(--c-encre, var(--muted)); opacity: 0.85; }
   .carte { border-radius: 20px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
   .tete { display: flex; align-items: center; gap: 10px; }
   .n { flex: none; width: 26px; height: 26px; border-radius: 8px; background: var(--c-fond); color: var(--c-encre); font-size: 12px; display: flex; align-items: center; justify-content: center; }

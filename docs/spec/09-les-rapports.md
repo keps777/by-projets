@@ -30,6 +30,7 @@
 - **Archives des rapports** : liste par jour, semaine, mois, avec recherche et marque « envoyé ».
 
 ## Précisions issues de la construction (5 oct. 2026)
-- Avant l'heure du rapport (21 h 15 par défaut), l'écran Rapports s'ouvre sur le rapport **de la veille** ; après, sur celui du jour. La flèche « suivant » mène toujours au jour en cours.
+- L'écran Rapports s'ouvre toujours sur l'onglet **Jour** et sur **la journée en cours** ; avant l'heure du rapport (21 h 15 par défaut) elle est présentée « en cours », sans rouge. Les flèches mènent aux jours précédents.
+- **Modifier à la main** : dans l'onglet Jour, toucher la carte d'un point ouvre la saisie du jour (comme « Saisir un autre jour » d'un sous-projet) avec les mesures du point ; l'enregistrement met à jour la saisie manuelle du projet, donc tous ses sous-projets, les barres et le rapport. Un point sans projet ou sans mesure explique comment le régler.
 - Archive et Archives ne comptent pas le jour en cours avant l'heure du rapport.
 - Le jour en cours n'est jamais présenté comme un échec : un zéro s'affiche en encre normale et le résumé dit « Journée en cours · rapport à 21:15 ».

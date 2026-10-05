@@ -6,14 +6,18 @@
   import Volet from '../../ui/Volet.svelte';
   import { couleurRubrique } from '../../ui/couleurs.ts';
   import { theme } from '../../ui/theme.svelte.ts';
+  import { dire } from '../../ui/toast.svelte.ts';
   import { routeur } from '../../routeur.svelte.ts';
   import { aujourdhui, maintenantLocal } from '../../data/temps.svelte.ts';
   import { COULEUR_SANS_PROJET, profil } from '../../data/requetes.ts';
-  import { ajouterJours, moisDe } from '@core/dates.ts';
-  import { atteint, calculerPoints, contenuDuJour, modifieDepuis, preparer, texteDuContenu } from './calcul.ts';
+  import { moisDe } from '@core/dates.ts';
+  import { TYPES } from '@core/metriques.ts';
+  import { atteint, calculerPoints, configDeMesure, contenuDuJour, modifieDepuis, preparer, texteDuContenu, type PointCalcule } from './calcul.ts';
   import { donneesRapport, rapportDuJour } from './donnees.ts';
   import { calculerJours, ratiosDuPoint } from './syntheses.ts';
   import { decaler, estVue, libellePeriode, nomMois, periodeDe, semaineIso, type Vue } from './periodes.ts';
+  import { styleCouleur } from '../../ui/couleurs.ts';
+  import VoletSaisie from '../projets/VoletSaisie.svelte';
   import CartePoint from './CartePoint.svelte';
   import PanneauExport from './PanneauExport.svelte';
 
@@ -23,12 +27,10 @@
   const vue = $derived<Vue>(estVue(routeur.params.get('onglet')) ? (routeur.params.get('onglet') as Vue) : 'jour');
   const jourParam = $derived(routeur.params.get('jour'));
   const p = $derived(profil());
-  // Avant l'heure du rapport (21:15 par défaut), on ouvre sur le rapport de la veille, le dernier généré (comme la maquette :
-  // lundi 4:55, « Ton rapport du 4 octobre est prêt »). La flèche suivante mène au jour en cours.
+  // On ouvre toujours sur la journée en cours ; avant l'heure du rapport (21:15 par défaut), elle est « en cours » : un zéro n'est pas un échec.
   const minutesRapport = $derived.by(() => { const [h, m] = (p?.heure_rapport ?? '21:15').split(':').map(Number); return (h || 0) * 60 + (m || 0); });
   const avantRapport = $derived(maintenantLocal().minutes < minutesRapport);
-  const jourDefaut = $derived(avantRapport ? ajouterJours(auj, -1) : auj);
-  const periode = $derived(periodeDe(vue, jourParam && /^\d{4}-\d{2}-\d{2}$/.test(jourParam) ? jourParam : jourDefaut));
+  const periode = $derived(periodeDe(vue, jourParam && /^\d{4}-\d{2}-\d{2}$/.test(jourParam) ? jourParam : auj));
   const suivanteFuture = $derived(decaler(periode, 1).debut > auj);
   /** Journée pas encore close : rien n'est « manqué », on n'affiche pas de rouge. */
   const enCours = $derived(vue === 'jour' && periode.debut === auj && avantRapport);
@@ -59,6 +61,26 @@
 
   const couleur = (c: string | null) => couleurRubrique(c ?? COULEUR_SANS_PROJET, theme.mode);
   const LETTRES = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+
+  // Modifier à la main les valeurs d'un point (jour) : même saisie manuelle que dans les sous-projets, qui se mettent à jour d'eux-mêmes.
+  let edition = $state<PointCalcule | null>(null);
+  const configsEdition = $derived(edition ? (edition.point.mesures ?? []).map((m) => configDeMesure(m, edition!.point, d, periode.debut, periode.fin)) : []);
+  const metriquesEdition = $derived.by(() => {
+    const vus = new Set<string>();
+    return configsEdition.map((c) => ({ ...c.metrique, id: c.metrique.id || c.metrique.cle, nom: c.metrique.id ? c.metrique.nom : nomLisible(c.metrique.type, c.metrique.cle) })).filter((m) => (vus.has(m.cle) ? false : (vus.add(m.cle), true)));
+  });
+  const periodeEdition = $derived(configsEdition[0]?.sousProjet ? { debut: configsEdition[0].sousProjet.debut, fin: configsEdition[0].sousProjet.fin ?? null } : { debut: periode.debut, fin: null });
+  /** Nom d'une mesure sans sous-projet : « Nombre de fois », « Temps », « Chapitres »… (la clé « nombre:chapitres » donne « Chapitres »). */
+  function nomLisible(type: string, cle: string): string {
+    if (type === 'fois') return 'Nombre de fois';
+    if (type === 'nombre') { const u = cle.split(':')[1] ?? 'nombre'; return u.charAt(0).toUpperCase() + u.slice(1); }
+    return TYPES[type as keyof typeof TYPES]?.nom ?? cle;
+  }
+  function modifier(x: PointCalcule): void {
+    if (!x.point.projet_id) { dire('Ce point n’est lié à aucun projet : choisis-en un dans les Réglages pour y saisir des valeurs.'); return; }
+    if (!x.point.mesures?.length) { dire('Ce point n’a aucune mesure : choisis-les dans les Réglages.'); return; }
+    edition = x;
+  }
 
   function changerVue(v: Vue): void { routeur.definir('onglet', v); }
   function aller(n: number): void { routeur.definir('jour', decaler(periode, n).debut); }
@@ -105,13 +127,17 @@
 
   {#each points as x, i (x.point.id)}
     <CartePoint p={x} n={i + 1} {vue} {langue} {enCours} couleur={couleur(x.couleur)} ratios={vue === 'jour' ? [] : ratiosDuPoint(jours, x.point.id)}
-      lettres={vue === 'semaine' ? LETTRES : []} {sousTitre} />
+      lettres={vue === 'semaine' ? LETTRES : []} {sousTitre} onmodifier={vue === 'jour' ? () => modifier(x) : undefined} />
   {/each}
 
   <div class="flottant">
     <button type="button" onclick={() => (exportOuvert = true)}><Icone nom="partager" taille={18} trait={2.2} />Exporter le rapport</button>
   </div>
 </EcranPage>
+
+<div style={edition ? styleCouleur(couleur(edition.couleur)) : ''}>
+  <VoletSaisie ouvert={edition != null} onfermer={() => (edition = null)} projetId={edition?.point.projet_id ?? ''} metriques={metriquesEdition} jour={periode.debut} aujourdhui={auj} periode={periodeEdition} />
+</div>
 
 <Volet ouvert={exportOuvert} onfermer={() => (exportOuvert = false)} label="Exporter le rapport">
   <PanneauExport {periode} {points} {nom} {langue} />

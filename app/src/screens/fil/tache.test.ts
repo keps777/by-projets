@@ -6,7 +6,7 @@ import { session } from '../../data/auth.svelte.ts';
 import { horloge } from '../../data/temps.svelte.ts';
 import { ajouterTache } from '../../data/actions/taches.ts';
 import { blocsDuJour } from '../../data/requetes.ts';
-import { choixMensuels, construireRegle, prevuParDefaut, resume, texteJours, unionMesures, type MetriqueSource } from './tache.ts';
+import { choixMensuels, construireRegle, lireDuree, prevuParDefaut, resume, texteJours, unionMesures, type MetriqueSource } from './tache.ts';
 import { modifierOccurrence, modifierSerie, modifierSuivantes } from './edition.ts';
 import { disposer } from './disposition.ts';
 
@@ -96,5 +96,25 @@ describe('résumé avec plusieurs rappels', () => {
     expect(resume({ ...base, rappel: 10, rappelsAvant: [120, 1440] })).toContain('rappels 1 jour, 2 h, 10 min avant');
     expect(resume({ ...base, rappel: null, rappelsAvant: [] })).toContain('sans rappel');
     expect(resume({ ...base, rappel: 0 })).toContain('rappel à l’heure');
+  });
+});
+
+describe('durée tapée à la main', () => {
+  it('comprend les façons de l’écrire', () => {
+    expect(lireDuree('3h45')).toBe(225);
+    expect(lireDuree('3 h 45')).toBe(225);
+    expect(lireDuree('3:45')).toBe(225);
+    expect(lireDuree('4h')).toBe(240);
+    expect(lireDuree('4 heures')).toBe(240);
+    expect(lireDuree('1,5 h')).toBe(90);
+    expect(lireDuree('45 min')).toBe(45);
+    expect(lireDuree('225')).toBe(225);
+    expect(lireDuree('2h30min')).toBe(150);
+  });
+  it('borne entre 5 min et 24 h, et refuse ce qui n’est pas une durée', () => {
+    expect(lireDuree('1')).toBe(5);
+    expect(lireDuree('30h')).toBe(1440);
+    expect(lireDuree('')).toBeNull();
+    expect(lireDuree('bientôt')).toBeNull();
   });
 });
