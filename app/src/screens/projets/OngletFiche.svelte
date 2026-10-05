@@ -7,6 +7,7 @@
   import type { Jour, Metrique, TypeMetrique } from '@core/types.ts';
   import type { Fiche, MetriqueLigne, SousProjetLigne } from '@core/lignes.ts';
   import Bouton from '../../ui/Bouton.svelte';
+  import Icone from '../../ui/Icone.svelte';
   import Volet from '../../ui/Volet.svelte';
   import { dire } from '../../ui/toast.svelte.ts';
   import { metriquesDe, valeursDuSousProjet } from '../../data/requetes.ts';
@@ -92,7 +93,7 @@
       <span class="muted petit">Ajouter une métrique</span>
       <div class="palette">
         {#each typesLibres as t (t)}
-          <button type="button" onclick={() => ajouter(t)}>+ {TYPES[t].nom}</button>
+          <button type="button" onclick={() => ajouter(t)}><Icone nom="plus" taille={12} trait={2.8} />{TYPES[t].nom}</button>
         {/each}
       </div>
     </div>
@@ -122,7 +123,7 @@
     {:else}
       <p class="muted petit vide">Aucune tâche ne nourrit encore ce sous-projet.</p>
     {/each}
-    <a class="ajouter" href="/tache/nouvelle?projet={sp.projet_id}&sous_projet={sp.id}">+ Ajouter une tâche</a>
+    <a class="ajouter" href="/tache/nouvelle?projet={sp.projet_id}&sous_projet={sp.id}"><Icone nom="plus" taille={14} trait={2.6} />Ajouter une tâche</a>
   </div>
 </section>
 
@@ -162,15 +163,14 @@
   .gras { font-weight: 600; }
   .fiche { border-radius: 22px; padding: 6px 14px; }
   .question { display: flex; flex-direction: column; gap: 4px; padding: 10px 0; border-bottom: 1px solid var(--ligne); }
-  .question:last-child { border-bottom: 0; }
   .q { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; color: var(--c-encre); }
-  textarea { font: 15px/1.4 var(--police); background: transparent; border: 0; padding: 0; resize: none; outline: none; field-sizing: content; min-height: 2.8em; }
+  textarea { font: 16px/1.4 var(--police); background: transparent; border: 0; padding: 0; resize: none; outline: none; field-sizing: content; min-height: 2.8em; }
   textarea::placeholder { color: var(--faint); }
   .groupe { display: flex; flex-direction: column; gap: 8px; }
   .rang { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 14px; }
   .lien { min-height: 44px; border: 0; background: transparent; color: var(--c-encre); font-size: 13px; font-weight: 600; padding: 0; }
   .liste { border-radius: 20px; overflow: hidden; }
-  .metrique { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--ligne); min-height: 56px; font-size: 14px; }
+  .metrique { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--ligne); min-height: 81px; font-size: 14px; }
   .type { flex: none; font-size: 11px; font-weight: 600; padding: 5px 9px; border-radius: 9px; background: var(--c-fond); color: var(--c-encre); min-width: 56px; text-align: center; }
   .col { flex: 1; min-width: 0; display: flex; flex-direction: column; }
   .pilote { margin-left: 6px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--c-encre); }
@@ -178,10 +178,10 @@
   .rapport.hors { color: var(--muted); }
   .barre { flex: none; width: 8px; height: 32px; border-radius: 4px; background: var(--c); }
   .vide { padding: 12px 14px; }
-  .ajouter { color: var(--c-encre); font-size: 14px; font-weight: 600; min-height: 50px; display: flex; align-items: center; justify-content: center; }
+  .ajouter { color: var(--c-encre); font-size: 14px; font-weight: 600; min-height: 50px; display: flex; align-items: center; justify-content: center; gap: 6px; }
   .ajout { display: flex; flex-direction: column; gap: 6px; }
   .palette { display: flex; flex-wrap: wrap; gap: 6px; }
-  .palette button { height: 44px; padding: 0 12px; border-radius: 22px; border: 1.5px dashed var(--ligne); background: transparent; font-size: 13px; font-weight: 600; }
+  .palette button { height: 44px; padding: 0 12px; border-radius: 22px; border: 1.5px dashed var(--ligne); background: transparent; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
   .statut { border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
   .action { height: 46px; border-radius: 14px; border: 1px solid var(--ligne); background: transparent; font-size: 14px; font-weight: 600; padding: 0 8px; }
   .action.plein { border: 0; background: var(--inverse); color: var(--inverse-texte); }

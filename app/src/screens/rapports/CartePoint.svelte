@@ -7,15 +7,17 @@
   import { niveau } from './syntheses.ts';
   import type { Vue } from './periodes.ts';
 
-  let { p, n, vue, langue, couleur, ratios = [], lettres = [], sousTitre = '' }: {
+  let { p, n, vue, langue, couleur, ratios = [], lettres = [], sousTitre = '', enCours = false }: {
     p: PointCalcule; n: number; vue: Vue; langue: Langue; couleur: string;
+    /** Journée pas encore close : un zéro n'est pas un échec, on le montre sans rouge. */
+    enCours?: boolean;
     /** Ratios jour par jour (semaine, mois) ; null = futur ou sans objectif. */
     ratios?: (number | null)[]; lettres?: string[]; sousTitre?: string;
   } = $props();
 
   const premiere = $derived(p.mesures[0]);
   const r = $derived(p.ratio);
-  const etat = $derived(r == null ? 'neutre' : r >= 1 ? 'bon' : r > 0 ? 'partiel' : 'mauvais');
+  const etat = $derived(r == null ? 'neutre' : r >= 1 ? 'bon' : r > 0 ? 'partiel' : enCours ? 'neutre' : 'mauvais');
 
   const valeur = $derived.by(() => {
     if (!premiere) return '—';
@@ -31,7 +33,7 @@
   });
   const points = $derived(premiere?.type === 'fois' && premiere.attendu != null && Number.isInteger(premiere.attendu) && premiere.attendu >= 1 && premiere.attendu <= 10 ? premiere.attendu : 0);
   const barre = $derived(!points && premiere?.attendu != null && premiere.attendu > 0 && r != null);
-  const largeur = $derived(r == null ? 0 : r <= 0 ? 3 : Math.min(100, r * 100));
+  const largeur = $derived(r == null ? 0 : r <= 0 ? (enCours ? 0 : 3) : Math.min(100, r * 100));
 </script>
 
 <article class="carte" style={styleCouleur(couleur)}>
@@ -48,6 +50,7 @@
   </div>
 
   {#if vue === 'jour'}
+    <div class="jour">
     {#if points}
       <div class="pastilles" aria-label="{premiere.fait ?? 0} sur {points}">
         {#each { length: points } as _, i (i)}<span class:pleine={i < (premiere.fait ?? 0)}></span>{/each}
@@ -62,6 +65,7 @@
     {:else}
       <span class="muted vide">Aucune mesure : choisis-les dans les Réglages.</span>
     {/if}
+    </div>
   {:else if vue === 'semaine'}
     <div class="semaine">
       {#each ratios as x, i (i)}
@@ -72,7 +76,8 @@
       {/each}
     </div>
   {:else}
-    <div class="mois">
+    <!-- Toujours deux rangées, comme la maquette (15 colonnes pour 30 jours, 16 pour 31). -->
+    <div class="mois" style:grid-template-columns="repeat({Math.max(1, Math.ceil(ratios.length / 2))}, minmax(0, 1fr))">
       {#each ratios as x, i (i)}<span class="case n{niveau(x)}" class:futur={x == null}></span>{/each}
     </div>
   {/if}
@@ -90,14 +95,15 @@
   .valeur.bon { color: var(--bon); }
   .valeur.mauvais { color: var(--mauvais); }
   .sous { font-size: 11px; }
-  .pastilles { display: flex; gap: 6px; }
-  .pastilles span { width: 22px; height: 22px; border-radius: 11px; border: 2px solid var(--c); }
+  .jour { display: flex; flex-direction: column; gap: 8px; }
+  .pastilles { display: flex; align-items: center; gap: 6px; }
+  .pastilles span { width: 22px; height: 22px; border-radius: 11px; border: 2px solid var(--c); transition: background 0.25s; }
   .pastilles span.pleine { background: var(--c); }
   .piste { position: relative; height: 8px; border-radius: 4px; background: var(--piste); }
-  .rempli { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; background: var(--c); }
+  .rempli { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; background: var(--c); transition: width 0.4s ease; }
   .rempli.bon { background: var(--bon); }
   .rempli.mauvais { background: var(--mauvais); }
-  .puces { display: flex; flex-wrap: wrap; gap: 6px; }
+  .puces { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
   .puces span { font-size: 12px; padding: 5px 8px; border-radius: 8px; background: var(--surface-2); }
   .vide { font-size: 12px; }
   .semaine { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; align-items: end; height: 54px; }

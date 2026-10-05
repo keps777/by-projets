@@ -36,7 +36,7 @@
 
 <EcranPage gap={14}>
   <div class="tete">
-    <div class="col">
+    <div class="col serre">
       <span class="annee">{mois.slice(0, 4)}</span>
       <h1 class="titre">{cap(nomDuMois(premierDuMois(mois)))}</h1>
     </div>
@@ -93,7 +93,7 @@
   <div class="stats">
     <div class="carte stat"><span class="titre">{dureeMin(stats.moyenneMin)}</span><span class="muted">charge moyenne / jour</span></div>
     <div class="carte stat"><span class="titre">{stats.accompliPct ?? 0} %</span><span class="muted">accompli à ce jour</span></div>
-    <div class="carte stat"><span class="titre">{stats.pic ? dateCourte(stats.pic) : '—'}</span><span class="muted">jour le plus chargé</span></div>
+    <div class="carte stat"><span class="titre">{stats.pic ? dateCourte(stats.pic).replace('.', '') : '—'}</span><span class="muted">jour le plus chargé</span></div>
   </div>
 
   <div class="carte prog">
@@ -109,17 +109,20 @@
 </EcranPage>
 
 <style>
-  .tete { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  /* Marges de la maquette : 18 px en haut, 18 px sur les côtés pour l'en-tête (12 + 6), 12 px pour le calendrier. */
+  .tete { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: -2px 2px 0; }
+  .col.serre { gap: 0; }
   .col { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .g8 { gap: 8px; }
+  .g8 { gap: 8px; padding: 0 2px; }
   .annee { font-size: 13px; font-weight: 600; color: var(--maintenant); }
   h1 { font-size: 28px; }
   .nav { display: flex; gap: 6px; }
   .couches { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
-  .couches button { height: 44px; border-radius: 12px; border: 1px solid var(--ligne); background: transparent; font-size: 13px; font-weight: 600; }
+  .couches button { position: relative; height: 40px; border-radius: 12px; border: 1px solid var(--ligne); background: transparent; font-size: 13px; font-weight: 600; }
   .couches button.actif { background: var(--inverse); border-color: var(--inverse); color: var(--inverse-texte); }
   .calendrier { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; margin: 0 -4px; }
   .jsem { text-align: center; font-size: 11px; font-weight: 600; color: var(--muted); }
+  .case { transition: transform 0.12s ease, background-color 0.25s ease; }
   .case { height: 66px; border-radius: 10px; background: var(--surface); border: 1px solid var(--ligne); padding: 4px; display: flex; flex-direction: column; justify-content: space-between; }
   .case.auj { border-color: var(--maintenant); }
   .num { align-self: flex-start; min-width: 22px; height: 22px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
@@ -127,7 +130,7 @@
   .barre { display: flex; flex-direction: column-reverse; border-radius: 3px; overflow: hidden; gap: 1px; }
   .pct { font-size: 11px; }
   .pct.vide { color: var(--faint); }
-  .legende { display: flex; flex-wrap: wrap; gap: 10px 14px; font-size: 11px; color: var(--muted); }
+  .legende { display: flex; flex-wrap: wrap; gap: 10px 14px; padding: 0 2px; font-size: 11px; color: var(--muted); }
   .legende span { display: flex; align-items: center; gap: 5px; }
   .legende i { width: 10px; height: 10px; border-radius: 3px; }
   .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
@@ -141,4 +144,6 @@
   .piste { position: relative; height: 8px; border-radius: 4px; background: var(--piste); }
   .piste span { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; }
   .piste i { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--texte); opacity: 0.45; }
+  /* Dessin de la maquette (40 px ou 36 px), zone d'appui portée à 44 px (spec §14). */
+  .couches button::after { content: ''; position: absolute; inset: -2px 0; }
 </style>

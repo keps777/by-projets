@@ -104,7 +104,8 @@
   .metrique { border-radius: 20px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
   .rang { display: flex; align-items: center; gap: 8px; }
   .type { flex: none; font-size: 11px; font-weight: 600; padding: 5px 9px; border-radius: 9px; background: var(--c-fond); color: var(--c-encre); }
-  input { height: 44px; border-radius: 12px; border: 1px solid var(--ligne); background: var(--champ); padding: 0 10px; font-size: 15px; min-width: 0; }
+  /* 15 px dans la maquette, 16 px ici : en dessous, l'iPhone zoome sur le champ. */
+  input { height: 44px; border-radius: 12px; border: 1px solid var(--ligne); background: var(--champ); padding: 0 10px; font-size: 16px; min-width: 0; }
   input:disabled { color: var(--muted); }
   .nom { flex: 1; font-weight: 600; }
   .retirer { flex: none; width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--ligne); background: transparent; color: var(--mauvais); display: flex; align-items: center; justify-content: center; }
@@ -112,16 +113,17 @@
   .sous { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: var(--muted); }
   .unite { width: 76px; }
   .pas { display: flex; align-items: center; height: 44px; border-radius: 12px; border: 1px solid var(--ligne); background: var(--champ); }
-  .pas button { flex: none; width: 44px; height: 44px; border: 0; background: transparent; font-size: 20px; }
+  .pas button { flex: none; width: 44px; height: 44px; border: 0; background: transparent; color: var(--texte); font-size: 20px; }
   .valeur { flex: 1; height: 42px; border: 0; background: transparent; text-align: center; padding: 0; }
   .defile { display: flex; gap: 6px; overflow-x: auto; margin: 0 -14px; padding: 0 14px; }
   .puce { flex: none; height: 40px; padding: 0 12px; border-radius: 20px; border: 1px solid var(--ligne); background: transparent; font-size: 12px; font-weight: 600; }
   .puce.on { background: var(--c); border-color: var(--c); color: var(--c-sur); }
   .options { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
   .option { display: flex; align-items: center; gap: 4px; font-size: 12px; }
-  .option input { width: 56px; height: 40px; text-align: center; font-size: 13px; }
+  .option input { width: 56px; height: 40px; text-align: center; font-size: 16px; }
   .periodes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
-  .periodes button { min-height: 44px; border-radius: 10px; border: 1px solid var(--ligne); background: transparent; font-size: 12px; font-weight: 600; }
+  .periodes button { position: relative; height: 40px; border-radius: 10px; border: 1px solid var(--ligne); background: transparent; font-size: 12px; font-weight: 600; }
+  .periodes button::after { content: ''; position: absolute; inset: -2px 0; }
   .periodes button.on { background: var(--inverse); border-color: var(--inverse); color: var(--inverse-texte); }
   .bas { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .sens { height: 40px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--ligne); background: transparent; font-size: 12px; font-weight: 600; }

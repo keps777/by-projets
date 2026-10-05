@@ -6,6 +6,8 @@
   import { disposer } from './disposition.ts';
   import { PX, pctDuBloc } from './vue-blocs.ts';
   import { hm } from './format.ts';
+  import { heureProposee } from './tache.ts';
+  import Icone from '../../ui/Icone.svelte';
 
   /** Journée de 24 h : heures, blocs placés à leur heure (côte à côte s'ils se chevauchent), ligne « maintenant » en direct. */
   let { blocs, jour, aujourdhui, estAujourdhui, focusMin, onouvrir, onjouer }: {
@@ -19,13 +21,40 @@
   const pcts = $derived(blocs.map((b) => pctDuBloc(b, mois, aujourdhui)));
   const heures = Array.from({ length: 25 }, (_, h) => h);
 
+  // Journée vide (aujourd'hui ou à venir) : un bloc fantôme en pointillés invite à poser le premier bloc juste après « maintenant ».
+  const DUREE_FANTOME = 45;
+  const fantome = $derived(!blocs.length && jour >= aujourdhui ? heureProposee(jour, aujourdhui, maintenant, DUREE_FANTOME) : null);
+
   let defile: HTMLDivElement | undefined = $state();
-  // Ouvre la journée sur « maintenant » (ou sur le bloc en cours), à chaque changement de jour.
+  // Ouvre la journée sur « maintenant » (ou sur le bloc en cours), à chaque changement de jour : la ligne se place
+  // au tiers haut de la zone visible, comme sur la maquette (152 px sous le haut d’une zone de 430 px). Si la zone n'a pas encore
+  // de hauteur (écran pas encore affiché), on réessaie à l'image suivante.
   $effect(() => {
     void jour;
     const el = defile;
     const cible = untrack(() => focusMin);
-    if (el) el.scrollTop = Math.max(0, cible * PX - 140);
+    if (!el) return;
+    let essais = 0, image = 0;
+    const placer = () => {
+      if (!el.clientHeight && essais++ < 30) { image = requestAnimationFrame(placer); return; }
+      el.scrollTop = Math.max(0, cible * PX + 12 - Math.round(el.clientHeight * 0.3535));
+    };
+    placer();
+    return () => cancelAnimationFrame(image);
+  });
+
+  // Une PWA reprend là où on l'a laissée : au retour dans l'app, si la ligne « maintenant » est sortie de la vue, on y revient en douceur.
+  $effect(() => {
+    if (!estAujourdhui) return;
+    const revenir = () => {
+      const el = defile;
+      if (!el || document.visibilityState !== 'visible') return;
+      const y = untrack(() => maintenant) * PX + 12;
+      if (y < el.scrollTop + 24 || y > el.scrollTop + el.clientHeight - 24)
+        el.scrollTo({ top: Math.max(0, y - Math.round(el.clientHeight * 0.3535)), behavior: 'smooth' });
+    };
+    document.addEventListener('visibilitychange', revenir);
+    return () => document.removeEventListener('visibilitychange', revenir);
   });
 </script>
 
@@ -41,6 +70,17 @@
       <BlocFil {b} pct={pcts[i]} col={places[i]?.col ?? 0} cols={places[i]?.cols ?? 1} aujourdhui={estAujourdhui}
         passe={estAujourdhui ? b.finMin <= maintenant : jour < aujourdhui} onouvrir={() => onouvrir(b.occ.id)} onjouer={() => onjouer(b.occ.id)} />
     {/each}
+
+    {#if fantome != null}
+      <a class="fantome" href="/tache/nouvelle?heure={fantome}{estAujourdhui ? '' : `&jour=${jour}`}" style:top="{fantome * PX + 1}px" style:height="{DUREE_FANTOME * PX - 3}px"
+        aria-label="Ajouter un bloc à {hm(fantome)}">
+        <span class="plus-fantome"><Icone nom="plus" taille={12} trait={2.6} /></span>
+        <span class="textes-fantome">
+          <span class="titre-fantome">{estAujourdhui ? 'Ton premier bloc ?' : 'Un premier bloc ?'}</span>
+          <span class="sous-fantome">{hm(fantome)}–{hm(fantome + DUREE_FANTOME)} · touche pour le placer ici</span>
+        </span>
+      </a>
+    {/if}
 
     {#if estAujourdhui}
       <div class="maintenant" style:top="{maintenant * PX}px" aria-label="Maintenant, {hm(maintenant)}">
@@ -63,4 +103,14 @@
   .pastille { background: var(--maintenant-pastille); color: var(--carte-texte); font-size: 11px; padding: 3px 6px; border-radius: 9px; letter-spacing: -0.02em; }
   .point { width: 10px; height: 10px; border-radius: 5px; background: var(--maintenant); margin-left: 1px; box-shadow: 0 0 0 3px var(--halo); flex: none; }
   .ligne { flex: 1; height: 2px; background: var(--maintenant); }
+  .fantome { position: absolute; left: 56px; right: 10px; border-radius: 10px; border: 1.5px dashed color-mix(in srgb, var(--muted) 55%, transparent);
+    display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; color: var(--texte); background: var(--fond); animation: fantome-entre 0.5s ease both; }
+  .fantome:active { transform: scale(0.985); background: var(--surface); }
+  .plus-fantome { flex: none; width: 18px; height: 18px; margin-top: 1px; border-radius: 9px; background: var(--inverse); color: var(--inverse-texte);
+    display: flex; align-items: center; justify-content: center; animation: fantome-pouls 2.4s ease-in-out 0.6s infinite; }
+  .textes-fantome { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  .titre-fantome { font-size: 14px; font-weight: 600; line-height: 1.2; }
+  .sous-fantome { font-size: 12px; line-height: 1.25; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  @keyframes fantome-entre { from { opacity: 0; transform: translateY(6px); } }
+  @keyframes fantome-pouls { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--inverse) 30%, transparent); } 50% { box-shadow: 0 0 0 5px transparent; } }
 </style>

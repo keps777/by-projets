@@ -182,7 +182,7 @@
         <Puces colonnes={4} petit options={[{ valeur: 0, label: 'À l’heure' }, { valeur: 5, label: '5 min' }, { valeur: 10, label: '10 min' }, { valeur: 15, label: '15 min' }]}
           valeur={delai} onchoisir={(v) => changerDelaiDefaut(v)} couleur="var(--accent)" texte="var(--accent-texte)" />
       </div>
-      <div class="ligne colonne">
+      <div class="ligne colonne serre">
         <span class="fort">En touchant une notification</span>
         <span class="muted petit">Rappel d’un bloc : ouvre l’écran Lancer · Reporter. Rapport du jour : ouvre Relire · Envoyer.</span>
       </div>
@@ -194,12 +194,12 @@
     <span class="etiquette">Quels rappels recevoir</span>
     <div class="carte liste">
       {#each RAPPELS as r (r.t)}
-        <div class="ligne">
+        <div class="ligne rappel">
           <span class="col grow">
             <span class="fort">{r.label}</span>
             <span class="muted petit">{aide(r.t)}
-              {#if r.t === 'rapport'}<input class="heure mono" type="time" aria-label="Heure du rapport" value={p?.heure_rapport ?? '21:15'}
-                onchange={(e) => { const v = (e.currentTarget as HTMLInputElement).value; if (/^\d{2}:\d{2}$/.test(v)) majProfil({ heure_rapport: v }); }} />{/if}
+              {#if r.t === 'rapport'}<label class="heure"><span>{p?.heure_rapport ?? '21:15'}</span><input type="time" aria-label="Heure du rapport" value={p?.heure_rapport ?? '21:15'}
+                onchange={(e) => { const v = (e.currentTarget as HTMLInputElement).value; if (/^\d{2}:\d{2}$/.test(v)) majProfil({ heure_rapport: v }); }} /></label>{/if}
             </span>
           </span>
           <Interrupteur actif={rappelsRecus.choix[r.t]} label={r.label} onchange={() => rappelsRecus.basculer(r.t)} />
@@ -232,29 +232,35 @@
 </EcranPage>
 
 <style>
-  h1 { font-size: 30px; }
+  h1 { font-size: 30px; line-height: normal; }
   .petit { font-size: 12px; }
   .fort { font-size: 14px; font-weight: 600; }
   .col { display: flex; flex-direction: column; }
   .grow { flex: 1; min-width: 0; }
   .profil { border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
   .identite { display: flex; align-items: center; gap: 12px; }
-  .avatar { width: 52px; height: 52px; border-radius: 16px; background: var(--accent); color: var(--accent-texte); font-size: 20px; display: flex; align-items: center; justify-content: center; flex: none; }
-  .app { font-size: 24px; }
+  .avatar { line-height: normal; width: 52px; height: 52px; border-radius: 16px; background: var(--accent); color: var(--accent-texte); font-size: 20px; display: flex; align-items: center; justify-content: center; flex: none; }
+  .app { font-size: 24px; line-height: normal; letter-spacing: -0.01em; }
   .deux { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); }
-  label input { height: 44px; min-width: 0; border-radius: 12px; border: 1px solid var(--ligne); background: var(--champ); font-size: 15px; padding: 0 12px; }
+  /* 16 px (et non 15 comme la maquette) : en dessous, l'iPhone zoome sur le champ. */
+  label input { height: 44px; min-width: 0; border-radius: 12px; border: 1px solid var(--ligne); background: var(--champ); font-size: 16px; padding: 0 12px; }
   .rangee { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .choix { display: flex; background: var(--surface-2); border-radius: 12px; padding: 3px; }
-  .choix button { min-height: 44px; padding: 0 14px; border: 0; border-radius: 10px; background: transparent; color: var(--muted); font-size: 13px; font-weight: 600; }
+  /* Boutons dessinés à 38 px comme la maquette ; la zone d'appui reste à 44 px. */
+  .choix button { position: relative; height: 38px; padding: 0 14px; border: 0; border-radius: 10px; background: transparent; color: var(--muted); font-size: 13px; font-weight: 600; }
+  .choix button::after { content: ''; position: absolute; inset: -3px 0; }
   .choix button.actif { background: var(--surface); color: var(--texte); }
   .groupe { display: flex; flex-direction: column; gap: 8px; scroll-margin-top: 16px; }
   .tete { display: flex; justify-content: space-between; align-items: baseline; }
   .liste { border-radius: 22px; overflow: hidden; }
-  .ligne { display: flex; align-items: center; gap: 10px; padding: 12px 14px; min-height: 52px; }
+  /* Hauteurs de la maquette : contenu minimum (44, 56 ou 52 px) plus les marges. */
+  .ligne { box-sizing: content-box; display: flex; align-items: center; gap: 10px; padding: 12px 14px; min-height: 44px; }
   .ligne + .ligne { border-top: 1px solid var(--ligne); }
   .ligne.haute { min-height: 56px; }
-  .ligne.colonne { flex-direction: column; align-items: stretch; gap: 6px; }
+  .ligne.rappel { padding: 10px 14px; min-height: 52px; }
+  .ligne.colonne { flex-direction: column; align-items: stretch; gap: 6px; min-height: 0; }
+  .ligne.serre { gap: 4px; }
   .codes { font-size: 11px; }
   .vide { padding: 14px; }
   .icone { flex: none; width: 36px; height: 36px; border-radius: 12px; background: var(--surface-2); display: flex; align-items: center; justify-content: center; }
@@ -264,10 +270,13 @@
   .note { line-height: 1.45; }
   .delais :global(.puces button) { padding: 0 4px; font-size: 12px; }
   .ajouter { width: 100%; border: 0; background: transparent; color: var(--accent-encre); font-size: 14px; font-weight: 600; min-height: 52px; display: flex; align-items: center; justify-content: center; gap: 6px; }
-  .poubelle { flex: none; min-width: 44px; height: 44px; border-radius: 12px; border: 1px solid var(--ligne); background: transparent; color: var(--muted); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; padding: 0 8px; }
+  .poubelle { flex: none; min-width: 44px; height: 44px; margin: -6px -8px -6px 0; border-radius: 12px; border: 1px solid transparent; background: transparent; color: var(--faint); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; padding: 0 8px; }
   .poubelle.confirmer { color: var(--mauvais); border-color: var(--mauvais); }
-  .heure { margin-left: 4px; height: 32px; border-radius: 8px; border: 1px solid var(--ligne); background: var(--champ); font-size: 12px; padding: 0 6px; }
-  .bouton { width: 100%; border: 0; background: transparent; text-align: left; font-size: 14px; font-weight: 600; }
+  /* Comme la maquette, l'heure s'écrit dans la phrase ; le champ natif (16 px, invisible) est posé dessus pour la changer. */
+  .heure { position: relative; display: inline; font-size: 12px; color: var(--accent-encre); font-weight: 600; text-decoration: underline dotted; text-underline-offset: 3px; }
+  .heure input { position: absolute; inset: -12px -8px; width: calc(100% + 16px); height: calc(100% + 24px); opacity: 0; font-size: 16px; border: 0; padding: 0; cursor: pointer; }
+  .heure:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  .bouton { box-sizing: border-box; min-height: 52px; width: 100%; border: 0; background: transparent; text-align: left; font-size: 14px; font-weight: 600; }
   .bouton + .bouton, .bouton + .ligne { border-top: 1px solid var(--ligne); }
   .danger { color: var(--mauvais); }
 </style>

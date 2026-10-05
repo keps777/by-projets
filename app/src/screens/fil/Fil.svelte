@@ -8,7 +8,8 @@
   import { aujourdhui as jourCourant, fuseau, horloge, maintenantLocal } from '../../data/temps.svelte.ts';
   import { ecouleOccurrence, minuteurDe, terminerBloc } from '../../data/actions/blocs.ts';
   import { routeur } from '../../routeur.svelte.ts';
-  import { couleurRubrique, styleCouleur } from '../../ui/couleurs.ts';
+  import { couleurRubrique } from '../../ui/couleurs.ts';
+  import { styleTeinte } from './teintes.ts';
   import { theme } from '../../ui/theme.svelte.ts';
   import { dire } from '../../ui/toast.svelte.ts';
   import BarreOnglets from '../../ui/BarreOnglets.svelte';
@@ -46,7 +47,8 @@
       if (actif && actif.jour === jour) return utcVersLocal(Date.parse(actif.debut), fuseau()).minutes;
       return untrack(() => maintenantLocal().minutes);
     }
-    return blocs[0]?.debutMin ?? 6 * 60;
+    // Jour à venir sans bloc : on montre le bloc fantôme de 09:00.
+    return blocs[0]?.debutMin ?? (jour > aujourdhui ? 8 * 60 : 6 * 60);
   });
 
   // Notifications : tant qu'elles ne sont pas autorisées, la cloche mène à l'écran d'autorisation (avec une pastille).
@@ -144,7 +146,7 @@
 
 <Reporter occId={reportId} {aujourdhui} onfermer={() => (reportId = null)} onvalide={() => { reportId = null; selId = null; }} />
 
-<div style={confBloc ? styleCouleur(couleurRubrique(confBloc.couleur, mode)) : ''}>
+<div style={confBloc ? styleTeinte(confBloc.couleur, mode) : ''}>
   <Confirmer ouvert={!!confBloc} sur="{dureeMin(Math.round((confBloc ? ecouleOccurrence(confBloc.occ, horloge.maintenant) : 0) / 60))} écoulées" question="As-tu terminé « {confBloc?.titre ?? ''} » ?">
     <button type="button" class="oui" onclick={() => confirmer(false)}>Oui, c’est fait</button>
     <div class="duo">
@@ -171,4 +173,6 @@
   .jour-pct .mono { font-size: 12px; }
   .segments { width: 92px; height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; display: flex; }
   .vues { padding: 2px 18px 6px; flex: none; }
+  /* Sur la maquette du Fil, la barre d'onglets n'a pas de filet (la carte du bas la sépare déjà). */
+  .ecran-fil :global(nav) { border-top: 0; }
 </style>

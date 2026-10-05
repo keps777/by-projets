@@ -2,13 +2,12 @@
   // Archives des rapports (planche Archives) : par jour, semaine, mois ; recherche ; marque « envoyé ».
   import EcranPage from '../../ui/EcranPage.svelte';
   import Icone from '../../ui/Icone.svelte';
-  import Puces from '../../ui/Puces.svelte';
   import Anneau from '../../ui/Anneau.svelte';
   import { couleurRubrique } from '../../ui/couleurs.ts';
   import { theme } from '../../ui/theme.svelte.ts';
   import { routeur } from '../../routeur.svelte.ts';
   import { magasin } from '../../data/magasin.svelte.ts';
-  import { aujourdhui } from '../../data/temps.svelte.ts';
+  import { aujourdhui, maintenantLocal } from '../../data/temps.svelte.ts';
   import { COULEUR_SANS_PROJET, profil } from '../../data/requetes.ts';
   import { ajouterJours, lundiDe, moisDe, dernierDuMois, premierDuMois } from '@core/dates.ts';
   import { formaterMesures } from '@core/rapport.ts';
@@ -20,6 +19,7 @@
   let { params: _ = {} }: { params?: Record<string, string> } = $props();
 
   type Filtre = 'tous' | 'jours' | 'semaines' | 'mois' | 'envoyes';
+  const FILTRES: [Filtre, string][] = [['tous', 'Tous'], ['jours', 'Jours'], ['semaines', 'Semaines'], ['mois', 'Mois'], ['envoyes', 'Envoyés']];
   let filtre = $state<Filtre>('tous');
   let recherche = $state('');
   let limite = $state(4);
@@ -27,6 +27,9 @@
 
   const auj = $derived(aujourdhui());
   const langue = $derived(profil()?.langue_rapport ?? 'fr');
+  // Le rapport du jour n'existe qu'à partir de l'heure du rapport (21:15 par défaut) : avant, la journée en cours n'est pas archivée.
+  const minutesRapport = $derived.by(() => { const [h, m] = (profil()?.heure_rapport ?? '21:15').split(':').map(Number); return (h || 0) * 60 + (m || 0); });
+  const dernierJour = $derived(maintenantLocal().minutes < minutesRapport ? ajouterJours(auj, -1) : auj);
   const d = $derived(donneesRapport());
   const prep = $derived(preparer(d));
   const debut = $derived(premierJour(auj));
@@ -37,6 +40,8 @@
     for (let l = lundiDe(auj); l >= lundiDe(debut); l = ajouterJours(l, -7)) res.push(l);
     return res;
   });
+  /** Semaines qui ont au moins un rapport (la semaine en cours n'en a pas encore le lundi matin). */
+  const semainesVisibles = $derived(lundis.filter((l) => semaine(l).length));
   const moisListe = $derived.by(() => {
     const res: string[] = [];
     for (let m = moisDe(auj); m >= moisDe(debut); m = moisDe(ajouterJours(premierDuMois(m), -1))) res.push(m);
@@ -48,13 +53,13 @@
   let cacheDe: unknown = null;
   let cacheJour = '';
   function semaine(lundi: string): JourCalcule[] {
-    if (cacheDe !== prep || cacheJour !== auj) { cache = new Map(); cacheDe = prep; cacheJour = auj; }
+    if (cacheDe !== prep || cacheJour !== dernierJour) { cache = new Map(); cacheDe = prep; cacheJour = dernierJour; }
     let j = cache.get(lundi);
-    if (!j) { j = calculerJours(prep, d, lundi, ajouterJours(lundi, 6), auj).filter((x) => !x.futur && x.jour >= debut).reverse(); cache.set(lundi, j); }
+    if (!j) { j = calculerJours(prep, d, lundi, ajouterJours(lundi, 6), auj).filter((x) => !x.futur && x.jour >= debut && x.jour <= dernierJour).reverse(); cache.set(lundi, j); }
     return j;
   }
   function mois(m: string): JourCalcule[] {
-    return calculerJours(prep, d, premierDuMois(m), dernierDuMois(m), auj).filter((x) => !x.futur && x.jour >= debut);
+    return calculerJours(prep, d, premierDuMois(m), dernierDuMois(m), auj).filter((x) => !x.futur && x.jour >= debut && x.jour <= dernierJour);
   }
 
   // Carte du mois : le mois précédent s'il a des rapports, sinon le mois en cours.
@@ -113,7 +118,7 @@
   </button>
 {/snippet}
 
-<EcranPage gap={14}>
+<EcranPage gap={14} onglets={false}>
   <div class="haut">
     <button type="button" class="rond" aria-label="Retour aux rapports" onclick={() => routeur.retour('/rapports')}><Icone nom="retour" taille={18} trait={2.2} /></button>
     <h1 class="titre">Archives</h1>
@@ -125,8 +130,11 @@
   </label>
 
   {#if !recherche.trim()}
-    <div class="filtres"><Puces defile petit options={[{ valeur: 'tous', label: 'Tous' }, { valeur: 'jours', label: 'Jours' }, { valeur: 'semaines', label: 'Semaines' }, { valeur: 'mois', label: 'Mois' }, { valeur: 'envoyes', label: 'Envoyés' }]}
-      valeur={filtre} onchoisir={(v) => (filtre = v as Filtre)} /></div>
+    <div class="filtres">
+      {#each FILTRES as [v, label] (v)}
+        <button type="button" class:actif={filtre === v} aria-pressed={filtre === v} onclick={() => (filtre = v)}>{label}</button>
+      {/each}
+    </div>
   {/if}
 
   {#if recherche.trim()}
@@ -140,10 +148,10 @@
     {#if moisListe.length > limite + 2}<button type="button" class="plus" onclick={() => (limite += 6)}>Afficher plus</button>{/if}
   {:else}
     {#if filtre === 'tous'}{@render carteMois(moisVedette, joursVedette)}{/if}
-    {#each lundis.slice(0, limite) as l, i (l)}
+    {#each semainesVisibles.slice(0, limite) as l, i (l)}
       {@const jours = semaine(l)}
       {@const lignes = filtre === 'envoyes' ? jours.filter((j) => envoyes.has(j.jour)) : jours}
-      {#if lignes.length || filtre === 'tous' || filtre === 'semaines'}
+      {#if lignes.length}
         <section class="semaine">
           <div class="entete">
             <span class="petit fort">{libelleSemaine(l)}</span>
@@ -158,42 +166,50 @@
         </section>
       {/if}
     {/each}
-    {#if lundis.length > limite}<button type="button" class="plus" onclick={() => (limite += 4)}>Afficher plus</button>{/if}
+    {#if semainesVisibles.length > limite}<button type="button" class="plus" onclick={() => (limite += 4)}>Afficher plus</button>{/if}
     {#if filtre === 'envoyes' && !envoyes.size}<p class="muted vide">Aucun rapport envoyé pour l’instant. Partage-le depuis l’écran Rapports.</p>{/if}
   {/if}
 </EcranPage>
 
 <style>
   .haut { display: flex; align-items: center; gap: 10px; }
-  h1 { font-size: 26px; }
-  .cherche { display: flex; align-items: center; gap: 8px; height: 46px; border-radius: 14px; background: var(--surface); border: 1px solid var(--ligne); padding: 0 12px; color: var(--muted); }
+  h1 { font-size: 26px; line-height: normal; }
+  .cherche { flex: none; display: flex; align-items: center; gap: 8px; height: 46px; border-radius: 14px; background: var(--surface); border: 1px solid var(--ligne); padding: 0 12px; color: var(--muted); }
   .cherche input { flex: 1; min-width: 0; border: 0; background: transparent; font-size: 15px; outline: none; }
-  .mois { background: var(--accent-fond); border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--accent-fond)); border-radius: 22px; padding: 16px; display: flex; align-items: center; gap: 14px; }
+  /* Carte du mois : violet très sombre (#1B1A2E, bord #34305A, piste de l'anneau #2E2A50 en nuit), dérivé de l'accent. */
+  .filtres { flex: none; display: flex; gap: 6px; overflow-x: auto; margin: 0 -16px; padding: 0 16px; }
+  .filtres button { position: relative; flex: none; height: 38px; padding: 0 14px; border-radius: 19px; border: 1px solid var(--ligne); background: transparent; font-size: 13px; font-weight: 600; }
+  .filtres button::after { content: ''; position: absolute; inset: -3px 0; }
+  .filtres button.actif { border-color: var(--inverse); background: var(--inverse); color: var(--inverse-texte); }
+  .mois { flex: none; background: color-mix(in srgb, var(--accent) 10%, var(--fond)); border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--fond)); border-radius: 22px; padding: 16px; display: flex; align-items: center; gap: 14px;
+    --piste: color-mix(in srgb, var(--accent) 23%, var(--fond)); }
   .pct { font-size: 13px; }
   .textes { flex: 1; display: flex; flex-direction: column; gap: 2px; }
   .sur { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-encre); }
   .grand { font-size: 17px; font-weight: 600; }
   .petit { font-size: 13px; }
+  .textes .petit { font-size: 12px; }
   .fort { font-weight: 600; }
   .semaine { display: flex; flex-direction: column; gap: 8px; }
   .entete { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
-  .recap-lien { color: var(--accent-encre); font-size: 13px; font-weight: 600; min-height: 32px; display: flex; align-items: center; flex: none; }
+  .recap-lien { color: var(--accent-encre); font-size: 13px; font-weight: 600; min-height: 32px; display: flex; align-items: center; flex: none; text-decoration: underline; text-underline-offset: 2px; }
   .liste { flex: none; overflow: hidden; }
-  .jour { display: flex; align-items: center; gap: 12px; padding: 12px 14px; min-height: 44px; }
-  .jour + .jour { border-top: 1px solid var(--ligne); }
+  /* Comme la maquette : 44 px de contenu minimum plus les marges (ligne de 69 px). */
+  .jour { box-sizing: content-box; display: flex; align-items: center; gap: 12px; padding: 12px 14px; min-height: 44px; }
+  .jour:not(:last-child) { border-bottom: 1px solid color-mix(in srgb, var(--ligne) 60%, var(--surface)); }
   .date { flex: none; width: 40px; display: flex; flex-direction: column; align-items: center; }
   .wd { font-size: 11px; }
-  .num { font-size: 20px; }
+  .num { font-size: 20px; line-height: normal; }
   .milieu { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
   .points { display: flex; gap: 3px; }
   .points span { flex: 1; height: 6px; border-radius: 3px; background: var(--piste); }
   .points .bon { background: var(--bon); }
   .points .partiel { background: color-mix(in srgb, var(--c) 65%, var(--surface)); }
-  .points .mauvais { background: color-mix(in srgb, var(--mauvais) 30%, var(--surface)); }
+  .points .mauvais { background: color-mix(in srgb, var(--mauvais) 15%, var(--surface)); }
   .resume { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .score { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 13px; }
   .envoye { font-size: 10px; font-weight: 600; color: var(--bon); }
-  .recap { width: 100%; padding: 14px; display: flex; align-items: center; justify-content: space-between; min-height: 48px; font-size: 13px; text-align: left; }
+  .recap { width: 100%; padding: 14px; display: flex; align-items: center; justify-content: space-between; min-height: 44px; font-size: 13px; text-align: left; }
   .plus, .replier { min-height: 44px; border: 0; background: none; color: var(--accent-encre); font-size: 14px; font-weight: 600; }
   .replier { align-self: center; color: var(--muted); font-size: 13px; }
   .vide { font-size: 14px; text-align: center; padding: 20px 8px; }

@@ -63,7 +63,7 @@
 
 <EcranPage gap={14}>
   <div class="tete">
-    <div class="col">
+    <div class="col serre">
       <span class="plage">{plageSemaine(lundi)}</span>
       <h1 class="titre">Semaine {numeroSemaine(lundi)}</h1>
     </div>
@@ -73,7 +73,7 @@
     </div>
   </div>
 
-  <div>
+  <div class="vues">
     <Segment valeur="semaine" options={[
       { valeur: 'jour', label: 'Jour', href: jourDeVue === aujourdhui ? '/' : `/?jour=${jourDeVue}` },
       { valeur: 'semaine', label: 'Semaine' },
@@ -137,7 +137,10 @@
 </EcranPage>
 
 <style>
-  .tete { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  /* Marges de la maquette : 18 px en haut, 18 px sur les côtés pour l'en-tête (12 + 6), 12 px pour la grille. */
+  .tete { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: -2px 2px 0; }
+  .col.serre { gap: 0; }
+  .vues { padding: 0 2px; }
   .col { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   .plage { font-size: 13px; font-weight: 600; color: var(--maintenant); }
   h1 { font-size: 28px; }
@@ -152,12 +155,12 @@
   .colonne { position: relative; display: block; border-radius: 8px; background: color-mix(in srgb, var(--surface-2) 45%, var(--fond)); overflow: hidden; }
   .colonne.auj { background: var(--surface); }
   .trait { position: absolute; left: 0; right: 0; height: 1px; background: var(--ligne); }
-  .bloc { position: absolute; border-radius: 4px; border: 1.5px solid var(--c); background: transparent; }
+  .bloc { position: absolute; border-radius: 4px; border: 1.5px solid var(--c); background: transparent; transition: background-color 0.3s ease; }
   .bloc.fait { background: var(--c); }
   .bloc.manque { border-color: var(--faint); }
   .maintenant { position: absolute; left: 0; right: 0; height: 2px; background: var(--maintenant); }
   .point { position: absolute; left: -1px; width: 7px; height: 7px; border-radius: 4px; background: var(--maintenant); }
-  .legende { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px; color: var(--muted); }
+  .legende { display: flex; gap: 12px; flex-wrap: wrap; padding: 0 2px; font-size: 11px; color: var(--muted); }
   .legende span { display: flex; align-items: center; gap: 5px; }
   .legende i { width: 12px; height: 12px; border-radius: 3px; }
   .l-fait { background: var(--texte); }
@@ -169,5 +172,5 @@
   .doux { font-size: 13px; opacity: 0.75; }
   .props { display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
   .prop { display: flex; justify-content: space-between; gap: 8px; }
-  .placer { height: 46px; border-radius: 14px; border: 0; background: var(--carte-texte); color: var(--carte-fond); font-size: 15px; font-weight: 600; }
+  .placer { height: 46px; border-radius: 14px; border: 0; background: var(--inverse); color: var(--inverse-texte); font-size: 15px; font-weight: 600; }
 </style>

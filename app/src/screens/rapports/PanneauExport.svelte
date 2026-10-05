@@ -69,7 +69,7 @@
   }
 </script>
 
-<div class="panneau">
+<div class="panneau" class:volet={entete}>
   {#if entete}
     <div class="tete">
       <h2 class="titre">Exporter</h2>
@@ -111,22 +111,27 @@
   </div>
 
   <div class="actions">
-    <button type="button" class="secondaire" onclick={copier}><Icone nom={copie ? 'coche' : 'copier'} taille={17} />{copie ? 'Copié ✓' : 'Copier le texte'}</button>
-    <button type="button" class="principal" onclick={partager}><Icone nom="partager" taille={17} />Partager…</button>
+    <button type="button" class="secondaire" onclick={copier}>{copie ? 'Copié ✓' : 'Copier le texte'}</button>
+    <button type="button" class="principal" onclick={partager}>Partager…</button>
   </div>
   <button type="button" class="pdf" onclick={pdf}><span class="mono">PDF</span> Enregistrer en PDF</button>
 </div>
 
 <style>
   .panneau { display: flex; flex-direction: column; gap: 12px; }
+  /* Feuille de la planche RapportExport : marges 16/20 et écart 12, un peu plus serrées que le Volet commun (18/22, 14). */
+  .panneau.volet { margin: -2px -2px -2px; }
   .tete { display: flex; justify-content: space-between; align-items: baseline; }
-  h2 { font-size: 22px; }
+  h2 { font-size: 22px; line-height: normal; }
   .compte { font-size: 13px; }
   .presets { display: flex; gap: 6px; flex-wrap: wrap; }
-  .presets button { min-height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--ligne); background: transparent; font-size: 13px; font-weight: 600; }
+  /* Boutons dessinés à 40 px comme la maquette ; la zone d'appui reste à 44 px. */
+  .presets button, .points button { position: relative; }
+  .presets button::after, .points button::after { content: ''; position: absolute; inset: -2px 0; }
+  .presets button { height: 40px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--ligne); background: transparent; font-size: 13px; font-weight: 600; }
   .presets button.actif { background: var(--inverse); border-color: var(--inverse); color: var(--inverse-texte); }
   .points { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
-  .points button { min-height: 44px; border-radius: 12px; border: 1px solid var(--ligne); background: transparent; color: var(--muted); font-size: 12px; padding: 0 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .points button { height: 40px; border-radius: 12px; border: 1px solid var(--ligne); background: transparent; color: var(--muted); font-size: 12px; padding: 0 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .points button.on { background: var(--c-fond); border-color: var(--c); color: var(--c-encre); }
   .lien { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; border: 0; background: none; padding: 0; color: var(--accent-encre); font-size: 13px; font-weight: 600; }
   .nouveau { display: flex; gap: 6px; }
@@ -134,9 +139,9 @@
   .ok { height: 44px; padding: 0 14px; border-radius: 12px; border: 0; background: var(--accent); color: var(--accent-texte); font-weight: 600; }
   .ok:disabled { opacity: 0.45; }
   .apercu { display: flex; flex-direction: column; gap: 6px; }
-  .bulle { background: color-mix(in srgb, var(--bon) 20%, var(--surface)); color: var(--texte); border-radius: 18px 18px 4px 18px; padding: 12px 14px; font-size: 14px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .bulle { background: var(--bulle); color: var(--bulle-texte); border-radius: 18px 18px 4px 18px; padding: 12px 14px; font-size: 14px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
   .actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-  .actions button { min-height: 50px; border-radius: 16px; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .actions button { height: 50px; border-radius: 16px; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .secondaire { border: 1px solid var(--ligne); background: var(--surface); }
   .principal { border: 0; background: var(--inverse); color: var(--inverse-texte); }
   .pdf { min-height: 46px; border-radius: 14px; border: 1px dashed var(--ligne); background: transparent; color: var(--muted); font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }

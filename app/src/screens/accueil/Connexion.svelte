@@ -82,26 +82,29 @@
 <style>
   .fond { position: fixed; inset: 0; overflow: hidden; pointer-events: none; max-width: 480px; margin: 0 auto; }
   .bulle { position: absolute; border-radius: 50%; }
-  .bulle.a { left: -90px; top: -110px; width: 420px; height: 420px; background: color-mix(in srgb, var(--accent) 22%, var(--fond)); opacity: 0.8; }
-  .bulle.b { right: -140px; bottom: 60px; width: 340px; height: 340px; background: color-mix(in srgb, var(--b) 16%, var(--fond)); opacity: 0.6; }
-  .scene { position: relative; flex: 1; display: flex; flex-direction: column; gap: 22px; padding: 48px 8px 8px; }
+  .bulle.a { left: -90px; top: -110px; width: 420px; height: 420px; background: var(--halo-a); opacity: 0.8; }
+  .bulle.b { right: -140px; bottom: 60px; width: 340px; height: 340px; background: var(--halo-b); opacity: 0.55; }
+  /* Marges de la maquette : 64 px en haut, 24 px sur les côtés, 28 px en bas (la coque en donne 20, 16 et 24). */
+  .scene { position: relative; flex: 1; display: flex; flex-direction: column; gap: 22px; padding: 44px 8px 4px; }
   .marque { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
-  .avatar { width: 56px; height: 56px; border-radius: 18px; background: var(--accent); color: var(--accent-texte); font-size: 22px; display: flex; align-items: center; justify-content: center; }
+  .avatar { line-height: normal; width: 56px; height: 56px; border-radius: 18px; background: var(--accent); color: var(--accent-texte); font-size: 22px; display: flex; align-items: center; justify-content: center; }
   h1 { font-size: 40px; letter-spacing: -0.03em; line-height: 1; }
-  .devise { font-size: 20px; color: var(--muted); }
-  .modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); background: var(--surface); border-radius: 14px; padding: 4px; gap: 2px; }
-  .modes button { min-height: 44px; border: 0; border-radius: 10px; background: transparent; color: var(--muted); font-size: 14px; font-weight: 600; }
+  .devise { font-size: 20px; color: color-mix(in srgb, var(--texte) 50%, var(--muted)); }
+  .modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); background: color-mix(in srgb, var(--surface-2) 33%, var(--surface)); border-radius: 14px; padding: 4px; gap: 2px; }
+  .modes button { height: 44px; border: 0; border-radius: 10px; background: transparent; color: var(--muted); font-size: 14px; font-weight: 600; }
   .modes button.actif { background: var(--ligne); color: var(--texte); }
   .champs { display: flex; flex-direction: column; gap: 12px; }
   label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: var(--muted); }
-  input { height: 52px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--champ); font-size: 16px; padding: 0 14px; }
-  .mdp { display: flex; align-items: center; height: 52px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--champ); padding: 0 4px 0 14px; }
+  input { height: 52px; border-radius: 14px; border: 1px solid color-mix(in srgb, var(--ligne) 97%, var(--texte)); background: color-mix(in srgb, var(--surface) 60%, var(--fond)); font-size: 16px; padding: 0 14px; }
+  .mdp { display: flex; align-items: center; height: 52px; border-radius: 14px; border: 1px solid color-mix(in srgb, var(--ligne) 97%, var(--texte)); background: color-mix(in srgb, var(--surface) 60%, var(--fond)); padding: 0 4px 0 14px; }
+  input, .mdp { transition: border-color 0.18s ease; }
+  input:focus, .mdp:focus-within { outline: none; border-color: var(--accent); }
   .mdp input { flex: 1; min-width: 0; height: 100%; border: 0; padding: 0; background: transparent; outline: none; }
   .mdp button { width: 44px; height: 44px; border: 0; background: transparent; color: var(--muted); display: flex; align-items: center; justify-content: center; }
-  .aide { font-size: 12px; font-weight: 400; color: var(--faint); }
+  .aide { font-size: 12px; font-weight: 400; color: color-mix(in srgb, var(--faint) 50%, var(--muted)); }
   .erreur { color: var(--mauvais); font-size: 14px; font-weight: 600; }
   .bas { margin-top: auto; display: flex; flex-direction: column; gap: 10px; }
   .cta { height: 56px; border-radius: 18px; border: 0; background: var(--accent); color: var(--accent-texte); font-size: 16px; font-weight: 600; }
   .cta:disabled { opacity: 0.5; }
-  .note { font-size: 12px; line-height: 1.5; text-align: center; }
+  .note { font-size: 12px; line-height: 1.5; text-align: center; color: color-mix(in srgb, var(--faint) 50%, var(--muted)); }
 </style>

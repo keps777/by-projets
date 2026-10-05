@@ -16,8 +16,8 @@
   import { enregistrerSignature, lireSignature } from './donnees.ts';
   import { jourChiffres, jourCourt, MOIS_COURTS, parJour, periodeTexte, resumeProgression, textesParJour, valeurTexte } from './vues.ts';
 
-  let { sp, projet, rubrique, metriques, code, mois, jour }: {
-    sp: SousProjetLigne; projet: Projet; rubrique: Rubrique | undefined; metriques: Metrique[]; code: string | null; mois: string; jour: Jour;
+  let { sp, projet, metriques, code, mois, jour }: {
+    sp: SousProjetLigne; projet: Projet; rubrique?: Rubrique; metriques: Metrique[]; code: string | null; mois: string; jour: Jour;
   } = $props();
 
   const valeurs = $derived(valeursDuSousProjet(sp));
@@ -29,6 +29,10 @@
   const compte = (m: Metrique) => ['nombre', 'fois', 'oui_non', 'choix'].includes(m.type);
   const cell = (m: Metrique, v: number | undefined) => (v == null ? '' : compte(m) ? nombre(v) : valeurTexte(m, v, true));
 
+  /** Colonnes comme la maquette : pilote étroit, texte (passages) souple, autres valeurs (temps) étroites en chiffres. */
+  const aTexte = $derived(colonnes.some((m) => m.type === 'reference'));
+  const largeur = (m: Metrique, i: number) => (i === 0 ? '34px' : m.type === 'reference' || !aTexte ? 'minmax(0, 1fr)' : '36px');
+  const chiffre = (m: Metrique, i: number) => i > 0 && m.type !== 'reference';
   const lignes = $derived.by(() => {
     if (!f || !finVue || finVue < f.debut) return [];
     const parCol = colonnes.map((m) => (m.type === 'reference' ? { t: textesParJour(valeurs, m.cle, f.debut, finVue) } : { p: parJour(valeurs, m, f.debut, finVue) }));
@@ -57,7 +61,6 @@
 
   let signature = $state<{ image: string; le: string } | null>(null);
   $effect(() => { signature = lireSignature(sp.id); });
-  const etat = $derived(signature ? 'signé' : sp.statut === 'termine' ? 'terminé' : 'en cours');
   const mm = $derived(`${MOIS_COURTS[+mois.slice(5, 7) - 1].toUpperCase()} ${mois.slice(0, 4)}`);
 
   // Signature au doigt
@@ -91,7 +94,6 @@
     <span class="serif titre-doc">Fiche de suivi</span>
     <span class="mono meta">LUTHER LIFE{code ? ` · ${code}` : ''} · {mm}</span>
   </div>
-  <div class="mono meta">{rubrique?.nom ?? ''} · Projet {projet.numero ?? ''} · {periodeTexte(sp.debut, sp.fin)} · {etat}</div>
   <div class="serif sous-titre">{projet.nom} · {sp.nom}</div>
   {#if fiche.length}
     <div class="fiche">
@@ -99,10 +101,10 @@
     </div>
   {/if}
   {#if colonnes.length}
-    <div class="table" style:--cols="38px 34px {colonnes.map((m) => (m.type === 'reference' ? 'minmax(0, 1.6fr)' : 'minmax(0, 1fr)')).join(' ')}">
+    <div class="table" style:--cols="38px 24px {colonnes.map(largeur).join(' ')}">
       <div class="rang tete mono"><span>Date</span><span>Obj.</span>{#each colonnes as m (m.id)}<span class="coupe">{m.nom.split(/\s+/)[0]}</span>{/each}</div>
       {#each lignes as l (l.j)}
-        <div class="rang" class:aujourdhui={l.j === jour}><span class="mono">{jourChiffres(l.j)}</span><span>{l.obj}</span>{#each l.cells as c, i (i)}<span class="coupe">{c}</span>{/each}</div>
+        <div class="rang" class:aujourdhui={l.j === jour}><span class="mono">{jourChiffres(l.j)}</span><span>{l.obj}</span>{#each l.cells as c, i (i)}<span class="coupe" class:mono={chiffre(colonnes[i], i)}>{c}</span>{/each}</div>
       {/each}
       {#if aVenir}<span class="muted-doc">… {aVenir} jour{aVenir > 1 ? 's' : ''} à venir</span>{/if}
     </div>
@@ -116,14 +118,14 @@
       {#if signature}<img src={signature.image} alt="Signature" /><span>Signé le {jourCourt(signature.le.slice(0, 10))} {signature.le.slice(0, 4)}</span>
       {:else}<div class="ligne-sig"></div><span>Signature, le ____ / ____ / {jour.slice(0, 4)}</span>{/if}
     </div>
-    <div class="sig"><div class="ligne-sig"></div><span>Seconde personne (facultatif)</span></div>
+    <div class="sig"><div class="ligne-sig"></div><span>Discipleur (facultatif)</span></div>
   </div>
 </article>
 
 <div class="actions">
   <div class="deux">
-    <Bouton variante="secondaire" grand onclick={() => window.print()}>Exporter en PDF</Bouton>
-    <Bouton grand onclick={() => { signer = true; vide = true; }}>{signature ? 'Signer à nouveau' : 'Signer au doigt'}</Bouton>
+    <button type="button" class="action secondaire" onclick={() => window.print()}>Exporter en PDF</button>
+    <button type="button" class="action" onclick={() => { signer = true; vide = true; }}>{signature ? 'Signer à nouveau' : 'Signer au doigt'}</button>
   </div>
   <span class="muted note">Une fois signé, le sous-projet rejoint l’<a href="/archive">Archive</a>.</span>
 </div>
@@ -139,13 +141,14 @@
 </Volet>
 
 <style>
-  .vivant { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+  .vivant { display: flex; align-items: center; gap: 6px; font-size: 12px; margin-bottom: -6px; }
   .point { width: 7px; height: 7px; border-radius: 4px; background: var(--bon); }
   /* Le papier : couleurs d'un document imprimé, identiques de nuit comme de jour (c'est l'aperçu du PDF). */
   .papier, .toile {
     --papier: #ffffff; --encre: #16171b; --encre-2: #5e6068; --filet: #e3e1db; --pointille: #9a9ca3;
   }
-  .papier { background: var(--papier); color: var(--encre); border-radius: 6px; box-shadow: var(--ombre); padding: 22px 20px; display: flex; flex-direction: column; gap: 10px; font-size: 11px; line-height: 1.4; }
+  /* Le papier occupe toute la hauteur libre (signatures en bas de page), comme la maquette. */
+  .papier { flex: 1 0 auto; background: var(--papier); color: var(--encre); border-radius: 6px; box-shadow: var(--ombre); padding: 22px 20px; display: flex; flex-direction: column; gap: 10px; font-size: 11px; line-height: 1.4; }
   .entete { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; border-bottom: 2px solid var(--encre); padding-bottom: 6px; }
   .titre-doc { font-size: 20px; font-style: normal; }
   .meta { font-size: 9px; color: var(--encre-2); text-transform: uppercase; }
@@ -159,11 +162,14 @@
   .coupe { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .muted-doc { color: var(--encre-2); padding-top: 4px; }
   .totaux { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; border: 1px solid var(--encre); padding: 6px 8px; }
-  .signatures { margin-top: 8px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .signatures { margin-top: auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   .sig { display: flex; flex-direction: column; gap: 4px; }
   .sig img { height: 34px; object-fit: contain; object-position: left bottom; border-bottom: 1px dashed var(--pointille); }
   .ligne-sig { height: 34px; border-bottom: 1px dashed var(--pointille); }
-  .actions { position: sticky; bottom: -24px; margin: 0 -16px -24px; padding: 12px 16px 18px; background: var(--fond); display: flex; flex-direction: column; gap: 8px; }
+  .actions { position: sticky; bottom: -24px; margin: -14px -16px -24px; padding: 12px 16px 18px; background: var(--fond); display: flex; flex-direction: column; gap: 8px; }
+  /* Boutons de 50 px de la maquette (Bouton n'a que 46 et 54 px). */
+  .action { height: 50px; border-radius: 16px; border: 0; background: var(--inverse); color: var(--inverse-texte); font-size: 15px; font-weight: 600; }
+  .action.secondaire { border: 1px solid var(--ligne); background: var(--surface); color: var(--texte); }
   .deux { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .note { font-size: 12px; text-align: center; }
   .note a { color: var(--c-encre); text-decoration: underline; }

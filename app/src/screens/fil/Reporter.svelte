@@ -5,12 +5,12 @@
   import { COULEUR_SANS_PROJET, blocsDuJour, creneauxDuJour, profil } from '../../data/requetes.ts';
   import { fuseau } from '../../data/temps.svelte.ts';
   import { reporter } from '../../data/actions/taches.ts';
-  import { couleurRubrique, styleCouleur } from '../../ui/couleurs.ts';
   import { theme } from '../../ui/theme.svelte.ts';
   import { dire } from '../../ui/toast.svelte.ts';
   import Volet from '../../ui/Volet.svelte';
   import { dureeMin, hm, puceJour } from './format.ts';
   import Disponibilite from './Disponibilite.svelte';
+  import { styleTeinte } from './teintes.ts';
 
   /** Reporter une occurrence : jour, heure, rappel, disponibilité et créneaux libres les plus proches (spec §7.2, §7.3). */
   let { occId, aujourdhui, onfermer, onvalide }: { occId: string | null; aujourdhui: string; onfermer: () => void; onvalide: () => void } = $props();
@@ -59,7 +59,7 @@
 
 <Volet ouvert={!!occ} {onfermer} label="Reporter">
   {#if occ && tache}
-    <div class="rep" style={styleCouleur(couleurRubrique(couleur, theme.mode))}>
+    <div class="rep" style={styleTeinte(couleur, theme.mode)}>
       <div class="col">
         <span class="kicker">Reporter · {dureeMin(duree)}</span>
         <h2 class="titre">{tache.titre}</h2>
@@ -105,10 +105,10 @@
   .rep { display: flex; flex-direction: column; gap: 14px; }
   .col { display: flex; flex-direction: column; gap: 2px; }
   .centre { align-items: center; }
-  .kicker { font-size: 12px; font-weight: 600; color: var(--c-encre); }
+  .kicker { font-size: 12px; font-weight: 600; color: var(--c-titre); }
   h2 { font-size: 24px; }
   .jours { display: flex; gap: 6px; overflow-x: auto; margin: 0 -18px; padding: 0 18px; }
-  .jours button { flex: none; height: 44px; padding: 0 14px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--surface); font-size: 14px; font-weight: 600; }
+  .jours button { transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.12s ease; flex: none; height: 44px; padding: 0 14px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--surface); font-size: 14px; font-weight: 600; }
   .jours button.actif { background: var(--inverse); border-color: var(--inverse); color: var(--inverse-texte); }
   .heure { display: flex; align-items: center; justify-content: space-between; background: var(--surface-2); border-radius: 18px; padding: 8px; }
   .heure button { width: 44px; height: 44px; border-radius: 14px; border: 0; background: var(--surface); font-size: 12px; font-weight: 600; }
@@ -118,7 +118,7 @@
   .bascule { flex: none; display: flex; align-items: center; gap: 10px; border: 0; background: transparent; font-size: 14px; font-weight: 600; padding: 0; min-height: 44px; }
   .sw { width: 44px; height: 26px; border-radius: 13px; background: var(--piste); position: relative; transition: background 0.2s; }
   .sw.on { background: var(--c); }
-  .sw span { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 10px; background: var(--carte-texte); transition: left 0.2s; }
+  .sw span { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 10px; background: var(--carte-texte); transition: left 0.2s; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18); }
   .sw.on span { left: 21px; }
   .avances { display: flex; gap: 6px; }
   .avances.eteint { opacity: 0.4; }

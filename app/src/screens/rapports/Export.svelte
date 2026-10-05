@@ -24,6 +24,6 @@
 
 <EcranPage gap={14}>
   <EnTete titre="Exporter le rapport" repli="/rapports" />
-  <Segment options={[{ valeur: 'jour', label: 'Jour' }, { valeur: 'semaine', label: 'Semaine' }, { valeur: 'mois', label: 'Mois' }]} valeur={vue} onchoisir={(v) => routeur.definir('onglet', v)} />
+  <Segment options={[{ valeur: 'jour', label: 'Jour' }, { valeur: 'semaine', label: 'Semaine' }, { valeur: 'mois', label: 'Mois' }]} valeur={vue} onchoisir={(v) => routeur.definir('onglet', v)} hauteur={38} ample />
   <PanneauExport {periode} {points} nom={p?.nom_rapport?.trim() || p?.prenom || ''} langue={p?.langue_rapport ?? 'fr'} entete={false} />
 </EcranPage>

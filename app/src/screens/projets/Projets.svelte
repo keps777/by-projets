@@ -3,6 +3,8 @@
   // dépliables, mode Modifier pour ajouter ou retirer rubriques, projets et sous-projets (spec §12, US-14).
   import { SvelteSet } from 'svelte/reactivity';
   import { untrack } from 'svelte';
+  import { slide } from 'svelte/transition';
+  import { cubicOut } from 'svelte/easing';
   import { joursDuMois, moisDe } from '@core/dates.ts';
   import type { Projet, Rubrique, SousProjetLigne } from '@core/lignes.ts';
   import EcranPage from '../../ui/EcranPage.svelte';
@@ -137,10 +139,9 @@
       <div class="rubrique-tete">
         <span class="numero mono">{r.numero}</span>
         <h2>{r.r.nom}</h2>
+        <span class="muted petit">{r.projets.length} projet{r.projets.length > 1 ? 's' : ''}</span>
         {#if edition}
-          <button type="button" class="retirer-rub" aria-label="Retirer la rubrique {r.r.nom}" onclick={() => (aRetirer = { type: 'rubrique', id: r.r.id, nom: r.r.nom })}><Icone nom="poubelle" taille={16} /></button>
-        {:else}
-          <span class="muted petit">{r.projets.length} projet{r.projets.length > 1 ? 's' : ''}</span>
+          <button type="button" class="retirer-rub" aria-label="Retirer la rubrique {r.r.nom}" onclick={() => (aRetirer = { type: 'rubrique', id: r.r.id, nom: r.r.nom })} transition:slide={{ axis: 'x', duration: 180 }}><Icone nom="poubelle" taille={15} /></button>
         {/if}
       </div>
       <div class="carte liste">
@@ -149,7 +150,7 @@
           <div class="projet">
             <div class="projet-ligne">
               {#if edition}
-                <button type="button" class="moins" aria-label="Retirer le projet {p.p.nom}" onclick={() => (aRetirer = { type: 'projet', id: p.p.id, nom: p.p.nom })}><Icone nom="moins" taille={14} trait={3} /></button>
+                <button type="button" class="moins" transition:slide={{ axis: 'x', duration: 180 }} aria-label="Retirer le projet {p.p.nom}" onclick={() => (aRetirer = { type: 'projet', id: p.p.id, nom: p.p.nom })}><Icone nom="moins" taille={14} trait={3} /></button>
               {/if}
               <a href={p.href} class="projet-lien">
                 <span class="projet-haut">
@@ -171,11 +172,11 @@
               {/if}
             </div>
             {#if deplie && (edition || p.subs.length > 1)}
-              <div class="subs">
+              <div class="subs" transition:slide={{ duration: 240, easing: cubicOut }}>
                 {#each p.subs as x (x.sp.id)}
                   <div class="sub">
                     {#if edition}
-                      <button type="button" class="moins petit-rond" aria-label="Retirer le sous-projet {x.sp.nom}" onclick={() => (aRetirer = { type: 'sous-projet', id: x.sp.id, nom: x.sp.nom })}><Icone nom="moins" taille={12} trait={3} /></button>
+                      <button type="button" class="moins petit-rond" transition:slide={{ axis: 'x', duration: 180 }} aria-label="Retirer le sous-projet {x.sp.nom}" onclick={() => (aRetirer = { type: 'sous-projet', id: x.sp.id, nom: x.sp.nom })}><Icone nom="moins" taille={12} trait={3} /></button>
                     {/if}
                     <a href={x.href} class="sub-lien">
                       <span class="projet-haut">
@@ -188,14 +189,14 @@
                   </div>
                 {/each}
                 {#if edition}
-                  <a class="ajout-sub" href="/projets/nouveau-sous-projet?projet={p.p.id}"><Icone nom="plus" taille={14} trait={2.6} />Sous-projet</a>
+                  <a class="ajout-sub" transition:slide={{ duration: 180 }} href="/projets/nouveau-sous-projet?projet={p.p.id}"><Icone nom="plus" taille={14} trait={2.6} />Sous-projet</a>
                 {/if}
               </div>
             {/if}
           </div>
         {/each}
         {#if edition}
-          <button type="button" class="ajout-projet" onclick={() => (nouveauProjet = { rubriqueId: r.r.id, nom: '' })}><Icone nom="plus" taille={14} trait={2.6} />Projet dans cette rubrique</button>
+          <button type="button" class="ajout-projet" transition:slide={{ duration: 180 }} onclick={() => (nouveauProjet = { rubriqueId: r.r.id, nom: '' })}><Icone nom="plus" taille={14} trait={2.6} />Projet dans cette rubrique</button>
         {:else if !r.projets.length}
           <p class="muted petit vide">Aucun projet. Touche « Modifier » pour en ajouter un.</p>
         {/if}
@@ -204,7 +205,7 @@
   {/each}
 
   {#if edition}
-    <button type="button" class="ajout-rubrique" onclick={() => (nouvelleRubrique = { nom: '', couleur: PALETTE[5] })}><Icone nom="plus" taille={16} trait={2.6} />Nouvelle rubrique</button>
+    <button type="button" class="ajout-rubrique" transition:slide={{ duration: 180 }} onclick={() => (nouvelleRubrique = { nom: '', couleur: PALETTE[5] })}><Icone nom="plus" taille={16} trait={2.6} />Nouvelle rubrique</button>
   {/if}
   {#if magasin.pret && !vue.length}
     <p class="muted">Aucune rubrique. Touche « Modifier » pour en créer une.</p>
@@ -254,7 +255,7 @@
 <style>
   .tete { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
   .titres { display: flex; flex-direction: column; gap: 2px; }
-  h1 { font-size: 30px; }
+  h1 { font-size: 30px; line-height: normal; }
   .devise { font-size: 17px; color: var(--muted); }
   .modifier { flex: none; height: 44px; padding: 0 16px; border-radius: 22px; border: 1px solid var(--ligne); background: transparent; color: var(--texte); font-size: 14px; font-weight: 600; }
   .modifier.actif { background: var(--inverse); border-color: var(--inverse); color: var(--inverse-texte); }
@@ -269,18 +270,22 @@
   .piste { position: relative; display: block; height: 8px; border-radius: 4px; background: var(--piste); }
   .piste.fine { height: 6px; border-radius: 3px; }
   .piste.mince { height: 5px; border-radius: 3px; }
-  .rempli { position: absolute; left: 0; top: 0; bottom: 0; border-radius: inherit; background: var(--c); max-width: 100%; }
+  .rempli { position: absolute; left: 0; top: 0; bottom: 0; border-radius: inherit; background: var(--c); max-width: 100%; animation: remplit 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; transition: width 0.4s ease; }
+  @keyframes remplit { from { width: 0; } }
   .trait { position: absolute; top: -3px; bottom: -3px; width: 2px; margin-left: -1px; background: var(--texte); opacity: 0.45; }
 
   .rubrique { display: flex; flex-direction: column; gap: 8px; }
-  .rubrique-tete { display: flex; align-items: center; gap: 10px; min-height: 32px; }
+  .rubrique-tete { display: flex; align-items: center; gap: 10px; }
   .numero { flex: none; width: 26px; height: 26px; border-radius: 8px; background: var(--c); color: var(--c-sur); font-size: 12px; display: flex; align-items: center; justify-content: center; }
   h2 { flex: 1; font-size: 17px; font-weight: 600; }
-  .retirer-rub { flex: none; width: 44px; height: 44px; margin: -6px 0; border-radius: 14px; border: 1px solid var(--ligne); background: transparent; color: var(--mauvais); display: flex; align-items: center; justify-content: center; }
+  /* Absent de la maquette : discret (pas de cadre) pour ne pas alourdir l'en-tête, zone d'appui de 44 px. */
+  .retirer-rub { flex: none; position: relative; width: 28px; height: 28px; margin: -2px -4px -2px 0; border-radius: 14px; border: 0; background: transparent; color: var(--mauvais); display: flex; align-items: center; justify-content: center; }
+  .retirer-rub::after { content: ''; position: absolute; inset: -8px; }
   .liste { border-radius: 20px; overflow: hidden; }
   .projet { border-bottom: 1px solid var(--ligne); }
   .projet-ligne { display: flex; align-items: center; gap: 10px; padding: 12px 14px; }
-  .moins { flex: none; width: 32px; height: 32px; border-radius: 16px; border: 0; background: var(--mauvais); color: var(--fond); display: flex; align-items: center; justify-content: center; position: relative; }
+  /* Maquette : rouge plein (#E5483A de nuit) et signe blanc ; jetons proposés --mauvais-plein et --sur-mauvais. */
+  .moins { flex: none; width: 32px; height: 32px; border-radius: 16px; border: 0; background: var(--mauvais-plein, var(--mauvais)); color: var(--sur-mauvais, #fff); display: flex; align-items: center; justify-content: center; position: relative; }
   .moins::after { content: ''; position: absolute; inset: -6px; }
   .moins.petit-rond { width: 28px; height: 28px; border-radius: 14px; }
   .projet-lien { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
@@ -297,7 +302,7 @@
   .sub { display: flex; align-items: center; gap: 8px; padding: 10px 12px; margin-bottom: 6px; border-radius: 14px; background: var(--surface-2); }
   .sub-lien { flex: 1; min-width: 0; min-height: 44px; display: flex; flex-direction: column; justify-content: center; gap: 5px; }
   .sub-nom { flex: 1; min-width: 0; font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .ajout-sub { min-height: 44px; border-radius: 14px; border: 1.5px dashed var(--ligne); color: var(--c-encre); font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .ajout-sub { box-sizing: content-box; min-height: 44px; border-radius: 14px; border: 1.5px dashed var(--ligne); color: var(--c-encre); font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; }
   .ajout-projet { width: 100%; min-height: 48px; border: 0; background: transparent; color: var(--c-encre); font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; }
   .vide { padding: 14px; }
   .ajout-rubrique { min-height: 56px; border-radius: 20px; border: 2px dashed var(--ligne); background: transparent; color: var(--texte); font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }

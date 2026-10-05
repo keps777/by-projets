@@ -56,6 +56,6 @@
   .rang { display: flex; justify-content: space-between; gap: 10px; padding: 10px 0; font-size: 14px; }
   .rang span:first-child { font-weight: 600; }
   .champ { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; }
-  textarea { border-radius: 12px; border: 1px solid var(--ligne); background: var(--champ); padding: 10px 12px; font-size: 15px; resize: none; }
+  textarea { border-radius: 12px; border: 1px solid var(--ligne); background: var(--champ); padding: 10px 12px; font-size: 16px; resize: none; }
   .petit { font-size: 12px; text-align: center; }
 </style>

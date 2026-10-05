@@ -16,8 +16,8 @@
     <span class="mono libelle" style:top="{Math.max(0, haut - 14)}px">obj. {libelleObjectif}</span>
   {/if}
   <div class="barres" style:grid-template-columns="repeat({n}, minmax(0, 1fr))">
-    {#each barres as b (b.jour)}
-      <span class="barre {b.etat}" style:height="{hauteur(b)}px" title={decrire(b)}></span>
+    {#each barres as b, i (b.jour)}
+      <span class="barre {b.etat}" style:height="{hauteur(b)}px" style:--i={i} title={decrire(b)}></span>
     {/each}
   </div>
 </div>
@@ -28,7 +28,11 @@
   .objectif { position: absolute; left: 0; right: 0; border-top: 1.5px dashed var(--muted); opacity: 0.7; }
   .libelle { position: absolute; right: 0; font-size: 10px; color: var(--muted); }
   .barres { position: absolute; inset: 0; display: grid; gap: 2px; align-items: end; }
-  .barre { border-radius: 2px; background: var(--c); }
+  /* Les barres montent l'une après l'autre à l'ouverture, la ligne d'objectif se dessine. */
+  .barre { border-radius: 2px; background: var(--c); transform-origin: bottom; animation: monte 0.42s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: calc(var(--i) * 8ms); transition: height 0.3s ease; }
+  @keyframes monte { from { transform: scaleY(0); } }
+  .objectif { animation: trace 0.5s ease-out both; transform-origin: left; }
+  @keyframes trace { from { transform: scaleX(0); } }
   .barre.atteint { background: var(--bon); }
   .barre.zero { background: var(--mauvais); }
   .barre.avenir { background: var(--piste); }

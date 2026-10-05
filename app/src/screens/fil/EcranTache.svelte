@@ -142,11 +142,16 @@
 
 <style>
   .formulaire { display: contents; }
-  .tete { display: flex; align-items: center; gap: 10px; }
+  /* En-tête fixe comme la maquette (le « top » négatif annule la marge intérieure de la zone qui défile) (16 px en haut, 8 px dessous, puis 4 px avant « Quoi ? ») : il reste en place quand le formulaire défile. */
+  .tete { display: flex; align-items: center; gap: 10px; position: sticky; top: calc(-20px - var(--haut-sûr)); z-index: 5; background: var(--fond);
+    margin: calc(-20px - var(--haut-sûr)) -16px -14px; padding: calc(16px + var(--haut-sûr)) 16px 8px; }
+  /* Pied de la maquette : 18 px sous le bouton (plus la zone sûre de l'iPhone). */
+  .formulaire :global(.pied) { padding-bottom: calc(18px + var(--bas-sûr)); }
   .tete .titre { font-size: 20px; flex: 1; }
   .supprimer { width: 44px; height: 44px; border-radius: 22px; border: 1px solid var(--ligne); background: var(--surface); color: var(--mauvais); display: flex; align-items: center; justify-content: center; }
   .quoi { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: var(--muted); }
-  .quoi input { height: 56px; border-radius: 16px; border: 1px solid var(--ligne); background: var(--surface); font-size: 22px; padding: 0 14px; color: var(--texte); }
+  .quoi input { height: 56px; border-radius: 16px; border: 1px solid var(--ligne); background: var(--surface); font-size: 22px; letter-spacing: -0.01em; padding: 0 14px; color: var(--texte); transition: border-color 0.18s ease; }
+  .quoi input:focus { outline: none; border-color: var(--c); }
   .section { display: flex; flex-direction: column; gap: 8px; }
   .rappel { border-radius: 20px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
   .rappels { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }

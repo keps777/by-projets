@@ -6,9 +6,10 @@
   import { ecouleOccurrence } from '../../data/actions/blocs.ts';
   import { COULEUR_SANS_PROJET } from '../../data/requetes.ts';
   import { routeur } from '../../routeur.svelte.ts';
-  import { couleurRubrique, styleCouleur } from '../../ui/couleurs.ts';
+  import Icone from '../../ui/Icone.svelte';
   import { theme } from '../../ui/theme.svelte.ts';
   import { cap, chrono, dureeMin, hm, nomDuJour } from './format.ts';
+  import { styleTeinte } from './teintes.ts';
 
   /** Carte du bas : bloc en cours (Pause, Terminer), sinon « En ce moment » / « Ensuite » avec Lancer. */
   let { blocs, jour, aujourdhui, actif, onouvrir, onjouer, onterminer }: {
@@ -28,6 +29,10 @@
   });
 
   type Carte = { kicker: string; titre: string; sous: string; mono?: boolean; couleur: string | null; action?: { label: string; aria: string; pause?: boolean; faire: () => void }; terminer?: () => void; pct?: number; ouvrir?: () => void };
+
+  // Journée vide, aujourd'hui ou à venir : la carte devient une invitation (premier bloc, ou rendez-vous sans projet).
+  const invitation = $derived(!blocs.length && jour >= aujourdhui && !actif);
+  const suffixeJour = $derived(jour === aujourdhui ? '' : `jour=${jour}`);
 
   const carte = $derived.by((): Carte => {
     if (jour !== aujourdhui) {
@@ -65,10 +70,23 @@
     return { kicker: 'Journée accomplie', titre: 'Ton rapport du jour est prêt', sous: 'Touche pour le relire et l’envoyer', couleur: null, ouvrir: () => routeur.aller('/rapports') };
   });
 
-  const style = $derived(carte.couleur ? styleCouleur(couleurRubrique(carte.couleur, theme.mode)) : '--c:var(--carte-muted)');
+  const style = $derived(carte.couleur ? styleTeinte(carte.couleur, theme.mode) : '--c:var(--carte-muted)');
 </script>
 
 <div class="enveloppe">
+  {#if invitation}
+    <div class="carte-bas invitation">
+      <div class="texte-invit">
+        <span class="kicker" class:maintenant={jour === aujourdhui} style:--c="var(--carte-muted)">{jour === aujourdhui ? 'Journée libre' : cap(nomDuJour(jour))}</span>
+        <span class="titre-invit">{jour === aujourdhui ? 'Pose ton premier bloc' : 'Rien de prévu ce jour-là'}</span>
+        <span class="verset">« Recommande à l’Éternel tes œuvres, et tes projets réussiront. »</span>
+      </div>
+      <div class="boutons-invit">
+        <a class="ajouter" href="/tache/nouvelle{suffixeJour ? `?${suffixeJour}` : ''}"><Icone nom="plus" taille={15} trait={2.4} />Ajouter un bloc</a>
+        <a class="rdv" href="/tache/nouvelle?sans-projet=1{suffixeJour ? `&${suffixeJour}` : ''}"><Icone nom="calendrier" taille={15} />Rendez-vous</a>
+      </div>
+    </div>
+  {:else}
   <div class="carte-bas" {style}>
     <div class="rang">
       <button type="button" class="texte" onclick={() => carte.ouvrir?.()} disabled={!carte.ouvrir}>
@@ -96,6 +114,7 @@
       <span class="piste"><span class="barre" style:width="{carte.pct}%"></span></span>
     {/if}
   </div>
+  {/if}
 </div>
 
 <style>
@@ -111,5 +130,14 @@
   .terminer { flex: none; width: 44px; height: 44px; border-radius: 22px; border: 1px solid var(--carte-ligne); background: transparent; color: var(--carte-texte); display: flex; align-items: center; justify-content: center; }
   .action { flex: none; height: 44px; padding: 0 16px; border-radius: 22px; border: 0; background: var(--c); color: var(--c-sur); font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
   .piste { height: 6px; border-radius: 3px; background: var(--carte-piste); overflow: hidden; }
+  .invitation { gap: 12px; padding: 14px 12px 12px 14px; animation: invit-entre 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  .texte-invit { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .titre-invit { font-family: var(--police-titre); font-size: 21px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+  .verset { font-family: var(--police-serif); font-style: italic; font-size: 16px; line-height: 1.25; color: var(--carte-muted); margin-top: 2px; }
+  .boutons-invit { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 8px; }
+  .boutons-invit a { height: 44px; border-radius: 22px; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 14px; font-weight: 600; white-space: nowrap; }
+  .ajouter { background: var(--carte-texte); color: var(--carte-fond); }
+  .rdv { border: 1px solid var(--carte-ligne); color: var(--carte-texte); }
+  @keyframes invit-entre { from { opacity: 0; transform: translateY(10px); } }
   .barre { display: block; height: 6px; background: var(--c); border-radius: 3px; transition: width 0.9s linear; }
 </style>

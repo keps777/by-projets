@@ -154,7 +154,7 @@
         <input class="grand-champ" bind:value={nom} placeholder="Ex. 7 chapitres par jour" />
       </label>
       <button type="button" class="ligne-projet" onclick={() => (choixProjet = true)}>
-        <span class="muted">Projet</span><span class="gras coupe">{projet ? `${projet.numero ?? ''} · ${projet.nom}` : 'Choisir'}</span>
+        <span class="muted">Projet</span><span class="gras coupe">{projet ? projet.nom : 'Choisir'}</span>
       </button>
       <div class="periodes">
         {#each PERIODES as p (p.valeur)}
@@ -201,9 +201,11 @@
   </div>
 
   {#snippet pied()}
-    {#each problemes.slice(0, 2) as p (p)}<span class="probleme">{p}</span>{/each}
-    <span class="muted petit">{nom.trim() || 'Sans nom'} · {metriques.length} métrique{metriques.length > 1 ? 's' : ''} · {dansRapport} dans le rapport</span>
-    <Bouton grand plein desactive={problemes.length > 0} onclick={creer}>Créer le sous-projet</Bouton>
+    <div class="pied-contenu">
+      {#each problemes.slice(0, 2) as p (p)}<span class="probleme">{p}</span>{/each}
+      <span class="muted resume">{nom.trim() || 'Sans nom'} · {metriques.length} métrique{metriques.length > 1 ? 's' : ''} · {dansRapport} dans le rapport</span>
+      <Bouton grand plein desactive={problemes.length > 0} onclick={creer}>Créer le sous-projet</Bouton>
+    </div>
   {/snippet}
 </EcranPage>
 
@@ -222,8 +224,9 @@
 
 <style>
   .contenu { display: flex; flex-direction: column; gap: 18px; }
-  .tete { display: flex; align-items: center; gap: 10px; }
-  h1 { font-size: 20px; }
+  /* En-tête de la maquette : 16 px du haut, 12 px avant le premier groupe. */
+  .tete { display: flex; align-items: center; gap: 10px; margin: -4px 0 -6px; }
+  h1 { font-size: 20px; line-height: normal; }
   .petit { font-size: 12px; line-height: 1.45; }
   .mini { flex: none; font-size: 11px; }
   .gras { font-size: 14px; font-weight: 600; }
@@ -237,12 +240,13 @@
   .modeles { display: flex; flex-direction: column; gap: 6px; }
   .modele { width: 100%; border: 1px solid var(--ligne); background: transparent; text-align: left; border-radius: 18px; padding: 10px 14px; min-height: 56px; display: flex; flex-direction: column; gap: 6px; }
   .modele.on { background: var(--c-fond); border-color: var(--c); }
+  .modele .petit { line-height: normal; }
   .zero { min-height: 48px; border-radius: 18px; border: 1.5px dashed var(--ligne); background: transparent; font-size: 14px; font-weight: 600; }
   .zero.on { border-color: var(--c); border-style: solid; background: var(--c-fond); }
   .champ { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--muted); flex: 1; min-width: 0; }
-  .champ input { height: 48px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--surface); padding: 0 14px; font-size: 15px; min-width: 0; }
+  .champ input { height: 48px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--surface); padding: 0 14px; font-size: 16px; min-width: 0; }
   .champ .grand-champ { height: 50px; font-size: 17px; font-weight: 600; }
-  .ligne-projet { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--ligne); border-radius: 14px; padding: 10px 14px; min-height: 48px; font-size: 13px; text-align: left; }
+  .ligne-projet { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--ligne); border-radius: 14px; padding: 10px 14px; min-height: 70px; font-size: 13px; text-align: left; }
   .periodes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
   .periodes button { height: 44px; border-radius: 12px; border: 1px solid var(--ligne); background: transparent; font-size: 12px; font-weight: 600; }
   .periodes button.on { background: var(--c); border-color: var(--c); color: var(--c-sur); }
@@ -254,6 +258,8 @@
   .palette button { height: 44px; padding: 0 12px; border-radius: 22px; border: 1.5px dashed var(--ligne); background: transparent; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
   .calculs { background: var(--surface-2); border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
   .probleme { font-size: 12px; color: var(--mauvais); }
+  .pied-contenu { display: flex; flex-direction: column; gap: 8px; padding-bottom: 4px; }
+  .resume { font-size: 12px; line-height: 1.4; }
   h2 { font-size: 22px; }
   .liste { border-radius: 20px; overflow: hidden; }
   .choix-projet { width: 100%; display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 14px; border: 0; border-bottom: 1px solid var(--ligne); background: transparent; text-align: left; }

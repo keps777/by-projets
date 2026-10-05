@@ -7,6 +7,7 @@
   import type { Jour, Metrique } from '@core/types.ts';
   import type { SousProjetLigne } from '@core/lignes.ts';
   import Volet from '../../ui/Volet.svelte';
+  import Icone from '../../ui/Icone.svelte';
   import Bouton from '../../ui/Bouton.svelte';
   import Segment from '../../ui/Segment.svelte';
   import Puces from '../../ui/Puces.svelte';
@@ -136,7 +137,7 @@
     {:else}
       <p class="muted petit vide">Aucun mouvement ce mois-ci.</p>
     {/each}
-    <button type="button" class="ajouter" onclick={ouvrir}>+ Saisir un mouvement</button>
+    <button type="button" class="ajouter" onclick={ouvrir}><Icone nom="plus" taille={14} trait={2.6} />Saisir un mouvement</button>
   </div>
 </section>
 
@@ -185,22 +186,22 @@
   .rang.base { align-items: baseline; }
   .piste { position: relative; display: block; height: 8px; border-radius: 4px; background: var(--piste); overflow: hidden; }
   .piste.mince { height: 6px; border-radius: 3px; }
-  .rempli { position: absolute; left: 0; top: 0; bottom: 0; border-radius: inherit; background: var(--c); }
+  .rempli { position: absolute; left: 0; top: 0; bottom: 0; border-radius: inherit; background: var(--c); animation: remplit 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; transition: width 0.4s ease; }
+  @keyframes remplit { from { width: 0; } }
   .calculs { background: var(--surface-2); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; font-size: 12px; }
   .groupe { display: flex; flex-direction: column; gap: 8px; }
   .liste-cat { border-radius: 20px; padding: 6px 14px; }
   .cat { display: flex; flex-direction: column; gap: 6px; padding: 10px 0; border-bottom: 1px solid var(--ligne); }
-  .cat:last-child { border-bottom: 0; }
   .cat .rang { font-size: 14px; }
   .liste { border-radius: 20px; overflow: hidden; }
-  .mouvement { width: 100%; display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 14px; border: 0; border-bottom: 1px solid var(--ligne); background: transparent; text-align: left; min-height: 52px; font-size: 14px; }
+  .mouvement { width: 100%; display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 14px; border: 0; border-bottom: 1px solid var(--ligne); background: transparent; text-align: left; min-height: 73px; font-size: 14px; }
   .mouvement:disabled { cursor: default; opacity: 1; }
   .coupe { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .vide { padding: 12px 14px; }
-  .ajouter { width: 100%; border: 0; background: transparent; color: var(--c-encre); font-size: 14px; font-weight: 600; min-height: 50px; }
+  .ajouter { width: 100%; border: 0; background: transparent; color: var(--c-encre); font-size: 14px; font-weight: 600; min-height: 50px; display: flex; align-items: center; justify-content: center; gap: 6px; }
   h2 { font-size: 22px; }
   .champ { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; }
-  .champ input { height: 48px; border-radius: 12px; border: 1px solid var(--ligne); background: var(--champ); padding: 0 12px; font-size: 15px; }
+  .champ input { height: 48px; border-radius: 12px; border: 1px solid var(--ligne); background: var(--champ); padding: 0 12px; font-size: 16px; }
   .champ .grand-champ { font-size: 22px; height: 54px; }
   .deux { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 </style>

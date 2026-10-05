@@ -28,3 +28,8 @@
 **Export**
 - Bouton « Exporter le rapport » : choix des points (interrupteurs), **préréglages** nommés, aperçu du message, **Copier** et **Partager** (menu de partage du téléphone, donc WhatsApp).
 - **Archives des rapports** : liste par jour, semaine, mois, avec recherche et marque « envoyé ».
+
+## Précisions issues de la construction (5 oct. 2026)
+- Avant l'heure du rapport (21 h 15 par défaut), l'écran Rapports s'ouvre sur le rapport **de la veille** ; après, sur celui du jour. La flèche « suivant » mène toujours au jour en cours.
+- Archive et Archives ne comptent pas le jour en cours avant l'heure du rapport.
+- Le jour en cours n'est jamais présenté comme un échec : un zéro s'affiche en encre normale et le résumé dit « Journée en cours · rapport à 21:15 ».

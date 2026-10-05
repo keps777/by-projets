@@ -164,9 +164,9 @@
   {/if}
 
   <div class="carte tableau">
-    <div class="rangee entete"><span>Date</span><span>Obj.</span><span>Fait</span><span class="coupe">{majuscule(enTeteAutres) || 'Note'}</span></div>
+    <div class="rangee entete" class:large={!compte}><span>Date</span><span>Obj.</span><span>Fait</span><span class="coupe">{majuscule(enTeteAutres) || 'Note'}</span></div>
     {#each lignes as l (l.j)}
-      <button type="button" class="rangee" class:aujourdhui={l.j === jour} aria-label="Corriger le {jourCourt(l.j)}" onclick={() => (saisieJour = l.j)}>
+      <button type="button" class="rangee" class:large={!compte} class:aujourdhui={l.j === jour} aria-label="Corriger le {jourCourt(l.j)}" onclick={() => (saisieJour = l.j)}>
         <span class="col"><span class="date">{jourCourt(l.j)}</span><span class="muted tag">{l.tag}</span></span>
         <span class="mono muted">{l.obj}</span>
         <span class="fait"><span class="pastille mono {l.etat}">{l.v}</span><span class="mono delta" class:plus={l.delta.startsWith('+')}>{l.delta}</span></span>
@@ -187,9 +187,10 @@
   .col { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   .grand { font-size: 34px; line-height: 1; }
   .sur { font-size: 18px; color: var(--muted); }
-  .pct { font-size: 26px; color: var(--c); }
+  .pct { font-size: 26px; line-height: normal; color: var(--c); }
   .piste { position: relative; display: block; height: 12px; border-radius: 6px; background: var(--piste); }
-  .rempli { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px; background: var(--c); }
+  .rempli { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px; background: var(--c); animation: remplit 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; transition: width 0.4s ease; }
+  @keyframes remplit { from { width: 0; } }
   .rempli.mauvais { background: var(--mauvais); }
   .trait { position: absolute; top: -4px; bottom: -4px; width: 2px; margin-left: -1px; background: var(--texte); opacity: 0.6; }
   .texte-retard { font-size: 13px; }
@@ -197,7 +198,7 @@
 
   .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
   .stat { border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; }
-  .stat .titre { font-size: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .stat .titre { font-size: 20px; line-height: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .stat .muted { font-size: 11px; }
 
   .info, .bandeau { display: flex; gap: 10px; align-items: flex-start; background: var(--c-fond); color: var(--c-encre); border-radius: 16px; padding: 12px 14px; font-size: 13px; line-height: 1.4; }
@@ -206,8 +207,10 @@
   .bandeau.valider { background: var(--c-fond); color: var(--c-encre); }
 
   .tableau { border-radius: 22px; overflow: hidden; }
-  .rangee { width: 100%; display: grid; grid-template-columns: 58px 44px 72px minmax(0, 1fr); gap: 8px; padding: 10px 14px; align-items: center; border: 0; border-bottom: 1px solid var(--ligne); background: transparent; text-align: left; min-height: 44px; font-size: 13px; }
-  .rangee.aujourdhui { background: color-mix(in srgb, var(--c) 10%, transparent); }
+  /* Rangées : 44 px de contenu + marges + filet, comme la maquette (boîte de contenu). */
+  .rangee { width: 100%; display: grid; grid-template-columns: 58px 44px 64px minmax(0, 1fr); gap: 8px; padding: 10px 14px; align-items: center; border: 0; border-bottom: 1px solid var(--ligne); background: transparent; text-align: left; min-height: 65px; font-size: 13px; }
+  .rangee.large { grid-template-columns: 58px 44px 72px minmax(0, 1fr); }
+  .rangee.aujourdhui { background: color-mix(in srgb, var(--c) 8%, var(--surface)); }
   .entete { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); min-height: 0; }
   .date { font-weight: 600; }
   .tag { font-size: 10px; }

@@ -18,6 +18,13 @@
   const nomApp = $derived(`${profil()?.prenom || 'Luther'} Life`);
 
   const titreApercu = $derived(titres ? (delai === 0 ? 'RDQD du matin · maintenant' : `Dans ${delai} min : RDQD du matin`) : `Un bloc commence ${delai === 0 ? 'maintenant' : `dans ${delai} min`}`);
+  const jourRapport = new Intl.DateTimeFormat('fr-CA', { day: 'numeric', month: 'long' }).format(new Date());
+  // Aperçus d'écran verrouillé (planche Notifications), en version compacte.
+  const EXEMPLES: [string, string][] = [
+    [`Ton rapport du ${jourRapport} est prêt`, 'Toucher pour relire et envoyer'],
+    ['Récap de la semaine', 'Ton score, ton meilleur point et celui à renforcer, le dimanche à 20:00'],
+    ['Récap du mois', 'Ton score du mois, le 1er à 08:00']
+  ];
   const sousApercu = $derived(titres ? '05:00 – 05:30 · Ma relation avec Dieu' : 'Ouvre l’app pour voir lequel');
 
   async function autoriser(): Promise<void> {
@@ -27,12 +34,14 @@
 </script>
 
 {#snippet pied()}
+  <div class="bas">
   {#if resultat === 'accorde'}
     <a class="cta inverse" href="/">Ouvrir mon Fil</a>
   {:else}
     <button type="button" class="cta" disabled={occupe} onclick={autoriser}>{occupe ? 'Un instant…' : resultat === 'refuse' ? 'Réessayer' : 'Autoriser les notifications'}</button>
   {/if}
   <a class="plus-tard" href="/">Plus tard dans les Réglages</a>
+  </div>
 {/snippet}
 
 <EcranPage onglets={false} gap={18} {pied}>
@@ -68,31 +77,36 @@
 
   <div class="exemples">
     <span class="etiquette">Ce que tu recevras</span>
-    {#each [['Ton rapport du soir est prêt', 'Toucher pour relire et envoyer'], ['Récap de la semaine', 'Ton score et ton point fort, le dimanche'], ['Récap du mois', 'Le 1er du mois, au réveil']] as [t, s] (t)}
-      <div class="exemple"><span class="logo titre">LL</span><span class="textes"><span class="fort">{t}</span><span class="muted petit">{s}</span></span></div>
+    {#each EXEMPLES as [t, s], i (t)}
+      <div class="exemple" style:--a="{0.62 - i * 0.06}"><span class="logo titre">LL</span><span class="textes"><span class="fort">{t}</span><span class="sous">{s}</span></span></div>
     {/each}
-    <p class="muted petit">Sur iPhone, une notification d’app web s’ouvre d’un appui : pas de boutons sur l’écran verrouillé.</p>
+    <p class="note">Sur iPhone, une notification d’app web s’ouvre d’un appui : pas de boutons sur l’écran verrouillé.</p>
   </div>
 </EcranPage>
 
 <style>
-  .tete { display: flex; flex-direction: column; gap: 8px; padding: 36px 4px 0; }
+  /* Marges de la maquette : 56 px en haut, 20 px sur les côtés (la coque en donne 20 et 16). */
+  .tete { display: flex; flex-direction: column; gap: 8px; padding-top: 36px; }
+  .tete, .notif, .reglage, .bandeau, .exemples { margin: 0 4px; }
+  .bas { display: flex; flex-direction: column; gap: 8px; margin: 0 4px 8px; }
   .etape { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-encre); }
   h1 { font-size: 32px; line-height: 1.08; }
-  .intro { font-size: 15px; line-height: 1.45; color: var(--muted); }
-  .notif { background: var(--surface-2); border: 1px solid var(--ligne); border-radius: 22px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+  .intro { font-size: 15px; line-height: 1.45; color: color-mix(in srgb, var(--texte) 50%, var(--muted)); }
+  /* Notification façon écran verrouillé : verre légèrement violet (rgba(40,40,58,.78) en nuit), liseré clair. */
+  .notif { background: color-mix(in srgb, var(--accent) 8%, var(--surface)); border: 1px solid color-mix(in srgb, var(--texte) 8%, transparent); border-radius: 22px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
   .app { display: flex; align-items: center; gap: 8px; }
   .logo { flex: none; width: 22px; height: 22px; border-radius: 6px; background: var(--accent); color: var(--accent-texte); font-size: 10px; display: flex; align-items: center; justify-content: center; }
-  .nom { flex: 1; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+  .logo { line-height: normal; }
+  .nom { flex: 1; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: color-mix(in srgb, var(--texte) 50%, var(--muted)); }
   .quand { font-size: 12px; }
   .corps { display: flex; flex-direction: column; gap: 2px; }
   .t { font-size: 15px; font-weight: 600; }
-  .s { font-size: 14px; color: var(--muted); }
+  .s { font-size: 14px; color: color-mix(in srgb, var(--texte) 50%, var(--muted)); }
   .astuce { font-size: 13px; font-weight: 600; color: var(--accent-encre); }
   .reglage { display: flex; flex-direction: column; gap: 8px; }
-  .reglage :global(.puces button) { padding: 0 4px; font-size: 12px; }
+  .reglage :global(.puces button) { padding: 0 4px; font-size: 12px; border-radius: 12px; }
   .libelle { font-size: 13px; font-weight: 600; }
-  .titres { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--champ); border: 1px solid var(--ligne); border-radius: 16px; padding: 10px 14px; min-height: 56px; }
+  .titres { box-sizing: content-box; display: flex; align-items: center; justify-content: space-between; gap: 10px; background: color-mix(in srgb, var(--surface) 60%, var(--fond)); border: 1px solid color-mix(in srgb, var(--ligne) 60%, var(--surface)); border-radius: 16px; padding: 10px 14px; min-height: 56px; }
   .textes { display: flex; flex-direction: column; min-width: 0; }
   .fort { font-size: 14px; font-weight: 600; }
   .petit { font-size: 12px; }
@@ -100,7 +114,11 @@
   .bandeau.bon { background: var(--bon-fond); color: var(--bon); }
   .bandeau.alerte { background: var(--alerte-fond); color: var(--alerte); }
   .exemples { display: flex; flex-direction: column; gap: 8px; }
-  .exemple { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--ligne); border-radius: 18px; padding: 10px 12px; }
+  .exemple { display: flex; align-items: center; gap: 10px; border-radius: 22px; padding: 12px 14px;
+    background: color-mix(in srgb, color-mix(in srgb, var(--accent) 8%, var(--surface)) calc(var(--a) * 100%), var(--fond)); border: 1px solid color-mix(in srgb, var(--texte) 6%, transparent); }
+  .exemple .textes { gap: 1px; }
+  .sous { font-size: 13px; color: color-mix(in srgb, var(--texte) 50%, var(--muted)); }
+  .note { font-size: 12px; color: var(--faint); text-align: center; margin-top: 4px; }
   .cta { height: 56px; border-radius: 18px; border: 0; background: var(--accent); color: var(--accent-texte); font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
   .cta.inverse { background: var(--inverse); color: var(--inverse-texte); }
   .cta:disabled { opacity: 0.5; }

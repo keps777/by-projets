@@ -135,7 +135,7 @@
   .jours { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
   .jours .puce { padding: 0; border-radius: 12px; font-size: 14px; }
   .raccourcis { display: flex; gap: 6px; flex-wrap: wrap; }
-  .raccourcis button { min-height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--ligne); background: transparent; font-size: 12px; font-weight: 600; }
+  .raccourcis button { position: relative; height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--ligne); background: transparent; font-size: 12px; font-weight: 600; }
   .rang-fin { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; color: var(--muted); }
   .rang-fin input { height: 44px; border-radius: 12px; border: 1px solid var(--ligne); background: var(--surface); padding: 0 10px; }
   .pas { display: flex; align-items: center; gap: 8px; color: var(--texte); }
@@ -147,4 +147,6 @@
   .durees { display: flex; gap: 6px; }
   .durees .puce { flex: 1; padding: 0; }
   .chargee { font-size: 12px; color: var(--alerte); background: var(--alerte-fond); border-radius: 12px; padding: 10px 12px; }
+  /* Dessin de la maquette (40 px ou 36 px), zone d'appui portée à 44 px (spec §14). */
+  .raccourcis button::after { content: ''; position: absolute; inset: -4px 0; }
 </style>

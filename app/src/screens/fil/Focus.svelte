@@ -8,7 +8,6 @@
   import { aujourdhui as jourCourant, horloge, maintenantLocal } from '../../data/temps.svelte.ts';
   import { attendusDe, corrigerValeur, ecouleOccurrence, minuteurDe, saisirBloc, terminerBloc, type ValeurEntree } from '../../data/actions/blocs.ts';
   import { routeur } from '../../routeur.svelte.ts';
-  import { couleurRubrique, styleCouleur } from '../../ui/couleurs.ts';
   import { theme } from '../../ui/theme.svelte.ts';
   import { dire } from '../../ui/toast.svelte.ts';
   import Anneau from '../../ui/Anneau.svelte';
@@ -16,6 +15,7 @@
   import Confirmer from './Confirmer.svelte';
   import { basculerMinuteur, codeDuProjet, mesuresDuBloc, occurrenceActive, type MesureBloc } from './vue-blocs.ts';
   import { chrono, dureeMin, formatValeur } from './format.ts';
+  import { styleTeinte } from './teintes.ts';
 
   /** Mode Focus (spec §8) : anneau de temps, Pause, Terminer, passages lus, « Ce que Dieu me dit ». */
   let { params: _ = {} }: { params?: Record<string, string> } = $props();
@@ -31,7 +31,7 @@
     return blocsDuJour(aujourdhui).find((x) => !x.fait && x.finMin > m) ?? null;
   });
 
-  const style = $derived(b ? styleCouleur(couleurRubrique(b.couleur, theme.mode)) : '');
+  const style = $derived(b ? styleTeinte(b.couleur, theme.mode) : '');
   const totalS = $derived(b ? (b.finMin - b.debutMin) * 60 : 0);
   const ecoule = $derived(b ? ecouleOccurrence(b.occ, horloge.maintenant) : 0);
   const code = $derived(b ? codeDuProjet(b.projet?.id) : null);
@@ -122,9 +122,11 @@
       </div>
 
       <div class="anneau">
-        <Anneau pct={totalS ? (ecoule / totalS) * 100 : 0} taille={230} epaisseur={12} couleur="var(--c)">
-          <span class="mono temps">{chrono(ecoule)}</span>
-          <span class="muted sur">sur {chrono(totalS)}</span>
+        <Anneau pct={totalS ? (ecoule / totalS) * 100 : 0} taille={216} epaisseur={12} couleur="var(--c)">
+          <span class="centre-focus">
+            <span class="mono temps">{chrono(ecoule)}</span>
+            <span class="muted sur">sur {chrono(totalS)}</span>
+          </span>
         </Anneau>
       </div>
 
@@ -199,11 +201,16 @@
   .haut .rond { border: 0; background: var(--carte-fond); color: var(--carte-texte); }
   .mode { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
   .code { font-size: 11px; padding: 5px 8px; border-radius: 8px; background: var(--c-fond); color: var(--c-encre); }
+  .kicker, .temps { transition: color 0.2s ease; }
   .vide { width: 44px; }
   .tete { display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center; }
   .kicker { font-size: 12px; font-weight: 600; color: var(--c); }
-  h1 { font-size: 34px; }
-  .anneau { align-self: center; }
+  h1 { font-size: 34px; line-height: normal; }
+  /* Comme le rendu de la maquette : anneau de rayon 102 (12 px) dans un cadre de 230 px que la colonne tasse à 211 px ;
+     l'anneau déborde donc vers le bas et le chrono se place un peu au-dessus du centre. */
+  .anneau { position: relative; align-self: center; width: 230px; height: 211px; flex: none; }
+  .anneau > :global(.anneau) { position: absolute; left: 7px; top: 7px; }
+  .centre-focus { display: flex; flex-direction: column; align-items: center; gap: 2px; margin-top: -19px; }
   .temps { font-size: 46px; letter-spacing: -0.03em; }
   .sur { font-size: 13px; }
   .duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
@@ -220,6 +227,8 @@
   .piste span { display: block; height: 8px; border-radius: 4px; background: var(--c); transition: width 0.3s ease; }
   .piste span.bon { background: var(--bon); }
   .puces { display: flex; flex-wrap: wrap; gap: 6px; }
+  .puce { animation: puce-entre 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
+  @keyframes puce-entre { from { opacity: 0; transform: scale(0.85); } }
   .puce { display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 0 4px 0 12px; border-radius: 18px; background: var(--c-fond); color: var(--c-encre); font-size: 13px; font-weight: 600; }
   .puce .leger { font-weight: 400; opacity: 0.8; }
   .puce button { position: relative; width: 28px; height: 28px; border-radius: 14px; border: 0; background: transparent; color: inherit; display: flex; align-items: center; justify-content: center; }
@@ -227,13 +236,13 @@
   .puce button::after { content: ''; position: absolute; inset: -8px; }
   .formulaire { display: grid; grid-template-columns: minmax(0, 1fr) 56px 56px 50px; gap: 6px; align-items: end; }
   .formulaire label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: var(--muted); }
-  .formulaire input { height: 44px; min-width: 0; border-radius: 12px; border: 1px solid var(--ligne); background: var(--champ); font-size: 15px; padding: 0 10px; }
+  .formulaire input { height: 44px; min-width: 0; border-radius: 12px; border: 1px solid var(--ligne); background: var(--champ); font-size: 16px; padding: 0 10px; }
   .formulaire input.ch { width: 56px; padding: 0 8px; text-align: center; }
   .ajouter { height: 44px; border-radius: 12px; border: 0; background: var(--inverse); color: var(--inverse-texte); display: flex; align-items: center; justify-content: center; }
   .pas { display: flex; gap: 6px; }
   .pas button { width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--surface-2); font-size: 20px; }
   .note { display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-weight: 600; }
-  .note textarea { font: 15px/1.4 var(--police); background: var(--surface); border: 1px solid var(--ligne); border-radius: 16px; padding: 12px 14px; resize: none; }
+  .note textarea { font: 16px/1.4 var(--police); background: var(--surface); border: 1px solid var(--ligne); border-radius: 16px; padding: 12px 14px; resize: none; }
   .verset { font-size: 19px; line-height: 1.3; color: var(--muted); text-align: center; }
   .resume { font-size: 13px; }
 </style>

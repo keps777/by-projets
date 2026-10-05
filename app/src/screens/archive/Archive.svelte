@@ -7,8 +7,8 @@
   import { theme } from '../../ui/theme.svelte.ts';
   import { routeur } from '../../routeur.svelte.ts';
   import { magasin } from '../../data/magasin.svelte.ts';
-  import { aujourdhui } from '../../data/temps.svelte.ts';
-  import { COULEUR_SANS_PROJET } from '../../data/requetes.ts';
+  import { aujourdhui, maintenantLocal } from '../../data/temps.svelte.ts';
+  import { COULEUR_SANS_PROJET, profil } from '../../data/requetes.ts';
   import { ajouterJours, dernierDuMois, lundiDe, moisDe, premierDuMois } from '@core/dates.ts';
   import { preparer } from '../rapports/calcul.ts';
   import { donneesRapport, premierJour } from '../rapports/donnees.ts';
@@ -29,17 +29,21 @@
 
   // ------------------------------------------------------------------ rapports
   const auj = $derived(aujourdhui());
+  // Le rapport du jour n'existe qu'à partir de l'heure du rapport : avant, la journée en cours n'est pas comptée.
+  const minutesRapport = $derived.by(() => { const [h, m] = (profil()?.heure_rapport ?? '21:15').split(':').map(Number); return (h || 0) * 60 + (m || 0); });
+  const dernierJour = $derived(maintenantLocal().minutes < minutesRapport ? ajouterJours(auj, -1) : auj);
   const d = $derived(onglet === 'rapports' ? donneesRapport() : null);
   const prep = $derived(d ? preparer(d) : []);
   const debut = $derived(premierJour(auj));
   const envoyes = $derived(new Set(magasin.lignes.rapports.filter((r) => r.envoye_a).map((r) => r.jour)));
   const moisVedette = $derived(moisDe(debut) < moisDe(auj) ? moisDe(ajouterJours(premierDuMois(moisDe(auj)), -1)) : moisDe(auj));
-  const joursMois = $derived(d ? calculerJours(prep, d, premierDuMois(moisVedette), dernierDuMois(moisVedette), auj).filter((j) => !j.futur && j.jour >= debut) : []);
+  const joursMois = $derived(d ? calculerJours(prep, d, premierDuMois(moisVedette), dernierDuMois(moisVedette), auj).filter((j) => !j.futur && j.jour >= debut && j.jour <= dernierJour) : []);
   const semaines = $derived.by(() => {
     if (!d) return [];
     const res = [];
-    for (let l = lundiDe(auj), i = 0; l >= lundiDe(debut) && i < 4; l = ajouterJours(l, -7), i++) {
-      const jours = calculerJours(prep, d, l, ajouterJours(l, 6), auj).filter((j) => !j.futur && j.jour >= debut);
+    for (let l = lundiDe(dernierJour); l >= lundiDe(debut) && res.length < 4; l = ajouterJours(l, -7)) {
+      const jours = calculerJours(prep, d, l, ajouterJours(l, 6), auj).filter((j) => !j.futur && j.jour >= debut && j.jour <= dernierJour);
+      if (!jours.length) continue;
       res.push({ lundi: l, jours, envoyes: jours.filter((j) => envoyes.has(j.jour)).length, pct: pctJours(jours) });
     }
     return res;
@@ -54,9 +58,10 @@
   </div>
 
   <Segment options={[{ valeur: 'accomplis', label: 'Accomplis' }, { valeur: 'rapports', label: 'Rapports' }]} valeur={onglet}
-    onchoisir={(v) => routeur.definir('onglet', v === 'accomplis' ? null : v)} />
+    onchoisir={(v) => routeur.definir('onglet', v === 'accomplis' ? null : v)} hauteur={40} ample />
 
   {#if onglet === 'accomplis'}
+    <div class="accomplis">
     <div class="stats">
       <div class="carte stat"><span class="titre">{liste.length}</span><span class="muted">accompli{liste.length > 1 ? 's' : ''}</span></div>
       <div class="carte stat"><span class="titre">{nbRubriques}</span><span class="muted">rubrique{nbRubriques > 1 ? 's' : ''}</span></div>
@@ -64,9 +69,15 @@
     </div>
 
     {#if !liste.length}
-      <div class="carte vide">
-        <span class="serif">Ta première pierre viendra.</span>
-        <span class="muted">Chaque sous-projet validé s’ajoute ici, avec son document signé.</span>
+      <!-- État vide : la frise est déjà là, avec une pierre en attente, pour donner envie de poser la première. -->
+      <div class="pierre attente">
+        <div class="rail"><span class="caillou"></span><span class="trait"></span></div>
+        <div class="corps">
+          <span class="textes">
+            <span class="serif premiere">Ta première pierre viendra.</span>
+            <span class="muted meta">Chaque sous-projet validé s’ajoute ici, avec son document signé. Une pierre à la fois.</span>
+          </span>
+        </div>
       </div>
     {/if}
 
@@ -87,6 +98,7 @@
         {/each}
       {/each}
     </div>
+    </div>
   {:else}
     <div class="rapports">
       <a class="vedette" href="/rapports?onglet=mois&jour={premierDuMois(moisVedette)}">
@@ -94,6 +106,12 @@
         <span class="grand">{libelleMois(moisVedette)}</span>
         <span class="muted petit">{pluriel(joursMois.length, 'rapport')} · {formatPct(pctJours(joursMois))} des points atteints</span>
       </a>
+      {#if !semaines.length}
+        <div class="carte attente-rapport">
+          <span class="serif premiere">Ton premier rapport arrive ce soir.</span>
+          <span class="muted meta">Il se prépare tout seul à {profil()?.heure_rapport ?? '21:15'}, à partir de tes saisies du jour.</span>
+        </div>
+      {:else}
       <div class="carte liste">
         {#each semaines as s (s.lundi)}
           <a class="semaine" href="/rapports?onglet=semaine&jour={s.lundi}">
@@ -102,6 +120,7 @@
           </a>
         {/each}
       </div>
+      {/if}
       <a class="tous" href="/rapports/archives">Voir tous les rapports quotidiens</a>
     </div>
   {/if}
@@ -109,15 +128,17 @@
 
 <style>
   .tete { display: flex; flex-direction: column; gap: 6px; padding-top: 4px; }
-  h1 { font-size: 34px; }
-  .verset { font-size: 19px; color: var(--muted); line-height: 1.3; }
+  h1 { font-size: 34px; line-height: normal; }
+  .verset { font-size: 19px; color: var(--muted); }
+  .accomplis { display: flex; flex-direction: column; gap: 14px; }
   .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
   .stat { border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; }
-  .stat .titre { font-size: 24px; }
+  .stat .titre { font-size: 24px; line-height: normal; }
   .stat .muted { font-size: 11px; }
-  .vide { padding: 16px; display: flex; flex-direction: column; gap: 4px; }
-  .vide .serif { font-size: 19px; }
-  .vide .muted { font-size: 13px; }
+  .attente .caillou { background: transparent; border: 2px dashed var(--faint); }
+  .attente .trait { background: linear-gradient(var(--ligne), transparent); min-height: 24px; }
+  .premiere { font-size: 19px; }
+  .attente-rapport { padding: 16px; display: flex; flex-direction: column; gap: 4px; }
   .frise { display: flex; flex-direction: column; }
   .mois { padding: 10px 0 6px; letter-spacing: 0.08em; }
   .pierre { display: flex; gap: 12px; align-items: stretch; }
@@ -136,8 +157,9 @@
   .petit { font-size: 12px; }
   .fort { font-size: 14px; font-weight: 600; }
   .liste { overflow: hidden; }
-  .semaine { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; min-height: 52px; }
-  .semaine + .semaine { border-top: 1px solid var(--ligne); }
+  /* Comme la maquette : 52 px de contenu minimum plus les marges (ligne de 77 px). */
+  .semaine { box-sizing: content-box; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; min-height: 52px; }
+  .semaine:not(:last-child) { border-bottom: 1px solid var(--ligne); }
   .semaine .mono { font-size: 13px; }
   .tous { color: var(--accent-encre); font-size: 14px; font-weight: 600; min-height: 48px; display: flex; align-items: center; justify-content: center; }
 </style>

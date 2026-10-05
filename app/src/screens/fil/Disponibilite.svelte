@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { Disponibilite } from '@core/disponibilite.ts';
   import { COULEUR_SANS_PROJET, type BlocVue } from '../../data/requetes.ts';
-  import { couleurRubrique, styleCouleur } from '../../ui/couleurs.ts';
   import { theme } from '../../ui/theme.svelte.ts';
   import Icone from '../../ui/Icone.svelte';
   import { dureeMin, hm } from './format.ts';
+  import { styleTeinte } from './teintes.ts';
 
   /** Résultat de la vérification de disponibilité : « Créneau libre », ou la tâche en conflit et les créneaux libres juste après et juste avant. */
   let { dispo, duree, occupant, detaille = false, onchoisir }: {
@@ -19,15 +19,15 @@
 </script>
 
 {#if dispo.libre}
-  <div class="libre">
+  <div class="libre apparait">
     <Icone nom="coche" taille={18} trait={2.6} />
     {detaille ? (dispo.libreJusqua != null ? `Libre jusqu’à ${hm(dispo.libreJusqua)}` : 'Libre pour le reste de la journée') : 'Créneau libre'}
   </div>
 {:else}
-  <div class="occupe">
+  <div class="occupe apparait">
     {#if detaille}
       <span class="alerte-texte fort">Ce créneau est déjà occupé par :</span>
-      <div class="occupant" style={styleCouleur(couleurRubrique(occupant?.couleur ?? COULEUR_SANS_PROJET, theme.mode))}>
+      <div class="occupant" style={styleTeinte(occupant?.couleur ?? COULEUR_SANS_PROJET, theme.mode)}>
         <span class="barre"></span>
         <span class="col"><span class="nom">{titre}</span>
           {#if dispo.occupePar}<span class="mono heures">{hm(dispo.occupePar.debut)} – {hm(dispo.occupePar.fin)}{occupant ? ` · ${occupant.projet?.nom ?? 'Sans projet'}` : ''}</span>{/if}
@@ -64,4 +64,6 @@
   .sugg button { min-height: 52px; border-radius: 12px; border: 0; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
   .sugg .type { font-size: 11px; }
   .sugg .mono { font-size: 14px; }
+  .apparait { animation: apparait 0.22s ease both; }
+  @keyframes apparait { from { opacity: 0; transform: translateY(4px); } }
 </style>

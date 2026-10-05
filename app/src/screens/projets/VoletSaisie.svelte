@@ -104,12 +104,12 @@
 <style>
   .tete { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
   h2 { font-size: 22px; }
-  .date { height: 44px; border-radius: 12px; border: 1px solid var(--ligne); background: var(--champ); padding: 0 10px; font-size: 15px; }
+  .date { height: 44px; border-radius: 12px; border: 1px solid var(--ligne); background: var(--champ); padding: 0 10px; font-size: 16px; }
   .petit { font-size: 12px; }
   .champ { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; }
   .libelle { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
   .ligne { display: flex; justify-content: space-between; align-items: center; min-height: 44px; }
-  .texte, textarea { min-height: 46px; border-radius: 12px; border: 1px solid var(--ligne); background: var(--champ); padding: 0 12px; font-size: 15px; font-weight: 500; }
+  .texte, textarea { min-height: 46px; border-radius: 12px; border: 1px solid var(--ligne); background: var(--champ); padding: 0 12px; font-size: 16px; font-weight: 500; }
   textarea { padding: 10px 12px; resize: none; }
   .pas { display: flex; align-items: center; height: 48px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--champ); }
   .pas button { flex: none; width: 48px; height: 48px; border: 0; background: transparent; font-size: 22px; }

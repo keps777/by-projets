@@ -97,8 +97,8 @@
   .nom { font-size: 14px; font-weight: 600; }
   .petit { font-size: 12px; }
   .info { border-radius: 18px; padding: 12px 14px; font-size: 13px; line-height: 1.45; color: var(--muted); }
-  .rubriques { display: flex; gap: 6px; overflow-x: auto; margin: 0 -16px; padding: 0 16px; }
-  .rubriques button { flex: none; height: 44px; padding: 0 14px; border-radius: 20px; border: 1px solid var(--ligne); background: transparent; font-size: 13px; font-weight: 600; }
+  .rubriques { display: flex; gap: 6px; overflow-x: auto; margin: -2px -16px; padding: 2px 16px; }
+  .rubriques button { position: relative; flex: none; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid var(--ligne); background: transparent; font-size: 13px; font-weight: 600; }
   .rubriques button.actif { background: var(--c); border-color: var(--c); color: var(--c-sur); }
   .liste { border-radius: 20px; overflow: hidden; }
   .projet { width: 100%; border: 0; background: transparent; text-align: left; display: flex; align-items: center; gap: 10px; padding: 10px 14px; min-height: 48px; }
@@ -106,14 +106,18 @@
   .projet.actif { background: var(--surface-2); }
   .rond-choix { flex: none; width: 22px; height: 22px; border-radius: 11px; border: 2px solid var(--c); display: flex; align-items: center; justify-content: center; color: var(--c-sur); }
   .projet.actif .rond-choix { background: var(--c); }
-  .sp { display: flex; align-items: center; gap: 10px; padding: 10px 14px; min-height: 56px; }
+  .rond-choix { transition: background-color 0.18s ease; }
+  /* Hauteurs de la maquette, dont les lignes comptent la marge intérieure en plus (boîte de contenu). */
+  .sp { display: flex; align-items: center; gap: 10px; padding: 10px 14px; min-height: 56px; box-sizing: content-box; }
   .vide { padding: 12px 14px; font-size: 13px; line-height: 1.45; }
   .vide a { color: var(--accent-encre); font-weight: 600; }
   .mesures { border-radius: 20px; padding: 4px 14px; }
-  .mesure { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--ligne); min-height: 56px; }
+  .mesure { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--ligne); min-height: 56px; box-sizing: content-box; }
   .pas { display: flex; align-items: center; gap: 6px; }
   .pas button { width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--surface-2); font-size: 20px; }
   .pas button:disabled { opacity: 0.35; cursor: default; }
   .valeur { min-width: 62px; text-align: center; font-size: 15px; }
   .note { display: block; padding: 10px 0 8px; }
+  /* Dessin de la maquette (40 px ou 36 px), zone d'appui portée à 44 px (spec §14). */
+  .rubriques button::after { content: ''; position: absolute; inset: -2px 0; }
 </style>

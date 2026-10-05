@@ -3,10 +3,10 @@
   import type { BlocVue } from '../../data/requetes.ts';
   import { horloge } from '../../data/temps.svelte.ts';
   import { minuteurDe } from '../../data/actions/blocs.ts';
-  import { couleurRubrique, styleCouleur } from '../../ui/couleurs.ts';
   import { theme } from '../../ui/theme.svelte.ts';
   import Icone from '../../ui/Icone.svelte';
   import { PX, etiquetteRealise } from './vue-blocs.ts';
+  import { styleTeinte } from './teintes.ts';
   import { hm } from './format.ts';
 
   /** Un bloc de la journée : couleur de la rubrique, cercle ou coche, ▶ pour lancer, remplissage du minuteur. */
@@ -19,7 +19,7 @@
   const haut = $derived(hauteur >= 48);
   const tourne = $derived(b.enCours || b.enPause);
   const rempli = $derived(b.fait ? 100 : tourne ? remplissage(minuteurDe(b.occ), horloge.maintenant, (b.finMin - b.debutMin) * 60) * 100 : 0);
-  const style = $derived(styleCouleur(couleurRubrique(b.couleur, theme.mode)));
+  const style = $derived(styleTeinte(b.couleur, theme.mode));
   const sous = $derived(`${b.projet?.nom ?? 'Sans projet'} · ${hm(b.debutMin)}–${hm(b.finMin)}${b.projet && pct != null ? ` · mois ${pct} %` : ''}`);
   const montrerJouer = $derived(aujourdhui && !b.fait && hauteur >= 28);
 </script>
@@ -54,11 +54,15 @@
 <style>
   .bloc { position: absolute; border-radius: 10px; background: var(--c-fond); overflow: hidden; display: flex; align-items: stretch; color: var(--c-encre); }
   .bloc.estompe { opacity: 0.55; }
-  .bloc.tourne { box-shadow: 0 0 0 1.5px var(--c), 0 6px 18px color-mix(in srgb, var(--c) 30%, transparent); z-index: 2; }
-  .rempli { position: absolute; left: 0; top: 0; bottom: 0; background: color-mix(in srgb, var(--c) 34%, transparent); transition: width 0.9s linear; }
-  .bord { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -2px; background: var(--c); }
+  .bloc { transition: transform 0.14s ease, opacity 0.3s ease, box-shadow 0.3s ease; }
+  .bloc:has(> .ouvrir:active) { transform: scale(0.985); }
+  .bloc.tourne { box-shadow: 0 0 0 1.5px var(--c), 0 6px 18px var(--c-rempli); z-index: 2; }
+  .rempli { position: absolute; left: 0; top: 0; bottom: 0; background: var(--c-rempli); transition: width 0.9s linear; }
+  .bord { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -2px; background: var(--c); transition: left 0.9s linear; }
   .mois { position: absolute; left: 0; bottom: 0; height: 2px; background: var(--c); opacity: 0.85; }
   .ouvrir { position: relative; flex: 1; min-width: 0; border: 0; background: transparent; color: inherit; text-align: left; padding: 0 4px 0 10px; display: flex; gap: 8px; align-items: center; }
+  .ouvrir:active, .jouer:active { transform: none; }
+  .jouer:active .pastille { transform: scale(0.9); }
   .haut .ouvrir { padding: 9px 4px 9px 10px; align-items: flex-start; }
   .cercle { flex: none; width: 18px; height: 18px; border-radius: 9px; border: 2px solid var(--c); display: flex; align-items: center; justify-content: center; color: var(--c-sur); }
   .haut .cercle { margin-top: 1px; }
@@ -69,7 +73,7 @@
   .bloc:has(.cercle.fait) .titre-bloc { opacity: 0.78; }
   .sous { font-size: 12px; line-height: 1.25; opacity: 0.8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .jouer { position: relative; flex: none; width: 44px; border: 0; background: transparent; display: flex; align-items: center; justify-content: center; color: var(--c-sur); }
-  .pastille { width: 28px; height: 28px; border-radius: 14px; background: var(--c); display: flex; align-items: center; justify-content: center; }
+  .pastille { width: 28px; height: 28px; border-radius: 14px; background: var(--c); display: flex; align-items: center; justify-content: center; transition: transform 0.12s ease; }
   .reel { position: relative; flex: none; align-self: center; padding: 0 10px 0 4px; font-size: 11px; opacity: 0.85; }
   .haut .reel { align-self: flex-start; padding: 11px 10px 0 4px; }
 </style>

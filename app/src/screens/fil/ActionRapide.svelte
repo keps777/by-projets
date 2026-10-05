@@ -4,11 +4,11 @@
   import { aujourdhui as jourCourant, horloge, maintenantLocal } from '../../data/temps.svelte.ts';
   import { ecouleOccurrence } from '../../data/actions/blocs.ts';
   import { routeur } from '../../routeur.svelte.ts';
-  import { couleurRubrique, styleCouleur } from '../../ui/couleurs.ts';
   import { theme } from '../../ui/theme.svelte.ts';
   import Anneau from '../../ui/Anneau.svelte';
   import { basculerMinuteur } from './vue-blocs.ts';
   import { chrono, dureeMin, hm } from './format.ts';
+  import { styleTeinte } from './teintes.ts';
 
   /** Écran ouvert par une notification de rappel : compte à rebours, Lancer maintenant, Reporter, Voir le Fil (spec §10). */
   let { params: _ = {} }: { params?: Record<string, string> } = $props();
@@ -26,7 +26,10 @@
     return blocsDuJour(aujourdhui).find((x) => !x.fait && x.finMin > m) ?? null;
   });
 
-  const style = $derived(b ? styleCouleur(couleurRubrique(b.couleur, theme.mode)) : '');
+  // Halo et étiquette : la nuit, la couleur assombrie (#1C1840) et éclaircie (#BDB3FF) comme la maquette ; le jour, teinte douce et encre.
+  const style = $derived(b ? styleTeinte(b.couleur, theme.mode) + (theme.mode === 'nuit'
+    ? ';--ar-halo:color-mix(in srgb, var(--c) 20%, #000);--ar-kicker:color-mix(in srgb, var(--c) 70%, #fff)'
+    : ';--ar-halo:var(--c-fond);--ar-kicker:var(--c-encre)') : '');
   const tourne = $derived(!!b && (b.enCours || b.enPause));
   const reste = $derived(b ? Math.round((Date.parse(b.occ.debut) - horloge.maintenant) / 1000) : 0);
   const delai = $derived(Math.max(60, (b?.tache.rappel_min || 10) * 60));
@@ -53,7 +56,7 @@
     </div>
 
     <div class="anneau">
-      <Anneau {pct} taille={210} epaisseur={10} couleur="var(--c)">
+      <Anneau {pct} taille={198} epaisseur={10} couleur="var(--c)">
         <span class="muted petit">{libelle}</span>
         <span class="mono compteur">{compteur}</span>
       </Anneau>
@@ -82,12 +85,14 @@
 
 <style>
   .ecran-ar { --c: var(--accent); position: relative; overflow: hidden; height: 100dvh; max-width: 480px; margin: 0 auto; background: var(--fond); padding: calc(64px + var(--haut-sûr)) 20px calc(28px + var(--bas-sûr)); display: flex; flex-direction: column; gap: 22px; }
-  .halo { position: absolute; left: -90px; top: -120px; width: 420px; height: 420px; border-radius: 210px; background: color-mix(in srgb, var(--c) 16%, var(--fond)); opacity: 0.8; pointer-events: none; }
+  .halo { position: absolute; left: -90px; top: -120px; width: 420px; height: 420px; border-radius: 210px; background: var(--ar-halo, color-mix(in srgb, var(--c) 16%, var(--fond))); opacity: 0.8; pointer-events: none; animation: halo-entre 0.6s ease-out both; }
+  @keyframes halo-entre { from { transform: scale(0.85); opacity: 0; } }
   .tete { position: relative; display: flex; flex-direction: column; gap: 6px; }
-  .kicker { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-encre, var(--accent-encre)); }
+  .kicker { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ar-kicker, var(--accent-encre)); }
   h1 { font-size: 40px; letter-spacing: -0.03em; line-height: 1.05; }
   .heures { font-size: 14px; }
-  .anneau { position: relative; align-self: center; }
+  /* Cadre de 210 px, anneau de rayon 94 et 10 px d'épaisseur, comme la maquette. */
+  .anneau { position: relative; align-self: center; width: 210px; height: 210px; display: flex; align-items: center; justify-content: center; flex: none; }
   .petit { font-size: 12px; }
   .compteur { font-size: 44px; letter-spacing: -0.03em; }
   .actions { position: relative; display: flex; flex-direction: column; gap: 10px; margin-top: auto; }

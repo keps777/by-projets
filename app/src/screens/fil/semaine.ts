@@ -12,8 +12,8 @@ export function numeroSemaine(j: Jour): number {
   return Math.floor(ecartJours(`${jeudi.slice(0, 4)}-01-01`, jeudi) / 7) + 1;
 }
 
-/** « 5 oct. – 11 oct. » */
-export const plageSemaine = (lundi: Jour) => `${dateCourte(lundi)} – ${dateCourte(ajouterJours(lundi, 6))}`;
+/** « 5 oct – 11 oct » (sans le point d'abréviation, comme la maquette). */
+export const plageSemaine = (lundi: Jour) => `${dateCourte(lundi)} – ${dateCourte(ajouterJours(lundi, 6))}`.replace(/\./g, '');
 
 /** Heures affichées par la grille : 05:00 – 23:00 au moins, élargies à l'heure ronde si un bloc déborde. */
 export function bornesGrille(blocs: { debutMin: number; finMin: number }[]): { debut: number; fin: number } {

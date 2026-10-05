@@ -4,7 +4,9 @@
   import { moisDe } from '@core/dates.ts';
   import { metriquePilote, progressionDuMois } from '@core/progression.ts';
   import EcranPage from '../../ui/EcranPage.svelte';
+  import { fly } from 'svelte/transition';
   import Icone from '../../ui/Icone.svelte';
+  import Segment from '../../ui/Segment.svelte';
   import { couleurRubrique, styleCouleur } from '../../ui/couleurs.ts';
   import { theme } from '../../ui/theme.svelte.ts';
   import { magasin } from '../../data/magasin.svelte.ts';
@@ -46,6 +48,19 @@
     return { s, pct, court: s.nom.split(/\s+·\s+/)[0] };
   }));
 
+  /** La puce du sous-projet affiché reste visible dans la rangée qui défile. */
+  function suivrePuce(el: HTMLElement, _id: string) {
+    const caler = () => {
+      const on = el.querySelector<HTMLElement>('.puce.on');
+      if (!on) return;
+      const g = on.offsetLeft - 16, d = on.offsetLeft + on.offsetWidth + 16 - el.clientWidth;
+      if (el.scrollLeft > g) el.scrollTo({ left: g, behavior: 'smooth' });
+      else if (el.scrollLeft < d) el.scrollTo({ left: d, behavior: 'smooth' });
+    };
+    caler();
+    return { update: caler };
+  }
+
   const choisir = (o: Onglet) => routeur.definir('onglet', o === 'suivi' ? null : o);
   const allerA = (id: string) => routeur.aller(`/projets/sous-projet/${id}${onglet === 'suivi' ? '' : `?onglet=${onglet}`}`, true);
 </script>
@@ -68,7 +83,7 @@
       {#if onglet === 'suivi' && !finances}
         <div class="groupe">
           <span class="etiquette">Sous-projets de ce projet · {puces.length}</span>
-          <div class="defile-x">
+          <div class="defile-x" use:suivrePuce={sp.id}>
             {#each puces as p (p.s.id)}
               <button type="button" class="puce" class:on={p.s.id === sp.id} aria-pressed={p.s.id === sp.id} onclick={() => allerA(p.s.id)}>
                 {p.court} <span class="mono">{p.pct == null ? '—' : `${p.pct} %`}</span>
@@ -81,13 +96,10 @@
 
       {#if onglet !== 'document'}<h1 class="titre">{sp.nom}</h1>{/if}
 
-      <div class="onglets" role="tablist">
-        {#each ONGLETS as o (o.valeur)}
-          <button type="button" role="tab" aria-selected={o.valeur === onglet} class:actif={o.valeur === onglet} onclick={() => choisir(o.valeur)}>{o.label}</button>
-        {/each}
-      </div>
+      <Segment options={ONGLETS} valeur={onglet} onchoisir={choisir} hauteur={38} ample />
 
-      {#key sp.id}
+      {#key `${sp.id}:${onglet}`}
+        <div class="page-onglet" class:document={onglet === 'document'} in:fly={{ y: 10, duration: 220 }}>
         {#if onglet === 'suivi'}
           {#if finances}<SuiviFinances {sp} {metriques} {mois} {jour} />{:else}<OngletSuivi {sp} {metriques} {mois} {jour} {freres} />{/if}
         {:else if onglet === 'fiche'}
@@ -97,25 +109,29 @@
         {:else}
           <OngletTemps {sp} {metriques} {mois} {jour} {freres} />
         {/if}
+        </div>
       {/key}
     </div>
   {/if}
 </EcranPage>
 
 <style>
-  .contenu { display: flex; flex-direction: column; gap: 14px; }
+  .contenu { flex: 1 0 auto; display: flex; flex-direction: column; gap: 14px; }
+  /* Contenu de l'onglet : il glisse en place au changement d'onglet ; le Document remplit l'écran (papier jusqu'en bas). */
+  .page-onglet { display: flex; flex-direction: column; gap: 14px; }
+  .page-onglet.document { flex: 1 0 auto; }
   .tete { display: flex; align-items: center; gap: 10px; }
   .ariane { font-size: 12px; font-weight: 600; color: var(--c-encre); line-height: 1.35; min-width: 0; }
   .code { margin-left: auto; flex: none; font-size: 11px; padding: 5px 8px; border-radius: 8px; background: var(--c-fond); color: var(--c-encre); }
   .groupe { display: flex; flex-direction: column; gap: 6px; }
-  .defile-x { display: flex; gap: 6px; overflow-x: auto; margin: 0 -16px; padding: 0 16px; }
+  .defile-x { position: relative; display: flex; gap: 6px; overflow-x: auto; margin: 0 -16px; padding: 0 16px; }
   .puce { flex: none; height: 44px; padding: 0 14px; border-radius: 22px; border: 1px solid var(--ligne); background: transparent; color: var(--texte); font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
   .puce .mono { font-size: 12px; opacity: 0.85; }
   .puce.on { background: var(--c); border-color: var(--c); color: var(--c-sur); }
-  .puce.ajout { border: 1.5px dashed var(--ligne); color: var(--c-encre); gap: 6px; }
+  /* Lien, pas bouton : boîte de contenu comme la maquette (44 px + bordure). */
+  .puce.ajout { box-sizing: content-box; border: 1.5px dashed var(--ligne); color: var(--c-encre); gap: 6px; }
   h1 { font-size: 26px; line-height: 1.12; }
-  .onglets { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: var(--surface-2); border-radius: 14px; padding: 4px; gap: 2px; }
-  .onglets button { min-height: 44px; border: 0; border-radius: 10px; background: transparent; color: var(--muted); font-size: 13px; }
-  .onglets button.actif { background: var(--surface); color: var(--texte); font-weight: 600; }
+  /* Onglets de sous-projet : les inactifs restent en graisse normale dans la maquette (Segment « ample » les met à 600). */
+  .contenu :global(.segment [role='tab']:not(.actif)) { font-weight: 400; }
   .lien { color: var(--accent-encre); font-weight: 600; }
 </style>

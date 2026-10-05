@@ -3,7 +3,6 @@
   import type { BlocVue } from '../../data/requetes.ts';
   import { horloge } from '../../data/temps.svelte.ts';
   import { basculerFait, corrigerValeur, saisirBloc } from '../../data/actions/blocs.ts';
-  import { couleurRubrique, styleCouleur } from '../../ui/couleurs.ts';
   import { theme } from '../../ui/theme.svelte.ts';
   import Volet from '../../ui/Volet.svelte';
   import Icone from '../../ui/Icone.svelte';
@@ -11,13 +10,14 @@
   import { cap, chrono, dureeMin, formatValeur, hm, nomDuMois } from './format.ts';
   import { abreger, codeDuProjet, mesuresDuBloc, progressionsDe, tempsDuBloc, type MesureBloc } from './vue-blocs.ts';
   import { depuisAffichage, versAffichage } from './saisie.ts';
+  import { styleTeinte } from './teintes.ts';
 
   /** Volet d'un bloc : minuteur, valeurs réalisées corrigeables, Fait, Reporter, Focus, sous-projets alimentés (spec §8, §12). */
   let { b, aujourdhui, onfermer, onjouer, onterminer, onreporter }: {
     b: BlocVue | null; aujourdhui: string; onfermer: () => void; onjouer: (id: string) => void; onterminer: (id: string) => void; onreporter: (id: string) => void;
   } = $props();
 
-  const style = $derived(b ? styleCouleur(couleurRubrique(b.couleur, theme.mode)) : '');
+  const style = $derived(b ? styleTeinte(b.couleur, theme.mode) : '');
   const code = $derived(b ? codeDuProjet(b.projet?.id) : null);
   const totalS = $derived(b ? (b.finMin - b.debutMin) * 60 : 0);
   const tourne = $derived(!!b && (b.enCours || b.enPause));
@@ -44,7 +44,9 @@
     if (v != null) corrigerValeur(b.occ.id, m.cle, v);
     edition = null;
   }
-  const largeur = (m: MesureBloc) => (m.prevu ? Math.min(100, (m.realise / (m.prevu * 1.25)) * 100) : m.realise > 0 ? 100 : 0);
+  // Comme la maquette : un compte (« fois ») se remplit jusqu'au prévu (trait au bout), les autres jusqu'à 125 % (trait à 80 %).
+  const echelle = (m: MesureBloc) => (m.type === 'fois' ? 1 : 1.25);
+  const largeur = (m: MesureBloc) => (m.prevu ? Math.min(100, (m.realise / (m.prevu * echelle(m))) * 100) : m.realise > 0 ? 100 : 0);
   const atteint = (m: MesureBloc) => m.type !== 'temps' && m.prevu != null && m.realise >= m.prevu;
   const valeur = (m: MesureBloc) => (m.type === 'fois' || m.type === 'nombre' ? nombre(m.realise) : formatValeur(m.type, m.realise, '', m.options));
   const prevu = (m: MesureBloc) => {
@@ -113,7 +115,7 @@
               </div>
             {:else}
               <div class="rang">
-                <div class="col">
+                <div class="col serre">
                   <span class="muted petit">{m.label}</span>
                   {#if edition === m.cle}
                     <input class="direct" inputmode="decimal" bind:value={brouillon} aria-label="{m.label} ({m.type === 'temps' ? 'minutes' : m.unite})"
@@ -127,7 +129,7 @@
                   <button type="button" aria-label="Augmenter {m.label}" disabled={m.cle === 'temps' && tourne} onclick={() => ajuster(m, 1)}>+</button>
                 </div>
               </div>
-              <span class="piste large"><span class:bon={atteint(m)} style:width="{largeur(m)}%"></span>{#if m.prevu}<i style:left="80%"></i>{/if}</span>
+              <span class="piste large"><span class:bon={atteint(m)} style:width="{largeur(m)}%"></span>{#if m.prevu}<i style:left="{100 / echelle(m)}%"></i>{/if}</span>
             {/if}
           </div>
         {/each}
@@ -157,7 +159,7 @@
       {/if}
 
       <div class="liens">
-        {#if b.sousProjets[0]}<a href="/projets/sous-projet/{b.sousProjets[0].id}">Ouvrir le sous-projet <Icone nom="suivant" taille={16} trait={2.2} /></a>{/if}
+        {#if b.sousProjets[0]}<a class="souligne" href="/projets/sous-projet/{b.sousProjets[0].id}">Ouvrir le sous-projet <Icone nom="suivant" taille={16} trait={2.2} /></a>{/if}
         <a href="/tache/{b.tache.id}?occ={b.occ.id}" class="muted">Modifier la tâche <Icone nom="suivant" taille={16} trait={2.2} /></a>
       </div>
     </div>
@@ -168,17 +170,18 @@
   .volet { display: flex; flex-direction: column; gap: 14px; }
   .col { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
   .grandit { flex: 1; gap: 6px; }
+  .col.serre { gap: 0; }
   .rang { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .rang.base { align-items: baseline; }
   .petit { font-size: 13px; }
-  .ariane { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--c-encre); }
+  .ariane { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--c-titre); }
   .ariane .point { width: 8px; height: 8px; border-radius: 4px; background: var(--c); }
   .ariane .sep { color: var(--faint); }
   .tete { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
   h2 { font-size: 26px; }
   .heures { font-size: 12px; }
-  .code { flex: none; font-size: 11px; padding: 4px 8px; border-radius: 8px; background: var(--c-fond); color: var(--c-encre); }
-  .minuteur { display: flex; align-items: center; gap: 8px; background: var(--surface-2); border-radius: 18px; padding: 8px 8px 8px 14px; }
+  .code { flex: none; font-size: 11px; padding: 4px 8px; border-radius: 8px; background: var(--c-fond); color: var(--c-titre); }
+  .minuteur { display: flex; align-items: center; gap: 12px; background: var(--surface-2); border-radius: 18px; padding: 8px 8px 8px 14px; }
   .chrono { font-size: 20px; }
   .piste { position: relative; display: block; height: 4px; border-radius: 2px; background: var(--piste); }
   .piste > span { position: absolute; left: 0; top: 0; bottom: 0; border-radius: inherit; background: var(--c); transition: width 0.25s ease; }
@@ -189,7 +192,8 @@
   .stop { flex: none; width: 48px; height: 48px; border-radius: 16px; border: 1px solid var(--ligne); background: var(--surface); color: var(--texte); display: flex; align-items: center; justify-content: center; }
   .mesures { display: flex; flex-direction: column; gap: 4px; }
   .mesure { display: flex; flex-direction: column; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--ligne); }
-  .valeur { border: 0; background: none; padding: 0; text-align: left; font-size: 19px; font-weight: 600; min-height: 28px; }
+  .valeur { border: 0; background: none; padding: 0; text-align: left; font-size: 19px; font-weight: 600; }
+  .valeur:active { transform: none; opacity: 0.7; }
   .valeur:disabled { cursor: default; }
   .sur { font-size: 13px; font-weight: 500; color: var(--muted); }
   .direct { width: 110px; height: 36px; border-radius: 10px; border: 1px solid var(--c); background: var(--champ); font-size: 17px; padding: 0 10px; }
@@ -208,7 +212,10 @@
   .alimentes { background: var(--surface-2); border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 12px; }
   .sp { display: flex; flex-direction: column; gap: 6px; min-height: 44px; justify-content: center; }
   .sp .nom { font-size: 14px; font-weight: 600; min-width: 0; }
-  .sp .pct { flex: none; font-size: 20px; color: var(--c-encre); }
+  .sp .pct { flex: none; font-size: 20px; letter-spacing: 0; color: var(--c-titre); }
+  .sp .piste { overflow: hidden; }
+  .sp .piste i { top: 0; bottom: 0; opacity: 0.5; }
   .liens { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
   .liens a { font-size: 14px; font-weight: 600; min-height: 44px; display: flex; align-items: center; gap: 6px; }
+  .liens .souligne { text-decoration: underline; text-underline-offset: 2px; }
 </style>

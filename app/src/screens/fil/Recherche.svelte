@@ -85,20 +85,24 @@
   .champ input { flex: 1; min-width: 0; border: 0; background: transparent; font-size: 16px; outline: none; appearance: none; }
   .champ input::-webkit-search-cancel-button { display: none; }
   .effacer { width: 36px; height: 36px; border-radius: 18px; border: 0; background: transparent; color: var(--muted); display: flex; align-items: center; justify-content: center; }
-  .filtres { display: flex; gap: 6px; overflow-x: auto; margin: 0 -16px; padding: 0 16px; }
-  .filtres button { flex: none; height: 44px; padding: 0 14px; border-radius: 20px; border: 1px solid var(--ligne); background: transparent; font-size: 13px; font-weight: 600; }
+  .filtres { display: flex; gap: 6px; overflow-x: auto; margin: -2px -16px; padding: 2px 16px; }
+  .filtres button { position: relative; flex: none; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid var(--ligne); background: transparent; font-size: 13px; font-weight: 600; }
   .filtres button.actif { background: var(--inverse); border-color: var(--inverse); color: var(--inverse-texte); }
   .resultats { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 16px calc(24px + var(--bas-sûr)); display: flex; flex-direction: column; gap: 14px; }
   .bloc-recents, section { display: flex; flex-direction: column; gap: 10px; }
-  section { gap: 6px; }
+  section { gap: 6px; animation: groupe-entre 0.2s ease both; }
+  @keyframes groupe-entre { from { opacity: 0; transform: translateY(4px); } }
   .recents { display: flex; flex-wrap: wrap; gap: 6px; }
   .recents button { height: 44px; padding: 0 14px; border-radius: 22px; border: 1px solid var(--ligne); background: var(--surface); font-size: 14px; }
   .aide { font-size: 14px; line-height: 1.45; }
   .liste { background: var(--surface); border: 1px solid var(--ligne); border-radius: 20px; overflow: hidden; }
-  .liste a { display: flex; align-items: center; gap: 10px; padding: 10px 14px; min-height: 56px; color: var(--muted); }
-  .liste a + a { border-top: 1px solid var(--ligne); }
+  /* Comme la maquette : 56 px de contenu plus la marge intérieure (boîte de contenu). */
+  .liste a { display: flex; align-items: center; gap: 10px; padding: 10px 14px; min-height: 56px; box-sizing: content-box; color: var(--muted); }
+  .liste a { border-bottom: 1px solid var(--ligne); }
   .pastille { flex: none; width: 8px; height: 32px; border-radius: 4px; }
   .textes { flex: 1; min-width: 0; display: flex; flex-direction: column; }
   .t { font-size: 14px; font-weight: 600; color: var(--texte); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .s { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* Dessin de la maquette (40 px ou 36 px), zone d'appui portée à 44 px (spec §14). */
+  .filtres button::after { content: ''; position: absolute; inset: -2px 0; }
 </style>
