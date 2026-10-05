@@ -12,8 +12,13 @@ Une application web installable (PWA) pour **piloter toute sa vie par projets** 
 | [`docs/01-vision.md`](docs/01-vision.md) | La vision : le pourquoi, les concepts, les principes |
 | [`docs/02-specification.md`](docs/02-specification.md) | Le quoi : modèle de données, écrans, histoires utilisateur du MVP |
 | [`docs/03-feuille-de-route.md`](docs/03-feuille-de-route.md) | Où on en est, prochaines étapes, questions et décisions ouvertes |
+| [`docs/04-mes-projets.md`](docs/04-mes-projets.md) | Mes 4 thèmes et 25 projets, relevés du carnet « Luther Life » |
 
-## Maquette
+## Maquettes
+
+Maquettes haute fidélité (9 écrans, dont « Le Fil », l'écran principal façon calendrier avec la ligne de l'heure en direct) : https://claude.ai/artifact/5ZgqUjisYTEMRLL3w6d2F6
+
+Ancienne maquette :
 
 [`prototype/index.html`](prototype/index.html) : maquette cliquable autonome (un seul fichier, données fictives, rien n'est sauvegardé). Ouvre-la dans un navigateur, idéalement sur ton téléphone.
 
