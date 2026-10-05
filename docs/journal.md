@@ -31,6 +31,8 @@ Restent ouverts : lignes refusées sans écran de consultation ; signature seule
 **Passe de fidélité aux maquettes (même jour)** : les maquettes sont rendues avec le moteur de Claude Design (dc-runtime) et comparées à l'app écran par écran, en nuit et en jour. Causes de l'effet « zoomé » corrigées : zoom automatique d'iOS sur les champs < 16 px (viewport `maximum-scale=1` et champs à 16 px), interligne 1,45 global (désormais `normal`), Bricolage sans taille optique (désormais `opsz.css`). Teintes exactes des rubriques dans `ui/couleurs.ts`. État vide du Fil (bloc fantôme + invitation). Transitions et retour tactile.
 Outil de comparaison : voir la méthode dans ce journal ; relancer une passe à chaque nouvelle maquette.
 
+**Gestes et rappels multiples** : glisser la journée du Fil, toucher un espace libre pour ajouter à l'heure touchée, choisir l'heure d'un coup (roue + raccourcis), plusieurs rappels par tâche. **Migration 0900 `rappels_multiples` à appliquer sur Supabase AVANT de redéployer les fonctions** (la fonction materialiser-occurrences lit la nouvelle colonne).
+
 **Reste à faire (dans l'ordre)**
 1. Brancher le vrai Supabase (voir `supabase/README.md`) : appliquer les migrations, déployer les 3 fonctions, secrets VAPID, variables Vercel `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_VAPID_PUBLIC_KEY`, fermer les inscriptions après la création du compte.
    - Blocage : le jeton `SUPABACE_ACCES_TOKEN` (sic) ne voit que le projet `le-chemin` (autre application, ne pas y toucher). Il faut un jeton qui voit le projet `by-projets`.

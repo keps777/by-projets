@@ -39,8 +39,10 @@
   });
 
   const style = $derived(styleCouleur(couleurRubrique(f.couleur ?? COULEUR_SANS_PROJET, theme.mode)));
-  const texteResume = $derived(resume({ titre: f.titre, heure: f.heure, duree: f.duree, regle: f.regle, nbSousProjets: f.actifs.length, avecProjet: f.assoc, rappel: f.rappel }));
+  const texteResume = $derived(resume({ titre: f.titre, heure: f.heure, duree: f.duree, regle: f.regle, nbSousProjets: f.actifs.length, avecProjet: f.assoc, rappel: f.rappel, rappelsAvant: f.rappelsAvant }));
   const recurrente = $derived(!!tache && tache.regle.frequence !== 'une_fois');
+  const PLUS_TOT = [{ v: 60, l: '1 h' }, { v: 120, l: '2 h' }, { v: 1440, l: '1 jour' }, { v: 1560, l: '1 jour et 2 h' }, { v: 2880, l: '2 jours' }];
+  const basculerPlusTot = (v: number) => { f.rappelsAvant = f.rappelsAvant.includes(v) ? f.rappelsAvant.filter((x) => x !== v) : [...f.rappelsAvant, v]; };
   const RAPPELS = [{ v: 0, l: 'À l’heure' }, { v: 5, l: '5 min' }, { v: 10, l: '10 min' }, { v: 15, l: '15 min' }];
 
   let choixPortee = $state<'modifier' | 'supprimer' | null>(null);
@@ -116,7 +118,13 @@
               <button type="button" class:actif={f.rappel === r.v} aria-pressed={f.rappel === r.v} onclick={() => (f.rappel = f.rappel === r.v ? null : r.v)}>{r.l}</button>
             {/each}
           </div>
-          <span class="muted petit">{f.rappel == null ? 'Aucun rappel pour cette tâche. Touche un délai pour en ajouter un.' : 'Notification sur ton iPhone : la toucher ouvre l’écran Action rapide (Lancer, Reporter).'}</span>
+          <span class="etiquette plus-tot">Et aussi, plus tôt</span>
+          <div class="rappels plus" role="group" aria-label="Rappels plus tôt">
+            {#each PLUS_TOT as r (r.v)}
+              <button type="button" class:actif={f.rappelsAvant.includes(r.v)} aria-pressed={f.rappelsAvant.includes(r.v)} onclick={() => basculerPlusTot(r.v)}>{r.l} avant</button>
+            {/each}
+          </div>
+          <span class="muted petit">{f.rappel == null && !f.rappelsAvant.length ? 'Aucun rappel pour cette tâche. Touche un délai pour en ajouter un.' : 'Notification sur ton iPhone : la toucher ouvre l’écran Action rapide (Lancer, Reporter).'}</span>
         </div>
       </div>
     </EcranPage>
@@ -156,6 +164,9 @@
   .rappel { border-radius: 20px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
   .rappels { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
   .rappels button { height: 44px; border-radius: 12px; border: 1px solid var(--ligne); background: transparent; font-size: 12px; font-weight: 600; }
+  .plus-tot { margin-top: 2px; }
+  .rappels.plus { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .rappels.plus button { font-size: 12px; }
   .rappels button.actif { background: var(--c); border-color: var(--c); color: var(--c-sur); }
   .petit { font-size: 12px; }
   .resume { font-size: 12px; line-height: 1.4; }

@@ -8,6 +8,7 @@
   import { hm } from './format.ts';
   import { heureProposee } from './tache.ts';
   import Icone from '../../ui/Icone.svelte';
+  import { routeur } from '../../routeur.svelte.ts';
 
   /** Journée de 24 h : heures, blocs placés à leur heure (côte à côte s'ils se chevauchent), ligne « maintenant » en direct. */
   let { blocs, jour, aujourdhui, estAujourdhui, focusMin, onouvrir, onjouer }: {
@@ -24,6 +25,21 @@
   // Journée vide (aujourd'hui ou à venir) : un bloc fantôme en pointillés invite à poser le premier bloc juste après « maintenant ».
   const DUREE_FANTOME = 45;
   const fantome = $derived(!blocs.length && jour >= aujourdhui ? heureProposee(jour, aujourdhui, maintenant, DUREE_FANTOME) : null);
+
+  // Toucher un espace libre de la journée : la même fenêtre que « + », à l'heure touchée (arrondie à la demi-heure inférieure).
+  let grille: HTMLDivElement | undefined = $state();
+  let apercu = $state<number | null>(null);
+  const DUREE_APERCU = 30;
+  function toucher(e: MouseEvent) {
+    if (apercu != null || !grille || (e.target as Element).closest('.bloc, a, button')) return;
+    const y = e.clientY - grille.getBoundingClientRect().top;
+    const min = Math.max(0, Math.min(23 * 60 + 30, Math.floor(y / PX / 30) * 30));
+    apercu = min;
+    setTimeout(() => {
+      routeur.aller(`/tache/nouvelle?heure=${min}${estAujourdhui ? '' : `&jour=${jour}`}`);
+      apercu = null;
+    }, 110);
+  }
 
   let defile: HTMLDivElement | undefined = $state();
   // Ouvre la journée sur « maintenant » (ou sur le bloc en cours), à chaque changement de jour : la ligne se place
@@ -59,7 +75,8 @@
 </script>
 
 <div class="defile-jour" bind:this={defile}>
-  <div class="grille" style:height="{24 * 60 * PX}px">
+  <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+  <div class="grille" bind:this={grille} onclick={toucher} style:height="{24 * 60 * PX}px">
     {#each heures as h (h)}
       <div class="heure" style:top="{h * 60 * PX - 7}px" style:opacity={estAujourdhui && Math.abs(h * 60 - maintenant) < 13 ? 0 : 1}>
         <span class="mono">{hm(h * 60)}</span><span class="trait"></span>
@@ -70,6 +87,12 @@
       <BlocFil {b} pct={pcts[i]} col={places[i]?.col ?? 0} cols={places[i]?.cols ?? 1} aujourdhui={estAujourdhui}
         passe={estAujourdhui ? b.finMin <= maintenant : jour < aujourdhui} onouvrir={() => onouvrir(b.occ.id)} onjouer={() => onjouer(b.occ.id)} />
     {/each}
+
+    {#if apercu != null}
+      <div class="apercu" style:top="{apercu * PX + 1}px" style:height="{DUREE_APERCU * PX - 3}px" aria-hidden="true">
+        <span class="plus-fantome"><Icone nom="plus" taille={12} trait={2.6} /></span><span class="titre-fantome">{hm(apercu)}</span>
+      </div>
+    {/if}
 
     {#if fantome != null}
       <a class="fantome" href="/tache/nouvelle?heure={fantome}{estAujourdhui ? '' : `&jour=${jour}`}" style:top="{fantome * PX + 1}px" style:height="{DUREE_FANTOME * PX - 3}px"
@@ -105,6 +128,8 @@
   .ligne { flex: 1; height: 2px; background: var(--maintenant); }
   .fantome { position: absolute; left: 56px; right: 10px; border-radius: 10px; border: 1.5px dashed color-mix(in srgb, var(--muted) 55%, transparent);
     display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; color: var(--texte); background: var(--fond); animation: fantome-entre 0.5s ease both; }
+  .apercu { position: absolute; left: 56px; right: 10px; border-radius: 10px; border: 1.5px dashed var(--accent); background: var(--accent-fond); color: var(--accent-encre);
+    display: flex; align-items: center; gap: 8px; padding: 0 10px; animation: fantome-entre 0.11s ease both; z-index: 3; pointer-events: none; }
   .fantome:active { transform: scale(0.985); background: var(--surface); }
   .plus-fantome { flex: none; width: 18px; height: 18px; margin-top: 1px; border-radius: 9px; background: var(--inverse); color: var(--inverse-texte);
     display: flex; align-items: center; justify-content: center; animation: fantome-pouls 2.4s ease-in-out 0.6s infinite; }

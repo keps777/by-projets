@@ -75,6 +75,8 @@ export interface Tache extends Base {
   heure_debut: number;
   duree_min: number;
   rappel_min: number | null;
+  /** Rappels plus tôt, en minutes avant le début (2 h = 120, la veille = 1440…). Absent sur les anciennes lignes. */
+  rappels_avant_min?: number[];
   actif: boolean;
 }
 export interface TacheAlimente extends Base { tache_id: string; sous_projet_id: string }

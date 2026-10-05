@@ -21,6 +21,14 @@ describe('composerNotification', () => {
     expect(charge.corps).toBe('05:00 – 05:30');
   });
 
+  it('délais longs écrits comme on les dit (2 h, la veille, deux jours)', () => {
+    const titre = (envoyer: string) => composerNotification(rappel({ envoyer_a: envoyer })).charge.titre;
+    expect(titre('2026-10-05T07:00:00Z')).toBe('Dans 2 h : RDQD du matin');
+    expect(titre('2026-10-04T09:00:00Z')).toBe('Dans 1 jour : RDQD du matin');
+    expect(titre('2026-10-04T07:00:00Z')).toBe('Dans 1 jour et 2 h : RDQD du matin');
+    expect(titre('2026-10-03T09:00:00Z')).toBe('Dans 2 jours : RDQD du matin');
+  });
+
   it('titres masqués à l’écran verrouillé', () => {
     const { charge } = composerNotification(rappel({ titres_visibles: false }));
     expect(charge.titre).toBe('Un bloc commence dans 10 min');

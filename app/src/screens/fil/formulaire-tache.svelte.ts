@@ -27,6 +27,8 @@ export class FormulaireTache {
   heure = $state(9 * 60);
   duree = $state(45);
   rappel = $state<number | null>(10);
+  /** Rappels plus tôt (minutes avant le début). */
+  rappelsAvant = $state<number[]>([]);
 
   rubriques = $derived(rubriques());
   projets = $derived(this.rubriqueId ? projetsDe(this.rubriqueId) : []);
@@ -74,6 +76,7 @@ export class FormulaireTache {
     this.heure = t.heure_debut;
     this.duree = t.duree_min;
     this.rappel = t.rappel_min;
+    this.rappelsAvant = [...(t.rappels_avant_min ?? [])];
   }
 
   choisirRubrique(id: string): void {
@@ -100,7 +103,7 @@ export class FormulaireTache {
     const attendus = this.mesures.map((m) => ({ cle: m.cle, valeur: this.prevu(m) })).filter((a): a is { cle: string; valeur: number } => a.valeur != null);
     return {
       titre: this.titre, projetId: this.assoc ? this.projetId : null, regle: this.regle, heureDebut: this.heure, dureeMin: this.duree,
-      rappelMin: this.rappel, sousProjetIds: this.actifs.map((s) => s.id), attendus: this.assoc ? attendus : []
+      rappelMin: this.rappel, rappelsAvantMin: [...this.rappelsAvant].sort((a, b) => b - a), sousProjetIds: this.actifs.map((s) => s.id), attendus: this.assoc ? attendus : []
     };
   }
 }

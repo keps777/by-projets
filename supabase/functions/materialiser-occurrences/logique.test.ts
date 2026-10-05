@@ -52,6 +52,17 @@ describe('planifierOccurrences', () => {
   });
 });
 
+describe('rappels multiples', () => {
+  it('crée un rappel par délai de la tâche, sans doublon, seulement dans le futur', async () => {
+    const { depot, rappels } = depotMemoire([tache({ regle: { frequence: 'une_fois', debut: '2026-10-07', fin: { type: 'aucune' } }, heure_debut: 14 * 60, rappel_min: 10, rappels_avant_min: [120, 1440, 10] })]);
+    await materialiser(depot, { jours: 5 }, MAINTENANT);
+    const delais = [...rappels.values()].map((r) => Number(r.cle_unique.split(':').pop())).sort((a, b) => b - a);
+    expect(delais).toEqual([1440, 120, 10]);
+    await materialiser(depot, { jours: 5 }, MAINTENANT);
+    expect(rappels.size).toBe(3);
+  });
+});
+
 describe('materialiser', () => {
   it('crée les occurrences d’hier à J+90 et les rappels futurs seulement', async () => {
     const m = depotMemoire([tache()]);

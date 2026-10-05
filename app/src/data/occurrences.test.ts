@@ -83,3 +83,39 @@ describe('délai de rappel par défaut', () => {
     expect(enAttente(autre).every((r) => r.cle_unique.endsWith(':5'))).toBe(true);
   });
 });
+
+describe('plusieurs rappels par tâche', () => {
+  const rappelsDe = (occId: string) => magasin.lignes.rappels.filter((r) => r.occurrence_id === occId && r.etat === 'en_attente');
+
+  it('crée un rappel par délai (principal + plus tôt) pour chaque occurrence', () => {
+    const id = ajouterTache({ titre: 'Rendez-vous', projetId: null, regle: { frequence: 'une_fois', debut: '2026-10-09', fin: { type: 'aucune' } }, heureDebut: 14 * 60, dureeMin: 60, rappelMin: 10, rappelsAvantMin: [120, 1440, 2880] });
+    const occ = occsDe(id)[0];
+    const debut = Date.parse(occ.debut);
+    expect(rappelsDe(occ.id).map((r) => (debut - Date.parse(r.envoyer_a)) / 60000).sort((a, b) => b - a)).toEqual([2880, 1440, 120, 10]);
+  });
+
+  it('ne crée pas un rappel dont l’heure est déjà passée', () => {
+    // Demain 08:00 : « 2 jours avant » est dans le passé, « 1 jour avant » aussi (hier 08:00 < maintenant 05:00 ? non, demain-1j = aujourd’hui 08:00 > maintenant).
+    const id = ajouterTache({ titre: 'Tôt', projetId: null, regle: { frequence: 'une_fois', debut: '2026-10-06', fin: { type: 'aucune' } }, heureDebut: 8 * 60, dureeMin: 30, rappelMin: 10, rappelsAvantMin: [1440, 2880] });
+    const occ = occsDe(id)[0];
+    const debut = Date.parse(occ.debut);
+    expect(rappelsDe(occ.id).map((r) => (debut - Date.parse(r.envoyer_a)) / 60000).sort((a, b) => b - a)).toEqual([1440, 10]);
+  });
+
+  it('reporter garde les rappels plus tôt sur la nouvelle date', () => {
+    const id = ajouterTache({ titre: 'Visite', projetId: null, regle: { frequence: 'une_fois', debut: '2026-10-09', fin: { type: 'aucune' } }, heureDebut: 14 * 60, dureeMin: 60, rappelMin: 10, rappelsAvantMin: [120] });
+    const occ = occsDe(id)[0];
+    reporter(occ.id, { jour: '2026-10-12', debutMin: 16 * 60, rappelMin: 10 });
+    const nouveau = magasin.trouver('occurrences', occ.id)!;
+    const debut = Date.parse(nouveau.debut);
+    expect(rappelsDe(occ.id).map((r) => (debut - Date.parse(r.envoyer_a)) / 60000).sort((a, b) => b - a)).toEqual([120, 10]);
+  });
+
+  it('modifier la série met à jour les rappels plus tôt', () => {
+    const id = ajouterTache({ titre: 'Visite', projetId: null, regle: { frequence: 'une_fois', debut: '2026-10-09', fin: { type: 'aucune' } }, heureDebut: 14 * 60, dureeMin: 60, rappelMin: 10, rappelsAvantMin: [120] });
+    modifierSerie(id, { titre: 'Visite', projetId: null, regle: { frequence: 'une_fois', debut: '2026-10-09', fin: { type: 'aucune' } }, heureDebut: 14 * 60, dureeMin: 60, rappelMin: 10, rappelsAvantMin: [1440] }, '2026-10-05');
+    const occ = occsDe(id)[0];
+    const debut = Date.parse(occ.debut);
+    expect(rappelsDe(occ.id).map((r) => (debut - Date.parse(r.envoyer_a)) / 60000).sort((a, b) => b - a)).toEqual([1440, 10]);
+  });
+});

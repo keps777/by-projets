@@ -28,3 +28,4 @@
 - Reporter propose « À l'heure », 5, 10 et 15 min.
 - Le toucher d'une notification n'ouvre que des adresses de l'app.
 - Se réabonner sur le même appareil réutilise la ligne `abonnements_push` existante (`supprime_le` remis à nul).
+- **Plusieurs rappels par tâche** : le rappel principal (À l'heure, 5, 10 ou 15 min) plus des rappels « plus tôt » cumulables — 1 h, 2 h, 1 jour, 1 jour et 2 h, 2 jours avant (`taches.rappels_avant_min`, minutes avant le début). Chaque délai donne un rappel distinct par occurrence (clé `occurrence:délai`) ; un rappel dont l'heure est passée n'est pas créé. Le texte de la notification écrit le délai comme on le dit (« Dans 2 h », « Dans 1 jour et 2 h »). Reporter une occurrence garde ses rappels plus tôt.

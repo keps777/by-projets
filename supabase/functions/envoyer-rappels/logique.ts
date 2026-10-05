@@ -1,5 +1,5 @@
 // Envoi des rappels dus (spec §10) : composition des notifications et suivi des états. Aucune API Deno ici.
-import { formatHeure, utcVersLocal, type TypeRappel } from '../_shared/core/index.ts';
+import { formatHeure, libelleDelai, utcVersLocal, type TypeRappel } from '../_shared/core/index.ts';
 import type { ChargePush, CiblePush, Envoyeur, OptionsPush } from '../_shared/envoi.ts';
 
 /** Ligne rendue par la fonction SQL reserver_rappels. */
@@ -42,13 +42,13 @@ export function composerNotification(r: RappelReserve): { charge: ChargePush; op
     case 'bloc': {
       const fuseau = r.fuseau || FUSEAU_DEFAUT;
       const delai = r.debut ? Math.max(0, Math.round((Date.parse(r.debut) - Date.parse(r.envoyer_a)) / 60000)) : 0;
-      const quand = delai === 0 ? 'À l’heure' : `Dans ${delai} min`;
+      const quand = delai === 0 ? 'À l’heure' : `Dans ${libelleDelai(delai)}`;
       const heures = r.debut ? heureLocale(r.debut, fuseau) + (r.fin ? ` – ${heureLocale(r.fin, fuseau)}` : '') : '';
       const url = `/action-rapide?occ=${r.occurrence_id ?? ''}`;
       const ttl = r.debut ? Math.max(60, Math.round((Date.parse(r.debut) - Date.parse(r.envoyer_a)) / 1000) + 900) : 900;
       if (r.titres_visibles === false) {
         // Écran verrouillé discret : ni titre ni rubrique.
-        const titre = delai === 0 ? 'Un bloc commence maintenant' : `Un bloc commence dans ${delai} min`;
+        const titre = delai === 0 ? 'Un bloc commence maintenant' : `Un bloc commence dans ${libelleDelai(delai)}`;
         return { charge: { titre, corps: heures, url, tag }, options: { ttl, urgence: 'high' } };
       }
       const corps = [heures, r.rubrique].filter(Boolean).join(' · ');

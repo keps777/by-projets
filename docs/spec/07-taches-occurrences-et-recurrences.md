@@ -37,3 +37,8 @@ Le tout apparaît dans les vues Jour, Semaine et Mois.
 - « Celle-ci et les suivantes » termine la série la veille de l'occurrence choisie. « Toute la série » recrée les occurrences à venir (y compris celles supprimées une à une) ; les faites, en cours et reportées restent intactes.
 - Une occurrence supprimée n'est jamais recréée par la matérialisation.
 - Une saisie (§8) confirme le bloc ; un bloc jamais lancé prend la durée de **son occurrence** (pas celle de la tâche).
+
+## Gestes du Fil et de l'ajout de tâche (5 oct. 2026)
+- **Glisser la journée** vers la gauche (jour suivant) ou vers la droite (jour précédent) ; la journée glisse du côté d'où l'on vient.
+- **Toucher un espace libre** de la journée ouvre l'ajout de tâche, avec le jour affiché et l'heure touchée **arrondie à la demi-heure inférieure** (toucher à 1 h 40 → 1 h 30).
+- **Choisir l'heure d'un coup** : toucher l'heure (grand affichage) ouvre la roue de l'iPhone ; des raccourcis « Matin 8 h · Midi 12 h · Après-midi 15 h · Soir 18 h · Nuit 21 h » complètent −15 / +15.

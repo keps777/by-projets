@@ -2,7 +2,9 @@
   import { untrack } from 'svelte';
   import { SvelteSet } from 'svelte/reactivity';
   import { estArrive } from '@core/minuteur.ts';
-  import { utcVersLocal } from '@core/dates.ts';
+  import { ajouterJours, utcVersLocal } from '@core/dates.ts';
+  import { fly } from 'svelte/transition';
+  import { cubicOut } from 'svelte/easing';
   import { magasin } from '../../data/magasin.svelte.ts';
   import { blocsDuJour, profil } from '../../data/requetes.ts';
   import { aujourdhui as jourCourant, fuseau, horloge, maintenantLocal } from '../../data/temps.svelte.ts';
@@ -85,7 +87,34 @@
     if (estArrive(minuteurDe(a), horloge.maintenant, (Date.parse(a.fin) - Date.parse(a.debut)) / 1000)) confirmId = a.id;
   });
 
-  function choisirJour(j: string) { selId = null; routeur.definir('jour', j === aujourdhui ? null : j); }
+  // Sens du dernier changement de jour (1 = vers demain) : la journée entre du côté d'où l'on vient.
+  let sens = $state(1);
+  function choisirJour(j: string) { sens = j >= jour ? 1 : -1; selId = null; routeur.definir('jour', j === aujourdhui ? null : j); }
+
+  // Glisser la journée vers la gauche (jour suivant) ou vers la droite (jour précédent).
+  let depart: { x: number; y: number; t: number } | null = null;
+  function toucheDebut(e: TouchEvent) { const t = e.touches[0]; depart = e.touches.length === 1 ? { x: t.clientX, y: t.clientY, t: Date.now() } : null; }
+  // Un glissement franchement horizontal ne doit pas déclencher le « retour » du navigateur : on l'annule (écouteur non passif).
+  let pan: HTMLDivElement | undefined = $state();
+  $effect(() => {
+    const el = pan;
+    if (!el) return;
+    const bloquer = (e: TouchEvent) => {
+      const t = e.touches[0];
+      if (depart && t && e.cancelable && Math.abs(t.clientX - depart.x) > 12 && Math.abs(t.clientX - depart.x) > Math.abs(t.clientY - depart.y) * 1.6) e.preventDefault();
+    };
+    el.addEventListener('touchmove', bloquer, { passive: false });
+    return () => el.removeEventListener('touchmove', bloquer);
+  });
+  function toucheFin(e: TouchEvent) {
+    const d = depart; depart = null;
+    const t = e.changedTouches[0];
+    if (!d || !t) return;
+    const dx = t.clientX - d.x, dy = t.clientY - d.y;
+    // Geste net : assez long, plutôt horizontal, assez vif (sinon c'est un défilement ou une hésitation).
+    if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.6 || Date.now() - d.t > 700) return;
+    choisirJour(ajouterJours(jour, dx < 0 ? 1 : -1));
+  }
 
   function confirmer(corriger: boolean) {
     const b = confBloc;
@@ -135,7 +164,13 @@
 
   <BandeauJours {jour} {aujourdhui} onchoisir={choisirJour} />
 
-  <Journee {blocs} {jour} {aujourdhui} {estAujourdhui} {focusMin} onouvrir={(id) => (selId = id)} onjouer={basculerMinuteur} />
+  <div class="pan" bind:this={pan} ontouchstart={toucheDebut} ontouchend={toucheFin} role="presentation">
+    {#key jour}
+      <div class="page" in:fly={{ x: sens * 36, duration: 230, easing: cubicOut, opacity: 0 }}>
+        <Journee {blocs} {jour} {aujourdhui} {estAujourdhui} {focusMin} onouvrir={(id) => (selId = id)} onjouer={basculerMinuteur} />
+      </div>
+    {/key}
+  </div>
 
   <CarteBas {blocs} {jour} {aujourdhui} {actif} onouvrir={(id) => (selId = id)} onjouer={basculerMinuteur} onterminer={(id) => (confirmId = id)} />
 
@@ -173,5 +208,8 @@
   .jour-pct .mono { font-size: 12px; }
   .segments { width: 92px; height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; display: flex; }
   .vues { padding: 2px 18px 6px; flex: none; }
+  /* touch-action : le défilement vertical reste au navigateur, le glissement horizontal nous revient. */
+  .pan { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; touch-action: pan-y; }
+  .page { flex: 1; min-height: 0; display: flex; flex-direction: column; }
   /* Sur la maquette du Fil, la barre d'onglets n'a pas de filet (la carte du bas la sépare déjà). */
 </style>

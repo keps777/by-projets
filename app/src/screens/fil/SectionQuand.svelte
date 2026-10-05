@@ -39,6 +39,14 @@
     f.rec = r;
     if (r === 'hebdo' && !f.jours.length) f.jours = [jourSemaine(f.debut)];
   }
+  const RACCOURCIS = [{ l: 'Matin', m: 8 * 60 }, { l: 'Midi', m: 12 * 60 }, { l: 'Après-midi', m: 15 * 60 }, { l: 'Soir', m: 18 * 60 }, { l: 'Nuit', m: 21 * 60 }];
+  const borner = (m: number) => Math.max(0, Math.min(1440 - f.duree, m));
+  /** Heure choisie dans le sélecteur natif (roue de l'iPhone) : « HH:MM ». */
+  function choisirHeure(e: Event) {
+    const [h, m] = (e.currentTarget as HTMLInputElement).value.split(':').map(Number);
+    if (Number.isFinite(h) && Number.isFinite(m)) f.heure = borner(h * 60 + m);
+  }
+  const valeurHeure = $derived(`${String(Math.floor(f.heure / 60)).padStart(2, '0')}:${String(f.heure % 60).padStart(2, '0')}`);
   const deplacer = (d: number) => { f.heure = Math.max(0, Math.min(1440 - f.duree, f.heure + d)); };
 </script>
 
@@ -102,8 +110,18 @@
 
   <div class="heure">
     <button type="button" aria-label="15 minutes plus tôt" onclick={() => deplacer(-15)}>−15</button>
-    <div class="col centre"><span class="mono debut">{hm(f.heure)}</span><span class="muted fin">jusqu’à {hm(f.heure + f.duree)}</span></div>
+    <div class="col centre choix-heure">
+      <span class="mono debut">{hm(f.heure)}</span>
+      <span class="muted fin">jusqu’à {hm(f.heure + f.duree)}</span>
+      <span class="indice">toucher pour choisir l’heure</span>
+      <input class="natif" type="time" step="300" value={valeurHeure} onchange={choisirHeure} aria-label="Choisir l’heure de début" />
+    </div>
     <button type="button" aria-label="15 minutes plus tard" onclick={() => deplacer(15)}>+15</button>
+  </div>
+  <div class="raccourcis" role="group" aria-label="Aller à">
+    {#each RACCOURCIS as r (r.m)}
+      <button type="button" class="puce petite" class:inverse={f.heure === borner(r.m)} aria-pressed={f.heure === borner(r.m)} onclick={() => (f.heure = borner(r.m))}>{r.l} · {hm(r.m)}</button>
+    {/each}
   </div>
   <div class="durees">
     {#each DUREES as d (d)}
@@ -141,6 +159,12 @@
   .pas { display: flex; align-items: center; gap: 8px; color: var(--texte); }
   .pas button { width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--surface); font-size: 20px; }
   .heure { display: flex; align-items: center; justify-content: space-between; background: var(--surface-2); border-radius: 18px; padding: 8px; }
+  .choix-heure { position: relative; flex: 1; align-self: stretch; justify-content: center; border-radius: 12px; }
+  .choix-heure .indice { font-size: 11px; color: var(--faint); margin-top: 1px; }
+  /* Sélecteur natif posé, invisible, sur toute la zone de l'heure : un toucher ouvre la roue de l'iPhone (16 px : pas de zoom). */
+  .natif { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; font-size: 16px; border: 0; padding: 0; cursor: pointer; }
+  .raccourcis { display: flex; gap: 6px; overflow-x: auto; margin: 0 -16px; padding: 0 16px; }
+  .raccourcis .puce { flex: none; }
   .heure button { width: 52px; height: 44px; border-radius: 14px; border: 0; background: var(--surface); font-size: 13px; font-weight: 600; }
   .debut { font-size: 26px; letter-spacing: -0.02em; }
   .fin { font-size: 11px; }

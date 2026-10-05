@@ -13,3 +13,4 @@ export * from './modeles.ts';
 export * from './defauts.ts';
 export * from './lignes.ts';
 export * from './ids.ts';
+export * from './rappels.ts';

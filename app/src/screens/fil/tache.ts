@@ -1,6 +1,7 @@
 // Ajout d'une tâche (spec §7) : calculs purs du formulaire.
 import { jourSemaine, JOURS_COURTS } from '@core/dates.ts';
 import { TYPES } from '@core/metriques.ts';
+import { libelleDelai } from '@core/rappels.ts';
 import { decrire, rangDuJour, type Regle } from '@core/recurrence.ts';
 import type { Jour, OptionChoix, PeriodeCible, TypeMetrique } from '@core/types.ts';
 import { cap, dateLongue, hm } from './format.ts';
@@ -78,9 +79,10 @@ export function choixMensuels(debut: Jour): { valeur: 'jour_du_mois' | 'rang'; l
   ];
 }
 
-export function resume(o: { titre: string; heure: number; duree: number; regle: Regle; nbSousProjets: number; avecProjet: boolean; rappel: number | null }): string {
+export function resume(o: { titre: string; heure: number; duree: number; regle: Regle; nbSousProjets: number; avecProjet: boolean; rappel: number | null; rappelsAvant?: number[] }): string {
   const alim = !o.avecProjet ? 'sans projet' : o.nbSousProjets ? `alimente ${o.nbSousProjets} sous-projet${o.nbSousProjets > 1 ? 's' : ''}` : 'aucun sous-projet alimenté';
-  const rap = o.rappel == null ? 'sans rappel' : o.rappel === 0 ? 'rappel à l’heure' : `rappel ${o.rappel} min avant`;
+  const delais = [...(o.rappelsAvant ?? []), ...(o.rappel == null ? [] : [o.rappel])].sort((a, b) => b - a);
+  const rap = !delais.length ? 'sans rappel' : `rappel${delais.length > 1 ? 's' : ''} ${delais.map((d) => (d === 0 ? 'à l’heure' : libelleDelai(d))).join(', ')}${delais.length === 1 && delais[0] === 0 ? '' : ' avant'}`;
   return `${o.titre.trim() || 'Tâche'} · ${hm(o.heure)}–${hm(o.heure + o.duree)} · ${texteRecurrence(o.regle)} · ${alim} · ${rap}`;
 }
 

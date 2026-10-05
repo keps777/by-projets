@@ -89,3 +89,12 @@ describe('modifier une tâche (avec le magasin)', () => {
     expect(disposer(blocs.map((b) => ({ debut: b.debutMin, fin: b.finMin }))).map((p) => p.cols)).toEqual([2, 2]);
   });
 });
+
+describe('résumé avec plusieurs rappels', () => {
+  const base = { titre: 'Visite', heure: 600, duree: 60, regle: { frequence: 'une_fois', debut: '2026-10-06', fin: { type: 'aucune' } } as never, nbSousProjets: 0, avecProjet: false };
+  it('nomme chaque délai, du plus lointain au plus proche', () => {
+    expect(resume({ ...base, rappel: 10, rappelsAvant: [120, 1440] })).toContain('rappels 1 jour, 2 h, 10 min avant');
+    expect(resume({ ...base, rappel: null, rappelsAvant: [] })).toContain('sans rappel');
+    expect(resume({ ...base, rappel: 0 })).toContain('rappel à l’heure');
+  });
+});
