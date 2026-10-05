@@ -5,9 +5,9 @@
 --   select vault.create_secret('<la même valeur que le secret CRON_SECRET des fonctions>', 'cron_secret');
 -- Ce fichier n'est pas exécuté par les tests (PGlite n'a ni pg_cron ni pg_net).
 
-create extension if not exists pg_cron;
-create extension if not exists pg_net;
-create extension if not exists supabase_vault;
+create extension if not exists pg_cron with schema pg_catalog;
+create extension if not exists pg_net with schema extensions;
+create extension if not exists supabase_vault with schema vault;
 
 create or replace function public.appeler_fonction(p_nom text, p_corps jsonb default '{}'::jsonb)
 returns bigint

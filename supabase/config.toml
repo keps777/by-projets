@@ -1,0 +1,63 @@
+# Configuration de la CLI Supabase pour Luther Life (dépôt by-projets).
+# Les réglages d'authentification s'appliquent en local ; en production, les reporter dans le tableau de bord
+# (ou `supabase config push`). Voir supabase/README.md.
+project_id = "by-projets"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 17
+
+[db.seed]
+enabled = false
+
+[studio]
+enabled = true
+port = 54323
+
+# Aucun e-mail n'est envoyé (spec §11) : le serveur de courriels de test reste éteint.
+[inbucket]
+enabled = false
+
+[auth]
+enabled = true
+site_url = "http://localhost:5173"
+additional_redirect_urls = []
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+refresh_token_reuse_interval = 10
+# Ouvert le temps de créer LE compte, puis fermé (false) : spec §11.
+enable_signup = true
+enable_anonymous_sign_ins = false
+enable_manual_linking = false
+minimum_password_length = 12
+password_requirements = ""
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = false
+# Pas de confirmation d'adresse : la session est ouverte dès l'inscription.
+enable_confirmations = false
+secure_password_change = false
+max_frequency = "1s"
+
+[auth.sms]
+enable_signup = false
+enable_confirmations = false
+
+# Fonctions appelées par pg_cron : pas de jeton utilisateur, elles vérifient elles-mêmes le secret CRON_SECRET.
+[functions.envoyer-rappels]
+verify_jwt = false
+
+[functions.generer-rapports]
+verify_jwt = false
+
+[functions.materialiser-occurrences]
+verify_jwt = false
