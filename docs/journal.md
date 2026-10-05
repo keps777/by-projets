@@ -2,6 +2,21 @@
 
 > Lire ce fichier en début de session (après `CLAUDE.md`). Ajouter une entrée en fin de session.
 
+## 5 oct. 2026 (nuit) — Supabase branché en partie
+
+**Fait** (projet `by-projets`, ref `cmcadqeghkvlafwckfvu`, us-east-2)
+- Base vide vérifiée, puis les 7 migrations appliquées par la Management API (`POST /database/query`) et enregistrées dans `supabase_migrations.schema_migrations` (format CLI : `supabase db push` les voit comme appliquées). Aucune erreur.
+- 16 tables, RLS activée et forcée partout ; 3 tâches `cron.job` actives.
+- `postgres` a `BYPASSRLS` : `initialiser_compte` reste SECURITY DEFINER, aucune migration de plus.
+
+**Pas encore fait** (bloqué par les permissions de la session, pas par une erreur technique)
+1. Secrets des fonctions (VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT, CRON_SECRET) : les clés générées ont été jetées, à régénérer.
+2. Déploiement des 3 fonctions (`--no-verify-jwt`) ; vérifier `npm:web-push` dans le runtime.
+3. Coffre (vault) : `project_url` et `cron_secret`. D'ici là, pg_cron tourne chaque minute et `appeler_fonction` ne lève qu'un avertissement (secrets absents).
+4. Réglages Auth : confirmation d'e-mail désactivée, mot de passe ≥ 12, inscriptions ouvertes le temps de créer LE compte.
+5. Variables Vercel `VITE_*` et redéploiement : **seulement après l'étape 4** (sinon l'app passe en mode serveur avec confirmation par e-mail).
+6. Ensuite : l'utilisateur crée son compte, autorise les notifications depuis l'icône d'écran d'accueil, puis on ferme les inscriptions.
+
 ## 5 oct. 2026 (soir) — application complète en mode local, serveur écrit
 
 **Fait**
