@@ -73,7 +73,7 @@
     </div>
   </div>
 
-  <div class="bord">
+  <div>
     <Segment valeur="semaine" options={[
       { valeur: 'jour', label: 'Jour', href: jourDeVue === aujourdhui ? '/' : `/?jour=${jourDeVue}` },
       { valeur: 'semaine', label: 'Semaine' },

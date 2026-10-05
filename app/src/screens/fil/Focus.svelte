@@ -135,7 +135,7 @@
           {:else}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.9l12-7.5a1 1 0 0 0 0-1.7l-12-7.5A1 1 0 0 0 7 4.5z" /></svg>
           {/if}
-          {b.enCours ? 'Pause' : b.enPause ? 'Reprendre' : 'Lancer'}
+          {b.enCours ? 'Pause' : b.enPause ? 'Reprendre' : b.fait ? 'Relancer' : 'Lancer'}
         </button>
         <button type="button" class="secondaire" onclick={() => (confirme = true)}>Terminer</button>
       </div>

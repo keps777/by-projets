@@ -8,6 +8,7 @@ import { magasin } from '../../data/magasin.svelte.ts';
 import { metriquesDe, progressionProjet, progressionSousProjet, type BlocVue } from '../../data/requetes.ts';
 import { attendusDe, ecouleOccurrence, lancerBloc, pauseBloc, reprendreBloc, valeurSaisie } from '../../data/actions/blocs.ts';
 import { formatValeur, libelleCle } from './format.ts';
+import { versAffichage } from './saisie.ts';
 
 /** Pixels par minute dans la journée de 24 h (72 px par heure, comme la maquette). */
 export const PX = 72 / 60;
@@ -113,7 +114,10 @@ export function tempsDuBloc(b: BlocVue, now?: number): number {
 /** Étiquette du réalisé affichée à droite d'un bloc fait : « 3/7 ch. » ou « 52 min ». */
 export function etiquetteRealise(b: BlocVue): string {
   const qte = mesuresDuBloc(b).find((m) => m.type !== 'temps' && m.type !== 'reference' && m.prevu != null);
-  if (qte) return `${nombre(qte.type === 'montant' ? qte.realise / 100 : qte.realise)}/${nombre(qte.type === 'montant' ? qte.prevu! / 100 : qte.prevu!)}${qte.unite ? ' ' + abreger(qte.unite) : ''}`;
+  if (qte) {
+    const n = (v: number) => nombre(versAffichage(qte.type, v));
+    return `${n(qte.realise)}/${n(qte.prevu!)}${qte.unite ? ' ' + abreger(qte.unite) : ''}`;
+  }
   return formatValeur('temps', valeurSaisie(b.occ.id, 'temps') ?? (b.finMin - b.debutMin) * 60);
 }
 

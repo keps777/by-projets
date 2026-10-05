@@ -32,7 +32,8 @@
   const delai = $derived(Math.max(60, (b?.tache.rappel_min || 10) * 60));
   const pct = $derived(tourne && b ? Math.min(100, (ecouleOccurrence(b.occ, horloge.maintenant) / ((b.finMin - b.debutMin) * 60)) * 100) : Math.max(0, Math.min(100, (1 - reste / delai) * 100)));
   const libelle = $derived(tourne ? (b?.enPause ? 'en pause depuis' : 'en cours depuis') : reste >= 0 ? 'commence dans' : 'a commencé il y a');
-  const compteur = $derived(tourne && b ? chrono(ecouleOccurrence(b.occ, horloge.maintenant)) : chrono(Math.abs(reste)));
+  // Au-delà d'une heure, « 11 h 36 » se lit mieux qu'un chronomètre.
+  const compteur = $derived(tourne && b ? chrono(ecouleOccurrence(b.occ, horloge.maintenant)) : Math.abs(reste) >= 3600 ? dureeMin(Math.floor(Math.abs(reste) / 60)) : chrono(Math.abs(reste)));
   const suffixeJour = $derived(b && b.occ.jour !== aujourdhui ? `jour=${b.occ.jour}` : '');
 
   function lancer() {
