@@ -8,6 +8,8 @@
   import { trouverRoute } from './routes.ts';
   import { theme } from './ui/theme.svelte.ts';
   import Toasts from './ui/Toasts.svelte';
+  import { fly } from 'svelte/transition';
+  import { cubicOut } from 'svelte/easing';
 
   horloge.demarrer();
   theme.demarrer();
@@ -36,11 +38,14 @@
 
   let ecran = $state<Component<any> | null>(null);
   let paramsEcran = $state<Record<string, string>>({});
+  // Chemin réellement affiché : la transition ne part qu'une fois le nouvel écran chargé.
+  let cheminAffiche = $state('');
   $effect(() => {
     const c = cible;
     if (!c) { ecran = null; return; }
     let annule = false;
-    void c.route.charger().then((m) => { if (!annule) { ecran = m.default; paramsEcran = c.params; } });
+    const chemin = routeur.chemin;
+    void c.route.charger().then((m) => { if (!annule) { ecran = m.default; paramsEcran = c.params; cheminAffiche = chemin; } });
     return () => { annule = true; };
   });
 
@@ -53,7 +58,9 @@
 {#if !pret || (cible && !Ecran)}
   <div class="attente" aria-busy="true"><span class="titre">Luther Life</span></div>
 {:else if cible && Ecran}
-  <Ecran params={paramsEcran} />
+  {#key cheminAffiche}
+    <div class="vue" in:fly={{ y: 8, duration: 220, easing: cubicOut }}><Ecran params={paramsEcran} /></div>
+  {/key}
 {:else}
   <div class="attente"><span class="titre">Page introuvable</span><a href="/">Retour au Fil</a></div>
 {/if}
@@ -66,6 +73,7 @@
 <Toasts />
 
 <style>
+  .vue { height: 100%; }
   .attente { height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; font-size: 24px; }
   .attente a { font-size: 14px; color: var(--accent); }
   .synchro { position: fixed; left: 50%; bottom: calc(76px + var(--bas-sûr)); transform: translateX(-50%); z-index: 80; background: var(--surface-2); color: var(--muted); font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 14px; border: 1px solid var(--ligne); }
