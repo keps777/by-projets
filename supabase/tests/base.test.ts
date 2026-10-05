@@ -18,7 +18,7 @@ const compter = async (qui: string, table: string) =>
   Number((await comme<{ n: number }>(db, qui, `select count(*)::int as n from ${table}`))[0].n);
 
 describe('règles d’accès (RLS)', () => {
-  it('chaque utilisateur ne voit que ses lignes, dans les 16 tables', async () => {
+  it('chaque utilisateur ne voit que ses lignes, dans les 17 tables', async () => {
     for (const t of TABLES.filter((x) => x !== 'profils')) {
       expect(await compter(A, t), t).toBe(1);
       const autres = await comme(db, B, `select id from ${t} where user_id = $1`, [A]);

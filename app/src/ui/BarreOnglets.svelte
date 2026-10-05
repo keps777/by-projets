@@ -6,7 +6,7 @@
   let { filet = true }: { filet?: boolean } = $props();
 
   const ONGLETS: { href: string; label: string; icone: NomIcone; actifSur: string[] }[] = [
-    { href: '/', label: 'Le Fil', icone: 'fil', actifSur: ['/', '/semaine', '/mois', '/recherche', '/tache', '/focus', '/action-rapide'] },
+    { href: '/', label: 'Le Fil', icone: 'fil', actifSur: ['/', '/semaine', '/mois', '/recherche', '/tache', '/focus', '/action-rapide', '/carnet'] },
     { href: '/projets', label: 'Projets', icone: 'projets', actifSur: ['/projets'] },
     { href: '/rapports', label: 'Rapports', icone: 'rapports', actifSur: ['/rapports'] },
     { href: '/archive', label: 'Archive', icone: 'archive', actifSur: ['/archive'] },

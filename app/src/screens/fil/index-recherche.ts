@@ -18,7 +18,7 @@ function textes(v: unknown): string {
 }
 
 export function construireIndex(aujourdhui: Jour, couleur: (c: string) => string): Entree[] {
-  const { rubriques, projets, sous_projets, taches, saisies, saisie_valeurs, occurrences, rapports, points_rapport } = magasin.lignes;
+  const { rubriques, projets, sous_projets, taches, saisies, saisie_valeurs, occurrences, rapports, points_rapport, notes: carnet } = magasin.lignes;
   const mois = aujourdhui.slice(0, 7);
   const rub = new Map(rubriques.map((r) => [r.id, r]));
   const proj = new Map(projets.map((p) => [p.id, p]));
@@ -49,6 +49,13 @@ export function construireIndex(aujourdhui: Jour, couleur: (c: string) => string
     res.push(entree('taches', t.titre, `${cap(decrire(t.regle))} · ${hm(t.heure_debut)} – ${hm(t.heure_debut + t.duree_min)} · ${p?.nom ?? 'sans projet'}`, couleurProjet(t.projet_id), `/tache/${t.id}`));
   }
 
+  // Le Carnet : chaque note, avec son numéro. Les blocs qui ont des notes au Carnet n'ont pas de doublon « note de saisie ».
+  const blocsAvecCarnet = new Set(carnet.map((n) => n.occurrence_id).filter((x): x is string => !!x));
+  for (const n of [...carnet].sort((a, b) => b.numero - a.numero)) {
+    const d = n.origine === 'libre' ? 'note libre' : n.source_label ?? 'bloc';
+    res.push(entree('notes', n.texte, `Carnet n° ${n.numero} · ${dateCourte(n.jour)} · ${d}`, couleurProjet(n.projet_id), `/carnet?jour=${n.jour}`, [`n° ${n.numero}`, `${n.numero}`]));
+  }
+
   const tachesParOcc = new Map(occurrences.map((o) => [o.id, o.tache_id]));
   const tacheTitre = new Map(taches.map((t) => [t.id, t.titre]));
   const valeursPar = new Map<string, typeof saisie_valeurs>();
@@ -57,7 +64,7 @@ export function construireIndex(aujourdhui: Jour, couleur: (c: string) => string
     const quoi = (s.occurrence_id && tacheTitre.get(tachesParOcc.get(s.occurrence_id) ?? '')) || (s.projet_id && proj.get(s.projet_id)?.nom) || 'Saisie';
     const href = (s.jour === aujourdhui ? '/?' : `/?jour=${s.jour}&`) + (s.occurrence_id ? `bloc=${s.occurrence_id}` : '');
     const vals = valeursPar.get(s.id) ?? [];
-    if (s.note) res.push(entree('notes', s.note, `${dateCourte(s.jour)} · ${quoi} · note`, couleurProjet(s.projet_id), href));
+    if (s.note && !(s.occurrence_id && blocsAvecCarnet.has(s.occurrence_id))) res.push(entree('notes', s.note, `${dateCourte(s.jour)} · ${quoi} · note`, couleurProjet(s.projet_id), href));
     const txt = vals.map((v) => v.valeur_txt).filter((x): x is string => !!x);
     if (txt.length) {
       const temps = vals.find((v) => v.cle === 'temps')?.valeur_num;

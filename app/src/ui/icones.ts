@@ -26,6 +26,8 @@ export const ICONES = {
   poignee: 'M8 6h.01M8 12h.01M8 18h.01M16 6h.01M16 12h.01M16 18h.01',
   monde: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18',
   chaine: 'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
+  livre: 'M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4zM5 17a3 3 0 0 1 3-3h11M9 8h6',
+  crayon: 'M4 20l1-4L16 5l3 3L8 19l-4 1zM14 7l3 3',
   cadenas: 'M6 11h12v9H6zM8 11V8a4 4 0 0 1 8 0v3'
 } as const;
 export type NomIcone = keyof typeof ICONES;

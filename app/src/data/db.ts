@@ -21,7 +21,8 @@ const INDEX: Record<NomTable, string> = {
   presets_export: 'id, updated_at',
   rapports: 'id, jour, updated_at',
   rappels: 'id, occurrence_id, updated_at',
-  abonnements_push: 'id, updated_at'
+  abonnements_push: 'id, updated_at',
+  notes: 'id, jour, numero, updated_at'
 };
 
 export class BaseLocale extends Dexie {
@@ -30,7 +31,10 @@ export class BaseLocale extends Dexie {
 
   constructor(nom: string) {
     super(nom);
-    this.version(1).stores({ meta: 'cle', sortie: 'cle, table', ...INDEX });
+    // Version 1 : les 16 premières tables ; version 2 : le Carnet (notes).
+    const { notes, ...v1 } = INDEX;
+    this.version(1).stores({ meta: 'cle', sortie: 'cle, table', ...v1 });
+    this.version(2).stores({ notes });
   }
 
   lignes<K extends NomTable>(t: K): Table<LignesParTable[K], string> { return this.table(t) as Table<LignesParTable[K], string>; }

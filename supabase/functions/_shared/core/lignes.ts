@@ -137,9 +137,25 @@ export interface Rappel extends Base {
 export interface AbonnementPush extends Base { endpoint: string; cle_p256dh: string; cle_auth: string; appareil: string | null; dernier_succes: string | null }
 
 /** Tables synchronisées, dans l'ordre où elles peuvent être écrites (les parents d'abord). */
+/** Origine d'une note du Carnet (spec §18). */
+export type OrigineNote = 'libre' | 'focus' | 'bloc' | 'saisie';
+/** Une note du Carnet : numérotée sans interruption, une page par jour. */
+export interface Note extends Base {
+  jour: string;
+  texte: string;
+  numero: number;
+  origine: OrigineNote;
+  /** Minutes depuis minuit (heure locale) au moment de l'écriture. */
+  heure: number | null;
+  occurrence_id: string | null;
+  projet_id: string | null;
+  /** Titre du bloc, copié pour garder la référence même si le bloc disparaît. */
+  source_label: string | null;
+}
+
 export const TABLES = [
   'profils', 'rubriques', 'projets', 'sous_projets', 'metriques', 'taches', 'tache_alimente', 'tache_attendus',
-  'occurrences', 'saisies', 'saisie_valeurs', 'points_rapport', 'presets_export', 'rapports', 'rappels', 'abonnements_push'
+  'occurrences', 'saisies', 'saisie_valeurs', 'points_rapport', 'presets_export', 'rapports', 'rappels', 'abonnements_push', 'notes'
 ] as const;
 export type NomTable = (typeof TABLES)[number];
 
@@ -147,5 +163,5 @@ export interface LignesParTable {
   profils: Profil; rubriques: Rubrique; projets: Projet; sous_projets: SousProjetLigne; metriques: MetriqueLigne;
   taches: Tache; tache_alimente: TacheAlimente; tache_attendus: TacheAttendu; occurrences: Occurrence;
   saisies: Saisie; saisie_valeurs: SaisieValeur; points_rapport: PointRapportLigne; presets_export: PresetExport;
-  rapports: RapportLigne; rappels: Rappel; abonnements_push: AbonnementPush;
+  rapports: RapportLigne; rappels: Rappel; abonnements_push: AbonnementPush; notes: Note;
 }

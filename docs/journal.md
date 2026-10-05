@@ -35,6 +35,8 @@ Outil de comparaison : voir la méthode dans ce journal ; relancer une passe à 
 
 **Serveur à jour (5 oct., soir)** : migrations 0800 (secret pg_cron dans la base) et 0900 (rappels multiples) appliquées sur `by-projets` et enregistrées ; entrée de coffre `project_url` créée ; 3 fonctions redéployées ; secret de fonction `CRON_SECRET` supprimé ; pg_cron reçoit des 200 ; les fonctions répondent 401 sans le secret. Un compte existe déjà (le déclencheur `un_seul_compte` refuse tout autre). Reste : fermer « Allow new users to sign up » dans Supabase (Authentication), autoriser les notifications depuis l'icône d'écran d'accueil.
 
+**Carnet (spec §18)** : table `notes` (migration 1000, appliquée sur by-projets), écran `/carnet` (une page par jour, glisser, sommaire, note libre, corriger/supprimer), bouton « Carnet » au Fil, notes du Mode Focus à la place de « Ce que Dieu me dit », notes de saisie reflétées, recherche. Numéros jamais renumérotés.
+
 **Reste à faire (dans l'ordre)**
 1. Brancher le vrai Supabase (voir `supabase/README.md`) : appliquer les migrations, déployer les 3 fonctions, secrets VAPID, variables Vercel `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_VAPID_PUBLIC_KEY`, fermer les inscriptions après la création du compte.
    - Blocage : le jeton `SUPABACE_ACCES_TOKEN` (sic) ne voit que le projet `le-chemin` (autre application, ne pas y toucher). Il faut un jeton qui voit le projet `by-projets`.

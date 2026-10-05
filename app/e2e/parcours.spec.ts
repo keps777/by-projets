@@ -132,3 +132,66 @@ test('ajout de tâche : choisir l’heure d’un coup et cumuler des rappels plu
   await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
   await expect(page).toHaveURL(/\/$|\/\?/);
 });
+
+test.describe('Carnet', () => {
+  test('écrire des notes libres : numérotées, gardées après rechargement, corrigées et retrouvées dans la recherche', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('link', { name: /Carnet/ }).click();
+    await expect(page).toHaveURL(/\/carnet/);
+    const champ = page.getByLabel('Écrire une note libre');
+    await expect(champ).toBeFocused();
+    await champ.fill('Pardonner vite, sans attendre');
+    await page.getByRole('button', { name: 'Ajouter au Carnet' }).click();
+    await champ.fill('Appeler Christopher demain');
+    await page.getByRole('button', { name: 'Ajouter au Carnet' }).click();
+    const lignes = page.locator('.note');
+    await expect(lignes).toHaveCount(2);
+    await expect(lignes.nth(0).locator('.numero')).toHaveText('1');
+    await expect(lignes.nth(1).locator('.numero')).toHaveText('2');
+    await expect(page.getByText('Note libre ·').first()).toBeVisible();
+
+    await page.reload();
+    await expect(page.locator('.note')).toHaveCount(2);
+
+    // Corriger la note 1 : le numéro ne change pas.
+    await page.locator('.note').nth(0).locator('.texte').click();
+    await page.getByLabel('Texte de la note 1').fill('Pardonner vite, sans rien attendre');
+    await page.getByRole('button', { name: 'Enregistrer' }).click();
+    await expect(page.locator('.note').nth(0)).toContainText('sans rien attendre');
+    await expect(page.locator('.note').nth(0).locator('.numero')).toHaveText('1');
+
+    // La recherche retrouve la note, avec son numéro.
+    await page.goto('/recherche?q=christopher');
+    await expect(page.getByText('Carnet n° 2').first()).toBeVisible();
+  });
+
+  test('le sommaire liste les pages avec leurs numéros', async ({ page }) => {
+    await page.goto('/carnet?ecrire=1');
+    await page.getByLabel('Écrire une note libre').fill('Une pensée du jour');
+    await page.getByRole('button', { name: 'Ajouter au Carnet' }).click();
+    await page.getByRole('button', { name: 'Sommaire des pages' }).click();
+    await expect(page.getByRole('dialog', { name: 'Sommaire du Carnet' })).toContainText('n° 1');
+  });
+});
+
+test('Mode Focus : les notes écrites pendant un bloc vont au Carnet, numérotées, avec leur provenance', async ({ page }) => {
+  await page.goto('/tache/nouvelle?sans-projet=1&heure=60');
+  await page.getByLabel('Titre de la tâche').fill('Étude du soir');
+  await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+  await page.getByText('Étude du soir').first().click();
+  await page.getByRole('dialog').getByRole('button', { name: /Lancer/ }).first().click();
+  await page.getByRole('link', { name: /Mode Focus/ }).click();
+  await expect(page).toHaveURL(/\/focus\?occ=/);
+  const champ = page.getByLabel('Écrire une note');
+  await champ.fill('Matthieu 6 : ne vous inquiétez pas');
+  await page.getByRole('button', { name: 'Ajouter', exact: true }).click();
+  await expect(page.locator('.carnet-liste li')).toHaveCount(1);
+  await expect(page.locator('.carnet-liste .num')).toHaveText('1');
+  await champ.fill('Faire confiance, un jour à la fois');
+  await page.getByRole('button', { name: 'Ajouter', exact: true }).click();
+  await expect(page.locator('.carnet-liste .num').nth(1)).toHaveText('2');
+
+  await page.goto('/carnet');
+  await expect(page.locator('.note')).toHaveCount(2);
+  await expect(page.getByText(/Focus · Étude du soir/).first()).toBeVisible();
+});

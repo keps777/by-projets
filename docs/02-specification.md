@@ -27,6 +27,7 @@ Elle est **découpée en sections**, une par fichier dans `docs/spec/`. Une tâc
 | 15 | [Histoires utilisateur et critères d'acceptation](spec/15-histoires-utilisateur-et-criteres-d-acceptation.md) | US-01 à US-30 avec critères vérifiables | 130 |
 | 16 | [Hors périmètre de la v1](spec/16-hors-perimetre-de-la-v1.md) | Ce qui n'est pas dans la v1 | 10 |
 | 17 | [Décisions et questions ouvertes](spec/17-decisions-et-questions-ouvertes.md) | Décisions tranchées et questions ouvertes | 17 |
+| 18 | [Le Carnet](spec/18-le-carnet.md) | Livre numéroté de toutes les notes, une page par jour, note libre, notes du Mode Focus | 30 |
 
 ## Quelle section lire selon la tâche
 

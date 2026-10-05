@@ -7,6 +7,7 @@ import type { Jour, TypeMetrique } from '@core/types.ts';
 import type { DetailMouvement, Occurrence, Saisie, SaisieValeur, Tache } from '@core/lignes.ts';
 import { magasin } from '../../data/magasin.svelte.ts';
 import { fuseau } from '../../data/temps.svelte.ts';
+import { refleterNoteDeSaisie } from '../../data/actions/notes.ts';
 
 /** Code de rapport du projet (BR, DDEWG…), s'il y en a un. */
 export function codeDuProjet(projetId: string): string | null {
@@ -108,6 +109,11 @@ export function saisirJour(projetId: string, jour: Jour, valeurs: ValeurJour[], 
   if (!ops.length && (existante?.note ?? null) === noteNette) return;
   ops.unshift(['saisies', { id: sid, projet_id: projetId, occurrence_id: null, jour, source: jour < aujourdhui ? 'rattrapage' : 'manuel', note: noteNette, approx: existante?.approx ?? false }]);
   magasin.ecrireLot(ops);
+  // La note de la saisie entre aussi au Carnet (spec §18), avec le nom du projet et, pour un autre jour, ce jour.
+  if (note !== undefined) {
+    const projet = magasin.trouver('projets', projetId);
+    refleterNoteDeSaisie(sid, noteNette, projetId, `${projet?.nom ?? 'Saisie'}${jour === aujourdhui ? '' : ` · ${jour}`}`);
+  }
 }
 
 // ------------------------------------------------------------------ finances

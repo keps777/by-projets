@@ -57,7 +57,7 @@ export async function remplir(db: PGlite, qui: string, base: number): Promise<Re
   const ids = {
     rubrique: uid(base + 1), projet: uid(base + 2), sous_projet: uid(base + 3), metrique: uid(base + 4), tache: uid(base + 5),
     occurrence: uid(base + 6), saisie: uid(base + 7), valeur: uid(base + 8), point: uid(base + 9), rapport: uid(base + 10),
-    rappel: uid(base + 11), abonnement: uid(base + 12), alimente: uid(base + 13), attendu: uid(base + 14), preset: uid(base + 15)
+    rappel: uid(base + 11), abonnement: uid(base + 12), alimente: uid(base + 13), attendu: uid(base + 14), preset: uid(base + 15), note: uid(base + 16)
   };
   const regle = JSON.stringify({ frequence: 'quotidien', debut: '2026-10-01', fin: { type: 'aucune' } });
   const lignes: [string, unknown[]][] = [
@@ -75,6 +75,7 @@ export async function remplir(db: PGlite, qui: string, base: number): Promise<Re
     ['insert into presets_export (id, nom, points) values ($1, $2, $3)', [ids.preset, 'Essai', [ids.point]]],
     ['insert into rapports (id, jour) values ($1, $2)', [ids.rapport, '2026-10-05']],
     ['insert into rappels (id, type, occurrence_id, envoyer_a, cle_unique) values ($1, $2, $3, $4, $5)', [ids.rappel, 'bloc', ids.occurrence, '2020-01-01T08:50:00Z', `${ids.occurrence}:10`]],
+    ['insert into notes (id, jour, texte, numero, origine, occurrence_id) values ($1, $2, $3, 1, $4, $5)', [ids.note, '2026-10-05', 'Une note', 'focus', ids.occurrence]],
     ['insert into abonnements_push (id, endpoint, cle_p256dh, cle_auth) values ($1, $2, $3, $4)', [ids.abonnement, 'https://push.example/1', 'p', 'a']]
   ];
   for (const [sql, p] of lignes) await comme(db, qui, sql, p);

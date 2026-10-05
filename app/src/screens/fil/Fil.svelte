@@ -133,6 +133,7 @@
     <div class="ligne">
       <span class="titre appli">{prenom} Life</span>
       <div class="actions">
+        <a class="rond" href="/carnet?ecrire=1" aria-label="Carnet : écrire une note"><Icone nom="livre" taille={19} /></a>
         <a class="rond" href="/recherche" aria-label="Rechercher"><Icone nom="recherche" taille={19} /></a>
         <a class="rond cloche" href={notifsOk ? '/reglages' : '/autoriser-notifications'} aria-label="Notifications">
           <Icone nom="cloche" taille={19} />{#if !notifsOk}<span class="pastille"></span>{/if}

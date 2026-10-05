@@ -17,6 +17,7 @@ export const ROUTES: Route[] = [
   { motif: '/recherche', charger: () => import('./screens/fil/Recherche.svelte') },
   { motif: '/tache/nouvelle', charger: () => import('./screens/fil/NouvelleTache.svelte') },
   { motif: '/tache/:id', charger: () => import('./screens/fil/NouvelleTache.svelte') },
+  { motif: '/carnet', charger: () => import('./screens/carnet/Carnet.svelte') },
   { motif: '/projets', charger: () => import('./screens/projets/Projets.svelte') },
   { motif: '/projets/nouveau-sous-projet', charger: () => import('./screens/projets/NouveauSousProjet.svelte') },
   { motif: '/projets/sous-projet/:id', charger: () => import('./screens/projets/SousProjet.svelte') },

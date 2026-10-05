@@ -4,6 +4,7 @@
   import { estArrive } from '@core/minuteur.ts';
   import { nombre } from '@core/units.ts';
   import { magasin } from '../../data/magasin.svelte.ts';
+  import { ajouterNote, notesDuBloc } from '../../data/actions/notes.ts';
   import { blocsDuJour, metriquesDe, type BlocVue } from '../../data/requetes.ts';
   import { aujourdhui as jourCourant, horloge, maintenantLocal } from '../../data/temps.svelte.ts';
   import { attendusDe, corrigerValeur, ecouleOccurrence, minuteurDe, saisirBloc, terminerBloc, type ValeurEntree } from '../../data/actions/blocs.ts';
@@ -51,22 +52,30 @@
 
   // Brouillon gardé sur l'appareil tant que le bloc n'est pas terminé.
   let passages = $state<Passage[]>([]);
-  let note = $state('');
+  // Notes du Mode Focus : écrites une par une, elles vont dans le Carnet (numérotées, spec §18).
+  let brouillonNote = $state('');
+  const notesBloc = $derived(b ? notesDuBloc(b.occ.id) : []);
+  function noterCarnet() {
+    if (!b) return;
+    const n = ajouterNote({ texte: brouillonNote, origine: 'focus', occurrenceId: b.occ.id, projetId: b.tache.projet_id, sourceLabel: b.titre });
+    if (n) { brouillonNote = ''; try { localStorage.removeItem(cleBrouillon(b.occ.id) + ':note'); } catch { /* stockage indisponible */ } }
+  }
+  function memoriserNote() { if (b) try { localStorage.setItem(cleBrouillon(b.occ.id) + ':note', brouillonNote); } catch { /* stockage indisponible */ } }
   let livre = $state(''), de = $state(''), a = $state('');
   const cleBrouillon = (id: string) => `luther-life:focus:${id}`;
   let chargePour: string | null = null;
   $effect(() => {
     if (!b || chargePour === b.occ.id) return;
     chargePour = b.occ.id;
-    let brouillon: { passages?: Passage[]; note?: string } = {};
+    let brouillon: { passages?: Passage[] } = {};
     try { brouillon = JSON.parse(localStorage.getItem(cleBrouillon(b.occ.id)) ?? '{}'); } catch { /* stockage indisponible */ }
     const sv = b.saisie ? magasin.lignes.saisie_valeurs.find((v) => v.saisie_id === b.saisie!.id && v.cle === 'reference:passages') : undefined;
     passages = brouillon.passages ?? (Array.isArray(sv?.detail) ? (sv.detail as Passage[]) : []);
-    note = brouillon.note ?? b.saisie?.note ?? '';
+    try { brouillonNote = localStorage.getItem(cleBrouillon(b.occ.id) + ':note') ?? ''; } catch { brouillonNote = ''; }
   });
   function memoriser() {
     if (!b) return;
-    try { localStorage.setItem(cleBrouillon(b.occ.id), JSON.stringify({ passages, note })); } catch { /* stockage indisponible */ }
+    try { localStorage.setItem(cleBrouillon(b.occ.id), JSON.stringify({ passages })); } catch { /* stockage indisponible */ }
   }
 
   const compte = $derived(compterChapitres(passages));
@@ -98,8 +107,12 @@
       valeurs.push({ cle: 'reference:passages', txt: formaterPassages(passages), detail: passages });
       valeurs.push({ cle: 'nombre:chapitres', num: compte });
     }
-    saisirBloc(b.occ.id, valeurs, { source: 'focus', note: note.trim() || null });
-    try { localStorage.removeItem(cleBrouillon(b.occ.id)); } catch { /* stockage indisponible */ }
+    // Une note laissée dans le champ sans avoir touché « Ajouter » n'est pas perdue.
+    noterCarnet();
+    // La note de la saisie reprend le texte des notes du Carnet de ce bloc (les tableaux des sous-projets la montrent).
+    const texteNotes = notesDuBloc(b.occ.id).map((n) => n.texte).join('\n');
+    saisirBloc(b.occ.id, valeurs, { source: 'focus', note: texteNotes || null });
+    try { localStorage.removeItem(cleBrouillon(b.occ.id)); localStorage.removeItem(cleBrouillon(b.occ.id) + ':note'); } catch { /* stockage indisponible */ }
     dire(`« ${b.titre} » cochée · ${dureeMin(Math.round(sec / 60))}`);
     routeur.aller('/');
   }
@@ -177,9 +190,19 @@
         </div>
       {/if}
 
-      <label class="note">{dieu ? 'Ce que Dieu me dit' : 'Note'}
-        <textarea rows="3" bind:value={note} onchange={memoriser}></textarea>
-      </label>
+      <section class="carnet" aria-label="Mes notes">
+        <div class="carnet-tete"><span class="fort">Mes notes</span><a class="carnet-lien" href="/carnet?jour={b.occ.jour}">Ouvrir le Carnet</a></div>
+        {#if notesBloc.length}
+          <ol class="carnet-liste">
+            {#each notesBloc as n (n.id)}<li><span class="num mono">{n.numero}</span><span class="txt">{n.texte}</span></li>{/each}
+          </ol>
+        {/if}
+        <div class="carnet-ecrire">
+          <textarea rows="2" bind:value={brouillonNote} oninput={memoriserNote} placeholder={dieu ? 'Ce que Dieu me dit, ce que je retiens…' : 'Une idée, une décision, un détail à garder…'} aria-label="Écrire une note"></textarea>
+          <button type="button" disabled={!brouillonNote.trim()} onclick={noterCarnet}>Ajouter</button>
+        </div>
+        <span class="muted petit">Chaque note prend le numéro suivant du Carnet.</span>
+      </section>
 
       <p class="verset serif">{dieu ? '« Ta parole est une lampe à mes pieds. »' : '« Tout ce que vous faites, faites-le de bon cœur. »'}</p>
     {:else}
@@ -241,8 +264,19 @@
   .ajouter { height: 44px; border-radius: 12px; border: 0; background: var(--inverse); color: var(--inverse-texte); display: flex; align-items: center; justify-content: center; }
   .pas { display: flex; gap: 6px; }
   .pas button { width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--surface-2); font-size: 20px; }
-  .note { display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-weight: 600; }
-  .note textarea { font: 16px/1.4 var(--police); background: var(--surface); border: 1px solid var(--ligne); border-radius: 16px; padding: 12px 14px; resize: none; }
+  .carnet { display: flex; flex-direction: column; gap: 10px; background: var(--surface); border: 1px solid var(--ligne); border-radius: 20px; padding: 14px; }
+  .carnet-tete { display: flex; align-items: center; justify-content: space-between; font-size: 14px; }
+  .carnet-lien { font-size: 13px; font-weight: 600; color: var(--accent-encre); text-decoration: underline; text-underline-offset: 3px; min-height: 44px; display: inline-flex; align-items: center; }
+  .carnet-liste { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .carnet-liste li { display: flex; gap: 10px; align-items: flex-start; animation: entre 0.25s ease both; }
+  .carnet-liste .num { flex: none; min-width: 30px; padding: 3px 7px; border-radius: 8px; background: var(--accent-fond); color: var(--accent-encre); font-size: 12px; text-align: center; }
+  .carnet-liste .txt { font-size: 15px; line-height: 1.4; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .carnet-ecrire { display: flex; gap: 8px; align-items: flex-end; }
+  .carnet-ecrire textarea { flex: 1; min-width: 0; font: 16px/1.4 var(--police); background: var(--champ); border: 1px solid var(--ligne); border-radius: 14px; padding: 10px 12px; resize: none; }
+  .carnet-ecrire textarea:focus { outline: none; border-color: var(--c); }
+  .carnet-ecrire button { flex: none; height: 44px; padding: 0 16px; border-radius: 14px; border: 0; background: var(--c); color: var(--c-sur, var(--accent-texte)); font-size: 14px; font-weight: 600; }
+  .carnet-ecrire button:disabled { opacity: 0.35; }
+  @keyframes entre { from { opacity: 0; transform: translateY(4px); } }
   .verset { font-size: 19px; line-height: 1.3; color: var(--muted); text-align: center; }
   .resume { font-size: 13px; }
 </style>
