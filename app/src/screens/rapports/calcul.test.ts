@@ -123,3 +123,26 @@ describe('périodes', () => {
     expect(decaler(periodeDe('jour', '2026-10-01'), -1).debut).toBe('2026-09-30');
   });
 });
+
+describe('objectif du jour quand un projet a un sous-projet quotidien et un sous-projet « au total »', () => {
+  // « 10 chapitres par jour » (1 h par jour) et « Lire tout le nouveau testament » (45 min au total, plus récent).
+  const jourj = (id: string, spId: string, cle: string, type: MetriqueLigne['type'], cible: number, periode: MetriqueLigne['periode_cible']): MetriqueLigne =>
+    ({ ...met(id, spId, cle, type, cible), periode_cible: periode });
+  const d = (): DonneesRapport => ({
+    ...donnees(),
+    sousProjets: [sp('quotidien', 'p1', '2026-10-01', null), sp('total', 'p1', '2026-10-04', '2026-10-31')],
+    metriques: [jourj('q1', 'quotidien', 'temps', 'temps', 3600, 'jour'), jourj('q2', 'quotidien', 'nombre:chapitres', 'nombre', 10, 'jour'),
+      jourj('t1', 'total', 'temps', 'temps', 2700, 'total'), jourj('t2', 'total', 'nombre:chapitres', 'nombre', 260, 'total')],
+    points: [point('pt-br', 0, 'BR', 'p1', ['nombre:chapitres', 'temps'])], saisies: [], valeurs: []
+  });
+
+  it('l’objectif quotidien l’emporte : 1 h et 10 chapitres, pas 1 min et 8,4 chapitres', () => {
+    const [br] = calculerPoints(preparer(d()), d(), '2026-10-06', '2026-10-06');
+    expect(br.mesures.map((m) => m.attendu)).toEqual([10, 3600]);
+  });
+  it('sans sous-projet quotidien, on garde le plus récent', () => {
+    const sansQuotidien: DonneesRapport = { ...d(), sousProjets: [sp('total', 'p1', '2026-10-04', '2026-10-31')], metriques: d().metriques.filter((m) => m.sous_projet_id === 'total') };
+    const [br] = calculerPoints(preparer(sansQuotidien), sansQuotidien, '2026-10-06', '2026-10-06');
+    expect(br.mesures[1].attendu).toBeCloseTo(2700 / 28, 0); // 45 min réparties sur les 28 jours restants
+  });
+});

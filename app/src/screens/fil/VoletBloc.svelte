@@ -10,6 +10,7 @@
   import { cap, chrono, dureeMin, formatValeur, hm, nomDuMois } from './format.ts';
   import { abreger, codeDuProjet, mesuresDuBloc, progressionsDe, tempsDuBloc, type MesureBloc } from './vue-blocs.ts';
   import { depuisAffichage, versAffichage } from './saisie.ts';
+  import SuppressionBloc from './SuppressionBloc.svelte';
   import { CLE_CHAPITRES, CLE_PASSAGES, enregistrerPassages, passagesEnregistres } from './passages.ts';
   import PassagesLus from '../../ui/PassagesLus.svelte';
   import { styleTeinte } from './teintes.ts';
@@ -32,6 +33,7 @@
   const spLabel = $derived(!b ? '' : b.sousProjets.length > 1 ? `${b.sousProjets.length} sous-projets` : b.sousProjets[0]?.nom ?? (b.projet ? 'Aucun sous-projet' : ''));
   const libelleJouer = $derived(!b ? '' : b.enCours ? 'Pause' : b.enPause ? 'Reprendre' : ecoule > 0 || b.fait ? 'Relancer' : 'Lancer');
 
+  let suppression = $state(false);
   let edition = $state<string | null>(null);
   let brouillon = $state('');
 
@@ -168,11 +170,21 @@
         {#if b.sousProjets[0]}<a class="souligne" href="/projets/sous-projet/{b.sousProjets[0].id}">Ouvrir le sous-projet <Icone nom="suivant" taille={16} trait={2.2} /></a>{/if}
         <a href="/tache/{b.tache.id}?occ={b.occ.id}" class="muted">Modifier la tâche <Icone nom="suivant" taille={16} trait={2.2} /></a>
       </div>
+
+      <div class="fin-volet">
+        <button type="button" class="fermer-bas" onclick={onfermer}>Fermer</button>
+        <button type="button" class="supprimer-bas" onclick={() => (suppression = true)}><Icone nom="poubelle" taille={17} />Supprimer la tâche</button>
+      </div>
     </div>
   {/if}
 </Volet>
 
+<SuppressionBloc ouvert={suppression && !!b} tache={b?.tache ?? null} occId={b?.occ.id ?? null} titre={b?.titre ?? ''} onfermer={() => (suppression = false)} onsupprime={() => { suppression = false; onfermer(); }} />
+
 <style>
+  .fin-volet { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .fin-volet button { min-height: 48px; border-radius: 16px; border: 1px solid var(--ligne); background: transparent; color: var(--texte); font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .supprimer-bas { color: var(--mauvais) !important; }
   .bible { padding: 4px 0; }
   .volet { display: flex; flex-direction: column; gap: 14px; }
   .col { display: flex; flex-direction: column; gap: 4px; min-width: 0; }

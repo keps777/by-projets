@@ -22,3 +22,6 @@
 | **Ajouter une tâche** | AjouterTache, AjouterTacheSansProjet | Voir §7. |
 | **Archive** | Archive, ArchiveRapports | Onglets **Accomplis** (avec le verset 1 Samuel 7:12) et **Rapports**. |
 | **Réglages** | Reglages | Prénom, nom dans le rapport, langue du rapport, points du rapport et mesures, exports enregistrés, notifications (appareil, titres visibles), quels rappels recevoir, apparence. |
+
+## Feuilles (volets) : fermer et supprimer (6 oct. 2026)
+Toute feuille qui monte du bas se ferme **facilement** : bouton ✕ toujours visible en haut à droite, glissement vers le bas (depuis le haut de la feuille ou, quand elle est tout en haut, depuis n'importe où), appui à côté, touche Échap. Le volet d'un bloc ajoute en bas **Fermer** et **Supprimer la tâche** (un seul bloc, celui-ci et les suivants, ou toute la série pour une tâche qui se répète). Un fond opaque couvre la barre d'état de l'iPhone pour que le contenu qui défile ne passe pas sous l'heure.

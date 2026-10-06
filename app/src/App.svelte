@@ -75,10 +75,13 @@
     {synchro.etat === 'hors_ligne' ? 'Hors ligne' : synchro.etat === 'erreur' ? 'Synchronisation interrompue' : 'Synchronisation…'}
   </div>
 {/if}
+<!-- Fond opaque sous la barre d'état de l'iPhone : le contenu qui défile ne passe pas sous l'heure et les icônes. -->
+<div class="barre-statut" aria-hidden="true"></div>
 <Toasts />
 
 <style>
   .vue { height: 100%; }
+  .barre-statut { position: fixed; top: 0; left: 0; right: 0; height: var(--haut-sûr); background: var(--fond); z-index: 40; pointer-events: none; }
   .attente { height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; font-size: 24px; }
   .attente a { font-size: 14px; color: var(--accent); }
   .synchro { position: fixed; left: 50%; bottom: calc(76px + var(--bas-sûr)); transform: translateX(-50%); z-index: 80; background: var(--surface-2); color: var(--muted); font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 14px; border: 1px solid var(--ligne); }

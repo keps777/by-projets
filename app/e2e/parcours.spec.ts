@@ -416,3 +416,57 @@ test.describe('Chrono sur les points du rapport', () => {
     await expect(page.getByRole('dialog', { name: 'Fin de la session' })).toBeVisible();
   });
 });
+
+test.describe('Fermer et supprimer depuis le volet d’un bloc', () => {
+  test.use({ hasTouch: true });
+
+  async function ouvrirBloc(page: import('@playwright/test').Page, titre: string, heure = 120) {
+    await page.goto(`/tache/nouvelle?sans-projet=1&heure=${heure}`);
+    await page.getByLabel('Titre de la tâche').fill(titre);
+    await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+    await page.locator('.bloc').filter({ hasText: titre }).locator('.ouvrir').click();
+    await expect(page.getByRole('dialog', { name: titre })).toBeVisible();
+  }
+
+  test('le bouton ✕ et le bouton « Fermer » ferment le volet', async ({ page }) => {
+    await ouvrirBloc(page, 'À fermer');
+    await page.getByRole('dialog', { name: 'À fermer' }).getByRole('button', { name: 'Fermer', exact: true }).first().click();
+    await expect(page.getByRole('dialog', { name: 'À fermer' })).toBeHidden();
+    await page.locator('.bloc').filter({ hasText: 'À fermer' }).locator('.ouvrir').click();
+    await page.getByRole('dialog', { name: 'À fermer' }).getByRole('button', { name: 'Fermer', exact: true }).last().click();
+    await expect(page.getByRole('dialog', { name: 'À fermer' })).toBeHidden();
+  });
+
+  test('glisser vers le bas ferme le volet', async ({ page }) => {
+    await ouvrirBloc(page, 'À glisser');
+    const feuille = page.getByRole('dialog', { name: 'À glisser' });
+    const box = (await feuille.boundingBox())!;
+    const client = await page.context().newCDPSession(page);
+    const x = box.x + box.width / 2, y0 = box.y + 20;
+    await client.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y: y0 }] });
+    for (let i = 1; i <= 8; i++) await client.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x, y: y0 + i * 25 }] });
+    await client.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    await expect(feuille).toBeHidden();
+  });
+
+  test('supprimer la tâche d’un bloc : une seule fois, puis le bloc disparaît du Fil', async ({ page }) => {
+    await ouvrirBloc(page, 'À supprimer');
+    await page.getByRole('button', { name: 'Supprimer la tâche' }).click();
+    await page.getByRole('dialog', { name: 'Supprimer', exact: true }).getByRole('button', { name: 'Supprimer la tâche' }).click();
+    await expect(page.locator('.bloc').filter({ hasText: 'À supprimer' })).toHaveCount(0);
+  });
+
+  test('tâche qui se répète : on choisit seulement ce bloc, les suivants ou toute la série', async ({ page }) => {
+    await page.goto('/tache/nouvelle?sans-projet=1&heure=180');
+    await page.getByLabel('Titre de la tâche').fill('Chaque jour');
+    await page.getByRole('button', { name: 'Tous les jours' }).first().click();
+    await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+    await page.locator('.bloc').filter({ hasText: 'Chaque jour' }).locator('.ouvrir').click();
+    await page.getByRole('button', { name: 'Supprimer la tâche' }).click();
+    const choix = page.getByRole('dialog', { name: 'Supprimer', exact: true });
+    await expect(choix.getByRole('button', { name: /Seulement ce bloc/ })).toBeVisible();
+    await expect(choix.getByRole('button', { name: /Celui-ci et les suivants/ })).toBeVisible();
+    await choix.getByRole('button', { name: /Toute la série/ }).click();
+    await expect(page.locator('.bloc').filter({ hasText: 'Chaque jour' })).toHaveCount(0);
+  });
+});

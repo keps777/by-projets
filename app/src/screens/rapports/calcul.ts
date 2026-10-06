@@ -46,10 +46,11 @@ export function configDeMesure(mesure: MesurePoint, point: PointRapportLigne, d:
     const m = sp && metriqueDe(d, sp.id, mesure.cle);
     if (sp && m) return { metrique: versMetrique(m), sousProjet: { debut: sp.debut, fin: sp.fin } };
   }
-  for (const sp of sousProjetsDeLaPeriode(d, point.projet_id, debut, fin)) {
-    const m = metriqueDe(d, sp.id, mesure.cle);
-    if (m) return { metrique: versMetrique(m), sousProjet: { debut: sp.debut, fin: sp.fin } };
-  }
+  // L'objectif du jour vient d'abord d'un sous-projet à objectif quotidien (« 10 chapitres par jour », « 1 h par jour ») ;
+  // à défaut, du plus récent qui a cette mesure (un objectif « au total » ou mensuel est alors réparti sur ses jours).
+  const candidats = sousProjetsDeLaPeriode(d, point.projet_id, debut, fin).flatMap((sp) => { const m = metriqueDe(d, sp.id, mesure.cle); return m ? [{ sp, m }] : []; });
+  const choisi = candidats.find((c) => c.m.periode_cible === 'jour') ?? candidats[0];
+  if (choisi) return { metrique: versMetrique(choisi.m), sousProjet: { debut: choisi.sp.debut, fin: choisi.sp.fin } };
   return { metrique: metriqueDeLaCle(mesure.cle), sousProjet: { debut, fin: null } };
 }
 
