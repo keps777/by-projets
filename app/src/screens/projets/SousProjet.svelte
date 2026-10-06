@@ -18,6 +18,8 @@
   import OngletDocument from './OngletDocument.svelte';
   import OngletTemps from './OngletTemps.svelte';
   import SuiviFinances from './SuiviFinances.svelte';
+  import VoletRenommer from './VoletRenommer.svelte';
+  import { renommerProjet, renommerSousProjet } from '../../data/actions/projets.ts';
   import { codeDuProjet } from './donnees.ts';
   import { estFinances } from './vues.ts';
 
@@ -61,6 +63,7 @@
     return { update: caler };
   }
 
+  let renommer = $state<'projet' | 'sous-projet' | null>(null);
   const choisir = (o: Onglet) => routeur.definir('onglet', o === 'suivi' ? null : o);
   const allerA = (id: string) => routeur.aller(`/projets/sous-projet/${id}${onglet === 'suivi' ? '' : `?onglet=${onglet}`}`, true);
 </script>
@@ -76,7 +79,8 @@
     <div class="contenu" style={styleCouleur(couleur)}>
       <div class="tete">
         <button type="button" class="rond" aria-label="Retour aux projets" onclick={() => routeur.retour('/projets')}><Icone nom="retour" taille={18} trait={2.2} /></button>
-        <span class="ariane">{rubrique?.nom ?? ''} ›<br />Projet {projet.numero ?? ''} · {projet.nom}</span>
+        <span class="ariane">{rubrique?.nom ?? ''} ›<br />Projet {projet.numero ?? ''} · {projet.nom}
+          <button type="button" class="crayon" aria-label="Renommer le projet {projet.nom}" onclick={() => (renommer = 'projet')}><Icone nom="crayon" taille={14} trait={2.2} /></button></span>
         {#if code || finances}<span class="code mono">{code ?? 'FINANCES'}</span>{/if}
       </div>
 
@@ -94,7 +98,12 @@
         </div>
       {/if}
 
-      {#if onglet !== 'document'}<h1 class="titre">{sp.nom}</h1>{/if}
+      {#if onglet !== 'document'}
+        <div class="titre-ligne">
+          <h1 class="titre">{sp.nom}</h1>
+          <button type="button" class="crayon grand" aria-label="Renommer le sous-projet {sp.nom}" onclick={() => (renommer = 'sous-projet')}><Icone nom="crayon" taille={18} trait={2.2} /></button>
+        </div>
+      {/if}
 
       <Segment options={ONGLETS} valeur={onglet} onchoisir={choisir} hauteur={38} ample />
 
@@ -115,6 +124,12 @@
   {/if}
 </EcranPage>
 
+{#if sp && projet}
+  <VoletRenommer ouvert={renommer !== null} titre={renommer === 'projet' ? 'Renommer le projet' : 'Renommer le sous-projet'} nom={renommer === 'projet' ? projet.nom : sp.nom}
+    exemple={renommer === 'projet' ? 'Nom du projet' : 'Nom du sous-projet'} onfermer={() => (renommer = null)}
+    onenregistrer={(n) => (renommer === 'projet' ? renommerProjet(projet.id, n) : renommerSousProjet(sp.id, n))} />
+{/if}
+
 <style>
   .contenu { flex: 1 0 auto; display: flex; flex-direction: column; gap: 14px; }
   /* Contenu de l'onglet : il glisse en place au changement d'onglet ; le Document remplit l'écran (papier jusqu'en bas). */
@@ -131,6 +146,11 @@
   /* Lien, pas bouton : boîte de contenu comme la maquette (44 px + bordure). */
   .puce.ajout { box-sizing: content-box; border: 1.5px dashed var(--ligne); color: var(--c-encre); gap: 6px; }
   h1 { font-size: 26px; line-height: 1.12; }
+  .titre-ligne { display: flex; align-items: flex-start; gap: 6px; }
+  .titre-ligne h1 { flex: 1; min-width: 0; }
+  .crayon { flex: none; width: 44px; height: 44px; border-radius: 22px; border: 0; background: transparent; color: var(--c-encre); display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; }
+  .ariane .crayon { width: 36px; height: 36px; margin: -10px 0 -10px -6px; opacity: 0.85; }
+  .crayon.grand { margin-top: -6px; }
   /* Onglets de sous-projet : les inactifs restent en graisse normale dans la maquette (Segment « ample » les met à 600). */
   .contenu :global(.segment [role='tab']:not(.actif)) { font-weight: 400; }
   .lien { color: var(--accent-encre); font-weight: 600; }

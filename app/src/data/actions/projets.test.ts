@@ -6,7 +6,7 @@ import { session } from '../auth.svelte.ts';
 import { horloge } from '../temps.svelte.ts';
 import { metriquesDe, sousProjetsDe } from '../requetes.ts';
 import { cataloguerMesures } from '../../screens/fil/catalogue-metriques.ts';
-import { ajouterProjet, creerSousProjetRapide } from './projets.ts';
+import { ajouterProjet, creerSousProjetRapide, renommerProjet, renommerSousProjet } from './projets.ts';
 
 beforeEach(async () => {
   await magasin.fermer();
@@ -36,5 +36,17 @@ describe('création rapide depuis « Nouvelle tâche »', () => {
     expect(cles).toEqual(expect.arrayContaining(['temps', 'fois', 'distance', 'poids', 'note', 'oui_non', 'heure', 'pourcentage', 'nombre:chapitres', 'reference:passages']));
     expect(catalogue.find((c) => c.cle === 'temps')?.nom).toBe('Temps');
     expect(catalogue.find((c) => c.cle === 'montant:entrees')?.nom).toBe('Entrées');
+  });
+});
+
+describe('renommer', () => {
+  it('change le nom d’un projet et d’un sous-projet, sans accepter un nom vide', () => {
+    const projet = ajouterProjet(magasin.lignes.rubriques[0].id, 'Ancien');
+    const sp = creerSousProjetRapide(projet, 'Vieux nom', [], '2026-10-05');
+    renommerProjet(projet, '  Nouveau projet ');
+    renommerSousProjet(sp, 'Nouveau nom');
+    renommerSousProjet(sp, '   ');
+    expect(magasin.trouver('projets', projet)?.nom).toBe('Nouveau projet');
+    expect(magasin.trouver('sous_projets', sp)?.nom).toBe('Nouveau nom');
   });
 });

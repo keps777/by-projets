@@ -545,3 +545,50 @@ test('Projets : une rubrique se replie avec sa flèche et le repli est gardé', 
   await page.getByRole('button', { name: /Déplier la rubrique Ma relation avec Dieu/ }).click();
   await expect(projet).toBeVisible();
 });
+
+test('renommer un sous-projet et son projet depuis la page du sous-projet', async ({ page }) => {
+  await page.goto('/projets');
+  await page.getByRole('link', { name: /RDQD/ }).first().click();
+  // Le projet de départ n'a pas encore de sous-projet : on en crée un avec le modèle proposé.
+  await page.getByRole('button', { name: 'Créer le sous-projet' }).click();
+  await page.getByRole('button', { name: /Renommer le sous-projet/ }).click();
+  await page.getByRole('textbox', { name: 'Nom' }).fill('Rencontres du jour');
+  await page.getByRole('button', { name: 'Enregistrer' }).click();
+  await expect(page.getByRole('heading', { level: 1, name: 'Rencontres du jour' })).toBeVisible();
+
+  await page.getByRole('button', { name: /Renommer le projet/ }).click();
+  await page.getByRole('textbox', { name: 'Nom' }).fill('RDQD renommé');
+  await page.getByRole('button', { name: 'Enregistrer' }).click();
+  await expect(page.getByText('RDQD renommé').first()).toBeVisible();
+
+  await page.reload();
+  await expect(page.getByRole('heading', { level: 1, name: 'Rencontres du jour' })).toBeVisible();
+  await expect(page.getByText('RDQD renommé').first()).toBeVisible();
+});
+
+test('carte « Ensuite » : glisser vers le haut montre les blocs non faits qui suivent (autres jours compris), vers le bas les précédents', async ({ page }) => {
+  const dans = (n: number) => new Date(Date.now() + n * 86400000).toISOString().slice(0, 10);
+  for (const [n, titre] of [[3, 'Premier à venir'], [4, 'Deuxième à venir']] as const) {
+    await page.goto(`/tache/nouvelle?sans-projet=1&jour=${dans(n)}`);
+    await page.getByLabel('Titre de la tâche').fill(titre);
+    await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+    await expect(page).toHaveURL(/\/$|\/\?/);
+  }
+  await page.goto('/');
+  const carte = page.getByRole('group', { name: /Prochains blocs/ });
+  await expect(carte.getByText('Premier à venir')).toBeVisible();
+  const b = (await carte.boundingBox())!;
+  const glisser = async (dy: number) => {
+    await page.mouse.move(b.x + 80, b.y + b.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(b.x + 80, b.y + b.height / 2 + dy / 2, { steps: 4 });
+    await page.mouse.move(b.x + 80, b.y + b.height / 2 + dy, { steps: 4 });
+    await page.mouse.up();
+  };
+  await glisser(-70);
+  await expect(carte.getByText('Deuxième à venir')).toBeVisible();
+  await glisser(-70); // déjà au dernier : rien ne bouge
+  await expect(carte.getByText('Deuxième à venir')).toBeVisible();
+  await glisser(70);
+  await expect(carte.getByText('Premier à venir')).toBeVisible();
+});

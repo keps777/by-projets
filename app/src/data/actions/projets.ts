@@ -23,6 +23,9 @@ export function ajouterProjet(rubriqueId: string, nom: string): string {
   return id;
 }
 
+export function renommerProjet(projetId: string, nom: string): void { if (nom.trim()) magasin.ecrire('projets', { id: projetId, nom: nom.trim() }); }
+export function renommerSousProjet(spId: string, nom: string): void { if (nom.trim()) magasin.ecrire('sous_projets', { id: spId, nom: nom.trim() }); }
+
 /** Retire un projet de l'écran. Les saisies passées sont conservées (archivées), rien ne se perd. */
 export function retirerProjet(projetId: string): void { magasin.ecrire('projets', { id: projetId, statut: 'archive' }); }
 export function retirerRubrique(rubriqueId: string): void { magasin.ecrire('rubriques', { id: rubriqueId, archivee: true }); }

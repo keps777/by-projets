@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Occurrence } from '@core/lignes.ts';
-  import type { BlocVue } from '../../data/requetes.ts';
+  import { blocsNonFaits, type BlocVue } from '../../data/requetes.ts';
   import { magasin } from '../../data/magasin.svelte.ts';
   import { horloge, maintenantLocal } from '../../data/temps.svelte.ts';
   import { ecouleOccurrence } from '../../data/actions/blocs.ts';
@@ -8,7 +8,8 @@
   import { routeur } from '../../routeur.svelte.ts';
   import Icone from '../../ui/Icone.svelte';
   import { theme } from '../../ui/theme.svelte.ts';
-  import { cap, chrono, dureeMin, hm, nomDuJour } from './format.ts';
+  import { cap, chrono, dureeMin, hm, nomDuJour, puceJour } from './format.ts';
+  import { fly } from 'svelte/transition';
   import { styleTeinte } from './teintes.ts';
 
   /** Carte du bas : bloc en cours (Pause, Terminer), sinon « En ce moment » / « Ensuite » avec Lancer. */
@@ -40,10 +41,49 @@
     return { titre: tache?.titre ?? 'Bloc', couleur: rubrique?.couleur ?? COULEUR_SANS_PROJET, totalS: Math.max(60, (Date.parse(actif.fin) - Date.parse(actif.debut)) / 1000) };
   });
 
+  // Balayer la carte « Ensuite » : vers le haut, les blocs non faits qui suivent (même d'autres jours) ; vers le bas, ceux d'avant.
+  const file = $derived(blocsNonFaits());
+  const defaut = $derived.by(() => {
+    const i = file.findIndex((b) => b.occ.jour > aujourdhui || (b.occ.jour === aujourdhui && b.finMin > maintenant));
+    // Plus rien à faire aujourd'hui ni après : on garde la carte « Journée accomplie », placée après le dernier bloc en retard.
+    return i >= 0 ? i : file.length;
+  });
+  const dernier = $derived(defaut === file.length ? file.length : file.length - 1);
+  let choisieId = $state<string | null>(null);
+  let sens = $state(1);
+  const position = $derived.by(() => {
+    const i = choisieId ? file.findIndex((b) => b.occ.id === choisieId) : -1;
+    return i >= 0 ? i : defaut;
+  });
+  const parcourable = $derived(jour === aujourdhui && !actifs.length && dernier > 0);
+  function parcourir(delta: 1 | -1) {
+    const i = Math.min(dernier, Math.max(0, position + delta));
+    if (i === position) return;
+    sens = delta;
+    choisieId = i === defaut || !file[i] ? null : file[i].occ.id;
+  }
+  let depart: { x: number; y: number } | null = null;
+  const balayageDebut = (e: PointerEvent) => { depart = { x: e.clientX, y: e.clientY }; };
+  // On ne « capture » le doigt qu'une fois le geste vertical engagé : un simple appui garde ses boutons (Lancer…).
+  function balayageMouvement(e: PointerEvent) {
+    if (depart && parcourable && Math.abs(e.clientY - depart.y) > 10) (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
+  }
+  function balayageFin(e: PointerEvent) {
+    if (!depart || !parcourable) { depart = null; return; }
+    const dx = e.clientX - depart.x, dy = e.clientY - depart.y;
+    depart = null;
+    if (Math.abs(dy) > 36 && Math.abs(dy) > Math.abs(dx) * 1.5) parcourir(dy < 0 ? 1 : -1);
+  }
+  const libelleDecalage = (b: BlocVue) => {
+    const d = b.debutMin - maintenant;
+    if (b.occ.jour !== aujourdhui) return `${cap(puceJour(b.occ.jour, aujourdhui))} · ${hm(b.debutMin)}`;
+    return d > 0 ? `Ensuite · dans ${dureeMin(d)}` : `Non fait · prévu à ${hm(b.debutMin)}`;
+  };
+
   type Carte = { kicker: string; titre: string; sous: string; mono?: boolean; couleur: string | null; action?: { label: string; aria: string; pause?: boolean; faire: () => void }; terminer?: () => void; pct?: number; ouvrir?: () => void };
 
   // Journée vide, aujourd'hui ou à venir : la carte devient une invitation (premier bloc, ou rendez-vous sans projet).
-  const invitation = $derived(!blocs.length && jour >= aujourdhui && !actifs.length);
+  const invitation = $derived(!blocs.length && jour >= aujourdhui && !actifs.length && !(jour === aujourdhui && file.length));
   const suffixeJour = $derived(jour === aujourdhui ? '' : `jour=${jour}`);
 
   const carte = $derived.by((): Carte => {
@@ -67,14 +107,14 @@
         terminer: () => onterminer(actif.id), ouvrir: () => onouvrir(actif.id)
       };
     }
-    const cur = blocs.find((b) => b.debutMin <= maintenant && maintenant < b.finMin);
-    const next = blocs.find((b) => b.debutMin > maintenant);
-    const cible = cur ?? next;
+    const cible = file.length ? file[position] : undefined;
     if (cible) {
+      const enCours = cible.occ.jour === aujourdhui && cible.debutMin <= maintenant && maintenant < cible.finMin;
+      const dujour = cible.occ.jour === aujourdhui;
       return {
-        kicker: cur ? `En ce moment · reste ${dureeMin(cible.finMin - maintenant)}` : `Ensuite · dans ${dureeMin(cible.debutMin - maintenant)}`,
-        titre: cible.titre, sous: `${cible.projet?.nom ?? 'Sans projet'} · ${hm(cible.debutMin)}–${hm(cible.finMin)}`, couleur: cible.couleur,
-        action: cible.fait ? undefined : { label: 'Lancer', aria: `Lancer ${cible.titre}`, faire: () => onjouer(cible.occ.id) },
+        kicker: enCours ? `En ce moment · reste ${dureeMin(cible.finMin - maintenant)}` : libelleDecalage(cible), titre: cible.titre,
+        sous: `${cible.projet?.nom ?? 'Sans projet'} · ${hm(cible.debutMin)}–${hm(cible.finMin)}`, couleur: cible.couleur,
+        action: dujour ? { label: 'Lancer', aria: `Lancer ${cible.titre}`, faire: () => onjouer(cible.occ.id) } : undefined,
         ouvrir: () => onouvrir(cible.occ.id)
       };
     }
@@ -124,10 +164,11 @@
     </ul>
   </div>
   {:else}
-  <div class="carte-bas" {style}>
-    <div class="rang">
+  <div class="carte-bas" class:parcourable {style} onpointerdown={balayageDebut} onpointermove={balayageMouvement} onpointerup={balayageFin} onpointercancel={() => (depart = null)} role="group" aria-label={parcourable ? 'Prochains blocs · glisser vers le haut ou le bas pour parcourir' : undefined}>
+    {#key parcourable ? `${position}:${file[position]?.occ.id}` : 'fixe'}
+    <div class="rang" in:fly={{ y: parcourable ? sens * 16 : 0, duration: parcourable ? 180 : 0 }}>
       <button type="button" class="texte" onclick={() => carte.ouvrir?.()} disabled={!carte.ouvrir}>
-        <span class="kicker" class:maintenant={!carte.couleur && carte.kicker === 'Journée accomplie'}>{carte.kicker}</span>
+        <span class="kicker" class:maintenant={!carte.couleur && carte.kicker === 'Journée accomplie'}>{carte.kicker}{#if parcourable && file[position]} <span class="rang-pos mono">{position + 1}/{file.length}</span>{/if}</span>
         <span class="titre-carte">{carte.titre}</span>
         <span class="sous" class:mono={carte.mono}>{carte.sous}</span>
       </button>
@@ -147,6 +188,8 @@
         </button>
       {/if}
     </div>
+    {/key}
+    {#if parcourable}<span class="prise" aria-hidden="true"></span>{/if}
     {#if carte.pct != null}
       <span class="piste"><span class="barre" style:width="{carte.pct}%"></span></span>
     {/if}
@@ -167,6 +210,9 @@
   .terminer { flex: none; width: 44px; height: 44px; border-radius: 22px; border: 1px solid var(--carte-ligne); background: transparent; color: var(--carte-texte); display: flex; align-items: center; justify-content: center; }
   .action { flex: none; height: 44px; padding: 0 16px; border-radius: 22px; border: 0; background: var(--c); color: var(--c-sur); font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
   .piste { height: 6px; border-radius: 3px; background: var(--carte-piste); overflow: hidden; }
+  .carte-bas.parcourable { touch-action: none; user-select: none; -webkit-user-select: none; position: relative; overflow: hidden; }
+  .prise { position: absolute; top: 5px; left: 50%; width: 30px; height: 3px; margin-left: -15px; border-radius: 2px; background: var(--carte-ligne); }
+  .rang-pos { margin-left: 6px; font-size: 10px; opacity: 0.7; letter-spacing: 0; }
   .multi { gap: 8px; }
   .liste-actifs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; max-height: 188px; overflow-y: auto; }
   .liste-actifs li { display: flex; align-items: center; gap: 10px; }

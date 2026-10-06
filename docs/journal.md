@@ -5,6 +5,8 @@
 ## 6 oct. 2026 — Créer un projet ou un sous-projet depuis « Nouvelle tâche »
 
 - `CreationRapide.svelte` : « + Nouveau projet » et « + Nouveau sous-projet » (nom + menu déroulant à choix multiples des mesures du catalogue `catalogue-metriques.ts`) dans `SectionProjet`; action `creerSousProjetRapide`; spec §7 mise à jour; test unitaire + e2e.
+- Fil : la carte du bas se glisse vers le haut (blocs non faits suivants, tous jours) ou le bas (précédents) — `blocsNonFaits()`.
+- Projets/sous-projet : crayon pour renommer le projet et le sous-projet (`VoletRenommer`).
 - Projets : flèche à droite du titre d’une rubrique pour la replier/déplier (gardé dans `localStorage`).
 - Fin de session : temps modifiable (h/min/s) — voir spec §9.
 

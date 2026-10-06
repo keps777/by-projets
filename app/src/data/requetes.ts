@@ -92,12 +92,21 @@ export interface BlocVue {
 export const COULEUR_SANS_PROJET = '#A3A6B1';
 
 export function blocsDuJour(jour: Jour): BlocVue[] {
+  return blocsDe((occ) => occ.jour === jour).sort((a, b) => a.debutMin - b.debutMin);
+}
+
+/** Blocs de tous les jours qui ne sont pas faits ni ignorés, du plus ancien au plus lointain (carte « Ensuite » du Fil). */
+export function blocsNonFaits(): BlocVue[] {
+  return blocsDe((occ) => occ.etat !== 'faite').sort((a, b) => a.occ.debut.localeCompare(b.occ.debut));
+}
+
+function blocsDe(garder: (occ: Occurrence) => boolean): BlocVue[] {
   const tz = fuseau();
   const { occurrences, taches, projets, rubriques: rubs, tache_alimente, sous_projets, saisies } = magasin.lignes;
   const tachesParId = new Map(taches.map((t) => [t.id, t]));
   const res: BlocVue[] = [];
   for (const occ of occurrences) {
-    if (occ.jour !== jour || occ.etat === 'ignoree') continue;
+    if (!garder(occ) || occ.etat === 'ignoree') continue;
     const tache = tachesParId.get(occ.tache_id);
     if (!tache || !tache.actif) continue;
     const projet = tache.projet_id ? projets.find((p) => p.id === tache.projet_id) ?? null : null;
@@ -113,7 +122,7 @@ export function blocsDuJour(jour: Jour): BlocVue[] {
       couleur: rubrique?.couleur ?? COULEUR_SANS_PROJET
     });
   }
-  return res.sort((a, b) => a.debutMin - b.debutMin);
+  return res;
 }
 
 export function creneauxDuJour(jour: Jour, sauf?: string): Creneau[] {
