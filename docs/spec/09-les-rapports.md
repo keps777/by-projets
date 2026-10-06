@@ -38,6 +38,7 @@
 ## Chrono sur chaque point (onglet Jour, 5 oct. 2026)
 - Chaque carte de point qui a une mesure de **temps** et un projet porte un petit bouton **▶**. Le toucher **lance une session** : le chrono tourne sur la carte (et une pastille rouge marque l'onglet Rapports depuis les autres écrans) ; il survit au rechargement de l'app.
 - Toucher **■** arrête la session et ouvre la **pop-up de fin** : le temps y est déjà noté ; on peut remplir les **autres mesures** du point (nombre de fois — proposé à 1 —, chapitres, pages, références ; pour la Bible, les passages se choisissent par les menus et donnent le nombre de chapitres) ou **valider tel quel**. « Plus tard » garde la session arrêtée, « à valider » ; « Annuler la session » l'oublie.
+- Avant de valider, le **temps de la session se corrige** : heures, minutes et secondes sont des champs modifiables, avec des boutons −5 / −1 / +1 / +5 min et un lien « Remettre le temps du chrono ».
 - Valider écrit une **saisie du projet** (source « minuteur »). Les sessions d'un même jour **s'additionnent** au total du point et de ses sous-projets ; la correction manuelle du jour reste possible. Un seul chrono par point à la fois ; plusieurs points peuvent chronométrer en même temps. Réservé à la journée en cours.
 
 ## Objectif du jour d'un point (6 oct. 2026)

@@ -82,11 +82,12 @@
     if (etat === 'cours') chronos.arreter(x.point.id);
     sessionPour = x;
   }
-  function validerSession(autres: ValeurSession[]): void {
+  function validerSession(autres: ValeurSession[], secondes: number): void {
     const x = sessionPour;
     const s = x && chronos.sessions[x.point.id];
     if (!x || !s || !x.point.projet_id) return;
-    enregistrerSession(x.point.projet_id, s.jour, chronos.secondes(x.point.id), autres);
+    // Le temps enregistré est celui du volet : le chrono, ou ce que l'utilisateur a corrigé.
+    enregistrerSession(x.point.projet_id, s.jour, secondes, autres);
     chronos.oublier(x.point.id);
     sessionPour = null;
     dire(`Session ajoutée à ${x.point.code}`);

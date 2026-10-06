@@ -365,7 +365,8 @@ test.describe('Chrono sur les points du rapport', () => {
     await expect(page.getByRole('timer', { name: /Session de DDEWG/ })).toContainText('25:');
     await page.getByRole('button', { name: 'Arrêter le chrono de DDEWG' }).click();
     const pop = page.getByRole('dialog', { name: 'Fin de la session' });
-    await expect(pop).toContainText('25:0');
+    await expect(pop.getByLabel('Minutes')).toHaveValue('25');
+    await expect(pop.getByLabel('Heures')).toHaveValue('0');
     await expect(pop.getByRole('textbox', { name: 'Nombre de fois' })).toHaveValue('1'); // une séance = une rencontre
     await pop.getByRole('button', { name: 'Valider la session' }).click();
     const carte = page.getByRole('button', { name: /DDEWG : modifier les valeurs/ });
@@ -469,4 +470,40 @@ test.describe('Fermer et supprimer depuis le volet d’un bloc', () => {
     await choix.getByRole('button', { name: /Toute la série/ }).click();
     await expect(page.locator('.bloc').filter({ hasText: 'Chaque jour' })).toHaveCount(0);
   });
+});
+
+test('fin de session : le temps enregistré se corrige (heures, minutes, secondes)', async ({ page }) => {
+  await page.goto('/rapports');
+  await page.getByRole('button', { name: 'Lancer un chrono pour PWO' }).click();
+  // Le chrono est resté lancé « 14 h 51 » : on corrige à 1 h 20 min 30 s.
+  await page.evaluate(() => {
+    const v = JSON.parse(localStorage.getItem('luther-life:chronos') ?? '{}');
+    for (const k of Object.keys(v)) v[k].debut -= (14 * 3600 + 51 * 60 + 32) * 1000;
+    localStorage.setItem('luther-life:chronos', JSON.stringify(v));
+  });
+  await page.reload();
+  await page.getByRole('button', { name: 'Arrêter le chrono de PWO' }).click();
+  const pop = page.getByRole('dialog', { name: 'Fin de la session' });
+  await expect(pop.getByLabel('Heures')).toHaveValue('14');
+  await expect(pop.getByLabel('Minutes')).toHaveValue('51');
+  await pop.getByLabel('Heures').fill('1');
+  await pop.getByLabel('Minutes').fill('20');
+  await pop.getByLabel('Secondes').fill('30');
+  await pop.getByLabel('Secondes').blur();
+  await expect(pop.getByText(/Remettre le temps du chrono/)).toBeVisible();
+  // Les boutons ±1 / ±5 min ajustent, et une saisie hors limites se normalise (90 min = 1 h 30).
+  await pop.getByRole('button', { name: '+5 min' }).click();
+  await expect(pop.getByLabel('Minutes')).toHaveValue('25');
+  await pop.getByLabel('Minutes').fill('90');
+  await pop.getByLabel('Minutes').blur();
+  await expect(pop.getByLabel('Heures')).toHaveValue('2');
+  await expect(pop.getByLabel('Minutes')).toHaveValue('30');
+  await pop.getByLabel('Minutes').fill('0');
+  await pop.getByLabel('Heures').fill('1');
+  await pop.getByLabel('Heures').blur();
+  await pop.getByLabel('Minutes').fill('20');
+  await pop.getByLabel('Secondes').fill('0');
+  await pop.getByLabel('Secondes').blur();
+  await pop.getByRole('button', { name: 'Valider la session' }).click();
+  await expect(page.getByRole('button', { name: /PWO : modifier les valeurs/ })).toContainText('1h20');
 });

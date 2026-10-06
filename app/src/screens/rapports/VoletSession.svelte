@@ -13,7 +13,7 @@
 
   let { ouvert, titre, secondes, metriques, onvalider, onannuler, onfermer }: {
     ouvert: boolean; titre: string; secondes: number; metriques: Metrique[];
-    onvalider: (autres: ValeurSession[]) => void; onannuler: () => void; onfermer: () => void;
+    onvalider: (autres: ValeurSession[], secondes: number) => void; onannuler: () => void; onfermer: () => void;
   } = $props();
 
   // Le temps est celui du chrono : il n'est pas redemandé.
@@ -23,6 +23,20 @@
   let champs = $state<Record<string, string>>({});
   let textes = $state<Record<string, string>>({});
   let passages = $state<Passage[]>([]);
+
+  // Temps enregistré : celui du chrono au départ, modifiable à la main (heures, minutes, secondes) si le chrono est resté lancé trop longtemps ou arrêté trop tôt.
+  let h = $state('0'), m = $state('0'), sec = $state('0');
+  const MAX_S = 99 * 3600 + 59 * 60 + 59;
+  const lireNb = (t: string) => { const n = parseInt(t.replace(/\D/g, ''), 10); return Number.isFinite(n) ? n : 0; };
+  const total = $derived(Math.min(MAX_S, lireNb(h) * 3600 + lireNb(m) * 60 + lireNb(sec)));
+  const modifie = $derived(total !== secondes);
+  function poser(t: number) {
+    const v = Math.max(0, Math.min(MAX_S, Math.round(t)));
+    h = String(Math.floor(v / 3600)); m = String(Math.floor((v % 3600) / 60)); sec = String(v % 60);
+  }
+  /** Normalise à la sortie d'un champ : 90 minutes deviennent 1 h 30. */
+  const normaliser = () => poser(total);
+  const ajuster = (delta: number) => poser(total + delta);
 
   // Chaque ouverture repart de zéro ; une séance compte pour une fois (la plus fréquente des réponses attendues).
   $effect(() => {
@@ -34,6 +48,7 @@
       c[m.cle] = m.type === 'fois' ? '1' : '';
     }
     nums = n; champs = c; textes = {}; passages = [];
+    poser(secondes);
   });
 
   function regler(m: Metrique, v: number | null) { nums[m.cle] = v; champs[m.cle] = champTexte(m.type, v); }
@@ -55,7 +70,7 @@
   function valider() {
     onvalider(autres.map((m): ValeurSession => m.cle === 'reference:passages'
       ? { cle: m.cle, type: m.type, txt: passages.length ? formaterPassages(passages) : '', detail: passages }
-      : { cle: m.cle, type: m.type, num: nums[m.cle], txt: textes[m.cle] }));
+      : { cle: m.cle, type: m.type, num: nums[m.cle], txt: textes[m.cle] }), total);
   }
   const unite = (m: Metrique) => (m.type === 'montant' ? '$' : m.type === 'distance' ? 'km' : m.type === 'poids' ? 'kg' : m.type === 'nombre' ? m.unite : '');
 </script>
@@ -64,8 +79,23 @@
   <div class="tete">
     <span class="etiquette">Session terminée</span>
     <h2 class="titre">{titre}</h2>
-    <span class="duree mono">{chrono(secondes)}</span>
-    <span class="muted petit">Ce temps s’ajoute au total du jour. Tu peux remplir le reste, ou valider tel quel.</span>
+    <div class="temps-edit" role="group" aria-label="Temps enregistré">
+      <label><input class="mono" inputmode="numeric" bind:value={h} onfocus={(e) => e.currentTarget.select()} onblur={normaliser} aria-label="Heures" /><span>h</span></label>
+      <span class="deux-points" aria-hidden="true">:</span>
+      <label><input class="mono" inputmode="numeric" bind:value={m} onfocus={(e) => e.currentTarget.select()} onblur={normaliser} aria-label="Minutes" /><span>min</span></label>
+      <span class="deux-points" aria-hidden="true">:</span>
+      <label><input class="mono" inputmode="numeric" bind:value={sec} onfocus={(e) => e.currentTarget.select()} onblur={normaliser} aria-label="Secondes" /><span>s</span></label>
+    </div>
+    <div class="ajustements">
+      <button type="button" onclick={() => ajuster(-300)} disabled={total < 300}>−5 min</button>
+      <button type="button" onclick={() => ajuster(-60)} disabled={total < 60}>−1 min</button>
+      <button type="button" onclick={() => ajuster(60)}>+1 min</button>
+      <button type="button" onclick={() => ajuster(300)}>+5 min</button>
+    </div>
+    <span class="muted petit">
+      {#if modifie}Chrono : {chrono(secondes)} · <button type="button" class="lien-petit" onclick={() => poser(secondes)}>Remettre le temps du chrono</button>
+      {:else}Touche un chiffre pour corriger le temps. Il s’ajoute au total du jour ; tu peux remplir le reste, ou valider tel quel.{/if}
+    </span>
   </div>
 
   {#each autres as m (m.id)}
@@ -105,7 +135,16 @@
 <style>
   .tete { display: flex; flex-direction: column; gap: 4px; }
   h2 { font-size: 22px; }
-  .duree { font-size: 38px; letter-spacing: -0.02em; color: var(--c, var(--accent)); line-height: 1.1; }
+  .temps-edit { display: flex; align-items: flex-end; gap: 6px; margin: 4px 0 2px; }
+  .temps-edit label { display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 1; min-width: 0; }
+  .temps-edit input { width: 100%; height: 64px; text-align: center; font-size: 34px; letter-spacing: -0.02em; color: var(--c, var(--accent)); background: var(--champ); border: 1px solid var(--ligne); border-radius: 16px; padding: 0; }
+  .temps-edit input:focus { outline: none; border-color: var(--c, var(--accent)); }
+  .temps-edit label span { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .deux-points { font-size: 30px; color: var(--faint); padding-bottom: 28px; }
+  .ajustements { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .ajustements button { min-height: 44px; border-radius: 12px; border: 1px solid var(--ligne); background: var(--surface); color: var(--texte); font-size: 13px; font-weight: 600; }
+  .ajustements button:disabled { opacity: 0.35; }
+  .lien-petit { border: 0; background: none; padding: 0; min-height: 32px; color: var(--c-encre, var(--accent-encre)); font-size: 13px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
   .petit { font-size: 13px; }
   .champ { display: flex; flex-direction: column; gap: 6px; }
   .libelle { font-size: 13px; font-weight: 600; display: flex; flex-direction: column; gap: 6px; }
