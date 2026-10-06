@@ -9,7 +9,9 @@
   import { formatValeur, nomCourtRubrique } from './format.ts';
   import { pasDe, type MesureForm } from './tache.ts';
   import CreationRapide from './CreationRapide.svelte';
-  import { ajouterProjet, creerSousProjetRapide, type MesureRapide } from '../../data/actions/projets.ts';
+  import { cataloguerMesures } from './catalogue-metriques.ts';
+  import { magasin } from '../../data/magasin.svelte.ts';
+  import { ajouterProjet, creerSousProjetRapide, type NouvelleMetrique } from '../../data/actions/projets.ts';
   import { aujourdhui } from '../../data/temps.svelte.ts';
 
   /** Étapes 1 à 3 de l'ajout d'une tâche : projet associé, sous-projets alimentés, ce que la tâche enregistre (spec §7). */
@@ -33,8 +35,9 @@
     if (!f.rubriqueId) return;
     f.choisirProjet(ajouterProjet(f.rubriqueId, nom));
   }
-  function nouveauSousProjet(nom: string, mesure: MesureRapide) {
-    if (f.projetId) creerSousProjetRapide(f.projetId, nom, mesure, aujourdhui());
+  const catalogue = $derived(cataloguerMesures(magasin.lignes.metriques));
+  function nouveauSousProjet(nom: string, metriques: NouvelleMetrique[]) {
+    if (f.projetId) creerSousProjetRapide(f.projetId, nom, metriques, aujourdhui());
   }
   const lecteurs = (m: MesureForm) => (m.alimente.length > 1 ? `compte dans ${m.alimente.length} sous-projets` : m.alimente.length ? 'compte dans 1 sous-projet' : 'enregistré sur le bloc');
 </script>
@@ -79,7 +82,7 @@
       {:else}
         <p class="muted vide">Ce projet n’a pas encore de sous-projet : la tâche enregistrera le temps passé.</p>
       {/each}
-      <CreationRapide libelle="Nouveau sous-projet" exemple="Nom du sous-projet" avecMesure oncreer={nouveauSousProjet} />
+      <CreationRapide libelle="Nouveau sous-projet" exemple="Nom du sous-projet" mesures={catalogue} oncreer={nouveauSousProjet} />
     </div>
   </div>
 

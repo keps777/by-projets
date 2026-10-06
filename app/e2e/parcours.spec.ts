@@ -519,10 +519,13 @@ test('créer un projet puis un sous-projet depuis « Nouvelle tâche » et les u
 
   await page.getByRole('button', { name: 'Nouveau sous-projet' }).click();
   await page.getByRole('textbox', { name: 'Nouveau sous-projet' }).fill('Sprint un');
-  await page.getByRole('button', { name: 'Les deux' }).click();
+  await page.getByRole('button', { name: /Ce que le sous-projet mesure/ }).click();
+  await page.getByRole('option', { name: /^Fois/ }).click();
+  await page.getByRole('option', { name: /^Distance/ }).click();
+  await page.getByRole('button', { name: /Ce que le sous-projet mesure/ }).click();
   await page.getByRole('button', { name: 'Créer', exact: true }).click();
   await expect(page.getByText('Sprint un')).toBeVisible();
-  await expect(page.getByText('Mesure : temps, fois')).toBeVisible();
+  await expect(page.getByText('Mesure : temps, fois, distance')).toBeVisible();
   await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
   await expect(page).toHaveURL(/\/$|\/\?/);
 

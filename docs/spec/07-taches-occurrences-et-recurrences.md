@@ -47,5 +47,5 @@ Le tout apparaît dans les vues Jour, Semaine et Mois.
 - Modifier la durée d'une tâche (toute la série, ou une occurrence) redessine aussitôt son bloc sur Le Fil.
 
 ## Créer un projet ou un sous-projet depuis l'ajout de tâche (6 oct. 2026)
-- Une tâche peut être **à l'origine** d'un projet ou d'un sous-projet : la liste des projets se termine par **« + Nouveau projet »** (nom seul, créé dans la rubrique choisie, puis sélectionné) et la liste des sous-projets par **« + Nouveau sous-projet »** (nom + ce qu'il mesure : le temps, le nombre de fois, ou les deux ; démarre aujourd'hui, sans fin ni objectif).
+- Une tâche peut être **à l'origine** d'un projet ou d'un sous-projet : la liste des projets se termine par **« + Nouveau projet »** (nom seul, créé dans la rubrique choisie, puis sélectionné) et la liste des sous-projets par **« + Nouveau sous-projet »** (nom + **menu déroulant à choix multiples** des mesures : celles déjà utilisées dans les projets, puis toutes celles de l'app — temps, fois, nombre, montant, distance, poids, note, heure, passages, etc. ; au moins une ; démarre aujourd'hui, sans fin ni objectif).
 - Le sous-projet créé est tout de suite alimenté par la tâche ; objectif, période et autres métriques s'affinent ensuite dans Projets (formulaire complet « Nouveau sous-projet »).

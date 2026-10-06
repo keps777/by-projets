@@ -52,14 +52,9 @@ export function creerSousProjet(n: NouveauSousProjet): string {
   return id;
 }
 
-/** Ce que mesure un sous-projet créé en une ligne depuis « Nouvelle tâche ». */
-export type MesureRapide = 'temps' | 'fois' | 'les_deux';
-
-/** Sous-projet minimal (nom + temps et/ou nombre de fois, sans objectif), à affiner ensuite dans Projets. */
-export function creerSousProjetRapide(projetId: string, nom: string, mesure: MesureRapide, debut: Jour): string {
-  const temps: NouvelleMetrique = { type: 'temps', nom: 'Temps', unite: 'min', cible: null, periode_cible: 'jour', sens: 'plus', dans_rapport: true };
-  const fois: NouvelleMetrique = { type: 'fois', nom: 'Fois', unite: '', cible: null, periode_cible: 'jour', sens: 'plus', dans_rapport: true };
-  return creerSousProjet({ projetId, nom, debut, fin: null, reprisePasse: false, metriques: mesure === 'temps' ? [temps] : mesure === 'fois' ? [fois] : [temps, fois] });
+/** Sous-projet minimal (nom + mesures choisies, sans objectif), à affiner ensuite dans Projets. */
+export function creerSousProjetRapide(projetId: string, nom: string, metriques: NouvelleMetrique[], debut: Jour): string {
+  return creerSousProjet({ projetId, nom, debut, fin: null, reprisePasse: false, metriques });
 }
 
 export function creerDepuisModele(m: ModeleSousProjet, projetId: string, debut: Jour, fin: Jour | null, reprisePasse = true): string {
