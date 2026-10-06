@@ -8,6 +8,9 @@
   import { abreger } from './vue-blocs.ts';
   import { formatValeur, nomCourtRubrique } from './format.ts';
   import { pasDe, type MesureForm } from './tache.ts';
+  import CreationRapide from './CreationRapide.svelte';
+  import { ajouterProjet, creerSousProjetRapide, type MesureRapide } from '../../data/actions/projets.ts';
+  import { aujourdhui } from '../../data/temps.svelte.ts';
 
   /** Étapes 1 à 3 de l'ajout d'une tâche : projet associé, sous-projets alimentés, ce que la tâche enregistre (spec §7). */
   let { f }: { f: FormulaireTache } = $props();
@@ -26,6 +29,13 @@
     if (v == null) return 'à saisir';
     return formatValeur(m.type, v, abreger(m.unite), m.options);
   };
+  function nouveauProjet(nom: string) {
+    if (!f.rubriqueId) return;
+    f.choisirProjet(ajouterProjet(f.rubriqueId, nom));
+  }
+  function nouveauSousProjet(nom: string, mesure: MesureRapide) {
+    if (f.projetId) creerSousProjetRapide(f.projetId, nom, mesure, aujourdhui());
+  }
   const lecteurs = (m: MesureForm) => (m.alimente.length > 1 ? `compte dans ${m.alimente.length} sous-projets` : m.alimente.length ? 'compte dans 1 sous-projet' : 'enregistré sur le bloc');
 </script>
 
@@ -51,6 +61,7 @@
       {:else}
         <p class="muted vide">Aucun projet dans cette rubrique.</p>
       {/each}
+      {#if f.rubriqueId}<CreationRapide libelle="Nouveau projet" exemple="Nom du projet" oncreer={nouveauProjet} />{/if}
     </div>
   {/if}
 </div>
@@ -66,8 +77,9 @@
             onchange={(v) => (f.spOff = v ? f.spOff.filter((x) => x !== s.id) : [...f.spOff, s.id])} />
         </div>
       {:else}
-        <p class="muted vide">Ce projet n’a pas encore de sous-projet : la tâche enregistrera le temps passé. <a href="/projets/nouveau-sous-projet?projet={f.projetId}">Créer un sous-projet</a></p>
+        <p class="muted vide">Ce projet n’a pas encore de sous-projet : la tâche enregistrera le temps passé.</p>
       {/each}
+      <CreationRapide libelle="Nouveau sous-projet" exemple="Nom du sous-projet" avecMesure oncreer={nouveauSousProjet} />
     </div>
   </div>
 
@@ -110,7 +122,6 @@
   /* Hauteurs de la maquette, dont les lignes comptent la marge intérieure en plus (boîte de contenu). */
   .sp { display: flex; align-items: center; gap: 10px; padding: 10px 14px; min-height: 56px; box-sizing: content-box; }
   .vide { padding: 12px 14px; font-size: 13px; line-height: 1.45; }
-  .vide a { color: var(--accent-encre); font-weight: 600; }
   .mesures { border-radius: 20px; padding: 4px 14px; }
   .mesure { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--ligne); min-height: 56px; box-sizing: content-box; }
   .pas { display: flex; align-items: center; gap: 6px; }

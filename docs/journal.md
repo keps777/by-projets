@@ -2,6 +2,11 @@
 
 > Lire ce fichier en début de session (après `CLAUDE.md`). Ajouter une entrée en fin de session.
 
+## 6 oct. 2026 — Créer un projet ou un sous-projet depuis « Nouvelle tâche »
+
+- `CreationRapide.svelte` : « + Nouveau projet » et « + Nouveau sous-projet » (nom + mesure : temps, fois, ou les deux) dans `SectionProjet`; action `creerSousProjetRapide`; spec §7 mise à jour; test unitaire + e2e.
+- Fin de session : temps modifiable (h/min/s) — voir spec §9.
+
 ## 5 oct. 2026 (nuit) — Supabase branché, Vercel relié
 
 **Fait** (projet `by-projets`, ref `cmcadqeghkvlafwckfvu`, us-east-2)

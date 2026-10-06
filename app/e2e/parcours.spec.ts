@@ -507,3 +507,25 @@ test('fin de session : le temps enregistré se corrige (heures, minutes, seconde
   await pop.getByRole('button', { name: 'Valider la session' }).click();
   await expect(page.getByRole('button', { name: /PWO : modifier les valeurs/ })).toContainText('1h20');
 });
+
+test('créer un projet puis un sous-projet depuis « Nouvelle tâche » et les utiliser tout de suite', async ({ page }) => {
+  await page.goto('/tache/nouvelle');
+  await page.getByLabel('Titre de la tâche').fill('Lecture du soir');
+  await page.getByRole('button', { name: 'Nouveau projet' }).click();
+  await page.getByRole('textbox', { name: 'Nouveau projet' }).fill('Projet éclair');
+  await page.getByRole('button', { name: 'Créer', exact: true }).click();
+  const projet = page.getByRole('button', { name: /Projet éclair/ });
+  await expect(projet).toHaveAttribute('aria-pressed', 'true');
+
+  await page.getByRole('button', { name: 'Nouveau sous-projet' }).click();
+  await page.getByRole('textbox', { name: 'Nouveau sous-projet' }).fill('Sprint un');
+  await page.getByRole('button', { name: 'Les deux' }).click();
+  await page.getByRole('button', { name: 'Créer', exact: true }).click();
+  await expect(page.getByText('Sprint un')).toBeVisible();
+  await expect(page.getByText('Mesure : temps, fois')).toBeVisible();
+  await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+  await expect(page).toHaveURL(/\/$|\/\?/);
+
+  await page.getByRole('link', { name: 'Projets' }).first().click();
+  await expect(page.getByText('Projet éclair').first()).toBeVisible();
+});
