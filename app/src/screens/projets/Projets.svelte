@@ -33,6 +33,13 @@
 
   let edition = $state(false);
   const ouverts = new SvelteSet<string>();
+  // Rubriques repliées (flèche à droite du titre), gardées sur l'appareil.
+  const CLE_REPLIEES = 'luther-life:rubriques-repliees';
+  const repliees = new SvelteSet<string>(untrack(() => { try { return JSON.parse(localStorage.getItem(CLE_REPLIEES) ?? '[]') as string[]; } catch { return []; } }));
+  function replier(id: string) {
+    if (repliees.has(id)) repliees.delete(id); else repliees.add(id);
+    try { localStorage.setItem(CLE_REPLIEES, JSON.stringify([...repliees])); } catch { /* stockage indisponible : le repli ne dure que cette visite */ }
+  }
 
   /** Sous-projets montrés ici : ceux qui vivent encore (les terminés sont dans l'Archive). */
   const vivants = (pid: string) => sousProjetsDe(pid).filter((s) => s.statut !== 'termine').sort((a, b) => a.created_at.localeCompare(b.created_at));
@@ -135,16 +142,22 @@
   </section>
 
   {#each vue as r (r.r.id)}
+    {@const repliee = !edition && repliees.has(r.r.id)}
     <section class="rubrique" style={styleCouleur(r.couleur)} aria-label={r.r.nom}>
       <div class="rubrique-tete">
         <span class="numero mono">{r.numero}</span>
         <h2>{r.r.nom}</h2>
         <span class="muted petit">{r.projets.length} projet{r.projets.length > 1 ? 's' : ''}</span>
-        {#if edition}
+        {#if !edition}
+          <button type="button" class="plier" aria-expanded={!repliee} aria-label="{repliee ? 'Déplier' : 'Replier'} la rubrique {r.r.nom}" onclick={() => replier(r.r.id)}>
+            <span class="chevron" class:tourne={!repliee}><Icone nom="bas" taille={18} trait={2.4} /></span>
+          </button>
+        {:else}
           <button type="button" class="retirer-rub" aria-label="Retirer la rubrique {r.r.nom}" onclick={() => (aRetirer = { type: 'rubrique', id: r.r.id, nom: r.r.nom })} transition:slide={{ axis: 'x', duration: 180 }}><Icone nom="poubelle" taille={15} /></button>
         {/if}
       </div>
-      <div class="carte liste">
+      {#if !repliee}
+      <div class="carte liste" transition:slide={{ duration: 180 }}>
         {#each r.projets as p (p.p.id)}
           {@const deplie = edition || ouverts.has(p.p.id)}
           <div class="projet">
@@ -201,6 +214,7 @@
           <p class="muted petit vide">Aucun projet. Touche « Modifier » pour en ajouter un.</p>
         {/if}
       </div>
+      {/if}
     </section>
   {/each}
 
@@ -297,6 +311,7 @@
   .deplier { flex: none; min-width: 52px; height: 44px; border-radius: 14px; border: 1px solid var(--ligne); background: transparent; color: var(--texte); display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 12px; }
   .deplier.ouvert { background: var(--surface-2); }
   .chevron { display: flex; transition: transform 0.2s; }
+  .plier { flex: none; width: 44px; height: 44px; margin: -8px -8px -8px 0; border: 0; background: transparent; color: var(--muted); display: flex; align-items: center; justify-content: center; }
   .chevron.tourne { transform: rotate(180deg); }
   .subs { padding: 0 14px 10px 24px; display: flex; flex-direction: column; }
   .sub { display: flex; align-items: center; gap: 8px; padding: 10px 12px; margin-bottom: 6px; border-radius: 14px; background: var(--surface-2); }

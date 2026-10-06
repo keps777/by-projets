@@ -532,3 +532,16 @@ test('créer un projet puis un sous-projet depuis « Nouvelle tâche » et les u
   await page.getByRole('link', { name: 'Projets' }).first().click();
   await expect(page.getByText('Projet éclair').first()).toBeVisible();
 });
+
+test('Projets : une rubrique se replie avec sa flèche et le repli est gardé', async ({ page }) => {
+  await page.goto('/projets');
+  const projet = page.getByRole('link', { name: /La lecture de la Bible/ }).first();
+  await expect(projet).toBeVisible();
+  await page.getByRole('button', { name: /Replier la rubrique Ma relation avec Dieu/ }).click();
+  await expect(projet).toBeHidden();
+  await page.reload();
+  await expect(page.getByRole('button', { name: /Déplier la rubrique Ma relation avec Dieu/ })).toHaveAttribute('aria-expanded', 'false');
+  await expect(projet).toBeHidden();
+  await page.getByRole('button', { name: /Déplier la rubrique Ma relation avec Dieu/ }).click();
+  await expect(projet).toBeVisible();
+});

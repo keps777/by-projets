@@ -5,6 +5,7 @@
 ## 6 oct. 2026 — Créer un projet ou un sous-projet depuis « Nouvelle tâche »
 
 - `CreationRapide.svelte` : « + Nouveau projet » et « + Nouveau sous-projet » (nom + menu déroulant à choix multiples des mesures du catalogue `catalogue-metriques.ts`) dans `SectionProjet`; action `creerSousProjetRapide`; spec §7 mise à jour; test unitaire + e2e.
+- Projets : flèche à droite du titre d’une rubrique pour la replier/déplier (gardé dans `localStorage`).
 - Fin de session : temps modifiable (h/min/s) — voir spec §9.
 
 ## 5 oct. 2026 (nuit) — Supabase branché, Vercel relié

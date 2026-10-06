@@ -16,7 +16,7 @@
 | **Mois** | Mois | Grille du mois. Couche **Charge** : barre de proportions par rubrique dans chaque jour. Couche **Accompli** : intensité selon le % fait. Statistiques du mois et progression par rubrique. Toucher un jour ouvre Le Fil de ce jour. |
 | **Recherche** | Recherche | Projets, sous-projets, tâches, saisies et notes, rapports ; filtres ; recherches récentes ; insensible aux accents. |
 | **Rapports** | Rapport, RapportSemaine, RapportMois, RapportExport, Archives | Voir §9. |
-| **Projets** | Projets, ProjetsEdition | Progression du mois par rubrique, projets avec leurs sous-projets dépliables, mode **Modifier** (ajouter ou retirer projets, sous-projets, rubriques). |
+| **Projets** | Projets, ProjetsEdition | Progression du mois par rubrique, projets avec leurs sous-projets dépliables, **rubriques repliables par une flèche** (repli gardé sur l’appareil ; toujours dépliées en mode Modifier), mode **Modifier** (ajouter ou retirer projets, sous-projets, rubriques). |
 | **Sous-projet** | SousProjet, SousProjetNT, SousProjetFiche, SousProjetDocument, SousProjetTemps, SousProjetFinances | Onglets **Suivi** (objectif et réalisé du jour, graphique du mois, retard et rattrapage), **Fiche** (7 questions, métriques, tâches liées, statut), **Document** (aperçu vivant, PDF, signature), **Temps** (à venir, historique). Exemple en dollars : solde, entrées, sorties, catégories, mouvements. |
 | **Nouveau sous-projet** | NouveauSousProjet, NouveauSousProjetFinances | Modèles par rubrique, nom, période, **reprise du passé**, métriques éditables, calculs automatiques. |
 | **Ajouter une tâche** | AjouterTache, AjouterTacheSansProjet | Voir §7. |
