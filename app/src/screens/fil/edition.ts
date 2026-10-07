@@ -29,7 +29,7 @@ function remplacerLiens(tacheId: string, n: NouvelleTache): void {
 
 /** Toute la série : la tâche change, ses occurrences à venir sont recréées avec les nouvelles heures (le passé ne bouge pas). */
 export function modifierSerie(tacheId: string, n: NouvelleTache, aujourdhui: Jour): void {
-  magasin.ecrire('taches', { id: tacheId, titre: n.titre.trim() || 'Sans titre', projet_id: n.projetId, regle: n.regle, heure_debut: n.heureDebut, duree_min: n.dureeMin, rappel_min: n.rappelMin, ...(n.rappelsAvantMin?.length || magasin.trouver('taches', tacheId)?.rappels_avant_min?.length ? { rappels_avant_min: n.rappelsAvantMin ?? [] } : {}), actif: true });
+  magasin.ecrire('taches', { id: tacheId, titre: n.titre.trim() || 'Sans titre', projet_id: n.projetId, regle: n.regle, heure_debut: n.heureDebut, duree_min: n.dureeMin, rappel_min: n.rappelMin, ...(n.rappelsAvantMin?.length || magasin.trouver('taches', tacheId)?.rappels_avant_min?.length ? { rappels_avant_min: n.rappelsAvantMin ?? [] } : {}), alarme: !!n.alarme, actif: true });
   remplacerLiens(tacheId, n);
   // Une tâche « ce jour seulement » n'a qu'une occurrence : on la recrée même si elle avait été reportée.
   const cibles = prevues(tacheId, aujourdhui, n.regle.frequence !== 'une_fois');

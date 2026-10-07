@@ -1,7 +1,7 @@
 // Tâches et occurrences : ajout, matérialisation sur 90 jours, report, suppression (spec §7).
 import { ajouterJours, localVersUtc } from '@core/dates.ts';
-import { cleRappelBloc, idOccurrence, idRappel, nouvelId } from '@core/ids.ts';
-import { delaisRappel } from '@core/rappels.ts';
+import { cleRappelAlarme, cleRappelBloc, idOccurrence, idRappel, nouvelId, rangAlarme } from '@core/ids.ts';
+import { rappelsPlanifies } from '@core/rappels.ts';
 import { occurrencesEntre, type Regle } from '@core/recurrence.ts';
 import type { Jour } from '@core/types.ts';
 import type { Occurrence, Rappel, Tache } from '@core/lignes.ts';
@@ -19,6 +19,8 @@ export interface NouvelleTache {
   rappelMin: number | null;
   /** Rappels plus tôt : minutes avant le début (120 = 2 h, 1440 = la veille…). */
   rappelsAvantMin?: number[];
+  /** Alarme : le rappel le plus proche du début est répété (2 min, 5 fois) tant que le bloc est « prévu ». */
+  alarme?: boolean;
   sousProjetIds?: string[];
   /** Valeurs prévues par occurrence : { cle, valeur } en unité de base. */
   attendus?: { cle: string; valeur: number }[];
@@ -26,7 +28,7 @@ export interface NouvelleTache {
 
 export function ajouterTache(n: NouvelleTache): string {
   const id = nouvelId();
-  magasin.ecrire('taches', { id, titre: n.titre.trim() || 'Sans titre', projet_id: n.projetId, regle: n.regle, heure_debut: n.heureDebut, duree_min: n.dureeMin, rappel_min: n.rappelMin, ...(n.rappelsAvantMin?.length ? { rappels_avant_min: n.rappelsAvantMin } : {}), actif: true });
+  magasin.ecrire('taches', { id, titre: n.titre.trim() || 'Sans titre', projet_id: n.projetId, regle: n.regle, heure_debut: n.heureDebut, duree_min: n.dureeMin, rappel_min: n.rappelMin, ...(n.rappelsAvantMin?.length ? { rappels_avant_min: n.rappelsAvantMin } : {}), ...(n.alarme ? { alarme: true } : {}), actif: true });
   for (const sp of n.sousProjetIds ?? []) magasin.ecrire('tache_alimente', { id: nouvelId(), tache_id: id, sous_projet_id: sp });
   for (const a of n.attendus ?? []) magasin.ecrire('tache_attendus', { id: nouvelId(), tache_id: id, cle: a.cle, valeur_prevue: a.valeur });
   materialiserTache(id);
@@ -62,16 +64,16 @@ export function materialiserTache(tacheId: string, depuis: Jour = aujourdhui(), 
 
 type RappelNouveau = Partial<Rappel> & { id: string };
 
-function rappelAu(occId: string, debutMs: number, delaiMin: number): RappelNouveau | null {
+function rappelAu(occId: string, debutMs: number, delaiMin: number, rang = 0): RappelNouveau | null {
   const envoyerA = debutMs - delaiMin * 60000;
   if (envoyerA < horloge.maintenant) return null;
-  const cle = cleRappelBloc(occId, delaiMin);
+  const cle = rang ? cleRappelAlarme(occId, rang) : cleRappelBloc(occId, delaiMin);
   return { id: idRappel(cle), type: 'bloc', occurrence_id: occId, rapport_id: null, envoyer_a: new Date(envoyerA).toISOString(), etat: 'en_attente', cle_unique: cle, tentatives: 0, erreur: null };
 }
 
-/** Un rappel par délai de la tâche (principal + plus tôt) ; ceux dont l'heure est déjà passée ne sont pas créés. */
-function rappelsPour(tache: Tache, occId: string, debutMs: number): RappelNouveau[] {
-  return delaisRappel(tache).map((d) => rappelAu(occId, debutMs, d)).filter((r): r is RappelNouveau => r !== null);
+/** Un rappel par délai de la tâche (principal + plus tôt, puis insistances d'une alarme) ; ceux dont l'heure est déjà passée ne sont pas créés. */
+function rappelsPour(tache: Pick<Tache, 'rappel_min' | 'rappels_avant_min' | 'alarme'>, occId: string, debutMs: number): RappelNouveau[] {
+  return rappelsPlanifies(tache).map((d) => rappelAu(occId, debutMs, d.delai, d.rang)).filter((r): r is RappelNouveau => r !== null);
 }
 
 /** Rematérialise toutes les tâches actives (au démarrage de l'app : prolonge l'horizon). */
@@ -91,10 +93,7 @@ export function reporter(occId: string, r: Report): void {
   const ops: Parameters<typeof magasin.ecrireLot>[0] = [['occurrences', { id: occId, jour: r.jour, debut: new Date(debut).toISOString(), fin: new Date(debut + duree).toISOString(), etat: 'prevue', exception: true, demarree_a: null, pause_depuis: null, pause_cumulee_s: 0, terminee_a: null }]];
   for (const rp of magasin.lignes.rappels.filter((x) => x.occurrence_id === occId && x.etat === 'en_attente')) ops.push(['rappels', { id: rp.id, etat: 'annule' }]);
   // Le choix du report remplace le rappel principal ; les rappels plus tôt de la tâche suivent l'occurrence déplacée.
-  for (const d of delaisRappel({ rappel_min: r.rappelMin, rappels_avant_min: tache.rappels_avant_min })) {
-    const rp = rappelAu(occId, debut, d);
-    if (rp) ops.push(['rappels', rp]);
-  }
+  for (const rp of rappelsPour({ rappel_min: r.rappelMin, rappels_avant_min: tache.rappels_avant_min, alarme: tache.alarme }, occId, debut)) ops.push(['rappels', rp]);
   magasin.ecrireLot(ops);
 }
 
@@ -140,4 +139,13 @@ export function replanifierRappels(tacheId: string): number {
   }
   if (ops.length) magasin.ecrireLot(ops);
   return crees;
+}
+
+
+/** Fait taire l'alarme d'un bloc : ses rappels d'insistance encore en attente sont annulés (on a vu l'alarme, ou on ouvre le bloc). */
+export function silencerAlarme(occId: string): void {
+  const ops: Parameters<typeof magasin.ecrireLot>[0] = magasin.lignes.rappels
+    .filter((x) => x.occurrence_id === occId && x.etat === 'en_attente' && rangAlarme(x.cle_unique) > 0)
+    .map((x) => ['rappels', { id: x.id, etat: 'annule' }]);
+  if (ops.length) magasin.ecrireLot(ops);
 }

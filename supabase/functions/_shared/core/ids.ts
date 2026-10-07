@@ -25,6 +25,10 @@ export function uuidDeterministe(texte: string): string {
 export const idOccurrence = (tacheId: string, jour: string) => uuidDeterministe(`occ:${tacheId}:${jour}`);
 export const idRappel = (cleUnique: string) => uuidDeterministe(`rappel:${cleUnique}`);
 export const cleRappelBloc = (occurrenceId: string, delaiMin: number) => `${occurrenceId}:${delaiMin}`;
+/** Rappel d'insistance d'une alarme : `:alarme:1` à `:alarme:5` après le dernier rappel normal. */
+export const cleRappelAlarme = (occurrenceId: string, rang: number) => `${occurrenceId}:alarme:${rang}`;
+/** Rang d'insistance (1, 2…) d'après la clé d'un rappel, ou 0 pour un rappel normal. */
+export const rangAlarme = (cleUnique: string): number => Number(/:alarme:(\d+)$/.exec(cleUnique)?.[1] ?? 0);
 
 /** UUID aléatoire (navigateur, Deno et Node récents). */
 export const nouvelId = (): string => crypto.randomUUID();

@@ -32,6 +32,10 @@ export interface Profil extends Base {
   recevoir_rapport: boolean;
   recevoir_recap_semaine: boolean;
   recevoir_recap_mois: boolean;
+  /** Alarme proposée à l'ajout d'une tâche. */
+  alarme_defaut?: boolean;
+  /** Secret du lien d'abonnement au calendrier de l'iPhone (null tant qu'il n'est pas créé). */
+  jeton_calendrier?: string | null;
 }
 
 export interface Rubrique extends Base { cle: string | null; nom: string; couleur: string; ordre: number; archivee: boolean }
@@ -77,6 +81,8 @@ export interface Tache extends Base {
   rappel_min: number | null;
   /** Rappels plus tôt, en minutes avant le début (2 h = 120, la veille = 1440…). Absent sur les anciennes lignes. */
   rappels_avant_min?: number[];
+  /** Alarme : le rappel le plus proche du début est répété tant que le bloc n'est pas lancé, fait ou reporté. */
+  alarme?: boolean;
   actif: boolean;
 }
 export interface TacheAlimente extends Base { tache_id: string; sous_projet_id: string }

@@ -7,6 +7,7 @@
   import { theme } from '../../ui/theme.svelte.ts';
   import Anneau from '../../ui/Anneau.svelte';
   import { basculerMinuteur } from './vue-blocs.ts';
+  import { alarmes } from '../../alarme/alarme.svelte.ts';
   import { chrono, dureeMin, hm } from './format.ts';
   import { styleTeinte } from './teintes.ts';
 
@@ -15,6 +16,8 @@
 
   const aujourdhui = $derived(jourCourant());
   const occId = $derived(routeur.params.get('occ'));
+  // Ouvrir le bloc depuis une notification, c'est avoir vu l'alarme : les insistances à venir s'arrêtent.
+  $effect(() => { if (occId) alarmes.faireTaire(occId); });
 
   /** Le bloc de la notification ; sans paramètre, le prochain bloc du jour. */
   const b = $derived.by((): BlocVue | null => {

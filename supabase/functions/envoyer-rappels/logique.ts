@@ -1,5 +1,5 @@
 // Envoi des rappels dus (spec §10) : composition des notifications et suivi des états. Aucune API Deno ici.
-import { formatHeure, libelleDelai, utcVersLocal, type TypeRappel } from '../_shared/core/index.ts';
+import { ALARME_REPETITIONS, formatHeure, libelleDelai, rangAlarme, utcVersLocal, type TypeRappel } from '../_shared/core/index.ts';
 import type { ChargePush, CiblePush, Envoyeur, OptionsPush } from '../_shared/envoi.ts';
 
 /** Ligne rendue par la fonction SQL reserver_rappels. */
@@ -45,6 +45,12 @@ export function composerNotification(r: RappelReserve): { charge: ChargePush; op
       const quand = delai === 0 ? 'À l’heure' : `Dans ${libelleDelai(delai)}`;
       const heures = r.debut ? heureLocale(r.debut, fuseau) + (r.fin ? ` – ${heureLocale(r.fin, fuseau)}` : '') : '';
       const url = `/action-rapide?occ=${r.occurrence_id ?? ''}`;
+      const rang = rangAlarme(r.cle_unique);
+      if (rang) {
+        // Insistance d'une alarme : le bloc n'est toujours ni lancé, ni fait, ni reporté.
+        const nom = r.titres_visibles === false ? 'Un bloc t’attend' : r.titre ?? 'bloc';
+        return { charge: { titre: `⏰ ${nom}`, corps: `Rappel ${rang}/${ALARME_REPETITIONS} · ${heures} · touche pour lancer ou reporter`, url, tag }, options: { ttl: 300, urgence: 'high' } };
+      }
       const ttl = r.debut ? Math.max(60, Math.round((Date.parse(r.debut) - Date.parse(r.envoyer_a)) / 1000) + 900) : 900;
       if (r.titres_visibles === false) {
         // Écran verrouillé discret : ni titre ni rubrique.

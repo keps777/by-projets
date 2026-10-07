@@ -4,6 +4,7 @@
   import EcranPage from '../../ui/EcranPage.svelte';
   import Icone from '../../ui/Icone.svelte';
   import Interrupteur from '../../ui/Interrupteur.svelte';
+  import { alarmes } from '../../alarme/alarme.svelte.ts';
   import Puces from '../../ui/Puces.svelte';
   import { dire } from '../../ui/toast.svelte.ts';
   import { theme, type Apparence } from '../../ui/theme.svelte.ts';
@@ -11,6 +12,8 @@
   import { magasin } from '../../data/magasin.svelte.ts';
   import { session } from '../../data/auth.svelte.ts';
   import { modeServeur } from '../../data/config.ts';
+  import { lienCalendrier, nouveauJetonCalendrier } from './calendrier.ts';
+  import { copierTexte } from '../rapports/partage.ts';
   import { aujourdhui } from '../../data/temps.svelte.ts';
   import { profil } from '../../data/requetes.ts';
   import { ajouterPoint, changerDelaiDefaut, majProfil, modifierPoint, retirerPreset } from '../../data/actions/reglages.ts';
@@ -91,6 +94,18 @@
   ];
   const aide = (t: TypeRappelChoisi) => t === 'bloc' ? (delai ? `${delai} min avant · bouton Lancer` : 'à l’heure · bouton Lancer')
     : t === 'rapport' ? 'chaque jour à' : t === 'recap_semaine' ? 'dimanche à 20:00' : 'le 1er à 08:00';
+
+  // ------------------------------------------------------------------ calendrier de l'iPhone
+  const jetonCalendrier = $derived(p?.jeton_calendrier ?? null);
+  function creerLienCalendrier(): void { majProfil({ jeton_calendrier: nouveauJetonCalendrier() }); }
+  function changerLienCalendrier(): void {
+    if (!confirm('Changer le lien ? L’ancien cessera de marcher : tu devras te réabonner dans Calendrier.')) return;
+    creerLienCalendrier();
+    dire('Nouveau lien créé. Abonne-toi de nouveau.');
+  }
+  async function copierLienCalendrier(): Promise<void> {
+    if (jetonCalendrier && await copierTexte(lienCalendrier(jetonCalendrier))) dire('Lien copié.'); else dire('Copie impossible sur cet appareil.');
+  }
 
   // ------------------------------------------------------------------ données et compte
   function exporterDonnees(): void {
@@ -203,6 +218,12 @@
         <Puces colonnes={4} petit options={[{ valeur: 0, label: 'À l’heure' }, { valeur: 5, label: '5 min' }, { valeur: 10, label: '10 min' }, { valeur: 15, label: '15 min' }]}
           valeur={delai} onchoisir={(v) => changerDelaiDefaut(v)} couleur="var(--accent)" texte="var(--accent-texte)" />
       </div>
+      <div class="ligne haute">
+        <span class="col grow"><span class="fort">⏰ Alarme par défaut</span>
+          <span class="muted petit">Proposée à l’ajout d’une tâche : le rappel insiste (2 min, 5 fois) et sonne plein écran dans l’app.</span></span>
+        <Interrupteur actif={p?.alarme_defaut ?? false} label="Alarme par défaut" onchange={(v) => majProfil({ alarme_defaut: v })} />
+      </div>
+      <button type="button" class="ligne bouton" onclick={() => alarmes.lancerEssai()}><Icone nom="cloche" taille={18} /><span class="grow">Tester l’alarme (son et plein écran)</span></button>
       <div class="ligne colonne serre">
         <span class="fort">En touchant une notification</span>
         <span class="muted petit">Rappel d’un bloc : ouvre l’écran Lancer · Reporter. Rapport du jour : ouvre Relire · Envoyer.</span>
@@ -228,6 +249,26 @@
       {/each}
     </div>
   </section>
+
+  {#if modeServeur}
+    <section class="groupe" id="calendrier">
+      <span class="etiquette">Calendrier de l’iPhone</span>
+      <div class="carte liste">
+        <div class="ligne colonne serre">
+          <span class="fort">Tes blocs et leurs alarmes dans Calendrier</span>
+          <span class="muted petit">Chaque bloc des 60 prochains jours devient un événement avec ses alertes (rappels, et insistances d’une alarme). Elles sonnent même app fermée ; le son se règle dans Réglages iPhone › Sons › Alertes de calendrier. Le calendrier se met à jour tout seul.</span>
+        </div>
+        {#if !jetonCalendrier}
+          <button type="button" class="ligne bouton" onclick={creerLienCalendrier}><Icone nom="calendrier" taille={18} /><span class="grow">Créer mon lien d’abonnement</span></button>
+        {:else}
+          <a class="ligne bouton" href={lienCalendrier(jetonCalendrier, 'webcal')}><Icone nom="calendrier" taille={18} /><span class="grow">S’abonner dans Calendrier</span></a>
+          <button type="button" class="ligne bouton" onclick={copierLienCalendrier}><Icone nom="copier" taille={18} /><span class="grow">Copier le lien</span></button>
+          <button type="button" class="ligne bouton" onclick={changerLienCalendrier}><Icone nom="chaine" taille={18} /><span class="grow">Changer le lien (l’ancien cesse de marcher)</span></button>
+        {/if}
+      </div>
+      <p class="muted petit note">Le lien est secret : quiconque l’a voit tes blocs. Ne le partage pas ; change-le s’il circule.</p>
+    </section>
+  {/if}
 
   <div class="rangee">
     <span class="fort">Apparence</span>

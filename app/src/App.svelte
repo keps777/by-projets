@@ -10,10 +10,13 @@
   import { trouverRoute } from './routes.ts';
   import { theme } from './ui/theme.svelte.ts';
   import Toasts from './ui/Toasts.svelte';
+  import AlarmeEcran from './ui/AlarmeEcran.svelte';
+  import { alarmes } from './alarme/alarme.svelte.ts';
   import { fly } from 'svelte/transition';
   import { cubicOut } from 'svelte/easing';
 
   horloge.demarrer();
+  alarmes.demarrer();
   theme.demarrer();
   void session.demarrer();
 
@@ -78,6 +81,7 @@
 <!-- Fond opaque sous la barre d'état de l'iPhone : le contenu qui défile ne passe pas sous l'heure et les icônes. -->
 <div class="barre-statut" aria-hidden="true"></div>
 <Toasts />
+<AlarmeEcran />
 
 <style>
   .vue { height: 100%; }

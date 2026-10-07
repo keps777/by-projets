@@ -11,7 +11,7 @@ export function depotOccurrences(sb: Client): DepotOccurrences {
       return new Map(lignes.map((p) => [p.id, p.fuseau]));
     },
     async taches(filtre) {
-      let q = sb.from('taches').select('id, user_id, regle, heure_debut, duree_min, rappel_min, rappels_avant_min, actif, supprime_le');
+      let q = sb.from('taches').select('id, user_id, regle, heure_debut, duree_min, rappel_min, rappels_avant_min, alarme, actif, supprime_le');
       if (filtre.user_id) q = q.eq('user_id', filtre.user_id);
       if (filtre.tache_id) q = q.eq('id', filtre.tache_id);
       return verifier(await q, 'taches') as TacheSource[];

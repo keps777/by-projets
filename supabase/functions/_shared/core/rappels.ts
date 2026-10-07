@@ -20,3 +20,34 @@ export function libelleDelai(min: number): string {
   if (m) parties.push(`${m} min`);
   return parties.length > 1 ? `${parties.slice(0, -1).join(' ')} et ${parties[parties.length - 1]}` : parties[0];
 }
+
+/** Alarme : après le rappel le plus proche du début, on insiste toutes les 2 min, 5 fois, tant que le bloc est « prévu ». */
+export const ALARME_REPETITIONS = 5;
+export const ALARME_INTERVALLE_MIN = 2;
+
+export interface RappelPlanifie {
+  /** Minutes avant le début (négatif : après le début). */
+  delai: number;
+  /** 0 pour un rappel normal, 1 à 5 pour une insistance d'alarme. */
+  rang: number;
+}
+
+/** Tous les rappels d'une tâche, du plus tôt au plus tard : les délais choisis, puis (alarme) les insistances. */
+export function rappelsPlanifies(t: { rappel_min: number | null; rappels_avant_min?: readonly number[] | null; alarme?: boolean | null }): RappelPlanifie[] {
+  const normaux = delaisRappel(t);
+  if (!t.alarme) return normaux.map((delai) => ({ delai, rang: 0 }));
+  // Une alarme sans délai choisi sonne au début du bloc.
+  const delais = normaux.length ? normaux : [0];
+  const dernier = delais[delais.length - 1];
+  return [
+    ...delais.map((delai) => ({ delai, rang: 0 })),
+    ...Array.from({ length: ALARME_REPETITIONS }, (_, i) => ({ delai: dernier - (i + 1) * ALARME_INTERVALLE_MIN, rang: i + 1 }))
+  ];
+}
+
+/** Début de l'alarme dans l'app : l'instant du dernier rappel normal (en minutes avant le début), ou null sans alarme. */
+export function delaiAlarme(t: { rappel_min: number | null; rappels_avant_min?: readonly number[] | null; alarme?: boolean | null }): number | null {
+  if (!t.alarme) return null;
+  const normaux = delaisRappel(t);
+  return normaux.length ? normaux[normaux.length - 1] : 0;
+}

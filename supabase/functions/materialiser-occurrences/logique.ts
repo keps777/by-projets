@@ -1,10 +1,10 @@
 // Matérialisation des occurrences sur 90 jours glissants et de leurs rappels (spec §7.2, §10). Aucune API Deno ici.
 // Les identifiants sont déterministes (ids.ts) : l'app et le serveur créent les mêmes lignes, sans doublon.
-import { ajouterJours, cleRappelBloc, delaisRappel, idOccurrence, idRappel, localVersUtc, occurrencesEntre, utcVersLocal, type Regle } from '../_shared/core/index.ts';
+import { ajouterJours, cleRappelAlarme, cleRappelBloc, rappelsPlanifies, idOccurrence, idRappel, localVersUtc, occurrencesEntre, utcVersLocal, type Regle } from '../_shared/core/index.ts';
 
 export interface TacheSource {
   id: string; user_id: string; regle: Regle; heure_debut: number; duree_min: number;
-  rappel_min: number | null; rappels_avant_min?: number[] | null; actif: boolean; supprime_le: string | null;
+  rappel_min: number | null; rappels_avant_min?: number[] | null; alarme?: boolean | null; actif: boolean; supprime_le: string | null;
 }
 export interface OccurrenceNouvelle { id: string; user_id: string; tache_id: string; jour: string; debut: string; fin: string }
 export interface OccurrenceExistante { id: string; user_id: string; tache_id: string; debut: string; etat: string; supprime_le: string | null }
@@ -43,15 +43,15 @@ export function planifierOccurrences(t: TacheSource, fuseau: string, de: string,
 
 /** Rappels à venir des occurrences RÉELLES (une occurrence déplacée garde son heure), encore prévues. */
 export function rappelsDesOccurrences(t: TacheSource, occs: OccurrenceExistante[], maintenant: number): RappelNouveau[] {
-  const delais = delaisRappel(t);
+  const delais = rappelsPlanifies(t);
   if (!delais.length || !t.actif || t.supprime_le) return [];
   const res: RappelNouveau[] = [];
   for (const o of occs) {
     if (o.tache_id !== t.id || o.supprime_le || o.etat !== 'prevue') continue;
-    for (const delai of delais) {
+    for (const { delai, rang } of delais) {
       const envoyer = Date.parse(o.debut) - delai * 60_000;
       if (envoyer <= maintenant) continue;
-      const cle = cleRappelBloc(o.id, delai);
+      const cle = rang ? cleRappelAlarme(o.id, rang) : cleRappelBloc(o.id, delai);
       res.push({ id: idRappel(cle), user_id: o.user_id, type: 'bloc', occurrence_id: o.id, rapport_id: null, envoyer_a: new Date(envoyer).toISOString(), cle_unique: cle });
     }
   }

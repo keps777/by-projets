@@ -29,6 +29,8 @@ export class FormulaireTache {
   rappel = $state<number | null>(10);
   /** Rappels plus tôt (minutes avant le début). */
   rappelsAvant = $state<number[]>([]);
+  /** Alarme : le rappel le plus proche du début insiste (2 min, 5 fois) tant que le bloc n'est pas lancé, fait ou reporté. */
+  alarme = $state(false);
 
   rubriques = $derived(rubriques());
   projets = $derived(this.rubriqueId ? projetsDe(this.rubriqueId) : []);
@@ -43,7 +45,8 @@ export class FormulaireTache {
     return this.vals[m.cle] ?? prevuParDefaut(m, this.duree, this.rec === 'hebdo' ? this.jours.length : 7);
   }
 
-  nouvelle(debut: Jour, heure: number, projetId: string | null, sansProjet: boolean, rappelDefaut: number): void {
+  nouvelle(debut: Jour, heure: number, projetId: string | null, sansProjet: boolean, rappelDefaut: number, alarmeDefaut = false): void {
+    this.alarme = alarmeDefaut;
     this.debut = debut;
     this.finDate = dernierDuMois(debut.slice(0, 7));
     this.heure = heure;
@@ -77,6 +80,7 @@ export class FormulaireTache {
     this.duree = t.duree_min;
     this.rappel = t.rappel_min;
     this.rappelsAvant = [...(t.rappels_avant_min ?? [])];
+    this.alarme = !!t.alarme;
   }
 
   /**
@@ -114,7 +118,7 @@ export class FormulaireTache {
     const attendus = this.mesures.map((m) => ({ cle: m.cle, valeur: this.prevu(m) })).filter((a): a is { cle: string; valeur: number } => a.valeur != null);
     return {
       titre: this.titre, projetId: this.assoc ? this.projetId : null, regle: this.regle, heureDebut: this.heure, dureeMin: this.duree,
-      rappelMin: this.rappel, rappelsAvantMin: [...this.rappelsAvant].sort((a, b) => b - a), sousProjetIds: this.actifs.map((s) => s.id), attendus: this.assoc ? attendus : []
+      rappelMin: this.rappel, rappelsAvantMin: [...this.rappelsAvant].sort((a, b) => b - a), alarme: this.alarme, sousProjetIds: this.actifs.map((s) => s.id), attendus: this.assoc ? attendus : []
     };
   }
 }

@@ -63,6 +63,17 @@ describe('rappels multiples', () => {
   });
 });
 
+describe('alarme', () => {
+  it('ajoute les rappels d’insistance (2 min d’écart) pour une tâche avec alarme', async () => {
+    const { depot, rappels } = depotMemoire([tache({ regle: { frequence: 'une_fois', debut: '2026-10-07', fin: { type: 'aucune' } }, heure_debut: 14 * 60, rappel_min: 10, alarme: true })]);
+    await materialiser(depot, { jours: 5 }, MAINTENANT);
+    const cles = [...rappels.values()].map((r) => r.cle_unique.split(':').slice(1).join(':')).sort();
+    expect(cles).toEqual(['10', 'alarme:1', 'alarme:2', 'alarme:3', 'alarme:4', 'alarme:5']);
+    const quatre = [...rappels.values()].find((r) => r.cle_unique.endsWith(':alarme:2'))!;
+    expect(Date.parse(quatre.envoyer_a)).toBe(Date.parse('2026-10-07T14:00:00-04:00') - 6 * 60_000);
+  });
+});
+
 describe('materialiser', () => {
   it('crée les occurrences d’hier à J+90 et les rappels futurs seulement', async () => {
     const m = depotMemoire([tache()]);

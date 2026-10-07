@@ -12,6 +12,7 @@
   import Icone from '../../ui/Icone.svelte';
   import Volet from '../../ui/Volet.svelte';
   import { FormulaireTache } from './formulaire-tache.svelte.ts';
+  import Interrupteur from '../../ui/Interrupteur.svelte';
   import SectionProjet from './SectionProjet.svelte';
   import SectionQuand from './SectionQuand.svelte';
   import { modifierOccurrence, modifierSerie, modifierSuivantes } from './edition.ts';
@@ -36,7 +37,7 @@
     const jour = jourValide(p.get('jour')) ?? jourCourant();
     const heure = Number(p.get('heure'));
     f.nouvelle(jour, Number.isFinite(heure) && p.has('heure') ? heure : heureProposee(jour, jourCourant(), maintenantLocal().minutes, f.duree),
-      p.get('projet'), p.get('sans-projet') === '1', profil()?.rappel_defaut_min ?? 10);
+      p.get('projet'), p.get('sans-projet') === '1', profil()?.rappel_defaut_min ?? 10, !!profil()?.alarme_defaut);
   });
 
   const style = $derived(styleCouleur(couleurRubrique(f.couleur ?? COULEUR_SANS_PROJET, theme.mode)));
@@ -145,6 +146,10 @@
               <button type="button" class:actif={f.rappelsAvant.includes(r.v)} aria-pressed={f.rappelsAvant.includes(r.v)} onclick={() => basculerPlusTot(r.v)}>{r.l} avant</button>
             {/each}
           </div>
+          <div class="rang-alarme">
+            <span class="col"><span class="fort">⏰ Alarme</span><span class="muted petit">Le rappel le plus proche insiste (toutes les 2 min, 5 fois) et sonne plein écran dans l’app, tant que le bloc n’est pas lancé, fait ou reporté.</span></span>
+            <Interrupteur actif={f.alarme} label="Alarme pour cette tâche" couleur="var(--c)" onchange={(v) => (f.alarme = v)} />
+          </div>
           <span class="muted petit">{f.rappel == null && !f.rappelsAvant.length ? 'Aucun rappel pour cette tâche. Touche un délai pour en ajouter un.' : 'Notification sur ton iPhone : la toucher ouvre l’écran Action rapide (Lancer, Reporter).'}</span>
         </div>
       </div>
@@ -191,6 +196,9 @@
   .rappels { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
   .rappels button { height: 44px; border-radius: 12px; border: 1px solid var(--ligne); background: transparent; font-size: 12px; font-weight: 600; }
   .plus-tot { margin-top: 2px; }
+  .rang-alarme { display: flex; align-items: center; gap: 12px; padding-top: 10px; border-top: 1px solid var(--ligne); }
+  .rang-alarme .col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .fort { font-size: 14px; font-weight: 600; }
   .rappels.plus { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .rappels.plus button { font-size: 12px; }
   .rappels button.actif { background: var(--c); border-color: var(--c); color: var(--c-sur); }

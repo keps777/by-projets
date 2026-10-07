@@ -29,6 +29,14 @@ describe('composerNotification', () => {
     expect(titre('2026-10-03T09:00:00Z')).toBe('Dans 2 jours : RDQD du matin');
   });
 
+  it('insistance d’une alarme : rang, heures et lien vers l’action rapide', () => {
+    const { charge, options } = composerNotification(rappel({ cle_unique: 'o1:alarme:2', envoyer_a: '2026-10-05T08:56:00Z' }));
+    expect(charge.titre).toBe('⏰ RDQD du matin');
+    expect(charge.corps).toBe('Rappel 2/5 · 05:00 – 05:30 · touche pour lancer ou reporter');
+    expect(charge.url).toBe('/action-rapide?occ=o1');
+    expect(options.ttl).toBe(300);
+  });
+
   it('titres masqués à l’écran verrouillé', () => {
     const { charge } = composerNotification(rappel({ titres_visibles: false }));
     expect(charge.titre).toBe('Un bloc commence dans 10 min');

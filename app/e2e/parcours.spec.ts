@@ -611,3 +611,30 @@ test('Nouvelle tâche : la valeur de temps prévue se choisit avec des menus heu
   await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
   await expect(page).toHaveURL(/\/$|\/\?/);
 });
+
+test('alarme : une tâche avec alarme sonne en plein écran à son rappel, et « Ignorer » la fait taire', async ({ page }) => {
+  const minutes = (() => {
+    const p = new Intl.DateTimeFormat('en-GB', { timeZone: 'America/Toronto', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
+    return +p.find((x) => x.type === 'hour')!.value * 60 + +p.find((x) => x.type === 'minute')!.value;
+  })();
+  test.skip(minutes > 1440 - 60, 'trop près de minuit pour placer le bloc dans la même journée');
+  await page.goto(`/tache/nouvelle?sans-projet=1&heure=${minutes + 5}`);
+  await page.getByLabel('Titre de la tâche').fill('Appeler le pasteur');
+  await page.getByRole('switch', { name: 'Alarme pour cette tâche' }).click();
+  await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+  const alarme = page.getByRole('alertdialog', { name: 'Alarme' });
+  await expect(alarme.getByRole('heading', { name: 'Appeler le pasteur' })).toBeVisible({ timeout: 10_000 });
+  await alarme.getByRole('button', { name: 'Ignorer' }).click();
+  await expect(alarme).toBeHidden();
+  await page.reload();
+  await expect(page.getByRole('alertdialog', { name: 'Alarme' })).toBeHidden();
+});
+
+test('Réglages : tester l’alarme ouvre l’écran d’alarme', async ({ page }) => {
+  await page.goto('/reglages');
+  await page.getByRole('button', { name: /Tester l’alarme/ }).click();
+  const alarme = page.getByRole('alertdialog', { name: 'Alarme' });
+  await expect(alarme.getByText('Ceci est un essai')).toBeVisible();
+  await alarme.getByRole('button', { name: 'Fermer l’essai' }).click();
+  await expect(alarme).toBeHidden();
+});
