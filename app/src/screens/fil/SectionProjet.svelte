@@ -26,6 +26,13 @@
     const pas = pasDe(m.type) || 1;
     f.vals = { ...f.vals, [m.cle]: Math.max(0, Math.round((v + sens * pas) * 100) / 100) };
   }
+  /** Mesure de temps : heures et minutes se choisissent directement (valeur en secondes). */
+  const HEURES = Array.from({ length: 25 }, (_, i) => i);
+  const MINUTES = Array.from({ length: 60 }, (_, i) => i);
+  const parts = (v: number | null) => { const min = Math.round((v ?? 0) / 60); return { h: Math.floor(min / 60), min: min % 60 }; };
+  function fixerTemps(m: MesureForm, h: number, min: number) {
+    f.vals = { ...f.vals, [m.cle]: Math.min(24 * 3600, h * 3600 + min * 60) };
+  }
   const valeur = (m: MesureForm) => {
     const v = f.prevu(m);
     if (v == null) return 'à saisir';
@@ -93,11 +100,23 @@
         {@const v = f.prevu(m)}
         <div class="mesure">
           <span class="col"><span class="nom">{m.cle === 'temps' ? 'Temps' : m.nom}</span><span class="muted petit">{lecteurs(m)}</span></span>
+          {#if m.type === 'temps'}
+            {@const t = parts(v)}
+            <span class="temps-choix">
+              <select aria-label="Heures · {m.nom}" value={t.h} onchange={(e) => fixerTemps(m, +e.currentTarget.value, t.min)}>
+                {#each HEURES as h (h)}<option value={h}>{h} h</option>{/each}
+              </select>
+              <select aria-label="Minutes · {m.nom}" value={t.min} onchange={(e) => fixerTemps(m, t.h, +e.currentTarget.value)}>
+                {#each MINUTES as n (n)}<option value={n}>{String(n).padStart(2, '0')} min</option>{/each}
+              </select>
+            </span>
+          {:else}
           <span class="pas">
             <button type="button" aria-label="Diminuer {m.nom}" disabled={v == null || m.type === 'choix' || m.type === 'oui_non'} onclick={() => ajuster(m, -1)}>−</button>
             <span class="mono valeur">{valeur(m)}</span>
             <button type="button" aria-label="Augmenter {m.nom}" disabled={v == null || m.type === 'choix' || m.type === 'oui_non'} onclick={() => ajuster(m, 1)}>+</button>
           </span>
+          {/if}
         </div>
       {/each}
       <span class="muted petit note">Valeur prévue à chaque occurrence. La saisie réelle se fait ensuite dans le volet du bloc, une seule fois : tous les sous-projets la lisent.</span>
@@ -130,6 +149,8 @@
   .pas { display: flex; align-items: center; gap: 6px; }
   .pas button { width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--surface-2); font-size: 20px; }
   .pas button:disabled { opacity: 0.35; cursor: default; }
+  .temps-choix { display: flex; gap: 6px; }
+  .temps-choix select { height: 48px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--surface-2); color: var(--texte); font-size: 16px; font-weight: 600; padding: 0 8px; min-width: 0; }
   .valeur { min-width: 62px; text-align: center; font-size: 15px; }
   .note { display: block; padding: 10px 0 8px; }
   /* Dessin de la maquette (40 px ou 36 px), zone d'appui portée à 44 px (spec §14). */

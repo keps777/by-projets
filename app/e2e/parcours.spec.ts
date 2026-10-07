@@ -592,3 +592,22 @@ test('carte « Ensuite » : glisser vers le haut montre les blocs non faits qui 
   await glisser(70);
   await expect(carte.getByText('Premier à venir')).toBeVisible();
 });
+
+test('Nouvelle tâche : la valeur de temps prévue se choisit avec des menus heures et minutes', async ({ page }) => {
+  await page.goto('/tache/nouvelle');
+  await page.getByLabel('Titre de la tâche').fill('Prière du soir');
+  await page.getByRole('button', { name: 'Nouveau projet' }).click();
+  await page.getByRole('textbox', { name: 'Nouveau projet' }).fill('Projet calme');
+  await page.getByRole('button', { name: 'Créer', exact: true }).click();
+  await page.getByRole('button', { name: 'Nouveau sous-projet' }).click();
+  await page.getByRole('textbox', { name: 'Nouveau sous-projet' }).fill('Prière libre');
+  await page.getByRole('button', { name: 'Créer', exact: true }).click();
+  const heures = page.getByLabel('Heures · Temps');
+  const minutes = page.getByLabel('Minutes · Temps');
+  await heures.selectOption('1');
+  await minutes.selectOption('5');
+  await expect(heures).toHaveValue('1');
+  await expect(minutes).toHaveValue('5');
+  await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+  await expect(page).toHaveURL(/\/$|\/\?/);
+});
