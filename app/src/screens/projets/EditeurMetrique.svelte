@@ -4,6 +4,7 @@
   import { OPTIONS_JEUNE, TYPES, UNITES_RAPIDES } from '@core/metriques.ts';
   import Icone from '../../ui/Icone.svelte';
   import Interrupteur from '../../ui/Interrupteur.svelte';
+  import ChampTemps from '../../ui/ChampTemps.svelte';
   import { PERIODES, champTexte, lireChamp, pasDe, type Brouillon } from './vues.ts';
 
   let { m, onchange, onretirer, pilote = false, onpilote }: {
@@ -52,14 +53,25 @@
   {#if !estRef}
     <div class="grille">
       <label class="sous">Unité
-        <input class="unite" value={uniteLibre ? m.unite : info.uniteAffichee || m.unite} disabled={!uniteLibre} onchange={(e) => onchange({ unite: e.currentTarget.value.trim() })} />
+        <input class="unite" value={uniteLibre ? m.unite : m.type === 'temps' ? 'h · min' : info.uniteAffichee || m.unite} disabled={!uniteLibre} onchange={(e) => onchange({ unite: e.currentTarget.value.trim() })} />
       </label>
       <div class="sous">Objectif
+        {#if m.type === 'temps'}
+          <!-- Durée : heures et minutes à saisir directement (4 h = « 4 » et « 00 »), sans calcul en minutes ou en secondes. -->
+          <ChampTemps label="Objectif de {m.nom}" valeur={m.cible} avecSecondes={false} pas={900} onchange={(v) => onchange({ cible: v ? v : null })} />
+        {:else if m.type === 'heure'}
+          <div class="pas">
+            <button type="button" aria-label="Diminuer l’objectif" onclick={() => pas(-1)}>−</button>
+            <input class="mono valeur" type="time" value={texte} onchange={(e) => { texte = e.currentTarget.value; valider(); }} aria-label="Objectif de {m.nom}" />
+            <button type="button" aria-label="Augmenter l’objectif" onclick={() => pas(1)}>+</button>
+          </div>
+        {:else}
         <div class="pas">
           <button type="button" aria-label="Diminuer l’objectif" onclick={() => pas(-1)}>−</button>
-          <input class="mono valeur" bind:value={texte} onchange={valider} inputmode={m.type === 'heure' ? 'text' : 'decimal'} placeholder="—" aria-label="Objectif de {m.nom}" />
+          <input class="mono valeur" bind:value={texte} onchange={valider} inputmode="decimal" placeholder="—" aria-label="Objectif de {m.nom}" />
           <button type="button" aria-label="Augmenter l’objectif" onclick={() => pas(1)}>+</button>
         </div>
+        {/if}
       </div>
     </div>
     {#if m.type === 'nombre'}

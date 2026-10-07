@@ -841,3 +841,18 @@ test('Rapports : les livres de ZTF sont proposés, et un livre ajouté est propo
   await fenetre.getByLabel('Titre du livre').fill('perso');
   await expect(fenetre.getByRole('button', { name: 'Mon livre perso · MOI · 250 p' })).toBeVisible();
 });
+
+test('Nouveau sous-projet : l’objectif de temps se règle en heures et minutes (4 h sans calcul)', async ({ page }) => {
+  await page.goto('/projets/nouveau-sous-projet');
+  await page.getByRole('button', { name: /^Prière/ }).first().click();
+  const objectif = page.getByRole('group', { name: /Objectif de Temps de prière/ });
+  await expect(objectif.getByLabel('Heures')).toHaveValue('2');
+  await objectif.getByLabel('Heures').fill('4');
+  await objectif.getByLabel('Minutes').fill('0');
+  await objectif.getByLabel('Minutes').blur();
+  await expect(objectif.getByLabel('Heures')).toHaveValue('4');
+  await expect(objectif.getByLabel('Minutes')).toHaveValue('00');
+  await expect(objectif.getByLabel('Secondes')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Créer le sous-projet' }).click();
+  await expect(page.getByText(/4 h/).first()).toBeVisible();
+});

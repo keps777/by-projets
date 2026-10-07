@@ -1,6 +1,7 @@
 <script lang="ts">
+  import { tick } from 'svelte';
   /** Durée en heures, minutes et secondes (valeur en secondes) : « 3 h 07 min 36 s » se corrige champ par champ, sans décimales. */
-  let { valeur, onchange, label, pas = 300, max = 99 * 3600 }: { valeur: number | null; onchange: (secondes: number | null) => void; label: string; pas?: number; max?: number } = $props();
+  let { valeur, onchange, label, pas = 300, max = 99 * 3600, avecSecondes = true }: { valeur: number | null; onchange: (secondes: number | null) => void; label: string; pas?: number; max?: number; avecSecondes?: boolean } = $props();
 
   const total = $derived(Math.max(0, Math.round(valeur ?? 0)));
   const h = $derived(Math.floor(total / 3600));
@@ -14,15 +15,21 @@
     const t = (champ === 'h' ? n : h) * 3600 + (champ === 'm' ? n : m) * 60 + (champ === 's' ? n : s);
     onchange(Math.min(max, t));
   }
+  /** Après une saisie, le champ reprend la forme normalisée (« 0 » → « 00 », 75 min → « 15 ») même si la valeur n'a pas changé. */
+  const texteDe = (champ: 'h' | 'm' | 's') => (champ === 'h' ? String(h) : deux(champ === 'm' ? m : s));
+  function saisir(champ: 'h' | 'm' | 's', el: HTMLInputElement) {
+    lire(champ, el.value);
+    void tick().then(() => { el.value = texteDe(champ); });
+  }
   const bouger = (signe: 1 | -1) => onchange(Math.min(max, Math.max(0, total + signe * pas)));
   const choisir = (e: FocusEvent) => (e.currentTarget as HTMLInputElement).select();
 </script>
 
 <div class="temps" role="group" aria-label={label}>
   <button type="button" aria-label="Moins" onclick={() => bouger(-1)}>−</button>
-  <label><input class="mono" inputmode="numeric" value={h} aria-label="Heures" onfocus={choisir} onchange={(e) => lire('h', e.currentTarget.value)} /><span>h</span></label>
-  <label><input class="mono" inputmode="numeric" value={deux(m)} aria-label="Minutes" onfocus={choisir} onchange={(e) => lire('m', e.currentTarget.value)} /><span>min</span></label>
-  <label><input class="mono" inputmode="numeric" value={deux(s)} aria-label="Secondes" onfocus={choisir} onchange={(e) => lire('s', e.currentTarget.value)} /><span>s</span></label>
+  <label><input class="mono" inputmode="numeric" value={h} aria-label="Heures" onfocus={choisir} onchange={(e) => saisir('h', e.currentTarget)} /><span>h</span></label>
+  <label><input class="mono" inputmode="numeric" value={deux(m)} aria-label="Minutes" onfocus={choisir} onchange={(e) => saisir('m', e.currentTarget)} /><span>min</span></label>
+  {#if avecSecondes}<label><input class="mono" inputmode="numeric" value={deux(s)} aria-label="Secondes" onfocus={choisir} onchange={(e) => saisir('s', e.currentTarget)} /><span>s</span></label>{/if}
   <button type="button" aria-label="Plus" onclick={() => bouger(1)}>+</button>
 </div>
 
