@@ -666,7 +666,7 @@ test.describe('glisser un bloc sur la journée', () => {
     // Poignée du bas : la fin passe de 10:35 à environ 11:35 (+72 px ; le défilement automatique près du bord peut ajouter quelques minutes).
     const poignee = page.getByRole('slider', { name: /Changer l’heure de fin de Préparer la rencontre/ });
     await expect(poignee).toBeVisible();
-    await page.waitForTimeout(250); // la mise en place de la poignée et la fin des transitions
+    await expect(page.getByText(/Bloc placé de/)).toBeHidden({ timeout: 10_000 }); // le message ne doit pas couvrir la poignée
     const p = (await poignee.boundingBox())!;
     await page.mouse.move(p.x + p.width / 2, p.y + p.height / 2);
     await page.mouse.down();
