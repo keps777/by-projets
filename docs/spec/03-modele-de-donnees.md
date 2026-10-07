@@ -6,7 +6,7 @@ Toutes les tables ont `id uuid` (généré par le client pour permettre la saisi
 
 | Table | Colonnes principales | Remarques |
 |---|---|---|
-| `profils` | `prenom`, `nom_rapport`, `langue_rapport` (`en`/`fr`), `fuseau` (défaut `America/Toronto`), `apparence` (`nuit`/`jour`/`auto`), `heure_rapport` (défaut 21:15), `rappel_defaut_min` (0/5/10/15, défaut 10), `titres_visibles` (bool), `devise` (défaut `CAD`) | Un par utilisateur. Titre de l'app = `prenom` + « Life ». |
+| `profils` | `prenom`, `nom_rapport`, `langue_rapport` (`en`/`fr`), `fuseau` (défaut `America/Toronto`), `apparence` (`nuit`/`jour`/`auto`), `heure_rapport` (défaut 23:45), `rappel_defaut_min` (0/5/10/15, défaut 10), `titres_visibles` (bool), `devise` (défaut `CAD`) | Un par utilisateur. Titre de l'app = `prenom` + « Life ». |
 | `rubriques` | `nom`, `couleur`, `ordre`, `archivee` | Ajout et retrait libres. |
 | `projets` | `rubrique_id`, `numero`, `nom`, `ordre`, `statut` (`actif`/`pause`/`archive`) | Les 24 projets de départ : voir `04`. |
 | `sous_projets` | `projet_id`, `nom`, `debut`, `fin` (peut être nulle), `statut`, `metrique_pilote_id`, `reprise_passe` (bool), `fiche` (json : quoi, pourquoi, qui, où, quand, comment, combien), `termine_le` | `statut` : `brouillon`, `en_cours`, `a_valider`, `termine`, `archive`. |

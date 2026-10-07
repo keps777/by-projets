@@ -1,6 +1,6 @@
 // Génération du rapport du soir et des rappels de récapitulatif (spec §9, §10), à l'heure LOCALE de chaque profil.
 // Appelée chaque minute. Aucune API Deno ici.
-import { ajouterJours, jourSemaine, localVersUtc, lundiDe, moisDe, utcVersLocal, uuidDeterministe, type TypeRappel } from '../_shared/core/index.ts';
+import { HEURE_RAPPORT_DEFAUT, ajouterJours, jourSemaine, localVersUtc, lundiDe, moisDe, utcVersLocal, uuidDeterministe, type TypeRappel } from '../_shared/core/index.ts';
 import { construireContenu, type ContenuRapport, type DonneesJour } from './contenu.ts';
 
 export interface ProfilRapport { id: string; fuseau: string; heure_rapport: string }
@@ -32,7 +32,7 @@ const FUSEAU_DEFAUT = 'America/Toronto';
 
 export function minutesDe(hhmm: string): number {
   const m = /^(\d{1,2}):(\d{2})/.exec(hhmm ?? '');
-  return m ? Math.min(1439, +m[1] * 60 + +m[2]) : 21 * 60 + 15;
+  return m ? Math.min(1439, +m[1] * 60 + +m[2]) : minutesDe(HEURE_RAPPORT_DEFAUT);
 }
 
 const dansFenetre = (minutes: number, heure: number) => minutes >= heure && minutes < heure + FENETRE_MIN;

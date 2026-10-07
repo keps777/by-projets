@@ -71,7 +71,7 @@ Format de référence :
 
 ### Envoi des rappels et des rapports (serveur)
 - Une tâche planifiée du serveur (toutes les minutes) cherche les rappels à envoyer, puis envoie la notification push et/ou l'e-mail.
-- Le **rapport du jour** est généré par le serveur à l'heure choisie (ex. 21:15), même app fermée, puis annoncé par notification.
+- Le **rapport du jour** est généré par le serveur à l'heure choisie (23:45 par défaut), même app fermée, puis annoncé par notification.
 
 ### Modèle de données (esquisse)
 `profiles` · `rubriques` · `projets` (rubrique_id) · `sous_projets` (projet_id, période, mesure, cible) · `blocs` (créneaux, récurrence, projet_id) · `saisies` (bloc, date, quantité, minutes, détail JSON ; **rattachée au projet**, lue par tous ses sous-projets) · `points_rapport` (code, projet, mesures activées, ordre) · `exports` (préréglages) · `rapports` (jour, texte) · `rappels` (bloc, canal, délai, état) · `abonnements_push`.

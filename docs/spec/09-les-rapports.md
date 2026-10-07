@@ -20,7 +20,7 @@
 - `*gras*` et `_italique_` suivent la mise en forme de WhatsApp. `~` marque un temps approximatif. Les parenthèses détaillent les séances. Le titre et les libellés suivent la **langue du rapport** (English ou Français).
 
 **Génération**
-- Le **serveur** génère le rapport chaque jour à l'heure choisie (21:15 par défaut), même app fermée, puis envoie une notification « Ton rapport est prêt ».
+- Le **serveur** génère le rapport chaque jour à l'heure choisie (23:45 par défaut, réglable dans Réglages › Notifications), même app fermée, puis envoie une notification « Ton rapport est prêt ». Si l’app est ouverte à partir de cette heure et que le rapport n’est pas envoyé, une fenêtre **« Envoyer ton rapport ? »** propose *Relire et envoyer*, *Dans 15 min* ou *Pas ce soir* (elle ne revient pas ce soir-là) ; elle ne s’affiche pas dans Rapports.
 - On peut le **régénérer** à la demande. Une saisie corrigée après l'envoi marque le rapport « modifié depuis l'envoi » ; l'ancien texte reste consultable.
 
 **Récapitulatifs** : un onglet **Semaine** et un onglet **Mois** résument les rapports de la période (fait / attendu cumulé par point). Ils sont aussi exportables.
@@ -33,7 +33,7 @@
 - L'écran Rapports s'ouvre toujours sur l'onglet **Jour** et sur **la journée en cours** ; avant l'heure du rapport (21 h 15 par défaut) elle est présentée « en cours », sans rouge. Les flèches mènent aux jours précédents.
 - **Modifier à la main** : dans l'onglet Jour, toucher la carte d'un point ouvre la saisie du jour (comme « Saisir un autre jour » d'un sous-projet) avec les mesures du point ; l'enregistrement met à jour la saisie manuelle du projet, donc tous ses sous-projets, les barres et le rapport. Un point sans projet ou sans mesure explique comment le régler.
 - Archive et Archives ne comptent pas le jour en cours avant l'heure du rapport.
-- Le jour en cours n'est jamais présenté comme un échec : un zéro s'affiche en encre normale et le résumé dit « Journée en cours · rapport à 21:15 ».
+- Le jour en cours n'est jamais présenté comme un échec : un zéro s'affiche en encre normale et le résumé dit « Journée en cours · rapport à 23:45 ».
 
 ## Chrono sur chaque point (onglet Jour, 5 oct. 2026)
 - Chaque carte de point qui a une mesure de **temps** et un projet porte un petit bouton **▶**. Le toucher **lance une session** : le chrono tourne sur la carte (et une pastille rouge marque l'onglet Rapports depuis les autres écrans) ; il survit au rechargement de l'app.

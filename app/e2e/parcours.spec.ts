@@ -717,3 +717,36 @@ test('carte « Ensuite » : le rang compte les blocs non faits du jour du bloc a
   await expect(carte.getByText('Jour A premier')).toBeVisible();
   await expect(carte.getByText('1/2', { exact: true })).toBeVisible();
 });
+
+test.describe('invitation à envoyer le rapport (23:45 par défaut)', () => {
+  test('avant 23:45 rien ; à 23:50 la fenêtre propose d’envoyer, « Pas ce soir » la tait', async ({ page }) => {
+    await page.clock.install({ time: new Date('2026-10-07T03:30:00Z') }); // 23:30 à Toronto
+    await page.goto('/');
+    await expect(page.getByText('Luther Life').first()).toBeVisible();
+    await expect(page.getByRole('dialog', { name: 'Envoyer le rapport du jour' })).toBeHidden();
+    await page.clock.fastForward('00:20:00'); // 23:50
+    const fenetre = page.getByRole('dialog', { name: 'Envoyer le rapport du jour' });
+    await expect(fenetre.getByRole('heading', { name: 'Envoyer ton rapport ?' })).toBeVisible();
+    await expect(fenetre.getByText('Rapport du jour · 23:45')).toBeVisible();
+    await fenetre.getByRole('button', { name: 'Pas ce soir' }).click();
+    await expect(fenetre).toBeHidden();
+    await page.reload();
+    await expect(page.getByText('Luther Life').first()).toBeVisible();
+    await expect(page.getByRole('dialog', { name: 'Envoyer le rapport du jour' })).toBeHidden();
+  });
+
+  test('« Relire et envoyer » ouvre le rapport du jour', async ({ page }) => {
+    await page.clock.install({ time: new Date('2026-10-07T03:50:00Z') });
+    await page.goto('/');
+    await page.getByRole('dialog', { name: 'Envoyer le rapport du jour' }).getByRole('button', { name: 'Relire et envoyer' }).click();
+    await expect(page).toHaveURL(/\/rapports/);
+    await expect(page.getByRole('dialog', { name: 'Envoyer le rapport du jour' })).toBeHidden();
+  });
+
+  test('l’heure du rapport se règle dans les Réglages', async ({ page }) => {
+    await page.goto('/reglages');
+    await expect(page.getByLabel('Heure du rapport')).toHaveValue('23:45');
+    await page.getByLabel('Heure du rapport').fill('22:30');
+    await expect(page.getByLabel('Heure du rapport')).toHaveValue('22:30');
+  });
+});

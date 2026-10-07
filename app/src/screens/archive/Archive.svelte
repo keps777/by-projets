@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { HEURE_RAPPORT_DEFAUT } from '@core/defauts.ts';
   // Archive (planches Archive, ArchiveRapports, JourArchive) : les sous-projets accomplis, « pierres de mémorial »
   // (1 Samuel 7:12), et les récapitulatifs des rapports.
   import EcranPage from '../../ui/EcranPage.svelte';
@@ -30,7 +31,7 @@
   // ------------------------------------------------------------------ rapports
   const auj = $derived(aujourdhui());
   // Le rapport du jour n'existe qu'à partir de l'heure du rapport : avant, la journée en cours n'est pas comptée.
-  const minutesRapport = $derived.by(() => { const [h, m] = (profil()?.heure_rapport ?? '21:15').split(':').map(Number); return (h || 0) * 60 + (m || 0); });
+  const minutesRapport = $derived.by(() => { const [h, m] = (profil()?.heure_rapport ?? HEURE_RAPPORT_DEFAUT).split(':').map(Number); return (h || 0) * 60 + (m || 0); });
   const dernierJour = $derived(maintenantLocal().minutes < minutesRapport ? ajouterJours(auj, -1) : auj);
   const d = $derived(onglet === 'rapports' ? donneesRapport() : null);
   const prep = $derived(d ? preparer(d) : []);
@@ -109,7 +110,7 @@
       {#if !semaines.length}
         <div class="carte attente-rapport">
           <span class="serif premiere">Ton premier rapport arrive ce soir.</span>
-          <span class="muted meta">Il se prépare tout seul à {profil()?.heure_rapport ?? '21:15'}, à partir de tes saisies du jour.</span>
+          <span class="muted meta">Il se prépare tout seul à {profil()?.heure_rapport ?? HEURE_RAPPORT_DEFAUT}, à partir de tes saisies du jour.</span>
         </div>
       {:else}
       <div class="carte liste">

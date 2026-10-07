@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { HEURE_RAPPORT_DEFAUT } from '@core/defauts.ts';
   // Réglages (planches Reglages, JourReglages) : profil, points du rapport, exports, notifications, rappels, apparence, compte.
   import { tick, untrack } from 'svelte';
   import EcranPage from '../../ui/EcranPage.svelte';
@@ -240,7 +241,7 @@
           <span class="col grow">
             <span class="fort">{r.label}</span>
             <span class="muted petit">{aide(r.t)}
-              {#if r.t === 'rapport'}<label class="heure"><span>{p?.heure_rapport ?? '21:15'}</span><input type="time" aria-label="Heure du rapport" value={p?.heure_rapport ?? '21:15'}
+              {#if r.t === 'rapport'}<label class="heure"><span>{p?.heure_rapport ?? HEURE_RAPPORT_DEFAUT}</span><input type="time" aria-label="Heure du rapport" value={p?.heure_rapport ?? HEURE_RAPPORT_DEFAUT}
                 onchange={(e) => { const v = (e.currentTarget as HTMLInputElement).value; if (/^\d{2}:\d{2}$/.test(v)) majProfil({ heure_rapport: v }); }} /></label>{/if}
             </span>
           </span>

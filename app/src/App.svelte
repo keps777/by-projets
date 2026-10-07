@@ -11,6 +11,7 @@
   import { theme } from './ui/theme.svelte.ts';
   import Toasts from './ui/Toasts.svelte';
   import AlarmeEcran from './ui/AlarmeEcran.svelte';
+  import InviteRapport from './ui/InviteRapport.svelte';
   import { alarmes } from './alarme/alarme.svelte.ts';
   import { fly } from 'svelte/transition';
   import { cubicOut } from 'svelte/easing';
@@ -82,6 +83,7 @@
 <div class="barre-statut" aria-hidden="true"></div>
 <Toasts />
 <AlarmeEcran />
+<InviteRapport />
 
 <style>
   .vue { height: 100%; }

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { HEURE_RAPPORT_DEFAUT } from '@core/defauts.ts';
   // Archives des rapports (planche Archives) : par jour, semaine, mois ; recherche ; marque « envoyé ».
   import EcranPage from '../../ui/EcranPage.svelte';
   import Icone from '../../ui/Icone.svelte';
@@ -27,8 +28,8 @@
 
   const auj = $derived(aujourdhui());
   const langue = $derived(profil()?.langue_rapport ?? 'fr');
-  // Le rapport du jour n'existe qu'à partir de l'heure du rapport (21:15 par défaut) : avant, la journée en cours n'est pas archivée.
-  const minutesRapport = $derived.by(() => { const [h, m] = (profil()?.heure_rapport ?? '21:15').split(':').map(Number); return (h || 0) * 60 + (m || 0); });
+  // Le rapport du jour n'existe qu'à partir de l'heure du rapport (23:45 par défaut) : avant, la journée en cours n'est pas archivée.
+  const minutesRapport = $derived.by(() => { const [h, m] = (profil()?.heure_rapport ?? HEURE_RAPPORT_DEFAUT).split(':').map(Number); return (h || 0) * 60 + (m || 0); });
   const dernierJour = $derived(maintenantLocal().minutes < minutesRapport ? ajouterJours(auj, -1) : auj);
   const d = $derived(donneesRapport());
   const prep = $derived(preparer(d));

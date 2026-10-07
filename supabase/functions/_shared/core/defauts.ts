@@ -1,6 +1,9 @@
 // Rubriques, projets et points de rapport de départ (docs/04-mes-projets.md ; le projet 24 a été retiré).
 import type { RubriqueCle } from './modeles.ts';
 
+/** Heure du rapport du soir proposée par défaut (modifiable dans Réglages › Notifications). */
+export const HEURE_RAPPORT_DEFAUT = '23:45';
+
 export interface ProjetDefaut { numero: number; nom: string }
 export interface RubriqueDefaut { cle: RubriqueCle; nom: string; couleur: string; projets: ProjetDefaut[] }
 

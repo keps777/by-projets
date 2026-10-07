@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { HEURE_RAPPORT_DEFAUT } from '@core/defauts.ts';
   // Rapports (planches Rapport, RapportSemaine, RapportMois, JourRapport) : jour, semaine, mois, puis export.
   import EcranPage from '../../ui/EcranPage.svelte';
   import Icone from '../../ui/Icone.svelte';
@@ -30,8 +31,8 @@
   const vue = $derived<Vue>(estVue(routeur.params.get('onglet')) ? (routeur.params.get('onglet') as Vue) : 'jour');
   const jourParam = $derived(routeur.params.get('jour'));
   const p = $derived(profil());
-  // On ouvre toujours sur la journée en cours ; avant l'heure du rapport (21:15 par défaut), elle est « en cours » : un zéro n'est pas un échec.
-  const minutesRapport = $derived.by(() => { const [h, m] = (p?.heure_rapport ?? '21:15').split(':').map(Number); return (h || 0) * 60 + (m || 0); });
+  // On ouvre toujours sur la journée en cours ; avant l'heure du rapport (23:45 par défaut), elle est « en cours » : un zéro n'est pas un échec.
+  const minutesRapport = $derived.by(() => { const [h, m] = (p?.heure_rapport ?? HEURE_RAPPORT_DEFAUT).split(':').map(Number); return (h || 0) * 60 + (m || 0); });
   const avantRapport = $derived(maintenantLocal().minutes < minutesRapport);
   const periode = $derived(periodeDe(vue, jourParam && /^\d{4}-\d{2}-\d{2}$/.test(jourParam) ? jourParam : auj));
   const suivanteFuture = $derived(decaler(periode, 1).debut > auj);
@@ -48,7 +49,7 @@
   const nbAtteints = $derived(points.filter((x) => atteint(x.ratio)).length);
   const joursPasses = $derived(jours.filter((j) => !j.futur).length);
 
-  const resume = $derived(enCours && !nbAtteints ? `Journée en cours · rapport à ${p?.heure_rapport ?? '21:15'}` : vue === 'jour'
+  const resume = $derived(enCours && !nbAtteints ? `Journée en cours · rapport à ${p?.heure_rapport ?? HEURE_RAPPORT_DEFAUT}` : vue === 'jour'
     ? `${enCours ? 'En cours · ' : ''}${nbAtteints} point${nbAtteints > 1 ? 's' : ''} atteint${nbAtteints > 1 ? 's' : ''} sur ${points.length}`
     : `Récapitulatif de ${joursPasses} rapport${joursPasses > 1 ? 's' : ''}`);
   const sousTitre = $derived(vue === 'semaine' ? `semaine ${semaineIso(periode.debut)}` : nomMois(moisDe(periode.debut)));

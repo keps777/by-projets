@@ -72,7 +72,7 @@ describe('initialiser_compte', () => {
     const avantB = await totaux(B);
     const [p] = await comme<Record<string, unknown>>(db, A, 'select * from initialiser_compte($1)', ['Luther']);
     expect(p).toMatchObject({ id: A, prenom: 'Luther', nom_rapport: 'Luther', langue_rapport: 'fr', fuseau: 'America/Toronto', apparence: 'nuit',
-      heure_rapport: '21:15', rappel_defaut_min: 10, titres_visibles: true, devise: 'CAD', initialise: true });
+      heure_rapport: '23:45', rappel_defaut_min: 10, titres_visibles: true, devise: 'CAD', initialise: true });
     const t1 = await totaux(A);
     expect(t1).toEqual({ rubriques: 6, projets: 25, points: 13, presets: 4, profils: 1 }); // + 1 ligne de remplir()
     await comme(db, A, 'select initialiser_compte($1)', ['Autre']);
