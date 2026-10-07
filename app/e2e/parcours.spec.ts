@@ -703,3 +703,17 @@ test('dupliquer une tâche depuis le volet du bloc ouvre le formulaire prérempl
   await expect(page.getByText('Appel du lundi (copie)').first()).toBeVisible();
   await expect(page.getByText('Appel du lundi').first()).toBeVisible();
 });
+
+test('carte « Ensuite » : le rang compte les blocs non faits du jour du bloc affiché, pas tous les jours', async ({ page }) => {
+  const dans = (n: number) => new Date(Date.now() + n * 86400000).toISOString().slice(0, 10);
+  for (const [n, titre] of [[3, 'Jour A premier'], [3, 'Jour A second'], [5, 'Jour B unique']] as const) {
+    await page.goto(`/tache/nouvelle?sans-projet=1&jour=${dans(n)}&heure=${n === 3 && titre.endsWith('second') ? 600 : 480}`);
+    await page.getByLabel('Titre de la tâche').fill(titre);
+    await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+    await expect(page).toHaveURL(/\/$|\/\?/);
+  }
+  await page.goto('/');
+  const carte = page.getByRole('group', { name: /Prochains blocs/ });
+  await expect(carte.getByText('Jour A premier')).toBeVisible();
+  await expect(carte.getByText('1/2', { exact: true })).toBeVisible();
+});

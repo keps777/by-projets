@@ -55,6 +55,13 @@
     const i = choisieId ? file.findIndex((b) => b.occ.id === choisieId) : -1;
     return i >= 0 ? i : defaut;
   });
+  /** Rang du bloc affiché parmi les blocs non faits de son propre jour (« 2/5 » : le 2e des 5 qui restent ce jour-là). */
+  const rangDuJour = $derived.by(() => {
+    const b = file[position];
+    if (!b) return { rang: 0, total: 0 };
+    const memeJour = file.filter((x) => x.occ.jour === b.occ.jour);
+    return { rang: memeJour.findIndex((x) => x.occ.id === b.occ.id) + 1, total: memeJour.length };
+  });
   const parcourable = $derived(jour === aujourdhui && !actifs.length && dernier > 0);
   function parcourir(delta: 1 | -1) {
     const i = Math.min(dernier, Math.max(0, position + delta));
@@ -168,7 +175,7 @@
     {#key parcourable ? `${position}:${file[position]?.occ.id}` : 'fixe'}
     <div class="rang" in:fly={{ y: parcourable ? sens * 16 : 0, duration: parcourable ? 180 : 0 }}>
       <button type="button" class="texte" onclick={() => carte.ouvrir?.()} disabled={!carte.ouvrir}>
-        <span class="kicker" class:maintenant={!carte.couleur && carte.kicker === 'Journée accomplie'}>{carte.kicker}{#if parcourable && file[position]} <span class="rang-pos mono">{position + 1}/{file.length}</span>{/if}</span>
+        <span class="kicker" class:maintenant={!carte.couleur && carte.kicker === 'Journée accomplie'}>{carte.kicker}{#if parcourable && file[position]} <span class="rang-pos mono">{rangDuJour.rang}/{rangDuJour.total}</span>{/if}</span>
         <span class="titre-carte">{carte.titre}</span>
         <span class="sous" class:mono={carte.mono}>{carte.sous}</span>
       </button>
