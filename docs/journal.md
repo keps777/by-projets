@@ -4,6 +4,7 @@
 
 ## 7 oct. 2026 — Alarmes, rapport à 23:45, livres (CL)
 
+- Plusieurs métriques pilotent la barre (migration `20261007000400`, `progressionPilotes`) ; tâches proposées dans la Fiche (`propositions-taches.ts`) ; tâche d'un projet à livres : « Livre lu » (`ChoixLivre`).
 - Objectif de temps d'une métrique en h/min (`ChampTemps`, sans secondes) ; objectif « heure » avec le sélecteur d'heure.
 - Catalogue de livres : ZTF (`data/catalogue-livres.ts`) + tous les livres déjà ajoutés, proposés à la saisie du titre.
 - Livres du point CL (`LivreSuivi`, `itemsDesLivres`, migration `20261007000300` appliquée, `generer-rapports` redéployée) ; temps en h/min/s (`ChampTemps`) dans la saisie du jour et le volet d'un bloc ; détail des séances hors export. Spec §9.

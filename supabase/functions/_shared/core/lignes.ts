@@ -50,6 +50,8 @@ export interface SousProjetLigne extends Base {
   fin: string | null;
   statut: StatutSousProjet;
   metrique_pilote_id: string | null;
+  /** Métriques qui pilotent ensemble la barre (la première est la principale). Vide : la seule pilote ci-dessus. */
+  metriques_pilotes?: string[];
   reprise_passe: boolean;
   fiche: Fiche;
   bilan: string | null;

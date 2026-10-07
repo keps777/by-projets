@@ -1,7 +1,7 @@
 // Contenu structuré du rapport du jour (spec §9), calculé avec le noyau (mesuresDuPoint). L'app en compose le texte
 // à l'affichage (formaterRapport), selon le préréglage et la langue. Fonctions pures.
 import {
-  TYPES, itemsDesLivres, mesuresDuPoint,
+  TYPES, avecPagesDesLivres, itemsDesLivres, mesuresDuPoint,
   type ItemRapport, type LectureLivre, type MesureConfig, type MesurePoint, type MesureRapport, type Metrique, type MetriqueLigne, type PointRapportLigne,
   type Saisie, type SaisieValeur, type SousProjetLigne, type TypeMetrique, type ValeurSaisie
 } from '../_shared/core/index.ts';
@@ -68,10 +68,10 @@ export function configDeMesure(mesure: MesurePoint, point: PointRapportLigne, d:
 /** Valeurs saisies pour le projet du point (toutes les saisies du jour si le point n'a pas de projet). */
 export function valeursDuPoint(point: PointRapportLigne, d: DonneesJour): ValeurSaisie[] {
   const saisies = new Map(d.saisies.filter((s) => !s.supprime_le && (!point.projet_id || s.projet_id === point.projet_id)).map((s) => [s.id, s]));
-  return d.valeurs.filter((v) => !v.supprime_le && saisies.has(v.saisie_id)).map((v) => {
+  return avecPagesDesLivres(d.valeurs.filter((v) => !v.supprime_le && saisies.has(v.saisie_id)).map((v) => {
     const s = saisies.get(v.saisie_id)!;
     return { cle: v.cle, jour: s.jour, valeur: Number(v.valeur_num ?? 0), approx: s.approx || undefined, texte: v.valeur_txt ?? undefined };
-  });
+  }));
 }
 
 export function construireContenu(d: DonneesJour, jour: string): ContenuRapport {

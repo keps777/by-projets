@@ -4,7 +4,7 @@ import { ajouterJours, ecartJours, joursDuMois, maxJour, minJour, moisDe, premie
 import { TYPES, agreger, libelleChoix, valeursEntre } from './metriques.ts';
 import { fenetreDuMois, joursTotaux } from './progression.ts';
 import { formatHeure, formatMontantCourt, formatPoids, formatTemps, nombre } from './units.ts';
-import { cleDuLivre, type LivreSuivi } from './lignes.ts';
+import { CLE_LIVRE, cleDuLivre, type LivreSuivi } from './lignes.ts';
 import type { Jour, Metrique, OptionChoix, SousProjetPeriode, TypeMetrique, ValeurSaisie } from './types.ts';
 
 export type Langue = 'fr' | 'en';
@@ -153,6 +153,15 @@ export function mesuresDuPoint(configs: MesureConfig[], valeurs: ValeurSaisie[],
       details: m.type === 'temps' && v.length > 1 && unJour ? v.map((x) => formatTemps(x.valeur, x.approx)) : undefined
     };
   });
+}
+
+/**
+ * Les pages lues dans un livre (clé « livre:<id> ») comptent aussi dans les pages du jour (« nombre:pages ») : le total de pages d'un point
+ * et la progression d'un sous-projet voient les livres comme les autres saisies. À appliquer aux valeurs d'un point ou d'un sous-projet.
+ */
+export function avecPagesDesLivres<T extends { cle: string }>(valeurs: T[]): T[] {
+  const livres = valeurs.filter((v) => v.cle.startsWith(CLE_LIVRE));
+  return livres.length ? [...valeurs, ...livres.map((v) => ({ ...v, cle: 'nombre:pages' }))] : valeurs;
 }
 
 /** Valeur lue d'un livre : pages d'un jour (clé « livre:<id> » dans les saisies). */

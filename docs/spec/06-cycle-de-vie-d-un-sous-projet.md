@@ -36,3 +36,7 @@ Un **format type unique** pour tous les sous-projets ; seuls les blocs et les co
 - L'**aperçu** se met à jour à chaque saisie (« document vivant »). L'**export PDF** reprend exactement l'aperçu.
 - Le PDF est généré **sur l'appareil**, aucune donnée ne quitte le téléphone pour le produire.
 - La signature se dessine au doigt, puis s'intègre au PDF avec la date.
+
+## Tâches proposées (7 oct. 2026)
+Dans la Fiche, quand **aucune tâche ne nourrit le sous-projet** — ou que les tâches ne planifient pas assez de temps par semaine pour son objectif de temps — l'app **propose des tâches** : *tous les jours*, *du lundi au vendredi*, *3 fois par semaine*, avec la durée qui remplit l'objectif (ex. 2 h par semaine → 20 min × 7 jours) et, pour un objectif de pages ou de fois, la valeur prévue à chaque fois. Toucher une proposition ouvre « Nouvelle tâche » prérempli (projet, sous-projet nourri, titre, durée, récurrence, valeurs prévues). Seuls les objectifs cumulables (temps, fois, nombre, montant) donnent des propositions.
+

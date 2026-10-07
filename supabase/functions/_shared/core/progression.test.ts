@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { cibleDuMois, fenetreDuMois, progressionDuMois, moyennePct, doitEtreValide, joursEcoules } from './progression.ts';
+import { cibleDuMois, fenetreDuMois, progressionDuMois, progressionPilotes, metriquesPilotes, moyennePct, doitEtreValide, joursEcoules } from './progression.ts';
 import { agreger, cleMetrique } from './metriques.ts';
 import type { Metrique, ValeurSaisie } from './types.ts';
 import { solde, resteBudget, tauxEpargne, joursDeJeune, allure } from './calculs.ts';
@@ -131,5 +131,38 @@ describe('calculs automatiques', () => {
   it('jeûne et allure', () => {
     expect(joursDeJeune([1, 0.5, 1])).toBe(2.5);
     expect(allure(1800, 5000)).toBe(360);
+  });
+});
+
+describe('plusieurs métriques pilotent ensemble la barre', () => {
+  const m = (id: string, cle: string, type: Metrique['type'], cible: number | null): Metrique => ({ id, cle, type, nom: id, unite: '', cible, periode: 'jour', sens: 'plus', dansRapport: true });
+  const temps = m('t', 'temps', 'temps', 3600), pages = m('p', 'nombre:pages', 'nombre', 10), libre = m('l', 'fois', 'fois', null);
+  const sp = { debut: '2026-10-01', fin: null };
+  const v = (cle: string, jour: string, valeur: number): ValeurSaisie => ({ cle, jour, valeur });
+  // 6 jours écoulés au 6 oct. : cibles du mois 6 h (temps) et 60 pages (6 × 10).
+
+  it('désigne les pilotes, sinon la seule pilote par défaut', () => {
+    expect(metriquesPilotes([temps, pages, libre], ['p', 't'], null).map((x) => x.id)).toEqual(['t', 'p']);
+    expect(metriquesPilotes([temps, pages, libre], [], 'p').map((x) => x.id)).toEqual(['p']);
+    expect(metriquesPilotes([libre, pages], undefined, null).map((x) => x.id)).toEqual(['p']);
+    expect(metriquesPilotes([libre], [], null)).toEqual([]);
+  });
+  it('la barre est la moyenne des progressions des pilotes', () => {
+    const valeurs = [v('temps', '2026-10-03', 10 * 3600), v('nombre:pages', '2026-10-03', 155)]; // sur le mois : 31 h et 310 pages attendues
+    const t = progressionPilotes([temps], sp, valeurs, '2026-10', '2026-10-06');
+    const p = progressionPilotes([pages], sp, valeurs, '2026-10', '2026-10-06');
+    const ensemble = progressionPilotes([temps, pages], sp, valeurs, '2026-10', '2026-10-06');
+    expect(t.pct).toBe(32); // 10 h / 31 h
+    expect(p.pct).toBe(50); // 155 / 310
+    expect(ensemble.pct).toBe(41); // moyenne de 32 et 50
+    // le reste (réalisé, cible) vient de la pilote principale
+    expect(ensemble.realise).toBe(t.realise);
+    expect(ensemble.cible).toBe(t.cible);
+  });
+  it('une pilote sans objectif ne compte pas dans la moyenne', () => {
+    const valeurs = [v('nombre:pages', '2026-10-03', 30)];
+    const a = progressionPilotes([pages], sp, valeurs, '2026-10', '2026-10-06');
+    expect(progressionPilotes([libre, pages], sp, valeurs, '2026-10', '2026-10-06').pct).toBe(a.pct);
+    expect(progressionPilotes([], sp, valeurs, '2026-10', '2026-10-06').etat).toBe('a_definir');
   });
 });

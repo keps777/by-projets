@@ -3,7 +3,7 @@
   // retard et rattrapage, graphique du mois, objectif et réalisé de chaque jour, saisie et correction.
   import { jourSemaine, JOURS_LONGS, minJour } from '@core/dates.ts';
   import { TYPES } from '@core/metriques.ts';
-  import { doitEtreValide, fenetreDuMois, joursEcoules, metriquePilote, progressionDuMois } from '@core/progression.ts';
+  import { doitEtreValide, fenetreDuMois, joursEcoules, metriquesPilotes, progressionDuMois, progressionPilotes } from '@core/progression.ts';
   import { attenduDuJour } from '@core/rapport.ts';
   import { rythme } from '@core/calculs.ts';
   import { formatHeure, nombre } from '@core/units.ts';
@@ -23,8 +23,12 @@
   let { sp, metriques, mois, jour, freres }: { sp: SousProjetLigne; metriques: Metrique[]; mois: string; jour: Jour; freres: SousProjetLigne[] } = $props();
 
   const valeurs = $derived(valeursDuSousProjet(sp));
-  const pilote = $derived(metriquePilote(metriques, sp.metrique_pilote_id));
-  const prog = $derived(pilote ? progressionDuMois(pilote, sp, valeurs, mois, jour) : null);
+  const pilotes = $derived(metriquesPilotes(metriques, sp.metriques_pilotes, sp.metrique_pilote_id));
+  const pilote = $derived(pilotes[0]);
+  /** La barre : moyenne des progressions de toutes les pilotes ; le détail (chiffres, graphique) suit la pilote principale. */
+  const prog = $derived(pilote ? progressionPilotes(pilotes, sp, valeurs, mois, jour) : null);
+  /** Quand plusieurs métriques pilotent ensemble : la part de chacune dans la barre. */
+  const partsPilotes = $derived(pilotes.length > 1 ? pilotes.map((m) => ({ m, pct: progressionDuMois(m, sp, valeurs, mois, jour).pct })) : []);
   const f = $derived(fenetreDuMois(sp, mois));
   const finVue = $derived(f ? minJour(f.fin, jour) : null);
   const compte = $derived(!!pilote && ['nombre', 'fois', 'oui_non', 'choix'].includes(pilote.type));
@@ -146,6 +150,11 @@
       <span class="titre pct">{prog.pct ?? 0} %</span>
     </div>
     <span class="piste"><span class="rempli" class:mauvais={pilote.sens === 'moins' && (prog.ratio ?? 0) > 1} style:width="{prog.pct ?? 0}%"></span>{#if prog.traitPct != null}<span class="trait" style:left="{prog.traitPct}%"></span>{/if}</span>
+    {#if partsPilotes.length}
+      <div class="parts" role="list" aria-label="Métriques qui pilotent la barre">
+        {#each partsPilotes as x (x.m.id)}<span class="part" role="listitem">{x.m.nom}<span class="mono">{x.pct == null ? '—' : `${x.pct} %`}</span></span>{/each}
+      </div>
+    {/if}
     {#if ligneRetard}<span class="muted texte-retard">{ligneRetard.a}{#if ligneRetard.retard}<span class="retard">{ligneRetard.retard}</span>{/if}{ligneRetard.b}</span>{/if}
     <GraphiqueMois {barres} objectif={somme || pilote.type !== 'heure' ? objJour : null} libelleObjectif={objJour != null ? court(objJour) : ''} {decrire} />
   </div>
@@ -181,6 +190,9 @@
 <VoletValider ouvert={validation} onfermer={() => (validation = false)} {sp} {metriques} {valeurs} aujourdhui={jour} />
 
 <style>
+  .parts { display: flex; flex-wrap: wrap; gap: 6px; }
+  .part { display: inline-flex; gap: 6px; align-items: baseline; padding: 4px 10px; border-radius: 12px; background: var(--c-fond); color: var(--c-encre); font-size: 12px; font-weight: 600; }
+  .part .mono { font-size: 11px; opacity: 0.85; }
   .petit { font-size: 12px; }
   .bloc { border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
   .haut { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; }

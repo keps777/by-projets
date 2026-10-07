@@ -36,8 +36,21 @@
     const p = routeur.params;
     const jour = jourValide(p.get('jour')) ?? jourCourant();
     const heure = Number(p.get('heure'));
+    // Proposition de tâche (Fiche d'un sous-projet) : titre, durée, récurrence et valeurs prévues arrivent dans l'adresse.
+    const dureeProposee = Number(p.get('duree'));
+    if (dureeProposee >= 5 && dureeProposee <= 1440) f.duree = Math.round(dureeProposee);
     f.nouvelle(jour, Number.isFinite(heure) && p.has('heure') ? heure : heureProposee(jour, jourCourant(), maintenantLocal().minutes, f.duree),
       p.get('projet'), p.get('sans-projet') === '1', profil()?.rappel_defaut_min ?? 10, !!profil()?.alarme_defaut);
+    const titreProp = p.get('titre');
+    if (titreProp) f.titre = titreProp;
+    const spNourri = p.get('sous_projet');
+    if (spNourri && f.sousProjets.some((s) => s.id === spNourri)) f.spOff = f.sousProjets.filter((s) => s.id !== spNourri).map((s) => s.id);
+    const rec = p.get('rec');
+    if (rec === 'quotidien' || rec === 'hebdo') f.rec = rec;
+    const joursProp = (p.get('jours') ?? '').split(',').filter((x) => x.trim() !== '').map(Number).filter((n) => Number.isInteger(n) && n >= 0 && n <= 6);
+    if (joursProp.length) f.jours = joursProp;
+    const prevus = (p.get('prevus') ?? '').split(',').flatMap((x) => { const i = x.lastIndexOf('='); const v = Number(x.slice(i + 1)); return i > 0 && Number.isFinite(v) ? [[x.slice(0, i), v] as const] : []; });
+    if (prevus.length) f.vals = Object.fromEntries(prevus);
     // « Dupliquer » (volet d'un bloc) : le formulaire s'ouvre prérempli avec les réglages de la tâche copiée.
     const copie = magasin.trouver('taches', p.get('copie'));
     if (copie) f.dupliquer(copie, jour, Number.isFinite(heure) && p.has('heure') ? heure : copie.heure_debut);

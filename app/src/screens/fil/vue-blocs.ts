@@ -3,7 +3,7 @@ import { moyennePct } from '@core/progression.ts';
 import { TYPES } from '@core/metriques.ts';
 import { nombre } from '@core/units.ts';
 import type { Jour, Mois, OptionChoix, TypeMetrique } from '@core/types.ts';
-import type { MetriqueLigne, Occurrence, SousProjetLigne } from '@core/lignes.ts';
+import { CLE_LIVRE, type MetriqueLigne, type Occurrence, type SousProjetLigne } from '@core/lignes.ts';
 import { magasin } from '../../data/magasin.svelte.ts';
 import { metriquesDe, progressionProjet, progressionSousProjet, type BlocVue } from '../../data/requetes.ts';
 import { attendusDe, ecouleOccurrence, lancerBloc, pauseBloc, reprendreBloc, valeurSaisie } from '../../data/actions/blocs.ts';
@@ -62,6 +62,14 @@ export interface MesureBloc {
 const ORDRE_TYPE = (t: TypeMetrique) => (t === 'temps' ? 2 : t === 'reference' ? 1 : 0);
 
 /** Métriques d'un bloc pour le volet : valeurs prévues de la tâche et métriques des sous-projets alimentés, sans doublon ; le temps en dernier. */
+/** « Pages · titre du livre » pour une clé de livre, sinon le libellé par défaut de la clé. */
+function libelleDeCle(cle: string): string {
+  if (!cle.startsWith(CLE_LIVRE)) return libelleCle(cle);
+  const id = cle.slice(CLE_LIVRE.length);
+  const titre = magasin.lignes.points_rapport.flatMap((p) => p.livres ?? []).find((l) => l.id === id)?.titre;
+  return titre ? `Pages · ${titre}` : 'Pages du livre';
+}
+
 export function mesuresDuBloc(b: BlocVue, now?: number): MesureBloc[] {
   const metriques = new Map<string, MetriqueLigne>();
   for (const sp of b.sousProjets) for (const m of metriquesDe(sp.id)) if (!metriques.has(m.cle)) metriques.set(m.cle, m);
@@ -78,7 +86,7 @@ export function mesuresDuBloc(b: BlocVue, now?: number): MesureBloc[] {
     if (cle === 'temps' && (b.enCours || b.enPause)) realise = ecouleOccurrence(b.occ, now);
     const prevu = attendus.get(cle) ?? (cle === 'temps' ? b.tache.duree_min * 60 : null);
     return {
-      cle, type, label: cle === 'temps' ? 'Temps passé' : m?.nom ?? libelleCle(cle), unite: m?.unite ?? (cle.includes(':') ? cle.split(':')[1] : ''),
+      cle, type, label: cle === 'temps' ? 'Temps passé' : m?.nom ?? libelleDeCle(cle), unite: m?.unite ?? (cle.startsWith(CLE_LIVRE) ? 'p' : cle.includes(':') ? cle.split(':')[1] : ''),
       options: m?.options ?? null, prevu, realise, texte: v?.valeur_txt ?? null, pas: TYPES[type].pas || 1
     };
   });

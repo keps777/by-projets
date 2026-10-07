@@ -120,6 +120,30 @@ export function metriquePilote(metriques: Metrique[], piloteId: string | null): 
   return metriques.find((m) => m.id === piloteId) ?? metriques.find((m) => m.cible != null);
 }
 
+/**
+ * Métriques qui pilotent ensemble la barre d'un sous-projet : celles désignées (`ids`), dans l'ordre des métriques ;
+ * à défaut, la pilote seule (voir `metriquePilote`). La première est la pilote principale (textes détaillés, graphique).
+ */
+export function metriquesPilotes(metriques: Metrique[], ids: readonly string[] | null | undefined, piloteId: string | null): Metrique[] {
+  const choisies = ids?.length ? metriques.filter((m) => ids.includes(m.id)) : [];
+  if (choisies.length) return choisies;
+  const seule = metriquePilote(metriques, piloteId);
+  return seule ? [seule] : [];
+}
+
+/**
+ * Progression d'un sous-projet piloté par une ou plusieurs métriques : la barre est la **moyenne** des progressions de ses pilotes
+ * (celles qui ont un objectif) ; le reste (réalisé, cible, trait « où je devrais être », retard) vient de la pilote principale.
+ */
+export function progressionPilotes(pilotes: Metrique[], sp: SousProjetPeriode, valeurs: ValeurSaisie[], mois: Mois, aujourdhui: Jour): Progression {
+  const toutes = pilotes.map((m) => progressionDuMois(m, sp, valeurs, mois, aujourdhui));
+  const principale = toutes[0] ?? VIDE;
+  const chiffrees = toutes.filter((p) => p.pct != null);
+  if (chiffrees.length < 2) return principale.pct != null || !chiffrees[0] ? principale : { ...chiffrees[0] };
+  const moyenne = (x: number[]) => x.reduce((s, v) => s + v, 0) / x.length;
+  return { ...(principale.pct != null ? principale : chiffrees[0]), pct: Math.round(moyenne(chiffrees.map((p) => p.pct!))), ratio: moyenne(chiffrees.map((p) => p.ratio ?? 0)) };
+}
+
 /** État d'un sous-projet à valider : la date de fin est passée, ou la cible « au total » est atteinte (spec §6). */
 export function doitEtreValide(m: Metrique, sp: SousProjetPeriode, valeurs: ValeurSaisie[], aujourdhui: Jour): boolean {
   if (sp.fin && aujourdhui > sp.fin) return true;

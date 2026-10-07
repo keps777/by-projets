@@ -75,6 +75,8 @@
     fin = null; debut = '';
     regler(m.periode);
     metriques = m.metriques.map((x) => ({ type: x.type, nom: x.nom, unite: x.unite, cible: x.cible, periode_cible: x.periode, sens: x.sens, options: x.options ?? null, dans_rapport: x.dansRapport }));
+    const premier = metriques.findIndex((x) => x.cible != null);
+    if (premier >= 0) metriques[premier].pilote = true; // la pilote par défaut est visible ; on peut en ajouter d'autres
     if (!garderProjet || !projetId) projetId = projets.find((p) => p.nom === m.projet)?.id || projetId || projets[0]?.id || '';
   }
 
@@ -116,7 +118,8 @@
     if (problemes.length) { dire(problemes[0]); return; }
     const id = creerSousProjet({
       projetId, nom: nom.trim() || (modele != null ? nomDuModele(modeles[modele]) : 'Nouveau sous-projet'), debut, fin: finEffective, reprisePasse: reprise,
-      metriques: metriques.map((m) => ({ ...m, options: m.options ?? null }))
+      metriques: metriques.map(({ pilote: _p, ...m }) => ({ ...m, options: m.options ?? null })),
+      pilotesIndex: metriques.flatMap((m, i) => (m.pilote ? [i] : []))
     });
     dire('Sous-projet créé');
     routeur.aller(`/projets/sous-projet/${id}`, true);
@@ -181,7 +184,7 @@
     <section class="groupe serre">
       <div class="rang"><span class="etiquette">Métriques · {metriques.length}</span><span class="muted petit">tout est modifiable</span></div>
       {#each metriques as m, i (i)}
-        <EditeurMetrique {m} onchange={(p) => (metriques[i] = { ...metriques[i], ...p })} onretirer={() => metriques.splice(i, 1)} />
+        <EditeurMetrique {m} pilote={!!m.pilote} onpilote={() => (metriques[i] = { ...metriques[i], pilote: !metriques[i].pilote })} onchange={(p) => (metriques[i] = { ...metriques[i], ...p })} onretirer={() => metriques.splice(i, 1)} />
       {/each}
       <div class="ajout">
         <span class="muted petit">Ajouter une métrique</span>

@@ -1,6 +1,6 @@
 // « Remplis ma semaine » : repère les sous-projets dont l'objectif de temps de la semaine ne sera pas atteint
 // avec ce qui est déjà fait et prévu, et propose un créneau libre pour chacun.
-import { metriquePilote } from '@core/progression.ts';
+import { metriquesPilotes } from '@core/progression.ts';
 import type { Creneau, Jour } from '@core/types.ts';
 import { magasin } from '../../data/magasin.svelte.ts';
 import { COULEUR_SANS_PROJET, blocsDuJour, enMetrique, metriquesDe, profil, valeursDuSousProjet, type BlocVue } from '../../data/requetes.ts';
@@ -19,8 +19,9 @@ export function propositionsDeLaSemaine(jours: Jour[], blocsParJour: Record<Jour
   const res: Proposition[] = [];
   const sps = magasin.lignes.sous_projets.filter((s) => s.statut === 'en_cours' && s.debut <= dimanche && (!s.fin || s.fin >= jours[0]));
   for (const sp of sps) {
-    const pilote = metriquePilote(metriquesDe(sp.id).map(enMetrique), sp.metrique_pilote_id);
-    if (!pilote || pilote.type !== 'temps') continue;
+    // Le temps compte s'il fait partie de ce qui pilote la barre (même avec d'autres pilotes).
+    const pilote = metriquesPilotes(metriquesDe(sp.id).map(enMetrique), sp.metriques_pilotes, sp.metrique_pilote_id).find((m) => m.type === 'temps');
+    if (!pilote) continue;
     const cible = cibleHebdo(pilote, sp, aujourdhui.slice(0, 7));
     if (cible == null) continue;
     const fait = valeursDuSousProjet(sp).filter((v) => v.cle === pilote.cle && v.jour >= jours[0] && v.jour <= dimanche).reduce((s, v) => s + v.valeur, 0);

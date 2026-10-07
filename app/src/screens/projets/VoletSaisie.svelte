@@ -56,20 +56,11 @@
     note = magasin.trouver('saisies', idSaisieManuelle(projetId, j))?.note ?? '';
   });
 
-  // Pages par livre : le total de pages du point (« nombre:pages ») suit la somme des livres, le reste (pages hors livres) est gardé.
-  const clesLivres = $derived(metriques.filter((m) => m.cle.startsWith('livre:')).map((m) => m.cle));
-  const sommeLivres = () => clesLivres.reduce((s, c) => s + (nums[c] ?? 0), 0);
-  let pagesHorsLivres = 0;
-  $effect(() => { if (ouvert && j && clesLivres.length) pagesHorsLivres = Math.max(0, (nums['nombre:pages'] ?? 0) - sommeLivres()); });
+  // Les pages d'un livre comptent aussi dans les pages du point : le champ « Pages » ne porte que les lectures hors livres suivis.
+  const aDesLivres = $derived(metriques.some((m) => m.cle.startsWith('livre:')));
+  const nomChamp = (m: Metrique) => (aDesLivres && m.cle === 'nombre:pages' ? `${m.nom} · hors livres suivis` : m.nom);
 
-  function regler(m: Metrique, v: number | null) {
-    nums[m.cle] = v; champs[m.cle] = champTexte(m.type, v);
-    if (m.cle.startsWith('livre:') && metriques.some((x) => x.cle === 'nombre:pages')) {
-      const pages = metriques.find((x) => x.cle === 'nombre:pages')!;
-      const total = pagesHorsLivres + sommeLivres();
-      nums[pages.cle] = total; champs[pages.cle] = champTexte(pages.type, total);
-    }
-  }
+  function regler(m: Metrique, v: number | null) { nums[m.cle] = v; champs[m.cle] = champTexte(m.type, v); }
   function pas(m: Metrique, signe: 1 | -1) {
     let v = Math.max(0, (nums[m.cle] ?? 0) + signe * (pasDe(m.type, nums[m.cle] ?? 0) || 1));
     if (m.type === 'note') v = Math.min(10, v);
@@ -122,7 +113,7 @@
   {#each metriques as m (m.id)}
     {@const prevu = attenduDuJour(m, periode, j)}
     <div class="champ">
-      <span class="libelle"><span>{m.nom}</span>{#if prevu != null && m.type !== 'reference'}<span class="muted mono petit">prévu {valeurTexte(m, prevu, true)}</span>{/if}</span>
+      <span class="libelle"><span>{nomChamp(m)}</span>{#if prevu != null && m.type !== 'reference'}<span class="muted mono petit">prévu {valeurTexte(m, prevu, true)}</span>{/if}</span>
       {#if m.type === 'reference' && m.cle === 'reference:passages'}
         <PassagesLus passages={passagesPar[m.cle] ?? []} onchange={(ps) => changerPassages(m, ps)} />
         {#if autresTextes[m.cle]}<span class="muted petit">Déjà noté dans les blocs : {autresTextes[m.cle]}</span>{/if}

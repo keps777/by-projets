@@ -1,7 +1,7 @@
 // Calcul des rapports dans l'app (jour, semaine, mois), avec le noyau (mesuresDuPoint, formaterRapport). Fonctions pures.
 // Même résolution des objectifs que le serveur (supabase/functions/generer-rapports/contenu.ts), étendue à une période.
 import { TYPES } from '@core/metriques.ts';
-import { formaterMesures, formaterRapport, itemsDesLivres, mesuresDuPoint, type ItemRapport, type Langue, type MesureConfig, type MesureRapport, type PointRapport } from '@core/rapport.ts';
+import { avecPagesDesLivres, formaterMesures, formaterRapport, itemsDesLivres, mesuresDuPoint, type ItemRapport, type Langue, type MesureConfig, type MesureRapport, type PointRapport } from '@core/rapport.ts';
 import type { MesurePoint, MetriqueLigne, PointRapportLigne, Projet, Rubrique, Saisie, SaisieValeur, SousProjetLigne } from '@core/lignes.ts';
 import type { Jour, Metrique, TypeMetrique, ValeurSaisie } from '@core/types.ts';
 import type { Periode } from './periodes.ts';
@@ -61,7 +61,7 @@ export function valeursDuPoint(point: PointRapportLigne, d: DonneesRapport, parS
     if (point.projet_id && s.projet_id !== point.projet_id) continue;
     for (const v of parSaisie.get(s.id) ?? []) res.push({ cle: v.cle, jour: s.jour, valeur: Number(v.valeur_num ?? 0), approx: s.approx || undefined, texte: v.valeur_txt ?? undefined });
   }
-  return res;
+  return avecPagesDesLivres(res);
 }
 
 function indexerValeurs(d: DonneesRapport): Map<string, SaisieValeur[]> {

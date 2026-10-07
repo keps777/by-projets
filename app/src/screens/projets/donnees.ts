@@ -3,7 +3,8 @@ import { utcVersLocal } from '@core/dates.ts';
 import { nouvelId, uuidDeterministe } from '@core/ids.ts';
 import { TYPES } from '@core/metriques.ts';
 import { formatHeure } from '@core/units.ts';
-import type { Jour, TypeMetrique } from '@core/types.ts';
+import { metriquesPilotes } from '@core/progression.ts';
+import type { Jour, Metrique, TypeMetrique } from '@core/types.ts';
 import type { DetailMouvement, Occurrence, Saisie, SaisieValeur, Tache } from '@core/lignes.ts';
 import { magasin } from '../../data/magasin.svelte.ts';
 import { fuseau } from '../../data/temps.svelte.ts';
@@ -147,8 +148,18 @@ export function lireDetail(d: unknown): DetailMouvement {
 
 // ------------------------------------------------------------------ sous-projet
 
-/** Désigne la métrique qui fait avancer la barre du sous-projet (spec §5). */
-export function choisirPilote(spId: string, metriqueId: string): void { magasin.ecrire('sous_projets', { id: spId, metrique_pilote_id: metriqueId }); }
+/**
+ * Ajoute ou retire une métrique parmi celles qui font avancer la barre du sous-projet (spec §5) : plusieurs peuvent la piloter
+ * ensemble (moyenne de leurs progressions), au moins une reste. La première désignée est la pilote principale.
+ */
+export function basculerPilote(spId: string, metriqueId: string, metriques: Metrique[]): void {
+  const sp = magasin.trouver('sous_projets', spId);
+  if (!sp) return;
+  const actuelles = metriquesPilotes(metriques, sp.metriques_pilotes, sp.metrique_pilote_id).map((m) => m.id);
+  const suivantes = actuelles.includes(metriqueId) ? actuelles.filter((id) => id !== metriqueId) : [...actuelles, metriqueId];
+  if (!suivantes.length) return;
+  magasin.ecrire('sous_projets', { id: spId, metriques_pilotes: suivantes, metrique_pilote_id: suivantes[0] });
+}
 export function renommerSousProjet(spId: string, nom: string): void { if (nom.trim()) magasin.ecrire('sous_projets', { id: spId, nom: nom.trim() }); }
 export function changerPeriode(spId: string, debut: Jour, fin: Jour | null): void { magasin.ecrire('sous_projets', { id: spId, debut, fin }); }
 

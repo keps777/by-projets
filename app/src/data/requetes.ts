@@ -1,6 +1,7 @@
 // Lectures : transforment les lignes du magasin en objets prêts pour les écrans, avec le noyau de calcul.
 // À appeler dans $derived / $effect : elles lisent `magasin.lignes`, donc se recalculent quand les données changent.
-import { moyennePct, metriquePilote, progressionDuMois, type Progression } from '@core/progression.ts';
+import { avecPagesDesLivres } from '@core/rapport.ts';
+import { moyennePct, metriquesPilotes, progressionPilotes, type Progression } from '@core/progression.ts';
 import { utcVersLocal } from '@core/dates.ts';
 import type { Creneau, Jour, Metrique, Mois, ValeurSaisie } from '@core/types.ts';
 import type { MetriqueLigne, Occurrence, Profil, Projet, Rubrique, Saisie, SousProjetLigne, Tache } from '@core/lignes.ts';
@@ -38,8 +39,10 @@ export function valeursDuProjet(projetId: string): ValeurSaisie[] {
     if (s.projet_id !== projetId) continue;
     for (const v of parSaisie.get(s.id) ?? []) res.push({ cle: v.cle, jour: s.jour, valeur: v.valeur_num ?? 0, approx: s.approx || undefined, texte: v.valeur_txt ?? undefined });
   }
-  cacheValeurs.set(projetId, res);
-  return res;
+  // Les pages lues dans un livre comptent aussi comme pages du jour (sous-projets, progression, Document).
+  const avecLivres = avecPagesDesLivres(res);
+  cacheValeurs.set(projetId, avecLivres);
+  return avecLivres;
 }
 
 /** Valeurs lues par un sous-projet : celles de son projet, sans le passé s'il n'a pas demandé la reprise (spec §6). */
@@ -53,13 +56,14 @@ export function valeursDuSousProjet(sp: SousProjetLigne): ValeurSaisie[] {
 
 // ------------------------------------------------------------------ progression
 
-export interface ProgressionSP { pilote?: Metrique; progression: Progression | null }
+/** `pilote` : la pilote principale ; `pilotes` : toutes celles qui font avancer la barre ensemble (moyenne de leurs progressions). */
+export interface ProgressionSP { pilote?: Metrique; pilotes?: Metrique[]; progression: Progression | null }
 
 export function progressionSousProjet(sp: SousProjetLigne, mois: Mois, aujourdhui: Jour): ProgressionSP {
   const metriques = metriquesDe(sp.id).map(enMetrique);
-  const pilote = metriquePilote(metriques, sp.metrique_pilote_id);
-  if (!pilote) return { progression: null };
-  return { pilote, progression: progressionDuMois(pilote, { debut: sp.debut, fin: sp.fin }, valeursDuSousProjet(sp), mois, aujourdhui) };
+  const pilotes = metriquesPilotes(metriques, sp.metriques_pilotes, sp.metrique_pilote_id);
+  if (!pilotes.length) return { progression: null };
+  return { pilote: pilotes[0], pilotes, progression: progressionPilotes(pilotes, { debut: sp.debut, fin: sp.fin }, valeursDuSousProjet(sp), mois, aujourdhui) };
 }
 
 export function progressionProjet(projetId: string, mois: Mois, aujourdhui: Jour): number | null {

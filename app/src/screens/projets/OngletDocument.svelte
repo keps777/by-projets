@@ -3,7 +3,7 @@
   // navigateur, sur l'appareil) et signature au doigt (spec §6.1, US-20). Le « papier » garde ses couleurs de document
   // imprimé dans les deux modes, comme la maquette.
   import { minJour, ajouterJours, ecartJours } from '@core/dates.ts';
-  import { fenetreDuMois, metriquePilote, progressionDuMois } from '@core/progression.ts';
+  import { fenetreDuMois, metriquesPilotes, progressionDuMois, progressionPilotes } from '@core/progression.ts';
   import { attenduDuJour } from '@core/rapport.ts';
   import { nombre } from '@core/units.ts';
   import type { Jour, Metrique } from '@core/types.ts';
@@ -23,7 +23,8 @@
   const valeurs = $derived(valeursDuSousProjet(sp));
   const f = $derived(fenetreDuMois(sp, mois));
   const finVue = $derived(f ? minJour(f.fin, jour) : null);
-  const pilote = $derived(metriquePilote(metriques, sp.metrique_pilote_id));
+  const pilotes = $derived(metriquesPilotes(metriques, sp.metriques_pilotes, sp.metrique_pilote_id));
+  const pilote = $derived(pilotes[0]);
   const colonnes = $derived([...(pilote ? [pilote] : []), ...metriques.filter((m) => m.id !== pilote?.id)].slice(0, 4));
   const progs = $derived(new Map(metriques.map((m) => [m.id, progressionDuMois(m, sp, valeurs, mois, jour)])));
   const compte = (m: Metrique) => ['nombre', 'fois', 'oui_non', 'choix'].includes(m.type);
@@ -56,7 +57,7 @@
   });
   const totaux = $derived([
     ...metriques.filter((m) => m.type !== 'reference').slice(0, 2).map((m, i) => ({ l: i === 0 ? 'Total' : m.nom, v: resumeProgression(m, { realise: progs.get(m.id)?.realise ?? 0, cible: progs.get(m.id)?.cible ?? null }) })),
-    ...(pilote ? [{ l: 'Avancement', v: `${progs.get(pilote.id)?.pct ?? 0} %` }] : [])
+    ...(pilote ? [{ l: 'Avancement', v: `${progressionPilotes(pilotes, sp, valeurs, mois, jour).pct ?? 0} %` }] : [])
   ]);
 
   let signature = $state<{ image: string; le: string } | null>(null);

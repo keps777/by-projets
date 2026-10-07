@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formaterRapport, enteteRapport, mesuresDuPoint, attenduDuJour, attenduEntre, formaterMesure, itemsDesLivres, formaterPoint } from './rapport.ts';
+import { formaterRapport, enteteRapport, mesuresDuPoint, attenduDuJour, attenduEntre, formaterMesure, itemsDesLivres, formaterPoint, avecPagesDesLivres } from './rapport.ts';
 import type { Metrique, ValeurSaisie } from './types.ts';
 import { MODELES, modelesDeLaRubrique } from './modeles.ts';
 import { RUBRIQUES_DEFAUT, POINTS_DEFAUT } from './defauts.ts';
@@ -98,6 +98,14 @@ describe('données de départ', () => {
     const m = { type: 'temps' as const, fait: 11280, attendu: 10800, details: ['1h55', '0h40', '0h10', '0h02', '0h03', '0h08', '0h09'] };
     expect(formaterMesure(m)).toBe('3h08/3h00');
     expect(formaterMesure(m, 'fr', true)).toBe('3h08/3h00 (1h55; 0h40; 0h10; 0h02; 0h03; 0h08; 0h09)');
+  });
+
+  it('les pages d’un livre comptent aussi dans les pages du jour', () => {
+    const v = [{ cle: 'nombre:pages', jour: '2026-10-07', valeur: 4 }, { cle: 'livre:a', jour: '2026-10-07', valeur: 8 }, { cle: 'temps', jour: '2026-10-07', valeur: 600 }];
+    const avec = avecPagesDesLivres(v);
+    expect(avec.filter((x) => x.cle === 'nombre:pages').map((x) => x.valeur)).toEqual([4, 8]);
+    expect(avec.filter((x) => x.cle === 'livre:a').length).toBe(1);
+    expect(avecPagesDesLivres([v[2]])).toEqual([v[2]]);
   });
 
   describe('livres d’un point (CL)', () => {

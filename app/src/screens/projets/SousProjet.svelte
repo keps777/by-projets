@@ -2,7 +2,7 @@
   // Sous-projet (planches SousProjet, SousProjetNT, SousProjetFiche, SousProjetDocument, SousProjetTemps,
   // SousProjetFinances, JourSousProjet, JourSousProjetNT). Route /projets/sous-projet/:id, onglet via ?onglet=.
   import { moisDe } from '@core/dates.ts';
-  import { metriquePilote, progressionDuMois } from '@core/progression.ts';
+  import { metriquesPilotes, progressionPilotes } from '@core/progression.ts';
   import EcranPage from '../../ui/EcranPage.svelte';
   import { fly } from 'svelte/transition';
   import Icone from '../../ui/Icone.svelte';
@@ -45,8 +45,8 @@
   const freres = $derived(projet ? sousProjetsDe(projet.id).filter((s) => s.statut !== 'termine' || s.id === sp?.id).sort((a, b) => a.created_at.localeCompare(b.created_at)) : []);
   const puces = $derived(freres.map((s) => {
     const ms = metriquesDe(s.id).map(enMetrique);
-    const p = metriquePilote(ms, s.metrique_pilote_id);
-    const pct = p ? progressionDuMois(p, s, valeursDuSousProjet(s), mois, jour).pct : null;
+    const ps = metriquesPilotes(ms, s.metriques_pilotes, s.metrique_pilote_id);
+    const pct = ps.length ? progressionPilotes(ps, s, valeursDuSousProjet(s), mois, jour).pct : null;
     return { s, pct, court: s.nom.split(/\s+·\s+/)[0] };
   }));
 

@@ -9,6 +9,7 @@
   import { formatValeur, nomCourtRubrique } from './format.ts';
   import { pasDe, type MesureForm } from './tache.ts';
   import CreationRapide from './CreationRapide.svelte';
+  import ChoixLivre from './ChoixLivre.svelte';
   import { cataloguerMesures } from './catalogue-metriques.ts';
   import { magasin } from '../../data/magasin.svelte.ts';
   import { ajouterProjet, creerSousProjetRapide, type NouvelleMetrique } from '../../data/actions/projets.ts';
@@ -46,7 +47,7 @@
   function nouveauSousProjet(nom: string, metriques: NouvelleMetrique[]) {
     if (f.projetId) creerSousProjetRapide(f.projetId, nom, metriques, aujourdhui());
   }
-  const lecteurs = (m: MesureForm) => (m.alimente.length > 1 ? `compte dans ${m.alimente.length} sous-projets` : m.alimente.length ? 'compte dans 1 sous-projet' : 'enregistré sur le bloc');
+  const lecteurs = (m: MesureForm) => (m.cle.startsWith('livre:') ? 'pages du livre, comptées dans le rapport' : m.alimente.length > 1 ? `compte dans ${m.alimente.length} sous-projets` : m.alimente.length ? 'compte dans 1 sous-projet' : 'enregistré sur le bloc');
 </script>
 
 <div class="section">
@@ -92,6 +93,8 @@
       <CreationRapide libelle="Nouveau sous-projet" exemple="Nom du sous-projet" mesures={catalogue} oncreer={nouveauSousProjet} />
     </div>
   </div>
+
+  {#if f.pointLivres}<ChoixLivre {f} />{/if}
 
   <div class="section">
     <span class="etiquette">3 · Ce que cette tâche enregistre</span>

@@ -2,7 +2,7 @@
 import { nouvelId } from '@core/ids.ts';
 import { cleMetrique } from '@core/metriques.ts';
 import type { ModeleSousProjet } from '@core/modeles.ts';
-import { metriquePilote } from '@core/progression.ts';
+import { metriquesPilotes } from '@core/progression.ts';
 import type { Fiche, MetriqueLigne } from '@core/lignes.ts';
 import type { Jour } from '@core/types.ts';
 import { magasin } from '../magasin.svelte.ts';
@@ -40,14 +40,15 @@ export interface NouveauSousProjet {
   metriques: NouvelleMetrique[];
   reprisePasse: boolean;
   fiche?: Partial<Fiche>;
-  piloteIndex?: number;
+  /** Positions (dans `metriques`) des métriques qui pilotent ensemble la barre ; vide : la première qui a un objectif. */
+  pilotesIndex?: number[];
 }
 
 export function creerSousProjet(n: NouveauSousProjet): string {
   const id = nouvelId();
   const ids = n.metriques.map(() => nouvelId());
-  const pilote = metriquePilote(n.metriques.map((m, i) => ({ id: ids[i], cle: '', type: m.type, nom: m.nom, unite: m.unite, cible: m.cible, periode: m.periode_cible, sens: m.sens, dansRapport: m.dans_rapport })), n.piloteIndex != null ? ids[n.piloteIndex] : null);
-  magasin.ecrire('sous_projets', { id, projet_id: n.projetId, nom: n.nom.trim() || 'Nouveau sous-projet', debut: n.debut, fin: n.fin, statut: 'en_cours', metrique_pilote_id: pilote?.id ?? null, reprise_passe: n.reprisePasse, fiche: { ...FICHE_VIDE, ...n.fiche }, bilan: null, termine_le: null });
+  const pilotes = metriquesPilotes(n.metriques.map((m, i) => ({ id: ids[i], cle: '', type: m.type, nom: m.nom, unite: m.unite, cible: m.cible, periode: m.periode_cible, sens: m.sens, dansRapport: m.dans_rapport })), (n.pilotesIndex ?? []).map((i) => ids[i]).filter(Boolean), null);
+  magasin.ecrire('sous_projets', { id, projet_id: n.projetId, nom: n.nom.trim() || 'Nouveau sous-projet', debut: n.debut, fin: n.fin, statut: 'en_cours', metrique_pilote_id: pilotes[0]?.id ?? null, metriques_pilotes: pilotes.map((p) => p.id), reprise_passe: n.reprisePasse, fiche: { ...FICHE_VIDE, ...n.fiche }, bilan: null, termine_le: null });
   n.metriques.forEach((m, i) => magasin.ecrire('metriques', {
     id: ids[i], sous_projet_id: id, cle: m.cle ?? cleMetrique(m.type, m.unite, m.nom), type: m.type, nom: m.nom, unite: m.unite, cible: m.cible,
     periode_cible: m.periode_cible, sens: m.sens, options: m.options ?? null, dans_rapport: m.dans_rapport, ordre: i

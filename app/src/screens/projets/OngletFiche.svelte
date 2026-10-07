@@ -2,7 +2,7 @@
   // Onglet Fiche (planche SousProjetFiche) : les 7 questions, les métriques (modifiables), les tâches qui alimentent
   // le sous-projet, la période et le statut avec pause, validation, reprise ou suppression (spec §6, US-16, US-20).
   import { cleMetrique, TYPES } from '@core/metriques.ts';
-  import { metriquePilote } from '@core/progression.ts';
+  import { metriquesPilotes } from '@core/progression.ts';
   import { decrire } from '@core/recurrence.ts';
   import type { Jour, Metrique, TypeMetrique } from '@core/types.ts';
   import type { Fiche, MetriqueLigne, SousProjetLigne } from '@core/lignes.ts';
@@ -14,8 +14,10 @@
   import { ajouterMetrique, mettreEnPause, modifierFiche, modifierMetrique, retirerMetrique, rouvrirSousProjet, supprimerSousProjet } from '../../data/actions/projets.ts';
   import { routeur } from '../../routeur.svelte.ts';
   import EditeurMetrique from './EditeurMetrique.svelte';
+  import { besoinDuSousProjet, lienProposition, proposerTaches } from './propositions-taches.ts';
+  import { dureeMin } from '../fil/format.ts';
   import VoletValider from './VoletValider.svelte';
-  import { choisirPilote, heuresTache, tachesDuSousProjet } from './donnees.ts';
+  import { basculerPilote, heuresTache, tachesDuSousProjet } from './donnees.ts';
   import { cibleParDefaut, cleDe, objectifTexte, periodeTexte, type Brouillon } from './vues.ts';
   import { ORDRE_TYPES } from '@core/metriques.ts';
 
@@ -36,8 +38,12 @@
   };
 
   const lignes = $derived(metriquesDe(sp.id));
-  const pilote = $derived(metriquePilote(metriques, sp.metrique_pilote_id));
+  const pilotes = $derived(metriquesPilotes(metriques, sp.metriques_pilotes, sp.metrique_pilote_id));
   const taches = $derived(tachesDuSousProjet(sp.id));
+  /** Quand rien (ou pas assez) ne remplit l'objectif : des tâches à ajouter, qui ouvrent « Nouvelle tâche » prérempli. */
+  const suggestion = $derived(sp.statut === 'en_cours' || sp.statut === 'brouillon'
+    ? proposerTaches(besoinDuSousProjet(metriques, sp, jour.slice(0, 7)), taches)
+    : { manque: null, propositions: [] });
   let edition = $state(false);
   let validation = $state(false);
   let suppression = $state(false);
@@ -86,7 +92,7 @@
   </div>
   {#if edition}
     {#each lignes as l (l.id)}
-      <EditeurMetrique m={l} pilote={pilote?.id === l.id} onpilote={() => choisirPilote(sp.id, l.id)} onchange={(p) => changer(l, p)}
+      <EditeurMetrique m={l} pilote={pilotes.some((p) => p.id === l.id)} onpilote={() => basculerPilote(sp.id, l.id, metriques)} onchange={(p) => changer(l, p)}
         onretirer={() => { retirerMetrique(l.id); dire(`« ${l.nom} » retirée · les saisies restent`); }} />
     {/each}
     <div class="ajout">
@@ -102,7 +108,7 @@
       {#each metriques as m (m.id)}
         <div class="metrique">
           <span class="type">{m.type === 'reference' ? 'Texte' : TYPES[m.type].nom.replace(' ($)', '')}</span>
-          <span class="col"><span class="gras">{m.nom}{#if pilote?.id === m.id}<span class="pilote">pilote</span>{/if}</span><span class="muted petit">{objectifTexte(m)}</span></span>
+          <span class="col"><span class="gras">{m.nom}{#if pilotes.some((p) => p.id === m.id)}<span class="pilote">pilote</span>{/if}</span><span class="muted petit">{objectifTexte(m)}</span></span>
           <span class="mono rapport" class:hors={!m.dansRapport}>{m.dansRapport ? code ?? 'rapport' : '—'}</span>
         </div>
       {:else}
@@ -125,6 +131,17 @@
     {/each}
     <a class="ajouter" href="/tache/nouvelle?projet={sp.projet_id}&sous_projet={sp.id}"><Icone nom="plus" taille={14} trait={2.6} />Ajouter une tâche</a>
   </div>
+  {#if suggestion.propositions.length}
+    <div class="propositions" role="group" aria-label="Tâches proposées pour remplir l’objectif">
+      <span class="muted petit">{suggestion.manque} Pour remplir l’objectif, ajoute par exemple :</span>
+      {#each suggestion.propositions as p (p.id)}
+        <a class="proposition" href={lienProposition(p, sp.projet_id, sp.id, sp.nom)}>
+          <span class="col"><span class="gras">{p.quand} · {dureeMin(p.dureeMin)}</span><span class="muted petit">{p.detail}</span></span>
+          <Icone nom="plus" taille={16} trait={2.4} />
+        </a>
+      {/each}
+    </div>
+  {/if}
 </section>
 
 <div class="carte statut">
@@ -178,6 +195,9 @@
   .rapport.hors { color: var(--muted); }
   .barre { flex: none; width: 8px; height: 32px; border-radius: 4px; background: var(--c); }
   .vide { padding: 12px 14px; }
+  .propositions { display: flex; flex-direction: column; gap: 8px; }
+  .proposition { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 16px; border: 1px dashed var(--c); background: var(--c-fond); color: var(--c-encre); min-height: 56px; }
+  .proposition .col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
   .ajouter { color: var(--c-encre); font-size: 14px; font-weight: 600; min-height: 50px; display: flex; align-items: center; justify-content: center; gap: 6px; }
   .ajout { display: flex; flex-direction: column; gap: 6px; }
   .palette { display: flex; flex-wrap: wrap; gap: 6px; }

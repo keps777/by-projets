@@ -156,6 +156,8 @@ export function cibleParDefaut(type: TypeMetrique): number | null {
 export interface Brouillon {
   type: TypeMetrique; nom: string; unite: string; cible: number | null; periode_cible: PeriodeCible;
   sens: 'plus' | 'moins'; options?: { label: string; valeur: number }[] | null; dans_rapport: boolean; cle?: string;
+  /** Fait partie des métriques qui pilotent ensemble la barre (nouveau sous-projet). */
+  pilote?: boolean;
 }
 
 export const cleDe = (m: Brouillon) => m.cle ?? cleMetrique(m.type, m.unite, m.nom);

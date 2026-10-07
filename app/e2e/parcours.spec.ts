@@ -789,10 +789,10 @@ test('Rapports : ajouter un livre au point CL, saisir ses pages, le voir au rapp
   const deux = fenetre.getByLabel('Pages · Le chemin de l’obéissance');
   await deux.fill('5');
   await deux.blur();
-  await expect(fenetre.getByLabel('Pages', { exact: true })).toHaveValue('13'); // le total de pages du point suit les livres
   await fenetre.getByRole('button', { name: 'Enregistrer' }).click();
 
   const carte = page.getByRole('button', { name: 'CL : modifier les valeurs' });
+  await expect(carte.getByText(/13 pages/).first()).toBeVisible(); // les pages des livres comptent dans les pages du point
   await expect(carte.getByText('Le chemin de la vie (ZTF)')).toBeVisible();
   await expect(carte.getByText('100/120p (+8p auj.)')).toBeVisible();
   await expect(carte.getByText('90/130p (+5p auj.)')).toBeVisible();
@@ -855,4 +855,76 @@ test('Nouveau sous-projet : l’objectif de temps se règle en heures et minutes
   await expect(objectif.getByLabel('Secondes')).toHaveCount(0);
   await page.getByRole('button', { name: 'Créer le sous-projet' }).click();
   await expect(page.getByText(/4 h/).first()).toBeVisible();
+});
+
+test.describe('sous-projet : pilotes multiples et tâches proposées', () => {
+  async function creerLectureBiblique(page: import('@playwright/test').Page) {
+    await page.goto('/projets/nouveau-sous-projet');
+    await page.getByRole('button', { name: /^Lecture biblique/ }).first().click();
+    await page.getByRole('button', { name: 'Créer le sous-projet' }).click();
+    await expect(page).toHaveURL(/\/projets\/sous-projet\//);
+  }
+
+  test('plusieurs métriques pilotent ensemble la barre', async ({ page }) => {
+    await creerLectureBiblique(page);
+    await page.getByRole('tab', { name: 'Fiche' }).click();
+    await page.getByRole('button', { name: 'Modifier' }).click();
+    // Chapitres lus pilote par défaut ; le temps de lecture la pilote aussi.
+    const pilotes = page.getByRole('button', { name: /Pilote la barre|Piloter la barre/ });
+    await expect(pilotes.first()).toHaveAttribute('aria-pressed', 'true');
+    await pilotes.last().click();
+    await expect(pilotes.last()).toHaveAttribute('aria-pressed', 'true');
+    await expect(pilotes.first()).toHaveAttribute('aria-pressed', 'true');
+    await page.getByRole('button', { name: 'Terminé' }).click();
+    await page.getByRole('tab', { name: 'Suivi' }).click();
+    const parts = page.getByRole('list', { name: 'Métriques qui pilotent la barre' });
+    await expect(parts.getByRole('listitem')).toHaveCount(2);
+  });
+
+  test('sans tâche qui remplisse l’objectif, la Fiche propose des tâches, prêtes à ajouter', async ({ page }) => {
+    await creerLectureBiblique(page);
+    await page.getByRole('tab', { name: 'Fiche' }).click();
+    const propositions = page.getByRole('group', { name: 'Tâches proposées pour remplir l’objectif' });
+    await expect(propositions.getByText('Aucune tâche ne nourrit ce sous-projet.')).toBeVisible();
+    await propositions.getByRole('link', { name: /Du lundi au vendredi/ }).click();
+    await expect(page).toHaveURL(/\/tache\/nouvelle\?.*rec=hebdo/);
+    await expect(page.getByLabel('Titre de la tâche')).not.toHaveValue('');
+    await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+    await expect(page).toHaveURL(/\/$|\/\?/);
+  });
+});
+
+test('tâche du projet LLC : choisir ou créer le livre lu, et ses pages alimentent le rapport (point CL)', async ({ page }) => {
+  await page.goto('/tache/nouvelle');
+  await page.getByLabel('Titre de la tâche').fill('Lecture du soir');
+  await page.getByRole('button', { name: /LLC · littérature chrétienne/ }).click();
+  const livre = page.getByRole('group', { name: 'Livre lu' });
+  await expect(livre.getByRole('button', { name: /Aucun livre/ })).toHaveAttribute('aria-pressed', 'true');
+  await livre.getByRole('button', { name: 'Nouveau livre' }).click();
+  await livre.getByLabel('Titre du livre').fill('chemin vie');
+  await livre.getByRole('button', { name: /Le Chemin de la Vie · ZTF/ }).click();
+  await livre.getByLabel('Pages au total').fill('120');
+  await livre.getByLabel('Pages déjà lues').fill('92');
+  // Les pages prévues de la tâche sont celles du livre.
+  await expect(page.getByText('Pages · Le Chemin de la Vie').first()).toBeVisible();
+  await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+  await expect(page).toHaveURL(/\/$|\/\?/);
+
+  // Le livre est créé avec la tâche : il est proposé aux tâches suivantes.
+  await page.goto('/tache/nouvelle');
+  await page.getByRole('button', { name: /LLC · littérature chrétienne/ }).click();
+  await expect(page.getByRole('group', { name: 'Livre lu' }).getByText('Le Chemin de la Vie (ZTF)')).toBeVisible();
+  await expect(page.getByRole('group', { name: 'Livre lu' }).getByText('92/120 p lues')).toBeVisible();
+
+  // Bloc fait → les pages entrent au rapport, ligne du livre comprise.
+  await page.goto('/');
+  await page.getByRole('button', { name: /Lecture du soir/ }).first().click();
+  await expect(page.getByRole('dialog').getByText('Pages · Le Chemin de la Vie')).toBeVisible();
+  await page.getByRole('button', { name: /Marquer comme fait/ }).click();
+  await expect(page.getByRole('button', { name: /Fait · toucher pour annuler/ })).toBeVisible();
+  await page.getByRole('dialog').getByLabel('Fermer').click();
+  await page.getByRole('link', { name: 'Rapports' }).click();
+  const cl = page.getByRole('button', { name: 'CL : modifier les valeurs' });
+  await expect(cl.getByText('Le Chemin de la Vie (ZTF)')).toBeVisible();
+  await expect(cl.getByText(/102\/120p \(\+10p auj\.\)/)).toBeVisible();
 });
