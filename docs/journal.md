@@ -6,6 +6,7 @@
 
 - Migration `20261007000100_alarme_calendrier` (appliquée) : `taches.alarme`, `profils.alarme_defaut`, `profils.jeton_calendrier`.
 - Rappels insistants (`rappelsPlanifies`, `cleRappelAlarme`), écran d'alarme plein écran (`alarme/`, `ui/AlarmeEcran.svelte`), fonction `calendrier` (flux ICS, déployée). Spec §10.
+- Fil : glisser un bloc (appui long, poignées début/fin, `ajusterOccurrence`) ; Dupliquer la tâche (`?copie=`). Spec §12.
 - Fonctions redéployées : `calendrier`, `envoyer-rappels`, `materialiser-occurrences`.
 
 ## 6 oct. 2026 — Créer un projet ou un sous-projet depuis « Nouvelle tâche »

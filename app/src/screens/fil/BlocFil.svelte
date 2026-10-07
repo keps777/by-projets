@@ -10,27 +10,34 @@
   import { hm } from './format.ts';
 
   /** Un bloc de la journée : couleur de la rubrique, cercle ou coche, ▶ pour lancer, remplissage du minuteur. */
-  let { b, pct, col = 0, cols = 1, aujourdhui, passe, onouvrir, onjouer }: {
+  let { b, pct, col = 0, cols = 1, aujourdhui, passe, onouvrir, onjouer, apercu = null, selectionne = false, souleve = false }: {
     b: BlocVue; pct: number | null; col?: number; cols?: number; aujourdhui: boolean; passe: boolean;
     onouvrir: () => void; onjouer: () => void;
+    /** Horaire provisoire pendant un glisser (début et fin en minutes). */
+    apercu?: { debut: number; fin: number } | null;
+    /** Bloc choisi pour être déplacé : poignées de début et de fin. */
+    selectionne?: boolean;
+    souleve?: boolean;
   } = $props();
 
-  const hauteur = $derived(Math.max((b.finMin - b.debutMin) * PX - 3, 22));
+  const debutMin = $derived(apercu?.debut ?? b.debutMin);
+  const finMin = $derived(apercu?.fin ?? b.finMin);
+  const hauteur = $derived(Math.max((finMin - debutMin) * PX - 3, 22));
   const haut = $derived(hauteur >= 48);
   const tourne = $derived(b.enCours || b.enPause);
-  const rempli = $derived(b.fait ? 100 : tourne ? remplissage(minuteurDe(b.occ), horloge.maintenant, (b.finMin - b.debutMin) * 60) * 100 : 0);
+  const rempli = $derived(b.fait ? 100 : tourne ? remplissage(minuteurDe(b.occ), horloge.maintenant, (finMin - debutMin) * 60) * 100 : 0);
   const style = $derived(styleTeinte(b.couleur, theme.mode));
-  const sous = $derived(`${b.projet?.nom ?? 'Sans projet'} · ${hm(b.debutMin)}–${hm(b.finMin)}${b.projet && pct != null ? ` · mois ${pct} %` : ''}`);
+  const sous = $derived(`${b.projet?.nom ?? 'Sans projet'} · ${hm(debutMin)}–${hm(finMin)}${b.projet && pct != null ? ` · mois ${pct} %` : ''}`);
   const montrerJouer = $derived(aujourdhui && !b.fait && hauteur >= 28);
 </script>
 
-<div class="bloc" class:tourne class:estompe={passe && !b.fait && !tourne} class:haut {style}
-  style:top="{b.debutMin * PX + 1}px" style:height="{hauteur}px"
+<div class="bloc" data-occ={b.occ.id} class:tourne class:estompe={passe && !b.fait && !tourne} class:haut class:selectionne class:souleve {style}
+  style:top="{debutMin * PX + 1}px" style:height="{hauteur}px"
   style:left="calc(56px + (100% - 66px) * {col} / {cols})" style:width="calc((100% - 66px) / {cols} - {cols > 1 ? 2 : 0}px)">
   <span class="rempli" style:width="{rempli}%"></span>
   {#if tourne}<span class="bord" style:left="{rempli}%"></span>{/if}
   {#if pct != null}<span class="mois" style:width="{pct}%"></span>{/if}
-  <button type="button" class="ouvrir" onclick={onouvrir} aria-label="{b.titre}, {hm(b.debutMin)} à {hm(b.finMin)}{b.fait ? ', fait' : ''}">
+  <button type="button" class="ouvrir" onclick={onouvrir} aria-label="{b.titre}, {hm(debutMin)} à {hm(finMin)}{b.fait ? ', fait' : ''}">
     <span class="cercle" class:fait={b.fait}>{#if b.fait}<Icone nom="coche" taille={11} trait={3.6} />{/if}</span>
     <span class="textes">
       <span class="titre-bloc" class:petit={hauteur < 30}>{b.titre}</span>
@@ -49,11 +56,22 @@
     </button>
   {/if}
   {#if b.fait}<span class="reel mono">{etiquetteRealise(b)}</span>{/if}
+  {#if selectionne}
+    <span class="poignee haut-p" data-poignee="debut" aria-label="Changer l’heure de début de {b.titre}" role="slider" aria-valuenow={debutMin} aria-valuemin={0} aria-valuemax={1440} tabindex="-1"></span>
+    <span class="poignee bas-p" data-poignee="fin" aria-label="Changer l’heure de fin de {b.titre}" role="slider" aria-valuenow={finMin} aria-valuemin={0} aria-valuemax={1440} tabindex="-1"></span>
+  {/if}
 </div>
 
 <style>
   .bloc { position: absolute; border-radius: 10px; background: var(--c-fond); overflow: hidden; display: flex; align-items: stretch; color: var(--c-encre); }
   .bloc.estompe { opacity: 0.55; }
+  .bloc { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+  .bloc.selectionne { z-index: 5; overflow: visible; box-shadow: 0 0 0 2px var(--c), 0 8px 22px var(--c-rempli); opacity: 1; }
+  .bloc.souleve { transition: box-shadow 0.15s ease; box-shadow: 0 0 0 2px var(--c), 0 14px 30px rgba(0, 0, 0, 0.45); }
+  .poignee { position: absolute; left: 50%; width: 44px; height: 24px; margin-left: -22px; touch-action: none; z-index: 6; display: flex; align-items: center; justify-content: center; }
+  .poignee::after { content: ''; width: 22px; height: 6px; border-radius: 3px; background: var(--c); box-shadow: 0 0 0 2px var(--fond); }
+  .haut-p { top: -13px; }
+  .bas-p { bottom: -13px; }
   .bloc { transition: transform 0.14s ease, opacity 0.3s ease, box-shadow 0.3s ease; }
   .bloc:has(> .ouvrir:active) { transform: scale(0.985); }
   .bloc.tourne { box-shadow: 0 0 0 1.5px var(--c), 0 6px 18px var(--c-rempli); z-index: 2; }

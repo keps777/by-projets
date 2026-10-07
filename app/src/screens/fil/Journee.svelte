@@ -9,6 +9,8 @@
   import { heureProposee } from './tache.ts';
   import Icone from '../../ui/Icone.svelte';
   import { routeur } from '../../routeur.svelte.ts';
+  import { ajusterOccurrence, DUREE_MIN_BLOC, PAS_GLISSER } from '../../data/actions/taches.ts';
+  import { dire } from '../../ui/toast.svelte.ts';
 
   /** Journée de 24 h : heures, blocs placés à leur heure (côte à côte s'ils se chevauchent), ligne « maintenant » en direct. */
   let { blocs, jour, aujourdhui, estAujourdhui, focusMin, onouvrir, onjouer }: {
@@ -31,7 +33,7 @@
   let apercu = $state<number | null>(null);
   const DUREE_APERCU = 30;
   function toucher(e: MouseEvent) {
-    if (apercu != null || !grille || (e.target as Element).closest('.bloc, a, button')) return;
+    if (ignorerClic || apercu != null || !grille || (e.target as Element).closest('.bloc, a, button')) return;
     const y = e.clientY - grille.getBoundingClientRect().top;
     const min = Math.max(0, Math.min(23 * 60 + 30, Math.floor(y / PX / 30) * 30));
     apercu = min;
@@ -40,6 +42,130 @@
       apercu = null;
     }, 110);
   }
+
+  // ------------------------------------------------------------------ glisser un bloc : déplacer (début et fin) ou changer sa fin / son début
+  // Un appui long (ou un glisser à la souris) soulève un bloc « prévu » ; il garde ses poignées (haut : début, bas : fin) tant qu'on ne touche pas ailleurs.
+  type Glisse = {
+    id: string; mode: 'attente' | 'deplace' | 'debut' | 'fin'; x0: number; y0: number; debut0: number; fin0: number;
+    debut: number; fin: number; pointeur: number; scroll0: number; moitie: number;
+  };
+  let selection = $state<string | null>(null);
+  let glisse = $state<Glisse | null>(null);
+  let minuteurAppui: ReturnType<typeof setTimeout> | undefined;
+  let rafDefile = 0;
+  let ignorerClic = false;
+  const APPUI_LONG_MS = 380;
+  const TOLERANCE_PX = 8;
+
+  const bloc = (id: string) => blocs.find((b) => b.occ.id === id);
+  const deplacable = (b: BlocVue | undefined): b is BlocVue => !!b && b.occ.etat === 'prevue';
+  const accrocher = (min: number) => Math.round(min / PAS_GLISSER) * PAS_GLISSER;
+
+  function appliquerGlisse(g: Glisse, y: number) {
+    const delta = accrocher(((y - g.y0) + (defile ? defile.scrollTop - g.scroll0 : 0)) / PX);
+    if (g.mode === 'deplace') {
+      const duree = g.fin0 - g.debut0;
+      const debut = Math.max(0, Math.min(1440 - duree, g.debut0 + delta));
+      g.debut = debut; g.fin = debut + duree;
+    } else if (g.mode === 'fin') {
+      g.fin = Math.min(1440, Math.max(g.debut0 + DUREE_MIN_BLOC, g.fin0 + delta));
+    } else if (g.mode === 'debut') {
+      g.debut = Math.max(0, Math.min(g.fin0 - DUREE_MIN_BLOC, g.debut0 + delta));
+    }
+  }
+
+  function boucleDefile() {
+    cancelAnimationFrame(rafDefile);
+    const pas = () => {
+      if (!glisse || glisse.mode === 'attente' || !defile) return;
+      const r = defile.getBoundingClientRect();
+      const y = dernierY;
+      const marge = 56;
+      const v = y < r.top + marge ? -Math.min(14, (r.top + marge - y) / 4) : y > r.bottom - marge ? Math.min(14, (y - (r.bottom - marge)) / 4) : 0;
+      if (v) { defile.scrollTop += v; appliquerGlisse(glisse, dernierY); }
+      rafDefile = requestAnimationFrame(pas);
+    };
+    rafDefile = requestAnimationFrame(pas);
+  }
+  let dernierY = 0;
+
+  function appuiBloc(e: PointerEvent) {
+    const cible = e.target as Element;
+    const el = cible.closest<HTMLElement>('.bloc');
+    if (!el || cible.closest('.jouer') || e.button > 0) return;
+    const id = el.dataset.occ!;
+    const b = bloc(id);
+    const poignee = cible.closest<HTMLElement>('[data-poignee]')?.dataset.poignee as 'debut' | 'fin' | undefined;
+    if (!deplacable(b)) { selection = null; return; }
+    const base = { id, x0: e.clientX, y0: e.clientY, debut0: b.debutMin, fin0: b.finMin, debut: b.debutMin, fin: b.finMin, pointeur: e.pointerId, scroll0: defile?.scrollTop ?? 0, moitie: 0 };
+    dernierY = e.clientY;
+    if (poignee) { glisse = { ...base, mode: poignee }; grille?.setPointerCapture(e.pointerId); boucleDefile(); return; }
+    if (selection === id || e.pointerType === 'mouse') { glisse = { ...base, mode: 'attente' }; return; } // déplacement dès qu'on bouge
+    glisse = { ...base, mode: 'attente' };
+    clearTimeout(minuteurAppui);
+    minuteurAppui = setTimeout(() => {
+      if (glisse?.mode !== 'attente' || glisse.id !== id) return;
+      selection = id;
+      glisse = { ...glisse, mode: 'deplace' };
+      grille?.setPointerCapture(glisse.pointeur);
+      navigator.vibrate?.(12);
+      boucleDefile();
+    }, APPUI_LONG_MS);
+  }
+
+  function mouvementBloc(e: PointerEvent) {
+    const g = glisse;
+    if (!g || e.pointerId !== g.pointeur) return;
+    dernierY = e.clientY;
+    if (g.mode === 'attente') {
+      const d = Math.hypot(e.clientX - g.x0, e.clientY - g.y0);
+      if (d <= TOLERANCE_PX && !(e.pointerType === 'mouse' && d > 3)) return;
+      if (e.pointerType === 'mouse' || selection === g.id) {
+        // Souris, ou bloc déjà choisi : le déplacement commence tout de suite.
+        selection = g.id;
+        glisse = { ...g, mode: 'deplace' };
+        grille?.setPointerCapture(e.pointerId);
+        boucleDefile();
+      } else { clearTimeout(minuteurAppui); glisse = null; } // le doigt défile la journée : pas de glisser
+      return;
+    }
+    appliquerGlisse(g, e.clientY);
+    glisse = { ...g };
+  }
+
+  function finBloc(e: PointerEvent) {
+    clearTimeout(minuteurAppui);
+    cancelAnimationFrame(rafDefile);
+    const g = glisse;
+    if (!g || e.pointerId !== g.pointeur) return;
+    glisse = null;
+    if (g.mode === 'attente') return; // simple appui : le bloc s'ouvre comme avant
+    ignorerClic = true;
+    setTimeout(() => (ignorerClic = false), 350);
+    if (g.debut !== g.debut0 || g.fin !== g.fin0) {
+      if (ajusterOccurrence(g.id, g.debut, g.fin)) dire(`Bloc placé de ${hm(g.debut)} à ${hm(g.fin)}`);
+    }
+  }
+
+  function annulerGlisse() { clearTimeout(minuteurAppui); cancelAnimationFrame(rafDefile); glisse = null; }
+
+  /** Le clic qui suit un glisser ne doit pas ouvrir le bloc ; un appui hors du bloc choisi enlève ses poignées. */
+  function clicCapture(e: MouseEvent) {
+    if (ignorerClic) { e.stopImmediatePropagation(); e.preventDefault(); return; }
+    if (selection && !(e.target as Element).closest(`[data-occ="${selection}"]`)) selection = null;
+  }
+
+  // Pendant un glisser, la journée ne défile pas sous le doigt (le défilement automatique aux bords s'en charge).
+  $effect(() => {
+    const el = grille;
+    if (!el) return;
+    const bloquer = (e: TouchEvent) => { if (glisse && glisse.mode !== 'attente') e.preventDefault(); };
+    el.addEventListener('touchmove', bloquer, { passive: false });
+    return () => el.removeEventListener('touchmove', bloquer);
+  });
+  // Le jour change, ou le bloc disparaît : plus rien n'est choisi.
+  $effect(() => { void jour; selection = null; annulerGlisse(); });
+  $effect(() => { if (selection && !blocs.some((b) => b.occ.id === selection)) selection = null; });
 
   let defile: HTMLDivElement | undefined = $state();
   // Ouvre la journée sur « maintenant » (ou sur le bloc en cours), à chaque changement de jour : la ligne se place
@@ -79,7 +205,8 @@
 
 <div class="defile-jour" bind:this={defile}>
   <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-  <div class="grille" bind:this={grille} onclick={toucher} style:height="{24 * 60 * PX}px">
+  <div class="grille" bind:this={grille} onclick={toucher} onclickcapture={clicCapture} onpointerdown={appuiBloc} onpointermove={mouvementBloc} onpointerup={finBloc} onpointercancel={annulerGlisse}
+    style:height="{24 * 60 * PX}px">
     {#each heures as h (h)}
       <div class="heure" style:top="{h * 60 * PX - 7}px" style:opacity={estAujourdhui && Math.abs(h * 60 - maintenant) < 13 ? 0 : 1}>
         <span class="mono">{hm(h * 60)}</span><span class="trait"></span>
@@ -88,7 +215,9 @@
 
     {#each blocs as b, i (b.occ.id)}
       <BlocFil {b} pct={pcts[i]} col={places[i]?.col ?? 0} cols={places[i]?.cols ?? 1} aujourdhui={estAujourdhui}
-        passe={estAujourdhui ? b.finMin <= maintenant : jour < aujourdhui} onouvrir={() => onouvrir(b.occ.id)} onjouer={() => onjouer(b.occ.id)} />
+        passe={estAujourdhui ? b.finMin <= maintenant : jour < aujourdhui}
+        selectionne={selection === b.occ.id} souleve={glisse?.id === b.occ.id && glisse.mode !== 'attente'}
+        apercu={glisse?.id === b.occ.id && glisse.mode !== 'attente' ? { debut: glisse.debut, fin: glisse.fin } : null} onouvrir={() => onouvrir(b.occ.id)} onjouer={() => onjouer(b.occ.id)} />
     {/each}
 
     {#if apercu != null}
@@ -120,7 +249,7 @@
 
 <style>
   .defile-jour { flex: 1; min-height: 0; overflow-y: auto; position: relative; }
-  .grille { position: relative; margin: 12px 0 28px; }
+  .grille { position: relative; margin: 12px 0 28px; -webkit-touch-callout: none; }
   .heure { position: absolute; left: 0; right: 0; display: flex; align-items: center; gap: 6px; pointer-events: none; }
   .heure .mono { width: 46px; text-align: right; font-size: 11px; color: var(--faint); }
   .heure .trait { flex: 1; height: 1px; background: var(--ligne); }

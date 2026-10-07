@@ -149,3 +149,25 @@ export function silencerAlarme(occId: string): void {
     .map((x) => ['rappels', { id: x.id, etat: 'annule' }]);
   if (ops.length) magasin.ecrireLot(ops);
 }
+
+/** Pas du glisser-déposer sur la journée, et durée minimale d'un bloc redimensionné (minutes). */
+export const PAS_GLISSER = 5;
+export const DUREE_MIN_BLOC = 15;
+
+/**
+ * Glisser un bloc sur la journée : nouvel horaire de début et de fin, le même jour (une seule occurrence, la série reste intacte).
+ * Seul un bloc encore « prévu » bouge ; ses rappels à venir sont recalculés sur le nouveau début.
+ */
+export function ajusterOccurrence(occId: string, debutMin: number, finMin: number): boolean {
+  const occ = magasin.trouver('occurrences', occId);
+  const tache = occ && magasin.trouver('taches', occ.tache_id);
+  if (!occ || !tache || occ.etat !== 'prevue') return false;
+  const debut = Math.max(0, Math.min(1440 - DUREE_MIN_BLOC, Math.round(debutMin / PAS_GLISSER) * PAS_GLISSER));
+  const fin = Math.min(1440, Math.max(debut + DUREE_MIN_BLOC, Math.round(finMin / PAS_GLISSER) * PAS_GLISSER));
+  const debutMs = localVersUtc(occ.jour, debut, fuseau());
+  const ops: Parameters<typeof magasin.ecrireLot>[0] = [['occurrences', { id: occId, debut: new Date(debutMs).toISOString(), fin: new Date(debutMs + (fin - debut) * 60000).toISOString(), exception: true }]];
+  for (const rp of magasin.lignes.rappels.filter((x) => x.occurrence_id === occId && x.etat === 'en_attente')) ops.push(['rappels', { id: rp.id, etat: 'annule' }]);
+  for (const rp of rappelsPour(tache, occId, debutMs)) ops.push(['rappels', rp]);
+  magasin.ecrireLot(ops);
+  return true;
+}

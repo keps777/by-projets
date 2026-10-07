@@ -38,6 +38,9 @@
     const heure = Number(p.get('heure'));
     f.nouvelle(jour, Number.isFinite(heure) && p.has('heure') ? heure : heureProposee(jour, jourCourant(), maintenantLocal().minutes, f.duree),
       p.get('projet'), p.get('sans-projet') === '1', profil()?.rappel_defaut_min ?? 10, !!profil()?.alarme_defaut);
+    // « Dupliquer » (volet d'un bloc) : le formulaire s'ouvre prérempli avec les réglages de la tâche copiée.
+    const copie = magasin.trouver('taches', p.get('copie'));
+    if (copie) f.dupliquer(copie, jour, Number.isFinite(heure) && p.has('heure') ? heure : copie.heure_debut);
   });
 
   const style = $derived(styleCouleur(couleurRubrique(f.couleur ?? COULEUR_SANS_PROJET, theme.mode)));

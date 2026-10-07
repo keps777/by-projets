@@ -638,3 +638,68 @@ test('Réglages : tester l’alarme ouvre l’écran d’alarme', async ({ page 
   await alarme.getByRole('button', { name: 'Fermer l’essai' }).click();
   await expect(alarme).toBeHidden();
 });
+
+test.describe('glisser un bloc sur la journée', () => {
+  /** Demain, à la date de Toronto (le fuseau de l'app). */
+  const demain = () => {
+    const d = new Date(Date.now() + 86_400_000);
+    return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto' }).format(d);
+  };
+
+  test('déplacer un bloc, puis changer sa fin avec la poignée du bas', async ({ page }) => {
+    const jour = demain();
+    await page.goto(`/tache/nouvelle?sans-projet=1&jour=${jour}&heure=540`); // 09:00
+    await page.getByLabel('Titre de la tâche').fill('Préparer la rencontre');
+    await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+    await page.goto(`/?jour=${jour}`);
+    const bloc = page.getByRole('button', { name: /Préparer la rencontre, 09:00 à 09:45/ });
+    await expect(bloc).toBeVisible();
+    const b = (await bloc.boundingBox())!;
+    // Souris : on attrape le bloc et on le descend de 60 px (72 px = 1 h) → +50 min.
+    await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2 + 30, { steps: 4 });
+    await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2 + 60, { steps: 4 });
+    await page.mouse.up();
+    await expect(page.getByRole('button', { name: /Préparer la rencontre, 09:50 à 10:35/ })).toBeVisible();
+
+    // Poignée du bas : la fin passe de 10:35 à environ 11:35 (+72 px ; le défilement automatique près du bord peut ajouter quelques minutes).
+    const poignee = page.getByRole('slider', { name: /Changer l’heure de fin de Préparer la rencontre/ });
+    await expect(poignee).toBeVisible();
+    await page.waitForTimeout(250); // la mise en place de la poignée et la fin des transitions
+    const p = (await poignee.boundingBox())!;
+    await page.mouse.move(p.x + p.width / 2, p.y + p.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(p.x + p.width / 2, p.y + p.height / 2 + 36, { steps: 4 });
+    await page.mouse.move(p.x + p.width / 2, p.y + p.height / 2 + 72, { steps: 4 });
+    await page.mouse.up();
+    await expect(page.getByRole('button', { name: /Préparer la rencontre, 09:50 à 11:\d\d/ })).toBeVisible();
+
+    await page.reload();
+    await expect(page.getByRole('button', { name: /Préparer la rencontre, 09:50 à 11:\d\d/ })).toBeVisible();
+  });
+
+  test('un simple appui ouvre toujours le bloc, un bloc fait ne bouge pas', async ({ page }) => {
+    const jour = demain();
+    await page.goto(`/tache/nouvelle?sans-projet=1&jour=${jour}&heure=540`);
+    await page.getByLabel('Titre de la tâche').fill('Appui simple');
+    await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+    await page.goto(`/?jour=${jour}`);
+    await page.getByRole('button', { name: /Appui simple, 09:00 à 09:45/ }).click();
+    await expect(page.getByRole('dialog').getByText('Appui simple').first()).toBeVisible();
+  });
+});
+
+test('dupliquer une tâche depuis le volet du bloc ouvre le formulaire prérempli', async ({ page }) => {
+  await page.goto('/tache/nouvelle?sans-projet=1');
+  await page.getByLabel('Titre de la tâche').fill('Appel du lundi');
+  await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+  await page.getByRole('button', { name: /Appel du lundi/ }).first().click();
+  await page.getByRole('link', { name: 'Dupliquer la tâche' }).click();
+  await expect(page).toHaveURL(/\/tache\/nouvelle\?copie=/);
+  await expect(page.getByLabel('Titre de la tâche')).toHaveValue('Appel du lundi');
+  await page.getByLabel('Titre de la tâche').fill('Appel du lundi (copie)');
+  await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+  await expect(page.getByText('Appel du lundi (copie)').first()).toBeVisible();
+  await expect(page.getByText('Appel du lundi').first()).toBeVisible();
+});

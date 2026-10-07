@@ -151,6 +151,7 @@
         <button type="button" class="second" onclick={() => onreporter(b.occ.id)}><Icone nom="reporter" taille={16} /> Reporter</button>
         <a class="second" href="/focus?occ={b.occ.id}"><Icone nom="focus" taille={16} /> Mode Focus</a>
       </div>
+      <a class="second dupliquer" href="/tache/nouvelle?copie={b.tache.id}&jour={b.occ.jour}&heure={b.finMin}"><Icone nom="copier" taille={16} /> Dupliquer la tâche</a>
 
       {#if progs.length}
         <div class="alimentes">

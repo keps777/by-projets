@@ -83,6 +83,15 @@ export class FormulaireTache {
     this.alarme = !!t.alarme;
   }
 
+  /** Copie d'une tâche : tous ses réglages (titre, projet, mesures, durée, rappels, alarme, récurrence), posée au jour et à l'heure demandés. */
+  dupliquer(t: Tache, jour: Jour, heure: number): void {
+    this.charger(t);
+    this.debut = jour;
+    this.heure = Math.min(heure, 1440 - this.duree);
+    if (this.fin === 'date' && this.finDate < jour) this.finDate = dernierDuMois(jour.slice(0, 7));
+    if (this.rec === 'hebdo' && !this.jours.length) this.jours = [jourSemaine(jour)];
+  }
+
   /**
    * Reprend les réglages d'une tâche déjà créée (titre, projet et sous-projets alimentés, valeurs prévues, durée, rappels).
    * Le jour, l'heure de début et la récurrence restent ceux qui sont choisis.
