@@ -1,6 +1,6 @@
 <script lang="ts">
   // Carte d'un point du rapport (planches Rapport, RapportSemaine, RapportMois).
-  import { formaterMesure, formaterMesures, type Langue } from '@core/rapport.ts';
+  import { formaterLivre, formaterMesure, formaterMesures, type Langue } from '@core/rapport.ts';
   import { formatTemps } from '@core/units.ts';
   import { styleCouleur } from '../../ui/couleurs.ts';
   import Icone from '../../ui/Icone.svelte';
@@ -32,12 +32,12 @@
     // Récapitulatif : valeur compacte, sans les références (le texte WhatsApp, lui, les garde).
     if (vue !== 'jour') return formaterMesures(p.mesures.filter((m) => m.type !== 'reference'), langue) || '—';
     if (premiere.type === 'temps' && premiere.attendu != null && premiere.fait != null) return formatTemps(premiere.fait, premiere.approx);
-    return formaterMesure(premiere, langue);
+    return formaterMesure(premiere, langue, true);
   });
   const sous = $derived.by(() => {
     if (vue !== 'jour') return sousTitre;
     if (premiere?.type === 'temps' && premiere.attendu != null) return `objectif ${formatTemps(premiere.attendu)}`;
-    return p.mesures[1] ? formaterMesure(p.mesures[1], langue) : '';
+    return p.mesures[1] ? formaterMesure(p.mesures[1], langue, true) : '';
   });
   const points = $derived(premiere?.type === 'fois' && premiere.attendu != null && Number.isInteger(premiere.attendu) && premiere.attendu >= 1 && premiere.attendu <= 10 ? premiere.attendu : 0);
   const barre = $derived(!points && premiere?.attendu != null && premiere.attendu > 0 && r != null);
@@ -90,10 +90,17 @@
     {/if}
     {#if p.mesures.length}
       <div class="puces">
-        {#each p.mesures as m, i (i)}<span class="mono">{formaterMesure(m, langue)}</span>{/each}
+        {#each p.mesures as m, i (i)}<span class="mono">{formaterMesure(m, langue, true)}</span>{/each}
       </div>
     {:else}
       <span class="muted vide">Aucune mesure : choisis-les dans les Réglages.</span>
+    {/if}
+    {#if vue === 'jour' && p.items.length}
+      <ul class="livres-lus" aria-label="Livres lus">
+        {#each p.items as it, i (i)}
+          <li><span class="titre-livre">{it.titre}{it.auteur ? ` (${it.auteur})` : ''}</span><span class="mono">{it.livre ? formaterLivre(it.livre, langue) : ''}</span></li>
+        {/each}
+      </ul>
     {/if}
     {#if onmodifier && p.mesures.length}<span class="modifier"><Icone nom="crayon" taille={13} />Toucher pour modifier les valeurs</span>{/if}
     </div>
@@ -115,6 +122,9 @@
 </article>
 
 <style>
+  .livres-lus { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 12px; }
+  .livres-lus li { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+  .livres-lus .titre-livre { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; opacity: 0.9; }
   .chrono { position: relative; flex: none; width: 40px; height: 40px; border-radius: 20px; border: 1.5px solid var(--c); background: transparent; color: var(--c); display: inline-flex; align-items: center; justify-content: center; }
   .chrono::after { content: ''; position: absolute; inset: -4px; }
   .chrono.cours { background: var(--c); color: var(--c-sur); }

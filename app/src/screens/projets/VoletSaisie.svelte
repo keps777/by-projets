@@ -11,13 +11,18 @@
   import Interrupteur from '../../ui/Interrupteur.svelte';
   import Puces from '../../ui/Puces.svelte';
   import PassagesLus from '../../ui/PassagesLus.svelte';
+  import ChampTemps from '../../ui/ChampTemps.svelte';
   import { dire } from '../../ui/toast.svelte.ts';
   import { magasin } from '../../data/magasin.svelte.ts';
+  import type { LivreSuivi } from '@core/lignes.ts';
+  import { ajouterLivre, retirerLivre } from '../../data/actions/reglages.ts';
   import { contenuDuJour, idSaisieManuelle, saisirJour } from './donnees.ts';
   import { champTexte, jourCourt, lireChamp, pasDe, valeurTexte } from './vues.ts';
 
-  let { ouvert, onfermer, projetId, metriques, jour, aujourdhui, periode }: {
+  let { ouvert, onfermer, projetId, metriques, jour, aujourdhui, periode, pointLivres = null }: {
     ouvert: boolean; onfermer: () => void; projetId: string; metriques: Metrique[]; jour: Jour; aujourdhui: Jour; periode: { debut: Jour; fin: Jour | null };
+    /** Point du rapport qui suit des livres (CL) : la fenêtre permet d'en ajouter ou d'en retirer. */
+    pointLivres?: { id: string; livres: LivreSuivi[] } | null;
   } = $props();
 
   let j = $state('');
@@ -50,7 +55,20 @@
     note = magasin.trouver('saisies', idSaisieManuelle(projetId, j))?.note ?? '';
   });
 
-  function regler(m: Metrique, v: number | null) { nums[m.cle] = v; champs[m.cle] = champTexte(m.type, v); }
+  // Pages par livre : le total de pages du point (« nombre:pages ») suit la somme des livres, le reste (pages hors livres) est gardé.
+  const clesLivres = $derived(metriques.filter((m) => m.cle.startsWith('livre:')).map((m) => m.cle));
+  const sommeLivres = () => clesLivres.reduce((s, c) => s + (nums[c] ?? 0), 0);
+  let pagesHorsLivres = 0;
+  $effect(() => { if (ouvert && j && clesLivres.length) pagesHorsLivres = Math.max(0, (nums['nombre:pages'] ?? 0) - sommeLivres()); });
+
+  function regler(m: Metrique, v: number | null) {
+    nums[m.cle] = v; champs[m.cle] = champTexte(m.type, v);
+    if (m.cle.startsWith('livre:') && metriques.some((x) => x.cle === 'nombre:pages')) {
+      const pages = metriques.find((x) => x.cle === 'nombre:pages')!;
+      const total = pagesHorsLivres + sommeLivres();
+      nums[pages.cle] = total; champs[pages.cle] = champTexte(pages.type, total);
+    }
+  }
   function pas(m: Metrique, signe: 1 | -1) {
     let v = Math.max(0, (nums[m.cle] ?? 0) + signe * (pasDe(m.type, nums[m.cle] ?? 0) || 1));
     if (m.type === 'note') v = Math.min(10, v);
@@ -66,6 +84,15 @@
     textes[m.cle] = ps.length ? formaterPassages(ps) : '';
     const chap = metriques.find((x) => x.cle === 'nombre:chapitres');
     if (chap) regler(chap, Math.max(0, (nums[chap.cle] ?? 0) + compterChapitres(ps) - avant));
+  }
+
+  let nouveau = $state<{ titre: string; auteur: string; total: string; depart: string } | null>(null);
+  function creerLivre() {
+    if (!pointLivres || !nouveau?.titre.trim()) return;
+    const n = (t: string) => { const v = Math.round(Number(t.replace(',', '.').replace(/[^\d.]/g, ''))); return Number.isFinite(v) && v > 0 ? v : null; };
+    ajouterLivre(pointLivres.id, { titre: nouveau.titre, auteur: nouveau.auteur, total: n(nouveau.total), depart: n(nouveau.depart) ?? 0 });
+    nouveau = null;
+    dire('Livre ajouté');
   }
 
   const horsPeriode = $derived(!!j && (j < periode.debut || (periode.fin != null && j > periode.fin)));
@@ -101,16 +128,46 @@
         <Puces options={(m.options ?? []).map((o) => ({ valeur: o.valeur, label: o.label }))} valeur={nums[m.cle] ?? null} couleur="var(--c)" texte="var(--c-sur)" onchoisir={(v) => regler(m, v)} />
       {:else if m.type === 'heure'}
         <input class="texte mono" type="time" value={nums[m.cle] != null ? formatHeure(nums[m.cle]!) : ''} aria-label={m.nom} onchange={(e) => regler(m, parseHeure(e.currentTarget.value))} />
+      {:else if m.type === 'temps'}
+        <ChampTemps label={m.nom} valeur={nums[m.cle] ?? null} onchange={(v) => (nums[m.cle] = v)} />
       {:else}
         <div class="pas">
           <button type="button" aria-label="Moins" onclick={() => pas(m, -1)}>−</button>
           <input class="mono" bind:value={champs[m.cle]} onchange={() => lire(m)} inputmode="decimal" placeholder="0" aria-label={m.nom} />
-          <span class="muted unite">{m.type === 'temps' ? 'min' : m.type === 'montant' ? '$' : m.type === 'distance' ? 'km' : m.type === 'poids' ? 'kg' : m.type === 'nombre' ? m.unite : ''}</span>
+          <span class="muted unite">{m.type === 'montant' ? '$' : m.type === 'distance' ? 'km' : m.type === 'poids' ? 'kg' : m.type === 'nombre' ? m.unite : ''}</span>
           <button type="button" aria-label="Plus" onclick={() => pas(m, 1)}>+</button>
         </div>
       {/if}
     </div>
   {/each}
+
+  {#if pointLivres}
+    <div class="livres">
+      <span class="libelle"><span>Livres</span><span class="muted petit">{pointLivres.livres.filter((l) => l.actif).length} suivi{pointLivres.livres.filter((l) => l.actif).length > 1 ? 's' : ''}</span></span>
+      {#each pointLivres.livres.filter((l) => l.actif) as l (l.id)}
+        <div class="livre">
+          <span class="col"><span class="nom">{l.titre}{l.auteur ? ` (${l.auteur})` : ''}</span><span class="muted petit">{l.total ? `${l.total} p` : 'pages inconnues'}{l.depart ? ` · ${l.depart} déjà lues` : ''}</span></span>
+          <button type="button" class="retirer" aria-label="Retirer {l.titre}" onclick={() => retirerLivre(pointLivres.id, l.id)}>Retirer</button>
+        </div>
+      {/each}
+      {#if !nouveau}
+        <button type="button" class="ajouter" onclick={() => (nouveau = { titre: '', auteur: '', total: '', depart: '' })}>+ Ajouter un livre</button>
+      {:else}
+        <div class="nouveau">
+          <input class="texte" bind:value={nouveau.titre} placeholder="Titre du livre" aria-label="Titre du livre" autocomplete="off" />
+          <input class="texte" bind:value={nouveau.auteur} placeholder="Auteur ou initiales (ZTF)" aria-label="Auteur du livre" autocomplete="off" />
+          <span class="deux">
+            <input class="texte mono" bind:value={nouveau.total} inputmode="numeric" placeholder="Pages au total" aria-label="Pages au total" />
+            <input class="texte mono" bind:value={nouveau.depart} inputmode="numeric" placeholder="Déjà lues" aria-label="Pages déjà lues" />
+          </span>
+          <span class="deux">
+            <Bouton variante="secondaire" onclick={() => (nouveau = null)}>Annuler</Bouton>
+            <Bouton variante="accent" desactive={!nouveau.titre.trim()} onclick={creerLivre}>Ajouter</Bouton>
+          </span>
+        </div>
+      {/if}
+    </div>
+  {/if}
 
   <label class="champ">Note
     <textarea bind:value={note} rows="2" placeholder="Ce que je retiens de ce jour"></textarea>
@@ -131,5 +188,13 @@
   .pas { display: flex; align-items: center; height: 48px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--champ); }
   .pas button { flex: none; width: 48px; height: 48px; border: 0; background: transparent; font-size: 22px; }
   .pas input { flex: 1; min-width: 0; height: 46px; border: 0; background: transparent; text-align: right; font-size: 17px; padding: 0 6px; }
+  .livres { display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-weight: 600; }
+  .livre { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 12px; border: 1px solid var(--ligne); background: var(--champ); }
+  .livre .col { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .livre .nom { font-size: 14px; }
+  .retirer, .ajouter { min-height: 44px; border-radius: 12px; border: 1px solid var(--ligne); background: transparent; padding: 0 12px; font-size: 13px; font-weight: 600; color: var(--c-encre, var(--texte)); }
+  .retirer { min-height: 40px; color: var(--muted); }
+  .nouveau { display: flex; flex-direction: column; gap: 8px; }
+  .deux { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .unite { flex: 1; font-size: 13px; font-weight: 500; }
 </style>

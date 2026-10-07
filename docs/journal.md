@@ -2,7 +2,10 @@
 
 > Lire ce fichier en début de session (après `CLAUDE.md`). Ajouter une entrée en fin de session.
 
-## 7 oct. 2026 — Alarmes, rapport à 23:45
+## 7 oct. 2026 — Alarmes, rapport à 23:45, livres (CL)
+
+- Livres du point CL (`LivreSuivi`, `itemsDesLivres`, migration `20261007000300` appliquée, `generer-rapports` redéployée) ; temps en h/min/s (`ChampTemps`) dans la saisie du jour et le volet d'un bloc ; détail des séances hors export. Spec §9.
+
 
 - Rapport du soir à 23:45 par défaut (migration `20261007000200` appliquée : profils restés à 21:15 → 23:45) ; fenêtre « Envoyer ton rapport ? » dans l'app (`InviteRapport`, `invitation.svelte.ts`) ; l'heure se règle dans Réglages › Notifications.
 

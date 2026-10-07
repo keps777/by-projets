@@ -56,7 +56,7 @@
     const titre = periode.vue === 'jour' ? (langue === 'fr' ? 'Rapport du jour' : 'Daily report') : periode.vue === 'semaine' ? (langue === 'fr' ? 'Rapport de la semaine' : 'Weekly report') : (langue === 'fr' ? 'Rapport du mois' : 'Monthly report');
     const html = htmlImprimable({
       titre, sousTitre: libellePeriode(periode), nom, langue, genereLe: new Date().toLocaleString('fr-CA', { dateStyle: 'long', timeStyle: 'short' }),
-      lignes: choisis.map((p, i) => ({ n: i + 1, code: p.point.code, libelle: p.point.libelle, mesures: p.mesures, ratio: p.ratio, couleur: p.couleur }))
+      lignes: choisis.map((p, i) => ({ n: i + 1, code: p.point.code, libelle: p.point.libelle, mesures: p.mesures, ratio: p.ratio, couleur: p.couleur, items: p.items }))
     });
     if (!imprimer(html)) { void copier(); dire('PDF indisponible : texte copié à la place.'); }
   }

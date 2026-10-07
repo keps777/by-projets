@@ -750,3 +750,71 @@ test.describe('invitation à envoyer le rapport (23:45 par défaut)', () => {
     await expect(page.getByLabel('Heure du rapport')).toHaveValue('22:30');
   });
 });
+
+test('Rapports : le temps d’une saisie se corrige en heures, minutes, secondes (plus de « 187,6 min »)', async ({ page }) => {
+  await page.goto('/rapports');
+  await page.getByRole('button', { name: 'PA : modifier les valeurs' }).click();
+  const fenetre = page.getByRole('dialog');
+  await expect(fenetre.getByLabel('Heures').first()).toBeVisible();
+  await fenetre.getByLabel('Heures').first().fill('3');
+  await fenetre.getByLabel('Minutes').first().fill('7');
+  await fenetre.getByLabel('Secondes').first().fill('36');
+  await fenetre.getByLabel('Secondes').first().blur();
+  await expect(fenetre.getByLabel('Minutes').first()).toHaveValue('07');
+  await fenetre.getByRole('button', { name: 'Enregistrer' }).click();
+  await expect(page.getByText(/3h08/).first()).toBeVisible(); // 3 h 07 min 36 s = 187,6 min, affiché 3h08
+});
+
+test('Rapports : ajouter un livre au point CL, saisir ses pages, le voir au rapport avec cumul et total', async ({ page }) => {
+  await page.goto('/rapports');
+  await page.getByRole('button', { name: 'CL : modifier les valeurs' }).click();
+  const fenetre = page.getByRole('dialog');
+  await fenetre.getByRole('button', { name: '+ Ajouter un livre' }).click();
+  await fenetre.getByLabel('Titre du livre').fill('Le chemin de la vie');
+  await fenetre.getByLabel('Auteur du livre').fill('ZTF');
+  await fenetre.getByLabel('Pages au total').fill('120');
+  await fenetre.getByLabel('Pages déjà lues').fill('92');
+  await fenetre.getByRole('button', { name: 'Ajouter', exact: true }).click();
+  // Un deuxième livre.
+  await fenetre.getByRole('button', { name: '+ Ajouter un livre' }).click();
+  await fenetre.getByLabel('Titre du livre').fill('Le chemin de l’obéissance');
+  await fenetre.getByLabel('Auteur du livre').fill('ZTF');
+  await fenetre.getByLabel('Pages au total').fill('130');
+  await fenetre.getByLabel('Pages déjà lues').fill('85');
+  await fenetre.getByRole('button', { name: 'Ajouter', exact: true }).click();
+
+  const un = fenetre.getByLabel('Pages · Le chemin de la vie');
+  await un.fill('8');
+  await un.blur();
+  const deux = fenetre.getByLabel('Pages · Le chemin de l’obéissance');
+  await deux.fill('5');
+  await deux.blur();
+  await expect(fenetre.getByLabel('Pages', { exact: true })).toHaveValue('13'); // le total de pages du point suit les livres
+  await fenetre.getByRole('button', { name: 'Enregistrer' }).click();
+
+  const carte = page.getByRole('button', { name: 'CL : modifier les valeurs' });
+  await expect(carte.getByText('Le chemin de la vie (ZTF)')).toBeVisible();
+  await expect(carte.getByText('100/120p (+8p auj.)')).toBeVisible();
+  await expect(carte.getByText('90/130p (+5p auj.)')).toBeVisible();
+
+  // Le livre se retrouve le lendemain avec son cumul : il est retiré du rapport quand on le retire.
+  await page.reload();
+  await expect(page.getByRole('button', { name: 'CL : modifier les valeurs' }).getByText('100/120p (+8p auj.)')).toBeVisible();
+});
+
+test('volet d’un bloc : le temps passé se corrige en heures, minutes, secondes', async ({ page }) => {
+  await page.goto('/tache/nouvelle?sans-projet=1');
+  await page.getByLabel('Titre de la tâche').fill('Temps à corriger');
+  await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+  await page.getByRole('button', { name: /Temps à corriger/ }).first().click();
+  const volet = page.getByRole('dialog');
+  const saisie = volet.getByRole('button', { name: /Saisir Temps/ });
+  if (await saisie.count() === 0) test.skip(true, 'tâche sans projet : aucune valeur à corriger');
+  await saisie.click();
+  await volet.getByLabel('Heures').fill('3');
+  await volet.getByLabel('Minutes').fill('7');
+  await volet.getByLabel('Secondes').fill('36');
+  await volet.getByLabel('Secondes').blur();
+  await expect(volet.getByLabel('Minutes')).toHaveValue('07');
+  await volet.getByRole('button', { name: 'OK', exact: true }).click();
+});

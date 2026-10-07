@@ -43,3 +43,16 @@
 
 ## Objectif du jour d'un point (6 oct. 2026)
 Quand un projet a plusieurs sous-projets qui suivent la même mesure, l'objectif du jour d'un point vient **d'abord d'un sous-projet à objectif quotidien** (« 10 chapitres par jour », « 1 h par jour »), puis, à défaut, du plus récent. Un objectif « au total » ou mensuel (« Lire tout le Nouveau Testament ») n'écrase plus l'objectif quotidien : il donnerait « 0h01 » au lieu de « 1h00 ». Le choix explicite d'un sous-projet pour une mesure (Réglages → Points du rapport) reste prioritaire.
+
+## Livres, temps lisible, export (7 oct. 2026)
+- **Livres d'un point (CL)** : dans la saisie du point (toucher la carte), section **Livres** : « + Ajouter un livre » (titre, auteur ou initiales, pages au total, pages déjà lues), « Retirer » (les pages saisies restent). Chaque livre actif ajoute un champ « Pages · titre » ; le total « pages » du point suit la somme des livres. Les pages d'un livre sont des valeurs de saisie de clé `livre:<id>` ; le cumul = pages déjà lues + toutes les saisies jusqu'au jour.
+- **Texte exporté** (le serveur compose le même texte) : la ligne du point, puis une ligne par livre lu pendant la période :
+  ```
+  4. *CL* : 12 pages; 0h30
+     • Le chemin de la vie (ZTF) : 100/120p (+8p auj.)
+     • Le chemin de l'obéissance (ZTF) : 90/130p (+5p auj.)
+  ```
+  (« today » en anglais ; pour une semaine ou un mois, « (+8p) » sans « auj. »). Un livre non lu pendant la période n'apparaît pas. Même contenu dans le PDF.
+- **Temps en heures, minutes, secondes** : toute saisie de temps (saisie du jour, volet d'un bloc) se règle avec trois champs **h · min · s** (« 3 h 07 min 36 s »), plus de décimales (« 187,6 min »).
+- **Détail des séances** (« 1h55; 0h40; … » du point PA) : visible dans la page Rapports, **jamais** dans le texte exporté ni le PDF, qui gardent le total (« 3h08/3h00 »).
+

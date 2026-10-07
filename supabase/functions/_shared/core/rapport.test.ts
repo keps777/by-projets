@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formaterRapport, enteteRapport, mesuresDuPoint, attenduDuJour, attenduEntre, formaterMesure } from './rapport.ts';
+import { formaterRapport, enteteRapport, mesuresDuPoint, attenduDuJour, attenduEntre, formaterMesure, itemsDesLivres, formaterPoint } from './rapport.ts';
 import type { Metrique, ValeurSaisie } from './types.ts';
 import { MODELES, modelesDeLaRubrique } from './modeles.ts';
 import { RUBRIQUES_DEFAUT, POINTS_DEFAUT } from './defauts.ts';
@@ -23,7 +23,7 @@ describe('rapport : format de référence de la spec §9', () => {
     expect(texte).toBe([
       '*Report · October 4, 2026 · Luther Kevin K.*',
       '',
-      '1. *DDEWG* : 2/3; ~0h28 (0h12; ~0h16)',
+      '1. *DDEWG* : 2/3; ~0h28',
       '',
       '2. *PA* : ~2h15/2h00',
       '',
@@ -92,5 +92,45 @@ describe('données de départ', () => {
     for (const m of MODELES) for (const x of m.metriques) expect(ORDRE_TYPES).toContain(x.type);
     expect(ORDRE_TYPES.every((t) => t in TYPES)).toBe(true);
     expect(cleMetrique('nombre', 'chapitres')).toBe(MODELES[0].metriques[0].cle);
+  });
+
+  it('le détail des séances ne sort que pour l’affichage de la page, jamais dans le texte exporté', () => {
+    const m = { type: 'temps' as const, fait: 11280, attendu: 10800, details: ['1h55', '0h40', '0h10', '0h02', '0h03', '0h08', '0h09'] };
+    expect(formaterMesure(m)).toBe('3h08/3h00');
+    expect(formaterMesure(m, 'fr', true)).toBe('3h08/3h00 (1h55; 0h40; 0h10; 0h02; 0h03; 0h08; 0h09)');
+  });
+
+  describe('livres d’un point (CL)', () => {
+    const livres = [
+      { id: 'a', titre: 'Le chemin de la vie', auteur: 'ZTF', total: 120, depart: 92, actif: true },
+      { id: 'b', titre: 'Le chemin de l’obéissance', auteur: 'ZTF', total: 130, depart: 85, actif: true },
+      { id: 'c', titre: 'Pas lu aujourd’hui', auteur: '', total: 200, depart: 10, actif: true },
+      { id: 'd', titre: 'Retiré', auteur: '', total: 50, depart: 0, actif: false }
+    ];
+    const lectures = [
+      { cle: 'livre:a', jour: '2026-10-06', valeur: 0 }, { cle: 'livre:a', jour: '2026-10-07', valeur: 8 },
+      { cle: 'livre:b', jour: '2026-10-07', valeur: 5 }, { cle: 'livre:b', jour: '2026-10-08', valeur: 40 },
+      { cle: 'livre:d', jour: '2026-10-07', valeur: 9 }
+    ];
+    it('liste les livres lus ce jour-là, cumul sur total, sans les livres retirés', () => {
+      const items = itemsDesLivres(livres, lectures, '2026-10-07', '2026-10-07');
+      expect(items.map((i) => i.titre)).toEqual(['Le chemin de la vie', 'Le chemin de l’obéissance']);
+      expect(items[0].livre).toEqual({ cumul: 100, total: 120, periode: 8 });
+      expect(items[1].livre).toEqual({ cumul: 90, total: 130, periode: 5 }); // la lecture du 8 n'est pas comptée
+    });
+    it('écrit le point dans le format du rapport : mesures du point, puis une ligne par livre', () => {
+      const items = itemsDesLivres(livres, lectures, '2026-10-07', '2026-10-07');
+      const point = { code: 'CL', mesures: [{ type: 'nombre' as const, unite: 'pages', fait: 12 }, { type: 'temps' as const, fait: 1800 }], items };
+      expect(formaterPoint(4, point)).toBe([
+        '4. *CL* : 12 pages; 0h30',
+        '   • Le chemin de la vie (ZTF) : 100/120p (+8p auj.)',
+        '   • Le chemin de l’obéissance (ZTF) : 90/130p (+5p auj.)'
+      ].join('\n'));
+      expect(formaterPoint(4, point, 'en')).toContain('100/120p (+8p today)');
+    });
+    it('sur une période, pas de « auj. » ; sans total, juste les pages', () => {
+      const items = itemsDesLivres([{ ...livres[0], total: null }], lectures, '2026-10-05', '2026-10-11');
+      expect(formaterPoint(1, { code: 'CL', mesures: [], items }, 'fr', false)).toBe('1. *CL* :\n   • Le chemin de la vie (ZTF) : 100p (+8p)');
+    });
   });
 });

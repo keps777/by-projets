@@ -1,8 +1,8 @@
 // PDF du rapport, sans bibliothèque : une page HTML imprimable (A4, s'adapte au contenu) ouverte dans la boîte d'impression
 // du téléphone, d'où l'on choisit « Enregistrer en PDF » ou le partage. Rien ne quitte l'appareil.
-import { formaterMesure, type Langue, type MesureRapport } from '@core/rapport.ts';
+import { formaterLivre, formaterMesure, type ItemRapport, type Langue, type MesureRapport } from '@core/rapport.ts';
 
-export interface LignePdf { n: number; code: string; libelle: string; mesures: MesureRapport[]; ratio: number | null; couleur: string | null }
+export interface LignePdf { n: number; code: string; libelle: string; mesures: MesureRapport[]; ratio: number | null; couleur: string | null; items?: ItemRapport[] }
 export interface DocumentPdf { titre: string; sousTitre: string; nom: string; langue: Langue; lignes: LignePdf[]; genereLe: string }
 
 const echapper = (t: string) => t.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
@@ -21,8 +21,9 @@ export function htmlImprimable(doc: DocumentPdf): string {
   const lignes = doc.lignes.map((l) => {
     const e = etat(l.ratio, doc.langue);
     const mesures = l.mesures.length ? l.mesures.map((m) => `<span class="m">${echapper(formaterMesure(m, doc.langue))}</span>`).join('') : '<span class="m">—</span>';
+    const livres = (l.items ?? []).filter((it) => it.livre).map((it) => `<br><small>• ${echapper(it.titre)}${it.auteur ? ` (${echapper(it.auteur)})` : ''} : ${echapper(formaterLivre(it.livre!, doc.langue))}</small>`).join('');
     return `<tr><td class="n"><span class="pastille" style="background:${echapper(l.couleur ?? '#9D8CFF')}"></span>${l.n}</td>`
-      + `<td><b>${echapper(l.code)}</b><br><small>${echapper(l.libelle)}</small></td><td class="mes">${mesures}</td><td class="etat ${e.classe}">${e.texte}</td></tr>`;
+      + `<td><b>${echapper(l.code)}</b><br><small>${echapper(l.libelle)}</small></td><td class="mes">${mesures}${livres}</td><td class="etat ${e.classe}">${e.texte}</td></tr>`;
   }).join('');
   return `<!doctype html><html lang="${doc.langue}"><head><meta charset="utf-8"><title>${echapper(doc.titre)}</title><style>
 @page { size: A4; margin: 16mm 14mm; }

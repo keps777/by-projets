@@ -5,6 +5,7 @@
   import { basculerFait, corrigerValeur, saisirBloc } from '../../data/actions/blocs.ts';
   import { theme } from '../../ui/theme.svelte.ts';
   import Volet from '../../ui/Volet.svelte';
+  import ChampTemps from '../../ui/ChampTemps.svelte';
   import Icone from '../../ui/Icone.svelte';
   import Interrupteur from '../../ui/Interrupteur.svelte';
   import { cap, chrono, dureeMin, formatValeur, hm, nomDuMois } from './format.ts';
@@ -125,17 +126,22 @@
               <div class="rang">
                 <div class="col serre">
                   <span class="muted petit">{m.label}</span>
-                  {#if edition === m.cle}
+                  {#if edition === m.cle && m.type === 'temps'}
+                    <ChampTemps label={m.label} valeur={m.realise} onchange={(v) => b && corrigerValeur(b.occ.id, m.cle, v ?? 0)} />
+                    <button type="button" class="ok-temps" onclick={() => (edition = null)}>OK</button>
+                  {:else if edition === m.cle}
                     <input class="direct" inputmode="decimal" bind:value={brouillon} aria-label="{m.label} ({m.type === 'temps' ? 'minutes' : m.unite})"
                       onblur={() => valider(m)} onkeydown={(e) => { if (e.key === 'Enter') valider(m); if (e.key === 'Escape') edition = null; }} />
                   {:else}
                     <button type="button" class="valeur" disabled={m.cle === 'temps' && tourne} onclick={() => editer(m)} aria-label="Saisir {m.label}">{valeur(m)} <span class="sur">{prevu(m)}</span></button>
                   {/if}
                 </div>
+                {#if !(edition === m.cle && m.type === 'temps')}
                 <div class="pas">
                   <button type="button" aria-label="Diminuer {m.label}" disabled={m.cle === 'temps' && tourne} onclick={() => ajuster(m, -1)}>−</button>
                   <button type="button" aria-label="Augmenter {m.label}" disabled={m.cle === 'temps' && tourne} onclick={() => ajuster(m, 1)}>+</button>
                 </div>
+                {/if}
               </div>
               <span class="piste large"><span class:bon={atteint(m)} style:width="{largeur(m)}%"></span>{#if m.prevu}<i style:left="{100 / echelle(m)}%"></i>{/if}</span>
             {/if}
@@ -190,7 +196,8 @@
   .volet { display: flex; flex-direction: column; gap: 14px; }
   .col { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
   .grandit { flex: 1; gap: 6px; }
-  .col.serre { gap: 0; }
+  .col.serre { gap: 0; flex: 1; min-width: 0; }
+  .ok-temps { align-self: flex-end; margin-top: 6px; min-height: 40px; padding: 0 18px; border-radius: 12px; border: 1px solid var(--c); background: var(--c); color: var(--c-sur); font-size: 14px; font-weight: 600; }
   .rang { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .rang.base { align-items: baseline; }
   .petit { font-size: 13px; }

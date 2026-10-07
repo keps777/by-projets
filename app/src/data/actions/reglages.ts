@@ -1,6 +1,6 @@
 // Réglages : profil, points du rapport, préréglages d'export.
 import { nouvelId } from '@core/ids.ts';
-import type { MesurePoint, PointRapportLigne, Profil } from '@core/lignes.ts';
+import type { LivreSuivi, MesurePoint, PointRapportLigne, Profil } from '@core/lignes.ts';
 import { magasin } from '../magasin.svelte.ts';
 import { replanifierRappels } from './taches.ts';
 
@@ -29,6 +29,29 @@ export function ajouterPoint(code: string, libelle: string, projetId: string | n
   return id;
 }
 export function modifierPoint(id: string, patch: Partial<PointRapportLigne>): void { magasin.ecrire('points_rapport', { id, ...patch }); }
+/** Un point accepte des livres s'il compte des pages (CL) ou en suit déjà. */
+export const accepteLivres = (p: Pick<PointRapportLigne, 'mesures' | 'livres'>): boolean => !!p.livres?.length || (p.mesures ?? []).some((m) => m.cle === 'nombre:pages');
+
+export interface NouveauLivre { titre: string; auteur?: string; total?: number | null; depart?: number }
+
+/** Ajoute un livre à suivre sur un point (CL) : titre, auteur (initiales), pages au total, pages déjà lues. */
+export function ajouterLivre(pointId: string, n: NouveauLivre): string | null {
+  const p = magasin.trouver('points_rapport', pointId);
+  const titre = n.titre.trim();
+  if (!p || !titre) return null;
+  const id = nouvelId();
+  const total = n.total != null && n.total > 0 ? Math.round(n.total) : null;
+  const livre: LivreSuivi = { id, titre, auteur: (n.auteur ?? '').trim(), total, depart: Math.max(0, Math.round(n.depart ?? 0)), actif: true };
+  magasin.ecrire('points_rapport', { id: pointId, livres: [...(p.livres ?? []), livre] });
+  return id;
+}
+
+/** Le livre quitte le rapport ; ses pages déjà saisies restent dans l'historique. */
+export function retirerLivre(pointId: string, livreId: string): void {
+  const p = magasin.trouver('points_rapport', pointId);
+  if (p) magasin.ecrire('points_rapport', { id: pointId, livres: (p.livres ?? []).map((l) => (l.id === livreId ? { ...l, actif: false } : l)) });
+}
+
 export function retirerPoint(id: string): void { magasin.supprimer('points_rapport', id); }
 
 export function enregistrerPreset(nom: string, points: string[]): string {

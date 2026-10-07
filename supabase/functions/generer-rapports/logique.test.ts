@@ -68,7 +68,7 @@ describe('construireContenu', () => {
     const c = construireContenu(donnees, '2026-10-04');
     expect(c.points.map((p) => p.code)).toEqual(['PA', 'BR']);
     expect(formaterRapport({ nom: 'Luther', entete: c.entete, points: c.points })).toBe(
-      '*Rapport · 4 octobre 2026 · Luther*\n\n1. *PA* : ~0h28 (0h12; ~0h16)\n\n2. *BR* : 3/7 ch; réf. Jean 1-3; 0h25/0h45');
+      '*Rapport · 4 octobre 2026 · Luther*\n\n1. *PA* : ~0h28\n\n2. *BR* : 3/7 ch; réf. Jean 1-3; 0h25/0h45');
   });
 });
 

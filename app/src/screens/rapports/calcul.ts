@@ -1,7 +1,7 @@
 // Calcul des rapports dans l'app (jour, semaine, mois), avec le noyau (mesuresDuPoint, formaterRapport). Fonctions pures.
 // Même résolution des objectifs que le serveur (supabase/functions/generer-rapports/contenu.ts), étendue à une période.
 import { TYPES } from '@core/metriques.ts';
-import { formaterMesures, formaterRapport, mesuresDuPoint, type Langue, type MesureConfig, type MesureRapport, type PointRapport } from '@core/rapport.ts';
+import { formaterMesures, formaterRapport, itemsDesLivres, mesuresDuPoint, type ItemRapport, type Langue, type MesureConfig, type MesureRapport, type PointRapport } from '@core/rapport.ts';
 import type { MesurePoint, MetriqueLigne, PointRapportLigne, Projet, Rubrique, Saisie, SaisieValeur, SousProjetLigne } from '@core/lignes.ts';
 import type { Jour, Metrique, TypeMetrique, ValeurSaisie } from '@core/types.ts';
 import type { Periode } from './periodes.ts';
@@ -80,7 +80,7 @@ export function ratioPoint(ms: MesureRapport[]): number | null {
 }
 
 export interface PointPrepare { point: PointRapportLigne; couleur: string | null; valeurs: ValeurSaisie[] }
-export interface PointCalcule extends PointPrepare { mesures: MesureRapport[]; ratio: number | null }
+export interface PointCalcule extends PointPrepare { mesures: MesureRapport[]; ratio: number | null; /** Livres lus pendant la période (point CL). */ items: ItemRapport[] }
 
 /** Prépare une fois les points actifs (valeurs saisies, couleur de rubrique) pour calculer ensuite plusieurs périodes. */
 export function preparer(d: DonneesRapport): PointPrepare[] {
@@ -99,7 +99,8 @@ export function preparer(d: DonneesRapport): PointPrepare[] {
 export function calculerPoint(pp: PointPrepare, d: DonneesRapport, debut: Jour, fin: Jour): PointCalcule {
   const configs = (pp.point.mesures ?? []).map((m) => configDeMesure(m, pp.point, d, debut, fin));
   const mesures = mesuresDuPoint(configs, pp.valeurs, debut, fin);
-  return { ...pp, mesures, ratio: ratioPoint(mesures) };
+  const items = itemsDesLivres(pp.point.livres, pp.valeurs.map((v) => ({ cle: v.cle, jour: v.jour, valeur: v.valeur })), debut, fin);
+  return { ...pp, mesures, ratio: ratioPoint(mesures), items };
 }
 
 export const calculerPoints = (prep: PointPrepare[], d: DonneesRapport, debut: Jour, fin: Jour) => prep.map((pp) => calculerPoint(pp, d, debut, fin));
@@ -107,8 +108,8 @@ export const calculerPoints = (prep: PointPrepare[], d: DonneesRapport, debut: J
 export const atteint = (r: number | null) => r != null && r >= 1;
 
 /** Texte WhatsApp du rapport (format de l'utilisateur, spec §9), pour les points choisis. */
-export function texteDuRapport(o: { periode: Periode; nom: string; langue: Langue; points: { point: PointRapportLigne; mesures: MesureRapport[] }[] }): string {
-  const points: PointRapport[] = o.points.map((p) => ({ code: p.point.code, mesures: p.mesures }));
+export function texteDuRapport(o: { periode: Periode; nom: string; langue: Langue; points: { point: PointRapportLigne; mesures: MesureRapport[]; items?: ItemRapport[] }[] }): string {
+  const points: PointRapport[] = o.points.map((p) => ({ code: p.point.code, mesures: p.mesures, items: p.items }));
   return formaterRapport({ langue: o.langue, nom: o.nom, entete: { type: o.periode.vue, debut: o.periode.debut, fin: o.periode.fin }, points });
 }
 
@@ -118,10 +119,10 @@ export function resumeCourt(points: PointCalcule[], langue: Langue = 'fr', max =
 }
 
 /** Contenu structuré enregistré dans la table `rapports` (même forme que celui du serveur). */
-export interface ContenuRapport { version: 1; entete: { type: 'jour'; debut: Jour }; points: { point_id: string; code: string; libelle: string; mesures: MesureRapport[] }[] }
+export interface ContenuRapport { version: 1; entete: { type: 'jour'; debut: Jour }; points: { point_id: string; code: string; libelle: string; mesures: MesureRapport[]; items?: ItemRapport[] }[] }
 
 export function contenuDuJour(jour: Jour, points: PointCalcule[]): ContenuRapport {
-  return { version: 1, entete: { type: 'jour', debut: jour }, points: points.map((p) => ({ point_id: p.point.id, code: p.point.code, libelle: p.point.libelle, mesures: p.mesures })) };
+  return { version: 1, entete: { type: 'jour', debut: jour }, points: points.map((p) => ({ point_id: p.point.id, code: p.point.code, libelle: p.point.libelle, mesures: p.mesures, ...(p.items.length ? { items: p.items } : {}) })) };
 }
 
 /** Vrai si le contenu enregistré diffère du calcul actuel (une saisie corrigée après l'envoi). */
@@ -136,5 +137,5 @@ export function modifieDepuis(enregistre: unknown, actuel: ContenuRapport): bool
 export function texteDuContenu(c: unknown, nom: string, langue: Langue): string | null {
   const e = c as Partial<ContenuRapport> | null;
   if (!e?.points || !e.entete) return null;
-  return formaterRapport({ langue, nom, entete: { type: 'jour', debut: e.entete.debut }, points: e.points.map((p) => ({ code: p.code, mesures: p.mesures })) });
+  return formaterRapport({ langue, nom, entete: { type: 'jour', debut: e.entete.debut }, points: e.points.map((p) => ({ code: p.code, mesures: p.mesures, items: p.items })) });
 }

@@ -22,6 +22,9 @@
   import { chronos } from '../../data/chronos.svelte.ts';
   import { enregistrerSession, type ValeurSession } from './session.ts';
   import { mesuresDuPoint } from './mesures-point.ts';
+  import { cleDuLivre } from '@core/lignes.ts';
+  import { accepteLivres } from '../../data/actions/reglages.ts';
+  import { magasin } from '../../data/magasin.svelte.ts';
   import CartePoint from './CartePoint.svelte';
   import PanneauExport from './PanneauExport.svelte';
 
@@ -69,7 +72,14 @@
   // Modifier à la main les valeurs d'un point (jour) : même saisie manuelle que dans les sous-projets, qui se mettent à jour d'eux-mêmes.
   let edition = $state<PointCalcule | null>(null);
   const mesuresEdition = $derived(edition ? mesuresDuPoint(edition.point, d, periode.debut, periode.fin) : null);
-  const metriquesEdition = $derived(mesuresEdition?.metriques ?? []);
+  /** Un livre actif du point (CL) devient une ligne « Pages · titre » dans la saisie du jour. */
+  const pointEdition = $derived(edition ? magasin.trouver('points_rapport', edition.point.id) ?? edition.point : null);
+  const livresEdition = $derived((pointEdition?.livres ?? []).filter((l) => l.actif));
+  const metriquesEdition = $derived([
+    ...(mesuresEdition?.metriques ?? []),
+    ...livresEdition.map((l) => ({ id: cleDuLivre(l.id), cle: cleDuLivre(l.id), type: 'nombre' as const, nom: `Pages · ${l.titre}`, unite: 'p', cible: null, periode: 'jour' as const, sens: 'plus' as const, dansRapport: false }))
+  ]);
+  const pointLivres = $derived(pointEdition && accepteLivres(pointEdition) ? { id: pointEdition.id, livres: pointEdition.livres ?? [] } : null);
   const periodeEdition = $derived(mesuresEdition?.periode ?? { debut: periode.debut, fin: null });
   // Chrono d'un point (jour en cours seulement) : ▶ lance, ■ arrête et ouvre la pop-up des autres mesures, puis on valide.
   const chronometrable = $derived(vue === 'jour' && periode.debut === auj);
@@ -160,7 +170,7 @@
 </EcranPage>
 
 <div style={edition ? styleCouleur(couleur(edition.couleur)) : ''}>
-  <VoletSaisie ouvert={edition != null} onfermer={() => (edition = null)} projetId={edition?.point.projet_id ?? ''} metriques={metriquesEdition} jour={periode.debut} aujourdhui={auj} periode={periodeEdition} />
+  <VoletSaisie ouvert={edition != null} onfermer={() => (edition = null)} projetId={edition?.point.projet_id ?? ''} metriques={metriquesEdition} {pointLivres} jour={periode.debut} aujourdhui={auj} periode={periodeEdition} />
 </div>
 
 <div style={sessionPour ? styleCouleur(couleur(sessionPour.couleur)) : ''}>

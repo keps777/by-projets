@@ -1,8 +1,8 @@
 // Contenu structuré du rapport du jour (spec §9), calculé avec le noyau (mesuresDuPoint). L'app en compose le texte
 // à l'affichage (formaterRapport), selon le préréglage et la langue. Fonctions pures.
 import {
-  TYPES, mesuresDuPoint,
-  type MesureConfig, type MesurePoint, type MesureRapport, type Metrique, type MetriqueLigne, type PointRapportLigne,
+  TYPES, itemsDesLivres, mesuresDuPoint,
+  type ItemRapport, type LectureLivre, type MesureConfig, type MesurePoint, type MesureRapport, type Metrique, type MetriqueLigne, type PointRapportLigne,
   type Saisie, type SaisieValeur, type SousProjetLigne, type TypeMetrique, type ValeurSaisie
 } from '../_shared/core/index.ts';
 
@@ -15,9 +15,11 @@ export interface DonneesJour {
   saisies: Saisie[];
   /** Valeurs de ces saisies. */
   valeurs: SaisieValeur[];
+  /** Pages lues par livre (clé « livre:<id> »), tous jours confondus jusqu'au jour du rapport, avec le projet de leur saisie. */
+  lectures?: (LectureLivre & { projet_id: string })[];
 }
 
-export interface PointContenu { point_id: string; code: string; libelle: string; mesures: MesureRapport[] }
+export interface PointContenu { point_id: string; code: string; libelle: string; mesures: MesureRapport[]; items?: ItemRapport[] }
 export interface ContenuRapport { version: 1; entete: { type: 'jour'; debut: string }; points: PointContenu[] }
 
 const STATUTS_SUIVIS = new Set(['en_cours', 'a_valider', 'termine']);
@@ -76,9 +78,14 @@ export function construireContenu(d: DonneesJour, jour: string): ContenuRapport 
   const points = d.points
     .filter((p) => p.actif && !p.supprime_le)
     .sort((a, b) => a.ordre - b.ordre)
-    .map((p) => ({
-      point_id: p.id, code: p.code, libelle: p.libelle,
-      mesures: mesuresDuPoint((p.mesures ?? []).map((m) => configDeMesure(m, p, d, jour)), valeursDuPoint(p, d), jour, jour)
-    }));
+    .map((p) => {
+      const lectures = (d.lectures ?? []).filter((l) => !p.projet_id || l.projet_id === p.projet_id);
+      const items = itemsDesLivres(p.livres, lectures, jour, jour);
+      return {
+        point_id: p.id, code: p.code, libelle: p.libelle,
+        mesures: mesuresDuPoint((p.mesures ?? []).map((m) => configDeMesure(m, p, d, jour)), valeursDuPoint(p, d), jour, jour),
+        ...(items.length ? { items } : {})
+      };
+    });
   return { version: 1, entete: { type: 'jour', debut: jour }, points };
 }

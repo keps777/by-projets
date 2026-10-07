@@ -4,6 +4,7 @@ import { ajouterJours, ecartJours, joursDuMois, maxJour, minJour, moisDe, premie
 import { TYPES, agreger, libelleChoix, valeursEntre } from './metriques.ts';
 import { fenetreDuMois, joursTotaux } from './progression.ts';
 import { formatHeure, formatMontantCourt, formatPoids, formatTemps, nombre } from './units.ts';
+import { cleDuLivre, type LivreSuivi } from './lignes.ts';
 import type { Jour, Metrique, OptionChoix, SousProjetPeriode, TypeMetrique, ValeurSaisie } from './types.ts';
 
 export type Langue = 'fr' | 'en';
@@ -23,7 +24,9 @@ export interface MesureRapport {
   prefixe?: string;
 }
 
-export interface ItemRapport { titre: string; auteur?: string; mesures: MesureRapport[] }
+/** Pages d'un livre : cumul (départ compris), total du livre et pages lues pendant la période. */
+export interface LivreRapport { cumul: number; total: number | null; periode: number }
+export interface ItemRapport { titre: string; auteur?: string; mesures: MesureRapport[]; livre?: LivreRapport }
 export interface PointRapport { code: string; mesures: MesureRapport[]; items?: ItemRapport[] }
 
 const espaces = (t: string) => t.replace(/[  ]/g, ' ');
@@ -33,14 +36,18 @@ const T = {
   en: { ref: 'ref.', oui: 'yes', non: 'no', rapport: 'Report', semaine: 'Weekly report', mois: 'Monthly report', locale: 'en-US' }
 } as const;
 
-export function formaterMesure(m: MesureRapport, langue: Langue = 'fr'): string {
+/**
+ * Une mesure écrite. Le détail des séances (« 1h55; 0h40… ») n'entre que si `avecDetails` : il se montre dans la page Rapports,
+ * mais le texte exporté (WhatsApp, PDF) ne garde que le total.
+ */
+export function formaterMesure(m: MesureRapport, langue: Langue = 'fr', avecDetails = false): string {
   const t = T[langue];
   const att = m.attendu;
   switch (m.type) {
     case 'temps': {
       if (m.fait == null) return '—';
       const base = formatTemps(m.fait, m.approx) + (att != null ? '/' + formatTemps(att) : '');
-      return m.details?.length ? `${base} (${m.details.join('; ')})` : base;
+      return avecDetails && m.details?.length ? `${base} (${m.details.join('; ')})` : base;
     }
     case 'fois': return m.fait == null ? '—' : nombre(m.fait) + (att != null ? '/' + nombre(att) : '') + (m.unite ? ` ${m.unite}` : '');
     case 'nombre': return m.fait == null ? '—' : `${m.prefixe ?? ''}${nombre(m.fait)}${att != null ? '/' + nombre(att) : ''}${m.unite ? ' ' + m.unite : ''}`;
@@ -56,12 +63,22 @@ export function formaterMesure(m: MesureRapport, langue: Langue = 'fr'): string 
   }
 }
 
-export const formaterMesures = (ms: MesureRapport[], langue: Langue = 'fr') => ms.map((m) => formaterMesure(m, langue)).join('; ');
+export const formaterMesures = (ms: MesureRapport[], langue: Langue = 'fr', avecDetails = false) => ms.map((m) => formaterMesure(m, langue, avecDetails)).join('; ');
 
-export function formaterPoint(n: number, p: PointRapport, langue: Langue = 'fr'): string {
+/** « 100/120p (+8p auj.) » : cumul sur total, puis les pages de la période (« auj. » pour une seule journée). */
+export function formaterLivre(l: LivreRapport, langue: Langue = 'fr', unJour = true): string {
+  const base = `${nombre(l.cumul)}${l.total != null ? '/' + nombre(l.total) : ''}p`;
+  const quand = unJour ? (langue === 'en' ? ' today' : ' auj.') : '';
+  return l.periode > 0 ? `${base} (+${nombre(l.periode)}p${quand})` : base;
+}
+
+export function formaterPoint(n: number, p: PointRapport, langue: Langue = 'fr', unJour = true): string {
   if (p.items?.length) {
-    const lignes = p.items.map((it) => `   • _${it.titre}_${it.auteur ? ` (${it.auteur})` : ''} : ${formaterMesures(it.mesures, langue)}`);
-    return `${n}. *${p.code}* :\n${lignes.join('\n')}`;
+    const entete = p.mesures.length ? ` ${formaterMesures(p.mesures, langue)}` : '';
+    const lignes = p.items.map((it) => it.livre
+      ? `   • ${it.titre}${it.auteur ? ` (${it.auteur})` : ''} : ${formaterLivre(it.livre, langue, unJour)}`
+      : `   • _${it.titre}_${it.auteur ? ` (${it.auteur})` : ''} : ${formaterMesures(it.mesures, langue)}`);
+    return `${n}. *${p.code}* :${entete}\n${lignes.join('\n')}`;
   }
   return `${n}. *${p.code}* : ${formaterMesures(p.mesures, langue)}`;
 }
@@ -88,7 +105,7 @@ export function enteteRapport(e: EnteteRapport, nom: string, langue: Langue = 'f
 
 export function formaterRapport(o: { langue?: Langue; nom: string; entete: EnteteRapport; points: PointRapport[] }): string {
   const langue = o.langue ?? 'fr';
-  return [enteteRapport(o.entete, o.nom, langue), ...o.points.map((p, i) => formaterPoint(i + 1, p, langue))].join('\n\n');
+  return [enteteRapport(o.entete, o.nom, langue), ...o.points.map((p, i) => formaterPoint(i + 1, p, langue, o.entete.type === 'jour'))].join('\n\n');
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -136,6 +153,30 @@ export function mesuresDuPoint(configs: MesureConfig[], valeurs: ValeurSaisie[],
       details: m.type === 'temps' && v.length > 1 && unJour ? v.map((x) => formatTemps(x.valeur, x.approx)) : undefined
     };
   });
+}
+
+/** Valeur lue d'un livre : pages d'un jour (clé « livre:<id> » dans les saisies). */
+export interface LectureLivre { cle: string; jour: Jour; valeur: number }
+
+/**
+ * Lignes « • Titre (AUTEUR) : 100/120p (+8p auj.) » d'un point : les livres actifs lus pendant la période, avec le cumul
+ * (pages de départ + toutes les lectures jusqu'à la fin de la période) sur le total du livre.
+ */
+export function itemsDesLivres(livres: LivreSuivi[] | null | undefined, lectures: LectureLivre[], debut: Jour, fin: Jour): ItemRapport[] {
+  const items: ItemRapport[] = [];
+  for (const l of livres ?? []) {
+    if (!l.actif) continue;
+    const cle = cleDuLivre(l.id);
+    let cumul = l.depart || 0, periode = 0;
+    for (const v of lectures) {
+      if (v.cle !== cle || v.jour > fin) continue;
+      cumul += v.valeur;
+      if (v.jour >= debut) periode += v.valeur;
+    }
+    if (periode <= 0) continue;
+    items.push({ titre: l.titre, auteur: l.auteur || undefined, mesures: [], livre: { cumul, total: l.total, periode } });
+  }
+  return items;
 }
 
 export { premierDuMois, dernierDuMois, ecartJours, maxJour, minJour, fenetreDuMois };

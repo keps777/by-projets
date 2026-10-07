@@ -124,7 +124,22 @@ export interface SaisieValeur extends Base {
 export interface DetailMouvement { libelle: string | null; categorie: string | null }
 
 export interface MesurePoint { cle: string; sous_projet_id: string | null }
-export interface PointRapportLigne extends Base { ordre: number; code: string; libelle: string; projet_id: string | null; mesures: MesurePoint[]; actif: boolean }
+/** Un livre suivi par un point du rapport (ex. CL) : pages lues chaque jour, cumul sur le total. */
+export interface LivreSuivi {
+  id: string;
+  titre: string;
+  /** Initiales ou nom de l'auteur, entre parenthèses dans le rapport (« ZTF »). */
+  auteur: string;
+  /** Nombre de pages du livre (null : inconnu). */
+  total: number | null;
+  /** Pages déjà lues avant le suivi dans l'app. */
+  depart: number;
+  actif: boolean;
+}
+export const CLE_LIVRE = 'livre:';
+export const cleDuLivre = (id: string) => `${CLE_LIVRE}${id}`;
+
+export interface PointRapportLigne extends Base { ordre: number; code: string; libelle: string; projet_id: string | null; mesures: MesurePoint[]; actif: boolean; livres?: LivreSuivi[] }
 export interface PresetExport extends Base { nom: string; points: string[]; ordre: number }
 export interface RapportLigne extends Base { jour: string; contenu: unknown; genere_a: string; maj_a: string; envoye_a: string | null }
 
