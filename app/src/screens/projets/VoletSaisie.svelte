@@ -16,6 +16,7 @@
   import { magasin } from '../../data/magasin.svelte.ts';
   import type { LivreSuivi } from '@core/lignes.ts';
   import { ajouterLivre, retirerLivre } from '../../data/actions/reglages.ts';
+  import { catalogueDeLivres, proposerLivres, type LivreCatalogue } from '../../data/catalogue-livres.ts';
   import { contenuDuJour, idSaisieManuelle, saisirJour } from './donnees.ts';
   import { champTexte, jourCourt, lireChamp, pasDe, valeurTexte } from './vues.ts';
 
@@ -87,6 +88,12 @@
   }
 
   let nouveau = $state<{ titre: string; auteur: string; total: string; depart: string } | null>(null);
+  // Propositions : les livres de ZTF et tous ceux déjà ajoutés, sur n'importe quel point (le catalogue grandit à chaque livre ajouté).
+  const catalogue = $derived(catalogueDeLivres(magasin.lignes.points_rapport));
+  const propositions = $derived(nouveau && pointLivres ? proposerLivres(nouveau.titre, catalogue, pointLivres.livres, nouveau.titre.trim() ? 6 : 12) : []);
+  function choisirLivre(l: LivreCatalogue) {
+    if (nouveau) nouveau = { ...nouveau, titre: l.titre, auteur: l.auteur, total: l.total ? String(l.total) : nouveau.total };
+  }
   function creerLivre() {
     if (!pointLivres || !nouveau?.titre.trim()) return;
     const n = (t: string) => { const v = Math.round(Number(t.replace(',', '.').replace(/[^\d.]/g, ''))); return Number.isFinite(v) && v > 0 ? v : null; };
@@ -155,6 +162,13 @@
       {:else}
         <div class="nouveau">
           <input class="texte" bind:value={nouveau.titre} placeholder="Titre du livre" aria-label="Titre du livre" autocomplete="off" />
+          {#if propositions.length}
+            <div class="propositions" role="group" aria-label="Livres proposés">
+              {#each propositions as l (l.titre)}
+                <button type="button" class="prop" onclick={() => choisirLivre(l)}>{l.titre}{l.auteur ? ` · ${l.auteur}` : ''}{l.total ? ` · ${l.total} p` : ''}</button>
+              {/each}
+            </div>
+          {/if}
           <input class="texte" bind:value={nouveau.auteur} placeholder="Auteur ou initiales (ZTF)" aria-label="Auteur du livre" autocomplete="off" />
           <span class="deux">
             <input class="texte mono" bind:value={nouveau.total} inputmode="numeric" placeholder="Pages au total" aria-label="Pages au total" />
@@ -194,6 +208,9 @@
   .livre .nom { font-size: 14px; }
   .retirer, .ajouter { min-height: 44px; border-radius: 12px; border: 1px solid var(--ligne); background: transparent; padding: 0 12px; font-size: 13px; font-weight: 600; color: var(--c-encre, var(--texte)); }
   .retirer { min-height: 40px; color: var(--muted); }
+  .propositions { display: flex; flex-direction: column; gap: 4px; max-height: 190px; overflow-y: auto; overscroll-behavior: contain; padding: 2px; border-radius: 12px; border: 1px solid var(--ligne); }
+  .prop { min-height: 44px; border: 0; border-radius: 10px; background: transparent; text-align: left; padding: 0 10px; font-size: 14px; font-weight: 600; color: var(--c-encre, var(--texte)); }
+  .prop:active { background: var(--champ); }
   .nouveau { display: flex; flex-direction: column; gap: 8px; }
   .deux { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .unite { flex: 1; font-size: 13px; font-weight: 500; }

@@ -818,3 +818,26 @@ test('volet d’un bloc : le temps passé se corrige en heures, minutes, seconde
   await expect(volet.getByLabel('Minutes')).toHaveValue('07');
   await volet.getByRole('button', { name: 'OK', exact: true }).click();
 });
+
+test('Rapports : les livres de ZTF sont proposés, et un livre ajouté est proposé ensuite sur un autre point', async ({ page }) => {
+  await page.goto('/rapports');
+  await page.getByRole('button', { name: 'CL : modifier les valeurs' }).click();
+  const fenetre = page.getByRole('dialog');
+  await fenetre.getByRole('button', { name: '+ Ajouter un livre' }).click();
+  await fenetre.getByLabel('Titre du livre').fill('chemin obeissance');
+  await fenetre.getByRole('button', { name: /Le Chemin de l’Obéissance · ZTF/ }).click();
+  await expect(fenetre.getByLabel('Titre du livre')).toHaveValue('Le Chemin de l’Obéissance');
+  await expect(fenetre.getByLabel('Auteur du livre')).toHaveValue('ZTF');
+  await fenetre.getByLabel('Pages au total').fill('130');
+  await fenetre.getByRole('button', { name: 'Ajouter', exact: true }).click();
+  // Un livre inconnu s'ajoute au catalogue : il est proposé la fois suivante, avec ses pages.
+  await fenetre.getByRole('button', { name: '+ Ajouter un livre' }).click();
+  await fenetre.getByLabel('Titre du livre').fill('Mon livre perso');
+  await fenetre.getByLabel('Auteur du livre').fill('MOI');
+  await fenetre.getByLabel('Pages au total').fill('250');
+  await fenetre.getByRole('button', { name: 'Ajouter', exact: true }).click();
+  await fenetre.getByRole('button', { name: 'Retirer Mon livre perso' }).click();
+  await fenetre.getByRole('button', { name: '+ Ajouter un livre' }).click();
+  await fenetre.getByLabel('Titre du livre').fill('perso');
+  await expect(fenetre.getByRole('button', { name: 'Mon livre perso · MOI · 250 p' })).toBeVisible();
+});
