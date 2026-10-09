@@ -675,6 +675,7 @@ test.describe('glisser un bloc sur la journée', () => {
     await page.mouse.up();
     await expect(page.getByRole('button', { name: /Préparer la rencontre, 09:50 à 11:\d\d/ })).toBeVisible();
 
+    await page.waitForTimeout(600); // l'écriture locale (IndexedDB) suit l'affichage de quelques millisecondes
     await page.reload();
     await expect(page.getByRole('button', { name: /Préparer la rencontre, 09:50 à 11:\d\d/ })).toBeVisible();
   });
