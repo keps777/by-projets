@@ -40,6 +40,16 @@ export function ecouleS(m: Minuteur, now: number): number {
   return Math.max(0, Math.floor((fin - m.demarreeA) / 1000 - m.pauseCumuleeS));
 }
 
+/**
+ * Corrige à la main le temps écoulé d'un minuteur qui tourne ou qui est en pause : le départ recule ou avance pour que `ecouleS` vaille
+ * `secondes` à cet instant (en pause, il reste figé à cette valeur ; en cours, il repart de là). Sans effet sur un bloc non lancé ou fait.
+ */
+export function fixerEcoule(m: Minuteur, secondes: number, now: number): Minuteur {
+  if ((m.etat !== 'en_cours' && m.etat !== 'pause') || m.demarreeA == null) return m;
+  const fin = m.etat === 'pause' && m.pauseDepuis != null ? m.pauseDepuis : now;
+  return { ...m, demarreeA: fin - (Math.max(0, secondes) + m.pauseCumuleeS) * 1000 };
+}
+
 /** Remplissage du bloc, de 0 à 1. */
 export function remplissage(m: Minuteur, now: number, dureePrevueS: number): number {
   if (m.etat === 'faite') return 1;

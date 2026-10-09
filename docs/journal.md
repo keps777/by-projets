@@ -2,6 +2,10 @@
 
 > Lire ce fichier en début de session (après `CLAUDE.md`). Ajouter une entrée en fin de session.
 
+## 9 oct. 2026 — Temps d'un minuteur corrigeable
+
+- Le temps d'un bloc en cours ou en pause se corrige dans le volet (h/min/s, ±5 min) : `fixerEcoule` (core), `corrigerTempsEcoule`. Spec §8.
+
 ## 7 oct. 2026 — Alarmes, rapport à 23:45, livres (CL)
 
 - Plusieurs métriques pilotent la barre (migration `20261007000400`, `progressionPilotes`) ; tâches proposées dans la Fiche (`propositions-taches.ts`) ; tâche d'un projet à livres : « Livre lu » (`ChoixLivre`).

@@ -1,6 +1,6 @@
 // Vie d'un bloc : lancer, pause, terminer, saisie unique et correction (spec §8).
 import { idSaisie, idSaisieValeur } from '@core/ids.ts';
-import { ecouleS, initial, lancer, pause, reprendre, terminer, type Minuteur } from '@core/minuteur.ts';
+import { ecouleS, fixerEcoule, initial, lancer, pause, reprendre, terminer, type Minuteur } from '@core/minuteur.ts';
 import type { Occurrence, Saisie, SaisieValeur, SourceSaisie } from '@core/lignes.ts';
 import { magasin } from '../magasin.svelte.ts';
 import { horloge } from '../temps.svelte.ts';
@@ -28,6 +28,12 @@ export function lancerBloc(occId: string): void {
   // Relancer un bloc déjà fait ou corrigé : on repart du temps déjà enregistré.
   const acquis = magasin.lignes.saisies.find((s) => s.occurrence_id === occId) ? valeurSaisie(occId, 'temps') ?? 0 : 0;
   appliquer(occId, lancer(Date.now(), o.etat === 'faite' ? acquis : 0));
+}
+
+/** Corrige à la main le temps écoulé d'un bloc dont le minuteur tourne ou est en pause (« 1 h 30 » au lieu de 1 h 00). */
+export function corrigerTempsEcoule(occId: string, secondes: number): void {
+  const o = magasin.trouver('occurrences', occId);
+  if (o && (o.etat === 'en_cours' || o.etat === 'pause')) appliquer(occId, fixerEcoule(minuteurDe(o), secondes, Date.now()));
 }
 
 export function pauseBloc(occId: string): void { const o = magasin.trouver('occurrences', occId); if (o) appliquer(occId, pause(minuteurDe(o), Date.now())); }

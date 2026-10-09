@@ -928,3 +928,23 @@ test('tâche du projet LLC : choisir ou créer le livre lu, et ses pages aliment
   await expect(cl.getByText('Le Chemin de la Vie (ZTF)')).toBeVisible();
   await expect(cl.getByText(/102\/120p \(\+10p auj\.\)/)).toBeVisible();
 });
+
+test('volet d’un bloc : le temps d’un minuteur en pause se corrige à la main, et le minuteur repart de là', async ({ page }) => {
+  await page.goto('/tache/nouvelle?sans-projet=1');
+  await page.getByLabel('Titre de la tâche').fill('Minuteur à corriger');
+  await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+  await page.getByRole('button', { name: /Minuteur à corriger/ }).first().click();
+  const volet = page.getByRole('dialog');
+  await volet.getByRole('button', { name: 'Lancer', exact: true }).click();
+  await volet.getByRole('button', { name: 'Pause', exact: true }).click();
+  await volet.getByRole('button', { name: /Saisir Temps/ }).click();
+  await volet.getByLabel('Heures').fill('1');
+  await volet.getByLabel('Minutes').fill('30');
+  await volet.getByLabel('Secondes').fill('0');
+  await volet.getByLabel('Secondes').blur();
+  await volet.getByRole('button', { name: 'OK', exact: true }).click();
+  await expect(volet.getByText(/^1:30:0\d \/ /)).toBeVisible();
+  // Les boutons − et + corrigent aussi le temps en cours (pas de 5 min).
+  await volet.getByRole('button', { name: /Augmenter Temps/ }).click();
+  await expect(volet.getByText(/^1:35:0\d \/ /)).toBeVisible();
+});

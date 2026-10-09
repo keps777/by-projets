@@ -24,3 +24,7 @@ Chaque bloc a **son propre minuteur** : on peut lancer ▶ plusieurs blocs en m�
 
 ## Passages de la Bible par menus déroulants (5 oct. 2026)
 Partout où l'on note ce qui a été lu (Mode Focus, volet d'un bloc, « Saisir un jour » d'un sous-projet, saisie depuis un point du rapport), les passages se choisissent dans trois **menus déroulants** : **Livre** (66 livres, groupés Ancien / Nouveau Testament), **Du chapitre**, **Au chapitre** (jamais avant « du chapitre »), puis « Ajouter ». Après un ajout, le chapitre suivant est déjà prêt (Luc 22–24 → Luc 24… ou Matthieu 1–2 → Matthieu 3) et le dernier livre utilisé est retenu. « Livre entier » remplit tous les chapitres. Chaque passage ajouté ou retiré met à jour la référence écrite (« Luc 22–24 · Matthieu 1–2 ») et le **nombre de chapitres lus**. Les anciennes saisies écrites à la main (« Mt 8–10 ») sont relues en passages.
+
+## Corriger le temps d'un minuteur en cours (9 oct. 2026)
+Dans le volet d'un bloc, le **temps passé se corrige à la main même quand le minuteur tourne ou est en pause** : toucher la valeur ouvre les champs **h · min · s** (OK pour finir), et − / + corrigent de 5 min. Le départ du minuteur est déplacé pour que le temps écoulé vaille la valeur choisie (`fixerEcoule`) : en pause il reste figé à cette valeur, en cours il repart de là ; les pauses déjà prises sont conservées.
+

@@ -2,7 +2,7 @@
   import { nombre } from '@core/units.ts';
   import type { BlocVue } from '../../data/requetes.ts';
   import { horloge } from '../../data/temps.svelte.ts';
-  import { basculerFait, corrigerValeur, saisirBloc } from '../../data/actions/blocs.ts';
+  import { basculerFait, corrigerTempsEcoule, corrigerValeur, saisirBloc } from '../../data/actions/blocs.ts';
   import { theme } from '../../ui/theme.svelte.ts';
   import Volet from '../../ui/Volet.svelte';
   import ChampTemps from '../../ui/ChampTemps.svelte';
@@ -38,11 +38,14 @@
   let edition = $state<string | null>(null);
   let brouillon = $state('');
 
+  /** Temps affiché pendant qu'on le corrige à la main sur un minuteur qui tourne (il ne bouge plus sous les doigts). */
+  let brouillonTemps = $state(0);
   function ajuster(m: MesureBloc, sens: 1 | -1) {
     if (!b) return;
+    if (m.cle === 'temps' && tourne) { corrigerTempsEcoule(b.occ.id, Math.max(0, m.realise + sens * m.pas)); return; }
     corrigerValeur(b.occ.id, m.cle, Math.max(0, Math.round((m.realise + sens * m.pas) * 1000) / 1000));
   }
-  function editer(m: MesureBloc) { edition = m.cle; brouillon = String(nombre(versAffichage(m.type, m.realise), 2)).replace(/\s/g, ''); }
+  function editer(m: MesureBloc) { brouillonTemps = m.realise; edition = m.cle; brouillon = String(nombre(versAffichage(m.type, m.realise), 2)).replace(/\s/g, ''); }
   function valider(m: MesureBloc) {
     if (!b || edition !== m.cle) return;
     const v = depuisAffichage(m.type, brouillon);
@@ -127,19 +130,19 @@
                 <div class="col serre">
                   <span class="muted petit">{m.label}</span>
                   {#if edition === m.cle && m.type === 'temps'}
-                    <ChampTemps label={m.label} valeur={m.realise} onchange={(v) => b && corrigerValeur(b.occ.id, m.cle, v ?? 0)} />
+                    <ChampTemps label={m.label} valeur={tourne ? brouillonTemps : m.realise} onchange={(v) => { if (!b) return; if (tourne) { brouillonTemps = v ?? 0; corrigerTempsEcoule(b.occ.id, v ?? 0); } else corrigerValeur(b.occ.id, m.cle, v ?? 0); }} />
                     <button type="button" class="ok-temps" onclick={() => (edition = null)}>OK</button>
                   {:else if edition === m.cle}
                     <input class="direct" inputmode="decimal" bind:value={brouillon} aria-label="{m.label} ({m.type === 'temps' ? 'minutes' : m.unite})"
                       onblur={() => valider(m)} onkeydown={(e) => { if (e.key === 'Enter') valider(m); if (e.key === 'Escape') edition = null; }} />
                   {:else}
-                    <button type="button" class="valeur" disabled={m.cle === 'temps' && tourne} onclick={() => editer(m)} aria-label="Saisir {m.label}">{valeur(m)} <span class="sur">{prevu(m)}</span></button>
+                    <button type="button" class="valeur" onclick={() => editer(m)} aria-label="Saisir {m.label}">{valeur(m)} <span class="sur">{prevu(m)}</span></button>
                   {/if}
                 </div>
                 {#if !(edition === m.cle && m.type === 'temps')}
                 <div class="pas">
-                  <button type="button" aria-label="Diminuer {m.label}" disabled={m.cle === 'temps' && tourne} onclick={() => ajuster(m, -1)}>−</button>
-                  <button type="button" aria-label="Augmenter {m.label}" disabled={m.cle === 'temps' && tourne} onclick={() => ajuster(m, 1)}>+</button>
+                  <button type="button" aria-label="Diminuer {m.label}" onclick={() => ajuster(m, -1)}>−</button>
+                  <button type="button" aria-label="Augmenter {m.label}" onclick={() => ajuster(m, 1)}>+</button>
                 </div>
                 {/if}
               </div>
