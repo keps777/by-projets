@@ -2,7 +2,10 @@
 
 > Lire ce fichier en début de session (après `CLAUDE.md`). Ajouter une entrée en fin de session.
 
-## 9 oct. 2026 — Temps d'un minuteur corrigeable
+## 9 oct. 2026 — Catalogue de livres mis à jour
+
+- Livres et pages des rapports d'août–octobre ajoutés au catalogue (`data/catalogue-livres.ts`) ; rapport : tous les livres en cours listés, « ✅ » à la fin d'un livre. Spec §9.
+- Temps d'un minuteur corrigeable
 
 - Le temps d'un bloc en cours ou en pause se corrige dans le volet (h/min/s, ±5 min) : `fixerEcoule` (core), `corrigerTempsEcoule`. Spec §8.
 

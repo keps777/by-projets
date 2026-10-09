@@ -65,11 +65,14 @@ export function formaterMesure(m: MesureRapport, langue: Langue = 'fr', avecDeta
 
 export const formaterMesures = (ms: MesureRapport[], langue: Langue = 'fr', avecDetails = false) => ms.map((m) => formaterMesure(m, langue, avecDetails)).join('; ');
 
-/** « 100/120p (+8p auj.) » : cumul sur total, puis les pages de la période (« auj. » pour une seule journée). */
+/** Livre terminé : toutes ses pages sont lues. */
+export const livreTermine = (l: Pick<LivreRapport, 'cumul' | 'total'>) => l.total != null && l.total > 0 && l.cumul >= l.total;
+
+/** « 100/120p (+8p auj.) » : cumul sur total, puis les pages de la période (« auj. » pour une seule journée) ; « ✅ » quand le livre est terminé. */
 export function formaterLivre(l: LivreRapport, langue: Langue = 'fr', unJour = true): string {
   const base = `${nombre(l.cumul)}${l.total != null ? '/' + nombre(l.total) : ''}p`;
   const quand = unJour ? (langue === 'en' ? ' today' : ' auj.') : '';
-  return l.periode > 0 ? `${base} (+${nombre(l.periode)}p${quand})` : base;
+  return `${l.periode > 0 ? `${base} (+${nombre(l.periode)}p${quand})` : base}${livreTermine(l) ? ' ✅' : ''}`;
 }
 
 export function formaterPoint(n: number, p: PointRapport, langue: Langue = 'fr', unJour = true): string {
@@ -168,21 +171,25 @@ export function avecPagesDesLivres<T extends { cle: string }>(valeurs: T[]): T[]
 export interface LectureLivre { cle: string; jour: Jour; valeur: number }
 
 /**
- * Lignes « • Titre (AUTEUR) : 100/120p (+8p auj.) » d'un point : les livres actifs lus pendant la période, avec le cumul
- * (pages de départ + toutes les lectures jusqu'à la fin de la période) sur le total du livre.
+ * Lignes « • Titre (AUTEUR) : 100/120p (+8p auj.) » d'un point : tous les livres actifs, comme dans les rapports de l'utilisateur
+ * (un livre en cours reste listé chaque jour, avec « (+Np auj.) » les jours où on le lit, et « ✅ » une fois terminé), avec le cumul
+ * (pages de départ + toutes les lectures jusqu'à la fin de la période) sur le total. Un livre terminé avant le début du mois du rapport,
+ * et non lu depuis, n'est plus listé : le ménage se fait au changement de mois.
  */
 export function itemsDesLivres(livres: LivreSuivi[] | null | undefined, lectures: LectureLivre[], debut: Jour, fin: Jour): ItemRapport[] {
   const items: ItemRapport[] = [];
   for (const l of livres ?? []) {
     if (!l.actif) continue;
     const cle = cleDuLivre(l.id);
-    let cumul = l.depart || 0, periode = 0;
+    let cumul = l.depart || 0, periode = 0, avantMois = l.depart || 0;
+    const moisDebut = premierDuMois(debut.slice(0, 7));
     for (const v of lectures) {
       if (v.cle !== cle || v.jour > fin) continue;
       cumul += v.valeur;
       if (v.jour >= debut) periode += v.valeur;
+      if (v.jour < moisDebut) avantMois += v.valeur;
     }
-    if (periode <= 0) continue;
+    if (periode <= 0 && livreTermine({ cumul: avantMois, total: l.total })) continue;
     items.push({ titre: l.titre, auteur: l.auteur || undefined, mesures: [], livre: { cumul, total: l.total, periode } });
   }
   return items;

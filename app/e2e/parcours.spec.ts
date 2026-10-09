@@ -826,8 +826,8 @@ test('Rapports : les livres de ZTF sont proposés, et un livre ajouté est propo
   const fenetre = page.getByRole('dialog');
   await fenetre.getByRole('button', { name: '+ Ajouter un livre' }).click();
   await fenetre.getByLabel('Titre du livre').fill('chemin obeissance');
-  await fenetre.getByRole('button', { name: /Le Chemin de l’Obéissance · ZTF/ }).click();
-  await expect(fenetre.getByLabel('Titre du livre')).toHaveValue('Le Chemin de l’Obéissance');
+  await fenetre.getByRole('button', { name: /Le chemin de l’obéissance · ZTF/ }).click();
+  await expect(fenetre.getByLabel('Titre du livre')).toHaveValue('Le chemin de l’obéissance');
   await expect(fenetre.getByLabel('Auteur du livre')).toHaveValue('ZTF');
   await fenetre.getByLabel('Pages au total').fill('130');
   await fenetre.getByRole('button', { name: 'Ajouter', exact: true }).click();
@@ -903,11 +903,11 @@ test('tâche du projet LLC : choisir ou créer le livre lu, et ses pages aliment
   await expect(livre.getByRole('button', { name: /Aucun livre/ })).toHaveAttribute('aria-pressed', 'true');
   await livre.getByRole('button', { name: 'Nouveau livre' }).click();
   await livre.getByLabel('Titre du livre').fill('chemin vie');
-  await livre.getByRole('button', { name: /Le Chemin de la Vie · ZTF/ }).click();
+  await livre.getByRole('button', { name: /Le chemin de la vie · ZTF · 124 p/ }).click();
   await livre.getByLabel('Pages au total').fill('120');
   await livre.getByLabel('Pages déjà lues').fill('92');
   // Les pages prévues de la tâche sont celles du livre.
-  await expect(page.getByText('Pages · Le Chemin de la Vie').first()).toBeVisible();
+  await expect(page.getByText('Pages · Le chemin de la vie').first()).toBeVisible();
   await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
   await expect(page).toHaveURL(/\/$|\/\?/);
 
@@ -915,19 +915,19 @@ test('tâche du projet LLC : choisir ou créer le livre lu, et ses pages aliment
   await expect(page.getByRole('button', { name: /Lecture du soir/ }).first()).toBeVisible();
   await page.getByRole('link', { name: 'Ajouter une tâche' }).click();
   await page.getByRole('button', { name: /LLC · littérature chrétienne/ }).click();
-  await expect(page.getByRole('group', { name: 'Livre lu' }).getByText('Le Chemin de la Vie (ZTF)')).toBeVisible();
+  await expect(page.getByRole('group', { name: 'Livre lu' }).getByText('Le chemin de la vie (ZTF)')).toBeVisible();
   await expect(page.getByRole('group', { name: 'Livre lu' }).getByText('92/120 p lues')).toBeVisible();
 
   // Bloc fait → les pages entrent au rapport, ligne du livre comprise.
   await page.getByRole('button', { name: 'Fermer', exact: true }).click();
   await page.getByRole('button', { name: /Lecture du soir/ }).first().click();
-  await expect(page.getByRole('dialog').getByText('Pages · Le Chemin de la Vie')).toBeVisible();
+  await expect(page.getByRole('dialog').getByText('Pages · Le chemin de la vie')).toBeVisible();
   await page.getByRole('button', { name: /Marquer comme fait/ }).click();
   await expect(page.getByRole('button', { name: /Fait · toucher pour annuler/ })).toBeVisible();
   await page.getByRole('dialog').getByLabel('Fermer').click();
   await page.getByRole('link', { name: 'Rapports' }).click();
   const cl = page.getByRole('button', { name: 'CL : modifier les valeurs' });
-  await expect(cl.getByText('Le Chemin de la Vie (ZTF)')).toBeVisible();
+  await expect(cl.getByText('Le chemin de la vie (ZTF)')).toBeVisible();
   await expect(cl.getByText(/102\/120p \(\+10p auj\.\)/)).toBeVisible();
 });
 

@@ -113,21 +113,34 @@ describe('données de départ', () => {
       { id: 'a', titre: 'Le chemin de la vie', auteur: 'ZTF', total: 120, depart: 92, actif: true },
       { id: 'b', titre: 'Le chemin de l’obéissance', auteur: 'ZTF', total: 130, depart: 85, actif: true },
       { id: 'c', titre: 'Pas lu aujourd’hui', auteur: '', total: 200, depart: 10, actif: true },
-      { id: 'd', titre: 'Retiré', auteur: '', total: 50, depart: 0, actif: false }
+      { id: 'd', titre: 'Retiré', auteur: '', total: 50, depart: 0, actif: false },
+      { id: 'e', titre: 'Fini le mois dernier', auteur: 'ZTF', total: 40, depart: 40, actif: true },
+      { id: 'f', titre: 'Fini hier', auteur: 'ZTF', total: 20, depart: 15, actif: true }
     ];
     const lectures = [
       { cle: 'livre:a', jour: '2026-10-06', valeur: 0 }, { cle: 'livre:a', jour: '2026-10-07', valeur: 8 },
       { cle: 'livre:b', jour: '2026-10-07', valeur: 5 }, { cle: 'livre:b', jour: '2026-10-08', valeur: 40 },
-      { cle: 'livre:d', jour: '2026-10-07', valeur: 9 }
+      { cle: 'livre:d', jour: '2026-10-07', valeur: 9 }, { cle: 'livre:f', jour: '2026-10-06', valeur: 5 }
     ];
-    it('liste les livres lus ce jour-là, cumul sur total, sans les livres retirés', () => {
+    it('liste les livres actifs avec leur cumul ; « + » seulement les jours de lecture ; ✅ quand le livre est terminé', () => {
       const items = itemsDesLivres(livres, lectures, '2026-10-07', '2026-10-07');
-      expect(items.map((i) => i.titre)).toEqual(['Le chemin de la vie', 'Le chemin de l’obéissance']);
+      expect(items.map((i) => i.titre)).toEqual(['Le chemin de la vie', 'Le chemin de l’obéissance', 'Pas lu aujourd’hui', 'Fini hier']);
       expect(items[0].livre).toEqual({ cumul: 100, total: 120, periode: 8 });
       expect(items[1].livre).toEqual({ cumul: 90, total: 130, periode: 5 }); // la lecture du 8 n'est pas comptée
+      expect(items[2].livre).toEqual({ cumul: 10, total: 200, periode: 0 });
+      expect(items[3].livre).toEqual({ cumul: 20, total: 20, periode: 0 }); // terminé hier : reste listé jusqu'à la fin du mois
+    });
+    it('un livre terminé avant le mois du rapport, et non lu depuis, n’est plus listé ; les livres retirés non plus', () => {
+      const titres = itemsDesLivres(livres, lectures, '2026-10-07', '2026-10-07').map((i) => i.titre);
+      expect(titres).not.toContain('Fini le mois dernier');
+      expect(titres).not.toContain('Retiré');
+      // le 1er du mois suivant, un livre terminé en octobre disparaît ; un livre en cours reste
+      const novembre = itemsDesLivres(livres, lectures, '2026-11-01', '2026-11-01').map((i) => i.titre);
+      expect(novembre).not.toContain('Fini hier');
+      expect(novembre).toContain('Le chemin de la vie');
     });
     it('écrit le point dans le format du rapport : mesures du point, puis une ligne par livre', () => {
-      const items = itemsDesLivres(livres, lectures, '2026-10-07', '2026-10-07');
+      const items = itemsDesLivres(livres.slice(0, 2), lectures, '2026-10-07', '2026-10-07');
       const point = { code: 'CL', mesures: [{ type: 'nombre' as const, unite: 'pages', fait: 12 }, { type: 'temps' as const, fait: 1800 }], items };
       expect(formaterPoint(4, point)).toBe([
         '4. *CL* : 12 pages; 0h30',
@@ -135,6 +148,12 @@ describe('données de départ', () => {
         '   • Le chemin de l’obéissance (ZTF) : 90/130p (+5p auj.)'
       ].join('\n'));
       expect(formaterPoint(4, point, 'en')).toContain('100/120p (+8p today)');
+    });
+    it('un livre terminé porte ✅, avec ou sans pages lues ce jour-là', () => {
+      const fini = itemsDesLivres([{ id: 'x', titre: 'Sois rempli du Saint-Esprit', auteur: 'ZTF', total: 20, depart: 16, actif: true }], [{ cle: 'livre:x', jour: '2026-10-07', valeur: 4 }], '2026-10-07', '2026-10-07');
+      expect(formaterPoint(1, { code: 'CL', mesures: [], items: fini })).toBe('1. *CL* :\n   • Sois rempli du Saint-Esprit (ZTF) : 20/20p (+4p auj.) ✅');
+      const lendemain = itemsDesLivres([{ id: 'x', titre: 'Sois rempli du Saint-Esprit', auteur: 'ZTF', total: 20, depart: 16, actif: true }], [{ cle: 'livre:x', jour: '2026-10-07', valeur: 4 }], '2026-10-08', '2026-10-08');
+      expect(formaterPoint(1, { code: 'CL', mesures: [], items: lendemain })).toBe('1. *CL* :\n   • Sois rempli du Saint-Esprit (ZTF) : 20/20p ✅');
     });
     it('sur une période, pas de « auj. » ; sans total, juste les pages', () => {
       const items = itemsDesLivres([{ ...livres[0], total: null }], lectures, '2026-10-05', '2026-10-11');

@@ -7,25 +7,42 @@ export interface LivreCatalogue { titre: string; auteur: string; total: number |
 
 export const AUTEUR_ZTF = 'ZTF';
 
-/** Titres français de ZTF (sans les pages, que l'on saisit une fois). Liste de départ, non exhaustive : tout ajout s'y ajoute. */
+/**
+ * Livres connus d'avance : auteur, titre (écrit comme dans les rapports) et pages quand elles sont connues (rapports d'août à octobre 2026).
+ * Les autres livres de ZTF sont proposés sans pages : on les saisit une fois, l'app s'en souvient.
+ */
+const ZTF = 'ZTF';
+const LIVRES_CONNUS: LivreCatalogue[] = [
+  // Livres déjà lus ou en cours, pages connues
+  { titre: 'L’agressivité spirituelle', auteur: ZTF, total: 417 },
+  { titre: 'Jouir du choix de ton conjoint', auteur: ZTF, total: 213 },
+  { titre: 'Le chemin de la vie', auteur: ZTF, total: 124 },
+  { titre: 'Le chemin du caractère chrétien', auteur: ZTF, total: 171 },
+  { titre: 'Sois rempli du Saint-Esprit', auteur: ZTF, total: 20 },
+  { titre: 'Réveil spirituel personnel', auteur: ZTF, total: 80 },
+  { titre: 'La Repentance, clé d’une réelle conversion biblique', auteur: 'Samuel & Dorothée Hatzakortzian', total: 95 }
+];
+
+/** Autres titres français de ZTF (pages inconnues). */
 const TITRES_ZTF = [
   // « Le Chemin Chrétien » (13 livres)
-  'Le Chemin de la Vie', 'Le Chemin de l’Obéissance', 'Le Chemin d’Être Disciple', 'Le Chemin de la Sanctification', 'Le Chemin du Caractère Chrétien',
-  'Le Chemin du Combat Spirituel', 'Le Chemin de la Souffrance pour Christ', 'Le Chemin de la Prière Victorieuse', 'Le Chemin des Vainqueurs',
-  'Le Chemin de la Puissance Spirituelle', 'Le Chemin de l’Encouragement Spirituel', 'Le Chemin de l’Amour pour le Seigneur', 'Le Chemin du Service Chrétien',
+  'Le chemin de l’obéissance', 'Le chemin d’être disciple', 'Le chemin de la sanctification', 'Le chemin du combat spirituel',
+  'Le chemin de la souffrance pour Christ', 'Le chemin de la prière victorieuse', 'Le chemin des vainqueurs',
+  'Le chemin de la puissance spirituelle', 'Le chemin de l’encouragement spirituel', 'Le chemin de l’amour pour le Seigneur', 'Le chemin du service chrétien',
   // Prière, jeûne, intercession
-  'L’Art de l’Intercession', 'La Pratique de l’Intercession', 'Prier avec Puissance', 'Le Ministère de la Supplication', 'Le Ministère du Jeûne',
+  'L’art de l’intercession', 'La pratique de l’intercession', 'Prier avec puissance', 'Le ministère de la supplication', 'Le ministère du jeûne',
   // Vie spirituelle et sainteté
-  'La Vraie Repentance', 'La Guérison Intérieure', 'Réveil Spirituel Personnel', 'Tu Peux Recevoir un Cœur Pur Aujourd’hui', 'Délivrance du Péché d’Adultère et de Fornication',
-  'Délivrance du Péché de Paresse', 'Pour Devenir Disciple', 'Le Don à Dieu', 'L’École de la Vérité', 'Les Guerriers de la Nuit',
+  'La vraie repentance', 'La guérison intérieure', 'Tu peux recevoir un cœur pur aujourd’hui', 'Délivrance du péché d’adultère et de fornication',
+  'Délivrance du péché de paresse', 'Pour devenir disciple', 'Le don à Dieu', 'L’école de la vérité', 'Les guerriers de la nuit',
   // Jeunesse, mariage
-  'Le Jeu de la Vie', 'Un Mot aux Étudiants', 'Préparation Pratique pour le Mariage', 'Jouir de la Vie Conjugale'
+  'Le jeu de la vie', 'Un mot aux étudiants', 'Préparation pratique pour le mariage', 'Jouir de la vie conjugale'
 ];
 
 /** Minuscules, sans accents ni ponctuation : « L’École de la Vérité » et « ecole de la verite » se reconnaissent. */
 export const normaliser = (t: string): string => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[’'`]/g, ' ').replace(/[^a-z0-9]+/g, ' ').trim();
 
-export const LIVRES_ZTF: LivreCatalogue[] = TITRES_ZTF.map((titre) => ({ titre, auteur: AUTEUR_ZTF, total: null }));
+/** Le catalogue de départ : livres connus (avec pages), puis les autres titres de ZTF. */
+export const LIVRES_ZTF: LivreCatalogue[] = [...LIVRES_CONNUS, ...TITRES_ZTF.map((titre) => ({ titre, auteur: AUTEUR_ZTF, total: null }))];
 
 /** Catalogue complet : ZTF d'abord, puis les livres de l'utilisateur ; un livre déjà saisi (pages, auteur) remplace la fiche de départ. */
 export function catalogueDeLivres(points: Pick<PointRapportLigne, 'livres'>[]): LivreCatalogue[] {
