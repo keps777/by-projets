@@ -910,14 +910,15 @@ test('tâche du projet LLC : choisir ou créer le livre lu, et ses pages aliment
   await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
   await expect(page).toHaveURL(/\/$|\/\?/);
 
-  // Le livre est créé avec la tâche : il est proposé aux tâches suivantes.
-  await page.goto('/tache/nouvelle');
+  // Le livre est créé avec la tâche : il est proposé aux tâches suivantes (navigation sans rechargement : l'écriture locale est asynchrone).
+  await expect(page.getByRole('button', { name: /Lecture du soir/ }).first()).toBeVisible();
+  await page.getByRole('link', { name: 'Ajouter une tâche' }).click();
   await page.getByRole('button', { name: /LLC · littérature chrétienne/ }).click();
   await expect(page.getByRole('group', { name: 'Livre lu' }).getByText('Le Chemin de la Vie (ZTF)')).toBeVisible();
   await expect(page.getByRole('group', { name: 'Livre lu' }).getByText('92/120 p lues')).toBeVisible();
 
   // Bloc fait → les pages entrent au rapport, ligne du livre comprise.
-  await page.goto('/');
+  await page.getByRole('button', { name: 'Fermer', exact: true }).click();
   await page.getByRole('button', { name: /Lecture du soir/ }).first().click();
   await expect(page.getByRole('dialog').getByText('Pages · Le Chemin de la Vie')).toBeVisible();
   await page.getByRole('button', { name: /Marquer comme fait/ }).click();
