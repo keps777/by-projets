@@ -41,7 +41,8 @@ export default defineConfig({
       'src/**/*.test.ts',
       '../supabase/functions/_shared/core/**/*.test.ts',
       '../supabase/tests/**/*.test.ts',
-      '../supabase/functions/**/*.test.ts'
+      '../supabase/functions/**/*.test.ts',
+      '../supabase/scripts/**/*.test.ts'
     ],
     environment: 'node'
   }

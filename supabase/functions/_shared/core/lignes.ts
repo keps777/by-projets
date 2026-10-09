@@ -137,6 +137,8 @@ export interface LivreSuivi {
   /** Pages déjà lues avant le suivi dans l'app. */
   depart: number;
   actif: boolean;
+  /** Dernier jour où le livre figure au rapport, quand il a été retiré : les rapports passés le gardent. */
+  retireLe?: string | null;
 }
 export const CLE_LIVRE = 'livre:';
 export const cleDuLivre = (id: string) => `${CLE_LIVRE}${id}`;

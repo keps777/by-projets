@@ -323,7 +323,7 @@ test('Bible : choisir le livre et les chapitres dans des menus (Focus), puis les
   await expect(page).toHaveURL(/\/$/);
   await page.getByRole('navigation', { name: 'Navigation principale' }).getByRole('link', { name: 'Rapports' }).click();
   const br = page.getByRole('button', { name: /BR : modifier les valeurs/ });
-  await expect(br).toContainText('5 chapitres');
+  await expect(br).toContainText('5 ch');
   await expect(br).toContainText('Luc 22–24 · Matthieu 1–2');
 });
 
@@ -340,7 +340,7 @@ test('Bible : depuis le rapport, la saisie du jour utilise les menus et met le n
   await expect(volet.getByText('Jean 5–7')).toBeVisible();
   await volet.getByRole('button', { name: 'Enregistrer' }).click();
   const br = page.getByRole('button', { name: /BR : modifier les valeurs/ });
-  await expect(br).toContainText('4 chapitres');
+  await expect(br).toContainText('4 ch');
   await expect(br).toContainText('Jean 3 · Jean 5–7');
 });
 
@@ -395,7 +395,7 @@ test.describe('Chrono sur les points du rapport', () => {
     await expect(pop.getByRole('textbox', { name: 'Chapitres' })).toHaveValue('3');
     await pop.getByRole('button', { name: 'Valider la session' }).click();
     const br = page.getByRole('button', { name: /BR : modifier les valeurs/ });
-    await expect(br).toContainText('3 chapitres');
+    await expect(br).toContainText('3 ch');
     await expect(br).toContainText('Jean 3–5');
     await expect(br).toContainText('0h40');
 
@@ -949,4 +949,20 @@ test('volet d’un bloc : le temps d’un minuteur en pause se corrige à la mai
   // Les boutons − et + corrigent aussi le temps en cours (pas de 5 min).
   await volet.getByRole('button', { name: /Augmenter Temps/ }).click();
   await expect(volet.getByText(/^1:35:0\d \/ /)).toBeVisible();
+});
+
+test('lire plus de chapitres que l’objectif est permis : « 105/7 ch » au rapport, sans plafond', async ({ page }) => {
+  await page.goto('/projets/nouveau-sous-projet');
+  await page.getByRole('button', { name: /^Lecture biblique/ }).first().click();
+  await page.getByRole('button', { name: 'Créer le sous-projet' }).click();
+  await expect(page).toHaveURL(/\/projets\/sous-projet\//);
+  await page.waitForTimeout(600); // l'écriture locale (IndexedDB) suit l'affichage de quelques millisecondes
+  await page.goto('/rapports');
+  await page.getByRole('button', { name: 'BR : modifier les valeurs' }).click();
+  const fenetre = page.getByRole('dialog');
+  const champ = fenetre.getByLabel('Chapitres lus').or(fenetre.getByLabel('Chapitres')).first();
+  await champ.fill('105');
+  await champ.blur();
+  await fenetre.getByRole('button', { name: 'Enregistrer' }).click();
+  await expect(page.getByRole('button', { name: 'BR : modifier les valeurs' }).getByText('105/7 ch').first()).toBeVisible();
 });

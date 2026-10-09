@@ -1,7 +1,9 @@
 // Réglages : profil, points du rapport, préréglages d'export.
+import { ajouterJours } from '@core/dates.ts';
 import { nouvelId } from '@core/ids.ts';
 import type { LivreSuivi, MesurePoint, PointRapportLigne, Profil } from '@core/lignes.ts';
 import { magasin } from '../magasin.svelte.ts';
+import { aujourdhui } from '../temps.svelte.ts';
 import { replanifierRappels } from './taches.ts';
 
 export function majProfil(patch: Partial<Omit<Profil, 'id'>>): void {
@@ -46,10 +48,10 @@ export function ajouterLivre(pointId: string, n: NouveauLivre): string | null {
   return id;
 }
 
-/** Le livre quitte le rapport ; ses pages déjà saisies restent dans l'historique. */
+/** Le livre quitte le rapport dès aujourd'hui (il reste dans les rapports d'hier et d'avant) ; ses pages déjà saisies restent dans l'historique. */
 export function retirerLivre(pointId: string, livreId: string): void {
   const p = magasin.trouver('points_rapport', pointId);
-  if (p) magasin.ecrire('points_rapport', { id: pointId, livres: (p.livres ?? []).map((l) => (l.id === livreId ? { ...l, actif: false } : l)) });
+  if (p) magasin.ecrire('points_rapport', { id: pointId, livres: (p.livres ?? []).map((l) => (l.id === livreId ? { ...l, actif: false, retireLe: ajouterJours(aujourdhui(), -1) } : l)) });
 }
 
 export function retirerPoint(id: string): void { magasin.supprimer('points_rapport', id); }

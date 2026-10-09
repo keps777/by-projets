@@ -2,6 +2,10 @@
 
 > Lire ce fichier en début de session (après `CLAUDE.md`). Ajouter une entrée en fin de session.
 
+## 9 oct. 2026 — Historique importé
+
+- 61 rapports (1ᵉʳ août → 2 oct.) importés : 143 saisies « rattrapage », 211 valeurs, 61 rapports envoyés, 7 livres sur CL. Analyseur testé dans `supabase/scripts/importer-historique/` (le texte brut de l'historique n'est pas gardé dans le dépôt). `retireLe` sur les livres ; « ch » pour les chapitres ; test « plus de chapitres que l'objectif ».
+
 ## 9 oct. 2026 — Catalogue de livres mis à jour
 
 - Livres et pages des rapports d'août–octobre ajoutés au catalogue (`data/catalogue-livres.ts`) ; rapport : tous les livres en cours listés, « ✅ » à la fin d'un livre. Spec §9.

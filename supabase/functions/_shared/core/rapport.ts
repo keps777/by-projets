@@ -40,6 +40,9 @@ const T = {
  * Une mesure écrite. Le détail des séances (« 1h55; 0h40… ») n'entre que si `avecDetails` : il se montre dans la page Rapports,
  * mais le texte exporté (WhatsApp, PDF) ne garde que le total.
  */
+/** « chapitres » s'écrit « ch » dans le rapport (« 9/7 ch »). */
+const uniteRapport = (u: string | undefined) => (u && /^(chapitres?|chapters?)$/i.test(u.trim()) ? 'ch' : u);
+
 export function formaterMesure(m: MesureRapport, langue: Langue = 'fr', avecDetails = false): string {
   const t = T[langue];
   const att = m.attendu;
@@ -50,7 +53,7 @@ export function formaterMesure(m: MesureRapport, langue: Langue = 'fr', avecDeta
       return avecDetails && m.details?.length ? `${base} (${m.details.join('; ')})` : base;
     }
     case 'fois': return m.fait == null ? '—' : nombre(m.fait) + (att != null ? '/' + nombre(att) : '') + (m.unite ? ` ${m.unite}` : '');
-    case 'nombre': return m.fait == null ? '—' : `${m.prefixe ?? ''}${nombre(m.fait)}${att != null ? '/' + nombre(att) : ''}${m.unite ? ' ' + m.unite : ''}`;
+    case 'nombre': return m.fait == null ? '—' : `${m.prefixe ?? ''}${nombre(m.fait)}${att != null ? '/' + nombre(att) : ''}${uniteRapport(m.unite) ? ' ' + uniteRapport(m.unite) : ''}`;
     case 'montant': return m.fait == null ? '—' : espaces(formatMontantCourt(m.fait)) + (att != null ? '/' + espaces(formatMontantCourt(att)) : '');
     case 'oui_non': return (m.fait ?? 0) >= 1 ? t.oui : t.non;
     case 'choix': return m.texte ?? libelleChoix(m.options, m.fait ?? 0);
@@ -179,7 +182,8 @@ export interface LectureLivre { cle: string; jour: Jour; valeur: number }
 export function itemsDesLivres(livres: LivreSuivi[] | null | undefined, lectures: LectureLivre[], debut: Jour, fin: Jour): ItemRapport[] {
   const items: ItemRapport[] = [];
   for (const l of livres ?? []) {
-    if (!l.actif) continue;
+    // Un livre retiré reste au rapport jusqu'au jour de son retrait (les rapports passés ne changent pas).
+    if (!l.actif && !(l.retireLe && debut <= l.retireLe)) continue;
     const cle = cleDuLivre(l.id);
     let cumul = l.depart || 0, periode = 0, avantMois = l.depart || 0;
     const moisDebut = premierDuMois(debut.slice(0, 7));

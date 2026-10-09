@@ -108,6 +108,14 @@ describe('données de départ', () => {
     expect(avecPagesDesLivres([v[2]])).toEqual([v[2]]);
   });
 
+  it('plus de chapitres que l’objectif : « 9/7 ch », « 105/10 ch » ; « chapitres » s’écrit « ch »', () => {
+    const ch = (fait: number, attendu: number, unite = 'chapitres') => ({ type: 'nombre' as const, unite, fait, attendu });
+    expect(formaterMesure(ch(9, 7))).toBe('9/7 ch');
+    expect(formaterMesure(ch(105, 10))).toBe('105/10 ch');
+    expect(formaterMesure(ch(13, 7, 'chapters'), 'en')).toBe('13/7 ch');
+    expect(formaterMesure({ type: 'nombre', unite: 'pages', fait: 12 })).toBe('12 pages');
+  });
+
   describe('livres d’un point (CL)', () => {
     const livres = [
       { id: 'a', titre: 'Le chemin de la vie', auteur: 'ZTF', total: 120, depart: 92, actif: true },
