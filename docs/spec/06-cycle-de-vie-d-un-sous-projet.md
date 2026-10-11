@@ -40,3 +40,11 @@ Un **format type unique** pour tous les sous-projets ; seuls les blocs et les co
 ## Tâches proposées (7 oct. 2026)
 Dans la Fiche, quand **aucune tâche ne nourrit le sous-projet** — ou que les tâches ne planifient pas assez de temps par semaine pour son objectif de temps — l'app **propose des tâches** : *tous les jours*, *du lundi au vendredi*, *3 fois par semaine*, avec la durée qui remplit l'objectif (ex. 2 h par semaine → 20 min × 7 jours) et, pour un objectif de pages ou de fois, la valeur prévue à chaque fois. Toucher une proposition ouvre « Nouvelle tâche » prérempli (projet, sous-projet nourri, titre, durée, récurrence, valeurs prévues). Seuls les objectifs cumulables (temps, fois, nombre, montant) donnent des propositions.
 
+
+## Repartir d'un sous-projet déjà fait (11 oct. 2026)
+
+Dans « Nouveau sous-projet », la section **Repartir d'un sous-projet déjà fait** liste les sous-projets terminés ou archivés (récents d'abord). En choisir un recopie son projet, son nom, sa fiche (7 questions), ses métriques (clés comprises, pour que les saisies s'additionnent comme avant) et ses pilotes. Tout reste modifiable avant de créer.
+
+- **Dates adaptées** (`core/reprise.ts`) : un mois entier devient le mois en cours ; une semaine entière, la semaine en cours ; « sans fin » reste sans fin à partir d'aujourd'hui ; toute autre période garde sa durée et commence aujourd'hui.
+- **Tâches** : interrupteur « Reprendre aussi ses tâches » (actif par défaut). Chaque tâche active du sous-projet est recopiée avec ses heures, durée, rappels, alarme et valeurs prévues ; sa récurrence (début et date de fin) glisse du même nombre de jours que la période. Les valeurs liées à un livre précis ne suivent pas.
+- Les saisies de l'ancien sous-projet ne sont pas reprises (il repart à zéro).

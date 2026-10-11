@@ -5,7 +5,9 @@ import type { ModeleSousProjet } from '@core/modeles.ts';
 import { metriquesPilotes } from '@core/progression.ts';
 import type { Fiche, MetriqueLigne } from '@core/lignes.ts';
 import type { Jour } from '@core/types.ts';
+import { regleDecalee } from '@core/reprise.ts';
 import { magasin } from '../magasin.svelte.ts';
+import { ajouterTache } from './taches.ts';
 import { metriquesDe } from '../requetes.ts';
 
 export const FICHE_VIDE: Fiche = { quoi: '', pourquoi: '', qui: '', ou: '', quand: '', comment: '', combien: '' };
@@ -91,4 +93,21 @@ export function rouvrirSousProjet(spId: string): void { magasin.ecrire('sous_pro
 export function supprimerSousProjet(spId: string): void {
   magasin.supprimer('metriques', magasin.lignes.metriques.filter((m) => m.sous_projet_id === spId).map((m) => m.id));
   magasin.supprimer('sous_projets', spId);
+}
+
+/**
+ * Reprend les tâches d'un sous-projet déjà fait pour le nouveau : mêmes titres, heures, durées, rappels et valeurs prévues,
+ * dates décalées de `decalage` jours. Les valeurs liées à un livre précis ne suivent pas. Renvoie le nombre de tâches copiées.
+ */
+export function reprendreTaches(sourceId: string, nouveauId: string, projetId: string, decalage: number): number {
+  const ids = new Set(magasin.lignes.tache_alimente.filter((a) => a.sous_projet_id === sourceId).map((a) => a.tache_id));
+  const taches = magasin.lignes.taches.filter((t) => ids.has(t.id) && t.actif);
+  for (const t of taches) {
+    ajouterTache({
+      titre: t.titre, projetId, regle: regleDecalee(t.regle, decalage), heureDebut: t.heure_debut, dureeMin: t.duree_min, rappelMin: t.rappel_min,
+      rappelsAvantMin: t.rappels_avant_min, alarme: t.alarme, sousProjetIds: [nouveauId],
+      attendus: magasin.lignes.tache_attendus.filter((a) => a.tache_id === t.id && !a.cle.startsWith('livre:')).map((a) => ({ cle: a.cle, valeur: a.valeur_prevue }))
+    });
+  }
+  return taches.length;
 }

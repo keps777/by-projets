@@ -966,3 +966,25 @@ test('lire plus de chapitres que l’objectif est permis : « 105/7 ch » au rap
   await fenetre.getByRole('button', { name: 'Enregistrer' }).click();
   await expect(page.getByRole('button', { name: 'BR : modifier les valeurs' }).getByText('105/7 ch').first()).toBeVisible();
 });
+
+test('Nouveau sous-projet : repartir d’un sous-projet déjà fait, avec ses réglages et des dates adaptées', async ({ page }) => {
+  await page.goto('/projets/nouveau-sous-projet');
+  await expect(page.getByText('Repartir d’un sous-projet déjà fait')).toHaveCount(0);
+  await page.getByRole('button', { name: /^Lecture biblique/ }).first().click();
+  await page.getByRole('textbox', { name: 'Nom du sous-projet' }).fill('Lecture de l’été');
+  await page.getByRole('button', { name: 'Créer le sous-projet' }).click();
+  await expect(page).toHaveURL(/\/projets\/sous-projet\//);
+  await page.getByRole('tab', { name: 'Fiche' }).click();
+  await page.getByRole('button', { name: 'Terminer et archiver' }).click();
+  await page.getByRole('button', { name: 'Valider et terminer' }).click();
+
+  await page.waitForTimeout(800); // l'écriture locale est asynchrone avant un rechargement
+  await page.goto('/projets/nouveau-sous-projet');
+  const ancien = page.getByRole('button', { name: /Lecture de l’été/ });
+  await expect(ancien).toBeVisible();
+  await ancien.click();
+  await expect(page.getByRole('textbox', { name: 'Nom du sous-projet' })).toHaveValue('Lecture de l’été');
+  await expect(page.getByText('Ce sous-projet n’avait pas de tâche.')).toBeVisible();
+  await page.getByRole('button', { name: 'Créer le sous-projet' }).click();
+  await expect(page).toHaveURL(/\/projets\/sous-projet\//);
+});

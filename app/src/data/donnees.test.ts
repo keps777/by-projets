@@ -6,7 +6,7 @@ import { session } from './auth.svelte.ts';
 import { horloge } from './temps.svelte.ts';
 import { ajouterTache, materialiserTache, reporter, supprimerOccurrences } from './actions/taches.ts';
 import { corrigerValeur, ecouleOccurrence, lancerBloc, pauseBloc, reprendreBloc, saisirBloc, terminerBloc } from './actions/blocs.ts';
-import { creerDepuisModele, creerSousProjet, validerSousProjet } from './actions/projets.ts';
+import { creerDepuisModele, creerSousProjet, reprendreTaches, validerSousProjet } from './actions/projets.ts';
 import { blocsDuJour, progressionProjet, progressionSousProjet, valeursDuProjet } from './requetes.ts';
 import { MODELES } from '@core/modeles.ts';
 
@@ -151,5 +151,23 @@ describe('minuteur d’un bloc', () => {
     expect(magasin.trouver('occurrences', occ.id)!.etat).toBe('pause');
     reprendreBloc(occ.id);
     expect(ecouleOccurrence(magasin.trouver('occurrences', occ.id)!, Date.now() + 600_000)).toBeGreaterThanOrEqual(599);
+  });
+});
+
+describe('repartir d’un sous-projet déjà fait', () => {
+  it('reprend les tâches avec leurs dates décalées et leurs valeurs prévues', () => {
+    const bible = projet('La lecture de la Bible').id;
+    const m = { type: 'nombre' as const, nom: 'Chapitres', unite: 'chapitres', cible: 7, periode_cible: 'jour' as const, sens: 'plus' as const, dans_rapport: true };
+    const ancien = creerSousProjet({ projetId: bible, nom: 'Septembre', debut: '2026-09-01', fin: '2026-09-30', reprisePasse: false, metriques: [m] });
+    ajouterTache({ titre: 'Lecture du matin', projetId: bible, regle: { frequence: 'hebdo', debut: '2026-09-01', jours: [0, 2], fin: { type: 'date', date: '2026-09-30' } }, heureDebut: 330, dureeMin: 45, rappelMin: 10, alarme: true, sousProjetIds: [ancien], attendus: [{ cle: 'nombre:chapitres', valeur: 3 }, { cle: 'livre:x', valeur: 5 }] });
+    validerSousProjet(ancien);
+    const nouveau = creerSousProjet({ projetId: bible, nom: 'Octobre', debut: '2026-10-01', fin: '2026-10-31', reprisePasse: false, metriques: [m] });
+    expect(reprendreTaches(ancien, nouveau, bible, 30)).toBe(1);
+    const copie = magasin.lignes.taches.find((t) => t.titre === 'Lecture du matin' && t.regle.debut === '2026-10-01')!;
+    expect(copie.regle.fin).toEqual({ type: 'date', date: '2026-10-30' });
+    expect(copie.heure_debut).toBe(330);
+    expect(copie.alarme).toBe(true);
+    expect(magasin.lignes.tache_alimente.some((a) => a.tache_id === copie.id && a.sous_projet_id === nouveau)).toBe(true);
+    expect(magasin.lignes.tache_attendus.filter((a) => a.tache_id === copie.id).map((a) => a.cle)).toEqual(['nombre:chapitres']);
   });
 });

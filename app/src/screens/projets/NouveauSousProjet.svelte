@@ -3,9 +3,11 @@
   // reprise du passé, métriques modifiables, calculs automatiques (spec §4, §6, US-15 à US-17).
   // Paramètres de recherche : ?projet=<id> (projet visé), ?rubrique=<id>.
   import { untrack } from 'svelte';
-  import { minJour } from '@core/dates.ts';
+  import { dernierDuMois, ecartJours, minJour, moisDe, premierDuMois } from '@core/dates.ts';
+  import { periodeAdaptee } from '@core/reprise.ts';
   import { OPTIONS_JEUNE, ORDRE_TYPES, TYPES } from '@core/metriques.ts';
   import { modelesDeLaRubrique, type ModeleSousProjet, type RubriqueCle } from '@core/modeles.ts';
+  import type { SousProjetLigne } from '@core/lignes.ts';
   import type { TypeMetrique } from '@core/types.ts';
   import EcranPage from '../../ui/EcranPage.svelte';
   import Icone from '../../ui/Icone.svelte';
@@ -16,9 +18,9 @@
   import { theme } from '../../ui/theme.svelte.ts';
   import { dire } from '../../ui/toast.svelte.ts';
   import { magasin } from '../../data/magasin.svelte.ts';
-  import { projetsDe, rubriques, valeursDuProjet } from '../../data/requetes.ts';
+  import { metriquesDe, projetsDe, rubriques, valeursDuProjet } from '../../data/requetes.ts';
   import { aujourdhui } from '../../data/temps.svelte.ts';
-  import { creerSousProjet } from '../../data/actions/projets.ts';
+  import { creerSousProjet, reprendreTaches } from '../../data/actions/projets.ts';
   import { routeur } from '../../routeur.svelte.ts';
   import EditeurMetrique from './EditeurMetrique.svelte';
   import {
@@ -46,12 +48,22 @@
   let reprise = $state(true);
   let metriques = $state<Brouillon[]>([]);
   let choixProjet = $state(false);
+  /** Sous-projet déjà fait dont on repart (réglages copiés, dates adaptées), et reprise de ses tâches. */
+  let sourceId = $state<string | null>(null);
+  let avecTaches = $state(true);
 
   const rubrique = $derived(rubs.find((r) => r.id === rubriqueId));
   const couleur = $derived(couleurRubrique(rubrique?.couleur ?? '#A3A6B1', theme.mode));
   const modeles = $derived<ModeleSousProjet[]>(rubrique?.cle ? modelesDeLaRubrique(rubrique.cle as RubriqueCle) : []);
   const projets = $derived(rubriqueId ? projetsDe(rubriqueId) : []);
   const projet = $derived(magasin.trouver('projets', projetId));
+
+  const source = $derived(magasin.trouver('sous_projets', sourceId));
+  /** Les sous-projets déjà faits (terminés ou archivés), les plus récents d'abord. */
+  const anciens = $derived(magasin.lignes.sous_projets
+    .filter((x) => x.statut === 'termine' || x.statut === 'archive')
+    .sort((a, b) => (b.termine_le ?? b.fin ?? b.created_at).localeCompare(a.termine_le ?? a.fin ?? a.created_at)));
+  const nbTachesSource = $derived(source ? magasin.lignes.tache_alimente.filter((a) => a.sous_projet_id === source.id && magasin.trouver('taches', a.tache_id)?.actif).length : 0);
 
   /** « Budget du mois » devient « Budget d’octobre ». */
   function nomDuModele(m: ModeleSousProjet): string {
@@ -67,7 +79,23 @@
     debut = p.debut; fin = p.fin;
   }
 
+  function chargerAncien(sp: SousProjetLigne) {
+    const pr = magasin.trouver('projets', sp.projet_id);
+    sourceId = sp.id; modele = null;
+    if (pr) { rubriqueId = pr.rubrique_id; projetId = pr.id; }
+    nom = sp.nom;
+    const lignes = metriquesDe(sp.id);
+    const pilotes = sp.metriques_pilotes?.length ? sp.metriques_pilotes : sp.metrique_pilote_id ? [sp.metrique_pilote_id] : [];
+    metriques = lignes.map((l) => ({ type: l.type, nom: l.nom, unite: l.unite, cible: l.cible, periode_cible: l.periode_cible, sens: l.sens, options: l.options ?? null, dans_rapport: l.dans_rapport, cle: l.cle, pilote: pilotes.includes(l.id) }));
+    if (!metriques.some((x) => x.pilote)) { const premier = metriques.findIndex((x) => x.cible != null); if (premier >= 0) metriques[premier].pilote = true; }
+    const p = periodeAdaptee(sp.debut, sp.fin, jour);
+    debut = p.debut; fin = p.fin;
+    choix = !p.fin ? 'sans_fin' : p.debut === premierDuMois(moisDe(p.debut)) && p.fin === dernierDuMois(moisDe(p.debut)) ? 'mois' : ecartJours(p.debut, p.fin) === 6 ? 'semaine' : 'dates';
+    reprise = false; // un sous-projet repris repart à zéro : ses saisies anciennes appartiennent à l'ancienne période
+  }
+
   function charger(i: number | null, garderProjet = false) {
+    sourceId = null;
     modele = i;
     const m = i == null ? null : modeles[i];
     if (!m) { nom = ''; metriques = []; regler('mois'); return; }
@@ -119,9 +147,11 @@
     const id = creerSousProjet({
       projetId, nom: nom.trim() || (modele != null ? nomDuModele(modeles[modele]) : 'Nouveau sous-projet'), debut, fin: finEffective, reprisePasse: reprise,
       metriques: metriques.map(({ pilote: _p, ...m }) => ({ ...m, options: m.options ?? null })),
-      pilotesIndex: metriques.flatMap((m, i) => (m.pilote ? [i] : []))
+      pilotesIndex: metriques.flatMap((m, i) => (m.pilote ? [i] : [])),
+      fiche: source?.fiche
     });
-    dire('Sous-projet créé');
+    const copiees = source && avecTaches ? reprendreTaches(source.id, id, projetId, ecartJours(source.debut, debut)) : 0;
+    dire(copiees ? `Sous-projet créé · ${copiees} tâche${copiees > 1 ? 's' : ''} reprise${copiees > 1 ? 's' : ''}` : 'Sous-projet créé');
     routeur.aller(`/projets/sous-projet/${id}`, true);
   }
 </script>
@@ -147,9 +177,32 @@
             <span class="muted petit">{m.metriques.map((x) => x.nom).join(' · ')}</span>
           </button>
         {/each}
-        <button type="button" class="zero" class:on={modele === null} aria-pressed={modele === null} onclick={() => charger(null, true)}>Partir de zéro</button>
+        <button type="button" class="zero" class:on={modele === null && !source} aria-pressed={modele === null && !source} onclick={() => charger(null, true)}>Partir de zéro</button>
       </div>
     </section>
+
+    {#if anciens.length}
+      <section class="groupe">
+        <span class="etiquette">Repartir d’un sous-projet déjà fait</span>
+        <div class="modeles anciens">
+          {#each anciens as a (a.id)}
+            <button type="button" class="modele" class:on={sourceId === a.id} aria-pressed={sourceId === a.id} onclick={() => chargerAncien(a)}>
+              <span class="rang"><span class="gras coupe">{a.nom}</span><span class="muted mini">{periodeTexte(a.debut, a.fin)}</span></span>
+              <span class="muted petit coupe">{magasin.trouver('projets', a.projet_id)?.nom ?? ''} · {metriquesDe(a.id).map((x) => x.nom).join(' · ')}</span>
+            </button>
+          {/each}
+        </div>
+        {#if source}
+          <div class="carte reprise">
+            <div class="rang">
+              <span class="gras">Reprendre aussi ses tâches</span>
+              <Interrupteur actif={avecTaches} label="Reprendre aussi ses tâches" couleur="var(--c)" onchange={(v) => (avecTaches = v)} />
+            </div>
+            <span class="muted petit">{nbTachesSource ? `${nbTachesSource} tâche${nbTachesSource > 1 ? 's' : ''}, recopiée${nbTachesSource > 1 ? 's' : ''} avec les dates décalées de ${ecartJours(source.debut, debut)} jours.` : 'Ce sous-projet n’avait pas de tâche.'}</span>
+          </div>
+        {/if}
+      </section>
+    {/if}
 
     <section class="groupe serre">
       <span class="etiquette">Identité</span>
@@ -241,6 +294,7 @@
   .puce { flex: none; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid var(--ligne); background: transparent; font-size: 13px; font-weight: 600; }
   .puce.on { background: var(--c); border-color: var(--c); color: var(--c-sur); }
   .modeles { display: flex; flex-direction: column; gap: 6px; }
+  .anciens { max-height: 260px; overflow-y: auto; }
   .modele { width: 100%; border: 1px solid var(--ligne); background: transparent; text-align: left; border-radius: 18px; padding: 10px 14px; min-height: 56px; display: flex; flex-direction: column; gap: 6px; }
   .modele.on { background: var(--c-fond); border-color: var(--c); }
   .modele .petit { line-height: normal; }
