@@ -48,3 +48,9 @@ Dans « Nouveau sous-projet », la section **Repartir d'un sous-projet déjà fa
 - **Dates adaptées** (`core/reprise.ts`) : un mois entier devient le mois en cours ; une semaine entière, la semaine en cours ; « sans fin » reste sans fin à partir d'aujourd'hui ; toute autre période garde sa durée et commence aujourd'hui.
 - **Tâches** : interrupteur « Reprendre aussi ses tâches » (actif par défaut). Chaque tâche active du sous-projet est recopiée avec ses heures, durée, rappels, alarme et valeurs prévues ; sa récurrence (début et date de fin) glisse du même nombre de jours que la période. Les valeurs liées à un livre précis ne suivent pas.
 - Les saisies de l'ancien sous-projet ne sont pas reprises (il repart à zéro).
+
+## Finances du mois par défaut (11 oct. 2026)
+
+Le sous-projet **Gestion de mes finances du mois** existe par défaut dans « La gestion de mes finances » : trois métriques Montant (Entrées, Sorties — moins = mieux —, Épargne), période sans fin, objectifs mensuels à définir. Créé une fois (identifiants déterministes), jamais recréé après suppression.
+
+**Saisir un mouvement** : type (Entrée, Sortie, Épargne), **nom**, **montant**, **catégorie**, jour. Les noms déjà utilisés pour ce type sont proposés (fréquents d'abord) et préremplissent catégorie et montant ; les catégories déjà utilisées passent devant les plus évidentes (entrées : Salaire, Don reçu, Revenu d'affaires… ; sorties : Loyer, Alimentation, Transport, Dons et dîme, Factures, Santé, Loisirs… ; épargne : Fonds d'urgence, Maison, Placement…). L'écran montre les sorties et les entrées par catégorie.

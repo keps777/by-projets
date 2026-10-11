@@ -4,6 +4,7 @@
   import { fenetreDuMois, joursEcoules, progressionDuMois } from '@core/progression.ts';
   import { resteBudget, solde, tauxEpargne } from '@core/calculs.ts';
   import { formatMontant, formatMontantCourt } from '@core/units.ts';
+  import { CATEGORIES_FINANCES } from './categories-finances.ts';
   import type { Jour, Metrique } from '@core/types.ts';
   import type { SousProjetLigne } from '@core/lignes.ts';
   import Volet from '../../ui/Volet.svelte';
@@ -14,7 +15,7 @@
   import { dire } from '../../ui/toast.svelte.ts';
   import { valeursDuSousProjet } from '../../data/requetes.ts';
   import { ajouterMouvement, lireDetail, retirerMouvement, saisiesDuProjet } from './donnees.ts';
-  import { jourCourt, lireChamp, rolesFinances } from './vues.ts';
+  import { champTexte, jourCourt, lireChamp, rolesFinances } from './vues.ts';
 
   let { sp, metriques, mois, jour }: { sp: SousProjetLigne; metriques: Metrique[]; mois: string; jour: Jour } = $props();
 
@@ -55,12 +56,14 @@
       };
     }));
   });
-  const categories = $derived.by(() => {
+  const repartition = (garde: (m: (typeof mouvements)[number]) => boolean) => {
     const parCat = new Map<string, number>();
-    for (const m of mouvements) if (m.sortie) parCat.set(m.cat, (parCat.get(m.cat) ?? 0) + m.montant);
+    for (const m of mouvements) if (garde(m)) parCat.set(m.cat, (parCat.get(m.cat) ?? 0) + m.montant);
     const total = [...parCat.values()].reduce((s, x) => s + x, 0);
     return [...parCat].sort((a, b) => b[1] - a[1]).map(([nom, v]) => ({ nom, v, pct: total ? Math.round((v / total) * 100) : 0 }));
-  });
+  };
+  const categories = $derived(repartition((m) => m.sortie));
+  const categoriesEntrees = $derived(repartition((m) => m.signe > 0));
   const texteMontant = (m: (typeof mouvements)[number]) => `${m.signe < 0 ? '−' : m.signe > 0 ? '+' : ''}${formatMontant(m.montant)}`;
 
   // Saisir un mouvement
@@ -76,15 +79,48 @@
     { valeur: 'entrees' as Role, label: 'Entrée' }, { valeur: 'sorties' as Role, label: 'Sortie' },
     ...(roles.epargne ? [{ valeur: 'epargne' as Role, label: 'Épargne' }] : [])
   ]);
-  const categoriesConnues = $derived([...new Set([...categories.map((c) => c.nom), 'Logement', 'Alimentation', 'Transport', 'Dons et dîme', 'Loisirs', 'Divers'])].filter((c) => c !== roles.sorties?.nom).slice(0, 8));
 
+  // Tout l'historique du projet : ce qui a déjà été saisi (nom, catégorie, dernier montant) est reproposé la fois suivante.
+  const historique = $derived.by(() => {
+    if (!ouvert) return [];
+    const parCle = new Map(metriques.filter((m) => m.type === 'montant').map((m) => [m.cle, m]));
+    return saisiesDuProjet(sp.projet_id, '2000-01-01', jour).flatMap((s) => s.valeurs.filter((v) => parCle.has(v.cle) && v.valeur_num).map((v) => {
+      const m = parCle.get(v.cle)!;
+      const d = lireDetail(v.detail);
+      return { role: (m === roles.sorties ? 'sorties' : m === roles.entrees ? 'entrees' : 'epargne') as Role, libelle: d.libelle ?? s.saisie.note, categorie: d.categorie, montant: v.valeur_num!, jour: s.saisie.jour };
+    }));
+  });
+  /** Noms déjà utilisés pour ce type de mouvement : les plus fréquents d'abord, avec leur dernière catégorie et leur dernier montant. */
+  const nomsConnus = $derived.by(() => {
+    const groupes = new Map<string, { libelle: string; n: number; categorie: string | null; montant: number; jour: string }>();
+    for (const h of historique) {
+      if (h.role !== role || !h.libelle) continue;
+      const k = h.libelle.toLowerCase();
+      const g = groupes.get(k);
+      if (!g) groupes.set(k, { libelle: h.libelle, n: 1, categorie: h.categorie, montant: h.montant, jour: h.jour });
+      else { g.n++; if (h.jour >= g.jour) { g.jour = h.jour; g.categorie = h.categorie ?? g.categorie; g.montant = h.montant; } }
+    }
+    return [...groupes.values()].sort((a, b) => b.n - a.n || b.jour.localeCompare(a.jour)).slice(0, 8);
+  });
+  /** Catégories de ce type : celles déjà utilisées d'abord, puis les plus évidentes. */
+  const categoriesConnues = $derived([...new Set([
+    ...historique.filter((h) => h.role === role && h.categorie).map((h) => h.categorie!),
+    ...CATEGORIES_FINANCES[role]
+  ])].slice(0, 10));
+  function choisirNom(n: (typeof nomsConnus)[number]) {
+    libelle = n.libelle;
+    if (!categorie && n.categorie) categorie = n.categorie;
+    if (!montant.trim()) montant = champTexte('montant', n.montant);
+  }
+
+  function changerRole(r: Role) { role = r; categorie = ''; }
   function ouvrir() { ouvert = true; role = 'sorties'; montant = ''; libelle = ''; categorie = ''; quand = jour; }
   function enregistrer() {
     const m = roles[role];
     const c = lireChamp('montant', montant);
     if (!m || !c) { dire('Indique un montant.'); return; }
     if (quand > jour) { dire('Choisis un jour passé ou aujourd’hui.'); return; }
-    ajouterMouvement(sp.projet_id, quand, m.cle, c, { libelle, categorie: role === 'sorties' ? categorie : m.nom }, jour);
+    ajouterMouvement(sp.projet_id, quand, m.cle, c, { libelle, categorie: categorie.trim() || (role === 'sorties' ? '' : m.nom) }, jour);
     dire('Mouvement enregistré');
     ouvert = false;
   }
@@ -125,6 +161,20 @@
   </div>
 </section>
 
+{#if categoriesEntrees.length}
+  <section class="groupe">
+    <span class="etiquette">Entrées par catégorie</span>
+    <div class="carte liste-cat">
+      {#each categoriesEntrees as x (x.nom)}
+        <div class="cat">
+          <span class="rang"><span class="gras">{x.nom}</span><span class="mono petit">{formatMontantCourt(x.v)} · {x.pct} %</span></span>
+          <span class="piste mince"><span class="rempli" style:width="{x.pct}%" style:background="var(--bon)"></span></span>
+        </div>
+      {/each}
+    </div>
+  </section>
+{/if}
+
 <section class="groupe">
   <div class="rang base"><span class="etiquette">Mouvements</span><span class="muted petit">saisis dans les blocs ou ici</span></div>
   <div class="carte liste">
@@ -143,20 +193,21 @@
 
 <Volet {ouvert} onfermer={() => (ouvert = false)} label="Saisir un mouvement">
   <h2 class="titre">Saisir un mouvement</h2>
-  <Segment options={optionsRole} valeur={role} onchoisir={(v) => (role = v)} />
+  <Segment options={optionsRole} valeur={role} onchoisir={changerRole} />
   <label class="champ">Montant ($)
     <!-- svelte-ignore a11y_autofocus -->
     <input class="mono grand-champ" bind:value={montant} inputmode="decimal" placeholder="0,00" autofocus />
   </label>
-  <label class="champ">Libellé
-    <input bind:value={libelle} placeholder={role === 'entrees' ? 'Ex. Salaire' : 'Ex. Épicerie'} />
-  </label>
-  {#if role === 'sorties'}
-    <div class="champ">Catégorie
-      <Puces options={categoriesConnues.map((c) => ({ valeur: c, label: c }))} valeur={categorie || null} couleur="var(--c)" texte="var(--c-sur)" petit onchoisir={(v) => (categorie = v)} />
-      <input bind:value={categorie} placeholder="Ou tape une catégorie" aria-label="Catégorie" />
-    </div>
-  {/if}
+  <div class="champ">Nom
+    <input bind:value={libelle} placeholder={role === 'entrees' ? 'Ex. Salaire' : role === 'epargne' ? 'Ex. Fonds d’urgence' : 'Ex. Épicerie'} aria-label="Nom du mouvement" />
+    {#if nomsConnus.length}
+      <Puces options={nomsConnus.map((n) => ({ valeur: n.libelle, label: n.libelle }))} valeur={libelle || null} couleur="var(--c)" texte="var(--c-sur)" petit onchoisir={(v) => { const n = nomsConnus.find((x) => x.libelle === v); if (n) choisirNom(n); }} />
+    {/if}
+  </div>
+  <div class="champ">Catégorie
+    <Puces options={categoriesConnues.map((c) => ({ valeur: c, label: c }))} valeur={categorie || null} couleur="var(--c)" texte="var(--c-sur)" petit onchoisir={(v) => (categorie = v)} />
+    <input bind:value={categorie} placeholder="Ou tape une catégorie" aria-label="Catégorie" />
+  </div>
   <label class="champ">Jour
     <input type="date" bind:value={quand} max={jour} />
   </label>

@@ -1002,3 +1002,31 @@ test('Nouveau sous-projet : objectif « x % d’un montant » (15 % d’un salai
   await expect(page.getByText(/15 % de 5000 \$ = 750 \$/)).toBeVisible();
   await expect(page.getByRole('status', { name: /Objectif calculé/ })).toContainText('750');
 });
+
+test('Finances : « Gestion de mes finances du mois » existe, et un nom déjà saisi est reproposé avec sa catégorie', async ({ page }) => {
+  await page.goto('/projets');
+  await expect(page.getByText('Gestion de mes finances du mois').first()).toBeVisible();
+  await page.getByText('Gestion de mes finances du mois').first().click();
+  await expect(page).toHaveURL(/\/projets\/sous-projet\//);
+
+  const saisir = async (role: string, nom: string | null, montant: string, categorie?: string) => {
+    await page.getByRole('button', { name: 'Saisir un mouvement' }).click();
+    const volet = page.getByRole('dialog', { name: 'Saisir un mouvement' });
+    await volet.getByRole('tab', { name: role, exact: true }).click();
+    if (nom) await volet.getByLabel('Nom du mouvement').fill(nom);
+    await volet.getByLabel(/^Montant/).fill(montant);
+    if (categorie) await volet.getByRole('button', { name: categorie, exact: true }).click();
+    await volet.getByRole('button', { name: 'Enregistrer' }).click();
+  };
+  await saisir('Entrée', 'Salaire', '3000', 'Salaire');
+  await saisir('Sortie', 'Loyer', '900', 'Loyer');
+
+  // Deuxième fois : le nom est proposé, et reprend sa catégorie et son montant.
+  await page.getByRole('button', { name: 'Saisir un mouvement' }).click();
+  const volet = page.getByRole('dialog', { name: 'Saisir un mouvement' });
+  await volet.getByRole('tab', { name: 'Entrée', exact: true }).click();
+  await volet.getByRole('button', { name: 'Salaire', exact: true }).first().click();
+  await expect(volet.getByLabel('Nom du mouvement')).toHaveValue('Salaire');
+  await expect(volet.getByLabel(/^Montant/)).toHaveValue('3000');
+  await expect(volet.getByLabel('Catégorie')).toHaveValue('Salaire');
+});

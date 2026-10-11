@@ -6,6 +6,7 @@ import { magasin } from '../../data/magasin.svelte.ts';
 import { session } from '../../data/auth.svelte.ts';
 import { horloge } from '../../data/temps.svelte.ts';
 import { creerDepuisModele } from '../../data/actions/projets.ts';
+import { assurerFinancesDuMois } from '../../data/actions/defauts.ts';
 import { progressionSousProjet, valeursDuProjet } from '../../data/requetes.ts';
 import { ajouterMouvement, contenuDuJour, lireDetail, saisiesDuProjet, saisirJour } from './donnees.ts';
 
@@ -52,6 +53,16 @@ describe('saisie manuelle d’un jour', () => {
 });
 
 describe('finances', () => {
+  it('« Gestion de mes finances du mois » est créé une fois par défaut, avec entrées, sorties et épargne', () => {
+    assurerFinancesDuMois('2026-10-11');
+    assurerFinancesDuMois('2026-10-11');
+    const p = projet('La gestion de mes finances');
+    const sps = magasin.lignes.sous_projets.filter((x) => x.projet_id === p.id && x.nom === 'Gestion de mes finances du mois');
+    expect(sps).toHaveLength(1);
+    expect(sps[0]).toMatchObject({ debut: '2026-10-01', fin: null, statut: 'en_cours' });
+    expect(magasin.lignes.metriques.filter((m) => m.sous_projet_id === sps[0].id).map((m) => m.cle)).toEqual(['montant:entrees', 'montant:sorties', 'montant:epargne']);
+  });
+
   it('un mouvement = une saisie avec sa catégorie', () => {
     const p = projet('La gestion de mes finances');
     ajouterMouvement(p.id, '2026-10-05', 'montant:sorties', 6840, { libelle: 'Épicerie', categorie: 'Alimentation' }, '2026-10-05');

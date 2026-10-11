@@ -2,6 +2,12 @@
 
 > Lire ce fichier en début de session (après `CLAUDE.md`). Ajouter une entrée en fin de session.
 
+## 11 oct. 2026 (nuit) — Finances du mois par défaut
+
+- **Sous-projet par défaut** « Gestion de mes finances du mois » (projet « La gestion de mes finances ») : Entrées, Sorties, Épargne, sans date de fin (objectifs mensuels, donc il suit chaque mois), objectifs à définir dans la Fiche (par ex. épargne en « % d'un montant »). Créé une fois après la première synchronisation (`assurerFinancesDuMois`, identifiants déterministes, jamais recréé si on le supprime).
+- **Saisie d'un mouvement** (Entrée / Sortie / Épargne) : nom, montant, **catégorie** pour les trois types, avec les catégories les plus évidentes (Salaire, Loyer, Alimentation, Transport, Dons et dîme, Factures, Santé…) ; les noms déjà saisis sont reproposés (les plus fréquents d'abord) et reprennent leur dernière catégorie et leur dernier montant. Nouvelle répartition « Entrées par catégorie ».
+- Spec §6 et US-21 mises à jour ; tests de données et e2e.
+
 ## 11 oct. 2026 (soir) — Objectif « x % d'un montant »
 
 - Une métrique **Montant** peut avoir pour objectif « x % d'un montant » (ex. 15 % de mon salaire) : on entre le pourcentage et le montant de référence, l'objectif se calcule (`cibleDePourcentage`) et s'affiche (« 15 % de 5000 $ = 750 $ »). Disponible à la création d'un sous-projet et dans la Fiche. La progression utilise la `cible` calculée, donc rien d'autre ne change.
