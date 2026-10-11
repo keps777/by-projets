@@ -166,3 +166,33 @@ describe('plusieurs métriques pilotent ensemble la barre', () => {
     expect(progressionPilotes([], sp, valeurs, '2026-10', '2026-10-06').etat).toBe('a_definir');
   });
 });
+
+describe('ce qui se compte à l’unité n’est pas attendu « à moitié »', () => {
+  const octobre = { debut: '2026-10-01', fin: '2026-10-31' };
+  const jeune = metrique({ id: 'j', cle: 'fois', type: 'fois', nom: 'Jeûne', unite: '', cible: 1, periode: 'semaine' });
+
+  it('1 jeûne par semaine (≈ 4,4 en octobre), 1 fait au 11 : 1 attendu, trait à 23 %, dans les temps', () => {
+    const p = progressionDuMois(jeune, octobre, saisies([['2026-10-04', 1]], 'fois'), '2026-10', '2026-10-11');
+    expect(p.attendu).toBe(1);
+    expect(p.retard).toBe(0);
+    expect(p.traitPct).toBe(Math.round((1 / (31 / 7)) * 100));
+    expect(p.pct).toBe(Math.round((1 / (31 / 7)) * 100));
+  });
+
+  it('au 11, avec 0 fait : 1 de retard (et non 1,4)', () => {
+    const p = progressionDuMois(jeune, octobre, [], '2026-10', '2026-10-11');
+    expect(p.retard).toBe(1);
+  });
+
+  it('le dernier jour, on attend toute la cible', () => {
+    const p = progressionDuMois(jeune, octobre, [], '2026-10', '2026-10-31');
+    expect(p.attendu).toBeCloseTo(31 / 7);
+    expect(p.traitPct).toBe(100);
+  });
+
+  it('une mesure continue garde un trait proportionnel aux jours', () => {
+    const p = progressionDuMois(metrique({ cible: 10, periode: 'mois' }), octobre, [], '2026-10', '2026-10-11');
+    expect(p.traitPct).toBe(35);
+    expect(p.attendu).toBeCloseTo(3.548, 2);
+  });
+});

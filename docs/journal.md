@@ -2,6 +2,11 @@
 
 > Lire ce fichier en début de session (après `CLAUDE.md`). Ajouter une entrée en fin de session.
 
+## 11 oct. 2026 — Trait « où je devrais être » recalibré
+
+- **Constat** : pour ce qui se compte à l'unité (fois, oui/non), le trait donnait une fraction (« 1,4 attendu ») arrondie dans le texte alors que la barre restait entière → « tu es dans les temps » avec une barre qui paraissait en retard. Les marqueurs des projets/rubriques utilisaient la part du mois écoulée, sans tenir compte de la fenêtre du sous-projet ; le volet d'un bloc avait le même repli.
+- **Fait** : fois / oui-non n'attendent que des unités entières échues (`floor`), trait, attendu, retard et texte concordent (« 1 attendu ») ; trait des projets et rubriques = moyenne des traits de leurs sous-projets ; plus de repli « mois » dans le volet d'un bloc (pas de trait si la métrique n'en a pas). Spec §5 mise à jour, tests ajoutés.
+
 ## 9 oct. 2026 — Historique importé
 
 - 61 rapports (1ᵉʳ août → 2 oct.) importés : 143 saisies « rattrapage », 211 valeurs, 61 rapports envoyés, 7 livres sur CL. Analyseur testé dans `supabase/scripts/importer-historique/` (le texte brut de l'historique n'est pas gardé dans le dépôt). `retireLe` sur les livres ; « ch » pour les chapitres ; test « plus de chapitres que l'objectif ».

@@ -29,7 +29,6 @@
   const mesures = $derived(b ? mesuresDuBloc(b, horloge.maintenant) : []);
   const mois = $derived(aujourdhui.slice(0, 7));
   const progs = $derived(b ? progressionsDe(b.sousProjets, mois, aujourdhui) : []);
-  const jourDuMois = $derived(Math.round((+aujourdhui.slice(8) / new Date(Date.UTC(+aujourdhui.slice(0, 4), +aujourdhui.slice(5, 7), 0)).getUTCDate()) * 100));
   const fil = $derived(!b ? '' : `${b.rubrique?.nom ?? 'Rendez-vous'}`);
   const spLabel = $derived(!b ? '' : b.sousProjets.length > 1 ? `${b.sousProjets.length} sous-projets` : b.sousProjets[0]?.nom ?? (b.projet ? 'Aucun sous-projet' : ''));
   const libelleJouer = $derived(!b ? '' : b.enCours ? 'Pause' : b.enPause ? 'Reprendre' : ecoule > 0 || b.fait ? 'Relancer' : 'Lancer');
@@ -168,7 +167,7 @@
           {#each progs as p (p.sp.id)}
             <a class="sp" href="/projets/sous-projet/{p.sp.id}">
               <span class="rang base"><span class="nom">{p.sp.nom}</span><span class="pct titre">{p.pct} %</span></span>
-              <span class="piste large"><span style:width="{p.pct}%"></span><i style:left="{p.trait ?? jourDuMois}%"></i></span>
+              <span class="piste large"><span style:width="{p.pct}%"></span>{#if p.trait != null}<i style:left="{p.trait}%"></i>{/if}</span>
               <span class="muted petit">{p.texte}</span>
             </a>
           {/each}

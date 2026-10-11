@@ -96,12 +96,16 @@ export function progressionDuMois(
 
   const realise = agreger(m.type, dansFenetre) ?? 0;
   const ratio = realise / cible;
-  const attendu = (cible * ecoules) / f.jours;
+  // Ce qui se compte à l'unité (fois, oui/non) ne s'attend pas « à moitié » : on n'attend que les unités entières déjà échues,
+  // et le trait de la barre suit cette même valeur pour rester d'accord avec le texte (« 1 attendu »).
+  const entier = m.type === 'fois' || m.type === 'oui_non';
+  const proportion = (cible * ecoules) / f.jours;
+  const attendu = entier && ecoules < f.jours ? Math.floor(proportion + 1e-9) : proportion;
   const retard = Math.max(0, attendu - realise);
   const reste = Math.max(0, cible - realise);
   return {
     etat, cible, realise, ratio, pct: arrondiPct(ratio), attendu,
-    traitPct: Math.round((ecoules / f.jours) * 100), retard,
+    traitPct: entier ? arrondiPct(attendu / cible) : Math.round((ecoules / f.jours) * 100), retard,
     parJourPourRattraper: restants > 0 ? reste / restants : null,
     joursRestants: restants
   };

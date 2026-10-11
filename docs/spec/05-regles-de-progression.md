@@ -17,7 +17,7 @@
 
 3. **Réalisé** = agrégation des valeurs saisies pour la clé de M, aux jours de la fenêtre.
 4. **Progression** = `réalisé ÷ cible du mois`. On **affiche** au plus 100 %, mais la valeur réelle est conservée (pour le rapport et l'Archive).
-5. **Où je devrais être aujourd'hui** (le trait sur la barre) = `cible du mois × jours_écoulés ÷ jours_fenêtre`, aujourd'hui compris. **Retard** = attendu − réalisé, jamais présenté comme un échec : « à rattraper à 9,1 ch. par jour » (= ce qui reste ÷ jours restants).
+5. **Où je devrais être aujourd'hui** (le trait sur la barre) = `cible du mois × jours_écoulés ÷ jours_fenêtre`, aujourd'hui compris. Pour ce qui se compte à l'unité (*fois*, *oui / non*), seules les **unités entières déjà échues** sont attendues (arrondi vers le bas, sauf le dernier jour) ; le trait, le texte (« 1 attendu ») et le retard concordent. Le trait d'un projet ou d'une rubrique est la **moyenne des traits** de ses sous-projets (leur fenêtre peut commencer en cours de mois). **Retard** = attendu − réalisé, jamais présenté comme un échec : « à rattraper à 9,1 ch. par jour » (= ce qui reste ÷ jours restants).
 6. **Cas particuliers**
    - *Sens « moins = mieux »* (dépenses) : la barre se remplit de la même façon, mais dépasser 100 % est signalé, et rester sous le trait est bon.
    - *Agrégation « dernière valeur »* (poids, pourcentage) : progression = `(valeur de départ − valeur actuelle) ÷ (valeur de départ − cible)`.

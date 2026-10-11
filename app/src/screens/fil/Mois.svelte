@@ -1,6 +1,6 @@
 <script lang="ts">
   import { moisSuivant, ajouterJours, premierDuMois } from '@core/dates.ts';
-  import { blocsDuJour, progressionRubrique, rubriques } from '../../data/requetes.ts';
+  import { blocsDuJour, progressionRubrique, rubriques, traitRubrique } from '../../data/requetes.ts';
   import { aujourdhui as jourCourant } from '../../data/temps.svelte.ts';
   import { routeur } from '../../routeur.svelte.ts';
   import { couleurRubrique } from '../../ui/couleurs.ts';
@@ -24,7 +24,7 @@
   const stats = $derived(statsMois(jours, aujourdhui));
   const attendu = $derived(partEcoulee(mois, aujourdhui));
   const rubs = $derived(rubriques());
-  const progs = $derived(rubs.map((r) => ({ id: r.id, nom: nomCourtRubrique(r.nom), couleur: couleurRubrique(r.couleur, mode), pct: progressionRubrique(r.id, mois, aujourdhui) })));
+  const progs = $derived(rubs.map((r) => ({ id: r.id, nom: nomCourtRubrique(r.nom), couleur: couleurRubrique(r.couleur, mode), pct: progressionRubrique(r.id, mois, aujourdhui), trait: traitRubrique(r.id, mois, aujourdhui) ?? attendu })));
 
   const allerMois = (n: number) => {
     const m = n > 0 ? moisSuivant(mois) : ajouterJours(premierDuMois(mois), -1).slice(0, 7);
@@ -101,7 +101,7 @@
     {#each progs as r (r.id)}
       <div class="ligne-prog">
         <span class="muted">{r.nom}</span>
-        <span class="piste"><span style:width="{r.pct ?? 0}%" style:background={r.couleur}></span><i style:left="{attendu}%"></i></span>
+        <span class="piste"><span style:width="{r.pct ?? 0}%" style:background={r.couleur}></span><i style:left="{r.trait}%"></i></span>
         <span class="mono">{r.pct == null ? '—' : `${r.pct} %`}</span>
       </div>
     {/each}

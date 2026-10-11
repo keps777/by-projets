@@ -74,6 +74,16 @@ export function progressionRubrique(rubriqueId: string, mois: Mois, aujourdhui: 
   return moyennePct(projetsDe(rubriqueId).map((p) => progressionProjet(p.id, mois, aujourdhui)));
 }
 
+/** Trait « où je devrais être » d'un projet : moyenne des traits de ses sous-projets (même ensemble que `progressionProjet`). */
+export function traitProjet(projetId: string, mois: Mois, aujourdhui: Jour): number | null {
+  return moyennePct(sousProjetsDe(projetId).filter((s) => s.statut === 'en_cours' || s.statut === 'a_valider').map((s) => progressionSousProjet(s, mois, aujourdhui).progression?.traitPct));
+}
+
+/** Trait d'une rubrique : moyenne des traits de ses projets. */
+export function traitRubrique(rubriqueId: string, mois: Mois, aujourdhui: Jour): number | null {
+  return moyennePct(projetsDe(rubriqueId).map((p) => traitProjet(p.id, mois, aujourdhui)));
+}
+
 // ------------------------------------------------------------------ blocs du Fil
 
 export interface BlocVue {

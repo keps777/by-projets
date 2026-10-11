@@ -48,7 +48,7 @@
     if (pilote.type === 'heure') return { a: `${prog.realise} jour${(prog.realise ?? 0) > 1 ? 's' : ''} sur ${joursEcoules(f, jour)} à l’heure.`, retard: '', b: '' };
     if (!somme) return { a: `Aujourd’hui : ${valeurTexte(pilote, prog.realise)} · cible ${valeurTexte(pilote, prog.cible)}.`, retard: '', b: '' };
     const att = arrondi(prog.attendu ?? 0);
-    const debut = `${valeurTexte(pilote, att)} ${pilote.sens === 'moins' ? 'prévus' : 'attendus'} au ${jourCourt(jour)} · `;
+    const debut = `${valeurTexte(pilote, att)} ${pilote.sens === 'moins' ? 'prévu' : 'attendu'}${compte && att <= 1 ? '' : 's'} au ${jourCourt(jour)} · `;
     if (pilote.sens === 'moins') {
       const depasse = (prog.realise ?? 0) > (prog.cible ?? 0);
       if (depasse) return { a: debut, retard: `dépassé de ${valeurTexte(pilote, (prog.realise ?? 0) - (prog.cible ?? 0), true)}`, b: '.' };

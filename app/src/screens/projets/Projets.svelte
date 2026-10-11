@@ -15,7 +15,7 @@
   import { theme } from '../../ui/theme.svelte.ts';
   import { dire } from '../../ui/toast.svelte.ts';
   import { magasin } from '../../data/magasin.svelte.ts';
-  import { progressionProjet, progressionRubrique, progressionSousProjet, projetsDe, rubriques, sousProjetsDe } from '../../data/requetes.ts';
+  import { progressionProjet, progressionRubrique, progressionSousProjet, projetsDe, rubriques, sousProjetsDe, traitProjet, traitRubrique } from '../../data/requetes.ts';
   import { aujourdhui } from '../../data/temps.svelte.ts';
   import { ajouterProjet, ajouterRubrique, archiverSousProjet, retirerProjet, retirerRubrique } from '../../data/actions/projets.ts';
   import { jourCourt, nomMois, resumeProgression } from './vues.ts';
@@ -29,6 +29,7 @@
   const mois = $derived(moisDe(jour));
   const jourN = $derived(+jour.slice(8, 10));
   const nbJours = $derived(joursDuMois(mois));
+  /** Repli quand rien n'a de trait propre : la part du mois écoulée. */
   const attendu = $derived(Math.round((jourN / nbJours) * 100));
 
   let edition = $state(false);
@@ -57,10 +58,11 @@
   function vueProjet(p: Projet) {
     const subs = vivants(p.id).map(vueSousProjet);
     const pct = progressionProjet(p.id, mois, jour);
+    const trait = traitProjet(p.id, mois, jour) ?? attendu;
     const n = subs.length;
     const ligne = n === 0 ? 'Aucun sous-projet · ajoutes-en un' : n === 1 ? subs[0].sp.nom + (subs[0].obj ? ' · ' + subs[0].obj : '') : `${n} sous-projets`;
     return {
-      p, subs, pct, ligne,
+      p, subs, pct, trait, ligne,
       marqueur: pct != null && !(n > 0 && subs.every((s) => s.futur)),
       href: n ? subs[0].href : `/projets/nouveau-sous-projet?projet=${p.id}`
     };
@@ -73,7 +75,8 @@
       numero: r.cle === 'transversal' ? '∞' : String(i + 1),
       court: (r.cle && NOMS_COURTS[r.cle]) || r.nom,
       couleur: couleurRubrique(r.couleur, theme.mode),
-      pct: progressionRubrique(r.id, mois, jour)
+      pct: progressionRubrique(r.id, mois, jour),
+      trait: traitRubrique(r.id, mois, jour) ?? attendu
     };
   }
 
@@ -86,7 +89,7 @@
   });
 
   const basculer = (id: string) => (ouverts.has(id) ? ouverts.delete(id) : ouverts.add(id));
-  const couleurPct = (pct: number | null) => (pct != null && pct >= 100 ? 'var(--bon)' : pct != null && pct < attendu * 0.5 ? 'var(--muted)' : 'var(--texte)');
+  const couleurPct = (pct: number | null, trait: number) => (pct != null && pct >= 100 ? 'var(--bon)' : pct != null && pct < trait * 0.5 ? 'var(--muted)' : 'var(--texte)');
 
   // ------------------------------------------------------------------ mode Modifier
   let nouveauProjet = $state<{ rubriqueId: string; nom: string } | null>(null);
@@ -134,7 +137,7 @@
     {#each vue as r (r.r.id)}
       <div class="ligne-resume" style={styleCouleur(r.couleur)}>
         <span class="muted court">{r.court}</span>
-        <span class="piste"><span class="rempli" style:width="{r.pct ?? 0}%"></span><span class="trait" style:left="{attendu}%"></span></span>
+        <span class="piste"><span class="rempli" style:width="{r.pct ?? 0}%"></span><span class="trait" style:left="{r.trait}%"></span></span>
         <span class="mono pct">{r.pct == null ? '—' : `${r.pct} %`}</span>
       </div>
     {/each}
@@ -169,12 +172,12 @@
                 <span class="projet-haut">
                   <span class="mono muted num">{p.p.numero ?? ''}</span>
                   <span class="projet-nom">{p.p.nom}</span>
-                  <span class="mono projet-pct" style:color={couleurPct(p.pct)}>{p.pct == null ? '—' : `${p.pct} %`}</span>
+                  <span class="mono projet-pct" style:color={couleurPct(p.pct, p.trait)}>{p.pct == null ? '—' : `${p.pct} %`}</span>
                 </span>
                 <span class="muted petit coupe">{p.ligne}</span>
                 <span class="piste fine">
                   <span class="rempli" style:width="{p.pct ?? 0}%" style:background={p.pct != null && p.pct >= 100 ? 'var(--bon)' : undefined}></span>
-                  {#if p.marqueur}<span class="trait" style:left="{attendu}%"></span>{/if}
+                  {#if p.marqueur}<span class="trait" style:left="{p.trait}%"></span>{/if}
                 </span>
               </a>
               {#if p.subs.length > 1 && !edition}
