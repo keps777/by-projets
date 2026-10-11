@@ -1,7 +1,7 @@
 <script lang="ts">
   // Carte d'édition d'une métrique (planche NouveauSousProjet, réutilisée par la Fiche) : nom, unité, objectif,
   // période, sens, « dans le rapport ». Les valeurs restent en unité de base ; l'écran montre minutes, dollars, km…
-  import { OPTIONS_JEUNE, TYPES, UNITES_RAPIDES } from '@core/metriques.ts';
+  import { OPTIONS_JEUNE, TYPES, UNITES_RAPIDES, cibleDePourcentage } from '@core/metriques.ts';
   import Icone from '../../ui/Icone.svelte';
   import Interrupteur from '../../ui/Interrupteur.svelte';
   import ChampTemps from '../../ui/ChampTemps.svelte';
@@ -19,6 +19,24 @@
   // Champ d'objectif : texte local, relu à chaque changement venu de l'extérieur.
   let texte = $state('');
   $effect(() => { texte = champTexte(m.type, m.cible); });
+
+  // « x % d'un montant » (Montant) : l'objectif se calcule à partir d'un pourcentage et d'un montant à entrer (salaire, revenu…).
+  const enPct = $derived(m.type === 'montant' && m.pourcentage != null);
+  let textePct = $state('');
+  let texteRef = $state('');
+  $effect(() => { textePct = m.pourcentage == null ? '' : String(m.pourcentage).replace('.', ','); });
+  $effect(() => { texteRef = champTexte('montant', m.montant_reference ?? null); });
+  function modePct(actif: boolean) {
+    if (actif === enPct) return;
+    if (actif) onchange({ pourcentage: 10, montant_reference: null, cible: null });
+    else onchange({ pourcentage: null, montant_reference: null });
+  }
+  function validerPct() {
+    const n = Number(textePct.trim().replace(',', '.'));
+    const pct = textePct.trim() && Number.isFinite(n) && n >= 0 ? Math.min(n, 1000) : (m.pourcentage ?? 10);
+    const ref = lireChamp('montant', texteRef);
+    onchange({ pourcentage: pct, montant_reference: ref, cible: cibleDePourcentage(pct, ref) });
+  }
 
   function pas(signe: 1 | -1) {
     const p = pasDe(m.type, m.cible);
@@ -65,6 +83,8 @@
             <input class="mono valeur" type="time" value={texte} onchange={(e) => { texte = e.currentTarget.value; valider(); }} aria-label="Objectif de {m.nom}" />
             <button type="button" aria-label="Augmenter l’objectif" onclick={() => pas(1)}>+</button>
           </div>
+        {:else if enPct}
+          <div class="pas calcule" role="status" aria-label="Objectif calculé de {m.nom}"><span class="mono valeur">{m.cible == null ? 'à calculer' : champTexte('montant', m.cible)}</span></div>
         {:else}
         <div class="pas">
           <button type="button" aria-label="Diminuer l’objectif" onclick={() => pas(-1)}>−</button>
@@ -74,6 +94,23 @@
         {/if}
       </div>
     </div>
+    {#if m.type === 'montant'}
+      <div class="mode" role="group" aria-label="Façon de fixer l’objectif de {m.nom}">
+        <button type="button" class:on={!enPct} aria-pressed={!enPct} onclick={() => modePct(false)}>Montant fixe</button>
+        <button type="button" class:on={enPct} aria-pressed={enPct} onclick={() => modePct(true)}>% d’un montant</button>
+      </div>
+      {#if enPct}
+        <div class="pct">
+          <label class="sous">Pourcentage
+            <span class="avec-unite"><input class="mono" bind:value={textePct} onchange={validerPct} inputmode="decimal" aria-label="Pourcentage de {m.nom}" /><span>%</span></span>
+          </label>
+          <label class="sous">d’un montant (à entrer)
+            <span class="avec-unite"><input class="mono" bind:value={texteRef} onchange={validerPct} inputmode="decimal" placeholder="Ex. salaire" aria-label="Montant dont on prend le pourcentage, pour {m.nom}" /><span>$</span></span>
+          </label>
+        </div>
+        <span class="muted calcul">{m.cible == null ? 'Entre le montant pour calculer l’objectif.' : `${m.pourcentage} % de ${champTexte('montant', m.montant_reference ?? null)} $ = ${champTexte('montant', m.cible)} $`}</span>
+      {/if}
+    {/if}
     {#if m.type === 'nombre'}
       <div class="defile">
         {#each UNITES_RAPIDES as u (u)}
@@ -127,6 +164,14 @@
   .pas { display: flex; align-items: center; height: 44px; border-radius: 12px; border: 1px solid var(--ligne); background: var(--champ); }
   .pas button { flex: none; width: 44px; height: 44px; border: 0; background: transparent; color: var(--texte); font-size: 20px; }
   .valeur { flex: 1; height: 42px; border: 0; background: transparent; text-align: center; padding: 0; }
+  .pas.calcule { justify-content: center; background: transparent; }
+  .mode { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .mode button { height: 40px; border-radius: 10px; border: 1px solid var(--ligne); background: transparent; font-size: 12px; font-weight: 600; }
+  .mode button.on { background: var(--inverse); border-color: var(--inverse); color: var(--inverse-texte); }
+  .pct { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 8px; }
+  .avec-unite { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--texte); }
+  .avec-unite input { flex: 1; width: 100%; text-align: center; }
+  .calcul { font-size: 12px; }
   .defile { display: flex; gap: 6px; overflow-x: auto; margin: 0 -14px; padding: 0 14px; }
   .puce { flex: none; height: 40px; padding: 0 12px; border-radius: 20px; border: 1px solid var(--ligne); background: transparent; font-size: 12px; font-weight: 600; }
   .puce.on { background: var(--c); border-color: var(--c); color: var(--c-sur); }

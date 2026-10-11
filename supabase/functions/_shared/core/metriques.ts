@@ -72,3 +72,9 @@ export function valeursEntre(valeurs: ValeurSaisie[], cle: string, debut: Jour, 
 export function libelleChoix(options: { label: string; valeur: number }[] | undefined, valeur: number): string {
   return (options ?? OPTIONS_JEUNE).find((o) => o.valeur === valeur)?.label ?? String(valeur);
 }
+
+/** Objectif « x % d'un montant » : `pourcentage` en % (15 = 15 %), `montantReference` en centimes → objectif en centimes (arrondi au centime). */
+export function cibleDePourcentage(pourcentage: number | null | undefined, montantReference: number | null | undefined): number | null {
+  if (pourcentage == null || montantReference == null || !Number.isFinite(pourcentage) || !Number.isFinite(montantReference)) return null;
+  return Math.round((montantReference * pourcentage) / 100);
+}

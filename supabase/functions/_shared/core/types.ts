@@ -27,6 +27,10 @@ export interface Metrique {
   sens: Sens;
   options?: OptionChoix[];
   dansRapport: boolean;
+  /** Objectif « x % d'un montant » : x (15 = 15 %). `cible` en est le résultat (montant de référence × x ÷ 100). */
+  pourcentage?: number | null;
+  /** Montant de référence (centimes) dont on prend le pourcentage. */
+  montantReference?: number | null;
 }
 
 export type StatutSousProjet = 'brouillon' | 'en_cours' | 'a_valider' | 'termine' | 'archive';

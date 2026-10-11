@@ -86,7 +86,7 @@
     nom = sp.nom;
     const lignes = metriquesDe(sp.id);
     const pilotes = sp.metriques_pilotes?.length ? sp.metriques_pilotes : sp.metrique_pilote_id ? [sp.metrique_pilote_id] : [];
-    metriques = lignes.map((l) => ({ type: l.type, nom: l.nom, unite: l.unite, cible: l.cible, periode_cible: l.periode_cible, sens: l.sens, options: l.options ?? null, dans_rapport: l.dans_rapport, cle: l.cle, pilote: pilotes.includes(l.id) }));
+    metriques = lignes.map((l) => ({ type: l.type, nom: l.nom, unite: l.unite, cible: l.cible, periode_cible: l.periode_cible, sens: l.sens, options: l.options ?? null, dans_rapport: l.dans_rapport, cle: l.cle, pourcentage: l.pourcentage ?? null, montant_reference: l.montant_reference ?? null, pilote: pilotes.includes(l.id) }));
     if (!metriques.some((x) => x.pilote)) { const premier = metriques.findIndex((x) => x.cible != null); if (premier >= 0) metriques[premier].pilote = true; }
     const p = periodeAdaptee(sp.debut, sp.fin, jour);
     debut = p.debut; fin = p.fin;

@@ -11,7 +11,7 @@ import { fuseau } from './temps.svelte.ts';
 export const profil = (): Profil | undefined => magasin.lignes.profils[0];
 
 export function enMetrique(l: MetriqueLigne): Metrique {
-  return { id: l.id, cle: l.cle, type: l.type, nom: l.nom, unite: l.unite, cible: l.cible, periode: l.periode_cible, sens: l.sens, options: l.options ?? undefined, dansRapport: l.dans_rapport };
+  return { id: l.id, cle: l.cle, type: l.type, nom: l.nom, unite: l.unite, cible: l.cible, periode: l.periode_cible, sens: l.sens, options: l.options ?? undefined, dansRapport: l.dans_rapport, pourcentage: l.pourcentage ?? null, montantReference: l.montant_reference ?? null };
 }
 
 const trier = <T extends { ordre: number }>(l: T[]) => [...l].sort((a, b) => a.ordre - b.ordre);

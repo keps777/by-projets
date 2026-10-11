@@ -988,3 +988,17 @@ test('Nouveau sous-projet : repartir d’un sous-projet déjà fait, avec ses r�
   await page.getByRole('button', { name: 'Créer le sous-projet' }).click();
   await expect(page).toHaveURL(/\/projets\/sous-projet\//);
 });
+
+test('Nouveau sous-projet : objectif « x % d’un montant » (15 % d’un salaire à entrer)', async ({ page }) => {
+  await page.goto('/projets/nouveau-sous-projet');
+  await page.getByRole('button', { name: 'Partir de zéro' }).click();
+  await page.getByRole('textbox', { name: 'Nom du sous-projet' }).fill('15 % de mon salaire');
+  await page.getByRole('button', { name: /Montant \(\$\)/ }).first().click();
+  const mode = page.getByRole('group', { name: /Façon de fixer l’objectif/ });
+  await mode.getByRole('button', { name: '% d’un montant' }).click();
+  await page.getByLabel(/Pourcentage de /).fill('15');
+  await page.getByLabel(/Montant dont on prend le pourcentage/).fill('5000');
+  await page.getByLabel(/Montant dont on prend le pourcentage/).blur();
+  await expect(page.getByText(/15 % de 5000 \$ = 750 \$/)).toBeVisible();
+  await expect(page.getByRole('status', { name: /Objectif calculé/ })).toContainText('750');
+});

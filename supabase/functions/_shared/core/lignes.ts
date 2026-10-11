@@ -71,6 +71,9 @@ export interface MetriqueLigne extends Base {
   options: OptionChoix[] | null;
   dans_rapport: boolean;
   ordre: number;
+  /** Objectif « x % d'un montant » (métriques Montant) : x, et le montant de référence en centimes ; `cible` en est le résultat. */
+  pourcentage?: number | null;
+  montant_reference?: number | null;
 }
 
 export interface Tache extends Base {

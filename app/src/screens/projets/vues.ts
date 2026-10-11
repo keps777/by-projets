@@ -85,12 +85,13 @@ export const PERIODES: { valeur: PeriodeCible; label: string; texte: string }[] 
 ];
 
 /** « Objectif : 7 ch. par jour », « Objectif : avant 05:00 », « Référence libre » */
-export function objectifTexte(m: Pick<Metrique, 'type' | 'unite' | 'options' | 'cible' | 'periode' | 'sens'>): string {
+export function objectifTexte(m: Pick<Metrique, 'type' | 'unite' | 'options' | 'cible' | 'periode' | 'sens' | 'pourcentage' | 'montantReference'>): string {
   if (m.type === 'reference') return 'Référence libre';
   if (m.cible == null) return 'Objectif à définir';
   if (m.type === 'heure') return `Objectif : ${m.sens === 'moins' ? 'avant' : 'après'} ${formatHeure(m.cible)}`;
   const per = PERIODES.find((p) => p.valeur === m.periode)?.texte ?? '';
-  return `Objectif : ${valeurTexte(m, m.cible, true)} ${per}${m.sens === 'moins' ? ' au plus' : ''}`;
+  const part = m.pourcentage != null && m.montantReference != null ? `${nombre(m.pourcentage)} % de ${valeurTexte(m, m.montantReference, true)} = ` : '';
+  return `Objectif : ${part}${valeurTexte(m, m.cible, true)} ${per}${m.sens === 'moins' ? ' au plus' : ''}`;
 }
 
 /** Valeur de l'unité de base → valeur saisie à l'écran (minutes, dollars, km, kg). */
@@ -156,6 +157,8 @@ export function cibleParDefaut(type: TypeMetrique): number | null {
 export interface Brouillon {
   type: TypeMetrique; nom: string; unite: string; cible: number | null; periode_cible: PeriodeCible;
   sens: 'plus' | 'moins'; options?: { label: string; valeur: number }[] | null; dans_rapport: boolean; cle?: string;
+  /** « x % d'un montant » (Montant) : x et le montant de référence (centimes) ; `cible` en est le résultat. */
+  pourcentage?: number | null; montant_reference?: number | null;
   /** Fait partie des métriques qui pilotent ensemble la barre (nouveau sous-projet). */
   pilote?: boolean;
 }
@@ -171,6 +174,7 @@ export function problemesMetriques(ms: Brouillon[], fin: Jour | null): string[] 
     const deja = vues.get(cle);
     if (deja != null) res.push(`« ${deja} » et « ${m.nom} » liraient la même saisie : change le nom ou l’unité de l’une des deux.`);
     else vues.set(cle, m.nom);
+    if (m.pourcentage != null && m.montant_reference == null) res.push(`« ${m.nom} » vise un pourcentage : entre le montant dont on le prend.`);
     if (!fin && m.periode_cible === 'total' && m.cible != null) res.push(`« ${m.nom} » vise un total : choisis une date de fin.`);
   }
   return res;

@@ -2,6 +2,11 @@
 
 > Lire ce fichier en début de session (après `CLAUDE.md`). Ajouter une entrée en fin de session.
 
+## 11 oct. 2026 (soir) — Objectif « x % d'un montant »
+
+- Une métrique **Montant** peut avoir pour objectif « x % d'un montant » (ex. 15 % de mon salaire) : on entre le pourcentage et le montant de référence, l'objectif se calcule (`cibleDePourcentage`) et s'affiche (« 15 % de 5000 $ = 750 $ »). Disponible à la création d'un sous-projet et dans la Fiche. La progression utilise la `cible` calculée, donc rien d'autre ne change.
+- Migration `20261011000100_objectif_pourcentage` (colonnes `pourcentage`, `montant_reference`), appliquée à la base réelle et enregistrée. Spec §3 mise à jour, tests unitaires et e2e.
+
 ## 11 oct. 2026 — Trait « où je devrais être » recalibré
 
 - **Constat** : pour ce qui se compte à l'unité (fois, oui/non), le trait donnait une fraction (« 1,4 attendu ») arrondie dans le texte alors que la barre restait entière → « tu es dans les temps » avec une barre qui paraissait en retard. Les marqueurs des projets/rubriques utilisaient la part du mois écoulée, sans tenir compte de la fenêtre du sous-projet ; le volet d'un bloc avait le même repli.

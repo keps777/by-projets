@@ -9,7 +9,7 @@ Chaque valeur est stockée dans une **unité de base** exacte et convertie seule
 | **Temps** | prière 2 h, lecture 45 min | secondes | `2h15`, `0h28`, `~0h28` si approximatif | somme |
 | **Fois** | rencontre dynamique 3 fois par jour | entier | `2/3` | somme |
 | **Nombre** | chapitres, pages, versets, personnes, âmes, séances, pièces, articles (unité libre) | décimal | `166/417 p.` | somme |
-| **Montant** ($) | entrées, sorties, épargne, dons | centimes + devise | `1 380,00 $` | somme |
+| **Montant** ($) | entrées, sorties, épargne, dons — l'objectif peut être **« x % d'un montant »** (15 % du salaire : on entre le pourcentage et le montant, l'objectif = montant × x ÷ 100) | centimes + devise | `1 380,00 $` | somme |
 | **Oui / Non** | don fait, lever à l'heure | 0 ou 1 | coche | somme (jours « oui ») |
 | **Choix** | jeûne **complet** ou **partiel** | valeur de l'option (Complet = 1, Partiel = 0,5, Aucun = 0) | libellé de l'option | somme des valeurs |
 | **Distance** | course de 5 km | mètres | `5,0 km` | somme |

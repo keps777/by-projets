@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { cibleDuMois, fenetreDuMois, progressionDuMois, progressionPilotes, metriquesPilotes, moyennePct, doitEtreValide, joursEcoules } from './progression.ts';
-import { agreger, cleMetrique } from './metriques.ts';
+import { agreger, cibleDePourcentage, cleMetrique } from './metriques.ts';
 import type { Metrique, ValeurSaisie } from './types.ts';
 import { solde, resteBudget, tauxEpargne, joursDeJeune, allure } from './calculs.ts';
 
@@ -195,4 +195,10 @@ describe('ce qui se compte à l’unité n’est pas attendu « à moitié »', 
     expect(p.traitPct).toBe(35);
     expect(p.attendu).toBeCloseTo(3.548, 2);
   });
+});
+
+describe('objectif en pourcentage d’un montant', () => {
+  it('15 % de 5 000 $ = 750 $ (centimes)', () => { expect(cibleDePourcentage(15, 500000)).toBe(75000); });
+  it('arrondit au centime', () => { expect(cibleDePourcentage(12.5, 333)).toBe(42); });
+  it('est vide tant que le montant manque', () => { expect(cibleDePourcentage(15, null)).toBeNull(); expect(cibleDePourcentage(null, 500000)).toBeNull(); });
 });

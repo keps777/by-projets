@@ -32,7 +32,7 @@ export function renommerSousProjet(spId: string, nom: string): void { if (nom.tr
 export function retirerProjet(projetId: string): void { magasin.ecrire('projets', { id: projetId, statut: 'archive' }); }
 export function retirerRubrique(rubriqueId: string): void { magasin.ecrire('rubriques', { id: rubriqueId, archivee: true }); }
 
-export interface NouvelleMetrique { type: MetriqueLigne['type']; nom: string; unite: string; cible: number | null; periode_cible: MetriqueLigne['periode_cible']; sens: MetriqueLigne['sens']; options?: MetriqueLigne['options']; dans_rapport: boolean; cle?: string }
+export interface NouvelleMetrique { type: MetriqueLigne['type']; nom: string; unite: string; cible: number | null; periode_cible: MetriqueLigne['periode_cible']; sens: MetriqueLigne['sens']; options?: MetriqueLigne['options']; dans_rapport: boolean; cle?: string; pourcentage?: number | null; montant_reference?: number | null }
 
 export interface NouveauSousProjet {
   projetId: string;
@@ -53,7 +53,8 @@ export function creerSousProjet(n: NouveauSousProjet): string {
   magasin.ecrire('sous_projets', { id, projet_id: n.projetId, nom: n.nom.trim() || 'Nouveau sous-projet', debut: n.debut, fin: n.fin, statut: 'en_cours', metrique_pilote_id: pilotes[0]?.id ?? null, metriques_pilotes: pilotes.map((p) => p.id), reprise_passe: n.reprisePasse, fiche: { ...FICHE_VIDE, ...n.fiche }, bilan: null, termine_le: null });
   n.metriques.forEach((m, i) => magasin.ecrire('metriques', {
     id: ids[i], sous_projet_id: id, cle: m.cle ?? cleMetrique(m.type, m.unite, m.nom), type: m.type, nom: m.nom, unite: m.unite, cible: m.cible,
-    periode_cible: m.periode_cible, sens: m.sens, options: m.options ?? null, dans_rapport: m.dans_rapport, ordre: i
+    periode_cible: m.periode_cible, sens: m.sens, options: m.options ?? null, dans_rapport: m.dans_rapport, ordre: i,
+    pourcentage: m.pourcentage ?? null, montant_reference: m.montant_reference ?? null
   }));
   return id;
 }
@@ -73,7 +74,7 @@ export function creerDepuisModele(m: ModeleSousProjet, projetId: string, debut: 
 export function modifierMetrique(id: string, patch: Partial<MetriqueLigne>): void { magasin.ecrire('metriques', { id, ...patch }); }
 export function ajouterMetrique(spId: string, m: NouvelleMetrique): string {
   const id = nouvelId();
-  magasin.ecrire('metriques', { id, sous_projet_id: spId, cle: m.cle ?? cleMetrique(m.type, m.unite, m.nom), type: m.type, nom: m.nom, unite: m.unite, cible: m.cible, periode_cible: m.periode_cible, sens: m.sens, options: m.options ?? null, dans_rapport: m.dans_rapport, ordre: metriquesDe(spId).length });
+  magasin.ecrire('metriques', { id, sous_projet_id: spId, cle: m.cle ?? cleMetrique(m.type, m.unite, m.nom), type: m.type, nom: m.nom, unite: m.unite, cible: m.cible, periode_cible: m.periode_cible, sens: m.sens, options: m.options ?? null, dans_rapport: m.dans_rapport, ordre: metriquesDe(spId).length, pourcentage: m.pourcentage ?? null, montant_reference: m.montant_reference ?? null });
   return id;
 }
 export function retirerMetrique(id: string): void { magasin.supprimer('metriques', id); }
