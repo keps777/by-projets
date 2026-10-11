@@ -24,7 +24,7 @@ Un **format type unique** pour tous les sous-projets ; seuls les blocs et les co
 |---|---|
 | **En-tête** | Nom de l'app, rubrique, projet (avec son code de rapport), période, état (en cours, terminé, signé). |
 | **Titre** | Nom du sous-projet. |
-| **Fiche** | Les 7 questions : quoi, pourquoi, qui, où, quand, comment, combien. |
+| **Fiche** | Les 7 questions : quoi, pourquoi, qui, où, quand, comment, combien — **repliées par défaut** (bouton Afficher/Masquer, choix gardé sur l’appareil). |
 | **Objectifs et résultats** | Une ligne par métrique : objectif, réalisé, pourcentage. |
 | **Journal** | Un tableau jour par jour. **Les colonnes suivent les métriques du sous-projet** : lecture = chapitres, passages, temps ; finances = entrées, sorties, catégories ; sport = séances, distance, durée. |
 | **Graphique** | Courbe ou barres du mois, avec le trait « où je devrais être ». |

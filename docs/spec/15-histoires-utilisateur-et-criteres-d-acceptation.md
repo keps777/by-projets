@@ -88,7 +88,7 @@ Format : *En tant que moi, je veux… afin de…*. Chaque critère est vérifiab
 - Après validation, le sous-projet est dans l'Archive, avec son PDF si je l'ai signé.
 
 **US-20 · Fiche et document.** Je veux une fiche de suivi qui se remplit seule.
-- La fiche contient les 7 questions (quoi, pourquoi, qui, où, quand, comment, combien).
+- La fiche contient les 7 questions (quoi, pourquoi, qui, où, quand, comment, combien). Elles sont repliées par défaut, avec un bouton pour les afficher.
 - Le document aperçu se met à jour à chaque saisie ; je peux l'exporter en PDF et le signer au doigt.
 
 **US-21 · Finances.** Je veux suivre entrées, sorties et épargne en dollars.

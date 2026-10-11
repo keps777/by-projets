@@ -44,6 +44,14 @@
   const suggestion = $derived(sp.statut === 'en_cours' || sp.statut === 'brouillon'
     ? proposerTaches(besoinDuSousProjet(metriques, sp, jour.slice(0, 7)), taches)
     : { manque: null, propositions: [] });
+  // Les 7 questions sont repliées par défaut ; le choix est gardé sur l'appareil.
+  const CLE_QUESTIONS = 'luther-life:fiche-questions';
+  let questionsOuvertes = $state((() => { try { return localStorage.getItem(CLE_QUESTIONS) === '1'; } catch { return false; } })());
+  const remplies = $derived(QUESTIONS.filter((f) => (sp.fiche?.[f.cle] ?? '').trim()).length);
+  function basculerQuestions() {
+    questionsOuvertes = !questionsOuvertes;
+    try { localStorage.setItem(CLE_QUESTIONS, questionsOuvertes ? '1' : '0'); } catch { /* stockage indisponible : le choix ne dure que cette visite */ }
+  }
   let edition = $state(false);
   let validation = $state(false);
   let suppression = $state(false);
@@ -76,14 +84,20 @@
   }
 </script>
 
-<div class="carte fiche">
-  {#each QUESTIONS as f (f.cle)}
-    <label class="question">
-      <span class="q">{f.q}</span>
-      <textarea rows="2" value={sp.fiche?.[f.cle] ?? ''} placeholder={f.aide} aria-label={f.q} onchange={(e) => enregistrer(f.cle, e.currentTarget.value)}></textarea>
-    </label>
-  {/each}
-</div>
+<button type="button" class="carte entete-questions" aria-expanded={questionsOuvertes} onclick={basculerQuestions}>
+  <span class="col"><span class="gras">Les 7 questions</span><span class="muted petit">Quoi, pourquoi, qui, où, quand, comment, combien · {remplies}/7 remplies</span></span>
+  <span class="lien-q">{questionsOuvertes ? 'Masquer' : 'Afficher'}</span>
+</button>
+{#if questionsOuvertes}
+  <div class="carte fiche">
+    {#each QUESTIONS as f (f.cle)}
+      <label class="question">
+        <span class="q">{f.q}</span>
+        <textarea rows="2" value={sp.fiche?.[f.cle] ?? ''} placeholder={f.aide} aria-label={f.q} onchange={(e) => enregistrer(f.cle, e.currentTarget.value)}></textarea>
+      </label>
+    {/each}
+  </div>
+{/if}
 
 <section class="groupe">
   <div class="rang">
@@ -178,6 +192,8 @@
 <style>
   .petit { font-size: 12px; }
   .gras { font-weight: 600; }
+  .entete-questions { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; border-radius: 20px; padding: 12px 14px; min-height: 56px; font: inherit; color: inherit; }
+  .lien-q { flex: none; font-size: 13px; font-weight: 600; color: var(--c-encre); }
   .fiche { border-radius: 22px; padding: 6px 14px; }
   .question { display: flex; flex-direction: column; gap: 4px; padding: 10px 0; border-bottom: 1px solid var(--ligne); }
   .q { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; color: var(--c-encre); }

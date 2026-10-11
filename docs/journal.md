@@ -6,6 +6,7 @@
 
 - **Constat** : pour ce qui se compte à l'unité (fois, oui/non), le trait donnait une fraction (« 1,4 attendu ») arrondie dans le texte alors que la barre restait entière → « tu es dans les temps » avec une barre qui paraissait en retard. Les marqueurs des projets/rubriques utilisaient la part du mois écoulée, sans tenir compte de la fenêtre du sous-projet ; le volet d'un bloc avait le même repli.
 - **Fait** : fois / oui-non n'attendent que des unités entières échues (`floor`), trait, attendu, retard et texte concordent (« 1 attendu ») ; trait des projets et rubriques = moyenne des traits de leurs sous-projets ; plus de repli « mois » dans le volet d'un bloc (pas de trait si la métrique n'en a pas). Spec §5 mise à jour, tests ajoutés.
+- **Fiche** : les 7 questions (Quoi, Pourquoi…) sont repliées par défaut, bouton Afficher/Masquer (« n/7 remplies »), choix gardé sur l'appareil.
 
 ## 9 oct. 2026 — Historique importé
 
