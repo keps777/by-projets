@@ -35,3 +35,11 @@
 - *Étudier le Nouveau Testament*, 260 chapitres sur octobre : cible du mois = **260** ; au 5 octobre, attendu = 260 × 5 ÷ 31 = 42 ; objectif quotidien = 8,4.
 - *Jeûne de 40 jours* du 15 octobre au 23 novembre : en octobre, cible = 40 × 17 ÷ 40 = **17** jours ; en novembre, 23.
 - Un sous-projet de **7 jours** ou de **21 jours** suit la même règle, sur sa fenêtre.
+
+## Retraite de 24 h (12 oct. 2026)
+
+Depuis l'écran Projets, l'app propose une journée de rattrapage. **Besoin** = pour chaque métrique qui pilote un sous-projet en cours, le retard du mois (§ « où je devrais être ») converti en temps : temps tel quel ; chapitres 12 min ; pages 2 min ; personnes et âmes 15 min ; fois 30 min ; oui/non 15 min ; choix 30 min ; distance 6 min/km ; geste d'argent 10 min. Arrondi aux 5 minutes ; moins de 5 minutes, rien. Une même saisie (projet + clé) comptée par plusieurs sous-projets n'est rattrapée qu'une fois (le plus gros retard).
+
+**Journée** (06 h → 06 h) : ouverture 06 h–06 h 30, plages de travail 06 h 30–12 h 30, 13 h 30–15 h 30, 16 h–19 h, 20 h–21 h 30 (repas 12 h 30 et 19 h, marche 15 h 30, bilan 21 h 30, nuit 22 h–05 h 30, clôture). Blocs de 90 min au plus, avec une pause de 10 min après un bloc d'au moins 1 h. Capacité de travail : 11 h ; au-delà, chaque besoin est réduit proportionnellement (15 min au minimum) et le manque est annoncé. Les thèmes sont placés dans l'ordre de l'écran Projets.
+
+**Poser au Fil** : une tâche « ce jour seulement » par bloc de rattrapage (sous-projet lié, temps prévu et quantité rattrapée), plus l'ouverture et le bilan. Repas, pauses et nuit restent des repères, sans tâche.

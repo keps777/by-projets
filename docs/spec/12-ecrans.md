@@ -32,3 +32,5 @@ Toute feuille qui monte du bas se ferme **facilement** : bouton ✕ toujours vis
 
 
 **Renommer** : en mode Modifier de l'écran Projets, un crayon à côté de chaque rubrique, projet et sous-projet ouvre une fenêtre « Renommer » ; le projet et le sous-projet se renomment aussi depuis l'écran d'un sous-projet.
+
+**Retraite de 24 h** : bouton sur l'écran Projets (sous la progression du mois) ; une feuille montre le temps par thème, le déroulé de la journée et un sélecteur de jour, puis « Poser au Fil ». Règles : §5.

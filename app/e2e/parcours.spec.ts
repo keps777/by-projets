@@ -1044,3 +1044,20 @@ test('Projets : en mode Modifier, un projet (et une rubrique) se renomme', async
   await page.getByRole('dialog', { name: 'Renommer la rubrique' }).getByRole('button', { name: 'Enregistrer' }).click();
   await expect(page.getByRole('heading', { name: 'Ma vie', exact: true })).toBeVisible();
 });
+
+test('Projets : une retraite de 24 h est proposée pour rattraper les retards du mois, et se pose au Fil', async ({ page }) => {
+  // Un sous-projet de prière (objectif de temps par jour, depuis le début du mois) : il y a forcément du retard à rattraper.
+  await page.goto('/projets/nouveau-sous-projet');
+  await page.getByRole('button', { name: /^Prière/ }).first().click();
+  await page.getByRole('button', { name: 'Créer le sous-projet' }).click();
+  await expect(page).toHaveURL(/\/projets\/sous-projet\//);
+  await page.waitForTimeout(600);
+  await page.goto('/projets');
+  await page.getByRole('button', { name: 'Me proposer une retraite de 24 h' }).click();
+  const volet = page.getByRole('dialog', { name: 'Retraite de 24 h' });
+  await expect(volet.getByText('Déroulé · 06 h 00 → 06 h 00')).toBeVisible();
+  await expect(volet.getByText('Ouverture · me poser devant Dieu')).toBeVisible();
+  await expect(volet.getByRole('region', { name: 'Temps par thème' })).toContainText('Ma relation avec Dieu');
+  await volet.getByRole('button', { name: /^Poser au Fil/ }).click();
+  await expect(page.getByText(/Retraite posée au Fil/)).toBeVisible();
+});

@@ -20,6 +20,7 @@
   import { ajouterProjet, ajouterRubrique, archiverSousProjet, renommerProjet, renommerRubrique, renommerSousProjet, retirerProjet, retirerRubrique } from '../../data/actions/projets.ts';
   import { jourCourt, nomMois, resumeProgression } from './vues.ts';
   import VoletRenommer from './VoletRenommer.svelte';
+  import VoletRetraite from './VoletRetraite.svelte';
 
   let { params: _ = {} }: { params?: Record<string, string> } = $props();
 
@@ -34,6 +35,7 @@
   const attendu = $derived(Math.round((jourN / nbJours) * 100));
 
   let edition = $state(false);
+  let retraite = $state(false);
   const ouverts = new SvelteSet<string>();
   // Rubriques repliées (flèche à droite du titre), gardées sur l'appareil.
   const CLE_REPLIEES = 'luther-life:rubriques-repliees';
@@ -145,6 +147,7 @@
       </div>
     {/each}
     <span class="muted petit">Le trait vertical marque où tu devrais être aujourd’hui. Le pourcentage d’un projet est la moyenne de ses sous-projets.</span>
+    <button type="button" class="retraite" onclick={() => (retraite = true)}>Me proposer une retraite de 24 h</button>
   </section>
 
   {#each vue as r (r.r.id)}
@@ -268,6 +271,8 @@
   {/if}
 </Volet>
 
+<VoletRetraite ouvert={retraite} onfermer={() => (retraite = false)} {mois} {jour} />
+
 <VoletRenommer ouvert={aRenommer !== null} titre={aRenommer?.type === 'rubrique' ? 'Renommer la rubrique' : aRenommer?.type === 'projet' ? 'Renommer le projet' : 'Renommer le sous-projet'} nom={aRenommer?.nom ?? ''}
   exemple="Nouveau nom" onfermer={() => (aRenommer = null)}
   onenregistrer={(n) => { const a = aRenommer; if (!a) return; if (a.type === 'rubrique') renommerRubrique(a.id, n); else if (a.type === 'projet') renommerProjet(a.id, n); else renommerSousProjet(a.id, n); dire('Nom modifié'); }} />
@@ -316,6 +321,7 @@
   .projet { border-bottom: 1px solid var(--ligne); }
   .projet-ligne { display: flex; align-items: center; gap: 10px; padding: 12px 14px; }
   /* Maquette : rouge plein (#E5483A de nuit) et signe blanc ; jetons proposés --mauvais-plein et --sur-mauvais. */
+  .retraite { min-height: 48px; border-radius: 14px; border: 1px solid var(--ligne); background: transparent; color: var(--texte); font-size: 14px; font-weight: 600; }
   .crayon { flex: none; position: relative; width: 36px; height: 36px; border-radius: 18px; border: 0; background: transparent; color: var(--c-encre, var(--texte)); display: flex; align-items: center; justify-content: center; }
   .crayon::after { content: ''; position: absolute; inset: -4px; }
   .moins { flex: none; width: 32px; height: 32px; border-radius: 16px; border: 0; background: var(--mauvais-plein, var(--mauvais)); color: var(--sur-mauvais, #fff); display: flex; align-items: center; justify-content: center; position: relative; }

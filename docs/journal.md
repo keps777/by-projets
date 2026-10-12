@@ -2,6 +2,12 @@
 
 > Lire ce fichier en début de session (après `CLAUDE.md`). Ajouter une entrée en fin de session.
 
+## 12 oct. 2026 (soir) — Retraite de 24 h
+
+- Écran Projets : bouton **« Me proposer une retraite de 24 h »**. Il estime le temps pour rattraper, thème par thème, le retard du mois (temps tel quel ; chapitres 12 min, pages 2 min, fois 30 min, oui/non 15 min, gestes d'argent 10 min, km 6 min — estimations prudentes, arrondies aux 5 min), puis répartit ce temps dans une journée-type de 06 h à 06 h (ouverture, repas, marche, bilan, nuit de 7 h 30). Si le retard dépasse ce qu'une journée contient (11 h de travail), tout est réduit proportionnellement et le reste est annoncé.
+- « **Poser au Fil** » crée une tâche « ce jour seulement » par bloc, liée à son sous-projet, avec le temps prévu et la quantité rattrapée (chapitres, pages…), plus l'ouverture et le bilan. Jour proposé : le prochain samedi.
+- Noyau `core/retraite.ts` (tests), `screens/projets/{retraite.ts,VoletRetraite.svelte}`, spec §5 et §12, e2e.
+
 ## 12 oct. 2026 — Renommer un projet depuis la liste
 
 - En mode **Modifier** de l'écran Projets, un crayon à côté de chaque rubrique, projet et sous-projet ouvre « Renommer » (le crayon du projet existait déjà dans l'écran d'un sous-projet). Spec §12 mise à jour.
