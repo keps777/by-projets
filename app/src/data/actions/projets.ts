@@ -25,6 +25,7 @@ export function ajouterProjet(rubriqueId: string, nom: string): string {
   return id;
 }
 
+export function renommerRubrique(rubriqueId: string, nom: string): void { if (nom.trim()) magasin.ecrire('rubriques', { id: rubriqueId, nom: nom.trim() }); }
 export function renommerProjet(projetId: string, nom: string): void { if (nom.trim()) magasin.ecrire('projets', { id: projetId, nom: nom.trim() }); }
 export function renommerSousProjet(spId: string, nom: string): void { if (nom.trim()) magasin.ecrire('sous_projets', { id: spId, nom: nom.trim() }); }
 

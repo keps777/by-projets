@@ -17,8 +17,9 @@
   import { magasin } from '../../data/magasin.svelte.ts';
   import { progressionProjet, progressionRubrique, progressionSousProjet, projetsDe, rubriques, sousProjetsDe, traitProjet, traitRubrique } from '../../data/requetes.ts';
   import { aujourdhui } from '../../data/temps.svelte.ts';
-  import { ajouterProjet, ajouterRubrique, archiverSousProjet, retirerProjet, retirerRubrique } from '../../data/actions/projets.ts';
+  import { ajouterProjet, ajouterRubrique, archiverSousProjet, renommerProjet, renommerRubrique, renommerSousProjet, retirerProjet, retirerRubrique } from '../../data/actions/projets.ts';
   import { jourCourt, nomMois, resumeProgression } from './vues.ts';
+  import VoletRenommer from './VoletRenommer.svelte';
 
   let { params: _ = {} }: { params?: Record<string, string> } = $props();
 
@@ -94,6 +95,8 @@
   // ------------------------------------------------------------------ mode Modifier
   let nouveauProjet = $state<{ rubriqueId: string; nom: string } | null>(null);
   let nouvelleRubrique = $state<{ nom: string; couleur: string } | null>(null);
+  // Renommer (mode Modifier) : crayon à côté de chaque rubrique, projet et sous-projet.
+  let aRenommer = $state<{ type: 'rubrique' | 'projet' | 'sous-projet'; id: string; nom: string } | null>(null);
   let aRetirer = $state<{ type: 'rubrique' | 'projet' | 'sous-projet'; id: string; nom: string } | null>(null);
 
   function creerProjet() {
@@ -156,6 +159,7 @@
             <span class="chevron" class:tourne={!repliee}><Icone nom="bas" taille={18} trait={2.4} /></span>
           </button>
         {:else}
+          <button type="button" class="crayon" aria-label="Renommer la rubrique {r.r.nom}" onclick={() => (aRenommer = { type: 'rubrique', id: r.r.id, nom: r.r.nom })}><Icone nom="crayon" taille={15} trait={2.2} /></button>
           <button type="button" class="retirer-rub" aria-label="Retirer la rubrique {r.r.nom}" onclick={() => (aRetirer = { type: 'rubrique', id: r.r.id, nom: r.r.nom })} transition:slide={{ axis: 'x', duration: 180 }}><Icone nom="poubelle" taille={15} /></button>
         {/if}
       </div>
@@ -180,6 +184,9 @@
                   {#if p.marqueur}<span class="trait" style:left="{p.trait}%"></span>{/if}
                 </span>
               </a>
+              {#if edition}
+                <button type="button" class="crayon" aria-label="Renommer le projet {p.p.nom}" onclick={() => (aRenommer = { type: 'projet', id: p.p.id, nom: p.p.nom })}><Icone nom="crayon" taille={16} trait={2.2} /></button>
+              {/if}
               {#if p.subs.length > 1 && !edition}
                 <button type="button" class="deplier" class:ouvert={deplie} aria-expanded={deplie} aria-label="{deplie ? 'Replier' : 'Voir'} les sous-projets de {p.p.nom}" onclick={() => basculer(p.p.id)}>
                   <span class="mono">{p.subs.length}</span>
@@ -202,6 +209,9 @@
                       <span class="piste mince"><span class="rempli" style:width="{x.pct ?? 0}%" style:background={x.pct != null && x.pct >= 100 ? 'var(--bon)' : undefined}></span></span>
                       <span class="muted petit">{x.obj}</span>
                     </a>
+                    {#if edition}
+                      <button type="button" class="crayon" aria-label="Renommer le sous-projet {x.sp.nom}" onclick={() => (aRenommer = { type: 'sous-projet', id: x.sp.id, nom: x.sp.nom })}><Icone nom="crayon" taille={15} trait={2.2} /></button>
+                    {/if}
                   </div>
                 {/each}
                 {#if edition}
@@ -258,6 +268,10 @@
   {/if}
 </Volet>
 
+<VoletRenommer ouvert={aRenommer !== null} titre={aRenommer?.type === 'rubrique' ? 'Renommer la rubrique' : aRenommer?.type === 'projet' ? 'Renommer le projet' : 'Renommer le sous-projet'} nom={aRenommer?.nom ?? ''}
+  exemple="Nouveau nom" onfermer={() => (aRenommer = null)}
+  onenregistrer={(n) => { const a = aRenommer; if (!a) return; if (a.type === 'rubrique') renommerRubrique(a.id, n); else if (a.type === 'projet') renommerProjet(a.id, n); else renommerSousProjet(a.id, n); dire('Nom modifié'); }} />
+
 <Volet ouvert={!!aRetirer} onfermer={() => (aRetirer = null)} label="Confirmer le retrait">
   {#if aRetirer}
     <h2 class="titre volet-titre">Retirer {aRetirer.type === 'rubrique' ? 'la rubrique' : aRetirer.type === 'projet' ? 'le projet' : 'le sous-projet'} « {aRetirer.nom} » ?</h2>
@@ -302,6 +316,8 @@
   .projet { border-bottom: 1px solid var(--ligne); }
   .projet-ligne { display: flex; align-items: center; gap: 10px; padding: 12px 14px; }
   /* Maquette : rouge plein (#E5483A de nuit) et signe blanc ; jetons proposés --mauvais-plein et --sur-mauvais. */
+  .crayon { flex: none; position: relative; width: 36px; height: 36px; border-radius: 18px; border: 0; background: transparent; color: var(--c-encre, var(--texte)); display: flex; align-items: center; justify-content: center; }
+  .crayon::after { content: ''; position: absolute; inset: -4px; }
   .moins { flex: none; width: 32px; height: 32px; border-radius: 16px; border: 0; background: var(--mauvais-plein, var(--mauvais)); color: var(--sur-mauvais, #fff); display: flex; align-items: center; justify-content: center; position: relative; }
   .moins::after { content: ''; position: absolute; inset: -6px; }
   .moins.petit-rond { width: 28px; height: 28px; border-radius: 14px; }

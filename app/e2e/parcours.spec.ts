@@ -1030,3 +1030,17 @@ test('Finances : « Gestion de mes finances du mois » existe, et un nom déjà 
   await expect(volet.getByLabel(/^Montant/)).toHaveValue('3000');
   await expect(volet.getByLabel('Catégorie')).toHaveValue('Salaire');
 });
+
+test('Projets : en mode Modifier, un projet (et une rubrique) se renomme', async ({ page }) => {
+  await page.goto('/projets');
+  await page.getByRole('button', { name: 'Modifier', exact: true }).click();
+  await page.getByRole('button', { name: /^Renommer le projet Le jeûne$/ }).click();
+  const volet = page.getByRole('dialog', { name: 'Renommer le projet' });
+  await volet.getByLabel('Nom').fill('Mon jeûne');
+  await volet.getByRole('button', { name: 'Enregistrer' }).click();
+  await expect(page.getByText('Mon jeûne', { exact: true }).first()).toBeVisible();
+  await page.getByRole('button', { name: /^Renommer la rubrique Ma vie personnelle$/ }).click();
+  await page.getByRole('dialog', { name: 'Renommer la rubrique' }).getByLabel('Nom').fill('Ma vie');
+  await page.getByRole('dialog', { name: 'Renommer la rubrique' }).getByRole('button', { name: 'Enregistrer' }).click();
+  await expect(page.getByRole('heading', { name: 'Ma vie', exact: true })).toBeVisible();
+});

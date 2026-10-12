@@ -2,6 +2,10 @@
 
 > Lire ce fichier en début de session (après `CLAUDE.md`). Ajouter une entrée en fin de session.
 
+## 12 oct. 2026 — Renommer un projet depuis la liste
+
+- En mode **Modifier** de l'écran Projets, un crayon à côté de chaque rubrique, projet et sous-projet ouvre « Renommer » (le crayon du projet existait déjà dans l'écran d'un sous-projet). Spec §12 mise à jour.
+
 ## 11 oct. 2026 (nuit) — Finances du mois par défaut
 
 - **Sous-projet par défaut** « Gestion de mes finances du mois » (projet « La gestion de mes finances ») : Entrées, Sorties, Épargne, sans date de fin (objectifs mensuels, donc il suit chaque mois), objectifs à définir dans la Fiche (par ex. épargne en « % d'un montant »). Créé une fois après la première synchronisation (`assurerFinancesDuMois`, identifiants déterministes, jamais recréé si on le supprime).
