@@ -15,6 +15,9 @@ export interface SessionChrono {
 export type EtatChrono = 'repos' | 'cours' | 'arret';
 
 const CLE = 'luther-life:chronos';
+/** Clé d'une session lancée depuis un sous-projet : `sp:<id>` (les points du rapport gardent leur propre identifiant). */
+export const PREFIXE_SOUS_PROJET = 'sp:';
+export const cleSousProjet = (spId: string) => `${PREFIXE_SOUS_PROJET}${spId}`;
 
 function lire(): Record<string, SessionChrono> {
   try {
@@ -61,8 +64,10 @@ class Chronos {
     this.#ecrire();
   }
 
-  /** Identifiants des points dont une session tourne ou attend sa validation. */
-  get actifs(): string[] { return Object.keys(this.sessions); }
+  /** Identifiants des points du rapport dont une session tourne ou attend sa validation. */
+  get actifs(): string[] { return Object.keys(this.sessions).filter((k) => !k.startsWith(PREFIXE_SOUS_PROJET)); }
+  /** Sous-projets dont un temps tourne ou attend sa validation (lancé depuis le sous-projet). */
+  get sousProjetsActifs(): string[] { return Object.keys(this.sessions).filter((k) => k.startsWith(PREFIXE_SOUS_PROJET)).map((k) => k.slice(PREFIXE_SOUS_PROJET.length)); }
 }
 
 export const chronos = new Chronos();

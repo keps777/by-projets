@@ -1061,3 +1061,81 @@ test('Projets : une retraite de 24 h est proposée pour rattraper les retards du
   await volet.getByRole('button', { name: /^Poser au Fil/ }).click();
   await expect(page.getByText(/Retraite posée au Fil/)).toBeVisible();
 });
+
+test('Sous-projet : lancer un temps, l’arrêter, noter ce qui a été fait, et l’enregistrer comme saisie du projet', async ({ page }) => {
+  await page.goto('/projets/nouveau-sous-projet');
+  await page.getByRole('button', { name: /^Lecture biblique/ }).first().click();
+  await page.getByRole('button', { name: 'Créer le sous-projet' }).click();
+  await expect(page).toHaveURL(/\/projets\/sous-projet\//);
+
+  const chrono = page.getByRole('group', { name: 'Temps du sous-projet' });
+  await chrono.getByRole('button', { name: 'Lancer un temps' }).click();
+  await expect(chrono.getByText('Temps en cours')).toBeVisible();
+  await page.waitForTimeout(1500);
+  await chrono.getByRole('button', { name: 'Arrêter' }).click();
+
+  // On note ce qui a été fait pendant ce temps : les métriques du sous-projet (chapitres lus…).
+  const volet = page.getByRole('dialog', { name: 'Fin de la session' });
+  await expect(volet.getByText('Session terminée')).toBeVisible();
+  await volet.getByRole('textbox', { name: 'Chapitres lus' }).fill('3');
+  await volet.getByRole('textbox', { name: 'Chapitres lus' }).blur();
+  await volet.getByRole('button', { name: 'Valider la session' }).click();
+  await expect(page.getByText(/Session enregistrée/)).toBeVisible();
+  await expect(chrono.getByRole('button', { name: 'Lancer un temps' })).toBeVisible();
+});
+
+test.describe('Fil : vue Tableau (prêtes, à faire, en cours, terminées)', () => {
+  async function creerEtOuvrirTableau(page: import('@playwright/test').Page, titre: string) {
+    await page.goto('/tache/nouvelle?sans-projet=1');
+    await page.getByLabel('Titre de la tâche').fill(titre);
+    await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+    await expect(page).toHaveURL(/\/$|\/\?/);
+    await page.getByRole('group', { name: 'Présentation de la journée' }).getByRole('button', { name: 'Tableau' }).click();
+    await expect(page.getByRole('region', { name: 'Tableau de la journée' })).toBeVisible();
+  }
+  const colonne = (page: import('@playwright/test').Page, nom: string) => page.getByRole('region', { name: new RegExp(`^${nom} \\(`) });
+
+  test('les boutons font avancer une carte : lancer, terminer, rouvrir', async ({ page }) => {
+    await creerEtOuvrirTableau(page, 'Écrire le plan');
+    const tab = page.getByRole('region', { name: 'Tableau de la journée' });
+    const carte = page.getByRole('button', { name: /^Écrire le plan, / });
+    await expect(carte).toBeVisible();
+    await tab.getByRole('button', { name: 'Lancer Écrire le plan' }).click();
+    await expect(colonne(page, 'En cours')).toContainText('Écrire le plan');
+    await tab.getByRole('button', { name: 'Terminer Écrire le plan' }).click();
+    await page.getByRole('button', { name: /Oui, c’est fait/ }).click();
+    await expect(colonne(page, 'Terminées')).toContainText('Écrire le plan');
+    await tab.getByRole('button', { name: 'Rouvrir Écrire le plan' }).click();
+    await expect(colonne(page, 'Terminées')).not.toContainText('Écrire le plan');
+    await expect(page.getByRole('region', { name: /^(À faire|Prêtes) \(1\)$/ })).toContainText('Écrire le plan');
+  });
+
+  test('glisser une carte vers la droite la lance, vers la gauche la remet à faire', async ({ page }) => {
+    await creerEtOuvrirTableau(page, 'Glisser moi');
+    const corps = page.getByRole('button', { name: /^Glisser moi, / });
+    const b = (await corps.boundingBox())!;
+    const y = b.y + b.height / 2;
+    await page.mouse.move(b.x + 20, y);
+    await page.mouse.down();
+    await page.mouse.move(b.x + 60, y, { steps: 4 });
+    await page.mouse.move(b.x + 180, y, { steps: 6 });
+    await page.mouse.up();
+    await expect(colonne(page, 'En cours')).toContainText('Glisser moi');
+
+    const b2 = (await page.getByRole('button', { name: /^Glisser moi, / }).boundingBox())!;
+    await page.mouse.move(b2.x + 200, b2.y + b2.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(b2.x + 160, b2.y + b2.height / 2, { steps: 4 });
+    await page.mouse.move(b2.x + 40, b2.y + b2.height / 2, { steps: 6 });
+    await page.mouse.up();
+    await expect(colonne(page, 'En cours')).not.toContainText('Glisser moi');
+  });
+
+  test('le choix de présentation est gardé, et le calendrier revient', async ({ page }) => {
+    await creerEtOuvrirTableau(page, 'Garde mon choix');
+    await page.reload();
+    await expect(page.getByRole('region', { name: 'Tableau de la journée' })).toBeVisible();
+    await page.getByRole('group', { name: 'Présentation de la journée' }).getByRole('button', { name: 'Calendrier' }).click();
+    await expect(page.getByRole('region', { name: 'Tableau de la journée' })).toHaveCount(0);
+  });
+});

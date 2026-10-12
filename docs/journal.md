@@ -2,6 +2,12 @@
 
 > Lire ce fichier en début de session (après `CLAUDE.md`). Ajouter une entrée en fin de session.
 
+## 12 oct. 2026 (nuit) — Vue Tableau du Fil, temps lancé depuis un sous-projet
+
+- **Fil · Tableau** : bascule Calendrier/Tableau (boutons + glissement sur la zone entre Jour/Semaine/Mois et les dates), quatre colonnes (Prêtes, À faire, En cours, Terminées), cartes glissables (droite : lancer puis terminer ; gauche : remettre à faire) et boutons. Pur : `fil/tableau.ts` (colonnes, gestes) testé ; `remettreAFaire` dans `actions/blocs.ts`. Choix de vue gardé sur l'appareil. Colonnes empilées sur téléphone pour ne pas gêner le glissement horizontal ; 4 colonnes dès 720 px.
+- **Sous-projet · Lancer un temps** : `ChronoSousProjet` réutilise `chronos` (clé `sp:<id>`), `VoletSession` (métriques du sous-projet) et `enregistrerSession`. Pastille sur l'onglet Projets.
+- Spec §12, tests unitaires et e2e (boutons, glissement à la souris, persistance, chrono de sous-projet). Le glissement tactile n'est pas testé en e2e (même mécanisme pointeur que la carte « Ensuite »).
+
 ## 12 oct. 2026 (soir) — Retraite de 24 h
 
 - Écran Projets : bouton **« Me proposer une retraite de 24 h »**. Il estime le temps pour rattraper, thème par thème, le retard du mois (temps tel quel ; chapitres 12 min, pages 2 min, fois 30 min, oui/non 15 min, gestes d'argent 10 min, km 6 min — estimations prudentes, arrondies aux 5 min), puis répartit ce temps dans une journée-type de 06 h à 06 h (ouverture, repas, marche, bilan, nuit de 7 h 30). Si le retard dépasse ce qu'une journée contient (11 h de travail), tout est réduit proportionnellement et le reste est annoncé.

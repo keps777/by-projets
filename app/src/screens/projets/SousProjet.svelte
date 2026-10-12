@@ -19,6 +19,7 @@
   import OngletTemps from './OngletTemps.svelte';
   import SuiviFinances from './SuiviFinances.svelte';
   import VoletRenommer from './VoletRenommer.svelte';
+  import ChronoSousProjet from './ChronoSousProjet.svelte';
   import { renommerProjet, renommerSousProjet } from '../../data/actions/projets.ts';
   import { codeDuProjet } from './donnees.ts';
   import { estFinances } from './vues.ts';
@@ -103,6 +104,10 @@
           <h1 class="titre">{sp.nom}</h1>
           <button type="button" class="crayon grand" aria-label="Renommer le sous-projet {sp.nom}" onclick={() => (renommer = 'sous-projet')}><Icone nom="crayon" taille={18} trait={2.2} /></button>
         </div>
+      {/if}
+
+      {#if onglet !== 'document' && sp.statut !== 'termine' && sp.statut !== 'archive'}
+        <ChronoSousProjet spId={sp.id} projetId={projet.id} nom={sp.nom} {metriques} />
       {/if}
 
       <Segment options={ONGLETS} valeur={onglet} onchoisir={choisir} hauteur={38} ample />

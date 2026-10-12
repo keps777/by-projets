@@ -88,6 +88,15 @@ export function basculerFait(occId: string): void {
   else terminerBloc(occId);
 }
 
+/**
+ * Remet un bloc « à faire » : le minuteur est effacé (un bloc en cours ou en pause repart de zéro), un bloc terminé est décoché.
+ * Les valeurs déjà saisies restent (comme pour « toucher pour annuler »).
+ */
+export function remettreAFaire(occId: string): void {
+  const o = magasin.trouver('occurrences', occId);
+  if (o && o.etat !== 'prevue') magasin.ecrire('occurrences', { id: occId, etat: 'prevue', terminee_a: null, demarree_a: null, pause_depuis: null, pause_cumulee_s: 0 });
+}
+
 /** Correction manuelle d'une valeur (volet du bloc). */
 export function corrigerValeur(occId: string, cle: string, num: number): void {
   saisirBloc(occId, [{ cle, num }], { source: 'bloc' });

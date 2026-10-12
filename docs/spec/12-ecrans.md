@@ -34,3 +34,19 @@ Toute feuille qui monte du bas se ferme **facilement** : bouton ✕ toujours vis
 **Renommer** : en mode Modifier de l'écran Projets, un crayon à côté de chaque rubrique, projet et sous-projet ouvre une fenêtre « Renommer » ; le projet et le sous-projet se renomment aussi depuis l'écran d'un sous-projet.
 
 **Retraite de 24 h** : bouton sur l'écran Projets (sous la progression du mois) ; une feuille montre le temps par thème, le déroulé de la journée et un sélecteur de jour, puis « Poser au Fil ». Règles : §5.
+
+## Le Fil · vue Tableau (12 oct. 2026)
+
+Entre le choix **Jour / Semaine / Mois** et la bande des dates, deux boutons **Calendrier · Tableau** (et deux points) ; **glisser le doigt sur cette zone** (vers la gauche : Tableau, vers la droite : Calendrier) change de présentation. Le choix est gardé sur l'appareil.
+
+Le **Tableau** range les blocs du jour affiché en quatre colonnes, empilées sur téléphone (côte à côte dès 720 px) :
+- **Prêtes** : prévues plus tard (aujourd'hui : heure de début pas encore venue ; jours à venir : tout) ;
+- **À faire** : l'heure est venue ou passée (jours passés : tout ce qui n'est pas fait) ;
+- **En cours** : un minuteur tourne ou est en pause ;
+- **Terminées** : faites. Les blocs ignorés n'y figurent pas.
+
+**Glisser une carte vers la droite** la fait avancer : prêtes / à faire → *lancer* (minuteur), en cours → *terminer* (la question « As-tu terminé ? » s'ouvre : temps corrigeable). **Vers la gauche**, elle recule : en cours ou terminées → *remise à faire* (minuteur effacé ou case décochée ; les valeurs saisies restent). Au-delà d'un seuil (84 px) le geste s'accomplit, un aperçu dit ce qui va se passer, et du côté où rien ne se passe la carte résiste. Chaque carte a aussi ses boutons (lancer, marquer fait, pause/reprise, terminer, rouvrir) ; toucher le texte ouvre le volet du bloc.
+
+## Sous-projet · lancer un temps (12 oct. 2026)
+
+Dans un sous-projet en cours, au-dessus des onglets : **Lancer un temps** (chronomètre qui survit au rechargement, comme les chronos des points du rapport, §9). **Arrêter** ouvre « Fin de la session » : le temps est corrigeable (h · min · s) et on remplit les **métriques du sous-projet** (chapitres, pages, fois, passages…) ; **Valider** enregistre une saisie du projet (source « minuteur ») qui s'ajoute au total du jour. « Plus tard » laisse la session arrêtée, à enregistrer ; « Annuler » l'oublie. Une pastille sur l'onglet Projets signale un temps en cours ou à enregistrer (celle de Rapports reste pour les points du rapport).

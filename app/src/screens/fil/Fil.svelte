@@ -19,6 +19,7 @@
   import Icone from '../../ui/Icone.svelte';
   import BandeauJours from './BandeauJours.svelte';
   import Journee from './Journee.svelte';
+  import Tableau from './Tableau.svelte';
   import CarteBas from './CarteBas.svelte';
   import VoletBloc from './VoletBloc.svelte';
   import Reporter from './Reporter.svelte';
@@ -88,6 +89,27 @@
     const fini = actifs.find((a) => a.etat === 'en_cours' && !refuses.has(a.id) && estArrive(minuteurDe(a), horloge.maintenant, (Date.parse(a.fin) - Date.parse(a.debut)) / 1000));
     if (fini) confirmId = fini.id;
   });
+
+  // Deux présentations de la journée : le calendrier (heures) et le tableau (prêtes, à faire, en cours, terminées).
+  // On passe de l'une à l'autre en glissant sur la bande des jours, ou avec les deux boutons ; le choix est gardé sur l'appareil.
+  type Vue = 'calendrier' | 'tableau';
+  const CLE_VUE = 'luther-life:vue-fil';
+  let vue = $state<Vue>((() => { try { return localStorage.getItem(CLE_VUE) === 'tableau' ? 'tableau' : 'calendrier'; } catch { return 'calendrier'; } })());
+  function choisirVue(v: Vue) {
+    if (v === vue) return;
+    vue = v;
+    try { localStorage.setItem(CLE_VUE, v); } catch { /* stockage indisponible : le choix ne dure que cette visite */ }
+  }
+  let departVue: { x: number; y: number; t: number } | null = null;
+  const vueDebut = (e: TouchEvent) => { const t = e.touches[0]; departVue = e.touches.length === 1 ? { x: t.clientX, y: t.clientY, t: Date.now() } : null; };
+  function vueFin(e: TouchEvent) {
+    const d = departVue; departVue = null;
+    const t = e.changedTouches[0];
+    if (!d || !t) return;
+    const dx = t.clientX - d.x, dy = t.clientY - d.y;
+    if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.4 || Date.now() - d.t > 700) return;
+    choisirVue(dx < 0 ? 'tableau' : 'calendrier');
+  }
 
   // Sens du dernier changement de jour (1 = vers demain) : la journée entre du côté d'où l'on vient.
   let sens = $state(1);
@@ -165,12 +187,23 @@
     ]} />
   </div>
 
-  <BandeauJours {jour} {aujourdhui} onchoisir={choisirJour} />
+  <div class="zone-vue" ontouchstart={vueDebut} ontouchend={vueFin} role="presentation">
+    <div class="bascule" role="group" aria-label="Présentation de la journée">
+      <button type="button" class:actif={vue === 'calendrier'} aria-pressed={vue === 'calendrier'} onclick={() => choisirVue('calendrier')}>Calendrier</button>
+      <span class="points" aria-hidden="true"><i class:actif={vue === 'calendrier'}></i><i class:actif={vue === 'tableau'}></i></span>
+      <button type="button" class:actif={vue === 'tableau'} aria-pressed={vue === 'tableau'} onclick={() => choisirVue('tableau')}>Tableau</button>
+    </div>
+    <BandeauJours {jour} {aujourdhui} onchoisir={choisirJour} />
+  </div>
 
-  <div class="pan" bind:this={pan} ontouchstart={toucheDebut} ontouchend={toucheFin} role="presentation">
+  <div class="pan" bind:this={pan} ontouchstart={vue === 'calendrier' ? toucheDebut : undefined} ontouchend={vue === 'calendrier' ? toucheFin : undefined} role="presentation">
     {#key jour}
       <div class="page" in:fly={{ x: sens * 36, duration: 230, easing: cubicOut, opacity: 0 }}>
-        <Journee {blocs} {jour} {aujourdhui} {estAujourdhui} {focusMin} onouvrir={(id) => (selId = id)} onjouer={basculerMinuteur} />
+        {#if vue === 'tableau'}
+          <Tableau {blocs} {jour} {aujourdhui} onouvrir={(id) => (selId = id)} onterminer={(id) => (confirmId = id)} />
+        {:else}
+          <Journee {blocs} {jour} {aujourdhui} {estAujourdhui} {focusMin} onouvrir={(id) => (selId = id)} onjouer={basculerMinuteur} />
+        {/if}
       </div>
     {/key}
   </div>
@@ -211,6 +244,14 @@
   .jour-pct .mono { font-size: 12px; }
   .segments { width: 92px; height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; display: flex; }
   .vues { padding: 2px 18px 6px; flex: none; }
+  /* Zone de glissement entre le choix Jour/Semaine/Mois et les dates : le doigt change de présentation. */
+  .zone-vue { flex: none; touch-action: pan-y; }
+  .bascule { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 18px; }
+  .bascule button { min-height: 36px; padding: 0 10px; border: 0; background: transparent; color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+  .bascule button.actif { color: var(--texte); }
+  .points { display: inline-flex; gap: 5px; }
+  .points i { width: 6px; height: 6px; border-radius: 3px; background: var(--surface-2); }
+  .points i.actif { background: var(--texte); }
   /* touch-action : le défilement vertical reste au navigateur, le glissement horizontal nous revient. */
   .pan { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; touch-action: pan-y; }
   .page { flex: 1; min-height: 0; display: flex; flex-direction: column; }

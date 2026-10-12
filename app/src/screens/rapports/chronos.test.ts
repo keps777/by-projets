@@ -5,7 +5,7 @@ import { magasin } from '../../data/magasin.svelte.ts';
 import { session } from '../../data/auth.svelte.ts';
 import { horloge } from '../../data/temps.svelte.ts';
 import { valeursDuProjet } from '../../data/requetes.ts';
-import { chronos } from '../../data/chronos.svelte.ts';
+import { chronos, cleSousProjet } from '../../data/chronos.svelte.ts';
 import { enregistrerSession, valeursARetenir } from './session.ts';
 
 // Environnement de test sans navigateur : un stockage local minimal.
@@ -78,5 +78,19 @@ describe('enregistrer une session', () => {
   it('ne retient pas une durée nulle sans autre valeur', () => {
     expect(enregistrerSession(projet(), '2026-10-05', 0, [])).toBeNull();
     expect(valeursARetenir([{ cle: 'fois', type: 'fois', num: 0 }])).toEqual([]);
+  });
+});
+
+describe('temps lancé depuis un sous-projet', () => {
+  it('a sa propre clé et n’est pas compté avec les points du rapport', () => {
+    const cle = cleSousProjet('abc');
+    chronos.demarrer(cle, Date.parse('2026-10-05T14:00:00Z'), '2026-10-05');
+    expect(chronos.etat(cle)).toBe('cours');
+    expect(chronos.sousProjetsActifs).toEqual(['abc']);
+    expect(chronos.actifs).toEqual([]);
+    chronos.arreter(cle, Date.parse('2026-10-05T14:25:00Z'));
+    expect(chronos.secondes(cle)).toBe(25 * 60);
+    chronos.oublier(cle);
+    expect(chronos.sousProjetsActifs).toEqual([]);
   });
 });

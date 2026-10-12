@@ -18,7 +18,7 @@
 
 <nav aria-label="Navigation principale" class:sans-filet={!filet}>
   {#each ONGLETS as o (o.href)}
-    <a href={o.href} class:actif={actif(o)} aria-current={actif(o) ? 'page' : undefined}><span class="ico"><Icone nom={o.icone} />{#if o.href === '/rapports' && chronos.actifs.length}<span class="pastille" aria-label="Chrono en cours" role="img"></span>{/if}</span><span>{o.label}</span></a>
+    <a href={o.href} class:actif={actif(o)} aria-current={actif(o) ? 'page' : undefined}><span class="ico"><Icone nom={o.icone} />{#if (o.href === '/rapports' && chronos.actifs.length) || (o.href === '/projets' && chronos.sousProjetsActifs.length)}<span class="pastille" aria-label="Chrono en cours" role="img"></span>{/if}</span><span>{o.label}</span></a>
   {/each}
 </nav>
 
