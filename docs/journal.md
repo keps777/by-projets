@@ -2,6 +2,10 @@
 
 > Lire ce fichier en début de session (après `CLAUDE.md`). Ajouter une entrée en fin de session.
 
+## 12 oct. 2026 (nuit, suite) — Tableau en trois colonnes
+
+- Retour de l'utilisateur : le Tableau devient **trois colonnes côte à côte (Prêt, En cours, Terminé)** de cartes courtes (nom coupé, heure, chrono). Toucher une carte ouvre le détail du bloc (volet existant) ; le chrono ▶ la passe en cours ; ■ puis « Oui, c'est fait » la passe en terminé ; glisser avance/recule. « Prêtes » et « À faire » fusionnent (le retard se voit à l'heure en orange). `tableau.ts`, `Tableau.svelte`, tests et e2e refaits ; spec §12 mise à jour.
+
 ## 12 oct. 2026 (nuit) — Vue Tableau du Fil, temps lancé depuis un sous-projet
 
 - **Fil · Tableau** : bascule Calendrier/Tableau (boutons + glissement sur la zone entre Jour/Semaine/Mois et les dates), quatre colonnes (Prêtes, À faire, En cours, Terminées), cartes glissables (droite : lancer puis terminer ; gauche : remettre à faire) et boutons. Pur : `fil/tableau.ts` (colonnes, gestes) testé ; `remettreAFaire` dans `actions/blocs.ts`. Choix de vue gardé sur l'appareil. Colonnes empilées sur téléphone pour ne pas gêner le glissement horizontal ; 4 colonnes dès 720 px.

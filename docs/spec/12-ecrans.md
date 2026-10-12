@@ -39,13 +39,14 @@ Toute feuille qui monte du bas se ferme **facilement** : bouton ✕ toujours vis
 
 Entre le choix **Jour / Semaine / Mois** et la bande des dates, deux boutons **Calendrier · Tableau** (et deux points) ; **glisser le doigt sur cette zone** (vers la gauche : Tableau, vers la droite : Calendrier) change de présentation. Le choix est gardé sur l'appareil.
 
-Le **Tableau** range les blocs du jour affiché en quatre colonnes, empilées sur téléphone (côte à côte dès 720 px) :
-- **Prêtes** : prévues plus tard (aujourd'hui : heure de début pas encore venue ; jours à venir : tout) ;
-- **À faire** : l'heure est venue ou passée (jours passés : tout ce qui n'est pas fait) ;
-- **En cours** : un minuteur tourne ou est en pause ;
-- **Terminées** : faites. Les blocs ignorés n'y figurent pas.
+Le **Tableau** range les blocs du jour affiché en **trois colonnes côte à côte** :
+- **Prêt** : prévu et pas encore lancé (l'heure de début, en orange, passe à l'orange quand elle est dépassée) ;
+- **En cours** : un minuteur tourne ou est en pause (la carte montre le temps écoulé) ;
+- **Terminé** : fait. Les blocs ignorés n'y figurent pas.
 
-**Glisser une carte vers la droite** la fait avancer : prêtes / à faire → *lancer* (minuteur), en cours → *terminer* (la question « As-tu terminé ? » s'ouvre : temps corrigeable). **Vers la gauche**, elle recule : en cours ou terminées → *remise à faire* (minuteur effacé ou case décochée ; les valeurs saisies restent). Au-delà d'un seuil (84 px) le geste s'accomplit, un aperçu dit ce qui va se passer, et du côté où rien ne se passe la carte résiste. Chaque carte a aussi ses boutons (lancer, marquer fait, pause/reprise, terminer, rouvrir) ; toucher le texte ouvre le volet du bloc.
+Chaque carte est courte : **nom coupé** (3 lignes au plus), heure, et le **chrono** en bas à droite. **Toucher la carte ouvre le détail du bloc**, le même volet que dans le calendrier. **▶ (Prêt)** lance le bloc : il passe en *En cours*. **■ (En cours)** ouvre « As-tu terminé ? » ; en validant, la carte passe en *Terminé* (✓).
+
+**Glisser une carte** (doigt ou souris) la fait avancer ou reculer d'une colonne : vers la droite, Prêt → lancer, En cours → terminer (même question de confirmation) ; vers la gauche, En cours ou Terminé → **remis en Prêt** (minuteur effacé ou case décochée ; les valeurs déjà saisies restent). Le geste s'accomplit au-delà de 56 px ; un aperçu nomme la colonne d'arrivée et du côté où rien ne se passe la carte résiste.
 
 ## Sous-projet · lancer un temps (12 oct. 2026)
 

@@ -1084,7 +1084,7 @@ test('Sous-projet : lancer un temps, l’arrêter, noter ce qui a été fait, et
   await expect(chrono.getByRole('button', { name: 'Lancer un temps' })).toBeVisible();
 });
 
-test.describe('Fil : vue Tableau (prêtes, à faire, en cours, terminées)', () => {
+test.describe('Fil : vue Tableau (prêt, en cours, terminé)', () => {
   async function creerEtOuvrirTableau(page: import('@playwright/test').Page, titre: string) {
     await page.goto('/tache/nouvelle?sans-projet=1');
     await page.getByLabel('Titre de la tâche').fill(titre);
@@ -1094,41 +1094,44 @@ test.describe('Fil : vue Tableau (prêtes, à faire, en cours, terminées)', () 
     await expect(page.getByRole('region', { name: 'Tableau de la journée' })).toBeVisible();
   }
   const colonne = (page: import('@playwright/test').Page, nom: string) => page.getByRole('region', { name: new RegExp(`^${nom} \\(`) });
+  const glisser = async (page: import('@playwright/test').Page, nom: RegExp, dx: number) => {
+    const b = (await page.getByRole('region', { name: 'Tableau de la journée' }).getByRole('button', { name: nom }).boundingBox())!;
+    const y = b.y + b.height / 2, x0 = b.x + (dx > 0 ? 12 : b.width - 12);
+    await page.mouse.move(x0, y);
+    await page.mouse.down();
+    await page.mouse.move(x0 + dx * 0.3, y, { steps: 4 });
+    await page.mouse.move(x0 + dx, y, { steps: 6 });
+    await page.mouse.up();
+  };
 
-  test('les boutons font avancer une carte : lancer, terminer, rouvrir', async ({ page }) => {
+  test('le chrono d’une carte la fait passer de prêt à en cours, puis à terminé une fois validée', async ({ page }) => {
     await creerEtOuvrirTableau(page, 'Écrire le plan');
     const tab = page.getByRole('region', { name: 'Tableau de la journée' });
-    const carte = page.getByRole('button', { name: /^Écrire le plan, / });
-    await expect(carte).toBeVisible();
+    await expect(colonne(page, 'Prêt')).toContainText('Écrire le plan');
     await tab.getByRole('button', { name: 'Lancer Écrire le plan' }).click();
     await expect(colonne(page, 'En cours')).toContainText('Écrire le plan');
+    await expect(colonne(page, 'Prêt')).not.toContainText('Écrire le plan');
     await tab.getByRole('button', { name: 'Terminer Écrire le plan' }).click();
     await page.getByRole('button', { name: /Oui, c’est fait/ }).click();
-    await expect(colonne(page, 'Terminées')).toContainText('Écrire le plan');
-    await tab.getByRole('button', { name: 'Rouvrir Écrire le plan' }).click();
-    await expect(colonne(page, 'Terminées')).not.toContainText('Écrire le plan');
-    await expect(page.getByRole('region', { name: /^(À faire|Prêtes) \(1\)$/ })).toContainText('Écrire le plan');
+    await expect(colonne(page, 'Terminé')).toContainText('Écrire le plan');
+    await expect(colonne(page, 'En cours')).not.toContainText('Écrire le plan');
   });
 
-  test('glisser une carte vers la droite la lance, vers la gauche la remet à faire', async ({ page }) => {
-    await creerEtOuvrirTableau(page, 'Glisser moi');
-    const corps = page.getByRole('button', { name: /^Glisser moi, / });
-    const b = (await corps.boundingBox())!;
-    const y = b.y + b.height / 2;
-    await page.mouse.move(b.x + 20, y);
-    await page.mouse.down();
-    await page.mouse.move(b.x + 60, y, { steps: 4 });
-    await page.mouse.move(b.x + 180, y, { steps: 6 });
-    await page.mouse.up();
-    await expect(colonne(page, 'En cours')).toContainText('Glisser moi');
+  test('toucher une carte ouvre le détail du bloc, comme dans le calendrier', async ({ page }) => {
+    await creerEtOuvrirTableau(page, 'Détail à voir');
+    await page.getByRole('region', { name: 'Tableau de la journée' }).getByRole('button', { name: /^Détail à voir, / }).click();
+    await expect(page.getByRole('dialog').getByText('Détail à voir').first()).toBeVisible();
+  });
 
-    const b2 = (await page.getByRole('button', { name: /^Glisser moi, / }).boundingBox())!;
-    await page.mouse.move(b2.x + 200, b2.y + b2.height / 2);
-    await page.mouse.down();
-    await page.mouse.move(b2.x + 160, b2.y + b2.height / 2, { steps: 4 });
-    await page.mouse.move(b2.x + 40, b2.y + b2.height / 2, { steps: 6 });
-    await page.mouse.up();
-    await expect(colonne(page, 'En cours')).not.toContainText('Glisser moi');
+  test('glisser une carte à droite la lance puis la termine, à gauche la remet en prêt', async ({ page }) => {
+    await creerEtOuvrirTableau(page, 'Glisser moi');
+    await glisser(page, /^Glisser moi, /, 110);
+    await expect(colonne(page, 'En cours')).toContainText('Glisser moi');
+    await glisser(page, /^Glisser moi, /, 110);
+    await page.getByRole('button', { name: /Oui, c’est fait/ }).click();
+    await expect(colonne(page, 'Terminé')).toContainText('Glisser moi');
+    await glisser(page, /^Glisser moi, /, -110);
+    await expect(colonne(page, 'Prêt')).toContainText('Glisser moi');
   });
 
   test('le choix de présentation est gardé, et le calendrier revient', async ({ page }) => {
