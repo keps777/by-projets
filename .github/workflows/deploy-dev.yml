@@ -1,0 +1,333 @@
+# AM-018 · Déploiement automatique de main vers l'environnement « dev »
+#
+# Se déclenche quand le workflow « CI » est vert sur un push de main (donc après la fusion d'une PR verte).
+# Étapes : images Docker (GHCR) -> préparation de l'hôte -> sauvegarde base -> migration -> API -> web
+#          -> purge CDN -> contrôles de fumée -> publication de l'adresse.
+# Aucun secret réel n'est dans le dépôt : tout vient des secrets et variables listés dans infra/README.md.
+# Tant que DEV_DEPLOY_ENABLED n'est pas « true », seules les images sont construites (si les apps sont prêtes).
+#
+# Retour arrière : lancer ce workflow à la main avec « rollback_tag » (voir infra/README.md), ou
+#   ssh <hôte> 'cd afrimove && ./ctl.sh rollback'
+name: Déploiement dev
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      rollback_tag:
+        description: "Retour arrière : tag d'image déjà publié (ex. sha-1a2b3c4). Vide = déployer le dernier main."
+        required: false
+        type: string
+        default: ""
+
+# Un seul déploiement dev à la fois, jamais interrompu en plein milieu.
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  # ------------------------------------------------------------------
+  # Quoi déployer, et est-ce possible ?
+  # ------------------------------------------------------------------
+  prepare:
+    name: Préparation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    outputs:
+      sha: ${{ steps.plan.outputs.sha }}
+      tag: ${{ steps.plan.outputs.tag }}
+      mode: ${{ steps.plan.outputs.mode }}
+      image_base: ${{ steps.plan.outputs.image_base }}
+      services: ${{ steps.plan.outputs.services }}
+      web_ready: ${{ steps.plan.outputs.web_ready }}
+      api_ready: ${{ steps.plan.outputs.api_ready }}
+      deploy: ${{ steps.plan.outputs.deploy }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - id: plan
+        name: Plan de déploiement
+        env:
+          EVENT: ${{ github.event_name }}
+          RUN_SHA: ${{ github.event.workflow_run.head_sha }}
+          DISPATCH_SHA: ${{ github.sha }}
+          ROLLBACK_TAG: ${{ inputs.rollback_tag }}
+          REPO: ${{ github.repository }}
+          DEPLOY_ENABLED: ${{ vars.DEV_DEPLOY_ENABLED }}
+          DEV_API_URL: ${{ vars.DEV_API_URL }}
+        run: |
+          set -euo pipefail
+          sha="${RUN_SHA:-$DISPATCH_SHA}"
+          image_base="ghcr.io/${REPO,,}"
+
+          if [ -n "${ROLLBACK_TAG:-}" ]; then
+            [[ "$ROLLBACK_TAG" =~ ^[A-Za-z0-9._-]{1,128}$ ]] || { echo "::error::rollback_tag invalide"; exit 1; }
+            mode=rollback
+            tag="$ROLLBACK_TAG"
+            web_ready=true
+            api_ready=true
+            services='[]'
+          else
+            mode=deploy
+            tag="sha-${sha:0:7}"
+            # Une app est « prête » quand elle a un vrai point d'entrée Vite / Nest. Avant cela
+            # (squelettes d'AM-001), il n'y a rien à mettre dans une image : on le dit, sans échouer.
+            web_ready=false
+            api_ready=false
+            if [ -f apps/web/index.html ] && ls apps/web/vite.config.* >/dev/null 2>&1; then web_ready=true; fi
+            if [ -f apps/api/src/main.ts ]; then api_ready=true; fi
+            services="$(jq -nc \
+              --arg web "$web_ready" --arg api "$api_ready" --arg url "${DEV_API_URL:-}" '
+              [ (if $web == "true" then {service:"web", dockerfile:"apps/web/Dockerfile", vite_api_url:$url} else empty end),
+                (if $api == "true" then {service:"api", dockerfile:"apps/api/Dockerfile", vite_api_url:""} else empty end) ]')"
+            if [ "$services" = "[]" ]; then
+              echo "::notice title=Rien à déployer::apps/web (Vite) et apps/api (Nest) n'ont pas encore de point d'entrée : aucune image construite."
+            fi
+          fi
+
+          deploy=false
+          if [ "${DEPLOY_ENABLED:-}" = "true" ]; then
+            if [ "$web_ready" = true ] || [ "$api_ready" = true ]; then deploy=true; fi
+          else
+            echo "::notice title=Déploiement désactivé::la variable DEV_DEPLOY_ENABLED n'est pas « true » (voir infra/README.md)."
+          fi
+
+          {
+            echo "sha=$sha"
+            echo "tag=$tag"
+            echo "mode=$mode"
+            echo "image_base=$image_base"
+            echo "services=$services"
+            echo "web_ready=$web_ready"
+            echo "api_ready=$api_ready"
+            echo "deploy=$deploy"
+          } >> "$GITHUB_OUTPUT"
+          {
+            echo "### Plan de déploiement dev"
+            echo "- mode : \`$mode\` · tag : \`$tag\` · commit : \`${sha:0:7}\`"
+            echo "- web prête : $web_ready · api prête : $api_ready · déploiement actif : $deploy"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ------------------------------------------------------------------
+  # Étape 1 · images Docker poussées sur GHCR (jeton GITHUB_TOKEN, aucun secret à créer)
+  # ------------------------------------------------------------------
+  images:
+    name: Image ${{ matrix.service }}
+    needs: prepare
+    if: needs.prepare.outputs.mode == 'deploy' && needs.prepare.outputs.services != '[]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: true
+      matrix:
+        include: ${{ fromJSON(needs.prepare.outputs.services) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.sha }}
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Construire et publier ${{ matrix.service }}
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          push: true
+          provenance: false
+          tags: |
+            ${{ needs.prepare.outputs.image_base }}/${{ matrix.service }}:${{ needs.prepare.outputs.tag }}
+            ${{ needs.prepare.outputs.image_base }}/${{ matrix.service }}:dev
+          # Seule l'image web consomme ce paramètre (adresse publique de l'API, figée dans le bundle Vite).
+          build-args: |
+            VITE_API_URL=${{ matrix.vite_api_url }}
+            VITE_APP_ENV=dev
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
+
+  # ------------------------------------------------------------------
+  # Étapes 2 à 8 · déploiement sur l'hôte dev
+  # ------------------------------------------------------------------
+  deploy:
+    name: Déployer en dev
+    needs: [prepare, images]
+    if: >-
+      ${{ !cancelled() && needs.prepare.outputs.deploy == 'true' &&
+          (needs.prepare.outputs.mode == 'rollback' || needs.images.result == 'success') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment:
+      name: dev
+      url: ${{ vars.DEV_WEB_URL }}
+    permissions:
+      contents: read
+    env:
+      TAG: ${{ needs.prepare.outputs.tag }}
+      MODE: ${{ needs.prepare.outputs.mode }}
+      IMAGE_BASE: ${{ needs.prepare.outputs.image_base }}
+      WEB_READY: ${{ needs.prepare.outputs.web_ready }}
+      API_READY: ${{ needs.prepare.outputs.api_ready }}
+      SSH_HOST: ${{ vars.DEV_SSH_HOST }}
+      SSH_USER: ${{ vars.DEV_SSH_USER }}
+      SSH_PORT: ${{ vars.DEV_SSH_PORT || '22' }}
+      DEPLOY_PATH: ${{ vars.DEV_DEPLOY_PATH || 'afrimove' }}
+      WEB_URL: ${{ vars.DEV_WEB_URL }}
+      API_URL: ${{ vars.DEV_API_URL }}
+      API_HEALTH_PATH: ${{ vars.DEV_API_HEALTH_PATH || '/' }}
+      MIGRATE_COMMAND: ${{ vars.DEV_MIGRATE_COMMAND }}
+      # Secrets : exposés ici uniquement pour tester leur présence dans les « if ».
+      HAS_CDN_PURGE: ${{ secrets.DEV_CDN_PURGE_WEBHOOK_URL != '' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.sha }}
+
+      # -- Étape 2 · accès SSH à l'hôte (clé et empreinte fournies, jamais de ssh-keyscan)
+      - name: Étape 2 · Préparer l'accès SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DEV_SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.DEV_SSH_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          missing=""
+          for v in SSH_HOST SSH_USER WEB_URL SSH_PRIVATE_KEY SSH_KNOWN_HOSTS; do
+            [ -n "${!v:-}" ] || missing="$missing $v"
+          done
+          if [ -n "$missing" ]; then
+            echo "::error title=Configuration dev incomplète::manquent :$missing (voir infra/README.md, section Secrets et variables)"
+            exit 1
+          fi
+          [[ "$DEPLOY_PATH" =~ ^[A-Za-z0-9_./-]+$ ]] || { echo "::error::DEV_DEPLOY_PATH invalide"; exit 1; }
+          [[ "$SSH_PORT" =~ ^[0-9]+$ ]] || { echo "::error::DEV_SSH_PORT invalide"; exit 1; }
+
+          install -d -m 700 "$RUNNER_TEMP/ssh"
+          printf '%s\n' "$SSH_PRIVATE_KEY" > "$RUNNER_TEMP/ssh/key"
+          chmod 600 "$RUNNER_TEMP/ssh/key"
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > "$RUNNER_TEMP/ssh/known_hosts"
+
+          cat > "$RUNNER_TEMP/remote" <<EOF
+          #!/usr/bin/env bash
+          exec ssh -i "$RUNNER_TEMP/ssh/key" -p "$SSH_PORT" \\
+            -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes \\
+            -o UserKnownHostsFile="$RUNNER_TEMP/ssh/known_hosts" -o ConnectTimeout=15 \\
+            "$SSH_USER@$SSH_HOST" "\$@"
+          EOF
+          chmod +x "$RUNNER_TEMP/remote"
+
+          "$RUNNER_TEMP/remote" "mkdir -p '$DEPLOY_PATH'"
+          scp -i "$RUNNER_TEMP/ssh/key" -P "$SSH_PORT" -o IdentitiesOnly=yes -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$RUNNER_TEMP/ssh/known_hosts" \
+            infra/dev/compose.yaml infra/dev/ctl.sh "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/"
+          "$RUNNER_TEMP/remote" "chmod +x '$DEPLOY_PATH/ctl.sh'"
+
+      # -- Étape 3 · hôte prêt, registre connecté
+      - name: Étape 3 · Vérifier l'hôte et se connecter au registre
+        env:
+          PULL_TOKEN: ${{ secrets.GHCR_PULL_TOKEN || secrets.GITHUB_TOKEN }}
+          PULL_USER: ${{ vars.GHCR_PULL_USER || github.actor }}
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/remote" "cd '$DEPLOY_PATH' && ./ctl.sh preflight"
+          printf '%s' "$PULL_TOKEN" | "$RUNNER_TEMP/remote" "cd '$DEPLOY_PATH' && ./ctl.sh login '$PULL_USER'"
+
+      # -- Étape 4 · filet de sécurité avant toute migration
+      - name: Étape 4 · Sauvegarder la base
+        if: env.MODE == 'deploy'
+        run: |
+          "$RUNNER_TEMP/remote" "cd '$DEPLOY_PATH' && ./ctl.sh backup"
+
+      # -- Étape 5 · migrations (facultatif : ne tourne que si DEV_MIGRATE_COMMAND est défini)
+      - name: Étape 5 · Migrer la base
+        if: env.MODE == 'deploy' && env.API_READY == 'true' && env.MIGRATE_COMMAND != ''
+        run: |
+          printf '%s' "$MIGRATE_COMMAND" | "$RUNNER_TEMP/remote" \
+            "cd '$DEPLOY_PATH' && API_IMAGE='$IMAGE_BASE/api' ./ctl.sh migrate '$TAG'"
+
+      # -- Étape 6 · API puis web (chaque bascule attend l'état « sain » et revient seule en arrière sinon)
+      - name: Étape 6a · Déployer l'API
+        if: env.API_READY == 'true'
+        run: |
+          "$RUNNER_TEMP/remote" "cd '$DEPLOY_PATH' && API_IMAGE='$IMAGE_BASE/api' ./ctl.sh deploy api '$TAG'"
+
+      - name: Étape 6b · Déployer le web
+        if: env.WEB_READY == 'true'
+        run: |
+          "$RUNNER_TEMP/remote" "cd '$DEPLOY_PATH' && WEB_IMAGE='$IMAGE_BASE/web' ./ctl.sh deploy web '$TAG'"
+
+      # -- Étape 7 · purge du CDN (facultative : secret DEV_CDN_PURGE_WEBHOOK_URL)
+      - name: Étape 7 · Purger le CDN
+        if: env.HAS_CDN_PURGE == 'true'
+        env:
+          CDN_PURGE_URL: ${{ secrets.DEV_CDN_PURGE_WEBHOOK_URL }}
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --max-time 30 -X POST "$CDN_PURGE_URL" > /dev/null
+          echo "CDN purgé."
+
+      # -- Étape 8 · contrôles de fumée sur les adresses publiques
+      - name: Étape 8 · Contrôles de fumée
+        id: smoke
+        run: |
+          set -euo pipefail
+          check() { # url, attendu(regex sur le code), libellé
+            local url="$1" want="$2" label="$3" code
+            for i in $(seq 1 12); do
+              code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "$url" || true)"
+              if [[ "$code" =~ $want ]]; then echo "OK  $label ($url) -> $code"; return 0; fi
+              sleep 5
+            done
+            echo "::error title=Contrôle de fumée::$label ($url) répond $code"
+            return 1
+          }
+          if [ "$WEB_READY" = true ]; then
+            check "${WEB_URL%/}/healthz" '^200$' "web /healthz"
+            check "${WEB_URL%/}/" '^200$' "web /"
+          fi
+          if [ "$API_READY" = true ] && [ -n "${API_URL:-}" ]; then
+            # Tant que l'API n'a pas de route de santé, tout code < 500 prouve qu'elle répond.
+            check "${API_URL%/}${API_HEALTH_PATH}" '^[1-4][0-9][0-9]$' "api ${API_HEALTH_PATH}"
+          fi
+
+      - name: Retour arrière automatique (contrôle de fumée en échec)
+        if: failure() && steps.smoke.outcome == 'failure' && env.MODE == 'deploy'
+        run: |
+          "$RUNNER_TEMP/remote" "cd '$DEPLOY_PATH' && ./ctl.sh rollback" || true
+
+      - name: État de l'hôte
+        if: always() && env.SSH_HOST != ''
+        run: |
+          [ -x "$RUNNER_TEMP/remote" ] || exit 0
+          "$RUNNER_TEMP/remote" "cd '$DEPLOY_PATH' && ./ctl.sh status" || true
+
+      # -- Étape 9 · l'adresse de dev est publiée à chaque déploiement
+      - name: Étape 9 · Publier l'adresse de dev
+        run: |
+          {
+            echo "### Déployé en dev"
+            echo ""
+            echo "- Application web : ${WEB_URL}"
+            [ -z "${API_URL:-}" ] || echo "- API : ${API_URL}"
+            echo "- Version : \`${TAG}\` (mode ${MODE})"
+            echo "- Commit : ${{ needs.prepare.outputs.sha }}"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "::notice title=Déployé en dev::${WEB_URL} (version ${TAG})"
