@@ -51,6 +51,7 @@ export interface TextePlanche {
 /** Texte visible d'une planche, attributs utiles (value, aria-label, placeholder, title) compris. */
 export function textePlanche(html: string): TextePlanche {
   let h = html
+    .replace(/<head>[\s\S]*?<\/head>/g, " ")
     .replace(/<helmet>[\s\S]*?<\/helmet>/g, " ")
     .replace(/<style[\s\S]*?<\/style>/g, " ")
     .replace(/<script[\s\S]*?<\/script>/g, " ")
@@ -61,7 +62,7 @@ export function textePlanche(html: string): TextePlanche {
   }
   h = h.replace(/<br\s*\/?>/g, " ");
   const sansBalises = (remplacement: string) =>
-    compacter(decoder(h.replace(/<[^>]+>/g, remplacement) + " " + attributs.join(" ")));
+    compacter(decoder(h.replace(/<[^>]+>/g, remplacement) + " " + attributs.join(" ¦ ")));
   return { colle: sansBalises(""), espace: sansBalises(" ") };
 }
 
@@ -79,7 +80,9 @@ export function jetons(texte: string): string[] {
 }
 
 export function jetonsPlanche(texte: TextePlanche): Set<string> {
-  return new Set([...jetons(texte.colle), ...jetons(texte.espace)]);
+  // Seule la version « balises = espace » donne des jetons fiables : collées, deux éléments voisins
+  // (« 07:10 » puis « 12 min ») formeraient un faux nombre.
+  return new Set(jetons(texte.espace));
 }
 
 /** Un jeton compte pour la couverture quand il a au moins deux chiffres ou un séparateur. */
@@ -115,6 +118,7 @@ export function ecrituresNombre(n: number): string[] {
 /** Segments de texte distincts d'une planche (un par balise), attributs utiles compris. */
 export function segmentsPlanche(html: string): string[] {
   let h = html
+    .replace(/<head>[\s\S]*?<\/head>/g, " ")
     .replace(/<helmet>[\s\S]*?<\/helmet>/g, " ")
     .replace(/<style[\s\S]*?<\/style>/g, " ")
     .replace(/<script[\s\S]*?<\/script>/g, " ")
