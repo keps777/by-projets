@@ -1,0 +1,782 @@
+{
+ "v": 3,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-10-16T09:00:00Z"
+ },
+ "title": "AfriMove — Maquettes v3",
+ "launch": {
+  "view": "canvas"
+ },
+ "pages": [],
+ "boards": {
+  "Splash.dc.html": {
+   "x": 0,
+   "y": -1200,
+   "w": 390,
+   "h": 844,
+   "title": "0a · Première ouverture · logo, jingle, langue",
+   "is_interactive": true
+  },
+  "Connexion.dc.html": {
+   "x": 470,
+   "y": -1200,
+   "w": 390,
+   "h": 844,
+   "title": "0b · Connexion · numéro + code SMS · WhatsApp · USSD",
+   "is_interactive": true
+  },
+  "Tuto.dc.html": {
+   "x": 940,
+   "y": -1200,
+   "w": 390,
+   "h": 844,
+   "title": "0c · Tutoriel · 3 écrans · tout en 3 touches",
+   "is_interactive": true
+  },
+  "Main.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Accueil — départs en direct (1 touche vers tout)",
+   "is_interactive": true
+  },
+  "SiegePay.dc.html": {
+   "x": 470,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Siège + paiement en un écran (touche 2 → 3)",
+   "is_interactive": true
+  },
+  "Pass.dc.html": {
+   "x": 940,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Billet · QR · code 4 chiffres",
+   "is_interactive": true
+  },
+  "Direct.dc.html": {
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "4 · Mon bus en direct · prévenir un proche",
+   "is_interactive": true
+  },
+  "Reseau.dc.html": {
+   "x": 1880,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "5 · Le réseau en direct · toutes les compagnies",
+   "is_interactive": true
+  },
+  "Covoit.dc.html": {
+   "x": 2350,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "6 · Covoiturage · interurbain et en ville",
+   "is_interactive": true
+  },
+  "Paiement.dc.html": {
+   "x": 2820,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "7 · Paiement · MoMo · OM · carte · depuis l'étranger",
+   "is_interactive": true
+  },
+  "Course.dc.html": {
+   "x": 3290,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "8 · Moto ou taxi vers la gare",
+   "is_interactive": true
+  },
+  "MainVille.dc.html": {
+   "x": 3760,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "1b · Accueil · mode « dans la même ville » (ville détectée, départ, arrivée)",
+   "is_interactive": true
+  },
+  "CovoitVille.dc.html": {
+   "x": 4230,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "6b · Covoiturage · en ville · passager",
+   "is_interactive": true
+  },
+  "CovoitConducteur.dc.html": {
+   "x": 4700,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "6c · Covoiturage · je conduis (proposer mon trajet)",
+   "is_interactive": true
+  },
+  "MainFiltres.dc.html": {
+   "x": 5170,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "1c · Accueil · filtre déroulant : classe, compagnies (une, plusieurs, toutes), préférées",
+   "is_interactive": true
+  },
+  "Arret.dc.html": {
+   "x": 0,
+   "y": 1200,
+   "w": 390,
+   "h": 844,
+   "title": "9 · Monter en route · arrêts",
+   "is_interactive": true
+  },
+  "Groupe.dc.html": {
+   "x": 470,
+   "y": 1200,
+   "w": 390,
+   "h": 844,
+   "title": "10 · Groupe · bus entier · cagnotte",
+   "is_interactive": true
+  },
+  "USSD.dc.html": {
+   "x": 940,
+   "y": 1200,
+   "w": 390,
+   "h": 844,
+   "title": "11 · USSD *123# et WhatsApp · téléphone simple",
+   "is_interactive": true
+  },
+  "Moi.dc.html": {
+   "x": 1410,
+   "y": 1200,
+   "w": 390,
+   "h": 844,
+   "title": "12 · Moi · fidélité · parrainage · proches · historique",
+   "is_interactive": true
+  },
+  "ColisEnvoi.dc.html": {
+   "x": 1880,
+   "y": 1200,
+   "w": 390,
+   "h": 844,
+   "title": "13 · Envoyer un colis · scan + formulaire en un écran",
+   "is_interactive": true
+  },
+  "ColisCode.dc.html": {
+   "x": 2350,
+   "y": 1200,
+   "w": 390,
+   "h": 844,
+   "title": "14 · Colis · code · suivi · photo",
+   "is_interactive": true
+  },
+  "Relais.dc.html": {
+   "x": 2820,
+   "y": 1200,
+   "w": 390,
+   "h": 844,
+   "title": "15 · Points relais · carte",
+   "is_interactive": true
+  },
+  "Livraison.dc.html": {
+   "x": 3290,
+   "y": 1200,
+   "w": 390,
+   "h": 844,
+   "title": "16 · Livraison moto en cours",
+   "is_interactive": true
+  },
+  "Proche.dc.html": {
+   "x": 3760,
+   "y": 1200,
+   "w": 390,
+   "h": 844,
+   "title": "17 · Payer le voyage d'un proche · depuis l'étranger",
+   "is_interactive": true
+  },
+  "Guichet.dc.html": {
+   "x": 0,
+   "y": 2400,
+   "w": 390,
+   "h": 844,
+   "title": "18 · Guichet — accueil de l'agent (tout à 1 touche)",
+   "is_interactive": true
+  },
+  "Vente.dc.html": {
+   "x": 470,
+   "y": 2400,
+   "w": 390,
+   "h": 844,
+   "title": "19 · Vente en un écran · siège · voyageur · paiement · imprimer",
+   "is_interactive": true
+  },
+  "Cadence.dc.html": {
+   "x": 940,
+   "y": 2400,
+   "w": 390,
+   "h": 844,
+   "title": "20 · Mode cadence (5 h) · 2 touches par billet",
+   "is_interactive": true
+  },
+  "GuichetColis.dc.html": {
+   "x": 1410,
+   "y": 2400,
+   "w": 390,
+   "h": 844,
+   "title": "21 · Colis au guichet · étiquette",
+   "is_interactive": true
+  },
+  "Depot.dc.html": {
+   "x": 1880,
+   "y": 2400,
+   "w": 390,
+   "h": 844,
+   "title": "22 · Dépôt d'un colis prépayé · code",
+   "is_interactive": true
+  },
+  "Quai.dc.html": {
+   "x": 2350,
+   "y": 2400,
+   "w": 390,
+   "h": 844,
+   "title": "23 · Quai · scan · comptage · soute",
+   "is_interactive": true
+  },
+  "Convoyeur.dc.html": {
+   "x": 2820,
+   "y": 2400,
+   "w": 390,
+   "h": 844,
+   "title": "24 · Convoyeur · vente en route",
+   "is_interactive": true
+  },
+  "Chauffeur.dc.html": {
+   "x": 3290,
+   "y": 2400,
+   "w": 390,
+   "h": 844,
+   "title": "25 · Chauffeur · feuille de route · incidents",
+   "is_interactive": true
+  },
+  "Controleur.dc.html": {
+   "x": 3760,
+   "y": 2400,
+   "w": 390,
+   "h": 844,
+   "title": "26 · Contrôleur inopiné",
+   "is_interactive": true
+  },
+  "Caisse.dc.html": {
+   "x": 0,
+   "y": 3600,
+   "w": 390,
+   "h": 844,
+   "title": "27 · Caisse · ouverture · fermeture · écart",
+   "is_interactive": true
+  },
+  "Superviseur.dc.html": {
+   "x": 470,
+   "y": 3600,
+   "w": 390,
+   "h": 844,
+   "title": "28 · Superviseur de gare · PIN · annulations",
+   "is_interactive": true
+  },
+  "RapportSoir.dc.html": {
+   "x": 940,
+   "y": 3600,
+   "w": 390,
+   "h": 844,
+   "title": "29 · Rapport du soir · WhatsApp 21 h",
+   "is_interactive": true
+  },
+  "Patron.dc.html": {
+   "x": 1410,
+   "y": 3600,
+   "w": 390,
+   "h": 844,
+   "title": "30 · Patron — accueil (tout à 1 touche)",
+   "is_interactive": true
+  },
+  "Assistant.dc.html": {
+   "x": 1880,
+   "y": 3600,
+   "w": 390,
+   "h": 844,
+   "title": "31 · L'assistant du patron",
+   "is_interactive": true
+  },
+  "Analyses.dc.html": {
+   "x": 2350,
+   "y": 3600,
+   "w": 390,
+   "h": 844,
+   "title": "32 · Analyses · semaine · lignes · bus",
+   "is_interactive": true
+  },
+  "Comptable.dc.html": {
+   "x": 2820,
+   "y": 3600,
+   "w": 390,
+   "h": 844,
+   "title": "33 · Comptable · exports · rapprochement",
+   "is_interactive": true
+  },
+  "Config.dc.html": {
+   "x": 3290,
+   "y": 3600,
+   "w": 390,
+   "h": 844,
+   "title": "34 · Configuration · lignes · tarifs · équipe",
+   "is_interactive": true
+  },
+  "Modules.dc.html": {
+   "x": 3760,
+   "y": 3600,
+   "w": 390,
+   "h": 844,
+   "title": "35 · Modules · activer ou masquer (les 12)",
+   "is_interactive": true
+  },
+  "Financement.dc.html": {
+   "x": 0,
+   "y": 4800,
+   "w": 390,
+   "h": 844,
+   "title": "36 · Financement · avance · crédit matériel · salaires",
+   "is_interactive": true
+  },
+  "InterAgences.dc.html": {
+   "x": 470,
+   "y": 4800,
+   "w": 390,
+   "h": 844,
+   "title": "37 · Colis entre compagnies · correspondance",
+   "is_interactive": true
+  },
+  "RelaisApp.dc.html": {
+   "x": 940,
+   "y": 4800,
+   "w": 390,
+   "h": 844,
+   "title": "38 · App du point relais",
+   "is_interactive": true
+  },
+  "Livreur.dc.html": {
+   "x": 1410,
+   "y": 4800,
+   "w": 390,
+   "h": 844,
+   "title": "39 · App du livreur moto",
+   "is_interactive": true
+  },
+  "Conducteur.dc.html": {
+   "x": 1880,
+   "y": 4800,
+   "w": 390,
+   "h": 844,
+   "title": "40 · Conducteur covoiturage",
+   "is_interactive": true
+  },
+  "Vendeur.dc.html": {
+   "x": 2350,
+   "y": 4800,
+   "w": 390,
+   "h": 844,
+   "title": "41 · Vendeur ambulant · commission",
+   "is_interactive": true
+  },
+  "Controle.dc.html": {
+   "x": 2820,
+   "y": 4800,
+   "w": 1280,
+   "h": 900,
+   "title": "42 · Salle de contrôle (web)",
+   "is_interactive": true,
+   "expand": "fill"
+  },
+  "Parcours.dc.html": {
+   "x": 0,
+   "y": 6000,
+   "w": 1760,
+   "h": 1500,
+   "title": "43 · Parcours en 3 touches — chaque case ouvre son écran",
+   "is_interactive": true
+  },
+  "Systeme.dc.html": {
+   "x": 1840,
+   "y": 6000,
+   "w": 1600,
+   "h": 1500,
+   "title": "44 · Système v3 · polices · couleurs · composants"
+  },
+  "CadenceBillet.dc.html": {
+   "x": 4230,
+   "y": 2400,
+   "w": 390,
+   "h": 844,
+   "title": "20b · Cadence · la suite : billet imprimé, numéro, siège, caisse, SMS",
+   "is_interactive": true
+  },
+  "CadenceQuai.dc.html": {
+   "x": 4700,
+   "y": 2400,
+   "w": 390,
+   "h": 844,
+   "title": "20c · Cadence · au quai : scan, nom et pièce complétés, embarquement",
+   "is_interactive": true
+  },
+  "SuperviseurValider.dc.html": {
+   "x": 4230,
+   "y": 3600,
+   "w": 390,
+   "h": 844,
+   "title": "28b · Superviseur · valider une clôture avec le PIN",
+   "is_interactive": true
+  },
+  "SuperviseurVoir.dc.html": {
+   "x": 4700,
+   "y": 3600,
+   "w": 390,
+   "h": 844,
+   "title": "28c · Superviseur · voir et décider une annulation avec le PIN",
+   "is_interactive": true
+  },
+  "SuperviseurEquipe.dc.html": {
+   "x": 5170,
+   "y": 3600,
+   "w": 390,
+   "h": 844,
+   "title": "28d · Superviseur · équipe, PIN, comptes",
+   "is_interactive": true
+  },
+  "SuperviseurDebloquer.dc.html": {
+   "x": 5640,
+   "y": 3600,
+   "w": 390,
+   "h": 844,
+   "title": "28e · Superviseur · débloquer un guichet hors ligne depuis 12 h",
+   "is_interactive": true
+  },
+  "AssistantReponse.dc.html": {
+   "x": 0,
+   "y": 7800,
+   "w": 390,
+   "h": 844,
+   "title": "31b · L’assistant répond · pourquoi Bafoussam baisse",
+   "is_interactive": true
+  },
+  "AnalysesLigne.dc.html": {
+   "x": 470,
+   "y": 7800,
+   "w": 390,
+   "h": 844,
+   "title": "32b · Analyses · une ligne en détail",
+   "is_interactive": true
+  },
+  "AnalysesBus.dc.html": {
+   "x": 940,
+   "y": 7800,
+   "w": 390,
+   "h": 844,
+   "title": "32c · Analyses · un bus en détail",
+   "is_interactive": true
+  },
+  "ConfigLigne.dc.html": {
+   "x": 1410,
+   "y": 7800,
+   "w": 390,
+   "h": 844,
+   "title": "34b · Configuration · modifier une ligne",
+   "is_interactive": true
+  },
+  "ComptableRapprochement.dc.html": {
+   "x": 1880,
+   "y": 7800,
+   "w": 390,
+   "h": 844,
+   "title": "33b · Comptable · 4 transactions MoMo sans correspondance",
+   "is_interactive": true
+  },
+  "ComptableApercu.dc.html": {
+   "x": 2350,
+   "y": 7800,
+   "w": 390,
+   "h": 844,
+   "title": "33c · Comptable · aperçu d’un export (pop-up)",
+   "is_interactive": true
+  },
+  "ComptableCloture.dc.html": {
+   "x": 2820,
+   "y": 7800,
+   "w": 390,
+   "h": 844,
+   "title": "33d · Comptable · décembre clôturé · envoyé au cabinet",
+   "is_interactive": true
+  },
+  "FinancementDemande.dc.html": {
+   "x": 3290,
+   "y": 7800,
+   "w": 390,
+   "h": 844,
+   "title": "36b · Financement · dossier envoyé · suivi",
+   "is_interactive": true
+  },
+  "InterAgencesConvention.dc.html": {
+   "x": 3760,
+   "y": 7800,
+   "w": 390,
+   "h": 844,
+   "title": "37b · Convention Alpha – Oméga",
+   "is_interactive": true
+  },
+  "PatronEquipe.dc.html": {
+   "x": 0,
+   "y": 9000,
+   "w": 390,
+   "h": 844,
+   "title": "30b · Patron · mes gares, mes gens",
+   "is_interactive": true
+  },
+  "PatronGare.dc.html": {
+   "x": 470,
+   "y": 9000,
+   "w": 390,
+   "h": 844,
+   "title": "30c · Patron · une gare en détail",
+   "is_interactive": true
+  },
+  "PatronPersonne.dc.html": {
+   "x": 940,
+   "y": 9000,
+   "w": 390,
+   "h": 844,
+   "title": "30d · Patron · une personne de l’équipe",
+   "is_interactive": true
+  },
+  "ConfigEquipeListe.dc.html": {
+   "x": 1410,
+   "y": 9000,
+   "w": 390,
+   "h": 844,
+   "title": "34c · Réglages · la liste de l’équipe (pop-up, filtre par rôle)",
+   "is_interactive": true
+  },
+  "ConfigPersonne.dc.html": {
+   "x": 1880,
+   "y": 9000,
+   "w": 390,
+   "h": 844,
+   "title": "34d · Réglages · modifier ou ajouter une personne",
+   "is_interactive": true
+  },
+  "ConfigRegles.dc.html": {
+   "x": 2350,
+   "y": 9000,
+   "w": 390,
+   "h": 844,
+   "title": "34e · Réglages · modifier une règle",
+   "is_interactive": true
+  },
+  "RelaisDevenir.dc.html": {
+   "x": 0,
+   "y": 10200,
+   "w": 390,
+   "h": 844,
+   "title": "22b · Devenir point de relais · programme ouvert (app voyageur)",
+   "is_interactive": true
+  },
+  "RelaisInscription.dc.html": {
+   "x": 470,
+   "y": 10200,
+   "w": 390,
+   "h": 844,
+   "title": "22c · Devenir point de relais · la fiche en 3 min",
+   "is_interactive": true
+  },
+  "RelaisVerification.dc.html": {
+   "x": 940,
+   "y": 10200,
+   "w": 390,
+   "h": 844,
+   "title": "22d · Devenir point de relais · vérification · activation",
+   "is_interactive": true
+  },
+  "LivreurDevenir.dc.html": {
+   "x": 1410,
+   "y": 10200,
+   "w": 390,
+   "h": 844,
+   "title": "23b · Devenir livreur · programme ouvert · particularités",
+   "is_interactive": true
+  },
+  "LivreurVerification.dc.html": {
+   "x": 1880,
+   "y": 10200,
+   "w": 390,
+   "h": 844,
+   "title": "23c · Devenir livreur · vérification · première course",
+   "is_interactive": true
+  }
+ },
+ "order": [
+  "Splash.dc.html",
+  "Connexion.dc.html",
+  "Tuto.dc.html",
+  "Main.dc.html",
+  "SiegePay.dc.html",
+  "Pass.dc.html",
+  "Direct.dc.html",
+  "Reseau.dc.html",
+  "Covoit.dc.html",
+  "Paiement.dc.html",
+  "Course.dc.html",
+  "MainVille.dc.html",
+  "CovoitVille.dc.html",
+  "CovoitConducteur.dc.html",
+  "MainFiltres.dc.html",
+  "Arret.dc.html",
+  "Groupe.dc.html",
+  "USSD.dc.html",
+  "Moi.dc.html",
+  "ColisEnvoi.dc.html",
+  "ColisCode.dc.html",
+  "Relais.dc.html",
+  "Livraison.dc.html",
+  "Proche.dc.html",
+  "Guichet.dc.html",
+  "Vente.dc.html",
+  "Cadence.dc.html",
+  "CadenceBillet.dc.html",
+  "CadenceQuai.dc.html",
+  "GuichetColis.dc.html",
+  "Depot.dc.html",
+  "Quai.dc.html",
+  "Convoyeur.dc.html",
+  "Chauffeur.dc.html",
+  "Controleur.dc.html",
+  "Caisse.dc.html",
+  "Superviseur.dc.html",
+  "SuperviseurValider.dc.html",
+  "SuperviseurVoir.dc.html",
+  "SuperviseurEquipe.dc.html",
+  "SuperviseurDebloquer.dc.html",
+  "RapportSoir.dc.html",
+  "Patron.dc.html",
+  "Assistant.dc.html",
+  "Analyses.dc.html",
+  "Comptable.dc.html",
+  "Config.dc.html",
+  "Modules.dc.html",
+  "Financement.dc.html",
+  "InterAgences.dc.html",
+  "RelaisApp.dc.html",
+  "Livreur.dc.html",
+  "Conducteur.dc.html",
+  "Vendeur.dc.html",
+  "Controle.dc.html",
+  "Parcours.dc.html",
+  "Systeme.dc.html",
+  "AssistantReponse.dc.html",
+  "AnalysesLigne.dc.html",
+  "AnalysesBus.dc.html",
+  "ConfigLigne.dc.html",
+  "ComptableRapprochement.dc.html",
+  "ComptableApercu.dc.html",
+  "ComptableCloture.dc.html",
+  "FinancementDemande.dc.html",
+  "InterAgencesConvention.dc.html",
+  "PatronEquipe.dc.html",
+  "PatronGare.dc.html",
+  "PatronPersonne.dc.html",
+  "ConfigEquipeListe.dc.html",
+  "ConfigPersonne.dc.html",
+  "ConfigRegles.dc.html",
+  "RelaisDevenir.dc.html",
+  "RelaisInscription.dc.html",
+  "RelaisVerification.dc.html",
+  "LivreurDevenir.dc.html",
+  "LivreurVerification.dc.html"
+ ],
+ "notes": {
+  "r0": {
+   "x": 0,
+   "y": -1500,
+   "text": "Première ouverture · logo et jingle, connexion par numéro, tutoriel",
+   "kind": "title1",
+   "maxW": 2000
+  },
+  "r1": {
+   "x": 0,
+   "y": -300,
+   "text": "Voyageur · acheter, suivre, payer — entre villes ou dans la même ville, bus et covoiturage",
+   "kind": "title1",
+   "maxW": 5560
+  },
+  "r2": {
+   "x": 0,
+   "y": 900,
+   "text": "Voyageur · en route, en groupe, sans smartphone, colis, proches",
+   "kind": "title1",
+   "maxW": 4150
+  },
+  "r3": {
+   "x": 0,
+   "y": 2100,
+   "text": "Agence · guichet, quai, bus — un billet vendu en 3 touches, imprimé",
+   "kind": "title1",
+   "maxW": 5090
+  },
+  "r4": {
+   "x": 0,
+   "y": 3300,
+   "text": "Agence et patron · caisse, supervision, rapport, analyses, réglages",
+   "kind": "title1",
+   "maxW": 6030
+  },
+  "r5": {
+   "x": 0,
+   "y": 4500,
+   "text": "Financement, partenaires et salle de contrôle",
+   "kind": "title1",
+   "maxW": 4100
+  },
+  "r6": {
+   "x": 0,
+   "y": 5700,
+   "text": "Parcours en 3 touches · système graphique v3",
+   "kind": "title1",
+   "maxW": 3440
+  },
+  "r7": {
+   "x": 0,
+   "y": 7500,
+   "text": "Patron · aucune impasse : assistant, ligne, bus, réglages, rapprochement, aperçu, clôture, financement, convention",
+   "kind": "title1",
+   "maxW": 4150
+  },
+  "r8": {
+   "x": 0,
+   "y": 8700,
+   "text": "Patron · mes gares, mes gens (sa propre vue) · équipe dans les réglages : filtre par rôle, liste, fiche, règles",
+   "kind": "title1",
+   "maxW": 2740
+  },
+  "r9": {
+   "x": 0,
+   "y": 9900,
+   "text": "Programmes ouverts depuis l’app voyageur · devenir point de relais (boutique) · devenir livreur (moto, vélo, à pied)",
+   "kind": "title1",
+   "maxW": 2270
+  }
+ },
+ "designSystems": []
+}

@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Parcours en 3 touches</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&amp;family=Instrument+Sans:wght@400;500;600;700&amp;family=Geist+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#F4F0E8;text-decoration:none}a:hover{color:#FFB547}
+</style>
+</helmet>
+<div style="width: 1760px; height: 1500px; box-sizing: border-box; display: flex; flex-direction: column; gap: 14px; padding: 32px 36px; background: #0B1019; color: #F4F0E8; font-family: 'Instrument Sans', system-ui, sans-serif; overflow: hidden">
+
+  <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px">
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <span style="font-family: 'Geist Mono', monospace; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: #FFB547">Maquettes v3 · carte des parcours · chaque case ouvre son écran</span>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 34px; font-weight: 800; letter-spacing: -.02em; line-height: 1.05">Toutes les grandes fonctionnalités en 3 touches, pas une de plus</h1>
+    </div>
+    <div style="display: flex; gap: 16px; font-size: 13px; color: #B5BDCB; align-items: center">
+      <span style="display: inline-flex; align-items: center; gap: 8px"><span style="width: 26px; height: 26px; border-radius: 13px; background: #FF6A1F; color: #0B1019; display: inline-flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 12px; font-weight: 700">1</span>touche 1 · depuis l'accueil</span>
+      <span style="display: inline-flex; align-items: center; gap: 8px"><span style="width: 26px; height: 26px; border-radius: 13px; background: #FFB547; color: #0B1019; display: inline-flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 12px; font-weight: 700">2</span>touche 2 · choisir</span>
+      <span style="display: inline-flex; align-items: center; gap: 8px"><span style="width: 26px; height: 26px; border-radius: 13px; background: #43E39B; color: #0B1019; display: inline-flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 12px; font-weight: 700">3</span>touche 3 · c'est fait</span>
+      <span style="display: inline-flex; align-items: center; gap: 8px"><span style="width: 16px; height: 16px; border-radius: 4px; border: 1px dashed #7F8A9E"></span>écran de suivi, zéro touche</span>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; flex: 1; min-height: 0">
+
+    <div style="display: flex; flex-direction: column; gap: 10px; min-width: 0">
+      <div style="display: grid; grid-template-columns: 170px 1fr; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 16px; background: #141B28; border: 1px solid #273247">
+        <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 15px; font-weight: 800; color: #FF6A1F">Première fois</span><span style="font-size: 11px; color: #B5BDCB">60 secondes</span></span>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+          <a href="Splash.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 120px"><span style="font-size: 13px; font-weight: 700">Logo · jingle</span><span style="font-size: 11px; color: #B5BDCB">langue</span></a><span style="color: #7F8A9E">→</span>
+          <a href="Connexion.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 120px"><span style="font-size: 13px; font-weight: 700">Numéro + SMS</span><span style="font-size: 11px; color: #B5BDCB">WhatsApp · USSD</span></a><span style="color: #7F8A9E">→</span>
+          <a href="Tuto.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 120px"><span style="font-size: 13px; font-weight: 700">Tuto 3 écrans</span><span style="font-size: 11px; color: #B5BDCB">passer possible</span></a><span style="color: #7F8A9E">→</span>
+          <a href="Main.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #FF6A1F; color: #0B1019; min-width: 120px"><span style="font-size: 13px; font-weight: 700">Accueil</span><span style="font-size: 11px; font-weight: 600">tout à 1 touche</span></a>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 170px 1fr; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 16px; background: #141B28; border: 1px solid #273247">
+        <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 15px; font-weight: 800; color: #FF6A1F">Acheter un billet</span><span style="font-size: 11px; color: #B5BDCB">le parcours n° 1</span></span>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+          <a href="Main.dc.html" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #FF6A1F; min-width: 150px"><span style="width: 22px; height: 22px; border-radius: 11px; background: #FF6A1F; color: #0B1019; display: inline-flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 700; flex: none">1</span><span style="font-size: 13px; font-weight: 700">Départ dans la liste</span></a><span style="color: #7F8A9E">→</span>
+          <a href="SiegePay.dc.html" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #FFB547; min-width: 150px"><span style="width: 22px; height: 22px; border-radius: 11px; background: #FFB547; color: #0B1019; display: inline-flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 700; flex: none">2</span><span style="font-size: 13px; font-weight: 700">Siège + MoMo, 1 écran</span></a><span style="color: #7F8A9E">→</span>
+          <a href="Pass.dc.html" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #43E39B; min-width: 150px"><span style="width: 22px; height: 22px; border-radius: 11px; background: #43E39B; color: #0B1019; display: inline-flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 700; flex: none">3</span><span style="font-size: 13px; font-weight: 700">Payer → billet</span></a>
+          <span style="color: #7F8A9E">puis</span>
+          <a href="Direct.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; border: 1px dashed #7F8A9E; min-width: 110px"><span style="font-size: 12px; font-weight: 700">Bus en direct</span><span style="font-size: 11px; color: #B5BDCB">prévenir Maman : 1</span></a>
+          <a href="Course.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; border: 1px dashed #7F8A9E; min-width: 110px"><span style="font-size: 12px; font-weight: 700">Moto vers la gare</span><span style="font-size: 11px; color: #B5BDCB">réserver : 1</span></a>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 170px 1fr; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 16px; background: #141B28; border: 1px solid #273247">
+        <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 15px; font-weight: 800; color: #FF6A1F">Autres façons de voyager</span><span style="font-size: 11px; color: #B5BDCB">toutes depuis l'accueil</span></span>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+          <a href="Proche.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 118px"><span style="font-size: 12px; font-weight: 700">Pour un proche</span><span style="font-size: 11px; color: #B5BDCB">1 · départ 2 · payer 3</span></a>
+          <a href="MainVille.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #43E39B; min-width: 118px"><span style="font-size: 12px; font-weight: 700">Dans la même ville</span><span style="font-size: 11px; color: #B5BDCB">ville détectée · moto, covoit, bus</span></a>
+          <a href="Covoit.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 118px"><span style="font-size: 12px; font-weight: 700">Covoiturage</span><span style="font-size: 11px; color: #B5BDCB">1 · trajet 2 · payer 3</span></a>
+          <a href="CovoitConducteur.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 118px"><span style="font-size: 12px; font-weight: 700">Je conduis</span><span style="font-size: 11px; color: #B5BDCB">proposer : 1 · publier 2</span></a>
+          <a href="Groupe.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 118px"><span style="font-size: 12px; font-weight: 700">Groupe · bus entier</span><span style="font-size: 11px; color: #B5BDCB">1 · places 2 · payer 3</span></a>
+          <a href="Arret.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 118px"><span style="font-size: 12px; font-weight: 700">Monter en route</span><span style="font-size: 11px; color: #B5BDCB">1 · bus 2 · payer 3</span></a>
+          <a href="Reseau.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 118px"><span style="font-size: 12px; font-weight: 700">Réseau en direct</span><span style="font-size: 11px; color: #B5BDCB">1 · ligne 2 · siège 3</span></a>
+          <a href="USSD.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 118px"><span style="font-size: 12px; font-weight: 700">Sans internet</span><span style="font-size: 11px; color: #B5BDCB">*123# · 3 réponses</span></a>
+          <a href="Paiement.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; border: 1px dashed #7F8A9E; min-width: 118px"><span style="font-size: 12px; font-weight: 700">Paiement</span><span style="font-size: 11px; color: #B5BDCB">MoMo · OM · carte</span></a>
+          <a href="Moi.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; border: 1px dashed #7F8A9E; min-width: 118px"><span style="font-size: 12px; font-weight: 700">Moi</span><span style="font-size: 11px; color: #B5BDCB">fidélité · proches</span></a>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 170px 1fr; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 16px; background: #141B28; border: 1px solid #273247">
+        <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 15px; font-weight: 800; color: #FFB547">Envoyer un colis</span><span style="font-size: 11px; color: #B5BDCB">et le suivre</span></span>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+          <a href="Main.dc.html" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #FF6A1F; min-width: 150px"><span style="width: 22px; height: 22px; border-radius: 11px; background: #FF6A1F; color: #0B1019; display: inline-flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 700; flex: none">1</span><span style="font-size: 13px; font-weight: 700">« Envoyer un colis »</span></a><span style="color: #7F8A9E">→</span>
+          <a href="ColisEnvoi.dc.html" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #FFB547; min-width: 150px"><span style="width: 22px; height: 22px; border-radius: 11px; background: #FFB547; color: #0B1019; display: inline-flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 700; flex: none">2</span><span style="font-size: 13px; font-weight: 700">Photo + qui + où, 1 écran</span></a><span style="color: #7F8A9E">→</span>
+          <a href="ColisCode.dc.html" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #43E39B; min-width: 150px"><span style="width: 22px; height: 22px; border-radius: 11px; background: #43E39B; color: #0B1019; display: inline-flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 700; flex: none">3</span><span style="font-size: 13px; font-weight: 700">Payer → code + suivi</span></a>
+          <span style="color: #7F8A9E">puis</span>
+          <a href="Relais.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; border: 1px dashed #7F8A9E; min-width: 100px"><span style="font-size: 12px; font-weight: 700">Point relais</span><span style="font-size: 11px; color: #B5BDCB">choisir : 1</span></a>
+          <a href="Livraison.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; border: 1px dashed #7F8A9E; min-width: 100px"><span style="font-size: 12px; font-weight: 700">Livraison moto</span><span style="font-size: 11px; color: #B5BDCB">suivi en direct</span></a>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 170px 1fr; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 16px; background: #141B28; border: 1px solid #273247">
+        <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 15px; font-weight: 800; color: #43E39B">Partenaires</span><span style="font-size: 11px; color: #B5BDCB">chacun sa petite app</span></span>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+          <a href="RelaisApp.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 130px"><span style="font-size: 12px; font-weight: 700">Point relais</span><span style="font-size: 11px; color: #B5BDCB">remettre : code 1 · photo 2</span></a>
+          <a href="Livreur.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 130px"><span style="font-size: 12px; font-weight: 700">Livreur moto</span><span style="font-size: 11px; color: #B5BDCB">accepter 1 · remettre 2</span></a>
+          <a href="Conducteur.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 130px"><span style="font-size: 12px; font-weight: 700">Conducteur covoit</span><span style="font-size: 11px; color: #B5BDCB">trajet 1 · publier 2</span></a>
+          <a href="Vendeur.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 130px"><span style="font-size: 12px; font-weight: 700">Vendeur ambulant</span><span style="font-size: 11px; color: #B5BDCB">départ 1 · siège 2 · payer 3</span></a>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px; min-width: 0">
+      <div style="display: grid; grid-template-columns: 170px 1fr; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 16px; background: #141B28; border: 1px solid #273247">
+        <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 15px; font-weight: 800; color: #FF6A1F">Vendre au guichet</span><span style="font-size: 11px; color: #B5BDCB">le parcours n° 1 de l'agence</span></span>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+          <a href="Guichet.dc.html" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #FF6A1F; min-width: 150px"><span style="width: 22px; height: 22px; border-radius: 11px; background: #FF6A1F; color: #0B1019; display: inline-flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 700; flex: none">1</span><span style="font-size: 13px; font-weight: 700">« Vendre un billet »</span></a><span style="color: #7F8A9E">→</span>
+          <a href="Vente.dc.html" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #FFB547; min-width: 150px"><span style="width: 22px; height: 22px; border-radius: 11px; background: #FFB547; color: #0B1019; display: inline-flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 700; flex: none">2</span><span style="font-size: 13px; font-weight: 700">Départ · siège · nom, 1 écran</span></a><span style="color: #7F8A9E">→</span>
+          <a href="Guichet.dc.html" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #43E39B; min-width: 150px"><span style="width: 22px; height: 22px; border-radius: 11px; background: #43E39B; color: #0B1019; display: inline-flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 700; flex: none">3</span><span style="font-size: 13px; font-weight: 700">Encaisser · imprimer</span></a>
+          <span style="color: #7F8A9E">ou</span>
+          <a href="Cadence.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #2A1F0B; border: 1px solid #FFB547; min-width: 120px"><span style="font-size: 12px; font-weight: 700; color: #FFB547">Mode cadence</span><span style="font-size: 11px; color: #B5BDCB">1 touche par billet</span></a><span style="color: #7F8A9E">→</span><a href="CadenceBillet.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; border: 1px dashed #FFB547; min-width: 110px"><span style="font-size: 12px; font-weight: 700">La suite</span><span style="font-size: 11px; color: #B5BDCB">billet · quai · nom</span></a>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 170px 1fr; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 16px; background: #141B28; border: 1px solid #273247">
+        <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 15px; font-weight: 800; color: #FFB547">Colis et quai</span><span style="font-size: 11px; color: #B5BDCB">depuis l'accueil guichet</span></span>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+          <a href="GuichetColis.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 122px"><span style="font-size: 12px; font-weight: 700">Enregistrer un colis</span><span style="font-size: 11px; color: #B5BDCB">1 · photo+infos 2 · étiquette 3</span></a>
+          <a href="Depot.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 122px"><span style="font-size: 12px; font-weight: 700">Dépôt prépayé</span><span style="font-size: 11px; color: #B5BDCB">1 · scan 2 · accepter 3</span></a>
+          <a href="Quai.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 122px"><span style="font-size: 12px; font-weight: 700">Quai · scanner</span><span style="font-size: 11px; color: #B5BDCB">1 · scan en continu</span></a>
+          <a href="Convoyeur.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 122px"><span style="font-size: 12px; font-weight: 700">Vente en route</span><span style="font-size: 11px; color: #B5BDCB">1 · places 2 · cash 3</span></a>
+          <a href="Chauffeur.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 122px"><span style="font-size: 12px; font-weight: 700">Chauffeur</span><span style="font-size: 11px; color: #B5BDCB">incident : 1 touche</span></a>
+          <a href="Controleur.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 122px"><span style="font-size: 12px; font-weight: 700">Contrôle inopiné</span><span style="font-size: 11px; color: #B5BDCB">siège 1 · régulariser 2</span></a>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 170px 1fr; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 16px; background: #141B28; border: 1px solid #273247">
+        <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 15px; font-weight: 800; color: #FF5C5C">Fermer la caisse</span><span style="font-size: 11px; color: #B5BDCB">l'argent, chaque soir</span></span>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+          <a href="Guichet.dc.html" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #FF6A1F; min-width: 140px"><span style="width: 22px; height: 22px; border-radius: 11px; background: #FF6A1F; color: #0B1019; display: inline-flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 700; flex: none">1</span><span style="font-size: 13px; font-weight: 700">« Ma caisse »</span></a><span style="color: #7F8A9E">→</span>
+          <a href="Caisse.dc.html" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #FFB547; min-width: 140px"><span style="width: 22px; height: 22px; border-radius: 11px; background: #FFB547; color: #0B1019; display: inline-flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 700; flex: none">2</span><span style="font-size: 13px; font-weight: 700">Compter les billets</span></a><span style="color: #7F8A9E">→</span>
+          <a href="Superviseur.dc.html" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #43E39B; min-width: 140px"><span style="width: 22px; height: 22px; border-radius: 11px; background: #43E39B; color: #0B1019; display: inline-flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 700; flex: none">3</span><span style="font-size: 13px; font-weight: 700">PIN du superviseur</span></a><span style="color: #7F8A9E">→</span>
+          <a href="RapportSoir.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; border: 1px dashed #7F8A9E; min-width: 120px"><span style="font-size: 12px; font-weight: 700">Rapport 21 h</span><span style="font-size: 11px; color: #B5BDCB">WhatsApp, zéro touche</span></a>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 170px 1fr; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 16px; background: #141B28; border: 1px solid #273247">
+        <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 15px; font-weight: 800; color: #6FA8FF">Patron</span><span style="font-size: 11px; color: #B5BDCB">tout à 1 touche de l'accueil</span></span>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+          <a href="Patron.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #FF6A1F; color: #0B1019; min-width: 110px"><span style="font-size: 12px; font-weight: 700">Accueil patron</span><span style="font-size: 11px; font-weight: 600">chiffres du jour</span></a><span style="color: #7F8A9E">→</span>
+          <a href="Assistant.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 100px"><span style="font-size: 12px; font-weight: 700">Assistant</span><span style="font-size: 11px; color: #B5BDCB">agir : 1</span></a>
+          <a href="Analyses.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 100px"><span style="font-size: 12px; font-weight: 700">Analyses</span><span style="font-size: 11px; color: #B5BDCB">lignes · bus</span></a>
+          <a href="Comptable.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 100px"><span style="font-size: 12px; font-weight: 700">Comptable</span><span style="font-size: 11px; color: #B5BDCB">export : 1</span></a>
+          <a href="Config.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 100px"><span style="font-size: 12px; font-weight: 700">Réglages</span><span style="font-size: 11px; color: #B5BDCB">lignes · équipe</span></a>
+          <a href="Modules.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 100px"><span style="font-size: 12px; font-weight: 700">Modules</span><span style="font-size: 11px; color: #B5BDCB">12 interrupteurs</span></a>
+          <a href="Financement.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 100px"><span style="font-size: 12px; font-weight: 700">Financement</span><span style="font-size: 11px; color: #B5BDCB">demander : 1</span></a>
+          <a href="InterAgences.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #273247; min-width: 100px"><span style="font-size: 12px; font-weight: 700">Inter-agences</span><span style="font-size: 11px; color: #B5BDCB">règlement lundi</span></a>
+          <a href="Controle.dc.html" style="display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: #1B2435; border: 1px solid #6FA8FF; min-width: 110px"><span style="font-size: 12px; font-weight: 700; color: #6FA8FF">Salle de contrôle</span><span style="font-size: 11px; color: #B5BDCB">web · 1280 px</span></a>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; border-radius: 16px; overflow: hidden; border: 1px solid #273247; flex: 1; min-height: 0">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 9px 14px; background: #050810; font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #FFB547"><span>La règle, fonction par fonction</span><span style="color: #B5BDCB">touches depuis l'accueil de son rôle</span></div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; padding: 6px 14px 10px; background: #0F1521; font-size: 12px">
+          <span style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #1B2435"><span>Acheter un billet, siège choisi, payé</span><strong style="color: #43E39B">3</strong></span>
+          <span style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #1B2435"><span>Vendre un billet au guichet, imprimé</span><strong style="color: #43E39B">3</strong></span>
+          <span style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #1B2435"><span>Payer pour un proche à l'étranger</span><strong style="color: #43E39B">3</strong></span>
+          <span style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #1B2435"><span>Billet en mode cadence</span><strong style="color: #43E39B">1</strong></span>
+          <span style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #1B2435"><span>Envoyer un colis avec code</span><strong style="color: #43E39B">3</strong></span>
+          <span style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #1B2435"><span>Enregistrer un colis au guichet</span><strong style="color: #43E39B">3</strong></span>
+          <span style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #1B2435"><span>Suivre son colis, prévenir un proche</span><strong style="color: #43E39B">1</strong></span>
+          <span style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #1B2435"><span>Scanner au quai</span><strong style="color: #43E39B">1</strong></span>
+          <span style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #1B2435"><span>Covoiturage réservé et payé</span><strong style="color: #43E39B">3</strong></span>
+          <span style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #1B2435"><span>Fermer sa caisse, validée</span><strong style="color: #43E39B">3</strong></span>
+          <span style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #1B2435"><span>Groupe ou bus entier</span><strong style="color: #43E39B">3</strong></span>
+          <span style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #1B2435"><span>Signaler un incident (chauffeur)</span><strong style="color: #43E39B">1</strong></span>
+          <span style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #1B2435"><span>Moto vers la gare</span><strong style="color: #43E39B">2</strong></span>
+          <span style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #1B2435"><span>Lire le rapport du soir</span><strong style="color: #43E39B">0</strong></span>
+          <span style="display: flex; justify-content: space-between; padding: 5px 0"><span>Billet sans internet (*123#)</span><strong style="color: #43E39B">3</strong></span>
+          <span style="display: flex; justify-content: space-between; padding: 5px 0"><span>Activer ou masquer un module</span><strong style="color: #43E39B">2</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1760,"height":1500}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "@afrimove/fidelite",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "fidelite": "echo 'banc de fidélité : voir ticket AM-004'",
+    "build": "echo ok",
+    "typecheck": "echo ok",
+    "lint": "echo ok",
+    "test": "echo ok"
+  }
+}

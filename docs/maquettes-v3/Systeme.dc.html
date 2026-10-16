@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Système v3</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&amp;family=Instrument+Sans:wght@400;500;600;700&amp;family=Geist+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#FF6A1F}a:hover{color:#FFB547}
+</style>
+</helmet>
+<div style="width: 1600px; height: 1500px; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px; padding: 36px 40px; background: #0B1019; color: #F4F0E8; font-family: 'Instrument Sans', system-ui, sans-serif; overflow: hidden">
+
+  <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px">
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <span style="font-family: 'Geist Mono', monospace; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: #FFB547">Système graphique v3 · ce qui change par rapport à la v2</span>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 36px; font-weight: 800; letter-spacing: -.02em; line-height: 1.05">Même nuit de gare, trois nouvelles voix</h1>
+    </div>
+    <div style="display: flex; align-items: center; gap: 14px">
+      <svg width="64" height="64" viewBox="0 0 72 72" role="img" aria-label="Logo AfriMove piste E"><rect width="72" height="72" rx="20" fill="#141B28"></rect><rect x="12" y="12" width="48" height="23" rx="6" fill="#273247"></rect><rect x="12" y="37" width="48" height="23" rx="6" fill="#1B2435"></rect><path d="M36 18 L50 56 L42 56 L36 38 L30 56 L22 56 Z" fill="#FFB547"></path><rect x="10" y="34" width="52" height="3" fill="#0B1019"></rect></svg>
+      <span style="display: flex; flex-direction: column; line-height: 1.1"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 24px; font-weight: 800; letter-spacing: -.02em">AfriMove</span><span style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #FFB547">A · comme Avance</span></span>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
+    <div style="display: flex; flex-direction: column; gap: 10px; padding: 20px; border-radius: 20px; background: #141B28; border: 1px solid #273247">
+      <span style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #FFB547">Titres · Bricolage Grotesque 800</span>
+      <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 56px; font-weight: 800; letter-spacing: -.03em; line-height: .95">Où vas-tu<br>aujourd'hui ?</span>
+      <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -.01em">Bêta Express · VIP · 7 500</span>
+      <span style="font-size: 13px; color: #B5BDCB; line-height: 1.45">Remplace Unbounded. Plus chaleureuse, plus lisible en gros sur un écran bas de gamme, et son « a » à queue rappelle les lettres peintes sur les bus.</span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 10px; padding: 20px; border-radius: 20px; background: #141B28; border: 1px solid #273247">
+      <span style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #FFB547">Texte · Instrument Sans 400 à 700</span>
+      <span style="font-size: 18px; font-weight: 700; line-height: 1.3">Le billet est nominatif. Il comporte un QR code et un code à 4 chiffres.</span>
+      <span style="font-size: 15px; line-height: 1.5; color: #F4F0E8">Présente-toi au quai 20 minutes avant, avec ta pièce. Un billet déjà scanné est refusé. L'argent du billet va à la compagnie, jamais à AfriMove.</span>
+      <span style="font-size: 13px; color: #B5BDCB; line-height: 1.45">Remplace Manrope. Compacte, très nette à 12 et 13 px, donc plus de contenu lisible sur un écran de 390 px sans fatigue.</span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 10px; padding: 20px; border-radius: 20px; background: #141B28; border: 1px solid #273247">
+      <span style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #FFB547">Chiffres et codes · Geist Mono 500 / 700</span>
+      <span style="font-family: 'Geist Mono', monospace; font-size: 48px; font-weight: 700; letter-spacing: .1em; line-height: 1">7341</span>
+      <span style="font-family: 'Geist Mono', monospace; font-size: 20px; font-weight: 700; color: #FFB547">08:00 · 482 913 · ALP-DLA-270105-0142</span>
+      <span style="font-size: 13px; color: #B5BDCB; line-height: 1.45">Remplace JetBrains Mono. Les chiffres sont larges et bien distincts (1, 7, 0), ce qu'on lit en criant un code au quai ou au téléphone.</span>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; flex: 1; min-height: 0">
+    <div style="display: flex; flex-direction: column; gap: 14px; min-width: 0">
+      <div style="display: flex; flex-direction: column; gap: 10px; padding: 18px 20px; border-radius: 20px; background: #141B28; border: 1px solid #273247">
+        <span style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #FFB547">Couleurs · inchangées depuis la v2</span>
+        <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px">
+          <span style="display: flex; flex-direction: column; gap: 6px"><span style="height: 54px; border-radius: 12px; background: #0B1019; border: 1px solid #273247"></span><span style="font-size: 12px; font-weight: 700">Nuit</span><span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #B5BDCB">#0B1019</span></span>
+          <span style="display: flex; flex-direction: column; gap: 6px"><span style="height: 54px; border-radius: 12px; background: #141B28; border: 1px solid #273247"></span><span style="font-size: 12px; font-weight: 700">Surface</span><span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #B5BDCB">#141B28</span></span>
+          <span style="display: flex; flex-direction: column; gap: 6px"><span style="height: 54px; border-radius: 12px; background: #1B2435; border: 1px solid #273247"></span><span style="font-size: 12px; font-weight: 700">Surface 2</span><span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #B5BDCB">#1B2435</span></span>
+          <span style="display: flex; flex-direction: column; gap: 6px"><span style="height: 54px; border-radius: 12px; background: #273247"></span><span style="font-size: 12px; font-weight: 700">Trait</span><span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #B5BDCB">#273247</span></span>
+          <span style="display: flex; flex-direction: column; gap: 6px"><span style="height: 54px; border-radius: 12px; background: #F4F0E8"></span><span style="font-size: 12px; font-weight: 700">Craie</span><span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #B5BDCB">#F4F0E8</span></span>
+          <span style="display: flex; flex-direction: column; gap: 6px"><span style="height: 54px; border-radius: 12px; background: #B5BDCB"></span><span style="font-size: 12px; font-weight: 700">Craie 2</span><span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #B5BDCB">#B5BDCB</span></span>
+          <span style="display: flex; flex-direction: column; gap: 6px"><span style="height: 54px; border-radius: 12px; background: #FF6A1F"></span><span style="font-size: 12px; font-weight: 700">Orange · action</span><span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #B5BDCB">#FF6A1F</span></span>
+          <span style="display: flex; flex-direction: column; gap: 6px"><span style="height: 54px; border-radius: 12px; background: #FFB547"></span><span style="font-size: 12px; font-weight: 700">Ambre · le A</span><span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #B5BDCB">#FFB547</span></span>
+          <span style="display: flex; flex-direction: column; gap: 6px"><span style="height: 54px; border-radius: 12px; background: #43E39B"></span><span style="font-size: 12px; font-weight: 700">Vert · validé</span><span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #B5BDCB">#43E39B</span></span>
+          <span style="display: flex; flex-direction: column; gap: 6px"><span style="height: 54px; border-radius: 12px; background: #FF5C5C"></span><span style="font-size: 12px; font-weight: 700">Rouge · alerte</span><span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #B5BDCB">#FF5C5C</span></span>
+          <span style="display: flex; flex-direction: column; gap: 6px"><span style="height: 54px; border-radius: 12px; background: #6FA8FF"></span><span style="font-size: 12px; font-weight: 700">Bleu · info</span><span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #B5BDCB">#6FA8FF</span></span>
+          <span style="display: flex; flex-direction: column; gap: 6px"><span style="height: 54px; border-radius: 12px; background: #050810; border: 1px solid #273247"></span><span style="font-size: 12px; font-weight: 700">Profond</span><span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #B5BDCB">#050810</span></span>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; padding: 18px 20px; border-radius: 20px; background: #141B28; border: 1px solid #273247; flex: 1">
+        <span style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #FFB547">Composants · les mêmes sur les 68 écrans</span>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
+          <span style="display: flex; align-items: center; justify-content: space-between; padding: 0 18px; min-height: 58px; border-radius: 16px; background: #FF6A1F; color: #0B1019"><span style="display: flex; flex-direction: column; line-height: 1.1"><span style="font-size: 16px; font-weight: 700">Action principale</span><span style="font-size: 11px; font-weight: 600">toujours en bas, sous le pouce</span></span><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 800">7 500 F</span></span>
+          <span style="display: grid; grid-template-columns: 58px 1fr auto; gap: 10px; align-items: center; padding: 12px 14px; border-radius: 14px; background: #1B2435; border: 1px solid #273247"><span style="font-family: 'Geist Mono', monospace; font-size: 18px; font-weight: 700; color: #FFB547">08:00</span><span style="display: flex; flex-direction: column; gap: 3px"><span style="font-size: 14px; font-weight: 700">Ligne de départ</span><span style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #B5BDCB"><span style="width: 64px; height: 5px; border-radius: 3px; background: #273247; overflow: hidden"><span style="display: block; width: 70%; height: 5px; background: #FFB547"></span></span>9 places</span></span><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 17px; font-weight: 800">7 500</span></span>
+          <span style="display: flex; gap: 8px; align-items: center"><span style="display: inline-flex; align-items: center; gap: 7px; padding: 7px 11px; border-radius: 999px; background: #1B2435; border: 1px solid #273247; font-family: 'Geist Mono', monospace; font-size: 11px; color: #B5BDCB"><span style="width: 7px; height: 7px; border-radius: 4px; background: #43E39B"></span>DIRECT</span><span style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .12em; padding: 6px 9px; border-radius: 999px; background: #1B2435; color: #FFB547">TOUCHE 2</span><span style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 11px; border-radius: 999px; background: #0E2A1E; border: 1px solid #1E5A40; font-size: 12px; font-weight: 700; color: #43E39B">Payé</span><span style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .12em; padding: 6px 9px; border-radius: 999px; background: #2A0F0F; color: #FF5C5C">INOPINÉ</span></span>
+          <span style="display: flex; gap: 6px; align-items: center"><span style="width: 36px; height: 36px; border-radius: 8px; background: #273247; display: inline-flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 11px; color: #7F8A9E">1</span><span style="width: 36px; height: 36px; border-radius: 8px; background: #1B2435; border: 1px solid #3A4760; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 11px">3</span><span style="width: 36px; height: 36px; border-radius: 8px; background: #FFB547; color: #0B1019; display: inline-flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 12px; font-weight: 700">7</span><span style="font-size: 12px; color: #B5BDCB; margin-left: 6px">sièges : pris · libre · toi</span><span style="width: 44px; height: 26px; border-radius: 13px; background: #43E39B; position: relative; margin-left: 10px"><span style="position: absolute; top: 3px; left: 21px; width: 20px; height: 20px; border-radius: 10px; background: #0B1019"></span></span><span style="font-size: 12px; color: #B5BDCB">interrupteur</span></span>
+          <span style="display: grid; grid-template-columns: 24px 1fr auto; gap: 10px; align-items: center; padding: 10px 14px; border-radius: 12px; background: #1B2435"><span style="width: 12px; height: 12px; border-radius: 6px; background: #FF6A1F; justify-self: center"></span><span style="font-size: 13px; font-weight: 700">Étape en cours · suivi</span><span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #FFB547">10:05</span></span>
+          <span style="display: flex; gap: 2px"><span style="width: 26px; height: 40px; border-radius: 6px; background: #1B2435; border-top: 1px solid #273247; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 800">D</span><span style="width: 26px; height: 40px; border-radius: 6px; background: #1B2435; border-top: 1px solid #273247; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 800">L</span><span style="width: 26px; height: 40px; border-radius: 6px; background: #1B2435; border-top: 1px solid #273247; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 800">A</span><span style="font-size: 12px; color: #B5BDCB; margin-left: 10px; align-self: center">volets de destination, comme sur le logo</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 14px; min-width: 0">
+      <div style="display: flex; flex-direction: column; gap: 10px; padding: 18px 20px; border-radius: 20px; background: #050810; border: 1px solid #FFB547">
+        <span style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #FFB547">Les 5 règles de la v3</span>
+        <ol style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 1.4">
+          <li><strong>Trois touches maximum</strong> pour chaque grande fonction, comptées depuis l'accueil de son rôle. Le compteur « TOUCHE 2 / 3 » est sur l'écran pendant la conception, retiré en production.</li>
+          <li><strong>Un écran = une décision.</strong> Siège et paiement sont sur le même écran. Photo et destinataire aussi. On ne fait jamais défiler pour trouver le bouton.</li>
+          <li><strong>L'action principale est en bas, en orange,</strong> avec le prix dedans. Les actions secondaires sont des cartes, jamais des menus.</li>
+          <li><strong>Tout ce qui est en direct pulse en vert</strong> : le bus, la synchro, le livreur. Ce qui attend est ambre. Ce qui bloque est rouge.</li>
+          <li><strong>Tout est livré, tout est masquable.</strong> Un module éteint ne laisse pas de bouton grisé. Les 12 modules ont leur interrupteur dans Modules.</li>
+        </ol>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; padding: 18px 20px; border-radius: 20px; background: #141B28; border: 1px solid #273247; flex: 1">
+        <span style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #FFB547">Ce que la v3 contient</span>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; font-size: 13px; color: #B5BDCB">
+          <span style="display: flex; justify-content: space-between; border-bottom: 1px solid #1B2435; padding: 4px 0"><span>Première ouverture</span><strong style="color: #F4F0E8">3 écrans</strong></span>
+          <span style="display: flex; justify-content: space-between; border-bottom: 1px solid #1B2435; padding: 4px 0"><span>Voyageur</span><strong style="color: #F4F0E8">26 écrans</strong></span>
+          <span style="display: flex; justify-content: space-between; border-bottom: 1px solid #1B2435; padding: 4px 0"><span>Agence (guichet, quai, bus, caisse)</span><strong style="color: #F4F0E8">12 écrans</strong></span>
+          <span style="display: flex; justify-content: space-between; border-bottom: 1px solid #1B2435; padding: 4px 0"><span>Patron et supervision</span><strong style="color: #F4F0E8">20 écrans</strong></span>
+          <span style="display: flex; justify-content: space-between; border-bottom: 1px solid #1B2435; padding: 4px 0"><span>Partenaires</span><strong style="color: #F4F0E8">4 apps</strong></span>
+          <span style="display: flex; justify-content: space-between; border-bottom: 1px solid #1B2435; padding: 4px 0"><span>Salle de contrôle web</span><strong style="color: #F4F0E8">1 page</strong></span>
+          <span style="display: flex; justify-content: space-between; padding: 4px 0"><span>Modules livrés le 5 janvier 2027</span><strong style="color: #43E39B">12 / 12</strong></span>
+          <span style="display: flex; justify-content: space-between; padding: 4px 0"><span>Jingle dans l'écran d'ouverture</span><strong style="color: #43E39B">10 s</strong></span>
+        </div>
+        <span style="font-size: 13px; color: #B5BDCB; line-height: 1.45; margin-top: auto">Toutes les idées v1 et v2 sont là : covoiturage ville et interurbain, USSD, groupe et cagnotte, proches à l'étranger, relais, livreurs, inter-agences, financement, crédit matériel, paie des équipages, vendeurs ambulants, contrôle inopiné, assistant, salle de contrôle. Ce qui a disparu, c'est la profondeur des menus.</span>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1600,"height":1500}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

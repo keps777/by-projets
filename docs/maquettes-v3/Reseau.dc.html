@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Le réseau en direct</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&amp;family=Instrument+Sans:wght@400;500;600;700&amp;family=Geist+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#FF6A1F}a:hover{color:#FFB547}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #0B1019; color: #F4F0E8; font-family: 'Instrument Sans', system-ui, sans-serif; overflow: hidden">
+
+  <header style="display: flex; align-items: center; gap: 10px; padding: 16px 16px 8px">
+    <a href="Main.dc.html" aria-label="Retour à l'accueil" style="width: 44px; height: 44px; border-radius: 22px; background: #141B28; border: 1px solid #273247; display: flex; align-items: center; justify-content: center; color: #F4F0E8; flex: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></a>
+    <div style="display: flex; flex-direction: column; flex: 1"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 18px; font-weight: 800; letter-spacing: -.01em; line-height: 1.1">Le réseau en direct</span><span style="font-size: 12px; color: #B5BDCB">5 compagnies · 38 bus en route · 14 départs à venir</span></div>
+    <span style="display: inline-flex; align-items: center; gap: 7px; padding: 7px 11px; border-radius: 999px; background: #141B28; border: 1px solid #273247; font-family: 'Geist Mono', monospace; font-size: 11px; color: #B5BDCB"><span style="width: 7px; height: 7px; border-radius: 4px; background: #43E39B; animation: pulse 1.6s infinite"></span>07:40</span>
+  </header>
+
+  <div style="display: flex; gap: 6px; padding: 4px 16px 10px; overflow: hidden">
+    <button type="button" aria-pressed="true" style="min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid #FFB547; background: #1B2435; color: #F4F0E8; font-size: 12px; font-weight: 700; white-space: nowrap">Toutes</button>
+    <button type="button" style="min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid #273247; background: #141B28; color: #B5BDCB; font-size: 12px; font-weight: 600; white-space: nowrap">Bêta</button>
+    <button type="button" style="min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid #273247; background: #141B28; color: #B5BDCB; font-size: 12px; font-weight: 600; white-space: nowrap">Alpha</button>
+    <button type="button" style="min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid #273247; background: #141B28; color: #B5BDCB; font-size: 12px; font-weight: 600; white-space: nowrap">Oméga</button>
+    <button type="button" style="min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid #273247; background: #141B28; color: #B5BDCB; font-size: 12px; font-weight: 600; white-space: nowrap">VIP</button>
+    <button type="button" style="min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid #273247; background: #141B28; color: #B5BDCB; font-size: 12px; font-weight: 600; white-space: nowrap">Nuit</button>
+  </div>
+
+  <div style="margin: 0 16px; border-radius: 18px; overflow: hidden; border: 1px solid #273247; background: #0F1521; flex: none">
+    <svg width="356" height="250" viewBox="0 0 356 250" role="img" aria-label="Carte du réseau : Douala, Yaoundé, Bafoussam, Bamenda, Kribi, Ngaoundéré" style="display: block">
+      <path d="M0 50h356M0 125h356M0 200h356M89 0v250M178 0v250M267 0v250" stroke="#141B28" stroke-width="1"></path>
+      <path d="M60 170 L200 120" stroke="#273247" stroke-width="8" stroke-linecap="round"></path>
+      <path d="M60 170 L110 70" stroke="#273247" stroke-width="8" stroke-linecap="round"></path>
+      <path d="M110 70 L150 30" stroke="#273247" stroke-width="6" stroke-linecap="round"></path>
+      <path d="M200 120 L110 70" stroke="#273247" stroke-width="6" stroke-linecap="round"></path>
+      <path d="M60 170 L90 225" stroke="#273247" stroke-width="6" stroke-linecap="round"></path>
+      <path d="M200 120 L320 40" stroke="#273247" stroke-width="6" stroke-linecap="round" stroke-dasharray="4 8"></path>
+      <path d="M60 170 L200 120" stroke="#FFB547" stroke-width="3" stroke-linecap="round"></path>
+      <circle cx="118" cy="149" r="6" fill="#FF6A1F"></circle><circle cx="152" cy="137" r="6" fill="#FF6A1F"></circle><circle cx="176" cy="129" r="6" fill="#FF6A1F"></circle>
+      <circle cx="84" cy="122" r="6" fill="#6FA8FF"></circle><circle cx="97" cy="96" r="6" fill="#6FA8FF"></circle>
+      <circle cx="160" cy="98" r="6" fill="#43E39B"></circle>
+      <circle cx="60" cy="170" r="11" fill="#0B1019" stroke="#F4F0E8" stroke-width="3"></circle>
+      <circle cx="200" cy="120" r="11" fill="#0B1019" stroke="#F4F0E8" stroke-width="3"></circle>
+      <circle cx="110" cy="70" r="9" fill="#0B1019" stroke="#F4F0E8" stroke-width="3"></circle>
+      <circle cx="150" cy="30" r="7" fill="#0B1019" stroke="#B5BDCB" stroke-width="3"></circle>
+      <circle cx="90" cy="225" r="7" fill="#0B1019" stroke="#B5BDCB" stroke-width="3"></circle>
+      <circle cx="320" cy="40" r="7" fill="#0B1019" stroke="#7F8A9E" stroke-width="3"></circle>
+      <text x="20" y="196" fill="#F4F0E8" font-family="Instrument Sans, sans-serif" font-size="12" font-weight="700">Douala</text>
+      <text x="214" y="124" fill="#F4F0E8" font-family="Instrument Sans, sans-serif" font-size="12" font-weight="700">Yaoundé</text>
+      <text x="124" y="66" fill="#F4F0E8" font-family="Instrument Sans, sans-serif" font-size="12" font-weight="700">Bafoussam</text>
+      <text x="160" y="26" fill="#B5BDCB" font-family="Instrument Sans, sans-serif" font-size="11" font-weight="600">Bamenda</text>
+      <text x="102" y="240" fill="#B5BDCB" font-family="Instrument Sans, sans-serif" font-size="11" font-weight="600">Kribi</text>
+      <text x="262" y="30" fill="#7F8A9E" font-family="Instrument Sans, sans-serif" font-size="11" font-weight="600">Ngaoundéré</text>
+      <text x="236" y="152" fill="#FFB547" font-family="Geist Mono, monospace" font-size="10" font-weight="700">● Bêta  ● Alpha  ● Oméga</text>
+    </svg>
+  </div>
+
+  <main style="flex: 1; display: flex; flex-direction: column; gap: 8px; padding: 10px 16px 0; overflow: hidden">
+    <div style="display: flex; justify-content: space-between; align-items: center; font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #FFB547"><span>Lignes · prochain départ</span><span style="color: #B5BDCB">touche une ligne</span></div>
+    <a href="SiegePay.dc.html" style="display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 12px 14px; border-radius: 14px; background: #141B28; border: 1px solid #273247; color: #F4F0E8; text-decoration: none; min-height: 58px"><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 700">Douala → Yaoundé</span><span style="font-size: 12px; color: #B5BDCB">3 compagnies · 08:00 Bêta VIP · 08:30 Alpha · 09:30 Oméga</span></span><span style="font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 700; color: #FFB547">dès 3 800</span></a>
+    <a href="SiegePay.dc.html" style="display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 12px 14px; border-radius: 14px; background: #141B28; border: 1px solid #273247; color: #F4F0E8; text-decoration: none; min-height: 58px"><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 700">Douala → Bafoussam</span><span style="font-size: 12px; color: #B5BDCB">2 compagnies · 08:15 Alpha · 10:00 Oméga</span></span><span style="font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 700; color: #FFB547">dès 3 500</span></a>
+    <a href="SiegePay.dc.html" style="display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 12px 14px; border-radius: 14px; background: #141B28; border: 1px solid #273247; color: #F4F0E8; text-decoration: none; min-height: 58px"><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 700">Yaoundé → Bamenda <span style="font-size: 11px; color: #6FA8FF; font-weight: 600">via Bafoussam</span></span><span style="font-size: 12px; color: #B5BDCB">correspondance 25 min · un seul billet</span></span><span style="font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 700; color: #FFB547">dès 7 000</span></a>
+    <a href="Covoit.dc.html" style="display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 12px 14px; border-radius: 14px; background: #0F1521; border: 1px dashed #3A4760; color: #F4F0E8; text-decoration: none; min-height: 52px"><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; font-weight: 700">Douala → Kribi <span style="font-size: 11px; color: #43E39B; font-weight: 600">covoiturage</span></span><span style="font-size: 12px; color: #B5BDCB">aucun bus avant 14 h · 2 voitures partent ce matin</span></span><span style="font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 700; color: #43E39B">4 000</span></a>
+  </main>
+
+  <nav aria-label="Navigation" style="display: flex; padding: 6px 8px 18px; background: #050810; border-top: 1px solid #1B2435">
+    <a href="Main.dc.html" aria-current="page" style="flex: 1; min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 700; color: #FF6A1F; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="15" rx="3"></rect><path d="M4 11h16"></path><path d="M7 18v3M17 18v3"></path></svg>Voyager</a>
+    <a href="ColisEnvoi.dc.html" style="flex: 1; min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 600; color: #B5BDCB; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"></path><path d="M3 8v8l9 5 9-5V8"></path><path d="M12 13v8"></path></svg>Colis</a>
+    <a href="Covoit.dc.html" style="flex: 1; min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 600; color: #B5BDCB; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17h14l-1.5-5h-11z"></path><path d="M7 12l1.5-4h7L17 12"></path><circle cx="7.5" cy="17" r="2"></circle><circle cx="16.5" cy="17" r="2"></circle></svg>Covoit</a>
+    <a href="Moi.dc.html" style="flex: 1; min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 600; color: #B5BDCB; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>Moi</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

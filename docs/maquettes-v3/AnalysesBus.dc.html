@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Analyses · un bus en détail</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&amp;family=Instrument+Sans:wght@400;500;600;700&amp;family=Geist+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#FF6A1F}a:hover{color:#FFB547}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #0B1019; color: #F4F0E8; font-family: 'Instrument Sans', system-ui, sans-serif; overflow: hidden">
+
+  <header style="display: flex; align-items: center; gap: 10px; padding: 14px 16px 6px">
+    <a href="Analyses.dc.html" aria-label="Retour" style="width: 44px; height: 44px; border-radius: 22px; background: #141B28; border: 1px solid #273247; display: flex; align-items: center; justify-content: center; color: #F4F0E8; flex: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></a>
+    <div style="display: flex; flex-direction: column; flex: 1"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 18px; font-weight: 800; letter-spacing: -.01em; line-height: 1.1">LT 207 AB · Nana</span><span style="font-size: 12px; color: #B5BDCB">Coaster 30 places · 2019 · 5 trajets cette semaine</span></div>
+    <span style="padding: 7px 11px; border-radius: 999px; background: #2A0F0F; border: 1px solid #FF5C5C; font-family: 'Geist Mono', monospace; font-size: 11px; color: #FF5C5C">À SURVEILLER</span>
+  </header>
+
+  <main style="flex: 1; display: flex; flex-direction: column; gap: 8px; padding: 2px 16px 0; overflow: hidden">
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+      <div style="display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border-radius: 12px; background: #141B28; border: 1px solid #273247"><span style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #7F8A9E">Recette</span><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 18px; font-weight: 800; line-height: 1; color: #F4F0E8">3,1 M</span><span style="font-size: 10px; color: #B5BDCB">5 trajets · 71 %</span></div><div style="display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border-radius: 12px; background: #141B28; border: 1px solid #273247"><span style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #7F8A9E">Dépenses</span><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 18px; font-weight: 800; line-height: 1; color: #FF5C5C">2,5 M</span><span style="font-size: 10px; color: #B5BDCB">carburant 1,6 · pannes 0,7</span></div><div style="display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border-radius: 12px; background: #141B28; border: 1px solid #273247"><span style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #7F8A9E">Net</span><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 18px; font-weight: 800; line-height: 1; color: #FF5C5C">+ 0,6 M</span><span style="font-size: 10px; color: #B5BDCB">flotte : + 2,1 M en moyenne</span></div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border-radius: 16px; background: #141B28; border: 1px solid #273247">
+      <div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #FFB547">Net par semaine · 8 semaines</span><span style="font-size: 11px; color: #FF5C5C; font-weight: 700">− 62 % depuis la panne du 12 nov.</span></div>
+      <div style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; align-items: end; height: 70px"><span style="display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; justify-content: flex-end"><span style="width: 100%; height: 88%; border-radius: 5px 5px 2px 2px; background: #273247"></span><span style="font-size: 9px; color: #7F8A9E">S41</span></span><span style="display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; justify-content: flex-end"><span style="width: 100%; height: 92%; border-radius: 5px 5px 2px 2px; background: #273247"></span><span style="font-size: 9px; color: #7F8A9E">S42</span></span><span style="display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; justify-content: flex-end"><span style="width: 100%; height: 84%; border-radius: 5px 5px 2px 2px; background: #273247"></span><span style="font-size: 9px; color: #7F8A9E">S43</span></span><span style="display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; justify-content: flex-end"><span style="width: 100%; height: 90%; border-radius: 5px 5px 2px 2px; background: #273247"></span><span style="font-size: 9px; color: #7F8A9E">S44</span></span><span style="display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; justify-content: flex-end"><span style="width: 100%; height: 96%; border-radius: 5px 5px 2px 2px; background: #273247"></span><span style="font-size: 9px; color: #7F8A9E">S45</span></span><span style="display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; justify-content: flex-end"><span style="width: 100%; height: 34%; border-radius: 5px 5px 2px 2px; background: #FF5C5C"></span><span style="font-size: 9px; color: #7F8A9E">S46</span></span><span style="display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; justify-content: flex-end"><span style="width: 100%; height: 58%; border-radius: 5px 5px 2px 2px; background: #FFB547"></span><span style="font-size: 9px; color: #7F8A9E">S47</span></span><span style="display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; justify-content: flex-end"><span style="width: 100%; height: 30%; border-radius: 5px 5px 2px 2px; background: #FF5C5C"></span><span style="font-size: 9px; color: #7F8A9E">S48</span></span></div>
+    </div>
+    <div style="display: flex; flex-direction: column; border-radius: 16px; overflow: hidden; border: 1px solid #273247; flex: none">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 7px 12px; background: #050810"><span style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #FFB547">Cette semaine · trajet par trajet</span><span style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #B5BDCB">5 · 2 pannes</span></div>
+      <div style="display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 0 12px; background: #141B28; min-height: 42px; font-size: 12px"><span style="display: flex; flex-direction: column; line-height: 1.15"><span style="font-size: 13px; font-weight: 700">Lun 06:00 · Douala → Bafoussam</span><span style="font-size: 11px; color: #B5BDCB">28 / 30 · 98 000 · à l’heure</span></span><span style="font-size: 11px; font-weight: 700; color: #43E39B; text-align: right">+ 61 k</span></div>
+      <div style="display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 0 12px; background: #141B28; border-top: 1px solid #1B2435; min-height: 42px; font-size: 12px"><span style="display: flex; flex-direction: column; line-height: 1.15"><span style="font-size: 13px; font-weight: 700">Mar 06:00 · Douala → Bafoussam</span><span style="font-size: 11px; color: #FF5C5C">panne embrayage à Mbouda · 2 h 10 · 30 replacés</span></span><span style="font-size: 11px; font-weight: 700; color: #FF5C5C; text-align: right">− 310 k</span></div>
+      <div style="display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 0 12px; background: #141B28; border-top: 1px solid #1B2435; min-height: 42px; font-size: 12px"><span style="display: flex; flex-direction: column; line-height: 1.15"><span style="font-size: 13px; font-weight: 700">Jeu 14:00 · Bafoussam → Douala</span><span style="font-size: 11px; color: #B5BDCB">19 / 30 · 66 500 · retard 25 min</span></span><span style="font-size: 11px; font-weight: 700; color: #43E39B; text-align: right">+ 22 k</span></div>
+      <div style="display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 0 12px; background: #141B28; border-top: 1px solid #1B2435; min-height: 42px; font-size: 12px"><span style="display: flex; flex-direction: column; line-height: 1.15"><span style="font-size: 13px; font-weight: 700">Ven 06:00 · Douala → Bafoussam</span><span style="font-size: 11px; color: #B5BDCB">30 / 30 · 105 000 · à l’heure</span></span><span style="font-size: 11px; font-weight: 700; color: #43E39B; text-align: right">+ 68 k</span></div>
+      <div style="display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 0 12px; background: #141B28; border-top: 1px solid #1B2435; min-height: 42px; font-size: 12px"><span style="display: flex; flex-direction: column; line-height: 1.15"><span style="font-size: 13px; font-weight: 700">Sam 09:00 · Douala → Bafoussam</span><span style="font-size: 11px; color: #FF5C5C">panne batterie au départ · 40 min · 30 gardés</span></span><span style="font-size: 11px; font-weight: 700; color: #FF5C5C; text-align: right">− 45 k</span></div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; border-radius: 14px; background: #0E2A1E; border: 1px solid #1E5A40; font-size: 12px; line-height: 1.4">
+      <span style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #43E39B">L'assistant</span>
+      <span>Deux pannes en 10 jours sur le même bus, c'est de l'entretien, pas de la malchance. Une révision complète coûte ≈ 180 k ; chaque panne t'a coûté plus. <strong>Je mettrais LT 207 au garage lundi et je passerais Nana sur LT 330 (8 trajets, 0 incident).</strong></span>
+    </div>
+  </main>
+  <div style="padding: 8px 16px 18px; display: grid; grid-template-columns: 1fr 1.7fr; gap: 8px; background: #050810; border-top: 1px solid #1B2435">
+    <a href="Analyses.dc.html" style="display: flex; align-items: center; justify-content: center; min-height: 56px; border-radius: 16px; background: #141B28; border: 1px solid #273247; color: #F4F0E8; font-size: 13px; font-weight: 600; text-decoration: none; text-align: center; line-height: 1.2">Toute la flotte</a>
+    <a href="Assistant.dc.html" style="display: flex; align-items: center; justify-content: space-between; padding: 0 16px; min-height: 56px; border-radius: 16px; background: #43E39B; color: #0B1019; text-decoration: none"><span style="display: flex; flex-direction: column; line-height: 1.1"><span style="font-size: 15px; font-weight: 700">Demander à l'assistant</span><span style="font-size: 11px; font-weight: 600">révision lundi · qui remplace ?</span></span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

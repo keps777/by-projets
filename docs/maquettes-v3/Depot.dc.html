@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Dépôt d'un colis prépayé</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&amp;family=Instrument+Sans:wght@400;500;600;700&amp;family=Geist+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#FF6A1F}a:hover{color:#FFB547}
+@keyframes scan{0%{transform:translateY(0)}100%{transform:translateY(150px)}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #0B1019; color: #F4F0E8; font-family: 'Instrument Sans', system-ui, sans-serif; overflow: hidden">
+
+  <header style="display: flex; align-items: center; gap: 10px; padding: 14px 16px 6px">
+    <a href="Guichet.dc.html" aria-label="Retour au guichet" style="width: 44px; height: 44px; border-radius: 22px; background: #141B28; border: 1px solid #273247; display: flex; align-items: center; justify-content: center; color: #F4F0E8; flex: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></a>
+    <div style="display: flex; flex-direction: column; flex: 1"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 18px; font-weight: 800; letter-spacing: -.01em; line-height: 1.1">Dépôt prépayé</span><span style="font-size: 12px; color: #B5BDCB">Le client a payé dans l'app · scanner son code</span></div>
+  </header>
+
+  <main style="flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 4px 16px 0; overflow: hidden">
+    <div style="position: relative; height: 190px; border-radius: 18px; background: #050810; border: 1px solid #273247; overflow: hidden; display: flex; align-items: center; justify-content: center">
+      <svg width="120" height="120" viewBox="0 0 21 21" aria-hidden="true" style="opacity: .9"><rect x="1" y="1" width="7" height="7" fill="#F4F0E8"></rect><rect x="2" y="2" width="5" height="5" fill="#050810"></rect><rect x="3" y="3" width="3" height="3" fill="#F4F0E8"></rect><rect x="13" y="1" width="7" height="7" fill="#F4F0E8"></rect><rect x="14" y="2" width="5" height="5" fill="#050810"></rect><rect x="15" y="3" width="3" height="3" fill="#F4F0E8"></rect><rect x="1" y="13" width="7" height="7" fill="#F4F0E8"></rect><rect x="2" y="14" width="5" height="5" fill="#050810"></rect><rect x="3" y="15" width="3" height="3" fill="#F4F0E8"></rect><path fill="#F4F0E8" d="M9 1h1v1H9zM11 1h1v2h-1zM9 3h2v1H9zM10 5h1v1h-1zM9 7h1v1H9zM11 6h1v2h-1zM1 9h1v1H1zM3 9h2v1H3zM6 9h1v2H6zM8 9h1v1H8zM10 9h2v1h-2zM13 9h1v1h-1zM15 9h1v2h-1zM17 9h2v1h-2zM2 11h2v1H2zM5 11h1v1H5zM8 11h2v1H8zM11 11h1v2h-1zM13 11h2v1h-2zM17 11h1v1h-1zM9 13h1v1H9zM12 13h1v1h-1zM14 13h2v1h-2zM17 13h1v2h-1zM9 15h2v1H9zM13 15h1v1h-1zM15 15h1v2h-1zM18 15h2v1h-2zM9 17h1v1H9zM11 17h2v1h-2zM14 17h1v1h-1zM17 17h1v1h-1zM9 19h3v1H9zM13 19h1v1h-1zM15 19h2v1h-2z"></path></svg>
+      <span style="position: absolute; left: 20px; right: 20px; top: 20px; height: 2px; background: #43E39B; animation: scan 1.6s linear infinite alternate" aria-hidden="true"></span>
+      <span style="position: absolute; top: 10px; left: 10px; width: 24px; height: 24px; border-left: 3px solid #FFB547; border-top: 3px solid #FFB547; border-radius: 4px 0 0 0" aria-hidden="true"></span><span style="position: absolute; top: 10px; right: 10px; width: 24px; height: 24px; border-right: 3px solid #FFB547; border-top: 3px solid #FFB547; border-radius: 0 4px 0 0" aria-hidden="true"></span><span style="position: absolute; bottom: 10px; left: 10px; width: 24px; height: 24px; border-left: 3px solid #FFB547; border-bottom: 3px solid #FFB547; border-radius: 0 0 0 4px" aria-hidden="true"></span><span style="position: absolute; bottom: 10px; right: 10px; width: 24px; height: 24px; border-right: 3px solid #FFB547; border-bottom: 3px solid #FFB547; border-radius: 0 0 4px 0" aria-hidden="true"></span>
+    </div>
+    <div style="display: flex; gap: 8px; align-items: center">
+      <span style="font-size: 12px; color: #B5BDCB; white-space: nowrap">ou le code</span>
+      <input type="text" aria-label="Code du colis prépayé" value="C-ALP-DLA-270105-0017" style="width: 100%; box-sizing: border-box; flex: 1; min-width: 0; min-height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #273247; background: #141B28; color: #F4F0E8; font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 700; outline: none">
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border-radius: 16px; background: #141B28; border: 1px solid #43E39B">
+      <div style="display: flex; justify-content: space-between; align-items: center"><span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #43E39B"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"></path></svg>Trouvé · payé 2 200 F dans l'app</span><span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #B5BDCB">07:40</span></div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 12px; color: #B5BDCB">
+        <span><span style="color: #7F8A9E">De</span><br><strong style="color: #F4F0E8">Ngo Aïcha</strong> · 6 91 22 10 08</span>
+        <span><span style="color: #7F8A9E">Pour</span><br><strong style="color: #F4F0E8">Ngo Thérèse</strong> · Bafoussam gare</span>
+        <span><span style="color: #7F8A9E">Déclaré</span><br>Médicaments, vêtements · 2 kg · 25 000 F · assuré</span>
+        <span><span style="color: #7F8A9E">Départ</span><br>08:15 Alpha Bafoussam · soute 60 %</span>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+      <button type="button" style="min-height: 56px; border-radius: 14px; border: 1px solid #273247; background: #141B28; color: #F4F0E8; font-size: 13px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.15"><span>Vérifier le poids</span><span style="font-size: 11px; color: #43E39B">2,1 kg · conforme</span></button>
+      <button type="button" style="min-height: 56px; border-radius: 14px; border: 1px solid #273247; background: #141B28; color: #F4F0E8; font-size: 13px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.15"><span>Photo au dépôt</span><span style="font-size: 11px; color: #FFB547">à prendre</span></button>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: #0F1521; border: 1px solid #1B2435; font-size: 12px; color: #B5BDCB"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF5C5C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M12 9v4M12 17h.01"></path><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path></svg>Rien à encaisser. Si le poids dépasse de plus de 1 kg, l'app propose un complément à payer par MoMo au client.</div>
+  </main>
+
+  <div style="padding: 8px 16px 18px; background: #050810; border-top: 1px solid #1B2435">
+    <a href="Quai.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 58px; border-radius: 16px; background: #43E39B; color: #0B1019; font-size: 16px; font-weight: 700; text-decoration: none">Accepter · imprimer l'étiquette</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

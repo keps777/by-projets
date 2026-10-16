@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Accueil · filtres classe et compagnies</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&amp;family=Instrument+Sans:wght@400;500;600;700&amp;family=Geist+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#FF6A1F}a:hover{color:#FFB547}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #0B1019; color: #F4F0E8; font-family: 'Instrument Sans', system-ui, sans-serif; overflow: hidden; position: relative">
+
+  <main style="flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 20px 16px 10px; overflow: hidden">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <div style="display: flex; align-items: center; gap: 10px">
+        <svg width="36" height="36" viewBox="0 0 72 72" aria-hidden="true"><rect width="72" height="72" rx="20" fill="#0B1019"></rect><rect x="12" y="12" width="48" height="23" rx="6" fill="#273247"></rect><rect x="12" y="37" width="48" height="23" rx="6" fill="#1B2435"></rect><path d="M36 18 L50 56 L42 56 L36 38 L30 56 L22 56 Z" fill="#FFB547"></path><rect x="10" y="34" width="52" height="3" fill="#0B1019"></rect></svg>
+        <span style="display: flex; flex-direction: column; line-height: 1.05"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 17px; font-weight: 800; letter-spacing: -.01em">AfriMove</span><span style="font-size: 11px; color: #7F8A9E">Bonjour Aïcha</span></span>
+      </div>
+      <span style="display: inline-flex; align-items: center; gap: 7px; padding: 7px 11px; border-radius: 999px; background: #141B28; border: 1px solid #273247; font-family: 'Geist Mono', monospace; font-size: 11px; color: #B5BDCB"><span style="width: 7px; height: 7px; border-radius: 4px; background: #43E39B; animation: pulse 1.6s infinite"></span>DIRECT · 07:38</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px; padding: 10px 14px 12px; border-radius: 18px; background: #050810; border: 1px solid #273247">
+      <div style="display: flex; padding: 3px; border-radius: 12px; background: #141B28; border: 1px solid #273247">
+        <button type="button" aria-pressed="true" style="flex: 1; min-height: 36px; border-radius: 9px; border: 0; background: #FF6A1F; color: #0B1019; font-size: 12px; font-weight: 700">Entre villes</button>
+        <a href="MainVille.dc.html" style="flex: 1; min-height: 36px; border-radius: 9px; background: transparent; color: #B5BDCB; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="10" r="3"></circle><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"></path></svg>Dans la même ville</a>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #B5BDCB"><span style="font-size: 15px; font-weight: 700; color: #F4F0E8">Douala <span style="color: #7F8A9E; font-weight: 500">→</span> Yaoundé</span><span>Aujourd'hui</span></div>
+      <a href="Main.dc.html" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 36px; padding: 0 12px; border-radius: 10px 10px 0 0; background: #1B2435; border: 1px solid #FFB547; border-bottom: 0; color: #F4F0E8; text-decoration: none"><span style="display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFB547" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18M6 12h12M10 19h4"></path></svg>Filtrer les départs</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFB547" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 15l-6-6-6 6"></path></svg></a>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; padding: 12px; margin-top: -8px; border-radius: 0 0 12px 12px; background: #1B2435; border: 1px solid #FFB547; border-top: 1px dashed #3A4760">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #FFB547">Classe</span>
+          <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+            <button type="button" aria-pressed="true" style="min-height: 38px; border-radius: 10px; border: 1px solid #FFB547; background: #273247; color: #F4F0E8; font-size: 12px; font-weight: 700">Toutes</button>
+            <button type="button" style="min-height: 38px; border-radius: 10px; border: 1px solid #3A4760; background: #141B28; color: #B5BDCB; font-size: 12px; font-weight: 600">VIP · clim</button>
+            <button type="button" style="min-height: 38px; border-radius: 10px; border: 1px solid #3A4760; background: #141B28; color: #B5BDCB; font-size: 12px; font-weight: 600">Classique</button>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <div style="display: flex; justify-content: space-between; align-items: center"><span style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #FFB547">Compagnies · une, plusieurs ou toutes</span><span style="font-size: 11px; color: #B5BDCB">★ = préférée</span></div>
+          <label style="display: grid; grid-template-columns: 24px 1fr auto; gap: 10px; align-items: center; min-height: 35px; cursor: pointer"><input type="checkbox" checked aria-label="Toutes les compagnies" style="width: 20px; height: 20px; accent-color: #FFB547; margin: 0"><span style="font-size: 13px; font-weight: 700">Toutes · 5 compagnies</span><span style="font-size: 11px; color: #B5BDCB">14 départs</span></label>
+          <label style="display: grid; grid-template-columns: 24px 1fr auto auto; gap: 10px; align-items: center; min-height: 35px; border-top: 1px solid #273247; cursor: pointer"><input type="checkbox" checked aria-label="Bêta Express" style="width: 20px; height: 20px; accent-color: #FFB547; margin: 0"><span style="font-size: 13px; font-weight: 600">Bêta Express <span style="font-size: 11px; color: #6FA8FF">VIP</span></span><span style="font-size: 11px; color: #B5BDCB">4 départs</span><button type="button" aria-label="Retirer des préférées" aria-pressed="true" style="width: 32px; height: 32px; border-radius: 16px; border: 0; background: transparent; color: #FFB547; font-size: 16px">★</button></label>
+          <label style="display: grid; grid-template-columns: 24px 1fr auto auto; gap: 10px; align-items: center; min-height: 35px; border-top: 1px solid #273247; cursor: pointer"><input type="checkbox" checked aria-label="Alpha Voyages" style="width: 20px; height: 20px; accent-color: #FFB547; margin: 0"><span style="font-size: 13px; font-weight: 600">Alpha Voyages</span><span style="font-size: 11px; color: #B5BDCB">5 départs</span><button type="button" aria-label="Retirer des préférées" aria-pressed="true" style="width: 32px; height: 32px; border-radius: 16px; border: 0; background: transparent; color: #FFB547; font-size: 16px">★</button></label>
+          <label style="display: grid; grid-template-columns: 24px 1fr auto auto; gap: 10px; align-items: center; min-height: 35px; border-top: 1px solid #273247; cursor: pointer"><input type="checkbox" checked aria-label="Oméga Transports" style="width: 20px; height: 20px; accent-color: #FFB547; margin: 0"><span style="font-size: 13px; font-weight: 600">Oméga Transports</span><span style="font-size: 11px; color: #B5BDCB">3 départs</span><button type="button" aria-label="Ajouter aux préférées" aria-pressed="false" style="width: 32px; height: 32px; border-radius: 16px; border: 0; background: transparent; color: #7F8A9E; font-size: 16px">☆</button></label>
+          <label style="display: grid; grid-template-columns: 24px 1fr auto auto; gap: 10px; align-items: center; min-height: 35px; border-top: 1px solid #273247; cursor: pointer"><input type="checkbox" checked aria-label="Général Express" style="width: 20px; height: 20px; accent-color: #FFB547; margin: 0"><span style="font-size: 13px; font-weight: 600">Général Express <span style="font-size: 11px; color: #B5BDCB">nuit</span></span><span style="font-size: 11px; color: #B5BDCB">1 départ</span><button type="button" aria-label="Ajouter aux préférées" aria-pressed="false" style="width: 32px; height: 32px; border-radius: 16px; border: 0; background: transparent; color: #7F8A9E; font-size: 16px">☆</button></label>
+          <label style="display: grid; grid-template-columns: 24px 1fr auto auto; gap: 10px; align-items: center; min-height: 35px; border-top: 1px solid #273247; cursor: pointer"><input type="checkbox" checked aria-label="Touristique Express" style="width: 20px; height: 20px; accent-color: #FFB547; margin: 0"><span style="font-size: 13px; font-weight: 600">Touristique Express</span><span style="font-size: 11px; color: #B5BDCB">1 départ</span><button type="button" aria-label="Ajouter aux préférées" aria-pressed="false" style="width: 32px; height: 32px; border-radius: 16px; border: 0; background: transparent; color: #7F8A9E; font-size: 16px">☆</button></label>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #FFB547">Aussi</span>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap">
+            <button type="button" aria-pressed="true" style="min-height: 32px; padding: 0 10px; border-radius: 999px; border: 1px solid #43E39B; background: #0E2A1E; color: #F4F0E8; font-size: 11px; font-weight: 700">Covoiturage ✓</button>
+            <button type="button" style="min-height: 32px; padding: 0 10px; border-radius: 999px; border: 1px solid #3A4760; background: #141B28; color: #B5BDCB; font-size: 11px; font-weight: 600">Matin seulement</button>
+            <button type="button" style="min-height: 32px; padding: 0 10px; border-radius: 999px; border: 1px solid #3A4760; background: #141B28; color: #B5BDCB; font-size: 11px; font-weight: 600">Places côte à côte</button>
+            <button type="button" style="min-height: 32px; padding: 0 10px; border-radius: 999px; border: 1px solid #3A4760; background: #141B28; color: #B5BDCB; font-size: 11px; font-weight: 600">≤ 5 000 F</button>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1.6fr; gap: 8px">
+          <button type="button" style="min-height: 44px; border-radius: 12px; border: 1px solid #3A4760; background: #141B28; color: #B5BDCB; font-size: 13px; font-weight: 600">Effacer</button>
+          <a href="Main.dc.html" style="display: flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 12px; background: #FF6A1F; color: #0B1019; font-size: 13px; font-weight: 700; text-decoration: none">Voir les 14 départs</a>
+        </div>
+        <span style="font-size: 11px; color: #7F8A9E; text-align: center">Tes préférées s'affichent toujours en premier. Le filtre reste mémorisé pour ce trajet.</span>
+      </div>
+    </div>
+  </main>
+
+  <nav aria-label="Navigation" style="display: flex; padding: 6px 8px 18px; background: #050810; border-top: 1px solid #1B2435">
+    <a href="Main.dc.html" aria-current="page" style="flex: 1; min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 700; color: #FF6A1F; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="15" rx="3"></rect><path d="M4 11h16"></path><path d="M7 18v3M17 18v3"></path></svg>Voyager</a>
+    <a href="ColisEnvoi.dc.html" style="flex: 1; min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 600; color: #B5BDCB; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"></path><path d="M3 8v8l9 5 9-5V8"></path><path d="M12 13v8"></path></svg>Colis</a>
+    <a href="Covoit.dc.html" style="flex: 1; min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 600; color: #B5BDCB; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17h14l-1.5-5h-11z"></path><path d="M7 12l1.5-4h7L17 12"></path><circle cx="7.5" cy="17" r="2"></circle><circle cx="16.5" cy="17" r="2"></circle></svg>Covoit</a>
+    <a href="Moi.dc.html" style="flex: 1; min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 600; color: #B5BDCB; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>Moi</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
