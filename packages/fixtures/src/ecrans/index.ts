@@ -31,6 +31,14 @@ import { Depot } from "./Depot";
 import { Quai } from "./Quai";
 import { Convoyeur } from "./Convoyeur";
 import { Chauffeur } from "./Chauffeur";
+import { Controleur } from "./Controleur";
+import { Caisse } from "./Caisse";
+import { Superviseur } from "./Superviseur";
+import { RapportSoir } from "./RapportSoir";
+import { Patron } from "./Patron";
+import { Assistant } from "./Assistant";
+import { Analyses } from "./Analyses";
+import { Comptable } from "./Comptable";
 
 export const ecrans = {
   Splash,
@@ -65,6 +73,14 @@ export const ecrans = {
   Quai,
   Convoyeur,
   Chauffeur,
+  Controleur,
+  Caisse,
+  Superviseur,
+  RapportSoir,
+  Patron,
+  Assistant,
+  Analyses,
+  Comptable,
 };
 
-// Planches sans scénario : 45
+// Planches sans scénario : 37

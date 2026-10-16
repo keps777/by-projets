@@ -46,6 +46,8 @@ export interface TextePlanche {
   colle: string;
   /** Balises remplacées par une espace : « 08:00 Bêta Express ». */
   espace: string;
+  /** Un segment par élément : « 184 » et « 612 000 » ne forment jamais le faux nombre « 184 612 000 ». */
+  segments: string[];
 }
 
 /** Texte visible d'une planche, attributs utiles (value, aria-label, placeholder, title) compris. */
@@ -63,7 +65,7 @@ export function textePlanche(html: string): TextePlanche {
   h = h.replace(/<br\s*\/?>/g, " ");
   const sansBalises = (remplacement: string) =>
     compacter(decoder(h.replace(/<[^>]+>/g, remplacement) + " " + attributs.join(" ¦ ")));
-  return { colle: sansBalises(""), espace: sansBalises(" ") };
+  return { colle: sansBalises(""), espace: sansBalises(" "), segments: segmentsPlanche(html) };
 }
 
 export function contient(texte: TextePlanche, extrait: string): boolean {
@@ -80,9 +82,9 @@ export function jetons(texte: string): string[] {
 }
 
 export function jetonsPlanche(texte: TextePlanche): Set<string> {
-  // Seule la version « balises = espace » donne des jetons fiables : collées, deux éléments voisins
-  // (« 07:10 » puis « 12 min ») formeraient un faux nombre.
-  return new Set(jetons(texte.espace));
+  // Les jetons se lisent élément par élément : collés ou même séparés par une espace, deux éléments
+  // voisins (« 184 » puis « 612 000 », « 07:10 » puis « 12 min ») formeraient un faux nombre.
+  return new Set(texte.segments.flatMap((segment) => jetons(segment)));
 }
 
 /** Un jeton compte pour la couverture quand il a au moins deux chiffres ou un séparateur. */
