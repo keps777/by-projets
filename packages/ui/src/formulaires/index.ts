@@ -2,8 +2,6 @@ export { Champ } from "./Champ";
 export type { ChampProps, VarianteChamp } from "./Champ";
 export { ChampTelephone } from "./ChampTelephone";
 export type { ChampTelephoneProps } from "./ChampTelephone";
-export { Selecteur } from "./Selecteur";
-export type { OptionSelecteur, SelecteurProps } from "./Selecteur";
 export { CaseACocher, LigneCochable } from "./CaseACocher";
 export type { CaseACocherProps, LigneCochableProps } from "./CaseACocher";
 export { Interrupteur, LigneInterrupteur } from "./Interrupteur";
