@@ -1,0 +1,111 @@
+.carte {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-height: 0;
+  border-radius: var(--am-radius-16);
+  overflow: hidden;
+  border: 1px solid var(--am-trait);
+  color: var(--am-craie);
+  font-family: var(--am-font-texte);
+}
+
+.carte[data-hauteur="libre"] {
+  flex: 1;
+}
+
+.carte[data-variante="large"] {
+  border-radius: var(--am-radius-18);
+}
+
+.entete {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: none;
+  padding: var(--am-space-8) var(--am-space-14);
+  background: var(--am-profond);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+  color: var(--am-ambre);
+}
+
+.carte[data-variante="large"] .entete {
+  padding: var(--am-space-10) var(--am-space-16);
+  background: var(--am-surface);
+  font-size: var(--am-fs-11);
+}
+
+.mention {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--am-space-4);
+  color: var(--am-craie-2);
+}
+
+.zone {
+  position: relative;
+  min-height: 0;
+}
+
+.carte[data-hauteur="libre"] .zone {
+  flex: 1;
+}
+
+.defilement {
+  overflow-y: auto;
+  background: var(--am-surface);
+}
+
+.defilement[data-fond="nuit"] {
+  background: var(--am-nuit);
+}
+
+.zone > .defilement {
+  height: 100%;
+}
+
+.carte[data-hauteur="libre"] .defilement {
+  position: absolute;
+  inset: 0;
+}
+
+.liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.degrade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 18px;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, var(--am-surface));
+}
+
+.degrade[data-fond="nuit"] {
+  background: linear-gradient(180deg, transparent, var(--am-nuit));
+}
+
+.carte[data-hauteur="libre"] .degrade {
+  height: 14px;
+}
+
+.carte[data-hauteur="auto"] .defilement {
+  overflow-y: visible;
+}
+
+.carte[data-hauteur="auto"] .zone > .defilement {
+  height: auto;
+}
+
+.carte[data-hauteur="auto"] .degrade {
+  display: none;
+}

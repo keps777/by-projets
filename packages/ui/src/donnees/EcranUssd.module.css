@@ -1,0 +1,49 @@
+.telephone {
+  /* Couleurs de l'afficheur relevées dans USSD.dc.html ; absentes des tokens AM-003. */
+  --am-ussd-fond: #c9d6b0;
+  --am-ussd-texte: #10200e;
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-8);
+  box-sizing: border-box;
+  padding: var(--am-space-10);
+  border-radius: var(--am-radius-18);
+  background: var(--am-surface-2);
+  border: 1px solid var(--am-trait);
+}
+
+.afficheur {
+  box-sizing: border-box;
+  min-height: 210px;
+  padding: var(--am-space-10);
+  border-radius: var(--am-radius-10);
+  background: var(--am-ussd-fond);
+  color: var(--am-ussd-texte);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-11);
+  line-height: var(--am-lh-aere);
+  white-space: pre-wrap;
+}
+
+.telephone[data-variante="large"] .afficheur {
+  min-height: 300px;
+  font-size: var(--am-fs-14);
+}
+
+.clavier {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.touche {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  border-radius: 7px;
+  background: var(--am-trait);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-12);
+  font-weight: 700;
+}

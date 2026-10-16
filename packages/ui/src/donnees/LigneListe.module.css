@@ -1,0 +1,40 @@
+.item {
+  display: block;
+}
+
+.item + .item {
+  border-top: 1px solid var(--am-surface-2);
+}
+
+.ligne {
+  display: grid;
+  gap: var(--am-space-10);
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 56px;
+  padding: var(--am-space-10) var(--am-space-14);
+  border: 0;
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font: inherit;
+  font-size: var(--am-fs-13);
+  text-align: left;
+  text-decoration: none;
+  cursor: default;
+}
+
+a.ligne,
+button.ligne {
+  cursor: pointer;
+}
+
+.item[data-densite="serree"] .ligne {
+  min-height: 42px;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: var(--am-space-12);
+  padding-right: var(--am-space-12);
+  gap: var(--am-space-8);
+  font-size: var(--am-fs-12);
+}
