@@ -50,13 +50,15 @@ export interface Etape<A extends string> {
   action: A;
   /** Heure de la transition, le jour des maquettes. */
   a: Heure;
+  /** Jour AAAA-MM-JJ de la transition si ce n'est pas le jour des maquettes. */
+  jour?: string;
   par?: string;
   motif?: string;
 }
 
-function meta(e: { a: Heure; par?: string; motif?: string }) {
+function meta(e: { a: Heure; jour?: string; par?: string; motif?: string }) {
   return {
-    at: heure(e.a),
+    at: heure(e.a, e.jour),
     ...(e.par !== undefined ? { par: e.par } : {}),
     ...(e.motif !== undefined ? { motif: e.motif } : {}),
   };

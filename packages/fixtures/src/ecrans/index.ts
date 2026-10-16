@@ -39,6 +39,14 @@ import { Patron } from "./Patron";
 import { Assistant } from "./Assistant";
 import { Analyses } from "./Analyses";
 import { Comptable } from "./Comptable";
+import { Config } from "./Config";
+import { Modules } from "./Modules";
+import { Financement } from "./Financement";
+import { InterAgences } from "./InterAgences";
+import { RelaisApp } from "./RelaisApp";
+import { Livreur } from "./Livreur";
+import { Conducteur } from "./Conducteur";
+import { Vendeur } from "./Vendeur";
 
 export const ecrans = {
   Splash,
@@ -81,6 +89,14 @@ export const ecrans = {
   Assistant,
   Analyses,
   Comptable,
+  Config,
+  Modules,
+  Financement,
+  InterAgences,
+  RelaisApp,
+  Livreur,
+  Conducteur,
+  Vendeur,
 };
 
-// Planches sans scénario : 37
+// Planches sans scénario : 29
