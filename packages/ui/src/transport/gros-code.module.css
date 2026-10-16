@@ -1,0 +1,12 @@
+.code {
+  display: block;
+  font-family: var(--am-font-mono);
+  font-weight: 700;
+  letter-spacing: var(--am-ls-code);
+  line-height: var(--am-lh-plein);
+  white-space: pre;
+}
+
+.code[data-espacement="large"] {
+  letter-spacing: var(--am-ls-etiquette-serree);
+}

@@ -1,0 +1,26 @@
+.avatar {
+  --accent: var(--am-vert);
+  flex: none;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--taille, 44px);
+  height: var(--taille, 44px);
+  border-radius: var(--am-radius-pill);
+  background: var(--am-surface-2);
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--am-font-titre);
+  font-size: calc(var(--taille, 44px) * 0.364);
+  font-weight: 800;
+  line-height: var(--am-lh-plein);
+}
+
+.avatar[data-ton="bleu"] {
+  --accent: var(--am-bleu);
+}
+
+.avatar[data-ton="ambre"] {
+  --accent: var(--am-ambre);
+}

@@ -1,0 +1,60 @@
+.carte {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-12);
+  padding: var(--am-space-12) var(--am-space-14);
+  border-radius: var(--am-radius-16);
+  background: var(--am-surface);
+  border: 1px solid var(--am-trait);
+  color: var(--am-craie);
+  font-family: var(--am-font-texte);
+  text-decoration: none;
+}
+
+a.carte:hover {
+  color: var(--am-craie);
+}
+
+a.carte:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+.texte {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.nom {
+  font-size: var(--am-fs-15);
+  font-weight: 700;
+}
+
+.mentions {
+  font-size: var(--am-fs-11);
+  font-weight: 600;
+  color: var(--am-vert);
+}
+
+.mentions[data-ton="bleu"] {
+  color: var(--am-bleu);
+}
+
+.mentions[data-ton="ambre"] {
+  color: var(--am-ambre);
+}
+
+.detail {
+  font-size: var(--am-fs-12);
+  color: var(--am-craie-2);
+}
+
+.droite {
+  flex: none;
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-20);
+  font-weight: 800;
+}
