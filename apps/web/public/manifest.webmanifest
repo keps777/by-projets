@@ -1,0 +1,30 @@
+{
+  "name": "AfriMove",
+  "short_name": "AfriMove",
+  "description": "Le bus, le colis et la caisse, en 3 touches.",
+  "lang": "fr",
+  "dir": "ltr",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0B1019",
+  "theme_color": "#0B1019",
+  "categories": ["travel", "business"],
+  "icons": [
+    { "src": "/icones/icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icones/icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    {
+      "src": "/icones/icone-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    { "src": "/icone.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Voyager", "url": "/voyager" },
+    { "name": "Salle de contrôle", "url": "/controle" }
+  ]
+}

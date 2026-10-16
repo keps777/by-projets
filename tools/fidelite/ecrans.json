@@ -1,3 +1,229 @@
 {
-  "ecrans": {}
+  "ecrans": {
+    "Splash": {
+      "route": "/bienvenue"
+    },
+    "Connexion": {
+      "route": "/connexion"
+    },
+    "Tuto": {
+      "route": "/tutoriel"
+    },
+    "Main": {
+      "route": "/voyager"
+    },
+    "SiegePay": {
+      "route": "/depart/dep-0800"
+    },
+    "Pass": {
+      "route": "/billet/BEX-DLA-270105-0142"
+    },
+    "Direct": {
+      "route": "/billet/BEX-DLA-270105-0142/direct"
+    },
+    "Reseau": {
+      "route": "/reseau"
+    },
+    "Covoit": {
+      "route": "/covoit"
+    },
+    "Paiement": {
+      "route": "/paiement/cmd-0001"
+    },
+    "Course": {
+      "route": "/course"
+    },
+    "MainVille": {
+      "route": "/voyager/ville"
+    },
+    "CovoitVille": {
+      "route": "/covoit/ville"
+    },
+    "CovoitConducteur": {
+      "route": "/covoit/conducteur"
+    },
+    "MainFiltres": {
+      "route": "/voyager/filtres"
+    },
+    "Arret": {
+      "route": "/monter-en-route"
+    },
+    "Groupe": {
+      "route": "/groupe"
+    },
+    "USSD": {
+      "route": "/sans-internet"
+    },
+    "Moi": {
+      "route": "/moi"
+    },
+    "ColisEnvoi": {
+      "route": "/colis"
+    },
+    "ColisCode": {
+      "route": "/colis/COL-0001"
+    },
+    "Relais": {
+      "route": "/colis/COL-0001/relais"
+    },
+    "Livraison": {
+      "route": "/colis/COL-0001/livraison"
+    },
+    "Proche": {
+      "route": "/proche"
+    },
+    "Guichet": {
+      "route": "/guichet/accueil"
+    },
+    "Vente": {
+      "route": "/guichet/vendre"
+    },
+    "Cadence": {
+      "route": "/guichet/cadence"
+    },
+    "CadenceBillet": {
+      "route": "/guichet/cadence/vendu"
+    },
+    "CadenceQuai": {
+      "route": "/completer"
+    },
+    "GuichetColis": {
+      "route": "/guichet/colis"
+    },
+    "Depot": {
+      "route": "/guichet/depot"
+    },
+    "Quai": {
+      "route": "/embarquement"
+    },
+    "Convoyeur": {
+      "route": "/convoyeur"
+    },
+    "Chauffeur": {
+      "route": "/chauffeur"
+    },
+    "Controleur": {
+      "route": "/inopine"
+    },
+    "Caisse": {
+      "route": "/guichet/caisse"
+    },
+    "Superviseur": {
+      "route": "/gare"
+    },
+    "SuperviseurValider": {
+      "route": "/cloture/cai-0002"
+    },
+    "SuperviseurVoir": {
+      "route": "/annulation/ann-0001"
+    },
+    "SuperviseurEquipe": {
+      "route": "/equipe"
+    },
+    "SuperviseurDebloquer": {
+      "route": "/debloquer/app-0003"
+    },
+    "RapportSoir": {
+      "route": "/rapport"
+    },
+    "Patron": {
+      "route": "/aujourdhui"
+    },
+    "Assistant": {
+      "route": "/assistant"
+    },
+    "Analyses": {
+      "route": "/analyses"
+    },
+    "Comptable": {
+      "route": "/comptable"
+    },
+    "Config": {
+      "route": "/reglages"
+    },
+    "Modules": {
+      "route": "/reglages/modules"
+    },
+    "Financement": {
+      "route": "/financement"
+    },
+    "InterAgences": {
+      "route": "/inter-agences"
+    },
+    "RelaisApp": {
+      "route": "/relais/accueil"
+    },
+    "Livreur": {
+      "route": "/livreur/accueil"
+    },
+    "Conducteur": {
+      "route": "/covoit/proposer"
+    },
+    "Vendeur": {
+      "route": "/vendeur/accueil"
+    },
+    "Controle": {
+      "route": "/controle"
+    },
+    "AssistantReponse": {
+      "route": "/assistant/reponse"
+    },
+    "AnalysesLigne": {
+      "route": "/analyses/ligne/dla-yao"
+    },
+    "AnalysesBus": {
+      "route": "/analyses/bus/lt-207-ab"
+    },
+    "ConfigLigne": {
+      "route": "/reglages/ligne/dla-yao"
+    },
+    "ComptableRapprochement": {
+      "route": "/comptable/rapprochement"
+    },
+    "ComptableApercu": {
+      "route": "/comptable/apercu/exp-2026-12"
+    },
+    "ComptableCloture": {
+      "route": "/comptable/cloture"
+    },
+    "FinancementDemande": {
+      "route": "/financement/demande/AV-2027-0041"
+    },
+    "InterAgencesConvention": {
+      "route": "/inter-agences/convention/conv-oc-0001"
+    },
+    "PatronEquipe": {
+      "route": "/gares"
+    },
+    "PatronGare": {
+      "route": "/gares/dla-akwa"
+    },
+    "PatronPersonne": {
+      "route": "/personnes/pers-0001"
+    },
+    "ConfigEquipeListe": {
+      "route": "/reglages/equipe"
+    },
+    "ConfigPersonne": {
+      "route": "/reglages/personne/pers-0001"
+    },
+    "ConfigRegles": {
+      "route": "/reglages/regles"
+    },
+    "RelaisDevenir": {
+      "route": "/moi/devenir-relais"
+    },
+    "RelaisInscription": {
+      "route": "/moi/devenir-relais/fiche"
+    },
+    "RelaisVerification": {
+      "route": "/moi/devenir-relais/suivi"
+    },
+    "LivreurDevenir": {
+      "route": "/moi/devenir-livreur"
+    },
+    "LivreurVerification": {
+      "route": "/moi/devenir-livreur/suivi"
+    }
+  }
 }

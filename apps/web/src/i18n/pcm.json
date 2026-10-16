@@ -1,0 +1,297 @@
+{
+  "coquille": {
+    "chargement": "",
+    "introuvable": {
+      "titre": "",
+      "retour": ""
+    },
+    "miseAJour": {
+      "message": "",
+      "action": ""
+    },
+    "langue": {
+      "aria": "",
+      "fr": "",
+      "en": "",
+      "pcm": ""
+    },
+    "demo": {
+      "titre": "",
+      "role": "",
+      "ouvrir": "",
+      "kit": "",
+      "roles": ""
+    },
+    "ecranVide": {
+      "etiquette": ""
+    },
+    "controle": {
+      "titre": "",
+      "connexion": "",
+      "aide": "",
+      "action": "",
+      "demoMention": ""
+    },
+    "acces": {
+      "refuse": ""
+    }
+  },
+  "navigation": {
+    "voyageur": {
+      "aria": "",
+      "voyager": "",
+      "colis": "",
+      "covoit": "",
+      "moi": ""
+    },
+    "guichet": {
+      "aria": "",
+      "guichet": "",
+      "vendre": "",
+      "colis": "",
+      "quai": "",
+      "caisse": ""
+    },
+    "superviseur": {
+      "aria": "",
+      "gare": "",
+      "caisses": "",
+      "quais": "",
+      "patron": ""
+    },
+    "patron": {
+      "aria": "",
+      "aujourdhui": "",
+      "analyses": "",
+      "gares": "",
+      "reglages": ""
+    }
+  },
+  "ecrans": {
+    "Splash": {
+      "titre": ""
+    },
+    "Connexion": {
+      "titre": ""
+    },
+    "Tuto": {
+      "titre": ""
+    },
+    "Main": {
+      "titre": ""
+    },
+    "SiegePay": {
+      "titre": ""
+    },
+    "Pass": {
+      "titre": ""
+    },
+    "Direct": {
+      "titre": ""
+    },
+    "Reseau": {
+      "titre": ""
+    },
+    "Covoit": {
+      "titre": ""
+    },
+    "Paiement": {
+      "titre": ""
+    },
+    "Course": {
+      "titre": ""
+    },
+    "MainVille": {
+      "titre": ""
+    },
+    "CovoitVille": {
+      "titre": ""
+    },
+    "CovoitConducteur": {
+      "titre": ""
+    },
+    "MainFiltres": {
+      "titre": ""
+    },
+    "Arret": {
+      "titre": ""
+    },
+    "Groupe": {
+      "titre": ""
+    },
+    "USSD": {
+      "titre": ""
+    },
+    "Moi": {
+      "titre": ""
+    },
+    "ColisEnvoi": {
+      "titre": ""
+    },
+    "ColisCode": {
+      "titre": ""
+    },
+    "Relais": {
+      "titre": ""
+    },
+    "Livraison": {
+      "titre": ""
+    },
+    "Proche": {
+      "titre": ""
+    },
+    "Guichet": {
+      "titre": ""
+    },
+    "Vente": {
+      "titre": ""
+    },
+    "Cadence": {
+      "titre": ""
+    },
+    "CadenceBillet": {
+      "titre": ""
+    },
+    "CadenceQuai": {
+      "titre": ""
+    },
+    "GuichetColis": {
+      "titre": ""
+    },
+    "Depot": {
+      "titre": ""
+    },
+    "Quai": {
+      "titre": ""
+    },
+    "Convoyeur": {
+      "titre": ""
+    },
+    "Chauffeur": {
+      "titre": ""
+    },
+    "Controleur": {
+      "titre": ""
+    },
+    "Caisse": {
+      "titre": ""
+    },
+    "Superviseur": {
+      "titre": ""
+    },
+    "SuperviseurValider": {
+      "titre": ""
+    },
+    "SuperviseurVoir": {
+      "titre": ""
+    },
+    "SuperviseurEquipe": {
+      "titre": ""
+    },
+    "SuperviseurDebloquer": {
+      "titre": ""
+    },
+    "RapportSoir": {
+      "titre": ""
+    },
+    "Patron": {
+      "titre": ""
+    },
+    "Assistant": {
+      "titre": ""
+    },
+    "Analyses": {
+      "titre": ""
+    },
+    "Comptable": {
+      "titre": ""
+    },
+    "Config": {
+      "titre": ""
+    },
+    "Modules": {
+      "titre": ""
+    },
+    "Financement": {
+      "titre": ""
+    },
+    "InterAgences": {
+      "titre": ""
+    },
+    "RelaisApp": {
+      "titre": ""
+    },
+    "Livreur": {
+      "titre": ""
+    },
+    "Conducteur": {
+      "titre": ""
+    },
+    "Vendeur": {
+      "titre": ""
+    },
+    "Controle": {
+      "titre": ""
+    },
+    "AssistantReponse": {
+      "titre": ""
+    },
+    "AnalysesLigne": {
+      "titre": ""
+    },
+    "AnalysesBus": {
+      "titre": ""
+    },
+    "ConfigLigne": {
+      "titre": ""
+    },
+    "ComptableRapprochement": {
+      "titre": ""
+    },
+    "ComptableApercu": {
+      "titre": ""
+    },
+    "ComptableCloture": {
+      "titre": ""
+    },
+    "FinancementDemande": {
+      "titre": ""
+    },
+    "InterAgencesConvention": {
+      "titre": ""
+    },
+    "PatronEquipe": {
+      "titre": ""
+    },
+    "PatronGare": {
+      "titre": ""
+    },
+    "PatronPersonne": {
+      "titre": ""
+    },
+    "ConfigEquipeListe": {
+      "titre": ""
+    },
+    "ConfigPersonne": {
+      "titre": ""
+    },
+    "ConfigRegles": {
+      "titre": ""
+    },
+    "RelaisDevenir": {
+      "titre": ""
+    },
+    "RelaisInscription": {
+      "titre": ""
+    },
+    "RelaisVerification": {
+      "titre": ""
+    },
+    "LivreurDevenir": {
+      "titre": ""
+    },
+    "LivreurVerification": {
+      "titre": ""
+    }
+  }
+}
