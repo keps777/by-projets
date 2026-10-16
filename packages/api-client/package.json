@@ -3,12 +3,30 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "main": "src/infra/index.ts",
+  "types": "src/infra/index.ts",
+  "exports": {
+    ".": "./src/infra/index.ts"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json --noEmit",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "prettier --check src",
     "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@afrimove/domain": "workspace:*",
+    "@tanstack/react-query": "5.104.3",
+    "react": "19.1.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@testing-library/react": "16.3.0",
+    "@types/react": "19.1.12",
+    "@types/react-dom": "19.1.9",
+    "jsdom": "26.1.0",
+    "react-dom": "19.1.1",
+    "typescript": "5.9.3",
+    "vitest": "3.2.4"
   }
 }
