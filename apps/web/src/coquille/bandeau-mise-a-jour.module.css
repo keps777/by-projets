@@ -1,0 +1,36 @@
+.bandeau {
+  position: fixed;
+  top: var(--am-space-10);
+  left: 50%;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-12);
+  box-sizing: border-box;
+  width: min(calc(100% - 2 * var(--am-gutter)), 358px);
+  padding: var(--am-space-6) var(--am-space-6) var(--am-space-6) var(--am-space-16);
+  transform: translateX(-50%);
+  border: 1px solid var(--am-vert-bord);
+  border-radius: var(--am-radius-pill);
+  background: var(--am-vert-fond);
+  color: var(--am-craie);
+  font-family: var(--am-font-texte);
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+}
+
+.message {
+  flex: 1;
+}
+
+.action {
+  min-height: 44px;
+  padding: 0 var(--am-space-16);
+  border: 0;
+  border-radius: var(--am-radius-pill);
+  background: var(--am-vert);
+  color: var(--am-nuit);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}

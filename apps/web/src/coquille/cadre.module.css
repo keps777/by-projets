@@ -1,0 +1,20 @@
+.cadre {
+  display: flex;
+  justify-content: center;
+  min-height: 100dvh;
+  background: var(--am-profond);
+}
+
+/* Sur ordinateur l'écran est une colonne de 390 px, détachée par un trait. */
+@media (min-width: 481px) {
+  .cadre:not(.fluide) > :first-child {
+    box-shadow:
+      0 0 0 1px var(--am-trait),
+      0 24px 64px rgb(0 0 0 / 0.5);
+  }
+}
+
+.fluide {
+  display: block;
+  background: var(--am-nuit);
+}
