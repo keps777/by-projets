@@ -1,0 +1,45 @@
+.histogramme {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.barre {
+  fill: var(--am-trait);
+}
+
+.barre[data-accent="ambre"] {
+  fill: var(--am-ambre);
+}
+
+.barre[data-accent="rouge"] {
+  fill: var(--am-rouge);
+}
+
+.barre[data-prevue="oui"] {
+  fill: var(--am-surface-2);
+  stroke: var(--am-trait-fort);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.etiquette {
+  fill: var(--am-gris);
+  font-family: var(--am-font-texte);
+}
+
+.etiquette[data-accent="ambre"] {
+  fill: var(--am-ambre);
+  font-weight: 700;
+}
+
+.etiquette[data-accent="rouge"] {
+  fill: var(--am-rouge);
+  font-weight: 700;
+}
+
+.repere {
+  fill: var(--am-gris);
+  font-family: var(--am-font-mono);
+}
