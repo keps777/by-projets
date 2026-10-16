@@ -47,6 +47,14 @@ import { RelaisApp } from "./RelaisApp";
 import { Livreur } from "./Livreur";
 import { Conducteur } from "./Conducteur";
 import { Vendeur } from "./Vendeur";
+import { Controle } from "./Controle";
+import { Parcours } from "./Parcours";
+import { Systeme } from "./Systeme";
+import { CadenceBillet } from "./CadenceBillet";
+import { CadenceQuai } from "./CadenceQuai";
+import { SuperviseurValider } from "./SuperviseurValider";
+import { SuperviseurVoir } from "./SuperviseurVoir";
+import { SuperviseurEquipe } from "./SuperviseurEquipe";
 
 export const ecrans = {
   Splash,
@@ -97,6 +105,14 @@ export const ecrans = {
   Livreur,
   Conducteur,
   Vendeur,
+  Controle,
+  Parcours,
+  Systeme,
+  CadenceBillet,
+  CadenceQuai,
+  SuperviseurValider,
+  SuperviseurVoir,
+  SuperviseurEquipe,
 };
 
-// Planches sans scénario : 29
+// Planches sans scénario : 21
