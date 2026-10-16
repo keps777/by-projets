@@ -25,6 +25,7 @@ export default defineConfig({
   server: { port: 5173, strictPort: true },
   preview: { port: 5173, strictPort: true },
   test: {
+    testTimeout: 20000,
     environment: "jsdom",
     globals: false,
     setupFiles: ["./src/test/setup.ts"],

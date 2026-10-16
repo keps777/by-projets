@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { screen, within } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import fr from "@/i18n/fr.json";
 import { rendreApp } from "@/test/rendre";
@@ -129,19 +129,26 @@ describe("barre d'onglets : où elle s'affiche", () => {
 
   it("éclaire Colis sur le suivi d'un colis, Covoit sur le covoiturage, Moi sur Moi", async () => {
     const { routeur } = rendreApp({ url: "/colis/COL-0001" });
-    let nav = await screen.findByRole("navigation", { name: "Navigation" });
+    const nav = await screen.findByRole("navigation", { name: "Navigation" });
     expect(within(nav).getByRole("link", { name: "Colis" })).toHaveAttribute(
       "aria-current",
       "page",
     );
     await routeur.navigate("/covoit/ville");
-    nav = await screen.findByRole("navigation", { name: "Navigation" });
-    expect(within(nav).getByRole("link", { name: "Covoit" })).toHaveAttribute(
-      "aria-current",
-      "page",
+    await waitFor(() =>
+      expect(
+        within(screen.getByRole("navigation", { name: "Navigation" })).getByRole("link", {
+          name: "Covoit",
+        }),
+      ).toHaveAttribute("aria-current", "page"),
     );
     await routeur.navigate("/moi");
-    nav = await screen.findByRole("navigation", { name: "Navigation" });
-    expect(within(nav).getByRole("link", { name: "Moi" })).toHaveAttribute("aria-current", "page");
+    await waitFor(() =>
+      expect(
+        within(screen.getByRole("navigation", { name: "Navigation" })).getByRole("link", {
+          name: "Moi",
+        }),
+      ).toHaveAttribute("aria-current", "page"),
+    );
   });
 });
