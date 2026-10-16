@@ -1,0 +1,101 @@
+# AM-017 · Poste de développement : API AfriMove + PostgreSQL 16.
+#
+#   docker compose up --build                 démarre la base, applique les migrations, lance l'API
+#   docker compose --profile seed run --rm seed   données de démonstration (comptes par rôle)
+#   docker compose down -v                    arrête et efface la base locale
+#
+# API : http://localhost:3000/health · documentation : http://localhost:3000/docs
+#
+# Ce fichier sert au DÉVELOPPEMENT LOCAL. Les valeurs « dev-seulement » ne sont pas des secrets :
+# l'API refuse de démarrer en production si l'une d'elles est restée. Pour utiliser d'autres
+# valeurs, les définir dans l'environnement ou dans un fichier .env à côté de ce fichier
+# (jamais versionné). L'environnement dev hébergé reste décrit dans infra/dev/compose.yaml.
+name: afrimove
+
+x-api: &api
+  build:
+    context: .
+    dockerfile: apps/api/Dockerfile
+  image: afrimove-api:local
+  environment: &api-env
+    NODE_ENV: development
+    PORT: "3000"
+    # Le mot de passe de la base doit rester sans caractère spécial (il entre dans une URL).
+    DATABASE_URL: postgresql://afrimove:${POSTGRES_PASSWORD:-dev-seulement}@db:5432/afrimove
+    JWT_SECRET: ${JWT_SECRET:-dev-seulement-jwt-secret-0123456789abcdef}
+    AUTH_PEPPER: ${AUTH_PEPPER:-dev-seulement-pepper-0123456789abcdef}
+    AUDIT_HMAC_KEY: ${AUDIT_HMAC_KEY:-dev-seulement-audit-0123456789abcdef}
+    ENCRYPTION_KEY: ${ENCRYPTION_KEY:-ZGV2LXNldWxlbWVudC1jbGUtMzItb2N0ZXRzLTAwMDA=}
+    BLIND_INDEX_KEY: ${BLIND_INDEX_KEY:-ZGV2LXNldWxlbWVudC1jbGUtaW5kZXgtYXZldWdsZS0=}
+    # Le simulateur de SMS écrit les codes dans les journaux de l'API : `docker compose logs api`.
+    SMS_MOCK_LOG_CODES: "true"
+    CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
+    OPENAPI_ENABLED: "true"
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: afrimove
+      POSTGRES_DB: afrimove
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dev-seulement}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U afrimove -d afrimove"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Applique les migrations puis s'arrête ; l'API attend qu'il ait réussi.
+  migrate:
+    <<: *api
+    command: ["node", "dist/migrate.js"]
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    <<: *api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    ports:
+      - "127.0.0.1:${API_PORT:-3000}:3000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 15s
+
+  # Données minimales de développement (compagnie de démonstration, un compte par rôle de gestion).
+  # Les secrets des comptes sont affichés une fois, ou fixés par SEED_PIN et SEED_MOT_DE_PASSE.
+  seed:
+    <<: *api
+    profiles: ["seed"]
+    command: ["node", "dist/seed.js"]
+    restart: "no"
+    environment:
+      <<: *api-env
+      SEED_PIN: ${SEED_PIN:-}
+      SEED_MOT_DE_PASSE: ${SEED_MOT_DE_PASSE:-}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  pgdata:
