@@ -1,0 +1,173 @@
+/* Champ, sélecteur et champ téléphone : valeurs relevées dans Vente, Connexion et ConfigPersonne. */
+
+.champ {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-3);
+  min-width: 0;
+  font-family: var(--am-font-texte);
+}
+
+.etiquette {
+  font-size: var(--am-fs-11);
+  font-weight: 600;
+  color: var(--am-craie-2);
+}
+
+.controle {
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 var(--am-space-12);
+  border-radius: var(--am-radius-10);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-family: inherit;
+  font-size: var(--am-fs-14);
+  font-weight: 600;
+  outline: none;
+}
+
+.controle:focus,
+.controle:focus-visible {
+  border-color: var(--am-ambre);
+}
+
+.controle::placeholder {
+  color: var(--am-gris);
+}
+
+.mono {
+  font-family: var(--am-font-mono);
+  font-weight: 700;
+}
+
+.invalide {
+  border-color: var(--am-rouge);
+}
+
+/* Variante des écrans de réglages (ConfigPersonne) : fond nuit, étiquette en capitales. */
+.config {
+  gap: var(--am-space-4);
+}
+
+.config .etiquette {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--am-gris);
+}
+
+.config .controle {
+  min-height: 42px;
+  background: var(--am-nuit);
+  font-size: var(--am-fs-13);
+  font-weight: 400;
+}
+
+.config .mono {
+  font-weight: 400;
+}
+
+.aide {
+  font-size: var(--am-fs-11);
+  color: var(--am-gris);
+}
+
+.erreur {
+  font-size: var(--am-fs-11);
+  color: var(--am-rouge);
+}
+
+/* Sélecteur stylé nuit : flèche dessinée en CSS, liste sombre. */
+.selecteur {
+  appearance: none;
+  -webkit-appearance: none;
+  color-scheme: dark;
+  padding-right: 34px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23B5BDCB' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  cursor: pointer;
+}
+
+.selecteur option {
+  background: var(--am-nuit);
+  color: var(--am-craie);
+}
+
+/* Champ téléphone de la planche Connexion. */
+.telephone {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-6);
+  font-family: var(--am-font-texte);
+}
+
+.telephone .etiquette {
+  font-size: var(--am-fs-12);
+}
+
+.cadre {
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-8);
+  padding: 0 var(--am-space-12);
+  min-height: 56px;
+  border-radius: var(--am-radius-14);
+  background: var(--am-surface);
+  border: 1px solid var(--am-trait);
+}
+
+.cadre:focus-within {
+  border-color: var(--am-ambre);
+}
+
+.cadreInvalide,
+.cadreInvalide:focus-within {
+  border-color: var(--am-rouge);
+}
+
+.indicatif {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--am-space-6);
+  padding: var(--am-space-6) var(--am-space-8);
+  border-radius: var(--am-radius-8);
+  background: var(--am-surface-2);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-14);
+  font-weight: 700;
+  flex: none;
+}
+
+.numero {
+  width: 100%;
+  box-sizing: border-box;
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--am-craie);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-20);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  outline: none;
+}
+
+.valide {
+  width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  background: var(--am-vert);
+  color: var(--am-nuit);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}

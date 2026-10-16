@@ -1,0 +1,189 @@
+/* Case à cocher, ligne cochable (MainFiltres), interrupteur (ConfigPersonne) et stepper (Groupe, Convoyeur). */
+
+.case {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--am-space-10);
+  cursor: pointer;
+  font-family: var(--am-font-texte);
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  color: var(--am-craie);
+}
+
+.coche {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--am-ambre);
+  flex: none;
+}
+
+.coche:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+.ligne {
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-10);
+  min-height: 35px;
+  font-family: var(--am-font-texte);
+}
+
+.ligneSeparee {
+  border-top: 1px solid var(--am-trait);
+}
+
+.ligneCochable {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  gap: var(--am-space-10);
+  align-items: center;
+  min-height: 35px;
+  cursor: pointer;
+}
+
+.ligneLibelle {
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  color: var(--am-craie);
+}
+
+.ligneDetail {
+  font-size: var(--am-fs-11);
+  font-weight: 400;
+  color: var(--am-craie-2);
+}
+
+.ligneDesactivee {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Interrupteur : piste 40 x 24, pastille 18 x 18. */
+.interrupteur {
+  position: relative;
+  flex: none;
+  width: 40px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--am-radius-12);
+  background: var(--am-trait);
+  cursor: pointer;
+}
+
+.interrupteur[aria-checked="true"] {
+  background: var(--am-vert);
+}
+
+.pastille {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  background: var(--am-gris);
+}
+
+.interrupteur[aria-checked="true"] .pastille {
+  left: 19px;
+  background: var(--am-nuit);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .interrupteur {
+    transition: background-color 120ms ease;
+  }
+
+  .pastille {
+    transition: left 120ms ease;
+  }
+}
+
+.interrupteur:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+.interrupteur:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ligneInterrupteur {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--am-space-8);
+  align-items: center;
+  padding: 0 var(--am-space-12);
+  min-height: 40px;
+  background: var(--am-surface);
+  font-family: var(--am-font-texte);
+  font-size: var(--am-fs-12);
+  color: var(--am-craie);
+  cursor: pointer;
+}
+
+.ligneInterrupteurSeparee {
+  border-top: 1px solid var(--am-surface-2);
+}
+
+/* Stepper : deux boutons ronds de 48 px autour d'un grand nombre. */
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-12);
+  font-family: var(--am-font-texte);
+}
+
+.rond {
+  width: 48px;
+  height: 48px;
+  flex: none;
+  padding: 0;
+  border-radius: 24px;
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface-2);
+  color: var(--am-craie);
+  font-size: var(--am-fs-22);
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.rond:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+.rond:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.centre {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+
+.nombre {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-44);
+  font-weight: 800;
+  color: var(--am-craie);
+}
+
+.legende {
+  margin-top: var(--am-space-4);
+  font-size: var(--am-fs-12);
+  color: var(--am-craie-2);
+}
