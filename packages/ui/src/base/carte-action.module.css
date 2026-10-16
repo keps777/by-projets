@@ -1,0 +1,157 @@
+.carte {
+  display: flex;
+  box-sizing: border-box;
+  margin: 0;
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-family: var(--am-font-texte);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.carte:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+.carte:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.textes {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: var(--am-lh-serree);
+}
+
+.icone {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  background: var(--am-surface-2);
+}
+
+.description {
+  color: var(--am-craie-2);
+}
+
+/* Carte Surface verticale (grille de 2). */
+.carte.carte {
+  flex-direction: column;
+  gap: var(--am-space-10);
+  min-height: 96px;
+  padding: var(--am-space-14);
+  border-radius: var(--am-radius-16);
+}
+
+.carte .icone {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--am-radius-12);
+}
+
+.carte .titre {
+  font-size: var(--am-fs-15);
+  font-weight: 700;
+}
+
+.carte .description {
+  font-size: var(--am-fs-11);
+}
+
+/* Carte compacte (grille de 3). */
+.compacte {
+  flex-direction: column;
+  gap: var(--am-space-6);
+  min-height: 74px;
+  padding: var(--am-space-10);
+  border-radius: var(--am-radius-14);
+}
+
+.compacte .icone {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+}
+
+.compacte .titre {
+  font-size: var(--am-fs-13);
+  font-weight: 700;
+}
+
+.compacte .description {
+  font-size: var(--am-fs-11);
+}
+
+/* Carte principale : grande carte orange, une seule par écran. */
+.principale {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--am-space-14);
+  min-height: 96px;
+  padding: var(--am-space-16);
+  border-color: transparent;
+  border-radius: var(--am-radius-20);
+  background: var(--am-orange);
+  color: var(--am-nuit);
+}
+
+.principale .icone {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--am-radius-16);
+  background: var(--am-nuit);
+  color: var(--am-ambre);
+}
+
+.principale .textes {
+  flex: 1;
+  line-height: var(--am-lh-compacte);
+}
+
+.principale .titre {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-22);
+  font-weight: 800;
+  letter-spacing: var(--am-ls-sous-titre);
+}
+
+.principale .description {
+  margin-top: var(--am-space-4);
+  color: inherit;
+  font-size: var(--am-fs-12);
+  font-weight: 600;
+}
+
+.chevron {
+  flex: none;
+}
+
+.ton-ambre {
+  color: var(--am-ambre);
+}
+
+.ton-vert {
+  color: var(--am-vert);
+}
+
+.ton-bleu {
+  color: var(--am-bleu);
+}
+
+.ton-rouge {
+  color: var(--am-rouge);
+}
+
+.ton-orange {
+  color: var(--am-orange);
+}
+
+.ton-craie {
+  color: var(--am-craie-2);
+}
