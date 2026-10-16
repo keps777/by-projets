@@ -1,0 +1,91 @@
+.pastille {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  border-radius: var(--am-radius-pill);
+  font-family: var(--am-font-mono);
+  white-space: nowrap;
+}
+
+.pilule {
+  gap: 7px;
+  padding: 7px 11px;
+  border: 1px solid transparent;
+  font-size: var(--am-fs-11);
+}
+
+.etiquette {
+  gap: 7px;
+  padding: var(--am-space-6) 9px;
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette-serree);
+}
+
+.ton-neutre {
+  background: var(--am-surface);
+  border-color: var(--am-trait);
+  color: var(--am-craie-2);
+}
+
+.ton-vert {
+  background: var(--am-vert-fond);
+  border-color: var(--am-vert);
+  color: var(--am-vert);
+}
+
+.ton-ambre {
+  background: var(--am-ambre-fond);
+  border-color: var(--am-ambre);
+  color: var(--am-ambre);
+}
+
+.ton-rouge {
+  background: var(--am-rouge-fond);
+  border-color: var(--am-rouge);
+  color: var(--am-rouge);
+}
+
+.ton-bleu {
+  background: var(--am-bleu-fond);
+  border-color: var(--am-bleu);
+  color: var(--am-bleu);
+}
+
+/* Le petit format n'a pas de bord : seul le fond porte la teinte. */
+.etiquette.ton-vert,
+.etiquette.ton-ambre,
+.etiquette.ton-rouge,
+.etiquette.ton-bleu {
+  border-color: transparent;
+}
+
+.fondDiscret {
+  background: var(--am-surface-2);
+}
+
+.point {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 4px;
+}
+
+.point-vert {
+  background: var(--am-vert);
+}
+
+.point-ambre {
+  background: var(--am-ambre);
+}
+
+.point-rouge {
+  background: var(--am-rouge);
+}
+
+.point-bleu {
+  background: var(--am-bleu);
+}
+
+.point-neutre {
+  background: var(--am-gris);
+}

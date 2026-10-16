@@ -1,0 +1,33 @@
+.entete {
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-10);
+  padding: var(--am-space-16) var(--am-gutter) var(--am-space-8);
+}
+
+.textes {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.titre {
+  margin: 0;
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-18);
+  font-weight: 800;
+  letter-spacing: var(--am-ls-sous-titre);
+  line-height: var(--am-lh-compacte);
+}
+
+.sousTitre {
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+}
+
+.droite {
+  display: flex;
+  flex: none;
+  align-items: center;
+}
