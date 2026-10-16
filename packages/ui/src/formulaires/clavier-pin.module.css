@@ -1,0 +1,104 @@
+/* Clavier PIN : valeurs relevées dans SuperviseurValider (panneau, 6 points, pavé 3 x 4). */
+
+.panneau {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-8);
+  padding: var(--am-space-12);
+  border-radius: var(--am-radius-16);
+  background: var(--am-profond);
+  border: 1px solid var(--am-ambre);
+  font-family: var(--am-font-texte);
+  color: var(--am-craie);
+}
+
+.entete {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--am-space-8);
+}
+
+.titre {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+  color: var(--am-ambre);
+}
+
+.sousTitre {
+  font-size: var(--am-fs-11);
+  color: var(--am-craie-2);
+}
+
+.points {
+  display: flex;
+  justify-content: center;
+  gap: var(--am-space-10);
+}
+
+.point {
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  background: var(--am-trait);
+}
+
+.pointPlein {
+  background: var(--am-ambre);
+}
+
+.pave {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--am-space-6);
+}
+
+.touche {
+  min-height: 44px;
+  padding: 0;
+  border-radius: var(--am-radius-10);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-18);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.toucheAction {
+  background: var(--am-carte-sombre);
+  color: var(--am-craie-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.touche:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+.touche:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.vide {
+  min-height: 44px;
+}
+
+.message {
+  margin: 0;
+  font-size: var(--am-fs-12);
+  text-align: center;
+  color: var(--am-rouge);
+}
+
+.note {
+  font-size: var(--am-fs-11);
+  color: var(--am-gris);
+  text-align: center;
+}
