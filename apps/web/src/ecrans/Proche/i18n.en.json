@@ -1,0 +1,63 @@
+{
+  "titre": "",
+  "sousTitre": "",
+  "retour": "",
+  "proches": {
+    "groupe": "",
+    "nouveau": "",
+    "sansNom": ""
+  },
+  "saisie": {
+    "nom": "",
+    "telephone": "",
+    "telephoneInvalide": ""
+  },
+  "departs": {
+    "titre": "",
+    "aide": "",
+    "aide_f": "",
+    "places_one": "",
+    "places_other": "",
+    "siege": "",
+    "siegeSansEmplacement": ""
+  },
+  "classe": {
+    "vip": "",
+    "classique": ""
+  },
+  "paiement": {
+    "libelle": "",
+    "frais": "",
+    "sansFrais": "",
+    "conversion": "",
+    "prevenir": "",
+    "prevenir_f": ""
+  },
+  "payer": {
+    "libelle": "",
+    "detail": "",
+    "aide": "",
+    "aide_f": ""
+  },
+  "messages": {
+    "saisirProche": "",
+    "complet": "",
+    "prix": "",
+    "demarrage": "",
+    "attente": "",
+    "echec": "",
+    "delai": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
