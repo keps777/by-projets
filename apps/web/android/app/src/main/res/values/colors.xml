@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Jetons de design v3 (packages/design) : Nuit = fond de l'application, Ambre = accent du logo. -->
+    <color name="nuit">#0B1019</color>
+    <color name="ambre">#FFB547</color>
+</resources>

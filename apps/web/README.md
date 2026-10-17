@@ -118,6 +118,32 @@ marchent pas dessus. Un test vérifie que `fr.json`, `en.json` et `pcm.json` ont
 - Vérification hors ligne : `pnpm --filter @afrimove/web run build && ... run preview`, ouvrir `/voyager`, attendre l'installation du
   service worker, couper le réseau et recharger (Lighthouse : installable ; la coquille s'ouvre sans réseau).
 
+## Emballage Capacitor (Play Store, App Store) — AM-184
+
+La **même** application, dans une coquille native : `capacitor.config.ts` (appId `com.afrimove.app`, `webDir: "dist"`), projets `android/` et `ios/`
+(générés par Capacitor 8, personnalisés : thème Nuit, marges des barres système, liens, signature), images sources dans `resources/`. Procédure complète
+de publication (comptes, signature, politique de confidentialité, fiche de boutique) : **`docs/publication-boutiques.md`**.
+
+```
+pnpm --filter web run cap:sync            # vite build + cap sync (copie dist/ dans android/ et ios/)
+pnpm --filter web run cap:android         # AAB signé (variables ANDROID_KEYSTORE_PATH / _PASSWORD, ANDROID_KEY_ALIAS / _PASSWORD)
+pnpm --filter web run cap:android:debug   # APK de débogage, sans signature
+pnpm --filter web run cap:ios             # macOS + Xcode : archive App Store (signature à configurer)
+pnpm --filter web run cap:open:android    # ou cap:open:ios : ouvre Android Studio / Xcode
+pnpm --filter web run cap:assets          # icônes et écrans de lancement depuis resources/
+```
+
+- **Un seul build web** : aucune branche de code propre aux boutiques. `src/natif/` ne fait quelque chose que si `window.Capacitor.isNativePlatform()` est vrai
+  (il n'embarque donc rien de natif dans le navigateur) : écran de lancement masqué dès le premier rendu, **liens entrants** (`https://<hôte>/…` et
+  `com.afrimove.app://…` ouvrent la page correspondante, sans redirection ouverte), **bouton retour d'Android** (quitte sur l'accueil d'un espace, recule ailleurs).
+  Le service worker n'est pas enregistré dans l'application (le build y est déjà). Hôtes des liens : `VITE_LIENS_HOTES=hote1,hote2` au build.
+- **Greffons natifs** : `@capacitor/app` (liens, retour), `@capacitor/splash-screen`, `@capacitor/push-notifications` (embarqué, **aucun code ne l'appelle encore**).
+  Pas d'imprimante Bluetooth native : voir §9 du document de publication, c'est le point bloquant avant mise en boutique.
+- **API** : l'application emballée a pour origine `https://localhost` (Android) et `capacitor://localhost` (iOS) ; les ajouter à `CORS_ORIGINS` de l'API.
+- **Tests** : `src/natif/*.test.*` (liens, retour, pont natif, et `emballage.test.ts` qui relit `android/` et `ios/` : identifiants, icônes, signature sans secret,
+  greffons synchronisés). Le projet Android se compile sans Android Studio avec JDK 21 + SDK 36 (`./gradlew assembleDebug`) ; iOS exige un Mac.
+- **CI** : `.github/workflows/boutiques.yml` (build web embarqué identique à `dist/` + fidélité Main, AAB signé, compilation iOS à la demande).
+
 ## Banc de fidélité
 
 `tools/fidelite/ecrans.json` déclare les 75 planches qui ont une route (Parcours et Systeme n'en ont pas). Pour les routes à segment
