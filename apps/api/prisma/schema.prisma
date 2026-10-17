@@ -2128,3 +2128,183 @@ model OffreCreditMateriel {
 
   @@map("offre_credit_materiel")
 }
+
+/**
+ * ------------------------------------------------------------------ inter-agences (AM-135)
+ */
+
+/// Une convention entre deux compagnies (A propose, B accepte). SQL : une seule convention ouverte par paire de
+/// compagnies, quel que soit l'ordre (index unique partiel sur la paire triée), version pour la concurrence optimiste.
+model ConventionInterAgences {
+  id             String    @id @db.Uuid
+  version        Int       @default(1)
+  compagnieAId   String    @db.Uuid
+  compagnieBId   String    @db.Uuid
+  /// SQL : proposee | active | suspendue | resiliee
+  statut         String
+  /// SQL : trimestriel | annuel
+  renouvellement String
+  /// Le colis type et le tableau des parts.
+  parts          Json
+  /// Garantie, attente et lignes des billets en correspondance.
+  voyageurs      Json
+  proposeeLe     DateTime  @db.Timestamptz(3)
+  activeLe       DateTime? @db.Timestamptz(3)
+  /// Qui demande la sortie, quand, et quand elle prend effet.
+  denonciation   Json?
+
+  signatures SignatureConvention[]
+  colis      PlanColisInterAgences[]
+  billets    BilletCorrespondance[]
+  reglements ReglementInterAgences[]
+
+  @@index([compagnieAId])
+  @@index([compagnieBId])
+  @@map("convention_inter_agences")
+}
+
+/// La signature d'une compagnie : une par compagnie et par convention.
+model SignatureConvention {
+  conventionId String   @db.Uuid
+  compagnieId  String   @db.Uuid
+  personneId   String   @db.Uuid
+  signeLe      DateTime @db.Timestamptz(3)
+  /// Place dans la convention : l'ordre des signatures est conservé.
+  rang         Int
+
+  convention ConventionInterAgences @relation(fields: [conventionId], references: [id], onDelete: Restrict)
+
+  @@id([conventionId, compagnieId])
+  @@map("signature_convention")
+}
+
+/// Le plan d'un colis qui change de compagnie en route : un par colis. Les tronçons et les passages de témoin
+/// sont figés en JSON ; `compagnieIds` (les compagnies des tronçons) sert à retrouver les échanges d'une compagnie.
+model PlanColisInterAgences {
+  colisId      String   @id @db.Uuid
+  version      Int      @default(1)
+  numero       String
+  conventionId String   @db.Uuid
+  emettriceId  String   @db.Uuid
+  prix         Int
+  troncons     Json
+  compagnieIds String[] @db.Uuid
+  transferts   Json
+  creeLe       DateTime @db.Timestamptz(3)
+  creePar      String   @db.Uuid
+
+  convention ConventionInterAgences @relation(fields: [conventionId], references: [id], onDelete: Restrict)
+
+  @@index([conventionId])
+  @@map("colis_inter_agences")
+}
+
+/// Un billet voyageur en plusieurs tronçons, sous le numéro du billet vendu. Nom et téléphone du voyageur
+/// ne sont écrits que chiffrés.
+model BilletCorrespondance {
+  /// Le billet vendu.
+  id                       String   @id @db.Uuid
+  version                  Int      @default(1)
+  numero                   String   @unique
+  conventionId             String   @db.Uuid
+  emettriceId              String   @db.Uuid
+  voyageurNomChiffre       String
+  voyageurTelephoneChiffre String
+  prix                     Int
+  troncons                 Json
+  compagnieIds             String[] @db.Uuid
+  arriveePremierBus        Json?
+  replacement              Json?
+  creeLe                   DateTime @db.Timestamptz(3)
+  creePar                  String   @db.Uuid
+
+  convention ConventionInterAgences @relation(fields: [conventionId], references: [id], onDelete: Restrict)
+
+  @@index([conventionId])
+  @@map("billet_correspondance")
+}
+
+/// Un règlement arrêté : un par convention et par lundi (`<conventionId>:<AAMMJJ>`).
+model ReglementInterAgences {
+  cle          String    @id
+  conventionId String    @db.Uuid
+  paiementLe   DateTime  @db.Timestamptz(3)
+  gelLe        DateTime  @db.Timestamptz(3)
+  /// Les créances réglées, telles qu'arrêtées.
+  lignes       Json
+  /// Nuls quand le solde est nul.
+  debiteurId   String?   @db.Uuid
+  creancierId  String?   @db.Uuid
+  montant      Int
+  /// SQL : a_payer | paye | sans_solde
+  etat         String
+  reference    String?
+  payeLe       DateTime? @db.Timestamptz(3)
+  erreur       String?
+
+  convention ConventionInterAgences @relation(fields: [conventionId], references: [id], onDelete: Restrict)
+  creances   CreanceReglee[]
+
+  @@index([conventionId, paiementLe])
+  @@map("reglement_inter_agences")
+}
+
+/// Une opération réglée (`colis:<id>:<rang>`, `billet:<id>:<rang>`, `replacement:<id>`) : la clé primaire garantit
+/// qu'elle ne l'est qu'une fois, dans un seul règlement. En ajout seul.
+model CreanceReglee {
+  cle          String @id
+  reglementCle String
+
+  reglement ReglementInterAgences @relation(fields: [reglementCle], references: [cle], onDelete: Restrict)
+
+  @@index([reglementCle])
+  @@map("creance_reglee")
+}
+
+/// Une contestation du relevé de la semaine.
+model ContestationReglement {
+  /// `CTX-AAMMJJ-n`
+  reference     String    @id
+  conventionIds String[]  @db.Uuid
+  compagnieId   String    @db.Uuid
+  personneId    String    @db.Uuid
+  motif         String
+  /// Les opérations contestées (`cle` des créances), figées au dépôt.
+  cles          String[]
+  deposeeLe     DateTime  @db.Timestamptz(3)
+  recevable     Boolean
+  /// SQL : ouverte | accordee | rejetee | irrecevable
+  statut        String
+  resolueLe     DateTime? @db.Timestamptz(3)
+  resoluePar    String?   @db.Uuid
+
+  @@index([statut])
+  @@index([compagnieId])
+  @@map("contestation_reglement")
+}
+
+/// Une invitation envoyée à une autre compagnie. SQL : `cle` unique (une par compagnie, numéro et jour).
+model InvitationCompagnie {
+  /// `INV-AAMMJJ-n`
+  reference        String   @id
+  /// `<compagnieId>:<téléphone>:<AAMMJJ>`
+  cle              String   @unique
+  compagnieId      String   @db.Uuid
+  personneId       String   @db.Uuid
+  nomCompagnie     String
+  telephoneChiffre String
+  envoyeeLe        DateTime @db.Timestamptz(3)
+
+  @@map("invitation_compagnie")
+}
+
+/// Le compte mobile money d'une compagnie, qui paie et reçoit le solde net des règlements. Le numéro n'y est
+/// que chiffré. Aucune route ne l'écrit encore.
+model CompteMomoCompagnie {
+  compagnieId      String @id @db.Uuid
+  telephoneChiffre String
+  /// SQL : mtn | orange
+  operateur        String
+
+  @@map("compte_momo_compagnie")
+}

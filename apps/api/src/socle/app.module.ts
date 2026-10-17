@@ -10,6 +10,7 @@ import { ColisModule } from "../colis/colis.module";
 import { CovoiturageModule } from "../covoiturage/covoiturage.module";
 import { FinancementModule } from "../financement/financement.module";
 import { GpsModule } from "../gps/gps.module";
+import { InterAgencesModule } from "../inter-agences/inter-agences.module";
 import { LivraisonModule } from "../livraison/livraison.module";
 import { ModulesModule } from "../modules/modules.module";
 import { NumerotationModule } from "../numerotation/numerotation.module";
@@ -121,6 +122,7 @@ const whatsApp = WhatsAppModule.avec({
     LivraisonModule,
     VendeursModule,
     FinancementModule,
+    InterAgencesModule,
     ThrottlerModule.forRootAsync({
       inject: [CONFIG],
       useFactory: (config: AppConfig) => ({

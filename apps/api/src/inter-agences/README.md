@@ -7,34 +7,44 @@ au scan « remis à » / « reçu », règlement hebdomadaire (période gelée l
 MoMo le lundi 08:00) et contestation du relevé.
 
 Le module est autonome : tous ses accès extérieurs sont des **ports** (classes abstraites, `ports.ts`) avec une
-version **en mémoire** (`memoire.ts`). Il n'est **pas** dans `AppModule` et n'a **pas** d'adaptateur PostgreSQL :
-l'intégration est faite par le coordinateur (voir « Brancher le module »). Il importe `ColisModule` (lecture du
-colis partenaire, référentiel, numérotation) et `VerificateurSignature` (`modules/signature`, PIN des patrons).
+version **en mémoire** (`memoire.ts`). Pour le stockage (conventions, colis et billets en correspondance,
+règlements, contestations, invitations, références) et pour les lectures de la billetterie (annuaire des
+compagnies, départs, billets vendus) il a aussi une version **PostgreSQL** (`postgres.ts`, lot B) choisie par
+`API_STOCKAGE` (voir `apps/api/INTEGRATION.md`). Il est dans `AppModule`. Seul le paiement du solde net
+(`ReglementsMobile`) reste simulé. Il importe `ColisModule` (lecture du colis partenaire, référentiel,
+numérotation) et `VerificateurSignature` (`modules/signature`, PIN des patrons).
 
 ## Brancher le module
 
-À faire par le coordinateur (le brief interdit de toucher `app.module.ts` et `prisma/schema.prisma`) :
+**Fait (lot B)**
 
-1. Ajouter `InterAgencesModule` aux `imports` de `AppModule` (après `ColisModule`).
-2. Écrire les adaptateurs PostgreSQL des ports (voir « Tables PostgreSQL ») et les fournir à la place des
-   versions en mémoire : `ConventionsRepository`, `ColisInterAgences`, `BilletsCorrespondance`, `Reglements`,
-   `Contestations`, `InvitationsCompagnies`, `CompteursReferences`.
-3. Brancher les lectures dans les autres modules : `AnnuaireCompagnies` (nom court et compte MoMo de la
-   compagnie), `DepartsInterAgences` (départs de la billetterie : ligne, heures, bus ; `prochain` pour le
-   replacement), `BilletsEmis` (billets vendus, par identifiant ou numéro).
-4. Brancher `ReglementsMobile` sur l'opérateur MoMo et Orange Money (AM-165). Il doit être **idempotent par
-   `cle`** (`<conventionId>:<AAMMJJ du lundi>`) : la tâche de fond rejoue la même clé après un résultat inconnu.
-5. Les tâches de fond (`TachesInterAgences`) démarrent seules hors tests : toutes les 15 minutes, elles
+1. `InterAgencesModule` est dans les `imports` de `AppModule` (après `FinancementModule`).
+2. Adaptateurs PostgreSQL de `ConventionsRepository`, `ColisInterAgences`, `BilletsCorrespondance`, `Reglements`,
+   `Contestations`, `InvitationsCompagnies`, `CompteursReferences`, `AnnuaireCompagnies`, `DepartsInterAgences` et
+   `BilletsEmis` (`postgres.ts`), migration `20261017000806_inter_agences`. Les noms et téléphones des voyageurs,
+   les téléphones des invitations et les numéros MoMo des compagnies sont chiffrés par `ChiffrementService`
+   (contextes `inter-agences.voyageur.nom`, `inter-agences.voyageur.telephone`,
+   `inter-agences.invitation.telephone`, `inter-agences.momo.telephone`).
+3. `BranchementInterAgencesColis` remplace au démarrage `ReferentielColis.interAgencesDisponible` par « la
+   compagnie a une convention en vigueur » : le guichet colis ne propose « Autre ville via une autre compagnie »
+   qu'à ces compagnies. Les tests du module colis (`colis/testing/app-colis-test.ts`) repilotent ce calcul avec
+   l'indicateur du référentiel en mémoire.
+4. Les tâches de fond (`TachesInterAgences`) démarrent seules hors tests : toutes les 15 minutes, elles
    appliquent les sorties dont le préavis est écoulé et arrêtent puis paient les règlements échus (lundi 08:00
-   inclus). Sur plusieurs instances, un verrou (`pg_advisory_lock`) évitera du travail en double ; sans verrou,
-   la clé unique du règlement et la clé d'idempotence du paiement empêchent un double paiement.
-6. `BranchementInterAgencesColis` remplace au démarrage `ReferentielColis.interAgencesDisponible` par
-   « la compagnie a une convention en vigueur » : le guichet colis ne propose « Autre ville via une autre
-   compagnie » qu'à ces compagnies. Si le référentiel PostgreSQL du module colis fournit déjà ce calcul, retirer
-   ce branchement.
+   inclus). La clé unique du règlement, la table `creance_reglee` (une opération ne se règle qu'une fois) et la
+   clé d'idempotence du paiement empêchent un double paiement, y compris sur plusieurs instances.
+
+**Reste à faire**
+
+5. Brancher `ReglementsMobile` sur l'opérateur MoMo et Orange Money (AM-165). Il doit être **idempotent par
+   `cle`** (`<conventionId>:<AAMMJJ du lundi>`) : la tâche de fond rejoue la même clé après un résultat inconnu.
+6. Écrire les comptes MoMo des compagnies (`compte_momo_compagnie`) : **aucune route ne les écrit** ; sans ligne,
+   le règlement reste `a_payer` (motif « compte MoMo manquant »). Reste à décider où le patron les saisit.
+7. Un verrou d'instance (`pg_advisory_lock`) pour les tâches de fond évitera du travail en double si l'API tourne
+   sur plusieurs processus.
 
 En production, `VerificationPortsInterAgences` **refuse de démarrer** tant qu'un des 11 ports est en mémoire ou
-simulé (`durable === false`) et nomme les ports concernés.
+simulé (`durable === false`) et nomme les ports concernés (aujourd'hui : `ReglementsMobile`).
 
 ## Routes
 
@@ -141,58 +151,33 @@ qui n'est pas partie à l'échange) ; `pas_le_porteur`, `pas_le_preneur`, `pas_v
 
 ## Tables PostgreSQL
 
-À créer par le coordinateur dans `prisma/schema.prisma`. Les montants sont des entiers FCFA, les instants des
-`timestamptz`. Les téléphones des voyageurs (`billet_correspondance.voyageur_telephone`) sont à **chiffrer**
-(`ChiffrementService`), comme les numéros MoMo des compagnies.
+**Écrites par la migration `20261017000806_inter_agences`** (modèles en fin de `schema.prisma`, bloc « lot B »).
+Comme le reste du schéma, les **colonnes sont en camelCase** (`compagnieAId`, `emettriceId`…) : les noms en
+snake_case de la description d'origine se lisent ainsi. Les montants sont des entiers FCFA, les instants des
+`timestamptz`. Ce sont ces contraintes qui garantissent les propriétés que les ports en mémoire simulent.
 
-**`convention_inter_agences`** (`ConventionStockee`) : `id` (uuid), `version` (int, concurrence optimiste),
-`compagnie_a_id`, `compagnie_b_id` (A propose, B accepte), `statut` (`proposee`, `active`, `suspendue`,
-`resiliee`), `renouvellement` (`trimestriel`, `annuel`), `parts` (jsonb : colis type et lignes),
-`voyageurs` (jsonb : garantie, attente, lignes), `proposee_le`, `active_le` (nul), `denonciation` (jsonb nul :
-qui, quand, effet). **Index unique partiel** sur la paire triée
-`(LEAST(compagnie_a_id, compagnie_b_id), GREATEST(…)) WHERE statut IN ('proposee','active','suspendue')` :
-une seule convention ouverte par paire (`ajouter` renvoie `paire_deja_ouverte`). `remplacer` =
-`UPDATE … WHERE id = $1 AND version = $2`. Index `(compagnie_a_id)` et `(compagnie_b_id)`.
+| Table                      | Contenu                                                                                                                                                     | Garde-fous de la base                                                                                                                                                                |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `convention_inter_agences` | `version` (concurrence optimiste : `UPDATE … WHERE id AND version`), compagnies A et B, statut, renouvellement, `parts` et `voyageurs` (JSON), dénonciation | **index unique partiel** sur la paire triée `(LEAST, GREATEST)` pour les statuts ouverts ; deux compagnies distinctes et connues ; valeurs fermées ; ne se supprime pas (se résilie) |
+| `signature_convention`     | une signature par compagnie et par convention (clé primaire), `rang` pour l'ordre                                                                           | personne et compagnie existantes ; en ajout seul                                                                                                                                     |
+| `colis_inter_agences`      | un plan par colis (clé primaire) : `troncons` et `transferts` en JSON, `compagnieIds` (uuid[]) pour retrouver les échanges d'une compagnie                  | clés étrangères colis, compagnie, personne ; index GIN sur `compagnieIds`                                                                                                            |
+| `billet_correspondance`    | un plan par billet vendu (clé = identifiant du billet), numéro unique, nom et téléphone du voyageur **chiffrés**, tronçons, arrivée, replacement            | clé étrangère billet ; index GIN sur `compagnieIds`                                                                                                                                  |
+| `reglement_inter_agences`  | un règlement par `cle` (`<convention>:<AAMMJJ>`) ; `lignes` gardées en JSON ; `UPDATE … WHERE cle AND etat` pour changer d'état                             | débiteur et créancier nuls ensemble, et exactement quand le solde est nul ; un règlement payé a référence et date ; **un règlement clos ne change plus** ; ne se supprime pas        |
+| `creance_reglee`           | une ligne par opération réglée, clé primaire = `cle` de la créance (`colis:<id>:<rang>`, `billet:<id>:<rang>`, `replacement:<id>`)                          | une opération ne se règle qu'une fois : le doublon fait échouer l'insertion du règlement ; en ajout seul                                                                             |
+| `contestation_reglement`   | `reference` (`CTX-AAMMJJ-n`), `conventionIds` (uuid[]), `cles` (text[]), statut, résolution                                                                 | recevable exactement quand non irrecevable ; résolue exactement quand accordée ou rejetée ; **une contestation close ne change plus** ; ne se supprime pas                           |
+| `invitation_compagnie`     | `reference` (`INV-AAMMJJ-n`), `cle` unique (une invitation par compagnie, numéro et jour), téléphone **chiffré**                                            | compagnie et personne existantes ; en ajout seul                                                                                                                                     |
+| `compte_momo_compagnie`    | une ligne par compagnie : numéro MoMo **chiffré** et opérateur                                                                                              | opérateur `mtn` ou `orange`                                                                                                                                                          |
 
-**`signature_convention`** : `convention_id`, `compagnie_id`, `personne_id`, `signe_le`. Clé primaire
-`(convention_id, compagnie_id)` : une signature par compagnie.
+Les références `INV-…` et `CTX-…` utilisent la table de compteurs `compteur_dossier` (une ligne par préfixe,
+`INSERT … ON CONFLICT DO UPDATE … RETURNING` : sans trou, sans doublon). Les ports `AnnuaireCompagnies`,
+`DepartsInterAgences` et `BilletsEmis` lisent des tables qui existent déjà (compagnie, ligne, gare, bus, départ,
+billet) ; ils ne créent rien.
 
-**`colis_inter_agences`** (`ColisInterAgencesStocke`) : `colis_id` (clé, un plan par colis), `version`,
-`numero`, `convention_id`, `emettrice_id`, `prix`, `troncons` (jsonb : rang, compagnie, départ, trajet, heures,
-bus, part), `transferts` (jsonb : rang, cédant, preneur, `remis` et `recu` : instant, personne, lieu),
-`cree_le`, `cree_par`. Index `(convention_id)`. L'accès par compagnie (`lister({ compagnieId })`) demande un
-index sur les compagnies des tronçons : une table fille `troncon_colis_inter_agences (colis_id, rang,
-compagnie_id, …)` est plus simple qu'un index jsonb.
-
-**`billet_correspondance`** (`BilletCorrespondanceStocke`) : `id` (= billet vendu), `version`, `numero`
-(unique), `convention_id`, `emettrice_id`, `voyageur_nom`, `voyageur_telephone` (chiffré), `prix`, `troncons`
-(jsonb : comme le colis plus `etat` `prevu|embarque|replace` et `embarque_le`), `arrivee_premier_bus` (jsonb
-nul), `replacement` (jsonb nul : décision, départ, bus, retardataire, montant), `cree_le`, `cree_par`. Même
-remarque d'index par compagnie que pour le colis.
-
-**`reglement_inter_agences`** (`ReglementStocke`) : `cle` (clé primaire, `<convention>:<AAMMJJ>` : `ajouter`
-renvoie `false` si elle existe), `convention_id`, `paiement_le`, `gel_le`, `lignes` (jsonb : les créances
-réglées, avec leur `cle` `colis:<id>:<rang>`, `billet:<id>:<rang>`, `replacement:<id>`), `debiteur_id` et
-`creancier_id` (nuls si solde nul), `montant`, `etat` (`a_payer`, `paye`, `sans_solde`), `reference` (opérateur),
-`paye_le`, `erreur`. `remplacer` = `UPDATE … WHERE cle = $1 AND etat = $2`. Pour ne jamais régler deux fois une
-opération, ajouter une table fille `reglement_ligne (cle_creance UNIQUE, reglement_cle)`.
-
-**`contestation_reglement`** (`ContestationStockee`) : `reference` (clé, `CTX-AAMMJJ-n`), `convention_ids`
-(uuid[]), `compagnie_id`, `personne_id`, `motif`, `cles` (text[] des créances contestées), `deposee_le`,
-`recevable`, `statut` (`ouverte`, `accordee`, `rejetee`, `irrecevable`), `resolue_le`, `resolue_par`.
-`remplacer` = `UPDATE … WHERE reference = $1 AND statut = $2`. Index `(statut)` et `(compagnie_id)`.
-
-**`invitation_compagnie`** (`InvitationStockee`) : `reference` (clé, `INV-AAMMJJ-n`), `cle` (unique,
-`<compagnie>:<téléphone>:<AAMMJJ>` : une invitation par compagnie, numéro et jour), `compagnie_id`,
-`personne_id`, `nom_compagnie`, `telephone` (chiffré), `envoyee_le`.
-
-**`compteur_reference`** : `prefixe` (clé), `valeur`. `prochain(prefixe)` = `INSERT … ON CONFLICT DO UPDATE
-SET valeur = valeur + 1 RETURNING valeur` (atomique, sans trou). Peut être la table de compteurs déjà utilisée
-par les autres modules (préfixes `INV-…` et `CTX-…`).
-
-Les ports `AnnuaireCompagnies`, `DepartsInterAgences` et `BilletsEmis` lisent des tables qui existent déjà
-(compagnies, départs et billets de la billetterie) : pas de nouvelle table. La compagnie a besoin d'un **compte
-MoMo** (`momo_telephone` chiffré, `momo_operateur`) pour payer et recevoir le solde net.
+Écarts avec la description d'origine : les `lignes` du règlement restent en JSON, doublées de `creance_reglee`
+pour l'unicité ; les tronçons restent en JSON, avec un tableau `compagnieIds` indexé (GIN) au lieu d'une table
+fille ; le **nom** du voyageur est chiffré lui aussi ; `AnnuaireCompagnies` rend `compagnie.nom` (le nom complet,
+il n'y a pas de nom court en base) ; l'arrivée d'un départ est `départ + ligne.dureeMinutes` ; `prochain` ignore
+les départs annulés ou fusionnés ; un billet sans téléphone donne une chaîne vide.
 
 ## Décisions à confirmer
 
@@ -212,10 +197,23 @@ MoMo** (`momo_telephone` chiffré, `momo_operateur`) pour payer et recevoir le s
 - Les lignes voyageurs sont des parts **par compagnie**, indépendantes des parts colis.
 - Textes inventés (SMS, messages d'erreur, `VOYAGEURS_AUCUN`) : voir `contenu.ts` et les services.
 
+## Tests
+
+- `*.test.ts`, `*.e2e.test.ts` : règles, validation et API complète sur les ports en mémoire.
+- `postgres.integration.test.ts` (avec `DATABASE_URL_TEST`) : le contrat des ports (`testing/contrat-ports.ts`)
+  sur la mémoire et sur PostgreSQL (une seule convention ouverte par paire dans l'ordre que l'on veut, un
+  règlement par clé, une créance réglée une seule fois, références sans trou, départs et billets lus dans la
+  billetterie) ; puis les garde-fous de la base (téléphones et noms jamais en clair, index unique partiel par SQL
+  direct, valeurs fermées, règlement et contestation clos figés, conventions qui ne se suppriment pas) et la
+  reprise après une nouvelle connexion.
+- `api.postgres.integration.test.ts` : de la proposition de convention au règlement du lundi, sur PostgreSQL :
+  deux patrons signent par leur PIN, colis enregistré et transféré par scans, billet équipé puis replacement après
+  15 minutes de retard, contestation tranchée par AfriMove, invitation rejouée, règlement du lundi payé par le
+  MoMo simulé, puis redémarrage de l'API sans second paiement.
+
 ## Reste à faire
 
-- Adaptateurs PostgreSQL des ports ci-dessus, tables et migrations Prisma (coordinateur).
-- `AnnuaireCompagnies`, `DepartsInterAgences`, `BilletsEmis` (billetterie), `ReglementsMobile` (AM-165).
+- `ReglementsMobile` (AM-165) et la saisie des comptes MoMo des compagnies.
 - Compléter le contrat patron (voir « Désaccords de contrat »).
 - Verrou d'instance pour les tâches de fond si l'API tourne sur plusieurs processus.
 - Plus de deux tronçons (trois compagnies) : le modèle de données le permet (`transferts` par rang), pas les

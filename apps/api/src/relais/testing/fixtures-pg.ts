@@ -14,11 +14,18 @@ export async function creerColisPg(
     mode?: "gare" | "relais" | "moto";
     etat?: "enregistre" | "charge" | "en_route" | "decharge" | "disponible" | "remis" | "en_relais";
     relaisId?: string | null;
+    /** La compagnie du colis et ses gares (sinon une compagnie et deux gares neuves), et le port payé. */
+    compagnieId?: string;
+    gareOrigineId?: string;
+    gareDestinationId?: string;
+    port?: number;
   } = {},
 ): Promise<{ id: string; numero: string }> {
-  const compagnie = await fx.compagnie();
-  const origine = await fx.gare(compagnie.id);
-  const destination = await fx.gare(compagnie.id);
+  const compagnieId = o.compagnieId ?? (await fx.compagnie()).id;
+  const origine = o.gareOrigineId ? { id: o.gareOrigineId } : await fx.gare(compagnieId);
+  const destination = o.gareDestinationId
+    ? { id: o.gareDestinationId }
+    : await fx.gare(compagnieId);
   const n = fx.prochain();
   const numero = `C-TST-270105-${n}-${randomUUID().slice(0, 4)}`;
   const c = await prisma.colis.create({
@@ -43,6 +50,8 @@ export async function creerColisPg(
       etat: o.etat ?? "disponible",
       jour: "270105",
       relaisId: o.relaisId ?? null,
+      ...(o.compagnieId ? { compagnieId: o.compagnieId } : {}),
+      ...(o.port === undefined ? {} : { port: o.port }),
     },
   });
   return { id: c.id, numero };
