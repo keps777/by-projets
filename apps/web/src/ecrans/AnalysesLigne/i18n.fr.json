@@ -1,0 +1,59 @@
+{
+  "entete": {
+    "retour": "Retour aux analyses",
+    "periode": "Période",
+    "sousTitre_one": "{{libelle}} · {{count}} départ par jour",
+    "sousTitre_other": "{{libelle}} · {{count}} départs par jour"
+  },
+  "periodes": {
+    "semaine": "Semaine",
+    "mois": "Mois",
+    "trimestre": "Trimestre"
+  },
+  "chiffres": {
+    "recette": "Recette",
+    "billets": "Billets",
+    "billetsDeparts_one": "{{count}} départ",
+    "billetsDeparts_other": "{{count}} départs",
+    "remplissage": "Rempl.",
+    "cible": "cible {{pct}}",
+    "colis": "Colis"
+  },
+  "departs": {
+    "titre": "Par départ · remplissage moyen",
+    "aide": "touche pour modifier",
+    "classe": {
+      "classique": "classique",
+      "vip": "VIP"
+    },
+    "concurrent": "{{compagnie}} {{heure}} à {{prix}}",
+    "aucun": "Aucun départ sur cette ligne pour cette période."
+  },
+  "parJour": {
+    "titre": "Par jour de la semaine"
+  },
+  "canaux": {
+    "enLigne": "Vendus en ligne",
+    "enLigneDetail_one": "{{count}} billet · {{pts}}",
+    "enLigneDetail_other": "{{count}} billets · {{pts}}",
+    "pts_one": "{{signe}} {{count}} pt",
+    "pts_other": "{{signe}} {{count}} pts",
+    "ptsStable": "stable",
+    "enRoute": "En route",
+    "enRouteArrets": "En route ({{arrets}})",
+    "enRouteBillets_one": "{{count}} billet",
+    "enRouteBillets_other": "{{count}} billets",
+    "enregistres": "tous enregistrés",
+    "aEnregistrer": "à enregistrer"
+  },
+  "pied": {
+    "pourquoi": "Pourquoi ça baisse ?",
+    "modifier": "Modifier la ligne"
+  },
+  "etats": {
+    "chargement": "Chargement de la ligne",
+    "erreur": "L'analyse de la ligne ne s'est pas chargée.",
+    "introuvable": "Cette ligne n'existe pas ou n'est plus ouverte.",
+    "reessayer": "Réessayer"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "entete": {
+    "retour": "",
+    "periode": "",
+    "sousTitre_one": "",
+    "sousTitre_other": ""
+  },
+  "periodes": {
+    "semaine": "",
+    "mois": "",
+    "trimestre": ""
+  },
+  "chiffres": {
+    "recette": "",
+    "billets": "",
+    "billetsDeparts_one": "",
+    "billetsDeparts_other": "",
+    "remplissage": "",
+    "cible": "",
+    "colis": ""
+  },
+  "departs": {
+    "titre": "",
+    "aide": "",
+    "classe": {
+      "classique": "",
+      "vip": ""
+    },
+    "concurrent": "",
+    "aucun": ""
+  },
+  "parJour": {
+    "titre": ""
+  },
+  "canaux": {
+    "enLigne": "",
+    "enLigneDetail_one": "",
+    "enLigneDetail_other": "",
+    "pts_one": "",
+    "pts_other": "",
+    "ptsStable": "",
+    "enRoute": "",
+    "enRouteArrets": "",
+    "enRouteBillets_one": "",
+    "enRouteBillets_other": "",
+    "enregistres": "",
+    "aEnregistrer": ""
+  },
+  "pied": {
+    "pourquoi": "",
+    "modifier": ""
+  },
+  "etats": {
+    "chargement": "",
+    "erreur": "",
+    "introuvable": "",
+    "reessayer": ""
+  }
+}
