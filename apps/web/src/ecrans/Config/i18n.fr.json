@@ -1,0 +1,96 @@
+{
+  "entete": {
+    "titre": "Réglages",
+    "sousTitre": "Lignes, tarifs, équipe, règles · tout se change ici",
+    "retour": "Retour",
+    "modules": "Modules"
+  },
+  "lignes": {
+    "titre": "Lignes et tarifs",
+    "ajouter": "+ ligne",
+    "modifier": "modifier",
+    "propose": "{{proposition}} proposé",
+    "detail": {
+      "departs_one": "{{count}} départ",
+      "departs_other": "{{count}} départs",
+      "classique": "classique {{prix}}",
+      "vip": "VIP {{prix}}",
+      "bagage": "bagage {{prix}}",
+      "arrets": "arrêts {{liste}}",
+      "prorata": "prix en route au prorata"
+    },
+    "vide": "Aucune ligne pour le moment. Ajoute la première avec « + ligne »."
+  },
+  "equipe": {
+    "titre_one": "Équipe · {{count}} personne",
+    "titre_other": "Équipe · {{count}} personnes",
+    "ajouter": "+ personne",
+    "roles": {
+      "guichetier_one": "guichetier",
+      "guichetier_other": "guichetiers",
+      "superviseur_one": "superviseur",
+      "superviseur_other": "superviseurs",
+      "convoyeur_one": "convoyeur",
+      "convoyeur_other": "convoyeurs",
+      "chauffeur_one": "chauffeur",
+      "chauffeur_other": "chauffeurs",
+      "relais_one": "agent relais",
+      "relais_other": "agents relais",
+      "comptable_one": "comptable",
+      "comptable_other": "comptables"
+    },
+    "filtres": "Filtrer l'équipe par rôle",
+    "visibles_one": "{{count}} visible",
+    "visibles_other": "{{count}} visibles",
+    "glisser": "glisser",
+    "voirListe": "Voir la liste",
+    "modifier": "modifier",
+    "vide": "Personne dans cette équipe pour le moment.",
+    "erreur": "La liste ne s'est pas chargée.",
+    "reessayer": "Réessayer"
+  },
+  "regles": {
+    "titre": "Règles",
+    "modifier": "modifier",
+    "annulation": {
+      "debut": "Annulation gratuite jusqu'à",
+      "debutAucune": "Annulation gratuite :",
+      "delai": {
+        "1h_avant": "1 h",
+        "2h_avant": "2 h",
+        "veille_20h": "la veille 20:00",
+        "jamais": "jamais"
+      },
+      "fin": {
+        "1h_avant": "avant · puis {{retenue}}",
+        "2h_avant": "avant · puis {{retenue}}",
+        "veille_20h": "· puis {{retenue}}",
+        "jamais": "· {{retenue}}"
+      },
+      "retenue": {
+        "selon_classe": "selon classe",
+        "dix_pct": "10 % partout",
+        "cinquante_pct": "50 % partout",
+        "aucun_remboursement": "pas de remboursement"
+      }
+    },
+    "tolerance": {
+      "debut": "Tolérance d'écart de caisse ·",
+      "montant": "{{montant}} F"
+    },
+    "cadence": "Numéro de téléphone obligatoire en mode cadence",
+    "fraisService": "Frais de service voyageur ({{montant}} F) pris en charge par l'agence",
+    "momo": "Comptes MoMo de l'agence · MTN {{mtn}} · OM {{orange}}"
+  },
+  "signature": {
+    "sousTitre": "Ton PIN signe ce changement",
+    "fermer": "Fermer",
+    "clavier": "Clavier PIN pour signer le changement"
+  },
+  "pied": "Chaque changement est daté, signé, et visible dans le rapport du soir.",
+  "etats": {
+    "chargement": "Chargement des réglages",
+    "erreur": "Les réglages ne se sont pas chargés.",
+    "reessayer": "Réessayer"
+  }
+}

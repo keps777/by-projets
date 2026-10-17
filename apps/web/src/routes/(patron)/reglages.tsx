@@ -1,5 +1,5 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { EcranConfig } from "@/ecrans/Config";
 
 export default function Page() {
-  return <EcranVide planche="Config" />;
+  return <EcranConfig />;
 }
