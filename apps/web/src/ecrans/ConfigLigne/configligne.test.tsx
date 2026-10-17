@@ -167,6 +167,31 @@ describe("ConfigLigne · rendu de la planche (scénario de démo)", () => {
     );
   });
 
+  it("ouvert depuis un départ de l'analyse (?depart=), « Modifier » mène au plan de CE départ et l'amène à l'œil", async () => {
+    const departVise = (ecrans.ConfigLigne.donnees.departs.liste[1] as { _departId: string })
+      ._departId;
+    expect(departVise).not.toBe(premierDepartId);
+    rendre({ url: `${URL_LIGNE}?depart=${departVise}` });
+    await attendreEcran();
+    expect(screen.getByRole("link", { name: "Modifier" })).toHaveAttribute(
+      "href",
+      `/depart/${departVise}`,
+    );
+    const visees = principal().querySelectorAll("[data-vise]");
+    expect(visees).toHaveLength(1);
+    expect(visees[0]).toContainElement(champ("Heure du départ de 08:15"));
+  });
+
+  it("un ?depart= qui n'est pas un départ de la ligne est ignoré : premier départ, aucun départ visé", async () => {
+    rendre({ url: `${URL_LIGNE}?depart=dep-inconnu` });
+    await attendreEcran();
+    expect(screen.getByRole("link", { name: "Modifier" })).toHaveAttribute(
+      "href",
+      `/depart/${premierDepartId}`,
+    );
+    expect(principal().querySelectorAll("[data-vise]")).toHaveLength(0);
+  });
+
   it("les zones de saisie, boutons et interrupteurs sont atteignables au clavier et ont un nom", async () => {
     rendre();
     await attendreEcran();

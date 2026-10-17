@@ -127,13 +127,13 @@ describe("MainVille · rendu de la planche (scénario de démo)", () => {
       "3 minCovoiturage Clarisse · vérifiéeHyundai · 3 places · passe par Bonanjo · 25 min700",
     );
     expect(lien(/Paul/)).toHaveTextContent(
-      "5 minMoto-taxi Paulvient te chercher · 18 min de trajet500",
+      "5 minMoto-taxi Paul · casque fournivient te chercher · 18 min de trajet500",
     );
     expect(lien(/Socatur/)).toHaveTextContent(
       "07:50Bus de ville ligne 3 · Socaturarrêt Marché central · 40 min · 12 places250",
     );
     expect(lien(/Jean-Marc/)).toHaveTextContent(
-      "08:00Covoiturage Jean-Marcchaque matin · Toyota · 2 places · 4,8 ★600",
+      "08:00Covoiturage Jean-Marc · régulierchaque matin · Toyota · 2 places · 4,8 ★600",
     );
   });
 

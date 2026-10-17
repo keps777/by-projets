@@ -29,6 +29,12 @@ Chromium : `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`, sinon `$PLAYWRIGHT_BROWSERS_PA
 l'écart existe et casse le jour où l'application est corrigée (retirer alors la marque). Liste et détails dans le
 rapport du ticket AM-180.
 
+Écarts restants (le lien « bandeau colis » et « Groupe · bus entier » sont corrigés et jouent comme des tests ordinaires) :
+
+- Cadence : le 2e billet coûte 2 touches (« Billet suivant » après chaque vente) — décision de conception.
+- Modules : l'interrupteur demande le PIN du patron (3 touches au lieu de 2) — décision de conception.
+- Livreur moto : « Accepter » ouvre la vue du client, sans action « remettre » (code + photo) pour le livreur.
+
 ## Fichiers
 
 - `scenarios/voyageur.test.ts`, `guichet.test.ts`, `exploitation.test.ts` : les 16 fonctions de la règle.

@@ -9,10 +9,10 @@ import {
   Interrupteur,
   Pastille,
 } from "@afrimove/ui";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { urlPlanche } from "@/coquille/planches";
 import {
   ajouterArret,
@@ -86,6 +86,7 @@ function LigneDepart({
   capacite,
   bus,
   invalide,
+  vise,
   onHeure,
   onBasculer,
 }: {
@@ -94,13 +95,24 @@ function LigneDepart({
   capacite: number;
   bus: string | null;
   invalide: boolean;
+  /** Le départ dont l'adresse (`?depart=`) a ouvert l'écran : on l'amène à l'œil, sans rien changer à son aspect. */
+  vise: boolean;
   onHeure: (cle: string, heure: string) => void;
   onBasculer: (cle: string) => void;
 }) {
   const { t } = useTranslation("ConfigLigne");
   const etat = depart.nouveau ? "nouveau" : estDeplace(depart) ? "modifie" : "normal";
+  const rangee = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (vise) rangee.current?.scrollIntoView?.({ block: "center" });
+  }, [vise]);
   return (
-    <div className={styles.depart} data-etat={etat}>
+    <div
+      ref={rangee}
+      className={styles.depart}
+      data-etat={etat}
+      {...(vise ? { "data-vise": "" } : {})}
+    >
       <label className={styles.zoneHeure}>
         <input
           type="text"
@@ -159,6 +171,7 @@ function LigneOption({
 export function EditeurLigne({ ligne, bus }: Props) {
   const { t } = useTranslation("ConfigLigne");
   const navigate = useNavigate();
+  const [params] = useSearchParams();
   const client = useClientApi();
   const modifier = patron.useModifierLigne();
   const signer = patron.useSignaturePin();
@@ -172,7 +185,12 @@ export function EditeurLigne({ ligne, bus }: Props) {
 
   const erreurs = erreursDuBrouillon(brouillon);
   const changements = nombreChangements(brouillon, ligne);
-  const departModifiable = brouillon.departs.find((d) => d.id !== null)?.id ?? null;
+  // `?depart=` (lien d'un départ de l'analyse de la ligne) désigne le départ visé ; sinon le premier départ existant.
+  const departVise = params.get("depart");
+  const departModifiable =
+    brouillon.departs.find((d) => d.id !== null && d.id === departVise)?.id ??
+    brouillon.departs.find((d) => d.id !== null)?.id ??
+    null;
 
   function publier() {
     if (!estPubliable(erreurs)) {
@@ -232,6 +250,7 @@ export function EditeurLigne({ ligne, bus }: Props) {
               capacite={ligne.plan.capacite}
               bus={depart.id ? (bus.get(depart.id) ?? null) : null}
               invalide={tentative && erreurs.departs.includes(depart.cle)}
+              vise={depart.id !== null && depart.id === departVise}
               onHeure={(cle, heure) => setBrouillon((b) => changerHeure(b, cle, heure))}
               onBasculer={(cle) => setBrouillon((b) => basculerDepart(b, cle))}
             />

@@ -155,8 +155,14 @@ describe("accueil dans la même ville (planche MainVille)", () => {
       ["bus_ville", 250, 12],
       ["covoiturage", 600, 22],
     ]);
+    // Le `qui` est le texte de la planche en entier (« Paul · casque fourni »), comme la maquette l'affiche.
+    expect(r.offres.map((o) => o.qui)).toEqual([
+      "Clarisse · vérifiée",
+      "Paul · casque fourni",
+      "ligne 3 · Socatur",
+      "Jean-Marc · régulier",
+    ]);
     expect(r.offres[0]).toMatchObject({
-      qui: "Clarisse",
       verifie: true,
       placesLibres: 3,
       dureeMinutes: 25,

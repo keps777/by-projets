@@ -8,6 +8,19 @@ export function heureDouala(iso: string): string {
   return /T(\d{2}:\d{2})/.exec(iso)?.[1] ?? "";
 }
 
+/**
+ * Identifiant d'un arrêt d'après son nom (« Boumnyebel » -> `boumnyebel`, « Édéa gare » -> `edea-gare`) : l'étape du
+ * trajet ne porte que le nom, et l'écran « Monter en route » lit l'arrêt par cet identifiant (`?arretId=`).
+ */
+export function idArret(nom: string): string {
+  return nom
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
 /** `+237677000024` -> `+237 6 77 00 00 24` (numéro camerounais à neuf chiffres) ; sinon le numéro tel quel. */
 export function numeroLisible(telephone: string): string {
   const morceaux = /^\+237(\d)(\d{2})(\d{2})(\d{2})(\d{2})$/.exec(telephone);

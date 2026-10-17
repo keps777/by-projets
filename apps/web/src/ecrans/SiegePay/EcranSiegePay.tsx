@@ -285,7 +285,10 @@ function ChoisirEtPayer({ departId, detail, planInitial, profil, moyens, devis }
           <a className={styles.pourLien} href={urlPlanche("Proche")}>
             {t("pour.proche")}
           </a>
-          <a className={styles.pourLien} href={urlPlanche("Groupe")}>
+          <a
+            className={styles.pourLien}
+            href={`${urlPlanche("Groupe")}?depart=${encodeURIComponent(departId)}`}
+          >
             {t("pour.plusieurs")}
           </a>
         </div>

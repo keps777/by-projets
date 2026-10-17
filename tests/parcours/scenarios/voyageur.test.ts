@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ecartConnu, utiliserBanc } from "../support/contexte";
+import { utiliserBanc } from "../support/contexte";
 
 /**
  * Parcours du voyageur, comptés depuis l'accueil `/voyager` (planche Main).
@@ -76,21 +76,17 @@ describe("envoyer un colis avec code : 3 touches", () => {
 });
 
 describe("suivre son colis, prévenir un proche : 1 touche", () => {
-  ecartConnu(
-    "le bandeau « Ton colis pour Maman est arrivé » ouvre le suivi du colis",
-    "dans le scénario Main, /colis/colis-c-dla-270105-0017 répond « Colis introuvable »",
-    async () => {
-      const p = await accueil();
-      await p.toucher(
-        p.page.getByRole("link", { name: /Ton colis pour Maman est arrivé/ }),
-        "bandeau colis arrivé",
-      );
-      await p.attendreEcran("ColisCode");
-      await p.absent(p.page.getByText("Colis introuvable"));
-      await p.voir(p.page.getByText(/CODE DE RETRAIT/i).first());
-      await p.verifierTouches(1);
-    },
-  );
+  it("le bandeau « Ton colis pour Maman est arrivé » ouvre le suivi du colis", async () => {
+    const p = await accueil();
+    await p.toucher(
+      p.page.getByRole("link", { name: /Ton colis pour Maman est arrivé/ }),
+      "bandeau colis arrivé",
+    );
+    await p.attendreEcran("ColisCode");
+    await p.absent(p.page.getByText("Colis introuvable"));
+    await p.voir(p.page.getByText(/CODE DE RETRAIT/i).first());
+    await p.verifierTouches(1);
+  });
 
   it("le suivi du colis, une fois ouvert, montre le code et les étapes (écran seul)", async () => {
     const p = await ouvrir({
@@ -122,25 +118,21 @@ describe("covoiturage réservé et payé : 3 touches", () => {
 });
 
 describe("groupe ou bus entier : 3 touches", () => {
-  ecartConnu(
-    "« Groupe · bus entier » → places → payer",
-    "le lien /groupe de l'accueil n'a ni ?depart= ni ?groupe= : l'écran affiche « Aucun départ choisi »",
-    async () => {
-      const p = await accueil();
-      await p.toucher(
-        p.page.getByRole("link", { name: /Groupe · bus entier/ }),
-        "Groupe · bus entier",
-      );
-      await p.attendreEcran("Groupe");
-      await p.absent(p.page.getByText("Aucun départ choisi"));
-      await p.toucher(
-        p.page.getByRole("button", { name: "Plus de voyageurs" }),
-        "places : +1 voyageur",
-      );
-      await p.toucher(p.page.getByRole("button", { name: /^Payer ma part/ }), "payer");
-      await p.verifierTouches(3);
-    },
-  );
+  it("« Groupe · bus entier » → places → payer", async () => {
+    const p = await accueil();
+    await p.toucher(
+      p.page.getByRole("link", { name: /Groupe · bus entier/ }),
+      "Groupe · bus entier",
+    );
+    await p.attendreEcran("Groupe");
+    await p.absent(p.page.getByText("Aucun départ choisi"));
+    await p.toucher(
+      p.page.getByRole("button", { name: "Plus de voyageurs" }),
+      "places : +1 voyageur",
+    );
+    await p.toucher(p.page.getByRole("button", { name: /^Payer ma part/ }), "payer");
+    await p.verifierTouches(3);
+  });
 
   it("l'écran Groupe, avec son groupe de démonstration : places puis payer = 2 touches", async () => {
     const p = await ouvrir({ route: "/groupe", scenario: "Groupe", role: "voyageur" });
