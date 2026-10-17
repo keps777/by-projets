@@ -1,0 +1,77 @@
+{
+  "boutique": {
+    "note": "{{note}} ★",
+    "inscrire": "+ inscrire une boutique"
+  },
+  "resume": {
+    "enGarde": "En garde",
+    "capacite": "/{{capacite}}",
+    "arrivent": "Arrivent",
+    "arriventVers": "vers {{heure}}",
+    "semaine": "Semaine",
+    "semaineDetail": "{{remis}} remis · {{jour}} {{moyen}}"
+  },
+  "actions": {
+    "remettre": {
+      "titre": "Remettre",
+      "detail": "code + pièce · touche 1"
+    },
+    "recevoir": {
+      "titre": "Recevoir",
+      "detail": "scanner l'étiquette"
+    }
+  },
+  "remise": {
+    "titre": "Remise en cours",
+    "pour": "{{numero}} · pour {{nom}}",
+    "code": "Code de retrait donné par le client",
+    "pieceVerifiee": "Pièce vérifiée : CNI au nom de {{nom}}. {{consigne}}",
+    "pieceAVerifier": "Pièce à vérifier : CNI au nom de {{nom}}. {{consigne}}",
+    "consigne": "Ne pas photographier la pièce. Photo du colis remis à la fin.",
+    "pieceCase": "Pièce d'identité vérifiée",
+    "vide": "Aucune remise en cours. Touchez un colis de la liste « En garde » pour le remettre."
+  },
+  "garde": {
+    "titre": "En garde · {{nombre}}",
+    "reprise": "repris à J+{{jours}}",
+    "depuis": "depuis {{jours}} j",
+    "depuisRappel": "depuis {{jours}} j · rappel envoyé",
+    "vide": "Aucun colis en garde pour le moment."
+  },
+  "pied": {
+    "remis": "Colis remis · photo · + {{montant}} F"
+  },
+  "reception": {
+    "titre": "Recevoir un colis",
+    "champ": "Numéro lu sur l'étiquette",
+    "valider": "Enregistrer la réception",
+    "reussie": "Colis {{numero}} reçu en garde.",
+    "vide": "Saisissez le numéro de l'étiquette.",
+    "introuvable": "Aucun colis ne porte ce numéro.",
+    "refuse": "Ce colis ne peut pas être reçu maintenant.",
+    "echec": "La réception n'a pas été enregistrée. Réessayez."
+  },
+  "messages": {
+    "reussie": "Colis {{numero}} remis · + {{montant}} F",
+    "codeIncomplet": "Saisissez les 6 chiffres du code du client.",
+    "pieceNonVerifiee": "Vérifiez la pièce d'identité avant de remettre le colis.",
+    "aucuneRemise": "Choisissez d'abord un colis à remettre.",
+    "codeInvalide_one": "Code incorrect. Il vous reste {{count}} essai.",
+    "codeInvalide_other": "Code incorrect. Il vous reste {{count}} essais.",
+    "codeBloque": "Trop d'essais : ce colis est bloqué.",
+    "etatIncompatible": "Ce colis n'est plus en garde chez vous.",
+    "echec": "La remise n'a pas été enregistrée. Réessayez."
+  },
+  "etats": {
+    "chargement": "Chargement de votre point relais",
+    "vide": {
+      "titre": "Aucun point relais",
+      "detail": "Votre boutique n'est pas encore inscrite comme point relais."
+    },
+    "erreur": {
+      "titre": "Impossible de charger votre point relais",
+      "detail": "Vérifiez la connexion, puis réessayez.",
+      "reessayer": "Réessayer"
+    }
+  }
+}
