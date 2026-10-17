@@ -10,8 +10,7 @@ import {
 import { AuditService } from "../audit/audit.service";
 import { ComptesService } from "../comptes/comptes.service";
 import type { PersonneEnregistree } from "../comptes/personnes.repository";
-import { PersonnesRepository, TelephoneDejaUtilise } from "../comptes/personnes.repository";
-import { ChiffrementService } from "../chiffrement/chiffrement.service";
+import { PersonnesRepository } from "../comptes/personnes.repository";
 import { TelephoneInvalide, normaliserTelephone } from "../comptes/telephone";
 import { CONFIG, type AppConfig } from "../config/config";
 import { Horloge } from "../horloge";
@@ -25,7 +24,6 @@ import { TokensService, type JetonEmis } from "./tokens.service";
 export const ESSAIS_PIN_MAX = 3;
 export const BLOCAGE_PIN_MINUTES = 15;
 
-const CONTEXTE_DEFI_TELEPHONE = "defi.telephone";
 const FENETRE_DEMANDES_MS = 15 * 60_000;
 const MESSAGE_IDENTIFIANTS = "Identifiants invalides";
 const MESSAGE_CODE = "Code invalide ou expiré";
@@ -43,61 +41,12 @@ export class AuthService {
     private readonly personnes: PersonnesRepository,
     private readonly defis: DefisRepository,
     private readonly hachage: HachageService,
-    private readonly chiffrement: ChiffrementService,
     private readonly tokens: TokensService,
     private readonly sms: SmsGateway,
     private readonly audit: AuditService,
     private readonly horloge: Horloge,
     @Inject(CONFIG) private readonly config: AppConfig,
   ) {}
-
-  /* ------------------------------------------------------------------ voyageur : numéro + code SMS */
-
-  async demanderCodeVoyageur(telephoneBrut: string): Promise<DefiEmis> {
-    const telephone = this.telephone(telephoneBrut);
-    const index = this.comptes.indexTelephone(telephone);
-    await this.limiterDemandes("connexion_voyageur", index, null, "voyageur");
-
-    // Même réponse que le numéro soit connu ou non : on n'envoie le SMS qu'aux voyageurs actifs.
-    const personne = await this.personnes.trouverParTelephoneIndex(index);
-    const eligible = personne === null || (personne.actif && personne.roles.includes("voyageur"));
-    const defi = await this.creerDefi(
-      "connexion_voyageur",
-      index,
-      eligible && personne === null
-        ? this.chiffrement.chiffrer(telephone, CONTEXTE_DEFI_TELEPHONE)
-        : null,
-      null,
-      null,
-    );
-    if (eligible) await this.envoyerCode(telephone, defi.code);
-    await this.audit.enregistrer({
-      action: "connexion.voyageur.code_demande",
-      resultat: "succes",
-      acteur: personne && eligible ? this.acteur(personne, "voyageur") : null,
-      details: { empreinteTelephone: index.slice(0, 12), sms: eligible },
-    });
-    return { defiId: defi.id, expireDans: this.config.otp.ttlSeconds };
-  }
-
-  async verifierCodeVoyageur(defiId: string, code: string): Promise<JetonEmis> {
-    const defi = await this.consommerDefi("connexion_voyageur", defiId, code);
-    let personne = await this.personnes.trouverParTelephoneIndex(defi.telephoneIndex);
-    if (personne === null) {
-      // Première connexion : le compte voyageur naît ici. Le numéro vient du défi, déjà normalisé.
-      personne = await this.creerVoyageur(defi);
-    }
-    if (!personne.actif || !personne.roles.includes("voyageur")) {
-      return this.refuser("connexion.voyageur", personne, "voyageur", "compte_non_eligible");
-    }
-    await this.personnes.enregistrerSucces(personne.id, this.horloge.maintenant());
-    await this.audit.enregistrer({
-      action: "connexion.voyageur",
-      resultat: "succes",
-      acteur: this.acteur(personne, "voyageur"),
-    });
-    return this.emettre(personne, "voyageur");
-  }
 
   /* ------------------------------------------------------------------ guichetier et rôles terrain : PIN */
 
@@ -348,20 +297,5 @@ export class AuthService {
     if (!(await this.defis.consommer(defi.id, maintenant)))
       throw new UnauthorizedException(MESSAGE_CODE);
     return defi;
-  }
-
-  private async creerVoyageur(defi: Defi): Promise<PersonneEnregistree> {
-    if (!defi.telephoneChiffre) throw new UnauthorizedException(MESSAGE_CODE);
-    const telephone = this.chiffrement.dechiffrer(defi.telephoneChiffre, CONTEXTE_DEFI_TELEPHONE);
-    try {
-      return await this.comptes.creer({ nom: "", telephone, roles: ["voyageur"] });
-    } catch (e) {
-      // Deux vérifications simultanées : l'autre a créé le compte, on le relit.
-      if (e instanceof TelephoneDejaUtilise) {
-        const existant = await this.personnes.trouverParTelephoneIndex(defi.telephoneIndex);
-        if (existant) return existant;
-      }
-      throw e;
-    }
   }
 }

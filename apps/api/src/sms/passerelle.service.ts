@@ -38,7 +38,13 @@ const CONTEXTE_TELEPHONE = "sms.destinataire";
 const NOM_TRAVAIL = "envoi-sms";
 
 /** Types dont l'utilisateur attend le message tout de suite : ils passent devant les alertes. */
-const TYPES_URGENTS: readonly TypeSms[] = ["billet", "code_retrait", "pin_provisoire", "systeme"];
+const TYPES_URGENTS: readonly TypeSms[] = [
+  "billet",
+  "code_retrait",
+  "pin_provisoire",
+  "code_connexion",
+  "systeme",
+];
 
 export interface DemandeEnvoi<T extends TypeSms = TypeSms> {
   type: T;
@@ -245,7 +251,8 @@ export class PasserelleSmsService {
       const n = await this.journal.compter({ depuis, demandeurId: demande.demandeurId });
       if (n >= this.config.limites.parDemandeurParHeure) throw new QuotaSmsDepasse("demandeur");
     }
-    if (demande.type !== "systeme") {
+    // Les codes de connexion ont leurs propres limites (délai entre deux envois, envois par heure).
+    if (demande.type !== "systeme" && demande.type !== "code_connexion") {
       const n = await this.journal.compter({
         depuis,
         destinataireIndex: index,

@@ -8,7 +8,7 @@ export { ConversationAchatService, type ResultatEntrant } from "./conversation.s
 export { AchatWhatsAppService } from "./achat.service";
 export { SuiviAchatsWhatsAppService, type ResumeSuiviAchat } from "./suivi-achats.service";
 export { JournalisationAchat } from "./journalisation.service";
-export { ComptesAchatComptes, MessagerieAchatPasserelle } from "./adaptateurs";
+export { ComptesAchatComptes, EquipeAnnuaire, MessagerieAchatPasserelle } from "./adaptateurs";
 export {
   CONFIG_ACHAT_WHATSAPP,
   chargerConfigAchatWhatsApp,

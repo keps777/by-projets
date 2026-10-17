@@ -4,13 +4,6 @@ import { ROLES, ROLES_DIRECTION, ROLES_PIN, type Role } from "./roles";
 
 const TELEPHONE = /^[+\d][\d\s.()-]{7,24}$/;
 
-export class DemandeCodeVoyageurDto {
-  @ApiProperty({ example: "+237 6 55 00 00 01", description: "Numéro du voyageur" })
-  @IsString()
-  @Matches(TELEPHONE, { message: "Numéro de téléphone invalide" })
-  telephone!: string;
-}
-
 export class CodeSmsDto {
   @ApiProperty({ format: "uuid", description: "Identifiant reçu à la demande du code" })
   @IsUUID()

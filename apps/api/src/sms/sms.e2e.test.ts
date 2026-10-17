@@ -233,6 +233,7 @@ describe("GET /sms/couts (administration)", () => {
       "alerte_proche",
       "retard",
       "pin_provisoire",
+      "code_connexion",
       "systeme",
     ]);
     const billet = res.body.parType[0];

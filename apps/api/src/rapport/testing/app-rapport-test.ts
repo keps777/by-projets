@@ -22,7 +22,6 @@ import {
   PersonnesMemoire,
 } from "../../socle/testing/memoire";
 import { PlanificateurRapport } from "../planificateur";
-import { RapportModule } from "../rapport.module";
 import { RapportSoirService } from "../rapport.service";
 import { AKWA, COMPAGNIE, monterRapport, type MontageRapport } from "./montage";
 import {
@@ -47,25 +46,28 @@ export async function creerAppRapportTest() {
   const config = configTest();
   const auditRepo = new AuditMemoire();
 
-  const module = await Test.createTestingModule({
-    imports: [
-      AppModule,
-      RapportModule.avec({
-        providers: [
-          { provide: ReferentielRapport, useValue: montage.referentiel },
-          { provide: VentesBillets, useValue: montage.ventes },
-          { provide: DepartsDuJour, useValue: montage.departs },
-          { provide: ActiviteColis, useValue: montage.colis },
-          { provide: CaissesDuJour, useValue: montage.caisses },
-          { provide: AnnulationsDuJour, useValue: montage.annulations },
-          { provide: TrousNumerotation, useValue: montage.trous },
-          { provide: ControlesEnRoute, useValue: montage.controles },
-          { provide: AssistantRapport, useValue: montage.assistant },
-          { provide: RapportsSoir, useValue: montage.rapports },
-        ],
-      }),
-    ],
-  })
+  // `AppModule` monte déjà le module du rapport (ponts compris) : les ports en mémoire du montage les remplacent.
+  const module = await Test.createTestingModule({ imports: [AppModule] })
+    .overrideProvider(ReferentielRapport)
+    .useValue(montage.referentiel)
+    .overrideProvider(VentesBillets)
+    .useValue(montage.ventes)
+    .overrideProvider(DepartsDuJour)
+    .useValue(montage.departs)
+    .overrideProvider(ActiviteColis)
+    .useValue(montage.colis)
+    .overrideProvider(CaissesDuJour)
+    .useValue(montage.caisses)
+    .overrideProvider(AnnulationsDuJour)
+    .useValue(montage.annulations)
+    .overrideProvider(TrousNumerotation)
+    .useValue(montage.trous)
+    .overrideProvider(ControlesEnRoute)
+    .useValue(montage.controles)
+    .overrideProvider(AssistantRapport)
+    .useValue(montage.assistant)
+    .overrideProvider(RapportsSoir)
+    .useValue(montage.rapports)
     .overrideProvider(CONFIG)
     .useValue(config)
     .overrideProvider(PersonnesRepository)

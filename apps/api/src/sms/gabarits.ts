@@ -54,6 +54,15 @@ export interface VariablesPinProvisoire {
   lien: string;
 }
 
+export interface VariablesCodeConnexion {
+  /** Code à usage unique (4 à 8 chiffres : le voyageur en reçoit 4). */
+  code: string;
+  /** Domaine de l'application web que WebOTP vérifie (`afrimove.app`). */
+  domaine: string;
+  /** Validité annoncée, en minutes. */
+  minutes: number;
+}
+
 export interface VariablesSysteme {
   texte: string;
 }
@@ -64,6 +73,7 @@ export interface VariablesParType {
   alerte_proche: VariablesAlerteProche;
   retard: VariablesRetard;
   pin_provisoire: VariablesPinProvisoire;
+  code_connexion: VariablesCodeConnexion;
   systeme: VariablesSysteme;
 }
 
@@ -106,6 +116,30 @@ class Lecteur {
     const v = this.brut[nom];
     if (typeof v !== "string" || !new RegExp(`^\\d{${chiffres}}$`).test(v)) {
       this.erreurs.push(`${nom} : ${chiffres} chiffres`);
+      return "";
+    }
+    return v;
+  }
+
+  /** Code de `min` à `max` chiffres. */
+  codeEntre(nom: string, min: number, max: number): string {
+    const v = this.brut[nom];
+    if (typeof v !== "string" || !new RegExp(`^\\d{${min},${max}}$`).test(v)) {
+      this.erreurs.push(`${nom} : ${min} à ${max} chiffres`);
+      return "";
+    }
+    return v;
+  }
+
+  /** Nom de domaine en minuscules (`afrimove.app`), sans schéma ni chemin : WebOTP le compare à la page. */
+  domaine(nom: string): string {
+    const v = this.brut[nom];
+    if (
+      typeof v !== "string" ||
+      v.length > 100 ||
+      !/^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9-]*[a-z0-9])?$/.test(v)
+    ) {
+      this.erreurs.push(`${nom} : nom de domaine en minuscules, sans schéma ni chemin`);
       return "";
     }
     return v;
@@ -278,6 +312,26 @@ export const GABARITS: { [T in TypeSms]: GabaritSms<T> } = {
     rendre: (v) =>
       `AfriMove : votre PIN provisoire est ${v.pin}. Valable 1 h. ` +
       `Changez-le à votre première connexion : ${v.lien}`,
+  },
+  code_connexion: {
+    type: "code_connexion",
+    sensible: true,
+    // Le code vaut 5 minutes par défaut ; l'appelant donne l'échéance exacte (`expireA`).
+    validiteMs: 5 * 60_000,
+    valider(brut) {
+      const l = lire("code_connexion", brut);
+      return terminer("code_connexion", l, {
+        code: l.codeEntre("code", 4, 8),
+        domaine: l.domaine("domaine"),
+        minutes: l.entier("minutes", 1, 15),
+      });
+    },
+    // Le saut de ligne est voulu : WebOTP (Chrome Android) ne lit que la DERNIÈRE ligne, qui doit être
+    // `@<domaine> #<code>`. Pas d'accent : l'alphabet GSM n'a pas tous les caractères français. Même
+    // texte que `texteSms` (auth-voyageur/regles.ts) : un test de l'authentification du voyageur le vérifie.
+    rendre: (v) =>
+      `AfriMove : ton code est ${v.code}. Valable ${v.minutes} min. ` +
+      `Personne d'AfriMove ne te le demandera jamais.\n\n@${v.domaine} #${v.code}`,
   },
   systeme: {
     type: "systeme",

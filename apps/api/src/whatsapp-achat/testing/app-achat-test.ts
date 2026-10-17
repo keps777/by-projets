@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import { Global, Module } from "@nestjs/common";
 import type { NestExpressApplication } from "@nestjs/platform-express";
 import { Test } from "@nestjs/testing";
 import request from "supertest";
@@ -47,10 +48,9 @@ import type { FournisseurWhatsAppSimule } from "../../whatsapp/fournisseur-simul
 import { JournalWhatsApp } from "../../whatsapp/journal";
 import { PasserelleWhatsAppService } from "../../whatsapp/passerelle.service";
 import { GestionnaireEntrants } from "../../whatsapp/ports";
-import { WhatsAppModule } from "../../whatsapp/whatsapp.module";
 import { CONFIG_ACHAT_WHATSAPP, chargerConfigAchatWhatsApp } from "../config";
 import { ConversationAchatService } from "../conversation.service";
-import { GESTIONNAIRE_SUIVANT, GestionnaireEntrantsAchat } from "../gestionnaire";
+import { GESTIONNAIRE_SUIVANT } from "../gestionnaire";
 import {
   AchatsMemoire,
   ConversationsMemoire,
@@ -66,7 +66,6 @@ import {
   TranscriptionVocale,
 } from "../ports";
 import { SuiviAchatsWhatsAppService } from "../suivi-achats.service";
-import { WhatsAppAchatModule } from "../whatsapp-achat.module";
 
 /* ------------------------------------------------------------------ le réseau de la planche */
 
@@ -188,7 +187,7 @@ export class AssistantMemoire extends GestionnaireEntrants {
 /**
  * L'API complète (gardes, rôles, audit) avec la vraie billetterie, les vrais paiements (agrégateur
  * simulé), la vraie passerelle WhatsApp (fournisseur simulé, webhook signé) et
- * `WhatsAppAchatModule`, sur les adaptateurs en mémoire. Le montage est celui du README : le module
+ * `WhatsAppAchatModule`, sur les adaptateurs en mémoire. Le montage est celui de `AppModule` : le module
  * d'achat fournit le `GestionnaireEntrants` de la passerelle.
  */
 export async function creerAppAchatTest(options: OptionsAppAchatTest = {}) {
@@ -210,26 +209,25 @@ export async function creerAppAchatTest(options: OptionsAppAchatTest = {}) {
   const equipe = new EquipeMemoire();
   const assistant = new AssistantMemoire();
 
-  const achatModule = WhatsAppAchatModule.avec({
-    providers: [
-      { provide: ReconnaissanceEquipe, useValue: equipe },
-      ...(options.sansTranscription
-        ? []
-        : [{ provide: TranscriptionVocale, useValue: transcription }]),
-      ...(options.avecAssistant ? [{ provide: GESTIONNAIRE_SUIVANT, useValue: assistant }] : []),
-    ],
-  });
-
-  const module = await Test.createTestingModule({
-    imports: [
-      AppModule,
-      achatModule,
-      WhatsAppModule.avec({
-        imports: [achatModule],
-        providers: [{ provide: GestionnaireEntrants, useExisting: GestionnaireEntrantsAchat }],
-      }),
-    ],
+  // L'assistant du rapport (`GESTIONNAIRE_SUIVANT`) est facultatif et absent de `AppModule` : un module
+  // global le fournit à l'achat quand le test le demande.
+  @Global()
+  @Module({
+    providers: options.avecAssistant
+      ? [{ provide: GESTIONNAIRE_SUIVANT, useValue: assistant }]
+      : [],
+    exports: options.avecAssistant ? [GESTIONNAIRE_SUIVANT] : [],
   })
+  class AssistantDeTest {}
+
+  // `AppModule` monte déjà l'achat et la passerelle WhatsApp ; ce montage remplace leurs ports.
+  let builder = Test.createTestingModule({ imports: [AppModule, AssistantDeTest] })
+    .overrideProvider(ReconnaissanceEquipe)
+    .useValue(equipe);
+  if (!options.sansTranscription) {
+    builder = builder.overrideProvider(TranscriptionVocale).useValue(transcription);
+  }
+  const module = await builder
     .overrideProvider(CONFIG)
     .useValue(config)
     .overrideProvider(CONFIG_PAIEMENTS)
@@ -304,9 +302,10 @@ export async function creerAppAchatTest(options: OptionsAppAchatTest = {}) {
     heureDepart: heure("10:00", DEMAIN),
   });
 
-  if (!options.sansPromotion) {
-    (app.get(Promotions) as PromotionsMemoire).ajouter({ code: "WHATSAPP", type: "frais_offerts" });
-  }
+  const promotions = app.get(Promotions) as PromotionsMemoire;
+  // Le code existe par défaut en mémoire (comme pour l'application) ; `sansPromotion` le retire.
+  if (options.sansPromotion) promotions.retirer("WHATSAPP");
+  else promotions.ajouter({ code: "WHATSAPP", type: "frais_offerts" });
   const comptesReversement = app.get(ComptesReversement) as ComptesReversementMemoire;
   await comptesReversement.definir(BETA, "compte-beta");
   if (!options.alphaSansCompte) await comptesReversement.definir(ALPHA, "compte-alpha");

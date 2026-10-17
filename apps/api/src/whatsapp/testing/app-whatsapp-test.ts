@@ -37,7 +37,6 @@ import {
 import { PasserelleWhatsAppService } from "../passerelle.service";
 import { AnnuaireRapport, GestionnaireEntrants, SecoursSms, SourceRapportSoir } from "../ports";
 import { PlanificateurRapportSoir } from "../rapport-soir.service";
-import { WhatsAppModule } from "../whatsapp.module";
 import { rapportMaquette } from "./montage";
 
 export const COMPAGNIE = "00000000-0000-4000-8000-0000000000c1";
@@ -63,20 +62,17 @@ export async function creerAppWhatsAppTest(env: Record<string, string> = {}) {
     ]);
   const gestionnaire = new GestionnaireEntrantsMemoire();
 
-  const module = await Test.createTestingModule({
-    // `avec` : les adaptateurs fournis remplacent ceux en mémoire par défaut
-    imports: [
-      AppModule,
-      WhatsAppModule.avec({
-        providers: [
-          { provide: SecoursSms, useValue: secoursSms },
-          { provide: SourceRapportSoir, useValue: source },
-          { provide: AnnuaireRapport, useValue: annuaire },
-          { provide: GestionnaireEntrants, useValue: gestionnaire },
-        ],
-      }),
-    ],
-  })
+  // `AppModule` monte déjà la passerelle (repli SMS, source du rapport, annuaire, achat) : les adaptateurs
+  // en mémoire de ce montage les remplacent un par un.
+  const module = await Test.createTestingModule({ imports: [AppModule] })
+    .overrideProvider(SecoursSms)
+    .useValue(secoursSms)
+    .overrideProvider(SourceRapportSoir)
+    .useValue(source)
+    .overrideProvider(AnnuaireRapport)
+    .useValue(annuaire)
+    .overrideProvider(GestionnaireEntrants)
+    .useValue(gestionnaire)
     .overrideProvider(CONFIG)
     .useValue(config)
     .overrideProvider(CONFIG_WHATSAPP)

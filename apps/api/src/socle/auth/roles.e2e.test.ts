@@ -143,8 +143,9 @@ describe("rôles stricts (HTTP)", () => {
       expect(publiques).toEqual(
         [
           "GET /health",
-          "POST /auth/voyageur/code",
-          "POST /auth/voyageur/verification",
+          // Connexion du voyageur (AM-023) : numéro + code de 4 chiffres par SMS.
+          "POST /voyageur/connexion/code",
+          "POST /voyageur/connexion/verification",
           "POST /auth/guichet/connexion",
           "POST /auth/direction/connexion",
           "POST /auth/direction/verification",
@@ -152,17 +153,36 @@ describe("rôles stricts (HTTP)", () => {
           "GET /billetterie/cle-publique",
           // SMS : les accusés de livraison du fournisseur, authentifiés par leur signature HMAC.
           "POST /sms/webhooks/:fournisseur",
+          // Paiements : l'agrégateur notifie (signature HMAC) ; le proche paie avec le lien reçu (jeton
+          // à usage limité dans l'adresse, sans compte).
+          "POST /paiements/webhooks/:fournisseur",
+          "GET /paiements/liens/:jeton",
+          "POST /paiements/liens/:jeton/paiements",
+          "GET /paiements/liens/:jeton/paiements/:paiementId",
+          // WhatsApp : vérification de l'abonnement, puis messages et accusés signés par Meta.
+          "GET /whatsapp/webhooks",
+          "POST /whatsapp/webhooks",
+          // USSD : l'opérateur (MTN ou Orange) appelle avec le jeton de son connecteur.
+          "POST /ussd/:operateur",
+          // Livraison : le lien de suivi qu'un client reçoit (jeton long, position jamais exacte).
+          "GET /suivi/:jeton",
         ].sort(),
       );
     });
 
     it("/patron/** est réservé à l'espace patron ; /afrimove/** à AfriMove seul", () => {
+      // Exception décidée : la salle de contrôle des bus (suivi GPS, AM-170) est aussi ouverte aux
+      // superviseurs, qui reçoivent l'alerte d'arrêt anormal. À confirmer avec le produit (INTEGRATION.md).
+      const exceptions: Record<string, readonly string[]> = {
+        "GET /patron/controle/bus": ["superviseur"],
+      };
       for (const r of vraies()) {
         if (r.chemin.startsWith("/patron")) {
           expect(r.roles, r.chemin).toBeDefined();
+          const permis = exceptions[`${r.methode} ${r.chemin}`] ?? [];
           for (const role of r.roles ?? []) {
             expect(
-              ROLES_ESPACE_PATRON as readonly string[],
+              [...ROLES_ESPACE_PATRON, ...permis] as readonly string[],
               `${r.chemin} ouvert à ${role}`,
             ).toContain(role);
           }

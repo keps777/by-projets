@@ -491,12 +491,22 @@ export class PreferencesMemoire extends PreferencesVoyageur implements StockageB
 @Injectable()
 export class PromotionsMemoire extends Promotions implements StockageBilletterie {
   readonly durable = false;
+  // JOURJ : promotion de démonstration. USSD et WHATSAPP : les codes « sans frais » des achats par USSD
+  // (AM-169) et par WhatsApp (AM-168), sans lesquels ces canaux ne peuvent rien vendre ; en production ils
+  // se créent dans la table des promotions (qui n'existe pas encore).
   private readonly codes = new Map<string, Promotion>([
     ["JOURJ", { code: "JOURJ", type: "frais_offerts" }],
+    ["USSD", { code: "USSD", type: "frais_offerts" }],
+    ["WHATSAPP", { code: "WHATSAPP", type: "frais_offerts" }],
   ]);
 
   ajouter(promotion: Promotion): void {
     this.codes.set(promotion.code.toUpperCase(), promotion);
+  }
+
+  /** Test : retire un code (un canal dont la promotion « sans frais » n'a pas été créée). */
+  retirer(code: string): void {
+    this.codes.delete(code.trim().toUpperCase());
   }
 
   async trouver(code: string) {

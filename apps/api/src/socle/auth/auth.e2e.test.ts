@@ -23,96 +23,6 @@ describe("authentification par rôle (HTTP)", () => {
   const connexionPin = (tel: string, pin: string, role = "guichetier") =>
     post("/auth/guichet/connexion", { telephone: tel, pin, role });
 
-  describe("voyageur : numéro + code SMS", () => {
-    it("demande, vérifie, crée le compte à la première connexion et émet un jeton voyageur", async () => {
-      const tel = nouveauNumero();
-      const demande = await post("/auth/voyageur/code", { telephone: tel });
-      expect(demande.status).toBe(202);
-      expect(demande.body).toMatchObject({ expireDans: 300 });
-      expect(t.sms.dernier()).toMatchObject({ telephone: tel });
-
-      const verif = await post("/auth/voyageur/verification", {
-        defiId: demande.body.defiId,
-        code: t.dernierCode(),
-      });
-      expect(verif.status).toBe(200);
-      expect(verif.body).toMatchObject({ tokenType: "Bearer", expiresIn: 3600, role: "voyageur" });
-
-      const moi = await t
-        .http()
-        .get("/me")
-        .set("Authorization", `Bearer ${verif.body.accessToken}`);
-      expect(moi.status).toBe(200);
-      expect(moi.body).toMatchObject({ role: "voyageur", peutVendre: true, accesPatron: false });
-
-      const compte = await t.comptes.trouverParTelephone(tel);
-      expect(compte?.roles).toEqual(["voyageur"]);
-      expect(compte?.telephoneChiffre).not.toContain(tel.slice(4));
-    });
-
-    it("le code ne sert qu'une fois", async () => {
-      const demande = await post("/auth/voyageur/code", { telephone: nouveauNumero() });
-      const code = t.dernierCode();
-      const corps = { defiId: demande.body.defiId, code };
-      expect((await post("/auth/voyageur/verification", corps)).status).toBe(200);
-      expect((await post("/auth/voyageur/verification", corps)).status).toBe(401);
-    });
-
-    it("un mauvais code est refusé, et après 5 essais le bon code ne marche plus", async () => {
-      const demande = await post("/auth/voyageur/code", { telephone: nouveauNumero() });
-      const bon = t.dernierCode();
-      const faux = bon === "000000" ? "111111" : "000000";
-      for (let i = 0; i < 5; i++) {
-        expect(
-          (await post("/auth/voyageur/verification", { defiId: demande.body.defiId, code: faux }))
-            .status,
-        ).toBe(401);
-      }
-      expect(
-        (await post("/auth/voyageur/verification", { defiId: demande.body.defiId, code: bon }))
-          .status,
-      ).toBe(401);
-    });
-
-    it("le code expire après 5 minutes", async () => {
-      const demande = await post("/auth/voyageur/code", { telephone: nouveauNumero() });
-      const code = t.dernierCode();
-      t.horloge.avancer(5 * MINUTE + 1000);
-      const rep = await post("/auth/voyageur/verification", { defiId: demande.body.defiId, code });
-      expect(rep.status).toBe(401);
-    });
-
-    it("limite les demandes de code : 3 par quart d'heure et par numéro", async () => {
-      const tel = nouveauNumero();
-      for (let i = 0; i < 3; i++)
-        expect((await post("/auth/voyageur/code", { telephone: tel })).status).toBe(202);
-      expect((await post("/auth/voyageur/code", { telephone: tel })).status).toBe(429);
-      t.horloge.avancer(16 * MINUTE);
-      expect((await post("/auth/voyageur/code", { telephone: tel })).status).toBe(202);
-    });
-
-    it("répond pareil pour un numéro de personnel, sans lui envoyer de SMS (pas d'énumération)", async () => {
-      const tel = nouveauNumero();
-      await t.creerCompte({ nom: "Staff", telephone: tel, roles: ["guichetier"], pin: PIN });
-      const avant = t.sms.messages().length;
-      const rep = await post("/auth/voyageur/code", { telephone: tel });
-      expect(rep.status).toBe(202);
-      expect(Object.keys(rep.body).sort()).toEqual(["defiId", "expireDans"]);
-      expect(t.sms.messages().length).toBe(avant);
-    });
-
-    it("refuse un numéro mal formé (400) et les champs inconnus", async () => {
-      expect((await post("/auth/voyageur/code", { telephone: "abc" })).status).toBe(400);
-      expect(
-        (await post("/auth/voyageur/code", { telephone: "655000001", role: "patron" })).status,
-      ).toBe(400);
-      expect(
-        (await post("/auth/voyageur/verification", { defiId: "pas-un-uuid", code: "123456" }))
-          .status,
-      ).toBe(400);
-    });
-  });
-
   describe("guichetier : numéro + PIN à 6 chiffres", () => {
     let tel: string;
     beforeEach(async () => {
@@ -225,7 +135,7 @@ describe("authentification par rôle (HTTP)", () => {
       expect((await etape1(tel, MOT_DE_PASSE, "patron")).status).toBe(423);
     });
 
-    it("un mauvais code SMS est refusé ; le défi d'un autre rôle ne sert pas", async () => {
+    it("un mauvais code SMS est refusé, puis le bon code ouvre la session", async () => {
       const tel = await creer("comptable");
       const e1 = await etape1(tel, MOT_DE_PASSE, "comptable");
       const code = t.dernierCode();
@@ -233,13 +143,49 @@ describe("authentification par rôle (HTTP)", () => {
       expect(
         (await post("/auth/direction/verification", { defiId: e1.body.defiId, code: faux })).status,
       ).toBe(401);
-      // Un code de connexion voyageur ne valide pas un défi direction et inversement.
-      expect(
-        (await post("/auth/voyageur/verification", { defiId: e1.body.defiId, code })).status,
-      ).toBe(401);
       expect(
         (await post("/auth/direction/verification", { defiId: e1.body.defiId, code })).status,
       ).toBe(200);
+    });
+
+    it("le code ne sert qu'une fois", async () => {
+      const e1 = await etape1(await creer("patron"), MOT_DE_PASSE, "patron");
+      const corps = { defiId: e1.body.defiId, code: t.dernierCode() };
+      expect((await post("/auth/direction/verification", corps)).status).toBe(200);
+      expect((await post("/auth/direction/verification", corps)).status).toBe(401);
+    });
+
+    it("après 5 mauvais codes, le bon code ne marche plus", async () => {
+      const e1 = await etape1(await creer("patron"), MOT_DE_PASSE, "patron");
+      const bon = t.dernierCode();
+      const faux = bon === "000000" ? "111111" : "000000";
+      for (let i = 0; i < 5; i++) {
+        expect(
+          (await post("/auth/direction/verification", { defiId: e1.body.defiId, code: faux }))
+            .status,
+        ).toBe(401);
+      }
+      expect(
+        (await post("/auth/direction/verification", { defiId: e1.body.defiId, code: bon })).status,
+      ).toBe(401);
+    });
+
+    it("le code expire après 5 minutes", async () => {
+      const e1 = await etape1(await creer("patron"), MOT_DE_PASSE, "patron");
+      const code = t.dernierCode();
+      t.horloge.avancer(5 * MINUTE + 1000);
+      expect(
+        (await post("/auth/direction/verification", { defiId: e1.body.defiId, code })).status,
+      ).toBe(401);
+    });
+
+    it("limite les demandes de code : 3 par quart d'heure et par compte", async () => {
+      const tel = await creer("patron");
+      for (let i = 0; i < 3; i++)
+        expect((await etape1(tel, MOT_DE_PASSE, "patron")).status).toBe(202);
+      expect((await etape1(tel, MOT_DE_PASSE, "patron")).status).toBe(429);
+      t.horloge.avancer(16 * MINUTE);
+      expect((await etape1(tel, MOT_DE_PASSE, "patron")).status).toBe(202);
     });
 
     it("un compte patron ne peut pas se connecter en AfriMove ni en guichetier", async () => {
@@ -345,19 +291,38 @@ describe("authentification par rôle (HTTP)", () => {
       await t.creerCompte({ nom: "Trace", telephone: tel, roles: ["guichetier"], pin: "907314" });
       await connexionPin(tel, "135790");
       await connexionPin(tel, "907314");
-      const d = await post("/auth/voyageur/code", { telephone: nouveauNumero() });
+      const direction = nouveauNumero();
+      await t.creerCompte({
+        nom: "Patron",
+        telephone: direction,
+        roles: ["patron"],
+        motDePasse: MOT_DE_PASSE,
+      });
+      const d = await post("/auth/direction/connexion", {
+        telephone: direction,
+        motDePasse: MOT_DE_PASSE,
+        role: "patron",
+      });
       const code = t.dernierCode();
-      await post("/auth/voyageur/verification", { defiId: d.body.defiId, code });
+      await post("/auth/direction/verification", { defiId: d.body.defiId, code });
 
       const actions = t.auditRepo.lignes.map((l) => `${l.action}:${l.resultat}`);
       expect(actions).toContain("connexion.pin:echec");
       expect(actions).toContain("connexion.pin:succes");
-      expect(actions).toContain("connexion.voyageur:succes");
+      expect(actions).toContain("connexion.motdepasse:succes");
+      expect(actions).toContain("connexion.direction:succes");
 
       const tout = JSON.stringify(t.auditRepo.lignes, (_k, v) =>
         typeof v === "bigint" ? String(v) : v,
       );
-      for (const secret of ["135790", "907314", code, tel.slice(4), MOT_DE_PASSE]) {
+      for (const secret of [
+        "135790",
+        "907314",
+        code,
+        tel.slice(4),
+        direction.slice(4),
+        MOT_DE_PASSE,
+      ]) {
         expect(tout, `le journal contient « ${secret} »`).not.toContain(secret);
       }
       expect((await t.audit.verifierChaine()).valide).toBe(true);

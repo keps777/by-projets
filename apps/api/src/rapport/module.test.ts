@@ -26,8 +26,14 @@ import {
   TrousMemoire,
   VentesBilletsMemoire,
 } from "./memoire";
-import { VerificationRapport, RapportModule } from "./rapport.module";
-import { CaissesDuJour, DepartsDuJour, TrousNumerotation, type Durable } from "./ports";
+import { VerificationRapport } from "./rapport.module";
+import {
+  CaissesDuJour,
+  DepartsDuJour,
+  ReferentielRapport,
+  TrousNumerotation,
+  type Durable,
+} from "./ports";
 import {
   CaissesDuJourSessions,
   DepartsDuJourBilletterie,
@@ -151,35 +157,38 @@ describe("assemblage Nest", () => {
       .compile();
   }
 
-  it("démarre avec les adaptateurs en mémoire et expose la source de la passerelle WhatsApp", async () => {
-    const m = await compiler([AppModule, RapportModule]);
+  it("démarre dans AppModule, branché sur la caisse, la billetterie et la numérotation", async () => {
+    const m = await compiler([AppModule]);
     await m.init();
     expect(m.get(SourceRapportSoirPourWhatsApp).reel).toBe(true);
-    expect(m.get(CaissesDuJour)).toBeInstanceOf(CaissesMemoire);
-    await m.close();
-  });
-
-  it("branche les ponts sur la caisse, la billetterie et la numérotation", async () => {
-    const m = await compiler([AppModule, RapportModule.avecModulesExistants()]);
-    await m.init();
     expect(m.get(CaissesDuJour)).toBeInstanceOf(CaissesDuJourSessions);
     expect(m.get(DepartsDuJour)).toBeInstanceOf(DepartsDuJourBilletterie);
     expect(m.get(TrousNumerotation)).toBeInstanceOf(TrousNumerotationControle);
+    // Les autres ports attendent leurs adaptateurs PostgreSQL : en mémoire, le garde-fou refuse la production.
+    expect(m.get(ReferentielRapport)).toBeInstanceOf(ReferentielMemoire);
     await m.close();
   });
 
-  it("laisse remplacer les autres adaptateurs en gardant les ponts", async () => {
-    const referentiel = new ReferentielMemoire();
-    const m = await compiler([
-      AppModule,
-      RapportModule.avecModulesExistants({
-        providers: [{ provide: CaissesDuJour, useValue: new CaissesMemoire() }],
-      }),
-    ]);
+  it("laisse remplacer un adaptateur en gardant les ponts", async () => {
+    const m = await Test.createTestingModule({ imports: [AppModule] })
+      .overrideProvider(CONFIG)
+      .useValue(configTest())
+      .overrideProvider(PersonnesRepository)
+      .useValue(new PersonnesMemoire())
+      .overrideProvider(DefisRepository)
+      .useValue(new DefisMemoire())
+      .overrideProvider(AuditRepository)
+      .useValue(new AuditMemoire())
+      .overrideProvider(EvenementsRepository)
+      .useValue(new EvenementsMemoire())
+      .overrideProvider(PrismaService)
+      .useValue({ estJoignable: async () => true, $disconnect: async () => undefined })
+      .overrideProvider(CaissesDuJour)
+      .useValue(new CaissesMemoire())
+      .compile();
     await m.init();
     expect(m.get(CaissesDuJour)).toBeInstanceOf(CaissesMemoire); // remplacé
     expect(m.get(DepartsDuJour)).toBeInstanceOf(DepartsDuJourBilletterie); // gardé
-    expect(referentiel.durable).toBe(false);
     await m.close();
   });
 });
