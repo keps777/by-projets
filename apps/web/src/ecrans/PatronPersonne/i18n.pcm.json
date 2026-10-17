@@ -1,0 +1,86 @@
+{
+  "retour": "",
+  "depuis": "",
+  "roles": {
+    "guichetier": "",
+    "superviseur": "",
+    "convoyeur": "",
+    "chauffeur": "",
+    "relais": "",
+    "comptable": ""
+  },
+  "badge": {
+    "ecarts_one": "",
+    "ecarts_other": ""
+  },
+  "fiche": {
+    "operateur": "",
+    "salaire": "",
+    "superviseur": "",
+    "superviseure": "",
+    "depuisHeure": "",
+    "etats": {
+      "en_service": "",
+      "a_bord": "",
+      "en_route": "",
+      "repos": "",
+      "indisponible": "",
+      "bloquee": ""
+    }
+  },
+  "chiffres": {
+    "billets": "",
+    "colis": "",
+    "annulations": "",
+    "ecarts": "",
+    "jours_one": "",
+    "jours_other": "",
+    "litiges_one": "",
+    "litiges_other": "",
+    "annulationsNormales": "",
+    "annulationsElevees": "",
+    "ecartsDetail": ""
+  },
+  "ecarts": {
+    "titre_one": "",
+    "titre_other": "",
+    "tolerance": "",
+    "aria": "",
+    "ariaJour": "",
+    "ariaAucun": ""
+  },
+  "journal": {
+    "titre_one": "",
+    "titre_other": "",
+    "valides_one": "",
+    "valides_other": "",
+    "ligne": "",
+    "aucun": ""
+  },
+  "actions": {
+    "gare": {
+      "titre": "",
+      "detail": ""
+    },
+    "pin": {
+      "titre": "",
+      "detail": ""
+    }
+  },
+  "pied": {
+    "desactiver": {
+      "libelle": "",
+      "detail": ""
+    },
+    "assistant": {
+      "libelle": "",
+      "detail": ""
+    }
+  },
+  "etats": {
+    "chargement": "",
+    "vide": "",
+    "erreur": "",
+    "reessayer": ""
+  }
+}
