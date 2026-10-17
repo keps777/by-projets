@@ -36,7 +36,10 @@ function rapport(src: SourceFixtures): c.RapportSoir {
     },
     gares: d.gares.map((g) => {
       const gare = GARES.find((x) => x.nom.toLowerCase().includes(g.nom.toLowerCase()))!;
-      const remarques = [...segments(g.texte), ...segments(g.suite.replace(/[()]/g, ""))].filter(
+      // Seules les parenthèses qui enveloppent toute la suite sont ôtées (« (guichet 2, validé par Essono) ») : celles
+      // d'une remarque restent, l'API les écrit ainsi (« 1 départ fusionné (16:00 + 16:30) »).
+      const suite = g.suite.trim().replace(/^\((.*)\)$/, "$1");
+      const remarques = [...segments(g.texte), ...segments(suite)].filter(
         (s) => !/billets/.test(s) && !/^écart/.test(s),
       );
       return {

@@ -10,14 +10,14 @@ import { CartePrevenir } from "./CartePrevenir";
 import { FeuilleChauffeur, FeuilleSignaler } from "./feuilles";
 import { HautDeCarte, TitreEcran } from "./haut";
 import { IconeAlerte, IconeColisOuvert, IconeTelephone } from "./icones";
-import { heureDouala, villeAvantBus } from "./suivi";
+import { heureDouala, idArret, villeAvantBus } from "./suivi";
 import styles from "./direct.module.css";
 
 /** Arrêts du trajet pour la frise du kit : le prochain arrêt est « en cours » (il pulse), les suivants « à venir ». */
 function arretsDeLaFrise(
   etapes: readonly c.EtapeTrajet[],
   prochainLibelle: string,
-  hrefMontee: string,
+  hrefMontee: (arret: string) => string,
 ): Arret[] {
   return etapes.map((etape, rang) => {
     const montees = etape.placesQuiMontent;
@@ -33,7 +33,7 @@ function arretsDeLaFrise(
         : etape.statut === "prochain"
           ? { detail: prochainLibelle }
           : {}),
-      ...(monte ? { montees, href: hrefMontee } : {}),
+      ...(monte ? { montees, href: hrefMontee(etape.arret) } : {}),
     };
   });
 }
@@ -101,7 +101,11 @@ export function DirectVue({ billetId, suivi }: { billetId: string; suivi: c.Suiv
         {suivi.etapes.length > 0 && (
           <FriseArrets
             libelle={t("frise.libelle")}
-            arrets={arretsDeLaFrise(suivi.etapes, t("frise.prochain"), urlPlanche("Arret"))}
+            arrets={arretsDeLaFrise(
+              suivi.etapes,
+              t("frise.prochain"),
+              (arret) => `${urlPlanche("Arret")}?arretId=${encodeURIComponent(idArret(arret))}`,
+            )}
           />
         )}
 

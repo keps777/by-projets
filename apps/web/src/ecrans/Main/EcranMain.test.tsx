@@ -183,7 +183,7 @@ describe("Main · navigation identique à la maquette", () => {
     [/14 bus et 6 covoiturages/, "/reseau"],
     ["Envoyer un colis", "/colis"],
     ["Payer pour un proche", "/proche"],
-    ["Groupe · bus entier", "/groupe"],
+    ["Groupe · bus entier", `/groupe?depart=${DEPART_BETA.id}`],
     ["Moto vers la gare", "/course"],
     ["Monter en route", "/monter-en-route"],
     ["Sans internet", "/sans-internet"],
@@ -196,7 +196,9 @@ describe("Main · navigation identique à la maquette", () => {
     await attendreEcran();
     expect(lien(texte)).toHaveAttribute("href", chemin);
     await userEvent.click(lien(texte));
-    await waitFor(() => expect(routeur.state.location.pathname).toBe(chemin));
+    const [pathname, search] = chemin.split("?") as [string, string | undefined];
+    await waitFor(() => expect(routeur.state.location.pathname).toBe(pathname));
+    expect(routeur.state.location.search).toBe(search === undefined ? "" : `?${search}`);
   });
 
   it("« Dans la même ville » ouvre MainVille", async () => {
@@ -620,6 +622,27 @@ describe("Main · états chargement, vide et erreur", () => {
     rendreAppMain({ client: clientMain(source) });
     expect(await screen.findByText("Aucun départ pour ce trajet ce jour-là.")).toBeInTheDocument();
     expect(lien("Payer pour un proche")).toBeInTheDocument();
+  });
+
+  it("« Groupe · bus entier » suit le prochain départ de la liste, pas toujours le même", async () => {
+    let premier = "";
+    const source = avecRecherche((reponse) => {
+      // La liste commence au deuxième bus : le lien doit suivre ce départ-là.
+      const departs = reponse.departs.slice(1);
+      premier = departs[0]!.id;
+      return { ...reponse, departs };
+    });
+    rendreAppMain({ client: clientMain(source) });
+    await screen.findByText("Alpha Voyages");
+    expect(premier).toBe(DEPART_ALPHA.id);
+    expect(lien("Groupe · bus entier")).toHaveAttribute("href", `/groupe?depart=${premier}`);
+  });
+
+  it("sans aucun bus à proposer, « Groupe · bus entier » ouvre /groupe sans départ", async () => {
+    const source = avecRecherche((reponse) => ({ ...reponse, departs: [], covoits: [] }));
+    rendreAppMain({ client: clientMain(source) });
+    await screen.findByText("Aucun départ pour ce trajet ce jour-là.");
+    expect(lien("Groupe · bus entier")).toHaveAttribute("href", "/groupe");
   });
 
   it("affiche « Aucun départ » dans l'onglet Covoit quand il n'y a que des bus", async () => {

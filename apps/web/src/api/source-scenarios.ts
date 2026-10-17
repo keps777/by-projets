@@ -1,5 +1,6 @@
 import { ecrans } from "@afrimove/fixtures";
 import {
+  ErreurHttp,
   SCENARIO_PAR_DEFAUT,
   agence,
   colis,
@@ -47,6 +48,42 @@ export function composerScenario(nom: string, donnees: EcranFixtures): Scenario 
   return { nom, operations, flux };
 }
 
+type Implementation = Scenario["operations"][number];
+
+/**
+ * Le client prend la première implémentation d'une opération. Quand plusieurs planches répondent à la même (la lecture
+ * d'un colis, par exemple : celui qu'on vient d'envoyer, celui du suivi), la première ne connaît que SES données et
+ * répondait « introuvable » à l'identifiant des autres, qui n'étaient alors jamais atteintes. Une implémentation qui
+ * répond 404 passe donc la main à la suivante ; toute autre erreur, et la dernière 404, sont rendues telles quelles.
+ */
+export function replierSur404(operations: readonly Implementation[]): Implementation[] {
+  const parOperation = new Map<string, Implementation[]>();
+  for (const impl of operations) {
+    const liste = parOperation.get(impl.operation.nom);
+    if (liste) liste.push(impl);
+    else parOperation.set(impl.operation.nom, [impl]);
+  }
+  return [...parOperation.values()].map((liste) => {
+    const [premiere, ...suivantes] = liste;
+    if (suivantes.length === 0) return premiere!;
+    return {
+      operation: premiere!.operation,
+      repondre: async (params: never, ctx: never) => {
+        let derniere: unknown;
+        for (const impl of liste) {
+          try {
+            return await (impl.repondre as (p: never, c: never) => unknown)(params, ctx);
+          } catch (erreur) {
+            if (!(erreur instanceof ErreurHttp) || erreur.statut !== 404) throw erreur;
+            derniere = erreur;
+          }
+        }
+        throw derniere;
+      },
+    } as Implementation;
+  });
+}
+
 /** Source des scénarios du mock : un scénario par planche, plus « defaut » (accueil voyageur). */
 export function sourceScenariosFixtures(): SourceScenarios {
   const parNom = ecrans as Record<string, EcranFixtures>;
@@ -74,7 +111,7 @@ export function sourceScenariosFixtures(): SourceScenarios {
           // une planche dont le mock n'est pas installable n'empêche pas les autres
         }
       }
-      return { nom, operations, flux };
+      return { nom, operations: replierSur404(operations), flux };
     },
   };
 }

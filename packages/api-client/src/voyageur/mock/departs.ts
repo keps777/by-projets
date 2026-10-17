@@ -193,7 +193,8 @@ export function offreVille(
     type,
     departA,
     departDansMinutes: Math.max(0, minutesEntre(departA, source.maintenant)),
-    qui: type === "bus_ville" ? o.qui : (o.qui.split(" · ")[0] ?? o.qui),
+    // Le texte de la planche, en entier (« Paul · casque fourni », « ligne 3 · Socatur ») : la ligne l'affiche tel quel.
+    qui: o.qui,
     verifie: /vérifi/.test(`${o.qui} ${o.reputation ?? ""}`),
     ...(note ? { note: Number(`${note[1]}.${note[2]}`) } : {}),
     detail: o.detail,

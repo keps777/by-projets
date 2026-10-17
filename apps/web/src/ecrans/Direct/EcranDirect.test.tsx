@@ -110,7 +110,10 @@ describe("Direct · liens de la planche", () => {
 
     expect(lien("Retour au billet")).toHaveAttribute("href", `/billet/${BILLET_ID}`);
     expect(lien(/^Prévenir Maman quand j'arrive/)).toHaveAttribute("href", "/moi");
-    expect(lien(/Boumnyebel · 4 places montent ici/)).toHaveAttribute("href", "/monter-en-route");
+    expect(lien(/Boumnyebel · 4 places montent ici/)).toHaveAttribute(
+      "href",
+      "/monter-en-route?arretId=boumnyebel",
+    );
     await waitFor(() =>
       expect(lien("Mon colis")).toHaveAttribute("href", "/colis/colis-c-dla-270105-0017"),
     );

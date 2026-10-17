@@ -1,6 +1,6 @@
 import type { voyageur as c } from "@afrimove/contrats";
 import { describe, expect, it } from "vitest";
-import { appliquerPosition, heureDouala, numeroLisible, villeAvantBus } from "./suivi";
+import { appliquerPosition, heureDouala, idArret, numeroLisible, villeAvantBus } from "./suivi";
 import { fractionsVilles, pointSurTrace, progressionBus } from "./trace";
 
 const etape = (arret: string, statut: c.EtapeTrajet["statut"], heure = "08:00"): c.EtapeTrajet => ({
@@ -51,6 +51,14 @@ describe("Direct · heures et numéros", () => {
   it("écrit un numéro camerounais par groupes, et laisse un autre numéro tel quel", () => {
     expect(numeroLisible("+237677000024")).toBe("+237 6 77 00 00 24");
     expect(numeroLisible("+33612345678")).toBe("+33612345678");
+  });
+});
+
+describe("Direct · identifiant d'arrêt", () => {
+  it("passe le nom de l'arrêt en identifiant sans accent ni espace", () => {
+    expect(idArret("Boumnyebel")).toBe("boumnyebel");
+    expect(idArret("Édéa gare")).toBe("edea-gare");
+    expect(idArret(" Pouma · carrefour ")).toBe("pouma-carrefour");
   });
 });
 

@@ -264,6 +264,11 @@ describe("RapportSoir · /(patron)/rapport", () => {
       ["Mvan", 338, 0],
       ["Bafoussam", 175, 0],
     ]);
+    expect(r.gares.map((g) => g.remarques)).toEqual([
+      ["3 guichets clôturés", "guichet 2, validé par Essono"],
+      ["1 départ fusionné (16:00 + 16:30)"],
+      ["soute pleine à 10:00"],
+    ]);
     expect(r.enRoute).toMatchObject({ billetsConvoyeurs: 23, controles: 1, regularisations: 1 });
     expect(r.remplissage.moyenPct).toBe(84);
     expect(r.annulations).toEqual({ nombre: 5, montant: 20_000, toutesAvecPin: true });

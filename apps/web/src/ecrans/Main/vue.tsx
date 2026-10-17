@@ -353,12 +353,25 @@ function Departs(
   );
 }
 
+/**
+ * Adresse d'une carte. « Groupe » s'ouvre sur le prochain départ de la liste (`?depart=`) : sans lui, l'écran
+ * Groupe n'a aucun départ où créer le groupe. Sans départ à proposer, la carte ouvre l'écran nu.
+ */
+function hrefRaccourci(carte: Raccourci, prochainDepart: string | undefined): string {
+  const url = urlPlanche(carte.planche);
+  return carte.planche === "Groupe" && prochainDepart !== undefined
+    ? `${url}?depart=${encodeURIComponent(prochainDepart)}`
+    : url;
+}
+
 function Raccourcis({
   cartes,
   autres,
+  prochainDepart,
 }: {
   cartes: readonly Raccourci[];
   autres: readonly Raccourci[];
+  prochainDepart: string | undefined;
 }) {
   const { t } = useTranslation("Main");
   return (
@@ -373,7 +386,7 @@ function Raccourcis({
               key={carte.cle}
               variante="compacte"
               className={styles.service}
-              href={urlPlanche(carte.planche)}
+              href={hrefRaccourci(carte, prochainDepart)}
               titre={t(`raccourcis.${carte.cle}`)}
               icone={carte.icone}
               {...(carte.ton ? { ton: carte.ton } : {})}
@@ -387,7 +400,11 @@ function Raccourcis({
           style={{ ["--colonnes" as string]: autres.length } as CSSProperties}
         >
           {autres.map((carte) => (
-            <a key={carte.cle} href={urlPlanche(carte.planche)} className={styles.raccourci}>
+            <a
+              key={carte.cle}
+              href={hrefRaccourci(carte, prochainDepart)}
+              className={styles.raccourci}
+            >
               {carte.icone}
               {t(`raccourcis.${carte.cle}`)}
             </a>
@@ -436,6 +453,7 @@ export function VueMain(props: PropsVueMain) {
       <Raccourcis
         cartes={SERVICES.filter((r) => actif(r.planche))}
         autres={AUTRES.filter((r) => actif(r.planche))}
+        prochainDepart={recherche?.departs[0]?.id}
       />
       {notification && (
         <a

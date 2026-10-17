@@ -110,20 +110,24 @@ describe("SiegePay · rendu de la planche", () => {
       "/voyager",
     );
     expect(screen.getByRole("link", { name: "Pour un proche" })).toHaveAttribute("href", "/proche");
-    expect(screen.getByRole("link", { name: "À plusieurs" })).toHaveAttribute("href", "/groupe");
+    expect(screen.getByRole("link", { name: "À plusieurs" })).toHaveAttribute(
+      "href",
+      `/groupe?depart=${DEPART_ID}`,
+    );
     expect(screen.getByRole("link", { name: "modifier" })).toHaveAttribute("href", "/moi");
   });
 
   it.each([
-    ["Pour un proche", "/proche"],
-    ["À plusieurs", "/groupe"],
-    ["modifier", "/moi"],
-    ["Retour aux départs", "/voyager"],
-  ])("ouvre l'écran suivant quand on touche « %s »", async (nom, chemin) => {
+    ["Pour un proche", "/proche", ""],
+    ["À plusieurs", "/groupe", `?depart=${DEPART_ID}`],
+    ["modifier", "/moi", ""],
+    ["Retour aux départs", "/voyager", ""],
+  ])("ouvre l'écran suivant quand on touche « %s »", async (nom, chemin, recherche) => {
     const { routeur } = rendreSiegePay();
     await attendreEcran();
     await userEvent.click(screen.getByRole("link", { name: nom }));
     await waitFor(() => expect(pathname(routeur)).toBe(chemin));
+    expect(routeur.state.location.search).toBe(recherche);
   });
 
   it("garde les frais de service sur une ligne à part, jamais ajoutés au prix du billet", async () => {
