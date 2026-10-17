@@ -1,0 +1,56 @@
+{
+  "retour": "",
+  "titre": "",
+  "sousTitre": "",
+  "reseau": {
+    "horsLigne": "",
+    "sync": ""
+  },
+  "tuiles": {
+    "aBord": "",
+    "aBordDetail": "",
+    "libres": "",
+    "libresDetail": "",
+    "enRoute": "",
+    "enRouteDetail": ""
+  },
+  "vente": {
+    "titre": "",
+    "titreTouche": "",
+    "trajet": "",
+    "moins": "",
+    "plus": "",
+    "place_one": "",
+    "place_other": "",
+    "siege_one": "",
+    "siege_other": "",
+    "voyageur": "",
+    "cash": "",
+    "cashDetail": "",
+    "cashDetailTouche": "",
+    "momo": "",
+    "momoDetail": "",
+    "note": "",
+    "confirmation_one": "",
+    "confirmation_other": "",
+    "erreur": ""
+  },
+  "actions": {
+    "scanner": "",
+    "scannerSansArret": "",
+    "colis": "",
+    "colisSansNombre": "",
+    "incident": ""
+  },
+  "pied": {
+    "liste": "",
+    "listeSansNombre": "",
+    "montrer": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": "",
+    "erreur": "",
+    "reessayer": ""
+  }
+}
