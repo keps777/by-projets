@@ -49,7 +49,7 @@ export function evenement(
 
 /** `caisse.ouverte` pour le guichet 2 de Douala, le numéro de session étant déduit de l'heure. */
 export function ouverture(
-  t: AppAgenceTest,
+  t: Pick<AppAgenceTest, "iso">,
   agentId: string,
   o: {
     sessionId?: string;
@@ -122,7 +122,12 @@ export function cloture(
 }
 
 /** POST d'un événement avec le jeton donné. */
-export function envoyer(t: AppAgenceTest, chemin: string, jeton: string, corps: unknown) {
+export function envoyer(
+  t: Pick<AppAgenceTest, "http">,
+  chemin: string,
+  jeton: string,
+  corps: unknown,
+) {
   return t
     .http()
     .post(chemin)
@@ -130,6 +135,6 @@ export function envoyer(t: AppAgenceTest, chemin: string, jeton: string, corps: 
     .send(corps as object);
 }
 
-export function lire(t: AppAgenceTest, chemin: string, jeton: string) {
+export function lire(t: Pick<AppAgenceTest, "http">, chemin: string, jeton: string) {
   return t.http().get(chemin).set("Authorization", `Bearer ${jeton}`);
 }

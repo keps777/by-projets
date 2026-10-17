@@ -30,6 +30,13 @@ export class SessionsMemoire extends SessionsCaisse {
     if (toutes.some((s) => s.etat === "ouverte" && s.guichetId === session.guichetId)) {
       return "guichet_occupe";
     }
+    // Comme l'index unique de la base : une ouverture ne peut venir que d'un seul événement.
+    if (
+      session.evenementOuvertureId !== "" &&
+      toutes.some((s) => s.evenementOuvertureId === session.evenementOuvertureId)
+    ) {
+      return "identifiant_pris";
+    }
     this.lignes.set(session.id, structuredClone(session));
     return "ok";
   }

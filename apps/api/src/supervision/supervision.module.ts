@@ -1,7 +1,10 @@
 import { Inject, Injectable, Module, type OnModuleInit } from "@nestjs/common";
 import { CaisseModule } from "../caisse/caisse.module";
 import { exigerStockageDurable } from "../caisse/stockage";
+import { ChiffrementService } from "../socle/chiffrement/chiffrement.service";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { EquipeService } from "./equipe.service";
 import {
@@ -13,6 +16,13 @@ import {
 } from "./memoire";
 import { PinSuperviseurService, PreuvesPinService } from "./pin.service";
 import { DemandesAnnulation, EquipeGare, PinsEquipe, RegistreBillets, SourceGare } from "./ports";
+import {
+  DemandesAnnulationPrisma,
+  EquipeGarePrisma,
+  PinsEquipePrisma,
+  RegistreBilletsPrisma,
+  SourceGarePrisma,
+} from "./postgres";
 import { SupervisionController } from "./supervision.controller";
 import { SupervisionService } from "./supervision.service";
 import { ValidationSuperviseurService } from "./validation.service";
@@ -43,8 +53,8 @@ export class VerificationStockageSupervision implements OnModuleInit {
  * Supervision de la gare (AM-164) : validation des clôtures, demandes d'annulation et décision par
  * PIN, équipe et PIN (provisoires par SMS, blocage après 3 essais), journal signé.
  *
- * À importer dans `AppModule` (périmètre du socle), avec `CaisseModule`. Les ports sont remplaçables :
- * les adaptateurs PostgreSQL remplacent les versions en mémoire (tables dans le README du dossier).
+ * Dans `AppModule`, avec `CaisseModule`. Les ports ont une version PostgreSQL (`postgres.ts`) et une
+ * version en mémoire, choisies par `API_STOCKAGE` (voir `socle/db/stockage.ts`).
  */
 @Module({
   imports: [CaisseModule],
@@ -57,11 +67,43 @@ export class VerificationStockageSupervision implements OnModuleInit {
     ValidationSuperviseurService,
     VerificationStockageSupervision,
     { provide: Horloge, useClass: HorlogeSysteme },
-    { provide: RegistreBillets, useClass: RegistreBilletsMemoire },
-    { provide: DemandesAnnulation, useClass: DemandesAnnulationMemoire },
-    { provide: SourceGare, useClass: SourceGareMemoire },
-    { provide: EquipeGare, useClass: EquipeMemoire },
-    { provide: PinsEquipe, useClass: PinsEquipeMemoire },
+    // PostgreSQL en production (ou avec API_STOCKAGE=postgres), mémoire ailleurs : voir socle/db/stockage.ts.
+    {
+      provide: RegistreBillets,
+      inject: [CONFIG, PrismaService, ChiffrementService],
+      useFactory: (config: AppConfig, prisma: PrismaService, chiffrement: ChiffrementService) =>
+        stockageSurPostgres(config)
+          ? new RegistreBilletsPrisma(prisma, chiffrement)
+          : new RegistreBilletsMemoire(),
+    },
+    {
+      provide: DemandesAnnulation,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config)
+          ? new DemandesAnnulationPrisma(prisma)
+          : new DemandesAnnulationMemoire(),
+    },
+    {
+      provide: SourceGare,
+      inject: [CONFIG, PrismaService, Horloge],
+      useFactory: (config: AppConfig, prisma: PrismaService, horloge: Horloge) =>
+        stockageSurPostgres(config)
+          ? new SourceGarePrisma(prisma, horloge)
+          : new SourceGareMemoire(),
+    },
+    {
+      provide: EquipeGare,
+      inject: [CONFIG, PrismaService, Horloge],
+      useFactory: (config: AppConfig, prisma: PrismaService, horloge: Horloge) =>
+        stockageSurPostgres(config) ? new EquipeGarePrisma(prisma, horloge) : new EquipeMemoire(),
+    },
+    {
+      provide: PinsEquipe,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new PinsEquipePrisma(prisma) : new PinsEquipeMemoire(),
+    },
   ],
   exports: [
     SupervisionService,

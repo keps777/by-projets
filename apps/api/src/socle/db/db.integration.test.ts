@@ -106,6 +106,7 @@ describe.skipIf(!URL_BASE)("PostgreSQL réel", () => {
         "20261017000100_ajout_seul_et_contraintes",
         "20261017000200_modules_metier",
         "20261017000300_modules_metier_garanties",
+        "20261017000400_colis_caisse_supervision_garanties",
       ]);
       expect(rows.every((r) => r.finished_at !== null)).toBe(true);
     });

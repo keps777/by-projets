@@ -175,11 +175,13 @@ enum ObjetDefi {
  */
 
 model Compagnie {
-  id    String  @id @default(uuid(7)) @db.Uuid
+  id                   String  @id @default(uuid(7)) @db.Uuid
   /// Code agence de 3 lettres utilisé dans les numéros (ALP, BEX…).
-  code  String  @unique
-  nom   String
-  actif Boolean @default(true)
+  code                 String  @unique
+  nom                  String
+  actif                Boolean @default(true)
+  /// Tolérance d'écart de caisse (FCFA) réglée par le patron ; null = la règle par défaut (1 000 F).
+  toleranceEcartCaisse Int?
 
   gares     Gare[]
   lignes    Ligne[]
@@ -195,6 +197,7 @@ model Compagnie {
   plagesAttribuees   PlageAttribuee[]
   modulesExceptions  ModuleException[]
   demandesAnnulation DemandeAnnulation[]
+  alertesPatron      AlertePatron[]
 
   @@map("compagnie")
 }
@@ -222,6 +225,7 @@ model Gare {
   plagesAttribuees   PlageAttribuee[]
   modulesExceptions  ModuleException[]
   demandesAnnulation DemandeAnnulation[]
+  alertesPatron      AlertePatron[]
 
   @@unique([compagnieId, code])
   @@map("gare")
@@ -434,6 +438,8 @@ model SessionCaisse {
   valideeA     DateTime?   @db.Timestamptz(3)
   valideeParId String?     @db.Uuid
   etat         EtatSession
+  /// ABANDONNÉE : l'historique d'une session est le journal signé de l'agence (`journal_agence`) et la
+  /// colonne `refus`. Elle reste (migrations additives) et vaut toujours `[]`.
   historique   Json        @default("[]")
 
   /// Rang du guichet à l'ouverture (copie de `guichet.rang`, tel qu'écrit dans le numéro K-…).
@@ -446,10 +452,13 @@ model SessionCaisse {
   reouverteA           DateTime? @db.Timestamptz(3)
   /// {coupures, pieces, total}
   comptage             Json?
-  /// {at, auto, cashCompte, cashAttendu, ecart, divergenceAppareil, comptageAbsent, decompte, evenementId}.
-  /// Les colonnes `clotureeA`, `cashCompte`, `cashAttendu`, `ecart` et `clotureeAuto` en gardent une copie interrogeable.
+  /// FAIT FOI pour la clôture : {at, auto, cashCompte, cashAttendu, ecart, divergenceAppareil, comptageAbsent,
+  /// decompte, evenementId}. Les colonnes `clotureeA`, `cashCompte`, `cashAttendu`, `ecart` et `clotureeAuto`
+  /// en sont la copie interrogeable : l'adaptateur les écrit dans la même instruction et le CHECK
+  /// `session_cloture_copie` refuse qu'elles divergent.
   cloture              Json?
-  /// {at, superviseurId, superviseurNom, ecart, commentaire, evenementId}
+  /// FAIT FOI pour la validation : {at, superviseurId, superviseurNom, ecart, commentaire, evenementId}.
+  /// `valideeA` et `valideeParId` en sont la copie interrogeable (CHECK `session_validation_copie`).
   validation           Json?
   /// Clôtures refusées avant la clôture actuelle.
   refus                Json      @default("[]")
@@ -1101,6 +1110,28 @@ model JournalAgence {
   @@index([compagnieId, at])
   @@index([cibleType, cibleId])
   @@map("journal_agence")
+}
+
+/// Alerte adressée au patron (clôture automatique, PIN bloqué, compte désactivé, écart hors tolérance).
+/// Distincte de `alerte_sync`, qui est nominative et liée aux appareils.
+model AlertePatron {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  /// SQL : cloture_automatique | pin_bloque | compte_desactive | ecart_hors_tolerance
+  type        String
+  compagnieId String?  @db.Uuid
+  gareId      String?  @db.Uuid
+  /// Une phrase lisible par le patron.
+  message     String
+  /// Qui est concerné (jamais de secret).
+  details     Json     @default("{}")
+  creeA       DateTime @db.Timestamptz(3)
+
+  compagnie Compagnie? @relation(fields: [compagnieId], references: [id])
+  gare      Gare?      @relation(fields: [gareId], references: [id])
+
+  @@index([compagnieId, creeA])
+  @@index([gareId, creeA])
+  @@map("alerte_patron")
 }
 
 /// Idempotence des écritures de la caisse et de la supervision : `commencer` est un INSERT … ON

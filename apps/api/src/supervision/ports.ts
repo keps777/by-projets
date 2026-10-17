@@ -3,8 +3,8 @@ import type { EtatBillet } from "../caisse/regles";
 /**
  * Ports de persistance et de lecture de la supervision. La logique (demandes, décisions, validation,
  * équipe, PIN) ne parle qu'à ces classes abstraites ; `memoire.ts` en fournit des versions en mémoire
- * pour les tests. Les versions PostgreSQL ne sont pas écrites (tables hors du périmètre : voir le
- * README du dossier).
+ * pour les tests. Les versions PostgreSQL sont dans `postgres.ts` ; les deux passent la même suite de
+ * contrat (`testing/contrat-ports.ts`).
  */
 
 export type ModePaiement = "cash" | "momo" | "orange_money";
@@ -74,10 +74,13 @@ export interface DemandeAnnulationStockee {
 
 export abstract class DemandesAnnulation {
   abstract readonly durable: boolean;
-  /** `deja_en_attente` : le billet a déjà une demande en attente ; `identifiant_pris` : l'UUID existe. */
+  /**
+   * `deja_en_attente` : le billet a déjà une demande en attente ; `identifiant_pris` : l'UUID existe ;
+   * `identifiant_invalide` : un identifiant n'est pas de la forme que le stockage accepte (UUID en base).
+   */
   abstract creer(
     demande: DemandeAnnulationStockee,
-  ): Promise<"ok" | "deja_en_attente" | "identifiant_pris">;
+  ): Promise<"ok" | "deja_en_attente" | "identifiant_pris" | "identifiant_invalide">;
   abstract trouver(demandeId: string): Promise<DemandeAnnulationStockee | null>;
   abstract enAttenteDuBillet(billetId: string): Promise<DemandeAnnulationStockee | null>;
   abstract enAttenteDeGare(gareId: string): Promise<DemandeAnnulationStockee[]>;

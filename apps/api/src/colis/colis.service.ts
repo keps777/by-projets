@@ -390,7 +390,12 @@ export class ColisService {
     try {
       let sequence: number;
       try {
-        sequence = await this.numerotation.prochainEnLigne(depart.gareOrigine.id, jour);
+        sequence = await this.numerotation.prochainEnLigne({
+          gareId: depart.gareOrigine.id,
+          compagnieId: depart.compagnieId,
+          at: maintenant,
+          reference: id,
+        });
       } catch (e) {
         if (e instanceof RangeError) {
           throw new ErreurColis(503, "plage_epuisee", "Plus de numéro disponible aujourd'hui");

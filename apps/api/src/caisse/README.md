@@ -5,7 +5,8 @@ Backend de la caisse du guichet : ouverture, comptage, clôture, clôture automa
 (`../supervision`) s'appuie sur celui-ci.
 
 Module Nest autonome : `CaisseModule` (importe `JournalAgenceModule`). Il est branché dans
-`AppModule` ; il reste les adaptateurs PostgreSQL (`apps/api/INTEGRATION.md`).
+`AppModule` ; ses ports ont une version mémoire et une version PostgreSQL (`postgres.ts`,
+`journal/postgres.ts`), choisies par `API_STOCKAGE` (`apps/api/INTEGRATION.md`).
 
 ## Routes et contrat
 
@@ -48,25 +49,47 @@ précédente + "\n" + JSON canonique de l'entrée)`. La clé est dérivée de `c
 pagine du plus récent au plus ancien (curseur `apres` = numéro d'ordre). Le superviseur ne lit que sa
 gare, le patron sa compagnie. Aucun PIN, code, mot de passe ou haché n'y entre (testé).
 
-## Ports (classes abstraites) et adaptateurs en mémoire
+## Ports (classes abstraites) et adaptateurs
 
-Tous exposent `durable`. **Sans adaptateur PostgreSQL, le module refuse de démarrer en production**
-(`exigerStockageDurable`, même principe que `SyncModule`).
+Tous exposent `durable`. **Avec un port en mémoire, le module refuse de démarrer en production**
+(`exigerStockageDurable`, même principe que `SyncModule`) ; avec `API_STOCKAGE=postgres` (ou
+`NODE_ENV=production` sans réglage) les adaptateurs PostgreSQL sont choisis.
 
-| Port                      | Rôle                                                                                 | Version mémoire            |
-| ------------------------- | ------------------------------------------------------------------------------------ | -------------------------- |
-| `SessionsCaisse`          | sessions : `creer` atomique, `transiter` compare-et-échange, lectures                | `SessionsMemoire`          |
-| `MouvementsCaisse`        | décompte (billets cash, colis cash, MoMo, annulations) + annulation                  | `MouvementsMemoire`        |
-| `GuichetsAgence`          | guichet → rang, gare, code de gare, compagnie                                        | `GuichetsMemoire`          |
-| `ReglesAgence`            | tolérance d'écart par compagnie                                                      | `ReglesMemoire`            |
-| `AlertesPatron`           | alertes au patron (clôture auto, PIN bloqué, compte désactivé, écart hors tolérance) | `AlertesPatronMemoire`     |
-| `JournalAgenceRepository` | journal en ajout seul, chaîne par compagnie                                          | `JournalAgenceMemoire`     |
-| `EvenementsTraites`       | idempotence : `commencer` / `terminer` / `abandonner`                                | `EvenementsTraitesMemoire` |
+| Port                      | Rôle                                                                                 | Mémoire                    | PostgreSQL                |
+| ------------------------- | ------------------------------------------------------------------------------------ | -------------------------- | ------------------------- |
+| `SessionsCaisse`          | sessions : `creer` atomique, `transiter` compare-et-échange, lectures                | `SessionsMemoire`          | `SessionsCaissePrisma`    |
+| `MouvementsCaisse`        | décompte (billets cash, colis cash, MoMo, annulations) + annulation                  | `MouvementsMemoire`        | `MouvementsCaissePrisma`  |
+| `GuichetsAgence`          | guichet → rang, gare, code de gare, compagnie                                        | `GuichetsMemoire`          | `GuichetsAgencePrisma`    |
+| `ReglesAgence`            | tolérance d'écart par compagnie                                                      | `ReglesMemoire`            | `ReglesAgencePrisma`      |
+| `AlertesPatron`           | alertes au patron (clôture auto, PIN bloqué, compte désactivé, écart hors tolérance) | `AlertesPatronMemoire`     | `AlertesPatronPrisma`     |
+| `JournalAgenceRepository` | journal en ajout seul, chaîne par compagnie                                          | `JournalAgenceMemoire`     | `JournalAgencePrisma`     |
+| `EvenementsTraites`       | idempotence : `commencer` / `terminer` / `abandonner`                                | `EvenementsTraitesMemoire` | `EvenementsTraitesPrisma` |
 
-## Tables PostgreSQL attendues (à créer par le coordinateur)
+## Tables PostgreSQL
 
-`prisma/schema.prisma` n'est pas touché par ce ticket. Une table existante peut être reprise si
-elle a les mêmes colonnes ; les noms ci-dessous sont indicatifs.
+Les tables sont créées (schéma Prisma et migrations `…000200`, `…000300`, `…000400`). Ce qui est
+décidé, et ce que la base garantit :
+
+- **`session_caisse`** : une caisse ouverte par agent et par guichet (index uniques partiels, ce qui
+  rend `creer` atomique) ; `transiter` est un `UPDATE … WHERE id AND etat`. Les colonnes en double sont
+  tranchées : le JSON `cloture` et le JSON `validation` **font foi**, les colonnes `clotureeA`,
+  `cashCompte`, `cashAttendu`, `ecart`, `clotureeAuto`, `valideeA`, `valideeParId` en sont une copie
+  interrogeable écrite dans la même instruction (les `CHECK` `session_cloture_copie` et
+  `session_validation_copie` refusent toute divergence), et `historique` est abandonnée (`[]`).
+- **`annulation_caisse`** : une ligne par demande (idempotence), ajout seul. Le décompte du serveur
+  (`MouvementsCaissePrisma.decompte`) est calculé depuis `billet` (cash seulement ; un billet sans
+  paiement connu compte comme mobile money), `colis` et `annulation_caisse`.
+- **`journal_agence`** : ajout seul, chaîne par compagnie ; `ajouter` prend le verrou consultatif
+  `7_017_164`, lit la tête et insère (l'index unique `(chaine, precedente)` est le filet). L'identifiant
+  d'événement est mis en minuscules et l'instant écrit à l'heure de Douala avant la signature, pour
+  qu'une relecture recalcule la même empreinte.
+- **`evenement_agence_traite`** : idempotence (`INSERT … ON CONFLICT DO NOTHING`) ; une réservation
+  « en cours » abandonnée depuis plus de cinq minutes est reprise.
+- **`alerte_patron`** (nouvelle) et **`compagnie.toleranceEcartCaisse`** (nouvelle, 1 000 F si absente).
+- Des identifiants qui ne sont pas des UUID sont refusés (`identifiant_invalide`, HTTP 422
+  `IDENTIFIANT_INVALIDE`) ; les tests en mémoire gardent des identifiants de texte.
+
+Description d'origine des colonnes, gardée comme référence de leur sens (noms indicatifs) :
 
 - **`session_caisse`** : `id` PK, `numero` UNIQUE, `guichet_id`, `guichet_rang`, `gare_id`,
   `compagnie_id`, `agent_id`, `fond_de_caisse` int, `tolerance` int, `ouverte_a` timestamptz,
@@ -105,11 +128,17 @@ id=? AND etat=?`.
 ## À brancher par le coordinateur
 
 1. Fait : `CaisseModule` et `SupervisionModule` sont dans `AppModule`.
-2. Fournir les adaptateurs PostgreSQL des ports ci-dessus (`{ provide: SessionsCaisse, useClass: … }`),
-   `durable = true`.
-3. Les ventes et colis cash doivent alimenter `MouvementsCaisse.decompte`.
+2. Fait : les adaptateurs PostgreSQL des ports ci-dessus (`durable = true`), choisis par fabrique.
+3. Fait côté lecture : `MouvementsCaisse.decompte` lit les ventes cash et les colis cash dans `billet`
+   et `colis`. Les ventes de la billetterie y apparaîtront dès qu'elle écrit dans PostgreSQL.
 
 ## Tests
 
 `caisse.e2e.test.ts` (API complète en mémoire), `parite.test.ts`, `unitaires.test.ts`. Le harnais
 `testing/app-agence-test.ts` monte `AppModule` + `CaisseModule` avec les comptes du socle en mémoire.
+
+Sur PostgreSQL (ignorés sans `DATABASE_URL_TEST`) : `postgres.integration.test.ts` passe la suite de
+contrat `testing/contrat-ports.ts` sur la mémoire et sur PostgreSQL, vérifie ce que seule la base garantit
+(caisse unique, chaîne falsifiée détectée, journal en ajout seul) et l'API de bout en bout ;
+`migration-caisse.integration.test.ts` rejoue la reprise de sessions écrites dans l'ancien format. Le
+harnais `testing/app-agence-pg.ts` monte l'application sur PostgreSQL.

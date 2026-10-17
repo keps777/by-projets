@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { HttpException, Injectable, Logger } from "@nestjs/common";
 import type { Utilisateur } from "../socle/auth/decorateurs";
 import { PersonnesRepository } from "../socle/comptes/personnes.repository";
 import { Horloge } from "../socle/horloge";
@@ -106,7 +106,7 @@ export class CaisseService {
         agentId: u.id,
         fondDeCaisse: d.fondDeCaisse,
         tolerance: await this.regles.tolerance(guichet.compagnieId),
-        ouverteA: e.at,
+        ouverteA: versIsoDouala(e.at),
         reouverteA: null,
         etat: "ouverte",
         comptage: null,
@@ -129,6 +129,8 @@ export class CaisseService {
           });
         } else if (resultat === "guichet_occupe") {
           throw conflit("GUICHET_OCCUPE", "La caisse de ce guichet est déjà ouverte");
+        } else if (resultat === "identifiant_invalide") {
+          throw invalide("IDENTIFIANT_INVALIDE", "L'identifiant de session doit être un UUID");
         } else if (resultat === "numero_pris") {
           throw conflit("NUMERO_SESSION_PRIS", "Ce numéro de session existe déjà");
         } else {
@@ -257,6 +259,8 @@ export class CaisseService {
       try {
         nombre += (await this.cloturerAutomatiquement(session, reference)) ? 1 : 0;
       } catch (err) {
+        // Une autre instance de l'API est en train de la fermer : rien à faire.
+        if (err instanceof HttpException && err.getStatus() === 425) continue;
         // Une session en défaut ne doit pas empêcher les autres de se fermer.
         this.logger.error(
           `Clôture automatique de la session ${session.id} impossible : ${err instanceof Error ? err.message : String(err)}`,

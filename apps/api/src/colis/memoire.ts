@@ -31,7 +31,7 @@ import {
   type Volatil,
 } from "./ports";
 import { PLAGE_EN_LIGNE } from "./regles";
-import { enMs } from "./temps";
+import { aammjjDouala, enMs } from "./temps";
 
 /**
  * Implémentations en mémoire des ports : tests, développement, démonstration. Rien n'y survit à un
@@ -67,7 +67,18 @@ export class ColisMemoire extends ColisRepository implements Volatil {
   async remplacer(colis: ColisStocke, versionAttendue: number) {
     const actuel = this.lignes.get(colis.id);
     if (!actuel || actuel.version !== versionAttendue) return false;
-    this.lignes.set(colis.id, copie({ ...colis, version: versionAttendue + 1 }));
+    // Ce qui identifie le colis ne change jamais (comme en base, où `remplacer` n'y touche pas).
+    this.lignes.set(
+      colis.id,
+      copie({
+        ...colis,
+        numero: actuel.numero,
+        sequence: actuel.sequence,
+        jour: actuel.jour,
+        creeA: actuel.creeA,
+        version: versionAttendue + 1,
+      }),
+    );
     return true;
   }
 
@@ -198,9 +209,19 @@ export class ReclamationsMemoire extends ReclamationsRepository implements Volat
 export class NumerotationMemoire extends NumerotationColis implements Volatil {
   readonly durable = false as const;
   private readonly compteurs = new Map<string, number>();
+  private readonly parReference = new Map<string, number>();
 
-  async prochainEnLigne(gareId: string, jour: string) {
-    const cle = `${gareId}:${jour}`;
+  async prochainEnLigne(demande: {
+    gareId: string;
+    compagnieId: string | null;
+    at: string;
+    reference: string;
+  }) {
+    const jour = aammjjDouala(demande.at);
+    const cleReference = `${demande.gareId}:${jour}:${demande.reference}`;
+    const deja = this.parReference.get(cleReference);
+    if (deja !== undefined) return deja;
+    const cle = `${demande.gareId}:${jour}`;
     const prochain = (this.compteurs.get(cle) ?? PLAGE_EN_LIGNE.debut - 1) + 1;
     if (prochain > PLAGE_EN_LIGNE.fin) {
       throw new RangeError(
@@ -208,6 +229,7 @@ export class NumerotationMemoire extends NumerotationColis implements Volatil {
       );
     }
     this.compteurs.set(cle, prochain);
+    this.parReference.set(cleReference, prochain);
     return prochain;
   }
 }

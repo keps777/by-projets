@@ -3,7 +3,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import { PersonnesRepository } from "../../socle/comptes/personnes.repository";
 import { CONFIG, type AppConfig } from "../../socle/config/config";
 import { Horloge } from "../../socle/horloge";
-import { jourDouala } from "../temps";
+import { jourDouala, versIsoDouala } from "../temps";
 import {
   JournalAgenceRepository,
   type EntreeJournalStockee,
@@ -136,16 +136,20 @@ export class JournalSigneService {
 
   async ecrire(e: EcritureJournal): Promise<EntreeJournalStockee | null> {
     const auteur = await this.auteur(e.auteurId);
+    // Ce qui est signé doit être ce que la base relira : un UUID n'a pas de casse (PostgreSQL le rend
+    // en minuscules) et l'heure est écrite d'une seule façon (millisecondes comprises).
+    const evenementId = e.evenement.id.toLowerCase();
+    const at = versIsoDouala(e.evenement.at);
     return this.repo.ajouter(
       JournalSigneService.chaineDe(e.compagnieId),
-      e.evenement.id,
+      evenementId,
       (precedente) => {
         const sansEmpreinte = {
           gareId: e.gareId,
           compagnieId: e.compagnieId,
-          evenementId: e.evenement.id,
+          evenementId,
           type: e.evenement.type,
-          at: e.evenement.at,
+          at,
           auteur,
           appareilId: e.evenement.appareilId,
           cible: e.evenement.cible,

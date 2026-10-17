@@ -8,6 +8,8 @@ import {
   type OnModuleInit,
 } from "@nestjs/common";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { CaisseController } from "./caisse.controller";
 import { CaisseService } from "./caisse.service";
@@ -19,6 +21,13 @@ import {
   ReglesMemoire,
   SessionsMemoire,
 } from "./memoire";
+import {
+  AlertesPatronPrisma,
+  GuichetsAgencePrisma,
+  MouvementsCaissePrisma,
+  ReglesAgencePrisma,
+  SessionsCaissePrisma,
+} from "./postgres";
 import {
   AlertesPatron,
   GuichetsAgence,
@@ -90,8 +99,8 @@ export class VerificationStockageCaisse implements OnModuleInit {
  * Sessions de caisse (AM-164) : ouverture, comptage, clôture, clôture automatique de minuit, calcul du
  * cash attendu et de l'écart, journal signé.
  *
- * À importer dans `AppModule` (périmètre du socle). Les ports sont remplaçables : les adaptateurs
- * PostgreSQL remplacent les versions en mémoire (tables dans le README du dossier).
+ * Dans `AppModule`. Les ports ont une version PostgreSQL (`postgres.ts`) et une version en mémoire,
+ * choisies par `API_STOCKAGE` (voir `socle/db/stockage.ts`).
  */
 @Module({
   imports: [JournalAgenceModule],
@@ -101,11 +110,39 @@ export class VerificationStockageCaisse implements OnModuleInit {
     PlanificateurClotureAuto,
     VerificationStockageCaisse,
     { provide: Horloge, useClass: HorlogeSysteme },
-    { provide: SessionsCaisse, useClass: SessionsMemoire },
-    { provide: MouvementsCaisse, useClass: MouvementsMemoire },
-    { provide: GuichetsAgence, useClass: GuichetsMemoire },
-    { provide: ReglesAgence, useClass: ReglesMemoire },
-    { provide: AlertesPatron, useClass: AlertesPatronMemoire },
+    // PostgreSQL en production (ou avec API_STOCKAGE=postgres), mémoire ailleurs : voir socle/db/stockage.ts.
+    {
+      provide: SessionsCaisse,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new SessionsCaissePrisma(prisma) : new SessionsMemoire(),
+    },
+    {
+      provide: MouvementsCaisse,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new MouvementsCaissePrisma(prisma) : new MouvementsMemoire(),
+    },
+    {
+      provide: GuichetsAgence,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new GuichetsAgencePrisma(prisma) : new GuichetsMemoire(),
+    },
+    {
+      provide: ReglesAgence,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new ReglesAgencePrisma(prisma) : new ReglesMemoire(),
+    },
+    {
+      provide: AlertesPatron,
+      inject: [CONFIG, PrismaService, Horloge],
+      useFactory: (config: AppConfig, prisma: PrismaService, horloge: Horloge) =>
+        stockageSurPostgres(config)
+          ? new AlertesPatronPrisma(prisma, horloge)
+          : new AlertesPatronMemoire(),
+    },
   ],
   exports: [
     CaisseService,

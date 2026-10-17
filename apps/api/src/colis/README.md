@@ -5,17 +5,22 @@ chaîne (chargement, route, arrivée, remise), code de retrait, photos, assuranc
 réclamations et indemnisation.
 
 Le module est autonome : tous ses accès extérieurs sont des **ports** (classes abstraites, `ports.ts`) avec une
-version **en mémoire** par défaut (`memoire.ts`). Il est branché dans `AppModule` ; les tables existent dans
-`prisma/schema.prisma` mais les adaptateurs PostgreSQL ne sont pas écrits (voir `apps/api/INTEGRATION.md`).
+version **en mémoire** (`memoire.ts`) et une version **PostgreSQL** (`postgres.ts`, Prisma). Il est branché
+dans `AppModule` ; `API_STOCKAGE` choisit l'une ou l'autre (voir `apps/api/INTEGRATION.md`).
 
 ## Brancher le module
 
 1. Fait : `ColisModule` est dans les `imports` de `AppModule`.
-2. Remplacer les ports en mémoire par des adaptateurs réels, par exemple
-   `{ provide: ColisRepository, useClass: ColisPrisma }`. En production, `VerificationPortsColis` **refuse de
-   démarrer** tant qu'un port est en mémoire ou simulé (`durable === false`).
-3. Ajouter les tables ci-dessous au schéma Prisma, puis les adaptateurs.
+2. Fait : les adaptateurs PostgreSQL `ColisPrisma`, `PhotosColisPrisma`, `ReclamationsColisPrisma` et
+   `NumerotationColisServeur` sont choisis par `ColisModule` quand `stockageSurPostgres(config)` est vrai.
+   En production, `VerificationPortsColis` **refuse de démarrer** tant qu'un port est en mémoire ou simulé
+   (`durable === false`) : restent en mémoire `FichiersPhotos`, les paiements, l'assureur, l'analyse de
+   photo, la diffusion du suivi et le référentiel (départs, gares, guichets).
+3. Fait : les tables sont dans `prisma/schema.prisma` et les migrations (voir la section suivante).
 4. Brancher la diffusion du suivi en direct sur le futur WebSocket (voir « Reste à faire »).
+
+Les tests passent la même suite de contrat sur la mémoire et sur PostgreSQL
+(`testing/contrat-ports.ts`, `postgres.integration.test.ts`, ignoré sans `DATABASE_URL_TEST`).
 
 Le SMS passe par `SmsGateway` du socle (`NotificationsColisSms`). WhatsApp n'a pas de fournisseur : un envoi
 demandé par WhatsApp part par SMS et l'accusé le dit.
@@ -81,7 +86,14 @@ Corps d'erreur : `{ code, message, details? }`. Codes en minuscules côté voyag
 - **Tâches de fond** (`TachesColis`, toutes les 15 minutes hors tests) : `purgerPhotos`, `marquerNonRetires`,
   `rejouerAssurances`, `renvoyerCodes`.
 
-## Tables PostgreSQL attendues
+## Tables PostgreSQL
+
+Les tables sont créées : `colis`, `photo_colis`, `reclamation_colis` (migrations « modules_metier »,
+« modules_metier_garanties » et « colis_caisse_supervision_garanties »). Les colonnes du schéma Prisma sont
+en camelCase (`codeEssais`, `gareOrigineId`…) ; le tableau ci-dessous garde la description d'origine, en
+snake_case, comme référence de leur sens. Garanties : le numéro est unique, l'écriture d'un colis est un
+`UPDATE … WHERE id AND version` (perdant : relit et recommence), et la base refuse un colis à trois essais
+sans blocage ou à plus de trois essais.
 
 Les montants sont des entiers en FCFA. Les instants sont des `timestamptz`. Les téléphones et le contenu sont
 chiffrés par `ChiffrementService` comme dans le reste de l'API.
@@ -133,8 +145,10 @@ null. Une référence de photo n'appartient qu'à un colis (la première liaison
 `refusee`), `decision` (jsonb : `a`, `par`, `motif`, `indemnisation { type, montant, dossierAssureur }`).
 `remplacer(reclamation, statutAttendu)` doit être une mise à jour conditionnelle sur le statut.
 
-**`compteur_colis_en_ligne`** : `(gare_id, jour)` → dernier numéro pris, dans la plage 4001–9999
-(`prochainEnLigne` incrémente de façon atomique). Au guichet, le numéro vient de l'appareil.
+**Compteur des colis en ligne** : pas de table `compteur_colis_en_ligne`. Le registre `numero_vu` de la
+numérotation (genre `colis`) donne le plus petit numéro libre de la plage 4001–9999 pour la gare et le
+jour ; `prochainEnLigne` est idempotent par référence (`NumerotationColisServeur`). Au guichet, le numéro
+vient de l'appareil.
 
 Autres ports sans table : `FichiersPhotos` (stockage objet), `AnalysePhotoColis` (estimation du poids et de la
 taille), `PaiementsColis` (opérateurs mobiles, clé d'idempotence), `AssureurPartenaire`, `ReferentielColis`
@@ -154,7 +168,7 @@ taille), `PaiementsColis` (opérateurs mobiles, clé d'idempotence), `AssureurPa
 
 ## Reste à faire
 
-- Adaptateurs PostgreSQL, stockage de fichiers, opérateurs de paiement, assureur, analyse de photo réels.
+- Stockage de fichiers, référentiel PostgreSQL (départs, gares, guichets), opérateurs de paiement, assureur, analyse de photo réels.
 - Passerelle WebSocket du suivi en direct (`DiffusionSuivi` est prête ; `suivreEnDirect` contrôle l'accès).
 - Routes des points relais et des livreurs (AM-148) : elles appellent `ColisService.executer` avec leur rôle.
 - Inter-agences (`SchemaColisPartenaire` est déjà la vue partagée).
