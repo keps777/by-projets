@@ -1,0 +1,1 @@
+export { EcranFinancement } from "./EcranFinancement";
