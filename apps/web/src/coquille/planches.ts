@@ -143,7 +143,7 @@ export const EXEMPLES_PARAMS: Record<string, string> = {
   appareilId: "appareil-gu3-dla",
   exportId: "exp-2026-12",
   ligneId: "ligne-alp-dlabaf",
-  busId: "lt-207-ab",
+  busId: "bus-lt207ab",
   dossierId: "AV-2027-0041",
   conventionId: "conv-oc-0001",
   gareId: "gare-alp-dla",

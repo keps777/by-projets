@@ -172,7 +172,7 @@
       "route": "/analyses/ligne/ligne-alp-dlabaf"
     },
     "AnalysesBus": {
-      "route": "/analyses/bus/lt-207-ab"
+      "route": "/analyses/bus/bus-lt207ab"
     },
     "ConfigLigne": {
       "route": "/reglages/ligne/ligne-alp-dlabaf"
