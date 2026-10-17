@@ -1,0 +1,1 @@
+export { EcranArret } from "./EcranArret";
