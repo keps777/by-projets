@@ -90,6 +90,8 @@ export interface ClotureVue {
   verrouille: boolean;
   envoi: { destinataire: string; recuA: string | null; fichiers: FichierClotureVue[] };
   apercuJournal: string[];
+  /** Transactions sans correspondance dont une décision a été appliquée (« Les 4 … sont traitées »). */
+  transactionsTraitees: number;
 }
 
 const somme = (valeurs: readonly number[]): number => valeurs.reduce((s, v) => s + v, 0);
@@ -242,6 +244,7 @@ export function vueClotureOuverte(d: DonneesMois, lignes: readonly TransactionFi
       })),
     },
     apercuJournal: apercuDuJournal(d),
+    transactionsTraitees: lignes.filter((l) => l.decision !== null).length,
   };
 }
 
@@ -271,5 +274,6 @@ export function vueClotureFermee(c: Cloture): ClotureVue {
       })),
     },
     apercuJournal: c.apercuJournal,
+    transactionsTraitees: c.lignes.filter((l) => l.decision !== null).length,
   };
 }

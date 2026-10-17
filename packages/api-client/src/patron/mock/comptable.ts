@@ -7,6 +7,7 @@ import {
   OP_CLOTURE,
   OP_CLOTURER,
   OP_COMPTABLE,
+  OP_FICHIER_EXPORT,
   OP_RAPPROCHEMENT,
 } from "../operations";
 import { conflit, creerJournal, introuvable, lireCommande } from "./contexte";
@@ -127,6 +128,35 @@ function apercu(src: SourceFixtures, exportId: c.IdExport): c.ApercuExport {
   };
 }
 
+/** Une cellule de CSV : entre guillemets dès qu'elle contient le séparateur, un guillemet ou un saut de ligne. */
+function celluleCsv(valeur: string | number | null): string {
+  if (valeur === null) return "";
+  const texte = String(valeur);
+  return /[;"\r\n]/.test(texte) ? `"${texte.replace(/"/g, '""')}"` : texte;
+}
+
+/**
+ * Le fichier d'un export dans le mock : le tableau de l'aperçu en CSV (la démonstration n'a pas de vrai tableur).
+ * Le vrai serveur remet l'XLSX, le CSV ou le PDF de l'export.
+ */
+function fichier(src: SourceFixtures, exportId: c.IdExport): c.FichierExport {
+  const a = apercu(src, exportId);
+  const { colonnes, lignes } = a.tableau;
+  const csv = [colonnes, ...lignes].map((l) => l.map(celluleCsv).join(";")).join("\r\n") + "\r\n";
+  const nom = a.export.nom
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+  return {
+    nom: `${nom}.csv`,
+    typeMime: "text/csv; charset=utf-8",
+    empreinte: null,
+    octets: new TextEncoder().encode(csv),
+  };
+}
+
 const CAUSES: ReadonlyArray<readonly [RegExp, c.TransactionSansCorrespondance["cause"]]> = [
   [/payé 2 fois/, "doublon_paiement"],
   [/expiration/, "paiement_apres_expiration"],
@@ -210,6 +240,7 @@ function cloture(src: SourceFixtures, etat: EtatComptable): c.ClotureMois {
       }),
     },
     apercuJournal: [...d.apercu.lignes],
+    transactionsTraitees: lignesRapprochement(src, etat).filter((l) => l.decision !== null).length,
   };
 }
 
@@ -233,9 +264,18 @@ export function mockComptable(src: SourceFixtures): ContributionMock {
         verifierMois(mois);
         return synthese(src, etat);
       }),
-      implementer(OP_APERCU_EXPORT, ({ exportId, mois }) => {
+      implementer(OP_APERCU_EXPORT, ({ exportId, mois, onglet }) => {
         verifierMois(mois);
-        return apercu(src, exportId);
+        const vue = apercu(src, exportId);
+        // Un seul tableau dans la démonstration : tout onglet connu montre le même, un autre n'existe pas.
+        if (onglet !== undefined && !vue.onglets.some((o) => o.id === onglet)) {
+          throw introuvable("Onglet", "ONGLET_INCONNU", onglet);
+        }
+        return vue;
+      }),
+      implementer(OP_FICHIER_EXPORT, ({ exportId, mois }) => {
+        verifierMois(mois);
+        return fichier(src, exportId);
       }),
       implementer(OP_RAPPROCHEMENT, ({ mois }) => {
         verifierMois(mois);

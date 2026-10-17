@@ -160,8 +160,18 @@ export const OP_APERCU_EXPORT = definirOperation<c.ParamsApercuExport, c.ApercuE
   nom: "patron.comptable.apercu",
   methode: "GET",
   chemin: (p) => `/patron/comptable/exports/${id(p.exportId)}/apercu`,
-  requete: (p) => ({ mois: p.mois }),
+  requete: (p) => ({ mois: p.mois, onglet: p.onglet }),
   reponse: c.ApercuExportSchema,
+});
+
+/** Le vrai fichier d'un export (XLSX, CSV ou PDF), pour « Télécharger ». */
+export const OP_FICHIER_EXPORT = definirOperation<c.ParamsFichierExport, c.FichierExport>({
+  nom: "patron.comptable.fichier",
+  methode: "GET",
+  chemin: (p) => `/patron/comptable/exports/${id(p.exportId)}/fichier`,
+  requete: (p) => ({ mois: p.mois }),
+  reponse: c.FichierExportSchema,
+  lecture: "binaire",
 });
 
 export const OP_RAPPROCHEMENT = definirOperation<c.ParamsMois, c.RapprochementMomo>({

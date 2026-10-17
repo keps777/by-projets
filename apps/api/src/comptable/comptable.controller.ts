@@ -59,8 +59,8 @@ export class ComptableController {
   @ApiOperation({
     summary: "Aperçu d'un export : les 10 premières lignes d'un onglet, le total, la signature",
     description:
-      "`patron.comptable.apercu` → `ApercuExport`. `onglet` (hors contrat) choisit l'onglet ; " +
-      "par défaut le premier.",
+      "`patron.comptable.apercu` → `ApercuExport`. `onglet` choisit l'onglet (un `id` de `onglets`) ; " +
+      "par défaut le premier ; 404 `ONGLET_INCONNU` sinon.",
   })
   @ApiQuery({ name: "mois", required: false })
   @ApiQuery({ name: "onglet", required: false })
@@ -83,7 +83,7 @@ export class ComptableController {
   @ApiOperation({
     summary: "Télécharger le fichier d'un export (XLSX, CSV ou PDF)",
     description:
-      "Hors contrat : aucune opération de téléchargement n'existe dans `@afrimove/api-client`. " +
+      '`patron.comptable.fichier` → `FichierExport` (les octets de la réponse, `lecture: "binaire"`). ' +
       "Mois clôturé : le fichier figé à la clôture. Mois ouvert : le fichier de l'aperçu s'il date de moins " +
       "de 10 minutes, sinon un fichier neuf. L'empreinte est dans l'en-tête `X-Empreinte-AfriMove`.",
   })

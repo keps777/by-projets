@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup } from "@testing-library/react";
+import { act, cleanup, renderHook } from "@testing-library/react";
 import {
   ALPHA_AKWA,
   ALPHA_BAFOUSSAM,
@@ -22,6 +22,7 @@ import {
   useConversationAssistant,
   useDossierFinancement,
   useEquipe,
+  useFichierExport,
   useFichePersonne,
   useGare,
   useGares,
@@ -41,7 +42,7 @@ import {
 } from "./hooks";
 import { PLANCHES_PATRON } from "./installer";
 import { ID_CONVENTION_OMEGA } from "./mock/interAgences";
-import { lire, lireErreur } from "./mock/testing";
+import { clientPatron, enveloppe, lire, lireErreur } from "./mock/testing";
 
 afterEach(cleanup);
 
@@ -547,6 +548,39 @@ describe("ComptableApercu · /(patron)/comptable/apercu/[exportId]", () => {
     });
     expect(x.signe).toBe(true);
   });
+
+  it("useApercuExport(onglet) : un onglet connu répond, un inconnu est un 404 ONGLET_INCONNU", async () => {
+    const x = await lire("ComptableApercu", () =>
+      useApercuExport("journal_ventes", undefined, "par_jour"),
+    );
+    expect(x.onglets.map((o) => o.id)).toContain("par_jour");
+    const erreur = await lireErreur("ComptableApercu", () =>
+      useApercuExport("journal_ventes", undefined, "nexiste_pas"),
+    );
+    expect(erreur).toMatchObject({ statut: 404, code: "ONGLET_INCONNU" });
+  });
+
+  it("useFichierExport : remet un vrai fichier (nom, type, octets) qui contient les lignes de l'aperçu", async () => {
+    const client = clientPatron("ComptableApercu");
+    const { result } = renderHook(() => useFichierExport(), { wrapper: enveloppe(client) });
+    let fichier!: Awaited<ReturnType<typeof result.current.mutateAsync>>;
+    await act(async () => {
+      fichier = await result.current.mutateAsync({ exportId: "journal_ventes" });
+    });
+    expect(fichier.nom).toBe("journal-des-ventes-decembre.csv");
+    expect(fichier.typeMime).toContain("text/csv");
+    const texte = new TextDecoder().decode(fichier.octets);
+    const lignes = texte.trimEnd().split("\r\n");
+    expect(lignes).toHaveLength(11);
+    expect(lignes[0]).toBe("date;heure;ligne;dép.;siège;classe;prix;mode;guichet");
+    expect(lignes[1]).toBe("2026-12-01;05:52;DLA-YDE;06:00;12;CLASS.;5000;CASH;GU1 · JM");
+
+    const erreur = await result.current.mutateAsync({ exportId: "annulations" }).then(
+      () => null,
+      (e: unknown) => e,
+    );
+    expect(erreur).toMatchObject({ statut: 404 });
+  });
 });
 
 describe("ComptableCloture · /(patron)/comptable/cloture", () => {
@@ -570,6 +604,8 @@ describe("ComptableCloture · /(patron)/comptable/cloture", () => {
     expect(m.envoi.fichiers[0]!.tailleOctets).toBe(1_200_000);
     expect(m.envoi.fichiers[4]).toMatchObject({ pages: 2, tailleOctets: null });
     expect(m.apercuJournal).toHaveLength(4);
+    // Les quatre transactions sans correspondance sont traitées : le nombre vient de la clôture.
+    expect(m.transactionsTraitees).toBe(4);
   });
 });
 

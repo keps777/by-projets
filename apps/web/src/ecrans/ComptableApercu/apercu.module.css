@@ -397,3 +397,29 @@
   min-height: 54px;
   border-radius: var(--am-radius-14);
 }
+
+/* Le fichier n'est pas arrivé : une ligne au-dessus des boutons, en rouge comme les autres erreurs. */
+.erreurTelechargement {
+  margin: 0 0 var(--am-space-8);
+  font-size: var(--am-fs-13);
+  color: var(--am-rouge);
+  text-align: center;
+}
+
+/* Un onglet qu'on peut toucher : le bouton remplit la pastille, il garde son texte et ses couleurs. */
+.ongletBouton {
+  align-self: stretch;
+  margin: 0 calc(-1 * var(--am-space-10));
+  padding: 0 var(--am-space-10);
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.ongletBouton:focus-visible {
+  outline: 2px solid var(--am-craie);
+  outline-offset: 2px;
+  border-radius: var(--am-radius-pill);
+}

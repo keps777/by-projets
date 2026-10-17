@@ -61,13 +61,13 @@ Lectures : patron et comptable. Écritures : patron seul, signées par son PIN (
 | `GET /patron/comptable/cloture`                  | patron, comptable | `patron.comptable.cloture`                 |
 | `POST /patron/comptable/clotures`                | patron            | `patron.comptable.cloturer`                |
 
-Route **ajoutée**, absente des contrats (le point signalé par l'écran ComptableApercu) :
+Route **reprise dans les contrats** (opération `patron.comptable.fichier`, lecture « binaire » du client) :
 
 | Route                                             | Rôles             | Usage                                   |
 | ------------------------------------------------- | ----------------- | --------------------------------------- |
 | `GET /patron/comptable/exports/:exportId/fichier` | patron, comptable | télécharger les vrais octets du fichier |
 
-Paramètre **ajouté**, absent des contrats : `onglet` sur l'aperçu (`?onglet=par_jour`), pour afficher un autre
+Paramètre repris dans les contrats (`ParamsApercuExport.onglet`) : `onglet` sur l'aperçu (`?onglet=par_jour`), pour afficher un autre
 onglet du classeur ; par défaut, le premier. Le téléchargement rend le type MIME du format, le nom
 `journal-ventes-2026-12.xlsx`, l'empreinte dans `X-Empreinte-AfriMove` et `Content-Disposition: attachment`.
 
@@ -224,13 +224,12 @@ compte marchand. `compagnie_id`, `reference` (l'identifiant de la transaction ch
 
 ## Écarts avec les écrans (à reporter au coordinateur)
 
-- **ComptableApercu** : le contrat n'a pas d'opération de téléchargement du vrai fichier (l'écran génère un CSV
-  tronqué côté client) ni de paramètre d'onglet dans `ParamsApercuExport`. Ce module ajoute
-  `GET …/exports/:exportId/fichier` et `?onglet=`. Pour les utiliser, `packages/contrats` et
-  `packages/api-client` doivent ajouter une opération `patron.comptable.fichier` et le champ `onglet`.
-- **ComptableCloture** : le nombre de transactions traitées n'est pas dans `ClotureMois` ; l'écran ne peut pas
-  l'afficher. Le module le sait (`lignes` de la clôture) mais ne peut pas l'ajouter à la réponse sans changer
-  le contrat strict.
+- **ComptableApercu** : réglé. `packages/contrats` et `packages/api-client` portent `patron.comptable.fichier`
+  (`FichierExport` : octets, nom, type, empreinte) et `ParamsApercuExport.onglet` ; l'écran télécharge le vrai
+  fichier et ses onglets sont cliquables.
+- **ComptableCloture** : réglé. `ClotureMois.transactionsTraitees` (optionnel) donne le nombre de transactions
+  sans correspondance dont une décision est appliquée (clôture ouverte : `decision` non nulle ; clôture faite :
+  les lignes figées).
 
 ## Reste à faire
 

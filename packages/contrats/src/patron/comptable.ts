@@ -68,8 +68,42 @@ export type SyntheseComptable = z.infer<typeof SyntheseComptableSchema>;
 export const ParamsApercuExportSchema = z.strictObject({
   exportId: IdExportSchema,
   mois: MoisSchema.optional(),
+  /**
+   * Onglet du fichier à montrer (un `id` de `ApercuExport.onglets`) ; le premier par défaut. Un onglet inconnu
+   * répond 404 `ONGLET_INCONNU`.
+   */
+  onglet: z.string().min(1).optional(),
 });
 export type ParamsApercuExport = z.infer<typeof ParamsApercuExportSchema>;
+
+/* ----------------------------------------------------------------------- fichier d'un export */
+
+export const ParamsFichierExportSchema = z.strictObject({
+  exportId: IdExportSchema,
+  /** Mois comptable ; le mois en cours de clôture par défaut. */
+  mois: MoisSchema.optional(),
+});
+export type ParamsFichierExport = z.infer<typeof ParamsFichierExportSchema>;
+
+/**
+ * Le fichier d'un export (`GET /patron/comptable/exports/:exportId/fichier`), tel que le client le remet à
+ * l'écran : les octets de la réponse (XLSX, CSV ou PDF) et ce que l'API en dit dans ses en-têtes. Mois clôturé :
+ * le fichier figé à la clôture ; mois ouvert : celui de l'aperçu s'il date de moins de 10 minutes, sinon un neuf.
+ */
+export const FichierExportSchema = z.strictObject({
+  /** Nom du fichier (en-tête `Content-Disposition`). */
+  nom: z.string().min(1),
+  /** Type du contenu (en-tête `Content-Type`). */
+  typeMime: z.string().min(1),
+  /** Empreinte AfriMove du fichier (en-tête `X-Empreinte-AfriMove`) ; `null` si l'API n'en donne pas. */
+  empreinte: z.string().nullable(),
+  /** Les octets du fichier (la balise de type, pas `instanceof` : les bibliothèques de test ont leur propre `Uint8Array`). */
+  octets: z.custom<Uint8Array>(
+    (v) => v instanceof Uint8Array || Object.prototype.toString.call(v) === "[object Uint8Array]",
+    "Octets (Uint8Array) attendus",
+  ),
+});
+export type FichierExport = z.infer<typeof FichierExportSchema>;
 
 /** Une cellule d'un tableau d'export : texte, entier de FCFA ou vide. */
 export const CelluleSchema = z.union([z.string(), z.number().int(), z.null()]);
@@ -192,6 +226,11 @@ export const ClotureMoisSchema = z.strictObject({
   }),
   /** Premières lignes (CSV brut) du journal des ventes envoyé. */
   apercuJournal: z.array(z.string()),
+  /**
+   * Transactions MoMo sans correspondance dont le patron a pris la décision (rembourser, rattacher, demander) ;
+   * l'écran écrit « Les N transactions sans correspondance sont traitées ». Absent : l'écran n'en dit rien.
+   */
+  transactionsTraitees: z.number().int().nonnegative().optional(),
 });
 export type ClotureMois = z.infer<typeof ClotureMoisSchema>;
 

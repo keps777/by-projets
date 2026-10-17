@@ -9,7 +9,8 @@ import { FeuilleSignature } from "./signature";
  * Écran « Mois clôturé et envoyé au cabinet » (AM-113, planche ComptableCloture.dc.html) : le total encaissé, le mois
  * verrouillé, les fichiers envoyés au cabinet et l'aperçu du journal des ventes.
  *
- * Les données viennent de `useClotureMois`. On y arrive de « Clôturer · tout envoyer » (Comptable) ou après avoir
+ * Les données viennent de `useClotureMois` (y compris le nombre de transactions sans correspondance traitées,
+ * `transactionsTraitees`). On y arrive de « Clôturer · tout envoyer » (Comptable) ou après avoir
  * appliqué les décisions du rapprochement (signées par le PIN) : tant que le mois est ouvert, « Clôturer · mon PIN »
  * signe la clôture avec `useCloturerMois`, puis l'écran montre le mois clôturé. Un mois clôturé n'accepte plus aucune
  * modification, seulement des écritures du mois suivant (le serveur refuse le reste).
@@ -20,10 +21,9 @@ export function EcranComptableCloture() {
   const requete = patron.useClotureMois();
   const donnees = requete.data;
 
-  // Le nombre de transactions sans correspondance traitées vient du rapprochement (même mois par défaut que la
-  // clôture) ; sans lui, la phrase du verrou garde seulement sa seconde moitié.
-  const rapprochement = patron.useRapprochementMomo();
-  const traitees = rapprochement.data?.lignes.filter((l) => l.decision !== null).length;
+  // Le nombre de transactions sans correspondance traitées est donné par la clôture elle-même ; sans lui, la phrase
+  // du verrou garde seulement sa seconde moitié.
+  const traitees = donnees?.transactionsTraitees;
 
   // Un mois inconnu répond 404 : il n'y a rien à clôturer, ce n'est pas une panne.
   const introuvable = requete.error instanceof ErreurHttp && requete.error.statut === 404;
