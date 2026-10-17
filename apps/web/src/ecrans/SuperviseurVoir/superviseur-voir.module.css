@@ -1,0 +1,291 @@
+/*
+ * Planche « SuperviseurVoir » (docs/maquettes-v3/SuperviseurVoir.dc.html). Les valeurs viennent de la maquette ;
+ * les couleurs, polices et espacements sont les variables --am-* de @afrimove/design.
+ *
+ * Dans la planche, seul le conteneur racine pose `box-sizing: border-box` : les blocs intérieurs sont en
+ * `content-box`. On reprend ce que la planche dessine réellement.
+ *
+ * Surcharges du kit (variantes locales, le kit n'est pas modifié) : le sélecteur est doublé (`.x.x`) pour passer
+ * devant la règle d'un seul sélecteur du composant du kit quel que soit l'ordre des feuilles.
+ */
+
+/*
+ * La planche tient dans l'écran (390 x 844) : la page prend toute la hauteur et le corps se serre au lieu de
+ * pousser le pied hors de l'écran. Seul « Ce que l'app a vérifié » se réduit, comme dans la planche, et il défile
+ * pour garder chaque contrôle lisible.
+ */
+.page {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  height: 100dvh;
+  min-height: 0;
+}
+
+/* Corps : 8 px entre les blocs, 2 px sous l'en-tête (le kit : 10 px et 4 px). */
+.corps.corps {
+  gap: var(--am-space-8);
+  padding-top: var(--am-space-2);
+}
+
+/* Le billet : numéro, montant, départ, voyageur, vente, motif. */
+.billet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-6);
+  padding: var(--am-space-12) var(--am-space-14);
+  border-radius: var(--am-radius-16);
+  background: var(--am-surface);
+  border: 1px solid var(--am-trait);
+}
+
+.billetTete {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.numero {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-14);
+  font-weight: 700;
+}
+
+.prix {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-22);
+  font-weight: 800;
+}
+
+.faits {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--am-space-4) var(--am-space-10);
+  font-size: var(--am-fs-12);
+  color: var(--am-craie-2);
+}
+
+.faitLibelle {
+  display: block;
+  color: var(--am-gris);
+}
+
+.fort {
+  color: var(--am-craie);
+}
+
+/* « Ce que l'app a vérifié » : un titre sur fond Profond, puis une ligne par contrôle. */
+.verifications {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-radius: var(--am-radius-14);
+  overflow: hidden auto;
+  scrollbar-width: none;
+  border: 1px solid var(--am-trait);
+}
+
+.verifications:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+.verificationsTitre {
+  display: flex;
+  flex: none;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px var(--am-space-12);
+  background: var(--am-profond);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+  color: var(--am-ambre);
+}
+
+.verification {
+  display: grid;
+  flex: none;
+  grid-template-columns: 20px 1fr;
+  gap: var(--am-space-8);
+  align-items: center;
+  padding: 7px var(--am-space-12);
+  background: var(--am-surface);
+  font-size: var(--am-fs-12);
+}
+
+.verification + .verification {
+  border-top: 1px solid var(--am-surface-2);
+}
+
+.marque {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--am-radius-8);
+  color: var(--am-nuit);
+  font-size: var(--am-fs-11);
+  font-weight: 800;
+}
+
+.marque[data-ton="vert"] {
+  background: var(--am-vert);
+}
+
+.marque[data-ton="ambre"] {
+  background: var(--am-ambre);
+}
+
+.marque[data-ton="bleu"] {
+  background: var(--am-bleu);
+}
+
+.alerte[data-alerte="true"] {
+  color: var(--am-ambre);
+}
+
+/* Choix : rembourser, reporter à demain, avoir. 44 px de haut au moins (la planche : 40 px). */
+.choix {
+  display: flex;
+  gap: var(--am-space-6);
+}
+
+.choisir {
+  flex: 1;
+  min-height: 44px;
+  padding: 0;
+  border-radius: var(--am-radius-10);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie-2);
+  font-family: inherit;
+  font-size: var(--am-fs-12);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.choisir[aria-pressed="true"] {
+  border-color: var(--am-ambre);
+  background: var(--am-surface-2);
+  color: var(--am-craie);
+  font-weight: 700;
+}
+
+.choisir:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+/* Retour sous le clavier PIN : remplace la règle de l'annulation le temps du message. */
+.retourPin {
+  display: block;
+}
+
+.retourPin[data-ton="rouge"] {
+  color: var(--am-rouge);
+}
+
+.retourPin[data-ton="vert"] {
+  color: var(--am-vert);
+}
+
+/* Pied : deux actions, 8 px au-dessus (le kit : 10 px). */
+.pied.pied {
+  display: grid;
+  grid-template-columns: 1fr 1.7fr;
+  padding-top: var(--am-space-8);
+}
+
+/*
+ * « Refuser » : la planche pose 56 px de contenu et 1 px de bord (58 px en tout, la grille étire aussi
+ * « Annuler »), bord et texte rouges, 13 px gras, rayon 16 (le bouton secondaire du kit : 46 px, rayon 12).
+ */
+.refuser.refuser {
+  box-sizing: content-box;
+  min-height: 56px;
+  padding: 0;
+  border-radius: var(--am-radius-16);
+  border-color: var(--am-rouge);
+  color: var(--am-rouge);
+  font-weight: 700;
+  text-align: center;
+}
+
+/* « Annuler · rembourser » : 16 px de marge et pas d'écart entre le texte et la coche (le kit : 18 px et 12 px). */
+.annuler.annuler {
+  gap: 0;
+  padding: 0 var(--am-space-16);
+}
+
+.annuler[aria-busy="true"],
+.refuser[aria-busy="true"] {
+  cursor: progress;
+}
+
+/* États chargement, vide et erreur : même cadre nuit, mêmes blocs. */
+.etat {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--am-space-8);
+  text-align: center;
+}
+
+.etatTitre {
+  margin: 0;
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-18);
+  font-weight: 800;
+  letter-spacing: var(--am-ls-sous-titre);
+}
+
+.etatDetail {
+  margin: 0;
+  font-size: var(--am-fs-13);
+  color: var(--am-craie-2);
+}
+
+.reessayer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  margin-top: var(--am-space-8);
+  padding: 0 var(--am-space-14);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie-2);
+  font-family: inherit;
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.squelette {
+  border-radius: var(--am-radius-14);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+}
+
+.squeletteBillet {
+  min-height: 98px;
+}
+
+.squeletteVerifications {
+  min-height: 150px;
+}
+
+.squeletteChoix {
+  min-height: 44px;
+}
+
+.squelettePin {
+  flex: 1;
+  border-radius: var(--am-radius-16);
+}
