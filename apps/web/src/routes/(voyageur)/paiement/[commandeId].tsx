@@ -1,5 +1,7 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { useParams } from "react-router";
+import { EcranPaiement } from "@/ecrans/Paiement";
 
 export default function Page() {
-  return <EcranVide planche="Paiement" />;
+  const { commandeId = "" } = useParams();
+  return <EcranPaiement commandeId={commandeId} />;
 }
