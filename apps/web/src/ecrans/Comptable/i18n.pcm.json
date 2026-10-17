@@ -1,0 +1,39 @@
+{
+  "entete": {
+    "titre": "",
+    "sousTitre": "",
+    "retour": "",
+    "mois": ""
+  },
+  "rapprochement": {
+    "titre": "",
+    "rapproche": "",
+    "ventes": "",
+    "recu": "",
+    "sansCorrespondance_one": "",
+    "sansCorrespondance_other": "",
+    "voir_one": "",
+    "voir_other": ""
+  },
+  "exports": {
+    "titre": "",
+    "aide": "",
+    "apercu": "",
+    "telecharger": "",
+    "aJour": "",
+    "aucun": ""
+  },
+  "cabinet": {
+    "titre": "",
+    "detail_one": "",
+    "detail_other": "",
+    "desactive": ""
+  },
+  "cloture": "",
+  "etats": {
+    "chargement": "",
+    "vide": "",
+    "erreur": "",
+    "reessayer": ""
+  }
+}
