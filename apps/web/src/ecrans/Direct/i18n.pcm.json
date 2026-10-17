@@ -1,0 +1,85 @@
+{
+  "retour": "",
+  "carte": {
+    "libelle": "",
+    "vitesse": ""
+  },
+  "statut": {
+    "direct": "",
+    "sansSignal": ""
+  },
+  "arrivee": {
+    "etiquette": "",
+    "detail": "",
+    "retard": "",
+    "aLHeure": ""
+  },
+  "bus": {
+    "compagnieSiege": ""
+  },
+  "prevenir": {
+    "titre": "",
+    "detail": "",
+    "interrupteur": "",
+    "annonce": {
+      "active": "",
+      "annule": ""
+    },
+    "erreur": "",
+    "sansProche": {
+      "titre": "",
+      "detail": ""
+    }
+  },
+  "frise": {
+    "libelle": "",
+    "prochain": ""
+  },
+  "actions": {
+    "chauffeur": "",
+    "signaler": "",
+    "colis": ""
+  },
+  "feuille": {
+    "fermer": "",
+    "terminer": ""
+  },
+  "signaler": {
+    "titre": "",
+    "motifs": {
+      "retard": {
+        "titre": "",
+        "detail": ""
+      },
+      "conduite": {
+        "titre": "",
+        "detail": ""
+      },
+      "incident": {
+        "titre": "",
+        "detail": ""
+      }
+    },
+    "transmis": "",
+    "erreur": ""
+  },
+  "chauffeur": {
+    "titre": "",
+    "chargement": "",
+    "consigne": "",
+    "appeler": "",
+    "erreur": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}

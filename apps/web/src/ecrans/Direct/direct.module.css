@@ -1,0 +1,485 @@
+/*
+ * Planche « Direct » (docs/maquettes-v3/Direct.dc.html). Les valeurs viennent de la maquette ; les couleurs, polices et
+ * espacements sont les variables --am-* de @afrimove/design. Les arrêts sont le composant FriseArrets du kit, la
+ * pastille EN DIRECT le composant Pastille.
+ *
+ * La planche ne pose `box-sizing: border-box` que sur son conteneur : ses liens ont donc leurs 48 px ou 60 px de
+ * hauteur minimale en contenu, bord et marge en plus (`content-box` ci-dessous). Surcharges du kit (le kit n'est pas
+ * modifié) : le sélecteur est doublé (`.x.x`) pour passer devant la règle d'un seul sélecteur du composant.
+ */
+
+/* Racine : prend la place de l'écran au-dessus de la barre d'onglets et sert d'ancre aux feuilles. */
+.racine {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Titre de l'écran pour les lecteurs d'écran : masqué visuellement. */
+.titreEcran {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Carte : 380 px de haut, fond de carte, tout par-dessus en position absolue. */
+.carte {
+  position: relative;
+  flex: none;
+  height: 380px;
+  background: var(--am-carte-sombre);
+  overflow: hidden;
+}
+
+.carteSvg {
+  display: block;
+  width: 100%;
+  height: 380px;
+}
+
+.quadrillage {
+  fill: none;
+  stroke: var(--am-surface);
+  stroke-width: 1;
+}
+
+.route {
+  fill: none;
+  stroke: var(--am-trait);
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+
+.parcours {
+  fill: none;
+  stroke: var(--am-ambre);
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+.noeud,
+.noeudPasse {
+  fill: var(--am-nuit);
+  stroke: var(--am-gris);
+  stroke-width: 3;
+}
+
+.noeudPasse {
+  stroke: var(--am-ambre);
+}
+
+/* Le halo de la maquette pulse en 1,8 s ; sans animation il reste à 25 %. */
+.halo {
+  fill: var(--am-orange);
+  opacity: 0.25;
+  animation: pulsationCarte 1.8s infinite;
+}
+
+.marqueur {
+  fill: var(--am-orange);
+}
+
+.silhouette {
+  fill: var(--am-nuit);
+}
+
+.nomVille {
+  fill: var(--am-craie-2);
+  font-family: var(--am-font-texte);
+  font-size: var(--am-fs-12);
+  font-weight: 600;
+}
+
+.vitesse {
+  fill: var(--am-ambre);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-11);
+  font-weight: 700;
+}
+
+@keyframes pulsationCarte {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: var(--am-pulse-min);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .halo {
+    animation: none;
+  }
+}
+
+/* Retour au billet : rond de 44 px sur fond Nuit, en haut à gauche de la carte. */
+.retour.retour {
+  position: absolute;
+  top: var(--am-space-16);
+  left: var(--am-space-16);
+  background: var(--am-nuit);
+}
+
+/* Pastille EN DIRECT : fond Nuit, en haut à droite. */
+.direct.direct {
+  position: absolute;
+  top: 22px;
+  right: var(--am-space-16);
+  background: var(--am-nuit);
+}
+
+/* Arrivée estimée en bas de la carte, compagnie et immatriculation à droite. */
+.arrivee {
+  position: absolute;
+  right: var(--am-gutter);
+  bottom: var(--am-space-14);
+  left: var(--am-gutter);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--am-space-10);
+}
+
+.arriveeGauche {
+  display: flex;
+  flex-direction: column;
+  line-height: var(--am-lh-plein);
+}
+
+.arriveeEtiquette {
+  color: var(--am-ambre);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-11);
+  letter-spacing: var(--am-ls-etiquette-serree);
+  text-transform: uppercase;
+}
+
+.arriveeHeure {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-44);
+  font-weight: 800;
+  letter-spacing: var(--am-ls-titre);
+}
+
+.arriveeDetail {
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+}
+
+.arriveeDroite {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--am-space-4);
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+}
+
+.immatriculation {
+  color: var(--am-craie);
+  font-family: var(--am-font-mono);
+}
+
+/* Corps : 12 px sous la carte, rien en dessous (la barre d'onglets suit). */
+.corps.corps {
+  gap: var(--am-space-10);
+  padding: var(--am-space-12) var(--am-gutter) 0;
+  overflow: hidden auto;
+}
+
+/* Carte orange « Prévenir ». */
+.prevenir {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--am-space-12);
+  box-sizing: content-box;
+  min-height: 60px;
+  padding: var(--am-space-12) var(--am-space-14);
+  border-radius: var(--am-radius-16);
+  background: var(--am-orange);
+  color: var(--am-nuit);
+}
+
+.prevenirLien {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  align-self: stretch;
+  gap: var(--am-space-12);
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.prevenirLien:hover {
+  color: inherit;
+}
+
+.prevenirLien:focus-visible,
+.interrupteur:focus-visible {
+  outline-color: var(--am-nuit);
+}
+
+.prevenirIcone {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--am-radius-12);
+  background: var(--am-nuit);
+  color: var(--am-ambre);
+}
+
+.prevenirTextes {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  line-height: var(--am-lh-serree);
+}
+
+.prevenirTitre {
+  font-size: var(--am-fs-14);
+  font-weight: 700;
+}
+
+.prevenirDetail {
+  font-size: var(--am-fs-12);
+  font-weight: 600;
+}
+
+/* Interrupteur : la piste fait 44 × 26 comme dans la maquette, la zone tactile 44 × 44. */
+.interrupteur {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.piste {
+  position: relative;
+  flex: none;
+  width: 44px;
+  height: 26px;
+  border-radius: 13px;
+  background: var(--am-nuit);
+}
+
+.bouton {
+  position: absolute;
+  top: var(--am-space-3);
+  left: var(--am-space-3);
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background: var(--am-gris);
+}
+
+.piste[data-actif="true"] .bouton {
+  left: 21px;
+  background: var(--am-vert);
+}
+
+/* Texte lu par les lecteurs d'écran quand le SMS est programmé ou annulé. */
+.annonce {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.alerte {
+  margin: 0;
+  color: var(--am-rouge);
+  font-size: var(--am-fs-12);
+  font-weight: 600;
+  line-height: var(--am-lh-normale);
+}
+
+/* Chauffeur, Signaler, Mon colis : trois cases égales. */
+.actions {
+  display: grid;
+  flex: none;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--am-space-8);
+}
+
+.action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--am-space-6);
+  box-sizing: content-box;
+  min-height: 48px;
+  margin: 0;
+  padding: 0;
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-family: inherit;
+  font-size: var(--am-fs-12);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.action:hover {
+  color: var(--am-craie);
+}
+
+/* Feuilles du bas (Signaler, Chauffeur). */
+.feuille {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-8);
+  padding: 0 var(--am-gutter) var(--am-space-16);
+}
+
+.feuilleEtat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-10);
+  margin: 0;
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-13);
+  line-height: var(--am-lh-normale);
+}
+
+.feuilleEtat p {
+  margin: 0;
+}
+
+.option {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-2);
+  box-sizing: border-box;
+  min-height: 56px;
+  margin: 0;
+  padding: var(--am-space-10) var(--am-space-14);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-12);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-family: var(--am-font-texte);
+  text-align: left;
+  cursor: pointer;
+}
+
+.option:disabled {
+  cursor: progress;
+}
+
+.optionTitre {
+  font-size: var(--am-fs-14);
+  font-weight: 700;
+}
+
+.optionDetail {
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+}
+
+.confirmation {
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-10);
+  margin: 0;
+  padding: var(--am-space-12) var(--am-space-14);
+  border: 1px solid var(--am-vert-bord);
+  border-radius: var(--am-radius-12);
+  background: var(--am-vert-fond);
+  color: var(--am-vert);
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  line-height: var(--am-lh-normale);
+}
+
+/* États chargement, vide et erreur : la carte garde sa place, le corps prend la forme de la planche. */
+.squeletteCarte {
+  flex: none;
+  height: 84px;
+  border-radius: var(--am-radius-16);
+  background: var(--am-surface);
+}
+
+.squeletteFrise {
+  flex: none;
+  height: 160px;
+  border-radius: var(--am-radius-16);
+  background: var(--am-surface);
+}
+
+.squeletteActions {
+  flex: none;
+  height: 50px;
+  border-radius: var(--am-radius-12);
+  background: var(--am-surface);
+}
+
+.etat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--am-space-8);
+  margin: auto 0;
+  padding: var(--am-space-24) var(--am-space-16);
+  text-align: center;
+}
+
+.etatTitre {
+  margin: 0;
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-18);
+  font-weight: 800;
+  line-height: var(--am-lh-compacte);
+}
+
+.etatDetail {
+  margin: 0;
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-13);
+  line-height: var(--am-lh-normale);
+}
+
+.reessayer {
+  box-sizing: border-box;
+  min-height: 44px;
+  margin-top: var(--am-space-8);
+  padding: 0 var(--am-space-18);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-family: inherit;
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  cursor: pointer;
+}
