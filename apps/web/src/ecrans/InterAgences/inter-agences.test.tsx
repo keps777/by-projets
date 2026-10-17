@@ -14,7 +14,7 @@ import { sourceScenariosFixtures } from "@/api/source-scenarios";
 import { rendreApp } from "@/test/rendre";
 import { heureDouala, jourSemaine, montant, montantSigne, tonMontant, tonTroncon } from "./formats";
 import fr from "./i18n.fr.json";
-import type { VueInterAgences } from "./types";
+import type { ColisEnCorrespondance, Troncon, VueInterAgences } from "./types";
 
 const planche = ecrans.InterAgences.donnees;
 
@@ -45,6 +45,18 @@ function cartes() {
     reglement: screen.getByRole("region", { name: "Règlement entre compagnies · semaine" }),
     voyageurs: screen.getByRole("region", { name: "Aussi pour les voyageurs" }),
   };
+}
+
+/** Le colis de la démo (présent dans la planche), pour le retoucher. */
+function colisDe(vue: VueInterAgences): ColisEnCorrespondance {
+  if (!vue.colisEnCorrespondance) throw new Error("la démo porte un colis en correspondance");
+  return vue.colisEnCorrespondance;
+}
+
+/** La même vue sans la clé `colisEnCorrespondance` (aucun échange en cours). */
+function sansColis(vue: VueInterAgences): VueInterAgences {
+  const { colisEnCorrespondance: _colis, ...reste } = vue;
+  return reste;
 }
 
 type Impl = Scenario["operations"][number];
@@ -223,10 +235,10 @@ describe("InterAgences · les données de l'API font l'écran", () => {
       clientApi: clientAvecVue((vue) => ({
         ...vue,
         colisEnCorrespondance: {
-          ...vue.colisEnCorrespondance,
+          ...colisDe(vue),
           numero: "C-ALP-DLA-270105-0099",
           poidsKg: 12,
-          troncons: vue.colisEnCorrespondance.troncons.map((t, i) =>
+          troncons: colisDe(vue).troncons.map((t, i) =>
             i === 0 ? { ...t, bus: "XX 001 YY", heureDepart: "09:05", part: 12_500 } : t,
           ),
         },
@@ -244,14 +256,11 @@ describe("InterAgences · les données de l'API font l'écran", () => {
   it("trois tronçons : trois colonnes, deux ronds de passage, couleurs en alternance", async () => {
     rendre({
       clientApi: clientAvecVue((vue) => {
-        const [un, deux] = vue.colisEnCorrespondance.troncons as [
-          VueInterAgences["colisEnCorrespondance"]["troncons"][number],
-          VueInterAgences["colisEnCorrespondance"]["troncons"][number],
-        ];
+        const [un, deux] = colisDe(vue).troncons as [Troncon, Troncon];
         return {
           ...vue,
           colisEnCorrespondance: {
-            ...vue.colisEnCorrespondance,
+            ...colisDe(vue),
             troncons: [un, deux, { ...un, rang: 3, compagnie: "Delta", part: 900 }],
           },
         };
@@ -299,24 +308,55 @@ describe("InterAgences · les données de l'API font l'écran", () => {
     expect(lignes[2]!.querySelector("[class*='somme']")).toHaveAttribute("data-ton", "rouge");
   });
 
-  it("la correspondance des voyageurs suit l'API et les compagnies des tronçons", async () => {
+  it("le billet voyageur suit la ligne de la convention : origine, ville de correspondance, arrivée et compagnies", async () => {
     rendre({
       clientApi: clientAvecVue((vue) => ({
         ...vue,
-        correspondanceVoyageurs: { minutesGaranties: 40, attenteDuSecondBusMinutes: 20 },
-        colisEnCorrespondance: {
-          ...vue.colisEnCorrespondance,
-          troncons: vue.colisEnCorrespondance.troncons.map((t) =>
-            t.rang === 2 ? { ...t, compagnie: "Delta" } : t,
-          ),
+        correspondanceVoyageurs: {
+          minutesGaranties: 40,
+          attenteDuSecondBusMinutes: 20,
+          trajet: {
+            origine: "Garoua",
+            via: "Ngaoundéré",
+            destination: "Maroua",
+            premiere: "Delta",
+            seconde: "Sigma",
+          },
         },
       })),
     });
     await attendreEcran();
     const { voyageurs } = cartes();
-    expect(voyageurs).toHaveTextContent("Alpha jusqu’à Bafoussam, Delta ensuite");
+    expect(voyageurs).toHaveTextContent(
+      "Garoua → Maroua en un seul billet : Delta jusqu’à Ngaoundéré, Sigma ensuite",
+    );
     expect(voyageurs).toHaveTextContent("correspondance de 40 min garantie");
     expect(voyageurs).toHaveTextContent("le second attend 20 min");
+    // Ni le départ « Yaoundé » de la planche, ni le trajet du colis ne reviennent.
+    expect(voyageurs).not.toHaveTextContent("Yaoundé");
+  });
+
+  it("l'origine du billet ne dépend pas du colis : sans colis en correspondance, le billet est montré", async () => {
+    rendre({ clientApi: clientAvecVue(sansColis) });
+    await screen.findByText("Aucun colis en correspondance pour le moment.");
+    expect(screen.getByRole("region", { name: "Aussi pour les voyageurs" })).toHaveTextContent(
+      "Yaoundé → Bamenda en un seul billet",
+    );
+  });
+
+  it("sans ligne voyageurs dans la convention (pas de trajet), la carte du billet n'est pas affichée", async () => {
+    rendre({
+      clientApi: clientAvecVue((vue) => ({
+        ...vue,
+        correspondanceVoyageurs: {
+          minutesGaranties: vue.correspondanceVoyageurs.minutesGaranties,
+          attenteDuSecondBusMinutes: vue.correspondanceVoyageurs.attenteDuSecondBusMinutes,
+        },
+      })),
+    });
+    await attendreEcran();
+    expect(screen.queryByRole("region", { name: "Aussi pour les voyageurs" })).toBeNull();
+    expect(screen.getByRole("region", { name: /· colis C-/ })).toBeInTheDocument();
   });
 
   it("le lien de la convention porte le nom de la compagnie et l'identifiant de l'API", async () => {
@@ -359,16 +399,29 @@ describe("InterAgences · les données de l'API font l'écran", () => {
     ).toEqual(["Convention Oméga · voir", "Convention Delta · voir", "Ajouter une compagnie"]);
   });
 
-  it("sans tronçon, le colis le dit et le billet voyageur n'est pas affiché", async () => {
+  it("sans tronçon, le colis le dit ; le règlement et le billet voyageur restent affichés", async () => {
     rendre({
       clientApi: clientAvecVue((vue) => ({
         ...vue,
-        colisEnCorrespondance: { ...vue.colisEnCorrespondance, troncons: [] },
+        colisEnCorrespondance: { ...colisDe(vue), troncons: [] },
       })),
     });
     await screen.findByText("Aucun colis en correspondance pour le moment.");
-    expect(screen.queryByRole("region", { name: "Aussi pour les voyageurs" })).toBeNull();
+    expect(screen.getByRole("region", { name: "Aussi pour les voyageurs" })).toBeInTheDocument();
     expect(screen.getByRole("region", { name: /Règlement entre compagnies/ })).toBeInTheDocument();
+  });
+
+  it("sans colis du tout (clé absente au contrat), la carte le dit sans titre de colis ni numéro", async () => {
+    rendre({ clientApi: clientAvecVue(sansColis) });
+    await screen.findByText("Aucun colis en correspondance pour le moment.");
+    const carte = screen.getByRole("region", { name: "Colis en correspondance" });
+    expect(carte).toHaveTextContent("Aucun colis en correspondance pour le moment.");
+    expect(carte.querySelector("h2")).toBeNull();
+    expect(within(carte).queryByRole("list")).toBeNull();
+    expect(screen.getByRole("region", { name: /Règlement entre compagnies/ })).toBeInTheDocument();
+    expect(
+      within(pied()).getByRole("link", { name: "Convention Oméga · voir" }),
+    ).toBeInTheDocument();
   });
 });
 
@@ -418,9 +471,8 @@ describe("InterAgences · chargement, vide, erreur", () => {
   it("vide : ni tronçon ni convention, un message et le raccourci d'ajout", async () => {
     rendre({
       clientApi: clientAvecVue((vue) => ({
-        ...vue,
+        ...sansColis(vue),
         conventions: [],
-        colisEnCorrespondance: { ...vue.colisEnCorrespondance, troncons: [] },
       })),
     });
     const message = await screen.findByText("Aucun échange entre compagnies pour le moment.");

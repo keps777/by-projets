@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { colis as contratsColis } from "@afrimove/contrats";
 import { act, cleanup, renderHook } from "@testing-library/react";
 import {
   ALPHA_AKWA,
@@ -796,7 +797,7 @@ describe("InterAgences · /(patron)/inter-agences", () => {
       poidsKg: 3,
     });
     expect(
-      v.colisEnCorrespondance.troncons.map((t) => [
+      v.colisEnCorrespondance?.troncons.map((t) => [
         t.rang,
         t.compagnie,
         t.heureDepart,
@@ -820,41 +821,58 @@ describe("InterAgences · /(patron)/inter-agences", () => {
     expect(v.correspondanceVoyageurs).toEqual({
       minutesGaranties: 25,
       attenteDuSecondBusMinutes: 15,
+      // L'origine du billet voyageur (« Yaoundé → Bamenda en un seul billet : Alpha jusqu'à Bafoussam, Oméga ensuite »).
+      trajet: {
+        origine: "Yaoundé",
+        via: "Bafoussam",
+        destination: "Bamenda",
+        premiere: "Alpha",
+        seconde: "Oméga",
+      },
     });
     expect(v.conventions).toEqual([{ id: ID_CONVENTION_OMEGA, avec: "Oméga", statut: "active" }]);
   });
 });
 
 describe("InterAgencesConvention · /(patron)/inter-agences/convention/[conventionId]", () => {
-  it("useConventionInterAgences : parts, 5 règles, 2 signatures, bilan du trimestre", async () => {
+  it("useConventionInterAgences : le contrat unique de la convention (parts, 5 règles, signatures, bilan, pied)", async () => {
     const c = await lire("InterAgencesConvention", () =>
       useConventionInterAgences(ID_CONVENTION_OMEGA),
     );
-    expect(c).toMatchObject({
-      compagnies: ["Alpha", "Oméga"],
-      signeeLe: "2026-10-12",
-      renouvellement: "trimestriel",
-      statut: "active",
+    expect(c).toMatchObject({ id: ID_CONVENTION_OMEGA, statut: "active" });
+    expect(c.titre).toContain("Alpha");
+    expect(c.titre).toContain("Oméga");
+    expect(c.parts.lignes.map((l) => l.troncon)).toEqual([
+      "Douala → Bafoussam",
+      "Bafoussam → Bamenda",
+      "Transbordement à Bafoussam",
+    ]);
+    expect(c.parts.lignes[0]!.parts).toEqual({ Alpha: 1400, Oméga: null });
+    expect(c.parts.total).toMatchObject({
+      prixClient: 3000,
+      fraisAfrimove: 150,
+      parts: { Alpha: 1600, Oméga: 1400 },
     });
-    expect(c.parts.colisType).toEqual({ poidsKg: 3, prix: 3000, fraisAfriMove: 150 });
-    expect(c.parts.lignes).toEqual([
-      { troncon: "Douala → Bafoussam", premiere: 1400, seconde: null },
-      { troncon: "Bafoussam → Bamenda", premiere: null, seconde: 1200 },
-      { troncon: "Transbordement à Bafoussam", premiere: 200, seconde: 200 },
+    expect(c.regles.liste.map((r) => r.rang)).toEqual([1, 2, 3, 4, 5]);
+    expect(c.regles.liste[0]!.titre).toBe("Responsabilité au scan.");
+    expect(c.signatures.map((s) => [s.compagnie, s.signataire, s.moi, s.parPin])).toEqual([
+      ["Alpha", "Toi", true, true],
+      ["Oméga", "E. Tchoua", false, true],
     ]);
-    expect(c.parts.total).toEqual({ premiere: 1600, seconde: 1400 });
-    expect(c.regles.map((r) => r.rang)).toEqual([1, 2, 3, 4, 5]);
-    expect(c.regles[0]!.titre).toBe("Responsabilité au scan");
-    expect(c.signatures.map((s) => [s.compagnie, s.signataire, s.signeA])).toEqual([
-      ["Alpha", "M. Kamga", "2026-10-12T09:40:00.000+01:00"],
-      ["Oméga", "E. Tchoua", "2026-10-12T11:05:00.000+01:00"],
-    ]);
-    expect(c.trimestre).toEqual({
+    expect(c.trimestre).toMatchObject({
       colisEchanges: 184,
       litiges: 1,
       netRecu: 131_000,
-      reglements: 12,
+      lundis: 12,
     });
+    expect(c.pied.length).toBeGreaterThan(0);
+  });
+
+  it("c'est la même convention que celle du module colis : une seule source, un seul contrat", async () => {
+    const c = await lire("InterAgencesConvention", () =>
+      useConventionInterAgences(ID_CONVENTION_OMEGA),
+    );
+    expect(() => contratsColis.SchemaConvention.parse(c)).not.toThrow();
   });
 });
 

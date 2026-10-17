@@ -126,18 +126,18 @@ qui n'est pas partie à l'échange) ; `pas_le_porteur`, `pas_le_preneur`, `pas_v
 
 ## Désaccords de contrat
 
-- **Deux contrats « convention »** : le patron (`patron.ConventionSchema`) est un sous-ensemble de celui du
-  colis (`colis.SchemaConvention`) : il manque `moi` (dans les signatures), `delaiLitigeJours` (dans le
-  trimestre), `pied` et la ponctuation des titres de règles. L'API sert le contrat colis, complet, sous
-  `/inter-agences/conventions/:id`. L'écran patron doit lire celui-là, ou le contrat patron être complété.
-- **Origine du billet voyageur en correspondance** : `colis.SchemaInterAgences.voyageurs` ne porte que le texte
-  et les minutes. Les contrats sont `strictObject` : impossible d'y ajouter un champ sans les modifier. La
-  route ajoutée `GET /inter-agences/correspondances` donne les lignes structurées (origine, via, destination,
-  première et seconde compagnie, minutes, texte).
-- **Planche patron `patron.interAgences.vue`** : elle ne montre qu'une compagnie partenaire et qu'un colis
-  (obligatoire). `?conventionId=` choisit la convention ; sans colis en correspondance, `colisEnCorrespondance`
-  est rempli d'un colis type (`numero` vide, aucun tronçon). Sans aucune convention, `colisId` est vide et la
-  réponse ne passe pas le schéma : il faudrait rendre `colisEnCorrespondance` optionnel dans le contrat.
+- **Convention : un seul contrat** (réglé). `patron.ConventionSchema` est désormais `colis.SchemaConvention`
+  (complet : `moi`, `delaiLitigeJours`, `pied`). L'API le sert sous `/inter-agences/conventions/:id` et, pour
+  `patron.interAgences.convention`, sous `/patron/inter-agences/conventions/:id` (même réponse, même étanchéité).
+  L'ancienne forme patron (compagnies, signeeLe, parts à colisType) n'était servie par personne ni lue par un écran.
+- **Origine du billet voyageur en correspondance** (réglé) : `patron.InterAgences.correspondanceVoyageurs.trajet`
+  (facultatif : origine, via, destination, première et seconde compagnie) vient de la première ligne voyageurs de la
+  convention choisie, la même donnée que `GET /inter-agences/correspondances` (qui garde toutes les lignes). Absent
+  quand la convention n'a pas de ligne voyageurs. `colis.SchemaInterAgences.voyageurs` (planche colis) reste sans
+  ces champs : il faut `/correspondances`.
+- **Planche patron `patron.interAgences.vue`** : elle ne montre qu'une compagnie partenaire et qu'un colis.
+  `?conventionId=` choisit la convention. `colisEnCorrespondance` est **facultatif** : sans échange en cours ou sans
+  convention la clé est absente (plus de colis type vide, et la réponse passe toujours le schéma).
 
 ## Tables PostgreSQL
 

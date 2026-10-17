@@ -26,7 +26,7 @@ export function EcranInterAgences() {
 function etatDe(requete: ReturnType<typeof patron.useInterAgences>): EtatBloc {
   const vue = requete.data;
   if (vue) {
-    return vue.colisEnCorrespondance.troncons.length === 0 && vue.conventions.length === 0
+    return (vue.colisEnCorrespondance?.troncons.length ?? 0) === 0 && vue.conventions.length === 0
       ? "vide"
       : "pret";
   }

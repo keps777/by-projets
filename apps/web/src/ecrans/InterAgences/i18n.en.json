@@ -9,7 +9,8 @@
     "trajet": "",
     "horaire": "",
     "part": "",
-    "aucun": ""
+    "aucun": "",
+    "aucunTitre": ""
   },
   "reglement": {
     "titre": "",

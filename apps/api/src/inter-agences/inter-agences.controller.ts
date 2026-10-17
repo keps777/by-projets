@@ -288,4 +288,12 @@ export class PatronInterAgencesController {
       conventionId && conventionId.length > 0 ? conventionId : undefined,
     );
   }
+
+  /** `patron.interAgences.convention` : le même contrat que `/inter-agences/conventions/:conventionId` (un seul contrat). */
+  @Roles("patron", "comptable")
+  @Get("conventions/:conventionId")
+  @ApiOperation({ summary: "Patron : la convention (même contrat que /inter-agences/conventions)" })
+  convention(@UtilisateurCourant() u: Utilisateur, @Param("conventionId") conventionId: string) {
+    return this.vues.convention(u, conventionId);
+  }
 }

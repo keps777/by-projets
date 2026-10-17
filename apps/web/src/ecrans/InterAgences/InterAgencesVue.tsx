@@ -1,15 +1,7 @@
 import { Bouton, EcranCorps, EcranPied, Entete } from "@afrimove/ui";
 import { useTranslation } from "react-i18next";
 import { urlPlanche } from "@/coquille/planches";
-import {
-  DEPART_VOYAGEUR_EN_ATTENTE_DU_CONTRAT,
-  heureDouala,
-  jourSemaine,
-  montant,
-  montantSigne,
-  tonMontant,
-  tonTroncon,
-} from "./formats";
+import { heureDouala, jourSemaine, montant, montantSigne, tonMontant, tonTroncon } from "./formats";
 import { FlecheTroncons } from "./icones";
 import styles from "./inter-agences.module.css";
 import type { EtatBloc, VueInterAgences } from "./types";
@@ -29,6 +21,14 @@ function Squelette({ className }: { className: string | undefined }) {
 function CarteColis({ vue }: { vue: VueInterAgences }) {
   const { t } = useTranslation("InterAgences");
   const colis = vue.colisEnCorrespondance;
+  if (!colis) {
+    // Aucun colis en correspondance : le contrat n'en envoie pas, la carte le dit simplement.
+    return (
+      <section className={styles.carteColis} aria-label={t("colis.aucunTitre")}>
+        <p className={styles.aucun}>{t("colis.aucun")}</p>
+      </section>
+    );
+  }
   const titre = t("colis.titre", {
     origine: colis.origine,
     destination: colis.destination,
@@ -139,24 +139,25 @@ function CarteReglement({ vue }: { vue: VueInterAgences }) {
   );
 }
 
-/** Le billet unique Alpha + Oméga, avec la correspondance garantie. Il se compose des deux tronçons du colis. */
+/**
+ * Le billet unique Alpha + Oméga, avec la correspondance garantie. Son origine, sa ville de correspondance et ses deux
+ * compagnies viennent de la ligne voyageurs de la convention (`correspondanceVoyageurs.trajet`), pas du colis.
+ */
 function CarteVoyageurs({ vue }: { vue: VueInterAgences }) {
   const { t } = useTranslation("InterAgences");
-  const { troncons } = vue.colisEnCorrespondance;
-  const premier = troncons[0];
-  const dernier = troncons.at(-1);
-  if (!premier || !dernier || troncons.length < 2) return null;
   const voyageurs = vue.correspondanceVoyageurs;
+  const trajet = voyageurs.trajet;
+  if (!trajet) return null;
   return (
     <section className={styles.voyageurs} aria-label={t("voyageurs.titre")}>
       <h2 className={styles.voyageursTitre}>{t("voyageurs.titre")}</h2>
       <p className={styles.voyageursTexte}>
         {t("voyageurs.texte", {
-          depart: DEPART_VOYAGEUR_EN_ATTENTE_DU_CONTRAT,
-          arrivee: dernier.destination,
-          premiere: premier.compagnie,
-          correspondance: premier.destination,
-          seconde: dernier.compagnie,
+          depart: trajet.origine,
+          arrivee: trajet.destination,
+          premiere: trajet.premiere,
+          correspondance: trajet.via,
+          seconde: trajet.seconde,
           garantie: voyageurs.minutesGaranties,
           attente: voyageurs.attenteDuSecondBusMinutes,
         })}

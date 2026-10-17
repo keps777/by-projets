@@ -399,6 +399,10 @@ export const OP_INTER_AGENCES = definirOperation<void, c.InterAgences>({
   reponse: c.InterAgencesSchema,
 });
 
+/**
+ * La convention : le contrat unique `colis.SchemaConvention` (comme `colis.OP_CONVENTION_INTER_AGENCES`, servi aussi
+ * sous `/inter-agences/conventions/:conventionId`). La route `/patron/…` est la même convention.
+ */
 export const OP_CONVENTION = definirOperation<{ conventionId: string }, c.Convention>({
   nom: "patron.interAgences.convention",
   methode: "GET",
