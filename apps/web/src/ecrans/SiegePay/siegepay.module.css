@@ -1,0 +1,309 @@
+/*
+ * Planche « SiegePay » (docs/maquettes-v3/SiegePay.dc.html). Les valeurs viennent de la maquette ; les couleurs,
+ * polices et espacements sont les variables --am-* de @afrimove/design.
+ *
+ * Surcharges du kit (variantes locales, le kit n'est pas modifié) : le sélecteur est doublé (`.x.x`) pour passer
+ * devant la règle d'un seul sélecteur du composant du kit quel que soit l'ordre des feuilles.
+ */
+
+/*
+ * Corps : le contenu tient juste dans les 844 px de la planche. Si une alerte s'ajoute, il défile au lieu d'être
+ * coupé, sans barre visible.
+ */
+.corps.corps {
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.corps.corps::-webkit-scrollbar {
+  display: none;
+}
+
+/* Heure du départ dans le sous-titre : Geist Mono ambre. */
+.heure {
+  font-family: var(--am-font-mono);
+  color: var(--am-ambre);
+}
+
+/* « Pour moi / Pour un proche / À plusieurs » : trois cibles de même largeur. */
+.pour {
+  display: flex;
+  gap: var(--am-space-8);
+}
+
+.pourMoi.pourMoi {
+  flex: 1;
+  /* Les boutons de la planche gardent le remplissage du navigateur (6 px) : il fixe la largeur des trois cibles. */
+  padding: 0 var(--am-space-6);
+}
+
+/* Les liens de la planche ne posent pas `box-sizing` : 44 px de contenu, bord en plus (46 px). */
+.pourLien {
+  box-sizing: content-box;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.pourLien:focus-visible,
+.modifier:focus-visible,
+.moyen:focus-visible,
+.payer:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+/* Voyageur et moyen de paiement. */
+.carte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-8);
+  padding: var(--am-space-12);
+  border-radius: var(--am-radius-16);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+}
+
+.voyageur {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.voyageurNom {
+  font-size: var(--am-fs-13);
+  font-weight: 700;
+}
+
+/* La planche pose 32 px de haut : la zone tactile atteint 44 px sans changer l'aspect. */
+.modifier {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  color: var(--am-bleu);
+  font-size: var(--am-fs-12);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.modifier::after {
+  content: "";
+  position: absolute;
+  inset: -6px -8px;
+}
+
+.moyens {
+  display: flex;
+  gap: var(--am-space-8);
+}
+
+.moyen {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: var(--am-space-6);
+  min-height: 44px;
+  margin: 0;
+  padding: 0 var(--am-space-6);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface-2);
+  color: var(--am-craie-2);
+  font-family: inherit;
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.moyen[aria-pressed="true"] {
+  border-color: var(--am-ambre);
+  color: var(--am-craie);
+  font-weight: 700;
+}
+
+.point {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+}
+
+.point[data-moyen="mtn_momo"] {
+  background: var(--am-ambre);
+}
+
+.point[data-moyen="orange_money"] {
+  background: var(--am-orange);
+}
+
+/* Récapitulatif : le billet, puis les frais de service sur une ligne à part. */
+.recap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-4);
+  padding: 0 var(--am-space-4);
+  font-size: var(--am-fs-13);
+  color: var(--am-craie-2);
+}
+
+.recapLigne {
+  display: flex;
+  justify-content: space-between;
+}
+
+.recapMontant {
+  font-family: var(--am-font-mono);
+}
+
+.recapOffert {
+  color: var(--am-vert);
+  font-weight: 600;
+}
+
+.recapBarre {
+  color: var(--am-gris);
+}
+
+/* Messages : place prise par un autre voyageur, échec du paiement ; attente de la confirmation MoMo. */
+.alerte {
+  margin: 0;
+  padding: var(--am-space-10) var(--am-space-14);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-rouge);
+  background: var(--am-rouge-fond);
+  color: var(--am-craie);
+  font-size: var(--am-fs-13);
+  line-height: var(--am-lh-normale);
+}
+
+.attente {
+  margin: 0;
+  padding: var(--am-space-10) var(--am-space-14);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-ambre);
+  background: var(--am-ambre-fond);
+  color: var(--am-craie);
+  font-size: var(--am-fs-13);
+  line-height: var(--am-lh-normale);
+}
+
+/* Bouton principal : la planche le dessine à 58 px, libellé 16 px (le bouton du kit : 56 px et 15 px). */
+.payer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 58px;
+  margin: 0;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--am-radius-16);
+  background: var(--am-orange);
+  color: var(--am-nuit);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.payer[aria-busy="true"] {
+  cursor: progress;
+}
+
+.payerTextes {
+  display: flex;
+  flex-direction: column;
+  line-height: var(--am-lh-compacte);
+}
+
+.payerLibelle {
+  font-size: var(--am-fs-16);
+  font-weight: 700;
+}
+
+.payerDetail {
+  font-size: var(--am-fs-11);
+  font-weight: 600;
+}
+
+.payerPrix {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-22);
+  font-weight: 800;
+}
+
+.garantie {
+  font-size: var(--am-fs-11);
+  color: var(--am-gris);
+  text-align: center;
+}
+
+/* États chargement, vide et erreur : même cadre nuit, mêmes cartes. */
+.etat {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--am-space-8);
+  text-align: center;
+}
+
+.etatTitre {
+  margin: 0;
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-18);
+  font-weight: 800;
+  letter-spacing: var(--am-ls-sous-titre);
+}
+
+.etatDetail {
+  margin: 0;
+  font-size: var(--am-fs-13);
+  color: var(--am-craie-2);
+}
+
+.squelette {
+  min-height: 120px;
+  border-radius: var(--am-radius-16);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  animation: pulse var(--am-pulse-duration) infinite;
+}
+
+.squeletteGrand {
+  min-height: 260px;
+}
+
+.squeletteBande {
+  min-height: 46px;
+}
+
+.reessayer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  margin-top: var(--am-space-8);
+  padding: 0 var(--am-space-14);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie-2);
+  font-family: inherit;
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  cursor: pointer;
+}

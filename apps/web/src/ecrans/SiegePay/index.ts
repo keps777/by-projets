@@ -1,0 +1,1 @@
+export { EcranSiegePay } from "./EcranSiegePay";

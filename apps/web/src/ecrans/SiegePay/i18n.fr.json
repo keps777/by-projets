@@ -1,0 +1,62 @@
+{
+  "titre": "Siège et paiement",
+  "retour": "Retour aux départs",
+  "classe": {
+    "vip": "VIP",
+    "classique": "Classique"
+  },
+  "pour": {
+    "moi": "Pour moi",
+    "proche": "Pour un proche",
+    "plusieurs": "À plusieurs"
+  },
+  "plan": {
+    "titre": "Choisis ta place",
+    "siege": "Siège <fort>{{numero}}</fort>",
+    "siegeEmplacement": "Siège <fort>{{numero}}</fort> · {{emplacement}}",
+    "aucunSiege": "Touche une place libre",
+    "placesLibres_one": "{{count}} place libre",
+    "placesLibres_other": "{{count}} places libres"
+  },
+  "voyageur": {
+    "modifier": "modifier"
+  },
+  "recap": {
+    "offertAvec": "(offerts avec {{code}})"
+  },
+  "payer": {
+    "libelle": "Payer et recevoir le billet",
+    "detail": {
+      "mtn_momo": "confirmation MoMo sur ton téléphone",
+      "orange_money": "confirmation Orange Money sur ton téléphone",
+      "carte": "paiement par carte à l'étape suivante"
+    },
+    "garantie": "L'argent du billet va à {{compagnie}}. AfriMove ne le garde pas."
+  },
+  "messages": {
+    "choisirSiege": "Choisis ta place avant de payer.",
+    "siegePris": "Le siège {{numero}} vient d'être pris par un autre voyageur. Choisis une autre place.",
+    "blocageEchoue": "Cette place n'a pas pu être bloquée. Réessaie.",
+    "blocageTermine": "Ta place n'est plus bloquée. Touche-la de nouveau pour la garder.",
+    "attente": "Demande envoyée. Confirme le paiement sur ton téléphone avec ton code {{moyen}}.",
+    "echec": "Le paiement n'a pas abouti. Ta place est libérée : choisis-la de nouveau pour réessayer.",
+    "delai": "Le délai de confirmation est dépassé. Ta place est libérée : choisis-la de nouveau pour réessayer.",
+    "demarrage": "Le paiement n'a pas pu démarrer. Réessaie."
+  },
+  "etats": {
+    "chargement": "Chargement du départ",
+    "vide": {
+      "titre": "Ce départ n'est plus proposé",
+      "detail": "Reviens aux départs pour en choisir un autre."
+    },
+    "complet": {
+      "titre": "Plus aucune place",
+      "detail": "Ce départ est complet. Reviens aux départs pour en choisir un autre."
+    },
+    "erreur": {
+      "titre": "Impossible de charger ce départ",
+      "detail": "Vérifie ta connexion, puis réessaie.",
+      "reessayer": "Réessayer"
+    }
+  }
+}

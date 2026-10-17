@@ -1,0 +1,62 @@
+{
+  "titre": "",
+  "retour": "",
+  "classe": {
+    "vip": "",
+    "classique": ""
+  },
+  "pour": {
+    "moi": "",
+    "proche": "",
+    "plusieurs": ""
+  },
+  "plan": {
+    "titre": "",
+    "siege": "",
+    "siegeEmplacement": "",
+    "aucunSiege": "",
+    "placesLibres_one": "",
+    "placesLibres_other": ""
+  },
+  "voyageur": {
+    "modifier": ""
+  },
+  "recap": {
+    "offertAvec": ""
+  },
+  "payer": {
+    "libelle": "",
+    "detail": {
+      "mtn_momo": "",
+      "orange_money": "",
+      "carte": ""
+    },
+    "garantie": ""
+  },
+  "messages": {
+    "choisirSiege": "",
+    "siegePris": "",
+    "blocageEchoue": "",
+    "blocageTermine": "",
+    "attente": "",
+    "echec": "",
+    "delai": "",
+    "demarrage": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "complet": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
