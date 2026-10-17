@@ -1,55 +1,55 @@
 {
   "fond": {
-    "titre": "",
-    "periode": "",
-    "rapprochement": "",
-    "exports": ""
+    "titre": "Accountant",
+    "periode": "{{periode}} · closing on day {{jour}} of di month",
+    "rapprochement": "MoMo reconciliation · {{mois}}",
+    "exports": "Export dem · fixed column dem"
   },
   "export": {
-    "detail": "",
-    "lignes_one": "",
-    "lignes_other": "",
-    "colonnes_one": "",
-    "colonnes_other": "",
+    "detail": "{{lignes}} · {{colonnes}} · {{taille}} · {{genere}}",
+    "lignes_one": "{{nombre}} row",
+    "lignes_other": "{{nombre}} row dem",
+    "colonnes_one": "{{nombre}} column",
+    "colonnes_other": "{{nombre}} column dem",
     "genere": {
-      "instant": "",
-      "minutes": "",
-      "heures": "",
-      "le": ""
+      "instant": "dem just generate am now",
+      "minutes": "dem generate am {{minutes}} min ago",
+      "heures": "dem generate am {{heures}} h ago",
+      "le": "dem generate am {{date}}"
     },
-    "fermer": "",
-    "onglets": ""
+    "fermer": "Close",
+    "onglets": "Tabs of di export"
   },
   "tableau": {
-    "aria": "",
-    "pied": "",
-    "piedComplet": "",
-    "total": ""
+    "aria": "{{nom}}, row {{premiere}} to {{derniere}}",
+    "pied": "Row {{premiere}} – {{derniere}} for {{total}} · slide to see di next ones",
+    "piedComplet": "Row {{premiere}} – {{derniere}} for {{total}}",
+    "total": "total {{montant}}"
   },
   "garanties": {
     "colonnes": {
-      "titre": "",
-      "detail": ""
+      "titre": "Fixed column dem",
+      "detail": "di same every month · di firm fit import am without change"
     },
     "onglets": {
-      "titre": ""
+      "titre": "One tab for each view"
     },
     "signe": {
-      "titre": "",
-      "detail": ""
+      "titre": "Signed",
+      "detail": "AfriMove fingerprint dey inside di file · nobody fit change am"
     }
   },
   "boutons": {
-    "fermer": "",
-    "telecharger": "",
-    "envoyer": ""
+    "fermer": "Close",
+    "telecharger": "Download",
+    "envoyer": "Send go di firm"
   },
   "etats": {
-    "titre": "",
-    "chargement": "",
-    "vide": "",
-    "introuvable": "",
-    "erreur": "",
-    "reessayer": ""
+    "titre": "Preview of export",
+    "chargement": "Preview dey load",
+    "vide": "Dis export no get any row.",
+    "introuvable": "Dis preview no dey available for dis export.",
+    "erreur": "Di preview no load.",
+    "reessayer": "Try again"
   }
 }

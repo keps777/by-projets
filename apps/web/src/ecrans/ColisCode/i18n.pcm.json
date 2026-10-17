@@ -1,43 +1,43 @@
 {
-  "titre": "",
-  "retour": "",
+  "titre": "Parcel for {{nom}}",
+  "retour": "Go back",
   "partager": {
-    "libelle": "",
-    "texte": "",
-    "copie": "",
-    "echec": ""
+    "libelle": "Share di tracking",
+    "texte": "Tracking of parcel {{numero}}",
+    "copie": "Dem don copy di tracking link.",
+    "echec": "We no fit share di tracking. Try again."
   },
   "resume": {
-    "assure": "",
-    "nonAssure": ""
+    "assure": "{{numero}} · {{poids}} kg · insured {{valeur}}",
+    "nonAssure": "{{numero}} · {{poids}} kg · no insurance"
   },
   "code": {
-    "libelle": "",
-    "envoyer": ""
+    "libelle": "Code to collect",
+    "envoyer": "Send di code"
   },
   "frise": {
-    "libelle": ""
+    "libelle": "Parcel tracking"
   },
   "canaux": {
-    "sms": "",
-    "whatsapp": ""
+    "sms": "SMS",
+    "whatsapp": "WhatsApp"
   },
   "messages": {
-    "codeEnvoye": "",
-    "envoiEchec": "",
-    "reclamationOuverte": "",
-    "reclamationEchec": ""
+    "codeEnvoye": "Dem don send di code by {{canal}} go {{numero}}.",
+    "envoiEchec": "We no fit send di code. Try again.",
+    "reclamationOuverte": "Complaint {{reference}} don open. Dem go answer before {{jour}}.",
+    "reclamationEchec": "We no fit open di complaint. Try again."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Di parcel tracking dey load",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "We no see di parcel",
+      "detail": "Dis parcel no dey, or e no be your own."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "We no fit load di parcel",
+      "detail": "Check your network, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

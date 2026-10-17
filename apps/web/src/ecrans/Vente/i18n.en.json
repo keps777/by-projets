@@ -1,74 +1,74 @@
 {
-  "titre": "",
-  "retour": "",
-  "sousTitre": "",
+  "titre": "Sell",
+  "retour": "Back to the ticket office",
+  "sousTitre": "Counter {{rang}} · ticket no. {{numero}}",
   "departs": {
-    "places": "",
-    "placesCourt": "",
-    "autres": ""
+    "places": "{{destination}} · {{nombre}}",
+    "placesCourt": "{{destination}} · {{nombre}} seats",
+    "autres": "+ {{nombre}}"
   },
   "plan": {
-    "siege": "",
-    "attribue": "",
-    "choisi": "",
-    "libres": "",
-    "siegeLibre": "",
-    "siegePris": "",
-    "indisponible": "",
-    "siegeChoisi": ""
+    "siege": "Seat",
+    "attribue": "assigned automatically · tap a seat to change",
+    "choisi": "chosen · tap a seat to change",
+    "libres": "{{nombre}} free",
+    "siegeLibre": "Seat {{numero}} free",
+    "siegePris": "Seat {{numero}} taken",
+    "indisponible": "The plan for this departure is not loaded yet.",
+    "siegeChoisi": "Seat {{numero}} chosen"
   },
   "voyageur": {
-    "nom": "",
-    "telephone": "",
-    "piece": "",
-    "clientConnu": "",
-    "bagage": ""
+    "nom": "Passenger name",
+    "telephone": "Phone",
+    "piece": "ID (last 4)",
+    "clientConnu": "Known customer ↓",
+    "bagage": "+ luggage {{montant}}"
   },
   "paiement": {
-    "cash": "",
-    "rendu": "",
-    "momo": "",
-    "push": "",
-    "orange": "",
-    "reference": ""
+    "cash": "Cash",
+    "rendu": "change: {{montant}}",
+    "momo": "MoMo",
+    "push": "push to the customer",
+    "orange": "Orange Money",
+    "reference": "reference"
   },
   "recap": {
-    "recu": "",
-    "aEncaisser": "",
-    "referenceLibelle": "",
-    "billet": "",
-    "bagage": "",
-    "sms": "",
-    "oui": "",
-    "non": ""
+    "recu": "Received:",
+    "aEncaisser": "To collect:",
+    "referenceLibelle": "Reference:",
+    "billet": "ticket {{montant}}",
+    "bagage": "luggage {{montant}}",
+    "sms": "SMS to the passenger:",
+    "oui": "yes",
+    "non": "no"
   },
   "encaisser": {
-    "libelle": "",
-    "detail": "",
-    "detailSansSms": ""
+    "libelle": "Collect and print",
+    "detail": "ticket + SMS in 2 s",
+    "detailSansSms": "ticket in 2 s"
   },
-  "annuler": "",
+  "annuler": "Cancel with the supervisor's PIN",
   "erreurs": {
-    "nom": "",
-    "telephone": "",
-    "piece": "",
-    "recu": "",
-    "reference": "",
-    "departAutre": "",
-    "siegePris": "",
-    "vente": "",
-    "impression": ""
+    "nom": "Enter the passenger's name.",
+    "telephone": "Invalid number: 9 digits, starting with 6.",
+    "piece": "Four digits.",
+    "recu": "The amount received is lower than the price.",
+    "reference": "Enter the Orange Money reference.",
+    "departAutre": "The plan and fare for this departure are not loaded yet.",
+    "siegePris": "This seat has just been taken. Choose another.",
+    "vente": "The sale was not recorded. Try again.",
+    "impression": "Ticket {{numero}} is sold, but printing failed. Tap \"Collect and print\" to try again."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Loading the sale",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No departure open for sale",
+      "detail": "There is no departure to sell for now."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "Unable to load the sale",
+      "detail": "Check the connection, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

@@ -1,65 +1,65 @@
 {
-  "marque": "",
-  "salutation": "",
-  "salutationSansNom": "",
-  "direct": "",
+  "marque": "AfriMove",
+  "salutation": "Hello {{prenom}}",
+  "salutationSansNom": "Hello",
+  "direct": "LIVE",
   "mode": {
-    "aria": "",
-    "entreVilles": "",
-    "memeVille": ""
+    "aria": "Type of trip",
+    "entreVilles": "Between town dem",
+    "memeVille": "Inside di same town"
   },
   "ville": {
-    "detectee": "",
-    "changer": "",
-    "titreFeuille": "",
-    "fermer": "",
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "detectee": "· dem see am from where you dey",
+    "changer": "Change town ▾",
+    "titreFeuille": "Change town",
+    "fermer": "Close",
+    "chargement": "Di town dem dey load",
+    "vide": "No town dey served for now.",
+    "erreur": "Di town dem no load.",
+    "reessayer": "Try again"
   },
   "champs": {
-    "depart": "",
-    "arrivee": "",
-    "maPosition": "",
-    "inverser": ""
+    "depart": "Where you dey go from",
+    "arrivee": "Where you dey go",
+    "maPosition": "where I dey",
+    "inverser": "Change di direction"
   },
   "quand": {
-    "aria": "",
-    "maintenant": "",
-    "dans1h": "",
-    "chaqueMatin": "",
-    "erreur": ""
+    "aria": "When you wan go",
+    "maintenant": "Now",
+    "dans1h": "For 1 h",
+    "chaqueMatin": "Every morning 07:00",
+    "erreur": "We no fit save di morning trip. Try again."
   },
   "liste": {
-    "resume": "",
+    "resume": "{{depart}} → {{arrivee}} · {{km}} km",
     "filtres": {
-      "aria": "",
-      "tout": "",
-      "moto": "",
-      "covoit": "",
-      "bus": ""
+      "aria": "Type dem of trip",
+      "tout": "All",
+      "moto": "Moto",
+      "covoit": "Carpool",
+      "bus": "Bus"
     },
     "types": {
-      "covoiturage": "",
-      "moto_taxi": "",
-      "bus_ville": ""
+      "covoiturage": "Carpooling",
+      "moto_taxi": "Moto-taxi",
+      "bus_ville": "City bus"
     },
-    "delai": "",
-    "verifiee": "",
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "delai": "{{count}} min",
+    "verifiee": "dem don check am",
+    "chargement": "Di offer dem dey load",
+    "vide": "No offer for dis trip for now.",
+    "erreur": "Di offer dem no load.",
+    "reessayer": "Try again"
   },
   "raccourcis": {
     "colis": {
-      "titre": "",
-      "detail": ""
+      "titre": "Parcel inside town",
+      "detail": "moto · from 1 000 F"
     },
     "conduis": {
-      "titre": "",
-      "detail": ""
+      "titre": "I dey drive",
+      "detail": "put my trip"
     }
   }
 }

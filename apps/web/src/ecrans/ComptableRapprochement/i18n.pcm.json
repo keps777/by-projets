@@ -1,67 +1,67 @@
 {
   "entete": {
-    "titre": "",
-    "sousTitre_one": "",
-    "sousTitre_other": "",
-    "retour": ""
+    "titre": "No match",
+    "sousTitre_one": "{{mois}} · {{count}} transaction for {{ventes}} · {{montant}} FCFA",
+    "sousTitre_other": "{{mois}} · {{count}} transactions for {{ventes}} · {{montant}} FCFA",
+    "retour": "Go back"
   },
-  "intro": "",
+  "intro": "Di merchant account receive di money, but no ticket get di reference. For each line, di app dey suggest di cause wey fit pass and wetin to do.",
   "tableau": {
-    "reference": "",
-    "montant": "",
-    "total": "",
+    "reference": "Operator ref. · date · number",
+    "montant": "amount",
+    "total": "Total to handle",
     "operateur": {
-      "mtn": "",
-      "orange": ""
+      "mtn": "MTN",
+      "orange": "Orange"
     },
     "action": {
-      "rembourser": "",
-      "rattacher": "",
-      "demander": ""
+      "rembourser": "Refund",
+      "rattacher": "Link am",
+      "demander": "Ask"
     },
     "decision": {
-      "rembourser": "",
-      "rattacher": "",
-      "demander": ""
+      "rembourser": "Dem don refund",
+      "rattacher": "Dem don link am",
+      "demander": "Dem don complain"
     }
   },
   "explications": {
     "rembourser": {
-      "titre": "",
-      "detail": ""
+      "titre": "Refund",
+      "detail": "MoMo go di same number · 1 touch · dem go keep di record for 7 years"
     },
     "rattacher": {
-      "titre": "",
-      "detail": ""
+      "titre": "Link am",
+      "detail": "di reference dey written for di parcel or di ticket"
     },
     "demander": {
-      "titre": "",
-      "detail": ""
+      "titre": "Ask",
+      "detail": "complaint to di operator · answer within 72 h"
     }
   },
-  "pied_one": "",
-  "pied_other": "",
+  "pied_one": "Nothing go close as long as one line still open. Di firm go receive di decision wit im reference.",
+  "pied_other": "Nothing go close as long as one line still open. Di firm go receive di {{count}} decisions wit dia references.",
   "boutons": {
-    "plusTard": "",
-    "appliquer_one": "",
-    "appliquer_other": "",
-    "remboursement_one": "",
-    "remboursement_other": "",
-    "rattachement_one": "",
-    "rattachement_other": "",
-    "reclamation_one": "",
-    "reclamation_other": ""
+    "plusTard": "Later",
+    "appliquer_one": "Do di line · my PIN",
+    "appliquer_other": "Do di {{count}} · my PIN",
+    "remboursement_one": "{{count}} refund",
+    "remboursement_other": "{{count}} refund dem",
+    "rattachement_one": "{{count}} link",
+    "rattachement_other": "{{count}} link dem",
+    "reclamation_one": "{{count}} complaint",
+    "reclamation_other": "{{count}} complaint dem"
   },
   "signature": {
-    "sousTitre": "",
-    "fermer": "",
-    "clavier": ""
+    "sousTitre": "Your PIN go sign dis decisions",
+    "fermer": "Close",
+    "clavier": "PIN keypad to sign di decisions"
   },
   "etats": {
-    "chargement": "",
-    "vide": "",
-    "traite": "",
-    "erreur": "",
-    "reessayer": ""
+    "chargement": "Di transaction dem wey no get match dey load",
+    "vide": "No transaction wey no get match.",
+    "traite": "Dem don handle all di transaction dem.",
+    "erreur": "Di transaction dem no load.",
+    "reessayer": "Try again"
   }
 }

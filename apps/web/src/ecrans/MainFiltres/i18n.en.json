@@ -1,50 +1,50 @@
 {
-  "marque": "",
-  "salutation": "",
-  "salutationSansNom": "",
-  "direct": "",
+  "marque": "AfriMove",
+  "salutation": "Hello {{prenom}}",
+  "salutationSansNom": "Hello",
+  "direct": "LIVE",
   "mode": {
-    "aria": "",
-    "entreVilles": "",
-    "memeVille": ""
+    "aria": "Trip type",
+    "entreVilles": "Between cities",
+    "memeVille": "Within the same city"
   },
   "trajet": {
-    "aujourdhui": ""
+    "aujourdhui": "Today"
   },
   "filtre": {
-    "titre": ""
+    "titre": "Filter the departures"
   },
   "classe": {
-    "titre": ""
+    "titre": "Class"
   },
   "compagnies": {
-    "titre": "",
-    "legende": "",
-    "toutesAria": "",
-    "toutes_one": "",
-    "toutes_other": "",
-    "departs_one": "",
-    "departs_other": "",
-    "retirerPreferee": "",
-    "ajouterPreferee": "",
-    "aucune": "",
-    "echecPreferee": ""
+    "titre": "Companies · one, several or all",
+    "legende": "★ = favourite",
+    "toutesAria": "All companies",
+    "toutes_one": "All · {{count}} company",
+    "toutes_other": "All · {{count}} companies",
+    "departs_one": "{{count}} departure",
+    "departs_other": "{{count}} departures",
+    "retirerPreferee": "Remove from favourites",
+    "ajouterPreferee": "Add to favourites",
+    "aucune": "No company serves this route today.",
+    "echecPreferee": "The favourite company could not be saved."
   },
   "aussi": {
-    "titre": "",
-    "actif": ""
+    "titre": "Also",
+    "actif": "{{libelle}} ✓"
   },
   "actions": {
-    "effacer": "",
-    "voir_one": "",
-    "voir_other": "",
-    "voirSansNombre": "",
-    "voirAucun": ""
+    "effacer": "Clear",
+    "voir_one": "See the departure",
+    "voir_other": "See the {{count}} departures",
+    "voirSansNombre": "See the departures",
+    "voirAucun": "No departure with this filter"
   },
-  "note": "",
+  "note": "Your favourites always show first. The filter is remembered for this route.",
   "etats": {
-    "chargement": "",
-    "erreur": "",
-    "reessayer": ""
+    "chargement": "Loading filters",
+    "erreur": "The filters could not be loaded.",
+    "reessayer": "Try again"
   }
 }

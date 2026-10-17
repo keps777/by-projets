@@ -1,66 +1,66 @@
 {
-  "titre": "",
-  "retour": "",
-  "sousTitre": "",
-  "partenaireAttendu": "",
+  "titre": "Financing",
+  "retour": "Go back",
+  "sousTitre": "Wit <partenaire>{{partenaire}}</partenaire> · your 90 days of sales na im dey make your file",
+  "partenaireAttendu": "[partner financial institution]",
   "avance": {
-    "titre": "",
+    "titre": "Advance for money wey dey enter",
     "statut": {
-      "eligible": "",
-      "non_eligible": "",
-      "en_cours": ""
+      "eligible": "you fit get am",
+      "non_eligible": "you no fit get am",
+      "en_cours": "e dey go on"
     },
-    "plafond": "",
-    "equivalence_one": "",
-    "equivalence_other": "",
-    "montant": "",
-    "rembourse": "",
-    "rembourseValeur": "",
-    "duree": "",
-    "dureeValeur_one": "",
-    "dureeValeur_other": "",
-    "cout": "",
-    "coutAttendu": "",
-    "coutValeur": "",
-    "coutFixe": "",
-    "garantie": ""
+    "plafond": "reach {{montant}}",
+    "equivalence_one": "= {{count}} day of sales",
+    "equivalence_other": "= {{count}} days of sales",
+    "montant": "Amount",
+    "rembourse": "dem go pay am back by",
+    "rembourseValeur": "{{pct}} % of MoMo sales",
+    "duree": "how long e go take",
+    "dureeValeur_one": "≈ {{count}} week",
+    "dureeValeur_other": "≈ {{count}} weeks",
+    "cout": "total cost",
+    "coutAttendu": "[x %]",
+    "coutValeur": "{{pct}} %",
+    "coutFixe": "· di partner dey set am",
+    "garantie": "Dem go pay am enter your account within {{heures}} h. No collateral: your AfriMove sales history na di guarantee. AfriMove no dey lend money, e dey present your file."
   },
   "credit": {
-    "titre": "",
-    "detail": ""
+    "titre": "Credit for equipment",
+    "detail": "{{montant}} · {{mensualites}} × {{mensualite}} · dem go take am from di sales"
   },
   "paie": {
-    "titre": "",
-    "detail_one": "",
-    "detail_other": "",
-    "precision": ""
+    "titre": "Salary of di crew",
+    "detail_one": "{{count}} salary dem go pay by MoMo {{jour}}",
+    "detail_other": "{{count}} salaries dem go pay by MoMo {{jour}}",
+    "precision": "dem calculate am from di trip dem and bonus dem · 1 touch"
   },
   "voyageurs": {
-    "titre": "",
-    "aide": "",
-    "exemple": ""
+    "titre": "For passengers · pay for 2 times",
+    "aide": "option for each agency",
+    "exemple": "VIP ticket {{prix}}: {{reservation}} when you book, {{veille}} di day before. Dem go hold di seat, di ticket go comot for di 2<sup>nd</sup> payment."
   },
   "action": {
-    "demander": "",
-    "masque": ""
+    "demander": "Ask for {{montant}} · file go for 1 touch",
+    "masque": "Dem hide di module until dem sign di agreement wit di partner."
   },
   "pin": {
-    "titre": "",
-    "sousTitre": "",
-    "note": "",
-    "fermer": "",
-    "echec": ""
+    "titre": "Confirm wit your PIN",
+    "sousTitre": "Ask for {{montant}} advance for money wey dey enter",
+    "note": "Your PIN go sign di mandate to take money from your account.",
+    "fermer": "Close",
+    "echec": "We no fit send di request. Try again."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Di financing dey load",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No offer for now",
+      "detail": "Your offer go show here as your sales allow am."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "We no fit load di financing",
+      "detail": "Check di network, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

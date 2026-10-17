@@ -1,42 +1,42 @@
 {
-  "titre": "",
-  "retour": "",
-  "sousTitre": "",
+  "titre": "Close my cash desk",
+  "retour": "Go back to counter",
+  "sousTitre": "{{numero}} · {{agent}} · e open {{heure}} wit {{fond}}",
   "appCompte": {
-    "titre": "",
-    "periode": "",
-    "billetsCash": "",
-    "colisCash": "",
-    "fond": "",
-    "annulations": "",
-    "momo": "",
-    "cashAttendu": ""
+    "titre": "Wetin di app count",
+    "periode": "{{debut}} → {{fin}}",
+    "billetsCash": "Cash ticket dem · {{nombre}}",
+    "colisCash": "Cash parcel dem · {{nombre}}",
+    "fond": "Money wey dem start wit",
+    "annulations": "Cancel dem wey dem approve (sup. PIN) · {{nombre}}",
+    "momo": "MoMo · {{nombre}} sale dem (e no dey for cash desk)",
+    "cashAttendu": "Cash wey dem expect"
   },
   "jeCompte": {
-    "titre": "",
-    "aide": ""
+    "titre": "Wetin I count · touch di notes",
+    "aide": "or type di total"
   },
   "ecart": {
-    "libelle": "",
-    "tolerance": "",
-    "historique": ""
+    "libelle": "Difference",
+    "tolerance": "Tolerance of di agency: {{montant}}.",
+    "historique": "Yesterday: {{hier}} · dis week: {{semaine}}"
   },
   "cloture": {
-    "libelle": "",
-    "detail": "",
-    "echec": ""
+    "libelle": "Close am · make di supervisor approve",
+    "detail": "e go put im PIN, dem go record di difference, di report go go by 9 pm",
+    "echec": "Dem no send di closing. Try again."
   },
-  "minuit": "",
+  "minuit": "You no close your cash desk: e close by itself for midnight.",
   "etats": {
-    "chargement": "",
+    "chargement": "Your cash desk dey load",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No cash desk dey open",
+      "detail": "No cash session dey to close."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "We no fit load your cash desk",
+      "detail": "Check di network, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

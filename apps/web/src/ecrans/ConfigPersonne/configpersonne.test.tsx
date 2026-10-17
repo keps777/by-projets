@@ -686,15 +686,16 @@ describe("ConfigPersonne · textes", () => {
     expect(vides).toEqual([]);
   });
 
-  it("en anglais comme en pidgin, les clés vides se replient sur le français", () => {
-    for (const langue of ["en", "pcm"] as const) {
-      const i18n = creerI18n(langue);
-      expect(i18n.t("actions.enregistrer.libelle", { ns: "ConfigPersonne" })).toBe(
-        "Enregistrer · mon PIN",
-      );
-      expect(i18n.t("droits.exceptions", { ns: "ConfigPersonne", count: 2 })).toBe(
-        "2 exceptions · tracées",
-      );
-    }
+  it("se lit en anglais et en pidgin, pluriels compris", () => {
+    const en = creerI18n("en");
+    expect(en.t("actions.enregistrer.libelle", { ns: "ConfigPersonne" })).toBe("Save · my PIN");
+    expect(en.t("droits.exceptions", { ns: "ConfigPersonne", count: 2 })).toBe(
+      "2 exceptions · logged",
+    );
+    const pcm = creerI18n("pcm");
+    expect(pcm.t("actions.enregistrer.libelle", { ns: "ConfigPersonne" })).toBe("Save am · my PIN");
+    expect(pcm.t("droits.exceptions", { ns: "ConfigPersonne", count: 2 })).toBe(
+      "2 exception dem · dem record dem",
+    );
   });
 });

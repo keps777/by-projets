@@ -1,65 +1,65 @@
 {
-  "marque": "",
-  "salutation": "",
-  "salutationSansNom": "",
-  "direct": "",
+  "marque": "AfriMove",
+  "salutation": "Hello {{prenom}}",
+  "salutationSansNom": "Hello",
+  "direct": "LIVE",
   "mode": {
-    "aria": "",
-    "entreVilles": "",
-    "memeVille": ""
+    "aria": "Trip type",
+    "entreVilles": "Between cities",
+    "memeVille": "Within the same city"
   },
   "ville": {
-    "detectee": "",
-    "changer": "",
-    "titreFeuille": "",
-    "fermer": "",
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "detectee": "· detected from your location",
+    "changer": "Change city ▾",
+    "titreFeuille": "Change city",
+    "fermer": "Close",
+    "chargement": "Loading cities",
+    "vide": "No city served at the moment.",
+    "erreur": "The cities could not be loaded.",
+    "reessayer": "Try again"
   },
   "champs": {
-    "depart": "",
-    "arrivee": "",
-    "maPosition": "",
-    "inverser": ""
+    "depart": "Departure",
+    "arrivee": "Arrival",
+    "maPosition": "my location",
+    "inverser": "Swap direction"
   },
   "quand": {
-    "aria": "",
-    "maintenant": "",
-    "dans1h": "",
-    "chaqueMatin": "",
-    "erreur": ""
+    "aria": "When to leave",
+    "maintenant": "Now",
+    "dans1h": "In 1 h",
+    "chaqueMatin": "Every morning 07:00",
+    "erreur": "The morning trip could not be saved. Try again."
   },
   "liste": {
-    "resume": "",
+    "resume": "{{depart}} → {{arrivee}} · {{km}} km",
     "filtres": {
-      "aria": "",
-      "tout": "",
-      "moto": "",
-      "covoit": "",
-      "bus": ""
+      "aria": "Trip types",
+      "tout": "All",
+      "moto": "Moto",
+      "covoit": "Carpool",
+      "bus": "Bus"
     },
     "types": {
-      "covoiturage": "",
-      "moto_taxi": "",
-      "bus_ville": ""
+      "covoiturage": "Carpooling",
+      "moto_taxi": "Moto-taxi",
+      "bus_ville": "City bus"
     },
-    "delai": "",
-    "verifiee": "",
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "delai": "{{count}} min",
+    "verifiee": "verified",
+    "chargement": "Loading offers",
+    "vide": "No offer for this trip right now.",
+    "erreur": "The offers could not be loaded.",
+    "reessayer": "Try again"
   },
   "raccourcis": {
     "colis": {
-      "titre": "",
-      "detail": ""
+      "titre": "Parcels in town",
+      "detail": "moto · from 1 000 F"
     },
     "conduis": {
-      "titre": "",
-      "detail": ""
+      "titre": "I'm driving",
+      "detail": "offer my trip"
     }
   }
 }

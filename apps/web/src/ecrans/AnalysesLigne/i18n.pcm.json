@@ -1,59 +1,59 @@
 {
   "entete": {
-    "retour": "",
-    "periode": "",
-    "sousTitre_one": "",
-    "sousTitre_other": ""
+    "retour": "Go back to analytics",
+    "periode": "Period",
+    "sousTitre_one": "{{libelle}} · {{count}} bus for each day",
+    "sousTitre_other": "{{libelle}} · {{count}} bus dem for each day"
   },
   "periodes": {
-    "semaine": "",
-    "mois": "",
-    "trimestre": ""
+    "semaine": "Week",
+    "mois": "Month",
+    "trimestre": "Quarter"
   },
   "chiffres": {
-    "recette": "",
-    "billets": "",
-    "billetsDeparts_one": "",
-    "billetsDeparts_other": "",
-    "remplissage": "",
-    "cible": "",
-    "colis": ""
+    "recette": "Money wey enter",
+    "billets": "Ticket dem",
+    "billetsDeparts_one": "{{count}} bus",
+    "billetsDeparts_other": "{{count}} bus dem",
+    "remplissage": "How full",
+    "cible": "target {{pct}}",
+    "colis": "Parcel dem"
   },
   "departs": {
-    "titre": "",
-    "aide": "",
+    "titre": "By bus · average of how full",
+    "aide": "touch to change",
     "classe": {
-      "classique": "",
-      "vip": ""
+      "classique": "standard",
+      "vip": "VIP"
     },
-    "concurrent": "",
-    "aucun": ""
+    "concurrent": "{{compagnie}} {{heure}} for {{prix}}",
+    "aucun": "No bus for dis line for dis period."
   },
   "parJour": {
-    "titre": ""
+    "titre": "By day of di week"
   },
   "canaux": {
-    "enLigne": "",
-    "enLigneDetail_one": "",
-    "enLigneDetail_other": "",
-    "pts_one": "",
-    "pts_other": "",
-    "ptsStable": "",
-    "enRoute": "",
-    "enRouteArrets": "",
-    "enRouteBillets_one": "",
-    "enRouteBillets_other": "",
-    "enregistres": "",
-    "aEnregistrer": ""
+    "enLigne": "Wey dem sell online",
+    "enLigneDetail_one": "{{count}} ticket · {{pts}}",
+    "enLigneDetail_other": "{{count}} ticket dem · {{pts}}",
+    "pts_one": "{{signe}} {{count}} pt",
+    "pts_other": "{{signe}} {{count}} pts",
+    "ptsStable": "stable",
+    "enRoute": "For road",
+    "enRouteArrets": "For road ({{arrets}})",
+    "enRouteBillets_one": "{{count}} ticket",
+    "enRouteBillets_other": "{{count}} ticket dem",
+    "enregistres": "dem don record all",
+    "aEnregistrer": "to record"
   },
   "pied": {
-    "pourquoi": "",
-    "modifier": ""
+    "pourquoi": "Why e dey go down?",
+    "modifier": "Change di line"
   },
   "etats": {
-    "chargement": "",
-    "erreur": "",
-    "introuvable": "",
-    "reessayer": ""
+    "chargement": "Di line dey load",
+    "erreur": "Analysis of di line no load.",
+    "introuvable": "Dis line no dey or e no open again.",
+    "reessayer": "Try again"
   }
 }

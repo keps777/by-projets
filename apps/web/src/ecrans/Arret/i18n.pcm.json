@@ -1,30 +1,30 @@
 {
-  "titre": "",
-  "retour": "",
-  "position": "",
-  "positionInconnue": "",
-  "gps": "",
+  "titre": "Enter bus for road",
+  "retour": "Go back",
+  "position": "You dey for {{arret}} · bus dem wey dey pass wit seat",
+  "positionInconnue": "Bus dem wey dey pass wit seat",
+  "gps": "GPS",
   "ligne": {
-    "etiquette": "",
-    "toi": ""
+    "etiquette": "Road {{ligne}}",
+    "toi": "{{arret}} · you"
   },
   "bus": {
-    "dans": "",
-    "places_one": "",
-    "places_other": "",
-    "parti": "",
-    "arrive": "",
+    "dans": "for {{delai}}",
+    "places_one": "· {{count}} seat",
+    "places_other": "· {{count}} seat dem",
+    "parti": "comot {{ville}} {{heure}}",
+    "arrive": "go reach {{ville}} {{heure}}",
     "classe": {
-      "classique": "",
-      "vip": ""
+      "classique": "standard",
+      "vip": "VIP"
     },
-    "prorata": ""
+    "prorata": "pro rata"
   },
-  "note": "",
+  "note": "You go pay now, di seat go dey hold. Di bus go stop because e know say you dey there. Price dey pro rata to di distance, di company dey set am.",
   "etats": {
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "chargement": "Di bus dem wey dey pass dey load",
+    "vide": "No bus wit seat go pass here for di next few hours.",
+    "erreur": "Di bus dem wey dey pass no load.",
+    "reessayer": "Try again"
   }
 }

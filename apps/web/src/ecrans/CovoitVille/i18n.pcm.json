@@ -1,48 +1,48 @@
 {
-  "titre": "",
+  "titre": "Carpooling",
   "ville": {
-    "detectee": "",
-    "choisie": ""
+    "detectee": "{{ville}} · dem don see am ▾",
+    "choisie": "{{ville}} ▾"
   },
   "mode": {
-    "aria": "",
-    "entreVilles": "",
-    "enVille": "",
-    "glisse": ""
+    "aria": "Type of trip",
+    "entreVilles": "Between town dem",
+    "enVille": "Inside town · {{ville}}",
+    "glisse": "slide to change"
   },
   "role": {
-    "aria": "",
-    "passager": "",
-    "conducteur": ""
+    "aria": "My role",
+    "passager": "I be passenger",
+    "conducteur": "I dey drive"
   },
   "itineraire": {
-    "depart": "",
-    "arrivee": "",
-    "maPosition": "",
-    "detail": "",
-    "maintenant": ""
+    "depart": "Where you dey go from",
+    "arrivee": "Where you dey go",
+    "maPosition": "where I dey",
+    "detail": "{{km}} km · now",
+    "maintenant": "now"
   },
   "maintenant": {
-    "titre": "",
-    "titreSeul": "",
-    "sens": ""
+    "titre": "Dem dey go now · {{count}}",
+    "titreSeul": "Dem dey go now",
+    "sens": "for your direction"
   },
   "offre": {
-    "dans": "",
-    "minutes": "",
-    "motoTaxi": "",
-    "verifie": "",
-    "verifiee": "",
-    "regulier": ""
+    "dans": "for {{count}} min",
+    "minutes": "{{count}} min",
+    "motoTaxi": "moto-taxi",
+    "verifie": "dem don check am",
+    "verifiee": "dem don check am",
+    "regulier": "dem dey go all di time"
   },
   "matin": {
-    "erreur": ""
+    "erreur": "We no fit save di morning trip. Try again."
   },
-  "securite": "",
+  "securite": "Dem dey fix price before, dem no dey bargain am inside di car. Dem go share your location wit one person wey dey close to you as you dey travel.",
   "etats": {
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "chargement": "Di carpool dem inside town dey load",
+    "vide": "No car dey go now for your direction.",
+    "erreur": "Di offer dem no load.",
+    "reessayer": "Try again"
   }
 }

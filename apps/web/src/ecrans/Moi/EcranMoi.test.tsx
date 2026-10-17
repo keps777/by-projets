@@ -169,12 +169,12 @@ describe("Moi · langue", () => {
     const { routeur } = rendreAppMoi();
     await attendreEcran();
     await utilisateur.click(screen.getByRole("button", { name: "Langue · FR" }));
-    expect(await screen.findByRole("button", { name: "Langue · EN" })).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "Language · EN" })).toBeInTheDocument();
     expect(routeur.state.location.pathname).toBe("/moi");
     expect(document.documentElement.lang).toBe("en");
-    await utilisateur.click(screen.getByRole("button", { name: "Langue · EN" }));
-    expect(await screen.findByRole("button", { name: "Langue · PCM" })).toBeInTheDocument();
-    await utilisateur.click(screen.getByRole("button", { name: "Langue · PCM" }));
+    await utilisateur.click(screen.getByRole("button", { name: "Language · EN" }));
+    expect(await screen.findByRole("button", { name: "Language · PCM" })).toBeInTheDocument();
+    await utilisateur.click(screen.getByRole("button", { name: "Language · PCM" }));
     expect(await screen.findByRole("button", { name: "Langue · FR" })).toBeInTheDocument();
   });
 });

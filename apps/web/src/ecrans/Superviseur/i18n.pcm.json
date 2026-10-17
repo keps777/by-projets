@@ -1,49 +1,49 @@
 {
   "entete": {
-    "titre": "",
-    "sousTitre": "",
-    "synchro": ""
+    "titre": "Supervisor · {{gare}}",
+    "sousTitre": "{{superviseur}} · {{guichets}} counter · {{quais}} bus park · {{heure}}",
+    "synchro": "{{synchronises}} / {{total}} don sync"
   },
   "demandes": {
-    "titre_one": "",
-    "titre_other": "",
-    "aide": "",
+    "titre_one": "{{count}} request dey wait for your PIN",
+    "titre_other": "{{count}} request dem dey wait for your PIN",
+    "aide": "touch 1 · PIN · e don finish",
     "cloture": {
-      "titre": "",
-      "detail": "",
-      "action": ""
+      "titre": "Closing of counter {{rang}}",
+      "detail": "· {{agent}} · difference {{ecart}} · wey dem count {{compte}}",
+      "action": "Approve · PIN"
     },
     "annulation": {
-      "titre": "",
-      "detail": "",
-      "action": ""
+      "titre": "Cancel",
+      "detail": "· counter {{rang}} · ticket {{billet}} · {{montant}} · \"{{motif}}\"",
+      "action": "See · PIN"
     }
   },
   "guichets": {
-    "libelle": "",
-    "ecartOuvert": "",
-    "aValider": "",
-    "ouvertA": "",
-    "ferme": ""
+    "libelle": "Counter {{rang}}",
+    "ecartOuvert": "difference {{ecart}} · e open",
+    "aValider": "{{ecart}} · to approve",
+    "ouvertA": "e open {{heure}}",
+    "ferme": "e close"
   },
   "departs": {
-    "titre": "",
-    "aide": "",
-    "ligne": "",
-    "bus": "",
-    "fusion": "",
-    "remplissage": ""
+    "titre": "Bus dem for afternoon",
+    "aide": "how full",
+    "ligne": "{{destination}} · bus park {{quai}}",
+    "bus": "{{bus}}",
+    "fusion": "dem suggest make we join am wit {{heure}}",
+    "remplissage": "{{vendus}}/{{capacite}}"
   },
   "raccourcis": {
-    "controle": "",
-    "equipe": "",
-    "debloquer": "",
-    "rapport": ""
+    "controle": "Check",
+    "equipe": "Team · PIN",
+    "debloquer": "Open 12 h",
+    "rapport": "Report 9 pm"
   },
   "etats": {
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "chargement": "Di station dey load",
+    "vide": "No information for dis station for now.",
+    "erreur": "Di station no load. Di shortcut dem still dey work.",
+    "reessayer": "Try again"
   }
 }

@@ -48,10 +48,20 @@ describe("i18n FR / EN / Pidgin", () => {
     expect(i18n.t("ecrans.Main.titre")).toBe(fr.ecrans.Main.titre);
   });
 
+  it("se lit en anglais et en pidgin", () => {
+    const en = creerI18n("en");
+    expect(en.language).toBe("en");
+    expect(en.t("navigation.patron.reglages")).toBe("Settings");
+    const pcm = creerI18n("pcm");
+    expect(pcm.language).toBe("pcm");
+    expect(pcm.t("navigation.patron.reglages")).toBe("Settings");
+    expect(pcm.t("navigation.voyageur.colis")).toBe("Parcel dem");
+  });
+
   it("se replie sur le français quand une clé anglaise ou pidgin est vide", () => {
     for (const langue of ["en", "pcm"] as const) {
       const i18n = creerI18n(langue);
-      expect(i18n.language).toBe(langue);
+      i18n.addResource(langue, "translation", "navigation.patron.reglages", "");
       expect(i18n.t("navigation.patron.reglages")).toBe("Réglages");
     }
   });

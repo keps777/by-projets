@@ -1,49 +1,49 @@
 {
   "entete": {
-    "titre": "",
-    "sousTitre": "",
-    "synchro": ""
+    "titre": "Supervisor · {{gare}}",
+    "sousTitre": "{{superviseur}} · {{guichets}} counters · {{quais}} platforms · {{heure}}",
+    "synchro": "{{synchronises}} / {{total}} synced"
   },
   "demandes": {
-    "titre_one": "",
-    "titre_other": "",
-    "aide": "",
+    "titre_one": "{{count}} request is waiting for your PIN",
+    "titre_other": "{{count}} requests are waiting for your PIN",
+    "aide": "tap 1 · PIN · done",
     "cloture": {
-      "titre": "",
-      "detail": "",
-      "action": ""
+      "titre": "Closing of counter {{rang}}",
+      "detail": "· {{agent}} · discrepancy {{ecart}} · counted {{compte}}",
+      "action": "Approve · PIN"
     },
     "annulation": {
-      "titre": "",
-      "detail": "",
-      "action": ""
+      "titre": "Cancellation",
+      "detail": "· counter {{rang}} · ticket {{billet}} · {{montant}} · \"{{motif}}\"",
+      "action": "View · PIN"
     }
   },
   "guichets": {
-    "libelle": "",
-    "ecartOuvert": "",
-    "aValider": "",
-    "ouvertA": "",
-    "ferme": ""
+    "libelle": "Counter {{rang}}",
+    "ecartOuvert": "discrepancy {{ecart}} · open",
+    "aValider": "{{ecart}} · to approve",
+    "ouvertA": "open {{heure}}",
+    "ferme": "closed"
   },
   "departs": {
-    "titre": "",
-    "aide": "",
-    "ligne": "",
-    "bus": "",
-    "fusion": "",
-    "remplissage": ""
+    "titre": "Afternoon departures",
+    "aide": "fill rate",
+    "ligne": "{{destination}} · platform {{quai}}",
+    "bus": "{{bus}}",
+    "fusion": "merge suggested with {{heure}}",
+    "remplissage": "{{vendus}}/{{capacite}}"
   },
   "raccourcis": {
-    "controle": "",
-    "equipe": "",
-    "debloquer": "",
-    "rapport": ""
+    "controle": "Check",
+    "equipe": "Team · PIN",
+    "debloquer": "Unblock 12 h",
+    "rapport": "Report 9 pm"
   },
   "etats": {
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "chargement": "Loading the station",
+    "vide": "No information for this station for now.",
+    "erreur": "The station could not be loaded. Shortcuts still work.",
+    "reessayer": "Try again"
   }
 }

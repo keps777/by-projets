@@ -1,28 +1,28 @@
 {
-  "titre": "",
-  "retour": "",
-  "sousTitre": "",
+  "titre": "The 12 modules",
+  "retour": "Back to settings",
+  "sousTitre": "Everything is delivered. You switch on what you use, by station or by city.",
   "pied": {
-    "avecAgence": "",
-    "sansAgence": ""
+    "avecAgence": "A hidden module disappears from your teams' and travellers' screens, without losing anything. {{actifs}} of {{total}} active at {{agence}}.",
+    "sansAgence": "A hidden module disappears from your teams' and travellers' screens, without losing anything. {{actifs}} of {{total}} active."
   },
   "pin": {
-    "titre": "",
-    "allumer": "",
-    "masquer": "",
-    "note": "",
-    "fermer": ""
+    "titre": "Confirm with your PIN",
+    "allumer": "Switch on \"{{module}}\"",
+    "masquer": "Hide \"{{module}}\"",
+    "note": "Your PIN dates and signs the change.",
+    "fermer": "Close"
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Loading the modules",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No module",
+      "detail": "Your agency's modules are not available yet."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "Unable to load the modules",
+      "detail": "Check the connection, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

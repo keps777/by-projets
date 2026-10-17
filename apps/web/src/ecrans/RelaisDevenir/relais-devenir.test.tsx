@@ -9,7 +9,7 @@ import {
 } from "@afrimove/api-client";
 import type { colis as contrats } from "@afrimove/contrats";
 import { ecrans } from "@afrimove/fixtures";
-import { act, screen, waitFor, within } from "@testing-library/react";
+import { act, cleanup, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { sourceScenariosFixtures } from "@/api/source-scenarios";
@@ -279,11 +279,16 @@ describe("RelaisDevenir · chargement, vide, erreur", () => {
 });
 
 describe("RelaisDevenir · langues", () => {
-  it("un texte absent en anglais se replie sur le français", async () => {
+  it("s'affiche en anglais puis en pidgin", async () => {
     rendre({ langue: "en" });
     await attendreEcran();
-    expect(screen.getByText("200 F / COLIS")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Plus tard" })).toBeInTheDocument();
+    expect(screen.getByText("200 F / PARCEL")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Later" })).toBeInTheDocument();
+    cleanup();
+    rendre({ langue: "pcm" });
+    await attendreEcran();
+    expect(screen.getByText("200 F / PARCEL")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Later" })).toBeInTheDocument();
   });
 
   it("les trois langues ont les mêmes clés", () => {

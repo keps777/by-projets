@@ -1,45 +1,45 @@
 {
   "entete": {
-    "titre": "",
-    "titreAvenir": "",
-    "titreAttente": "",
-    "sousTitre": "",
-    "retour": ""
+    "titre": "{{mois}} closed",
+    "titreAvenir": "Close {{mois}}",
+    "titreAttente": "Month closing",
+    "sousTitre": "{{quand}} · signed with your PIN",
+    "retour": "Back"
   },
   "encaisse": {
-    "libelle": "",
-    "cash": "",
-    "momo": "",
-    "ecart": ""
+    "libelle": "FCFA collected · {{mois}}",
+    "cash": "Cash",
+    "momo": "MoMo",
+    "ecart": "Discrepancy"
   },
   "verrou": {
-    "traitees_one": "",
-    "traitees_other": "",
-    "clos": "",
-    "aVenir": ""
+    "traitees_one": "The transaction with no match has been dealt with.",
+    "traitees_other": "The {{count}} transactions with no match have been dealt with.",
+    "clos": "The month is locked: no more changes, only {{suivant}} entries.",
+    "aVenir": "Once closed, the month is locked: no more changes, only {{suivant}} entries."
   },
   "envoi": {
-    "titre": "",
-    "titreAvenir": "",
-    "recu": ""
+    "titre": "Sent to {{destinataire}}",
+    "titreAvenir": "To send to {{destinataire}}",
+    "recu": "received {{heure}}"
   },
   "apercu": {
-    "titre": ""
+    "titre": "Preview · sales journal · first 3 rows"
   },
   "boutons": {
-    "revoir": "",
-    "tableauDeBord": "",
-    "cloturer": ""
+    "revoir": "Review the exports",
+    "tableauDeBord": "Back to the dashboard",
+    "cloturer": "Close {{mois}} · my PIN"
   },
   "signature": {
-    "sousTitre": "",
-    "fermer": "",
-    "clavier": ""
+    "sousTitre": "Your PIN signs the closing",
+    "fermer": "Close",
+    "clavier": "PIN keypad to sign the closing"
   },
   "etats": {
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "chargement": "Loading the closing",
+    "vide": "No month to close.",
+    "erreur": "The closing could not be loaded.",
+    "reessayer": "Try again"
   }
 }

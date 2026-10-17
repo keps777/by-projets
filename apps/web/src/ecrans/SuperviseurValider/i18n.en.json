@@ -1,71 +1,71 @@
 {
-  "titre": "",
-  "retour": "",
-  "sousTitre": "",
-  "badge": "",
+  "titre": "Approve the closing",
+  "retour": "Back",
+  "sousTitre": "Counter {{rang}} · {{agent}} · {{numero}} · {{heure}}",
+  "badge": "PIN",
   "bilan": {
-    "libelle": "",
-    "attendu": "",
-    "compte": "",
-    "ecart": ""
+    "libelle": "Cash desk summary",
+    "attendu": "Expected",
+    "compte": "Counted",
+    "ecart": "Discrepancy"
   },
   "session": {
-    "billets_one": "",
-    "billets_other": "",
-    "colis_one": "",
-    "colis_other": "",
-    "annulations_one": "",
-    "annulations_other": "",
-    "periode": ""
+    "billets_one": "{{count}} cash ticket",
+    "billets_other": "{{count}} cash tickets",
+    "colis_one": "{{count}} parcel",
+    "colis_other": "{{count}} parcels",
+    "annulations_one": "{{count}} approved cancellation",
+    "annulations_other": "{{count}} approved cancellations",
+    "periode": "{{debut}} → {{fin}}"
   },
   "controles": {
     "tolerance": {
-      "libelle": "",
-      "dans": "",
-      "hors": ""
+      "libelle": "Agency tolerance",
+      "dans": "within the limit",
+      "hors": "outside the limit"
     },
     "historique": {
-      "libelle_one": "",
-      "libelle_other": "",
-      "valeur_one": "",
-      "valeur_other": ""
+      "libelle_one": "{{agent}} · last {{count}} day",
+      "libelle_other": "{{agent}} · last {{count}} days",
+      "valeur_one": "{{count}} negative discrepancy · {{total}}",
+      "valeur_other": "{{count}} negative discrepancies · {{total}}"
     },
-    "cadence": ""
+    "cadence": "Rush tickets without a number today"
   },
   "commentaire": {
-    "libelle": ""
+    "libelle": "Supervisor's comment (visible to the owner)"
   },
   "pin": {
-    "titre": "",
-    "aide": "",
-    "regle": ""
+    "titre": "My PIN · {{nom}}",
+    "aide": "{{longueur}} digits · never shared",
+    "regle": "{{essais}} tries, then locked for {{minutes}} min and the owner is alerted. The valid PIN, timestamped and signed, goes into the 9 pm report."
   },
   "actions": {
-    "refuser": "",
+    "refuser": "Reject · recount",
     "valider": {
-      "libelle": "",
-      "detail": ""
+      "libelle": "Approve · discrepancy {{ecart}}",
+      "detail": "signed {{nom}} · cash desk closed"
     }
   },
   "message": {
-    "pinRequis": "",
-    "pinSaisi": "",
-    "pinIncorrect_one": "",
-    "pinIncorrect_other": "",
-    "pinBloque": "",
-    "echec": "",
-    "dejaTraitee": ""
+    "pinRequis": "Enter your PIN to decide.",
+    "pinSaisi": "PIN entered. You can approve or reject.",
+    "pinIncorrect_one": "Wrong PIN. {{count}} try left.",
+    "pinIncorrect_other": "Wrong PIN. {{count}} tries left.",
+    "pinBloque": "Keypad locked: wait for it to reopen.",
+    "echec": "The decision was not sent. Try again.",
+    "dejaTraitee": "This closing has already received a decision."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Loading the closing",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No closing to approve",
+      "detail": "This cash session is not waiting for approval."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "Unable to load the closing",
+      "detail": "Check the connection, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

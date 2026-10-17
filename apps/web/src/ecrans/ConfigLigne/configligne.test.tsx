@@ -578,11 +578,12 @@ describe("ConfigLigne · textes", () => {
     expect(vides).toEqual([]);
   });
 
-  it("en anglais comme en pidgin, les clés vides se replient sur le français", () => {
-    for (const langue of ["en", "pcm"] as const) {
-      const i18n = creerI18n(langue);
-      expect(i18n.t("departs.ajouter", { ns: "ConfigLigne" })).toBe("+ départ");
-      expect(i18n.t("nbChangements", { ns: "ConfigLigne", count: 2 })).toBe("2 changements");
-    }
+  it("se lit en anglais et en pidgin, pluriels compris", () => {
+    const en = creerI18n("en");
+    expect(en.t("departs.ajouter", { ns: "ConfigLigne" })).toBe("+ departure");
+    expect(en.t("nbChangements", { ns: "ConfigLigne", count: 2 })).toBe("2 changes");
+    const pcm = creerI18n("pcm");
+    expect(pcm.t("departs.ajouter", { ns: "ConfigLigne" })).toBe("+ bus");
+    expect(pcm.t("nbChangements", { ns: "ConfigLigne", count: 2 })).toBe("2 change dem");
   });
 });

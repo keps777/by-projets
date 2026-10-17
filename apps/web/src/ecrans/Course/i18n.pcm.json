@@ -1,55 +1,55 @@
 {
-  "retour": "",
+  "retour": "Go back to di ticket",
   "carte": {
-    "libelle": "",
-    "duree_one": "",
-    "duree_other": "",
+    "libelle": "Map: from {{depart}} to {{ville}} station, {{duree}} {{mode}}",
+    "duree_one": "{{count}} minute",
+    "duree_other": "{{count}} minutes",
     "mode": {
-      "moto": "",
-      "taxi": "",
-      "avec_valises": ""
+      "moto": "by moto",
+      "taxi": "by taxi",
+      "avec_valises": "wit 2 box"
     },
-    "chauffeur": ""
+    "chauffeur": "{{prenom}} · {{minutes}} min"
   },
   "depart": {
-    "consigne": "",
-    "heure": "",
-    "trajet": "",
-    "bus": ""
+    "consigne": "To reach di bus park {{minutes}} min before",
+    "heure": "Comot {{heure}}",
+    "trajet": "{{minutes}} min for road",
+    "bus": "bus by {{heure}}"
   },
   "modes": {
-    "groupe": ""
+    "groupe": "Choose di vehicle"
   },
   "chauffeur": {
-    "verifie": "",
-    "appeler": "",
-    "appelIndisponible": ""
+    "verifie": "dem don check am",
+    "appeler": "Call {{prenom}}",
+    "appelIndisponible": "Di number of {{prenom}} no dey available for now."
   },
   "recap": {
-    "cherche": "",
-    "arrivee": "",
-    "paiementBillet": "",
-    "paiement": ""
+    "cherche": "{{prenom}} dey come carry you for",
+    "arrivee": "Reach di {{compagnie}} bus park",
+    "paiementBillet": "Paid wit di ticket · one payment only",
+    "paiement": "Price of di ride"
   },
   "reserver": {
-    "libelle_moto": "",
-    "libelle_taxi": "",
-    "libelle_avec_valises": "",
-    "echec": ""
+    "libelle_moto": "Book di moto for {{heure}}",
+    "libelle_taxi": "Book di taxi for {{heure}}",
+    "libelle_avec_valises": "Book di ride for {{heure}}",
+    "echec": "We no fit book di ride. Try again."
   },
   "pied": {
-    "rappel": ""
+    "rappel": "Reminder {{minutes}} min before. Cancel am free till {{heure}}."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Di ride dey load",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No ride to offer",
+      "detail": "Open your ticket to book moto or taxi go station."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "We no fit load di ride",
+      "detail": "Check your network, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

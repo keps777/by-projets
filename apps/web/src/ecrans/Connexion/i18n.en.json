@@ -1,37 +1,37 @@
 {
-  "retour": "",
-  "etape": "",
+  "retour": "Back",
+  "etape": "Step 1 of 2 · 30 seconds",
   "titre": {
-    "ligne1": "",
-    "ligne2": ""
+    "ligne1": "Your number,",
+    "ligne2": "is your account."
   },
-  "explication": "",
+  "explication": "No password. A code arrives by SMS, and so does your ticket. The same number works on a basic phone with *123#.",
   "telephone": {
-    "libelle": ""
+    "libelle": "Phone number"
   },
   "code": {
-    "titre": "",
+    "titre": "Step 2 · code received by {{canal}}",
     "canaux": {
-      "sms": "",
-      "whatsapp": ""
+      "sms": "SMS",
+      "whatsapp": "WhatsApp"
     },
-    "renvoi": "",
-    "renvoyer": "",
-    "aide": ""
+    "renvoi": "resend in {{delai}}",
+    "renvoyer": "Resend the code",
+    "aide": "The code fills in by itself when the SMS arrives. Nobody from AfriMove will ever ask you for it."
   },
   "actions": {
-    "continuer": "",
-    "whatsapp": "",
-    "ussd": ""
+    "continuer": "Continue",
+    "whatsapp": "By WhatsApp",
+    "ussd": "Without internet · *123#"
   },
-  "mentions": "",
+  "mentions": "By continuing, you accept the terms of use and the data policy. Your data is never sold.",
   "erreurs": {
-    "telephone": "",
-    "envoi": "",
-    "codeIncomplet": "",
-    "codeFaux_one": "",
-    "codeFaux_other": "",
-    "verification": "",
-    "tropEssais": ""
+    "telephone": "Enter your 9-digit number, it starts with 6.",
+    "envoi": "The code could not be sent. Check your connection and try again.",
+    "codeIncomplet": "Enter the 4 digits of the code you received.",
+    "codeFaux_one": "That code is not right. You have {{count}} try left.",
+    "codeFaux_other": "That code is not right. You have {{count}} tries left.",
+    "verification": "The code could not be verified. Check your connection and try again.",
+    "tropEssais": "Too many tries. Try again in {{delai}}."
   }
 }

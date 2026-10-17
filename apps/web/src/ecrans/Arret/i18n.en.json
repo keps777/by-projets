@@ -1,30 +1,30 @@
 {
-  "titre": "",
-  "retour": "",
-  "position": "",
-  "positionInconnue": "",
-  "gps": "",
+  "titre": "Board along the way",
+  "retour": "Back",
+  "position": "You are at {{arret}} · buses passing with seats",
+  "positionInconnue": "Buses passing with seats",
+  "gps": "GPS",
   "ligne": {
-    "etiquette": "",
-    "toi": ""
+    "etiquette": "Route {{ligne}}",
+    "toi": "{{arret}} · you"
   },
   "bus": {
-    "dans": "",
-    "places_one": "",
-    "places_other": "",
-    "parti": "",
-    "arrive": "",
+    "dans": "in {{delai}}",
+    "places_one": "· {{count}} seat",
+    "places_other": "· {{count}} seats",
+    "parti": "left {{ville}} {{heure}}",
+    "arrive": "arrives {{ville}} {{heure}}",
     "classe": {
-      "classique": "",
-      "vip": ""
+      "classique": "standard",
+      "vip": "VIP"
     },
-    "prorata": ""
+    "prorata": "pro rata"
   },
-  "note": "",
+  "note": "You pay now, the seat is held. The bus stops because it knows you are there. Price pro rata to the distance, set by the company.",
   "etats": {
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "chargement": "Loading the passing buses",
+    "vide": "No bus with seats passes here in the next few hours.",
+    "erreur": "The passing buses could not be loaded.",
+    "reessayer": "Try again"
   }
 }

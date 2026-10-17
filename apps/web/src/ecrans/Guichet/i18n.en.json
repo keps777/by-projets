@@ -1,54 +1,54 @@
 {
   "agence": {
-    "titre": "",
-    "sousTitre": ""
+    "titre": "{{compagnie}} · {{gare}}",
+    "sousTitre": "Counter {{rang}} · {{agent}} · cash desk open {{heure}}"
   },
   "synchro": {
-    "sync": "",
-    "horsLigne": ""
+    "sync": "SYNC",
+    "horsLigne": "OFFLINE"
   },
   "compteurs": {
-    "billets": "",
-    "billetsDetail": "",
-    "colis": "",
-    "colisDetail": "",
-    "caisse": "",
-    "caisseDetail": ""
+    "billets": "Tickets",
+    "billetsDetail": "this morning",
+    "colis": "Parcels",
+    "colisDetail": "{{n}} to load",
+    "caisse": "In the cash desk",
+    "caisseDetail": "discrepancy {{valeur}}"
   },
   "actions": {
     "vendre": {
-      "titre": "",
-      "detail": ""
+      "titre": "Sell a ticket",
+      "detail": "departure · seat · name · collect · print: 3 taps"
     },
     "colis": {
-      "titre": "",
-      "detail": ""
+      "titre": "Register a parcel",
+      "detail": "photo, label, SMS"
     },
     "depot": {
-      "titre": "",
-      "detail": ""
+      "titre": "Prepaid drop-off",
+      "detail": "scan the customer's code"
     },
     "quai": {
-      "titre": "",
-      "detail": ""
+      "titre": "Platform · board",
+      "detail": "{{heure}} {{destination}} · {{scannes}}/{{capacite}} scanned"
     },
     "caisse": {
-      "titre": "",
-      "detail": ""
+      "titre": "My cash desk",
+      "detail": "close, count, discrepancy"
     },
-    "cadence": "",
-    "cadenceSansFile": "",
-    "superviseur": ""
+    "cadence": "Rush mode · queue of {{n}}",
+    "cadenceSansFile": "Rush mode",
+    "superviseur": "Call the supervisor"
   },
   "prochain": {
-    "depart_one": "",
-    "depart_other": "",
-    "ouverture": ""
+    "depart_one": "Next departure in {{minutes}} min: {{heure}} {{destination}}, {{count}} seat.",
+    "depart_other": "Next departure in {{minutes}} min: {{heure}} {{destination}}, {{count}} seats.",
+    "ouverture": "The {{heure}} {{destination}} opens for sale."
   },
   "etats": {
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "chargement": "Loading the ticket office home",
+    "vide": "No information for this ticket office for now.",
+    "erreur": "The ticket office home could not be loaded. You can keep selling.",
+    "reessayer": "Try again"
   }
 }

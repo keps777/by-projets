@@ -1,50 +1,50 @@
 {
   "fond": {
-    "titre": "",
-    "sousTitre_one": "",
-    "sousTitre_other": "",
-    "retour": ""
+    "titre": "Configuration",
+    "sousTitre_one": "Team · {{count}} person",
+    "sousTitre_other": "Team · {{count}} people",
+    "retour": "Go back"
   },
   "popup": {
-    "titre_one": "",
-    "titre_other": "",
-    "titreSansEffectif": "",
-    "aide": "",
-    "fermer": ""
+    "titre_one": "My team · {{count}} person",
+    "titre_other": "My team · {{count}} people",
+    "titreSansEffectif": "My team",
+    "aide": "touch one role to filter · touch one name to change am",
+    "fermer": "Close"
   },
   "roles": {
-    "guichetier_one": "",
-    "guichetier_other": "",
-    "superviseur_one": "",
-    "superviseur_other": "",
-    "convoyeur_one": "",
-    "convoyeur_other": "",
-    "chauffeur_one": "",
-    "chauffeur_other": "",
-    "relais_one": "",
-    "relais_other": "",
-    "comptable_one": "",
-    "comptable_other": ""
+    "guichetier_one": "counter agent",
+    "guichetier_other": "counter agent dem",
+    "superviseur_one": "supervisor",
+    "superviseur_other": "supervisor dem",
+    "convoyeur_one": "conductor",
+    "convoyeur_other": "conductor dem",
+    "chauffeur_one": "driver",
+    "chauffeur_other": "driver dem",
+    "relais_one": "relay agent",
+    "relais_other": "relay agent dem",
+    "comptable_one": "accountant",
+    "comptable_other": "accountant dem"
   },
-  "filtres": "",
-  "recherche": "",
-  "liste": "",
-  "modifier": "",
+  "filtres": "Filter di team by role",
+  "recherche": "Find name, counter, station…",
+  "liste": "People for di team (list wey dey scroll)",
+  "modifier": "change",
   "resume": {
-    "enService": "",
-    "bloquees_one": "",
-    "bloquees_other": ""
+    "enService": "{{count}} dey work",
+    "bloquees_one": "{{count}} dem lock",
+    "bloquees_other": "{{count}} dem lock"
   },
-  "signature": "",
+  "signature": "Every change dey signed wit your PIN",
   "actions": {
-    "fermer": "",
-    "ajouter": ""
+    "fermer": "Close",
+    "ajouter": "Add person"
   },
   "etats": {
-    "chargement": "",
-    "vide": "",
-    "aucun": "",
-    "erreur": "",
-    "reessayer": ""
+    "chargement": "Di team dey load",
+    "vide": "Nobody dey for di team for now.",
+    "aucun": "Nobody match.",
+    "erreur": "Di list no load.",
+    "reessayer": "Try again"
   }
 }

@@ -1,81 +1,81 @@
 {
-  "marque": "",
-  "salutation": "",
-  "salutationSansNom": "",
-  "direct": "",
+  "marque": "AfriMove",
+  "salutation": "Hello {{prenom}}",
+  "salutationSansNom": "Hello",
+  "direct": "LIVE",
   "classes": {
-    "vip": "",
-    "classique": ""
+    "vip": "VIP",
+    "classique": "Standard"
   },
   "mode": {
-    "aria": "",
-    "entreVilles": "",
-    "memeVille": ""
+    "aria": "Type of trip",
+    "entreVilles": "Between town dem",
+    "memeVille": "Inside di same town"
   },
   "trajet": {
-    "depart": "",
-    "arrivee": "",
-    "changerDepart": "",
-    "changerArrivee": "",
-    "inverser": "",
-    "position": ""
+    "depart": "Where you dey go from",
+    "arrivee": "Where you dey go",
+    "changerDepart": "Change di town wey you dey go from: {{ville}}",
+    "changerArrivee": "Change di town wey you dey go: {{ville}}",
+    "inverser": "Change di direction",
+    "position": "You dey for {{ville}} · {{gareDepart}} → {{gareArrivee}}"
   },
   "jour": {
-    "aujourdhui": "",
-    "demain": ""
+    "aujourdhui": "Today",
+    "demain": "Tomorrow"
   },
   "filtre": {
-    "toutes": "",
-    "vip": "",
-    "classique": "",
-    "compagnies_one": "",
-    "compagnies_other": "",
-    "resume": "",
-    "preferees_one": "",
-    "preferees_other": ""
+    "toutes": "All class dem",
+    "vip": "VIP",
+    "classique": "Standard",
+    "compagnies_one": "{{count}} company",
+    "compagnies_other": "{{count}} company dem",
+    "resume": "{{classe}} · {{compagnies}}",
+    "preferees_one": "{{count}} favourite",
+    "preferees_other": "{{count}} favourite dem"
   },
   "liste": {
-    "titre": "",
+    "titre": "Bus dem wey dey go · real seat dem",
     "onglets": {
-      "tout": "",
-      "bus": "",
-      "covoit": ""
+      "tout": "All",
+      "bus": "Bus",
+      "covoit": "Carpool"
     },
-    "covoitDetail_one": "",
-    "covoitDetail_other": "",
-    "bus_one": "",
-    "bus_other": "",
-    "covoiturages_one": "",
-    "covoiturages_other": "",
-    "reseauAujourdhui": "",
-    "reseauAutreJour": "",
-    "et": "",
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "covoitDetail_one": "{{lieu}} · {{count}} seat · {{vehicule}}",
+    "covoitDetail_other": "{{lieu}} · {{count}} seat dem · {{vehicule}}",
+    "bus_one": "{{count}} bus",
+    "bus_other": "{{count}} bus",
+    "covoiturages_one": "{{count}} carpool",
+    "covoiturages_other": "{{count}} carpool",
+    "reseauAujourdhui": "{{resume}} today · see all",
+    "reseauAutreJour": "{{resume}} dat day · see all",
+    "et": "{{bus}} and {{covoit}}",
+    "chargement": "Di departure dem dey load",
+    "vide": "No bus dey go dis road dat day.",
+    "erreur": "Di departure dem no load.",
+    "reessayer": "Try again"
   },
   "raccourcis": {
-    "colis": "",
-    "proche": "",
-    "groupe": "",
-    "course": "",
-    "arret": "",
-    "ussd": ""
+    "colis": "Send parcel",
+    "proche": "Pay for your person",
+    "groupe": "Group · full bus",
+    "course": "Moto go station",
+    "arret": "Enter bus for road",
+    "ussd": "Without internet"
   },
   "choixVille": {
-    "titreDepart": "",
-    "titreArrivee": "",
-    "fermer": "",
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "titreDepart": "Town wey you dey go from",
+    "titreArrivee": "Town wey you dey go",
+    "fermer": "Close",
+    "chargement": "Di town dem dey load",
+    "vide": "No town dey served for now.",
+    "erreur": "Di town dem no load.",
+    "reessayer": "Try again"
   },
   "choixJour": {
-    "titre": "",
-    "fermer": "",
-    "aujourdhui": "",
-    "demain": ""
+    "titre": "Choose di day",
+    "fermer": "Close",
+    "aujourdhui": "Today",
+    "demain": "Tomorrow"
   }
 }

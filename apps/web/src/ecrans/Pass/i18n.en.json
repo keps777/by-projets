@@ -1,51 +1,51 @@
 {
-  "retour": "",
+  "retour": "Back to home",
   "partager": {
-    "libelle": "",
-    "message": ""
+    "libelle": "Share the ticket",
+    "message": "My {{compagnie}} ticket: {{depart}} → {{arrivee}}, on {{date}} at {{heure}}. {{lien}}"
   },
   "statut": {
-    "paye": "",
-    "payeSansSms": "",
-    "reserve": "",
-    "embarque": "",
-    "voyage": "",
-    "annule": "",
-    "reporte": "",
-    "nonPresente": ""
+    "paye": "Paid · ticket sent by SMS",
+    "payeSansSms": "Paid",
+    "reserve": "Booked",
+    "embarque": "Boarded",
+    "voyage": "Travelling",
+    "annule": "Cancelled",
+    "reporte": "Postponed",
+    "nonPresente": "No-show"
   },
-  "horsLigne": "",
+  "horsLigne": "Ticket saved on this phone, updated as soon as the network is back.",
   "billet": {
-    "passager": "",
-    "passagerSansPiece": "",
-    "consigne": "",
+    "passager": "{{nom}} · ID card ··· {{piece}}",
+    "passagerSansPiece": "{{nom}}",
+    "consigne": "At the platform {{minutes}} min before, with your ID.",
     "classe": {
-      "vip": "",
-      "classique": ""
+      "vip": "VIP",
+      "classique": "Standard"
     }
   },
   "actions": {
     "suivre": {
-      "titre": "",
-      "detail": ""
+      "titre": "Track my bus",
+      "detail": "and notify a relative"
     },
     "moto": {
-      "titre": "",
-      "detail": ""
+      "titre": "Moto to the station",
+      "detail": "leaves at {{heure}} · {{prix}}"
     },
-    "annulation": "",
-    "colis": ""
+    "annulation": "Postpone or cancel · free until {{heure}}",
+    "colis": "+ parcel"
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Loading the ticket",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "Ticket not found",
+      "detail": "This ticket no longer exists or is not in your name."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "The ticket could not be loaded",
+      "detail": "Check your connection, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

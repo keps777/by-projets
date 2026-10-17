@@ -1,77 +1,77 @@
 {
   "boutique": {
-    "note": "",
-    "inscrire": ""
+    "note": "{{note}} ★",
+    "inscrire": "+ register a shop"
   },
   "resume": {
-    "enGarde": "",
-    "capacite": "",
-    "arrivent": "",
-    "arriventVers": "",
-    "semaine": "",
-    "semaineDetail": ""
+    "enGarde": "In custody",
+    "capacite": "/{{capacite}}",
+    "arrivent": "Arriving",
+    "arriventVers": "around {{heure}}",
+    "semaine": "Week",
+    "semaineDetail": "{{remis}} handed over · {{jour}} {{moyen}}"
   },
   "actions": {
     "remettre": {
-      "titre": "",
-      "detail": ""
+      "titre": "Hand over",
+      "detail": "code + ID · tap 1"
     },
     "recevoir": {
-      "titre": "",
-      "detail": ""
+      "titre": "Receive",
+      "detail": "scan the label"
     }
   },
   "remise": {
-    "titre": "",
-    "pour": "",
-    "code": "",
-    "pieceVerifiee": "",
-    "pieceAVerifier": "",
-    "consigne": "",
-    "pieceCase": "",
-    "vide": ""
+    "titre": "Handover in progress",
+    "pour": "{{numero}} · for {{nom}}",
+    "code": "Pick-up code given by the customer",
+    "pieceVerifiee": "ID checked: ID card in the name of {{nom}}. {{consigne}}",
+    "pieceAVerifier": "ID to check: ID card in the name of {{nom}}. {{consigne}}",
+    "consigne": "Do not photograph the ID. Photo of the parcel handed over at the end.",
+    "pieceCase": "ID checked",
+    "vide": "No handover in progress. Tap a parcel in the \"In custody\" list to hand it over."
   },
   "garde": {
-    "titre": "",
-    "reprise": "",
-    "depuis": "",
-    "depuisRappel": "",
-    "vide": ""
+    "titre": "In custody · {{nombre}}",
+    "reprise": "returned at D+{{jours}}",
+    "depuis": "for {{jours}} d",
+    "depuisRappel": "for {{jours}} d · reminder sent",
+    "vide": "No parcel in custody for now."
   },
   "pied": {
-    "remis": ""
+    "remis": "Parcel handed over · photo · + {{montant}} F"
   },
   "reception": {
-    "titre": "",
-    "champ": "",
-    "valider": "",
-    "reussie": "",
-    "vide": "",
-    "introuvable": "",
-    "refuse": "",
-    "echec": ""
+    "titre": "Receive a parcel",
+    "champ": "Number read on the label",
+    "valider": "Record the receipt",
+    "reussie": "Parcel {{numero}} received into custody.",
+    "vide": "Enter the label number.",
+    "introuvable": "No parcel has this number.",
+    "refuse": "This parcel cannot be received now.",
+    "echec": "The receipt was not recorded. Try again."
   },
   "messages": {
-    "reussie": "",
-    "codeIncomplet": "",
-    "pieceNonVerifiee": "",
-    "aucuneRemise": "",
-    "codeInvalide_one": "",
-    "codeInvalide_other": "",
-    "codeBloque": "",
-    "etatIncompatible": "",
-    "echec": ""
+    "reussie": "Parcel {{numero}} handed over · + {{montant}} F",
+    "codeIncomplet": "Enter the 6 digits of the customer's code.",
+    "pieceNonVerifiee": "Check the ID before handing over the parcel.",
+    "aucuneRemise": "First choose a parcel to hand over.",
+    "codeInvalide_one": "Wrong code. You have {{count}} try left.",
+    "codeInvalide_other": "Wrong code. You have {{count}} tries left.",
+    "codeBloque": "Too many tries: this parcel is blocked.",
+    "etatIncompatible": "This parcel is no longer in custody with you.",
+    "echec": "The handover was not recorded. Try again."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Loading your relay point",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No relay point",
+      "detail": "Your shop is not registered as a relay point yet."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "Unable to load your relay point",
+      "detail": "Check the connection, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

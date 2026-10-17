@@ -1,37 +1,37 @@
 {
-  "fermer": "",
+  "fermer": "Close",
   "reglages": {
-    "titre": "",
-    "sousTitre": "",
+    "titre": "Settings",
+    "sousTitre": "My account and dis phone",
     "profil": {
-      "chargement": "",
-      "indisponible": "",
-      "reessayer": ""
+      "chargement": "Profile dey load",
+      "indisponible": "Profile no dey available",
+      "reessayer": "Try again"
     },
     "langue": {
-      "titre": "",
-      "aria": "",
-      "fr": "",
-      "en": "",
-      "pcm": ""
+      "titre": "Language",
+      "aria": "Language of di app",
+      "fr": "Français",
+      "en": "English",
+      "pcm": "Pidgin"
     },
     "alertes": {
-      "titre": "",
-      "voyage": "",
-      "colis": ""
+      "titre": "Alert dem for dis phone",
+      "voyage": "My bus don comot or don reach",
+      "colis": "My parcel dey move"
     },
-    "deconnexion": "",
-    "terminer": ""
+    "deconnexion": "Comot for di account",
+    "terminer": "E don finish"
   },
   "clientConnu": {
-    "titre": "",
-    "sousTitre": "",
-    "recherche": "",
-    "vide": "",
-    "aucun": "",
-    "sansNumero": "",
-    "piece": "",
-    "derniere": "",
-    "liste": ""
+    "titre": "Customer wey we know",
+    "sousTitre": "One name, one number: di ticket go fill by itself",
+    "recherche": "Find name or number",
+    "vide": "No customer wey we know for dis counter yet. Every ticket wey you sell go add one here.",
+    "aucun": "No customer match.",
+    "sansNumero": "no number",
+    "piece": "ID {{chiffres}}",
+    "derniere": "last ticket na {{date}}",
+    "liste": "Customer dem wey we know"
   }
 }

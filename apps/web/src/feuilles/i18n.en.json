@@ -1,37 +1,37 @@
 {
-  "fermer": "",
+  "fermer": "Close",
   "reglages": {
-    "titre": "",
-    "sousTitre": "",
+    "titre": "Settings",
+    "sousTitre": "My account and this phone",
     "profil": {
-      "chargement": "",
-      "indisponible": "",
-      "reessayer": ""
+      "chargement": "Loading profile",
+      "indisponible": "Profile unavailable",
+      "reessayer": "Try again"
     },
     "langue": {
-      "titre": "",
-      "aria": "",
-      "fr": "",
-      "en": "",
-      "pcm": ""
+      "titre": "Language",
+      "aria": "App language",
+      "fr": "Français",
+      "en": "English",
+      "pcm": "Pidgin"
     },
     "alertes": {
-      "titre": "",
-      "voyage": "",
-      "colis": ""
+      "titre": "Alerts on this phone",
+      "voyage": "My bus leaves or arrives",
+      "colis": "My parcel is moving"
     },
-    "deconnexion": "",
-    "terminer": ""
+    "deconnexion": "Sign out",
+    "terminer": "Done"
   },
   "clientConnu": {
-    "titre": "",
-    "sousTitre": "",
-    "recherche": "",
-    "vide": "",
-    "aucun": "",
-    "sansNumero": "",
-    "piece": "",
-    "derniere": "",
-    "liste": ""
+    "titre": "Known customer",
+    "sousTitre": "A name, a number: the ticket fills itself in",
+    "recherche": "Search a name or a number",
+    "vide": "No known customer at this ticket office yet. Every ticket sold adds one here.",
+    "aucun": "No customer matches.",
+    "sansNumero": "no number",
+    "piece": "ID {{chiffres}}",
+    "derniere": "last ticket on {{date}}",
+    "liste": "Known customers"
   }
 }

@@ -56,9 +56,14 @@ describe("textes des feuilles", () => {
     expect(instance.getFixedT("fr", ESPACE_FEUILLES)("reglages.titre")).toBe("Réglages");
   });
 
-  it("se replie sur le français quand la langue n'a pas la traduction", async () => {
+  it("se lit en anglais et en pidgin, et se replie sur le français si une clé est vidée", async () => {
     const instance = creerI18n("en");
     enregistrerTextesFeuilles(instance);
+    expect(instance.getFixedT("en", ESPACE_FEUILLES)("reglages.titre")).toBe("Settings");
+    expect(instance.getFixedT("pcm", ESPACE_FEUILLES)("reglages.deconnexion")).toBe(
+      "Comot for di account",
+    );
+    instance.addResource("en", ESPACE_FEUILLES, "reglages.titre", "");
     expect(instance.getFixedT("en", ESPACE_FEUILLES)("reglages.titre")).toBe("Réglages");
   });
 });

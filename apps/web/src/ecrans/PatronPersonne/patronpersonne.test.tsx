@@ -402,13 +402,14 @@ describe("PatronPersonne · textes", () => {
     expect(vides).toEqual([]);
   });
 
-  it("en anglais comme en pidgin, les clés vides se replient sur le français", () => {
-    for (const langue of ["en", "pcm"] as const) {
-      const i18n = creerI18n(langue);
-      expect(i18n.t("pied.desactiver.libelle", { ns: "PatronPersonne" })).toBe(
-        "Désactiver le compte",
-      );
-      expect(i18n.t("badge.ecarts", { ns: "PatronPersonne", count: 3 })).toBe("3 ÉCARTS");
-    }
+  it("se lit en anglais et en pidgin, pluriels compris", () => {
+    const en = creerI18n("en");
+    expect(en.t("pied.desactiver.libelle", { ns: "PatronPersonne" })).toBe(
+      "Deactivate the account",
+    );
+    expect(en.t("badge.ecarts", { ns: "PatronPersonne", count: 3 })).toBe("3 DISCREPANCIES");
+    const pcm = creerI18n("pcm");
+    expect(pcm.t("pied.desactiver.libelle", { ns: "PatronPersonne" })).toBe("Put di account off");
+    expect(pcm.t("badge.ecarts", { ns: "PatronPersonne", count: 3 })).toBe("3 DIFFERENCE DEM");
   });
 });

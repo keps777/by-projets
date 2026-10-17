@@ -1,44 +1,44 @@
 {
   "entete": {
-    "retour": "",
-    "titre": ""
+    "retour": "Back",
+    "titre": "Become a relay point"
   },
-  "badge": "",
+  "badge": "{{montant}} F / PARCEL",
   "chiffres": {
     "parColis": {
-      "libelle": "",
-      "detail": ""
+      "libelle": "Per parcel",
+      "detail": "handed over · {{repris}} F if returned"
     },
     "exemple": {
-      "detail": ""
+      "detail": "last week · {{count}} parcels"
     },
     "actifs": {
-      "libelle": "",
-      "detail_one": "",
-      "detail_other": ""
+      "libelle": "Active relays",
+      "detail_one": "in {{count}} city",
+      "detail_other": "in {{count}} cities"
     }
   },
   "prerequis": {
-    "titre": ""
+    "titre": "What you need"
   },
   "etapes": {
-    "titre": ""
+    "titre": "How it works"
   },
   "actions": {
-    "plusTard": "",
-    "inscrire": "",
-    "inscrireDetail": ""
+    "plusTard": "Later",
+    "inscrire": "I sign up · 3 min",
+    "inscrireDetail": "form · agent within 72 h · kit"
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Loading the programme",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "Programme closed for now",
+      "detail": "The relay point programme is not accepting new shops. Come back later."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "Unable to load the programme",
+      "detail": "Check your connection, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

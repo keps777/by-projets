@@ -1,58 +1,58 @@
 {
   "entete": {
-    "retour": "",
-    "places": "",
-    "trajets_one": "",
-    "trajets_other": "",
-    "aSurveiller": ""
+    "retour": "Go back",
+    "places": "{{modele}} {{capacite}} seat dem",
+    "trajets_one": "{{count}} trip dis week",
+    "trajets_other": "{{count}} trip dem dis week",
+    "aSurveiller": "WATCH AM"
   },
   "chiffres": {
-    "recette": "",
-    "depenses": "",
-    "net": "",
-    "recetteDetail": "",
-    "trajets_one": "",
-    "trajets_other": "",
-    "depensesDetail": "",
-    "netDetail": ""
+    "recette": "Money wey enter",
+    "depenses": "Expenses",
+    "net": "Net",
+    "recetteDetail": "{{trajets}} · {{taux}} %",
+    "trajets_one": "{{count}} trip",
+    "trajets_other": "{{count}} trip dem",
+    "depensesDetail": "fuel {{carburant}} · breakdown {{pannes}}",
+    "netDetail": "fleet: {{net}} on average"
   },
   "semaines": {
-    "titre": "",
-    "tendance": ""
+    "titre": "Net for each week · {{count}} weeks",
+    "tendance": "{{variation}} since {{depuis}}"
   },
   "trajets": {
-    "titre": "",
-    "mentionPannes_one": "",
-    "mentionPannes_other": "",
-    "aucun": "",
-    "quand": "",
-    "aLHeure": "",
-    "retard": "",
-    "replaces": "",
-    "gardes": ""
+    "titre": "Dis week · trip by trip",
+    "mentionPannes_one": "{{trajets}} · {{count}} breakdown",
+    "mentionPannes_other": "{{trajets}} · {{count}} breakdown dem",
+    "aucun": "No trip dis week.",
+    "quand": "{{jour}} {{heure}} · {{origine}} → {{destination}}",
+    "aLHeure": "on time",
+    "retard": "{{duree}} late",
+    "replaces": "{{count}} dem don change place",
+    "gardes": "{{count}} dem keep"
   },
   "jours": {
-    "lun": "",
-    "mar": "",
-    "mer": "",
-    "jeu": "",
-    "ven": "",
-    "sam": "",
-    "dim": ""
+    "lun": "Mon",
+    "mar": "Tue",
+    "mer": "Wed",
+    "jeu": "Thu",
+    "ven": "Fri",
+    "sam": "Sat",
+    "dim": "Sun"
   },
   "assistant": {
-    "titre": ""
+    "titre": "Di assistant"
   },
   "pied": {
-    "flotte": "",
-    "assistant": "",
-    "assistantDetail": ""
+    "flotte": "All di fleet",
+    "assistant": "Ask di assistant",
+    "assistantDetail": "review for Monday · who go replace?"
   },
   "etats": {
-    "vide": "",
-    "introuvable": "",
-    "erreur": "",
-    "reessayer": "",
-    "chargement": ""
+    "vide": "Dis bus no run dis week.",
+    "introuvable": "We no see dis bus.",
+    "erreur": "Analysis of di bus no load.",
+    "reessayer": "Try again",
+    "chargement": "Analysis of di bus dey load"
   }
 }

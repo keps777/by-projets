@@ -1,39 +1,39 @@
 {
-  "retour": "",
-  "titre": "",
-  "sousTitre": "",
-  "pastille": "",
-  "montant": "",
+  "retour": "Go back",
+  "titre": "Become delivery man",
+  "sousTitre": "Di programme don open · moto, bicycle or on foot · you choose your time",
+  "pastille": "{{montant}} F / DELIVERY",
+  "montant": "{{montant}} F",
   "chiffres": {
-    "course": "",
-    "courseDetail": "",
-    "semaine_one": "",
-    "semaine_other": "",
-    "livreurs": "",
-    "villes_one": "",
-    "villes_other": ""
+    "course": "Di delivery",
+    "courseDetail": "≈ 4 km · dem dey pay for evening",
+    "semaine_one": "di week · {{count}} delivery",
+    "semaine_other": "di week · {{count}} delivery dem",
+    "livreurs": "Delivery men",
+    "villes_one": "for {{count}} town",
+    "villes_other": "for {{count}} town dem"
   },
   "actions": {
-    "plusTard": "",
-    "inscrire": "",
-    "inscrireDetail": ""
+    "plusTard": "Later",
+    "inscrire": "I wan register",
+    "inscrireDetail": "paper dem · 10 min training · 1st delivery"
   },
   "messages": {
-    "photos": "",
-    "momo": "",
-    "dejaLivreur": "",
-    "echec": ""
+    "photos": "Add di photo of your licence and of your insurance: dem need dem for moto.",
+    "momo": "Di MoMo number never complete: 9 digits, for example 6 75 12 34 09.",
+    "dejaLivreur": "You don be AfriMove delivery man already.",
+    "echec": "We no fit send di registration. Try again small time."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Di delivery man programme dey load",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "Di programme no open for now",
+      "detail": "Come back later: dem no open registration."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "Programme no dey available",
+      "detail": "Di delivery man programme no load.",
+      "reessayer": "Try again"
     }
   }
 }

@@ -1,63 +1,63 @@
 {
-  "titre": "",
-  "sousTitre": "",
-  "retour": "",
+  "titre": "Pay for your person",
+  "sousTitre": "From Montréal, Paris or Douala · dem go send am di ticket by SMS",
+  "retour": "Go back",
   "proches": {
-    "groupe": "",
-    "nouveau": "",
-    "sansNom": ""
+    "groupe": "Choose di person",
+    "nouveau": "+ New number",
+    "sansNom": "your person"
   },
   "saisie": {
-    "nom": "",
-    "telephone": "",
-    "telephoneInvalide": ""
+    "nom": "First name of di person",
+    "telephone": "Number of di person",
+    "telephoneInvalide": "Cameroon number dey needed: 9 digits, wey start wit 6."
   },
   "departs": {
-    "titre": "",
-    "aide": "",
-    "aide_f": "",
-    "places_one": "",
-    "places_other": "",
-    "siege": "",
-    "siegeSansEmplacement": ""
+    "titre": "Departure dem {{jour}}",
+    "aide": "your person go choose seat for di bus park, or you fit do am here",
+    "aide_f": "she go choose seat for di bus park, or you fit do am here",
+    "places_one": "{{count}} seat",
+    "places_other": "{{count}} seat dem",
+    "siege": "seat {{numero}} {{emplacement}} don choose",
+    "siegeSansEmplacement": "seat {{numero}} don choose"
   },
   "classe": {
-    "vip": "",
-    "classique": ""
+    "vip": "VIP · A/C",
+    "classique": "standard"
   },
   "paiement": {
-    "libelle": "",
-    "frais": "",
-    "sansFrais": "",
-    "conversion": "",
-    "prevenir": "",
-    "prevenir_f": ""
+    "libelle": "You dey pay by card · {{devise}}",
+    "frais": "{{billet}} F + {{frais}} F fees",
+    "sansFrais": "{{billet}} F",
+    "conversion": "≈ {{montant}}",
+    "prevenir": "Tell me when your person enter bus and when e reach",
+    "prevenir_f": "Tell me when she enter bus and when she reach"
   },
   "payer": {
-    "libelle": "",
-    "detail": "",
-    "aide": "",
-    "aide_f": ""
+    "libelle": "Pay · {{nom}} go get di ticket",
+    "detail": "SMS wit QR and 4-digit code",
+    "aide": "Your person no need smartphone or internet: di SMS dey enough for di bus park.",
+    "aide_f": "She no need smartphone or internet: di SMS dey enough for di bus park."
   },
   "messages": {
-    "saisirProche": "",
-    "complet": "",
-    "prix": "",
-    "demarrage": "",
-    "attente": "",
-    "echec": "",
-    "delai": ""
+    "saisirProche": "Put di first name and number of your person before you pay.",
+    "complet": "Dis bus don full. Choose another one.",
+    "prix": "We no fit calculate di price. Try again.",
+    "demarrage": "Di payment no fit start. Try again.",
+    "attente": "Payment don go. If your bank ask you, confirm am wit dem.",
+    "echec": "Di payment no pass. Check your card, then try again.",
+    "delai": "Di time to pay don finish. Try again."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Di departure dem dey load",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No bus dat day",
+      "detail": "Go back to di departure dem to choose another road or another day."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "We no fit load di departure dem",
+      "detail": "Check your network, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

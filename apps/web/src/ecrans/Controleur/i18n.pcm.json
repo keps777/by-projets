@@ -1,62 +1,62 @@
 {
-  "titre": "",
-  "sousTitre": "",
+  "titre": "Check for inside bus",
+  "sousTitre": "{{nom}} · {{fonction}} Alpha · bus {{bus}} for {{lieu}}",
   "fonction": {
-    "feminin": "",
-    "masculin": ""
+    "feminin": "inspector",
+    "masculin": "inspector"
   },
-  "retour": "",
-  "badge": "",
+  "retour": "Go back",
+  "badge": "CHECK WEY NO DEY EXPECT",
   "compteurs": {
     "liste": {
-      "libelle": "",
-      "detail": ""
+      "libelle": "List",
+      "detail": "valid ticket dem"
     },
     "comptes": {
-      "libelle": "",
-      "detail": ""
+      "libelle": "Wey dem count",
+      "detail": "people for inside bus"
     },
     "ecart": {
-      "libelle": "",
-      "sansBillet": "",
-      "aucun": "",
-      "sansVoyageur": ""
+      "libelle": "Difference",
+      "sansBillet": "no ticket",
+      "aucun": "no difference",
+      "sansVoyageur": "ticket wey no get passenger"
     }
   },
   "sieges": {
-    "titre": "",
-    "total": ""
+    "titre": "Seat by seat · touch one seat to check",
+    "total": "{{nombre}} seat dem"
   },
   "fiche": {
-    "titre": "",
-    "lieuHeure": "",
-    "declare": "",
-    "aucuneVente": "",
-    "venteTrouvee": "",
-    "regulariser": "",
-    "signaler": "",
-    "regularise": "",
-    "signale": "",
-    "echecRegularisation": "",
-    "echecSignalement": ""
+    "titre": "Seat {{numero}} · passenger wey no get ticket",
+    "lieuHeure": "{{lieu}} · {{heure}}",
+    "declare": "Im talk say im pay {{montant}} F to di conductor for {{ville}}.",
+    "aucuneVente": "Dem no record any sale for road for dis seat.",
+    "venteTrouvee": "Dem record one sale for road for dis seat.",
+    "regulariser": "Put am for order · ticket {{montant}}",
+    "signaler": "Report di conductor",
+    "regularise": "Ticket {{numero}} don sell: seat {{siege}} dey in order.",
+    "signale": "Dem don report di conductor: di patron go receive di report for seat {{siege}}.",
+    "echecRegularisation": "Dem no sell di ticket. Try again.",
+    "echecSignalement": "Dem no report di conductor. Try again."
   },
   "siege": {
-    "echec": ""
+    "echec": "Dem no record seat {{numero}}. Try again."
   },
   "cloture": {
-    "libelle": "",
-    "echec": ""
+    "libelle": "Close di check · send am to di patron",
+    "echec": "Dem no send di check to di patron. Try again."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Di check dey load",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No check dey go on",
+      "detail": "Di check for inside bus go show here as one bus need check."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "Di check no dey open",
+      "detail": "Check di network, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

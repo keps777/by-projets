@@ -1,44 +1,44 @@
 {
   "entete": {
-    "retour": "",
-    "titre": ""
+    "retour": "Go back",
+    "titre": "Become relay point"
   },
-  "badge": "",
+  "badge": "{{montant}} F / PARCEL",
   "chiffres": {
     "parColis": {
-      "libelle": "",
-      "detail": ""
+      "libelle": "For each parcel",
+      "detail": "wey you give out · {{repris}} F if dem carry am go back"
     },
     "exemple": {
-      "detail": ""
+      "detail": "last week · {{count}} parcel dem"
     },
     "actifs": {
-      "libelle": "",
-      "detail_one": "",
-      "detail_other": ""
+      "libelle": "Relay dem wey dey work",
+      "detail_one": "for {{count}} town",
+      "detail_other": "for {{count}} town dem"
     }
   },
   "prerequis": {
-    "titre": ""
+    "titre": "Wetin you need"
   },
   "etapes": {
-    "titre": ""
+    "titre": "How e dey work"
   },
   "actions": {
-    "plusTard": "",
-    "inscrire": "",
-    "inscrireDetail": ""
+    "plusTard": "Later",
+    "inscrire": "I wan register · 3 min",
+    "inscrireDetail": "form · agent within 72 h · kit"
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Di programme dey load",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "Di programme don close for now",
+      "detail": "Di relay point programme no dey take new shop. Come back later."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "We no fit load di programme",
+      "detail": "Check your network, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

@@ -275,11 +275,18 @@ describe("USSD · états chargement, vide et erreur", () => {
 });
 
 describe("USSD · textes", () => {
-  it("en anglais, les textes non traduits retombent sur le français (aucune clé brute)", async () => {
+  it("s'affiche en anglais, sans clé brute", async () => {
     rendreUssd({ langue: "en" });
-    await attendreApercu();
-    expect(screen.getByRole("heading", { level: 1, name: "Sans internet" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Voir le billet reçu" })).toBeInTheDocument();
+    await screen.findByRole("log", { name: "WhatsApp conversation: buying a ticket" });
+    expect(screen.getByRole("heading", { level: 1, name: "Without internet" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "See the ticket received" })).toBeInTheDocument();
+    expect(document.body.textContent).not.toMatch(/actions\.|whatsapp\.|ussd\.|etats\./);
+  });
+
+  it("s'affiche en pidgin, sans clé brute", async () => {
+    rendreUssd({ langue: "pcm" });
+    await screen.findByRole("log", { name: "WhatsApp conversation: how to buy ticket" });
+    expect(screen.getByRole("link", { name: "See di ticket wey you receive" })).toBeInTheDocument();
     expect(document.body.textContent).not.toMatch(/actions\.|whatsapp\.|ussd\.|etats\./);
   });
 });

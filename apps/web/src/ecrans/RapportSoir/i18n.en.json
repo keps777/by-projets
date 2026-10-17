@@ -1,54 +1,54 @@
 {
   "entete": {
-    "retour": "",
-    "marque": "",
-    "marqueSeule": "",
-    "verifie": ""
+    "retour": "Back",
+    "marque": "AfriMove · {{compagnie}}",
+    "marqueSeule": "AfriMove",
+    "verifie": "verified account · replies in 2 min"
   },
   "chiffres": {
-    "billets": "",
-    "colis": "",
-    "recette": "",
-    "variation": "",
-    "litiges_one": "",
-    "litiges_other": "",
-    "repartition": ""
+    "billets": "Tickets",
+    "colis": "Parcels",
+    "recette": "Revenue",
+    "variation": "{{variation}} vs yesterday",
+    "litiges_one": "{{count}} dispute",
+    "litiges_other": "{{count}} disputes",
+    "repartition": "cash {{cash}} · MoMo {{momo}}"
   },
   "gares": {
-    "billets_one": "",
-    "billets_other": "",
-    "ecart": "",
-    "aucune": ""
+    "billets_one": "{{nombre}} ticket",
+    "billets_other": "{{nombre}} tickets",
+    "ecart": "discrepancy",
+    "aucune": "No station in this report."
   },
   "enRoute": {
-    "titre": ""
+    "titre": "On the road"
   },
   "remplissage": {
-    "titre": "",
-    "moyen": ""
+    "titre": "Fill rate",
+    "moyen": "{{pct}} % average"
   },
   "annulations": {
-    "titre": "",
-    "aucune": "",
-    "detail": "",
-    "toutesAvecPin": "",
-    "sansPin": ""
+    "titre": "Cancellations",
+    "aucune": "none",
+    "detail": "{{nombre}} ({{montant}}), {{pin}}",
+    "toutesAvecPin": "all with PIN",
+    "sansPin": "including at least one without PIN"
   },
   "enLigne": {
-    "titre": "",
-    "billets_one": "",
-    "billets_other": ""
+    "titre": "Online",
+    "billets_one": "{{nombre}} ticket ({{pct}} %)",
+    "billets_other": "{{nombre}} tickets ({{pct}} %)"
   },
-  "ouvrirDetail": "",
-  "signature": "",
-  "signatureAucune": "",
-  "voir": "",
-  "saisie": "",
-  "ouvrirAssistant": "",
+  "ouvrirDetail": "Open the details in the app",
+  "signature": "{{heure}} · signed {{signatures}}",
+  "signatureAucune": "{{heure}} · no signature",
+  "voir": "See →",
+  "saisie": "Ask a question about your figures…",
+  "ouvrirAssistant": "Open the assistant",
   "etats": {
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "chargement": "Loading the evening report",
+    "vide": "The evening report has not arrived yet. It goes out every evening at 9 pm.",
+    "erreur": "The evening report could not be loaded.",
+    "reessayer": "Try again"
   }
 }

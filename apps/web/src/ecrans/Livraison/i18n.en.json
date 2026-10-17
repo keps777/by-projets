@@ -1,70 +1,70 @@
 {
-  "retour": "",
-  "fermer": "",
-  "statut": "",
-  "destinataire": "",
+  "retour": "Back",
+  "fermer": "Close",
+  "statut": "OUT FOR DELIVERY",
+  "destinataire": "the recipient",
   "carte": {
-    "libelle_one": "",
-    "libelle_other": "",
-    "depart": "",
-    "livreur": ""
+    "libelle_one": "Map: the courier is {{count}} minute from {{nom}}'s place",
+    "libelle_other": "Map: the courier is {{count}} minutes from {{nom}}'s place",
+    "depart": "{{lieu}} · picked up {{heure}}",
+    "livreur": "{{prenom}} · {{minutes}} min"
   },
   "arrivee": {
-    "colis": "",
-    "poids": "",
-    "poidsNonAssure": ""
+    "colis": "parcel {{reference}}",
+    "poids": "{{poids}} kg · insured",
+    "poidsNonAssure": "{{poids}} kg · not insured"
   },
   "livreur": {
-    "titre": "",
-    "verifie": "",
-    "reputation_one": "",
-    "reputation_other": "",
-    "engin": "",
-    "appeler": "",
-    "appelIndisponible": ""
+    "titre": "{{nom}} · moto courier",
+    "verifie": "verified",
+    "reputation_one": "{{note}} ★ · {{count}} delivery",
+    "reputation_other": "{{note}} ★ · {{count}} deliveries",
+    "engin": "{{moto}} · AfriMove vest no. {{gilet}}",
+    "appeler": "Call {{prenom}}",
+    "appelIndisponible": "{{prenom}}'s number is not available for now."
   },
   "remise": {
-    "libelle": "",
-    "aLeCode": "",
-    "pasLeCode": "",
-    "debut": "",
-    "fin": ""
+    "libelle": "At handover",
+    "aLeCode": "{{nom}} has the code",
+    "pasLeCode": "{{nom}} does not have the code yet",
+    "debut": "{{prenom}} asks for the code ",
+    "fin": " and checks the ID. He takes a photo of the parcel handed over. You get the photo, and so does {{nom}}. If she is not there, he waits {{minutes}} min then drops it at {{relais}}."
   },
   "partager": {
-    "libelle": "",
-    "titre": "",
-    "champ": "",
-    "envoyer": "",
-    "invalide": "",
-    "envoye": "",
-    "echec": ""
+    "libelle": "Share the tracking with {{nom}}",
+    "titre": "Share the tracking",
+    "champ": "{{nom}}'s number",
+    "envoyer": "Send the link",
+    "invalide": "Enter a 9-digit number.",
+    "envoye": "Tracking link sent to {{numero}}.",
+    "echec": "The tracking could not be sent. Try again."
   },
   "adresse": {
-    "libelle": "",
-    "champ": "",
-    "valider": "",
-    "vide": "",
-    "changee": "",
-    "livreurPrevenu": "",
-    "echec": ""
+    "libelle": "Change the address",
+    "champ": "New address",
+    "valider": "Confirm",
+    "vide": "Write the new address.",
+    "changee": "Address changed: {{adresse}}.",
+    "livreurPrevenu": " The courier has been notified.",
+    "echec": "The address could not be changed. Try again."
   },
   "pied": {
-    "livraison": "",
-    "payee": "",
-    "aPayer": "",
-    "assure": "",
-    "nonAssure": ""
+    "livraison": "Delivery {{prix}} F · {{etat}} · {{part}} F for {{prenom}} at handover",
+    "payee": "paid",
+    "aPayer": "to pay",
+    "assure": "insured",
+    "nonAssure": "not insured"
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Loading the delivery",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No delivery in progress",
+      "detail": "This parcel is not out for moto delivery, or it is not yours."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "Unable to load the delivery",
+      "detail": "Check your connection, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

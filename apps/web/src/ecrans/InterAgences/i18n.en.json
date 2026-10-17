@@ -1,49 +1,49 @@
 {
-  "titre": "",
-  "retour": "",
-  "sousTitre": "",
+  "titre": "Between companies",
+  "retour": "Back",
+  "sousTitre": "A parcel changes bus on the way. Each company is paid for its leg.",
   "colis": {
-    "titre": "",
-    "poids": "",
-    "troncon": "",
-    "trajet": "",
-    "horaire": "",
-    "part": "",
-    "aucun": ""
+    "titre": "{{origine}} → {{destination}} · parcel {{numero}}",
+    "poids": "{{kg}} kg",
+    "troncon": "Leg {{rang}} · {{compagnie}}",
+    "trajet": "{{origine}} → {{destination}}",
+    "horaire": "{{depart}} · {{bus}} · arrival {{arrivee}}",
+    "part": "{{montant}} · for {{compagnie}}",
+    "aucun": "No connecting parcel for now."
   },
   "reglement": {
-    "titre": "",
-    "nousDoit_one": "",
-    "nousDoit_other": "",
-    "nousLeDevons_one": "",
-    "nousLeDevons_other": "",
-    "solde": ""
+    "titre": "Settlement between companies · week",
+    "nousDoit_one": "{{compagnie}} owes you · {{count}} parcel carried for them",
+    "nousDoit_other": "{{compagnie}} owes you · {{count}} parcels carried for them",
+    "nousLeDevons_one": "You owe {{compagnie}} · {{count}} connecting parcel",
+    "nousLeDevons_other": "You owe {{compagnie}} · {{count}} connecting parcels",
+    "solde": "Net balance · settled by MoMo {{jour}} {{heure}}"
   },
   "jours": {
-    "0": "",
-    "1": "",
-    "2": "",
-    "3": "",
-    "4": "",
-    "5": "",
-    "6": ""
+    "0": "Sunday",
+    "1": "Monday",
+    "2": "Tuesday",
+    "3": "Wednesday",
+    "4": "Thursday",
+    "5": "Friday",
+    "6": "Saturday"
   },
   "voyageurs": {
-    "titre": "",
-    "texte": ""
+    "titre": "Also for travellers",
+    "texte": "{{depart}} → {{arrivee}} on a single ticket: {{premiere}} to {{correspondance}}, {{seconde}} after that, with a guaranteed {{garantie}} min connection. If the first bus is late, the second waits {{attente}} min or the traveller is rebooked for free."
   },
   "actions": {
-    "convention": "",
-    "ajouter": ""
+    "convention": "{{avec}} agreement · view",
+    "ajouter": "Add a company"
   },
   "chargement": {
-    "libelle": ""
+    "libelle": "Loading exchanges between companies"
   },
   "vide": {
-    "texte": ""
+    "texte": "No exchange between companies for now."
   },
   "erreur": {
-    "texte": "",
-    "reessayer": ""
+    "texte": "The exchanges between companies could not be loaded. Shortcuts still work.",
+    "reessayer": "Try again"
   }
 }

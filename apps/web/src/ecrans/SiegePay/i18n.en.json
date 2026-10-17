@@ -1,62 +1,62 @@
 {
-  "titre": "",
-  "retour": "",
+  "titre": "Seat and payment",
+  "retour": "Back to departures",
   "classe": {
-    "vip": "",
-    "classique": ""
+    "vip": "VIP",
+    "classique": "Standard"
   },
   "pour": {
-    "moi": "",
-    "proche": "",
-    "plusieurs": ""
+    "moi": "For me",
+    "proche": "For a relative",
+    "plusieurs": "For several people"
   },
   "plan": {
-    "titre": "",
-    "siege": "",
-    "siegeEmplacement": "",
-    "aucunSiege": "",
-    "placesLibres_one": "",
-    "placesLibres_other": ""
+    "titre": "Choose your seat",
+    "siege": "Seat <fort>{{numero}}</fort>",
+    "siegeEmplacement": "Seat <fort>{{numero}}</fort> · {{emplacement}}",
+    "aucunSiege": "Tap a free seat",
+    "placesLibres_one": "{{count}} free seat",
+    "placesLibres_other": "{{count}} free seats"
   },
   "voyageur": {
-    "modifier": ""
+    "modifier": "edit"
   },
   "recap": {
-    "offertAvec": ""
+    "offertAvec": "(free with {{code}})"
   },
   "payer": {
-    "libelle": "",
+    "libelle": "Pay and get the ticket",
     "detail": {
-      "mtn_momo": "",
-      "orange_money": "",
-      "carte": ""
+      "mtn_momo": "MoMo confirmation on your phone",
+      "orange_money": "Orange Money confirmation on your phone",
+      "carte": "card payment at the next step"
     },
-    "garantie": ""
+    "garantie": "The ticket money goes to {{compagnie}}. AfriMove does not keep it."
   },
   "messages": {
-    "choisirSiege": "",
-    "siegePris": "",
-    "blocageEchoue": "",
-    "blocageTermine": "",
-    "attente": "",
-    "echec": "",
-    "delai": "",
-    "demarrage": ""
+    "choisirSiege": "Choose your seat before paying.",
+    "siegePris": "Seat {{numero}} has just been taken by another traveller. Choose another seat.",
+    "blocageEchoue": "This seat could not be held. Try again.",
+    "blocageTermine": "Your seat is no longer held. Tap it again to keep it.",
+    "attente": "Request sent. Confirm the payment on your phone with your {{moyen}} code.",
+    "echec": "The payment did not go through. Your seat is released: choose it again to try again.",
+    "delai": "The confirmation time has run out. Your seat is released: choose it again to try again.",
+    "demarrage": "The payment could not start. Try again."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Loading the departure",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "This departure is no longer offered",
+      "detail": "Go back to the departures to choose another."
     },
     "complet": {
-      "titre": "",
-      "detail": ""
+      "titre": "No seats left",
+      "detail": "This departure is full. Go back to the departures to choose another."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "Unable to load this departure",
+      "detail": "Check your connection, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

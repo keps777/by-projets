@@ -1,50 +1,50 @@
 {
   "fond": {
-    "titre": "",
-    "sousTitre_one": "",
-    "sousTitre_other": "",
-    "retour": ""
+    "titre": "Configuration",
+    "sousTitre_one": "Team · {{count}} person",
+    "sousTitre_other": "Team · {{count}} people",
+    "retour": "Back"
   },
   "popup": {
-    "titre_one": "",
-    "titre_other": "",
-    "titreSansEffectif": "",
-    "aide": "",
-    "fermer": ""
+    "titre_one": "My team · {{count}} person",
+    "titre_other": "My team · {{count}} people",
+    "titreSansEffectif": "My team",
+    "aide": "tap a role to filter · tap a name to edit",
+    "fermer": "Close"
   },
   "roles": {
-    "guichetier_one": "",
-    "guichetier_other": "",
-    "superviseur_one": "",
-    "superviseur_other": "",
-    "convoyeur_one": "",
-    "convoyeur_other": "",
-    "chauffeur_one": "",
-    "chauffeur_other": "",
-    "relais_one": "",
-    "relais_other": "",
-    "comptable_one": "",
-    "comptable_other": ""
+    "guichetier_one": "counter agent",
+    "guichetier_other": "counter agents",
+    "superviseur_one": "supervisor",
+    "superviseur_other": "supervisors",
+    "convoyeur_one": "conductor",
+    "convoyeur_other": "conductors",
+    "chauffeur_one": "driver",
+    "chauffeur_other": "drivers",
+    "relais_one": "relay agent",
+    "relais_other": "relay agents",
+    "comptable_one": "accountant",
+    "comptable_other": "accountants"
   },
-  "filtres": "",
-  "recherche": "",
-  "liste": "",
-  "modifier": "",
+  "filtres": "Filter the team by role",
+  "recherche": "Search a name, a counter, a station…",
+  "liste": "Team members (scrolling list)",
+  "modifier": "edit",
   "resume": {
-    "enService": "",
-    "bloquees_one": "",
-    "bloquees_other": ""
+    "enService": "{{count}} on duty",
+    "bloquees_one": "{{count}} locked",
+    "bloquees_other": "{{count}} locked"
   },
-  "signature": "",
+  "signature": "Every change is signed with your PIN",
   "actions": {
-    "fermer": "",
-    "ajouter": ""
+    "fermer": "Close",
+    "ajouter": "Add a person"
   },
   "etats": {
-    "chargement": "",
-    "vide": "",
-    "aucun": "",
-    "erreur": "",
-    "reessayer": ""
+    "chargement": "Loading the team",
+    "vide": "Nobody on the team for now.",
+    "aucun": "Nobody matches.",
+    "erreur": "The list could not be loaded.",
+    "reessayer": "Try again"
   }
 }

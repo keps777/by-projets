@@ -1,48 +1,48 @@
 {
-  "titre": "",
+  "titre": "Carpooling",
   "ville": {
-    "detectee": "",
-    "choisie": ""
+    "detectee": "{{ville}} · detected ▾",
+    "choisie": "{{ville}} ▾"
   },
   "mode": {
-    "aria": "",
-    "entreVilles": "",
-    "enVille": "",
-    "glisse": ""
+    "aria": "Trip type",
+    "entreVilles": "Between cities",
+    "enVille": "In town · {{ville}}",
+    "glisse": "swipe to change"
   },
   "role": {
-    "aria": "",
-    "passager": "",
-    "conducteur": ""
+    "aria": "My role",
+    "passager": "I'm a passenger",
+    "conducteur": "I'm driving"
   },
   "itineraire": {
-    "depart": "",
-    "arrivee": "",
-    "maPosition": "",
-    "detail": "",
-    "maintenant": ""
+    "depart": "Departure",
+    "arrivee": "Arrival",
+    "maPosition": "my location",
+    "detail": "{{km}} km · now",
+    "maintenant": "now"
   },
   "maintenant": {
-    "titre": "",
-    "titreSeul": "",
-    "sens": ""
+    "titre": "Leaving now · {{count}}",
+    "titreSeul": "Leaving now",
+    "sens": "in your direction"
   },
   "offre": {
-    "dans": "",
-    "minutes": "",
-    "motoTaxi": "",
-    "verifie": "",
-    "verifiee": "",
-    "regulier": ""
+    "dans": "in {{count}} min",
+    "minutes": "{{count}} min",
+    "motoTaxi": "moto-taxi",
+    "verifie": "verified",
+    "verifiee": "verified",
+    "regulier": "regular"
   },
   "matin": {
-    "erreur": ""
+    "erreur": "The morning trip could not be saved. Try again."
   },
-  "securite": "",
+  "securite": "Prices are set in advance, never haggled in the car. Location shared with a relative during the trip.",
   "etats": {
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "chargement": "Loading in-town carpools",
+    "vide": "No car is leaving now in your direction.",
+    "erreur": "The offers could not be loaded.",
+    "reessayer": "Try again"
   }
 }

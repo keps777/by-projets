@@ -1,98 +1,98 @@
 {
-  "retour": "",
-  "sousTitre": "",
-  "nbDeparts_one": "",
-  "nbDeparts_other": "",
-  "nbArrets_one": "",
-  "nbArrets_other": "",
-  "nbChangements_one": "",
-  "nbChangements_other": "",
+  "retour": "Back to settings",
+  "sousTitre": "Route · {{departs}} · {{arrets}} · price, seats, rules",
+  "nbDeparts_one": "{{count}} departure",
+  "nbDeparts_other": "{{count}} departures",
+  "nbArrets_one": "{{count}} stop",
+  "nbArrets_other": "{{count}} stops",
+  "nbChangements_one": "{{count}} change",
+  "nbChangements_other": "{{count}} changes",
   "departs": {
-    "titre": "",
-    "ajouter": "",
-    "heure": "",
-    "heureModifiee": "",
-    "heureNouveau": "",
-    "heureNouveauJour": "",
-    "actif": "",
-    "actifNouveau": "",
+    "titre": "Departures",
+    "ajouter": "+ departure",
+    "heure": "Departure time from {{heure}}",
+    "heureModifiee": "Departure time, edited",
+    "heureNouveau": "New departure",
+    "heureNouveauJour": "New departure on {{jour}}",
+    "actif": "{{heure}} departure active",
+    "actifNouveau": "New departure active",
     "classe": {
-      "classique": "",
-      "vip": ""
+      "classique": "standard",
+      "vip": "VIP"
     },
-    "etait": "",
-    "nouveau": "",
-    "seulement": "",
-    "places": ""
+    "etait": "was {{heure}}",
+    "nouveau": "new",
+    "seulement": "{{jours}} only",
+    "places": "{{count}} seats"
   },
   "jours": {
-    "lun": "",
-    "mar": "",
-    "mer": "",
-    "jeu": "",
-    "ven": "",
-    "sam": "",
-    "dim": ""
+    "lun": "Monday",
+    "mar": "Tuesday",
+    "mer": "Wednesday",
+    "jeu": "Thursday",
+    "ven": "Friday",
+    "sam": "Saturday",
+    "dim": "Sunday"
   },
   "tarifs": {
-    "titre": "",
-    "classique": "",
-    "vip": "",
-    "bagage": "",
+    "titre": "Fares",
+    "classique": "Standard",
+    "vip": "VIP",
+    "bagage": "Extra luggage",
     "champ": {
-      "classique": "",
-      "vip": "",
-      "bagage": ""
+      "classique": "Standard price",
+      "vip": "VIP price",
+      "bagage": "Luggage price"
     }
   },
   "arrets": {
-    "titre": "",
-    "prorata": "",
-    "prorataAPublier": "",
-    "monteeOui": "",
-    "monteeNon": "",
-    "ajouter": ""
+    "titre": "Stops on the road",
+    "prorata": "pro rata {{montant}}",
+    "prorataAPublier": "pro rata at publication",
+    "monteeOui": "boarding OK",
+    "monteeNon": "no boarding",
+    "ajouter": "+ stop"
   },
   "plan": {
-    "libelle": "",
-    "resume_one": "",
-    "resume_other": "",
-    "detail": "",
-    "rangees_one": "",
-    "rangees_other": "",
-    "modifier": ""
+    "libelle": "Seat plan ·",
+    "resume_one": "{{count}} seat",
+    "resume_other": "{{count}} seats",
+    "detail": ", {{disposition}}, {{rangees}}",
+    "rangees_one": "{{count}} row",
+    "rangees_other": "{{count}} rows",
+    "modifier": "Edit"
   },
   "options": {
-    "venteEnLigne": "",
-    "fusionAuto": ""
+    "venteEnLigne": "Online sales · seats visible in the traveller app",
+    "fusionAuto": "Automatic merge if two departures are under 40 %"
   },
   "actions": {
-    "annuler": "",
-    "publier": "",
-    "publierDetail": "",
-    "aCorriger": ""
+    "annuler": "Cancel",
+    "publier": "Publish from Monday",
+    "publierDetail": "{{changements}} · counters and app updated · logged",
+    "aCorriger": "Fix the marked fields before publishing: a time like 09:15, a price for each fare."
   },
   "arret": {
-    "titre": "",
-    "sousTitre": "",
-    "nom": "",
-    "montee": "",
-    "ajouter": "",
-    "annuler": "",
-    "fermer": "",
-    "erreurNom": "",
-    "erreurExiste": ""
+    "titre": "Add a stop",
+    "sousTitre": "The pro rata price is calculated at publication.",
+    "nom": "Stop name",
+    "montee": "Boarding allowed",
+    "ajouter": "Add the stop",
+    "annuler": "Cancel",
+    "fermer": "Close",
+    "erreurNom": "Enter the stop name.",
+    "erreurExiste": "This stop is already on the route."
   },
   "pin": {
-    "titre": "",
-    "sousTitre": "",
-    "fermer": "",
-    "echec": ""
+    "titre": "Sign the publication",
+    "sousTitre": "{{changements}} · logged in the journal",
+    "fermer": "Close",
+    "echec": "The publication was not saved. Nothing has changed for the counters or the app."
   },
   "etats": {
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "chargement": "Loading the route",
+    "vide": "This route does not exist or is no longer open.",
+    "erreur": "The route could not be loaded.",
+    "reessayer": "Try again"
   }
 }

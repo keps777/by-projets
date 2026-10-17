@@ -1,67 +1,67 @@
 {
-  "titre": "",
-  "sousTitre": "",
-  "retour": "",
+  "titre": "Send parcel",
+  "sousTitre": "Photo, di person wey go receive, payment: one screen",
+  "retour": "Go back",
   "photo": {
-    "aPrendre": "",
-    "lecture": "",
-    "prise": ""
+    "aPrendre": "Touch to snap di parcel",
+    "lecture": "Dem dey read di photo…",
+    "prise": "Photo don snap · size wey dem guess: {{taille}} · {{poids}} kg"
   },
   "champs": {
-    "pour": "",
-    "ou": "",
-    "contenu": "",
-    "valeur": ""
+    "pour": "For who",
+    "ou": "Where",
+    "contenu": "Wetin dey inside (wey you talk)",
+    "valeur": "Value (F)"
   },
   "depart": {
-    "titre": "",
-    "sousTitre": "",
-    "gare": "",
-    "aucun": ""
+    "titre": "How e go travel",
+    "sousTitre": "next bus wey dey go",
+    "gare": "<fort>{{compagnie}}</fort> · collect for {{retrait}} · e go reach {{heure}}",
+    "aucun": "No bus dey go dis place."
   },
   "modes": {
-    "relais": "",
-    "moto": ""
+    "relais": "relay",
+    "moto": "moto"
   },
   "assurance": {
-    "libelle": "",
-    "detail": "",
-    "sansValeur": "",
-    "regle": ""
+    "libelle": "Insure am for {{valeur}} F",
+    "detail": "· {{prime}} F · {{assureur}}",
+    "sansValeur": "Insure di parcel",
+    "regle": "· {{taux}} % of di value, minimum {{minimum}} F · {{assureur}}"
   },
   "payer": {
-    "libelle": "",
-    "detail": "",
-    "calcul": ""
+    "libelle": "Pay and collect di code",
+    "detail": "you go drop am for counter, di label don ready",
+    "calcul": "…"
   },
   "prix": {
     "mots": {
-      "port": "",
-      "frais": "",
-      "assurance": "",
-      "relais": "",
-      "livraison": ""
+      "port": "carriage",
+      "frais": "fees",
+      "assurance": "insurance",
+      "relais": "relay",
+      "livraison": "delivery"
     },
-    "interdits": ""
+    "interdits": "dem no allow: {{liste}}"
   },
   "messages": {
-    "saisie": "",
-    "photoEchec": "",
-    "aucunDepart": "",
-    "departFerme": "",
-    "devis": "",
-    "echec": ""
+    "saisie": "Snap di parcel and fill all di place dem before you pay.",
+    "photoEchec": "We no fit read di photo. Snap am again.",
+    "aucunDepart": "No bus fit carry dis parcel. Change di place wey e dey go.",
+    "departFerme": "Dis bus no dey take parcel again. Try again small time after.",
+    "devis": "Dem never calculate di price yet. Try again small time.",
+    "echec": "Di payment no pass. Try again."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Di parcel sending dey load",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No bus for parcel",
+      "detail": "Go back to home, dem go soon put one bus."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "We no fit load di sending",
+      "detail": "Check your network, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

@@ -447,9 +447,9 @@ describe("Guichet · textes", () => {
     expect(vides).toEqual([]);
   });
 
-  it("se replie sur le français quand l'anglais est vide", () => {
+  it("se lit en anglais, pluriels compris, et se replie sur le français si une clé est vidée", () => {
     const i18n = creerI18n("en");
-    expect(i18n.t("Guichet:actions.vendre.titre")).toBe("Vendre un billet");
+    expect(i18n.t("Guichet:actions.vendre.titre")).toBe("Sell a ticket");
     expect(
       i18n.t("Guichet:prochain.depart", {
         count: 2,
@@ -457,6 +457,8 @@ describe("Guichet · textes", () => {
         heure: "08:30",
         destination: "Yaoundé",
       }),
-    ).toBe("Prochain départ dans 5 min : 08:30 Yaoundé, 2 places.");
+    ).toBe("Next departure in 5 min: 08:30 Yaoundé, 2 seats.");
+    i18n.addResource("en", "Guichet", "actions.vendre.titre", "");
+    expect(i18n.t("Guichet:actions.vendre.titre")).toBe("Vendre un billet");
   });
 });

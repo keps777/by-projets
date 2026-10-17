@@ -1,84 +1,84 @@
 {
-  "titre": "",
-  "quitter": "",
-  "touche": "",
+  "titre": "Rush mode",
+  "quitter": "Leave rush mode",
+  "touche": "tap {{n}} · ",
   "depart": {
-    "libelle": "",
-    "places_one": "",
-    "places_other": ""
+    "libelle": "Current departure",
+    "places_one": "seat left",
+    "places_other": "seats left"
   },
   "dernier": {
-    "libelle": "",
-    "detail": "",
-    "sansNom": "",
-    "aucun": ""
+    "libelle": "Last ticket · {{ecoule}}",
+    "detail": "{{numero}} · seat {{siege}} · {{nom}}",
+    "sansNom": "rush, no name",
+    "aucun": "No ticket sold"
   },
   "duree": {
-    "secondes": "",
-    "minutes": "",
-    "heures": ""
+    "secondes": "{{n}} s",
+    "minutes": "{{n}} min",
+    "heures": "{{h}} h {{m}}"
   },
-  "prochain": "",
-  "siegeSuivant": "",
-  "noteQuai": "",
+  "prochain": "Next",
+  "siegeSuivant": "Next seat:",
+  "noteQuai": "· name and ID entered at the platform by the conductor",
   "paiements": {
     "cash": {
-      "libelle": "",
-      "ligne1": "",
-      "ligne2": ""
+      "libelle": "CASH",
+      "ligne1": "prints",
+      "ligne2": "+ SMS if number"
     },
     "momo": {
-      "libelle": "",
-      "ligne1": "",
-      "pushEnvoye": "",
-      "ligne2": ""
+      "libelle": "MOMO",
+      "ligne1": "push",
+      "pushEnvoye": "push sent",
+      "ligne2": "confirmed"
     }
   },
   "options": {
-    "deuxPlaces": "",
-    "numero": "",
-    "autreDepart": ""
+    "deuxPlaces": "× 2 seats",
+    "numero": "+ number",
+    "autreDepart": "Other departure"
   },
   "pied": {
-    "vendus": "",
-    "annulations_one": "",
-    "annulations_other": "",
+    "vendus": "Sold in rush:",
+    "annulations_one": "· {{count}} cancellation",
+    "annulations_other": "· {{count}} cancellations",
     "synchro": {
-      "horsLigne": "",
-      "sync": "",
-      "enAttente": ""
+      "horsLigne": "offline OK · sync {{heure}}",
+      "sync": "online · sync {{heure}}",
+      "enAttente": "{{n}} to send · sync {{heure}}"
     }
   },
   "numero": {
-    "titre": "",
-    "aide": "",
-    "obligatoire": "",
-    "label": "",
-    "valider": "",
-    "fermer": "",
-    "erreur": ""
+    "titre": "Customer's number",
+    "aide": "The ticket is sent by SMS to this number.",
+    "obligatoire": "Number required in rush mode.",
+    "label": "Phone number",
+    "valider": "Confirm",
+    "fermer": "Close",
+    "erreur": "Enter the 9 digits of the number."
   },
   "autreDepart": {
-    "titre": "",
-    "ligne_one": "",
-    "ligne_other": "",
-    "chargement": "",
-    "erreur": ""
+    "titre": "Other departure",
+    "ligne_one": "{{heure}} {{destination}} · {{count}} free seat",
+    "ligne_other": "{{heure}} {{destination}} · {{count}} free seats",
+    "chargement": "Loading departures",
+    "erreur": "Unable to load the departures."
   },
   "erreurs": {
-    "vente": "",
-    "imprimante": ""
+    "vente": "The sale was not recorded. Try again.",
+    "imprimante": "Printer unavailable: tickets print as soon as it is back."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Loading rush mode",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No departure in rush mode",
+      "detail": "There is no departure open for sale for now."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "Unable to load rush mode",
+      "detail": "Check the connection, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

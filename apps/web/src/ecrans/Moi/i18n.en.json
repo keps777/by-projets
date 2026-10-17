@@ -1,61 +1,61 @@
 {
-  "reglages": "",
+  "reglages": "Settings",
   "profil": {
-    "cni": "",
-    "depuis": "",
-    "indisponible": ""
+    "cni": "ID card verified",
+    "depuis": "since {{date}}",
+    "indisponible": "Profile unavailable"
   },
   "fidelite": {
-    "libelle": "",
-    "points": "",
-    "equivalence": ""
+    "libelle": "Loyalty",
+    "points": "pts",
+    "equivalence": "= {{montant}} F off your next ticket"
   },
   "parrainage": {
-    "libelle": "",
-    "ami_one": "",
-    "ami_other": "",
-    "detail": ""
+    "libelle": "Referral · {{code}}",
+    "ami_one": "friend",
+    "ami_other": "friends",
+    "detail": "{{parrain}} F for you, {{filleul}} F for them"
   },
   "proches": {
-    "titre": "",
-    "ajouter": "",
-    "payer": "",
-    "demander": "",
-    "prevenu": "",
-    "prevenue": "",
-    "payeMesVoyages": "",
-    "vide": ""
+    "titre": "My relatives · 1 tap to buy",
+    "ajouter": "+ add",
+    "payer": "Pay a ticket for them",
+    "demander": "ask them",
+    "prevenu": "notified at each arrival",
+    "prevenue": "notified at each arrival",
+    "payeMesVoyages": "pays my trips by card",
+    "vide": "No relative yet"
   },
   "historique": {
-    "titre": "",
-    "sousTitre": "",
+    "titre": "My trips and parcels",
+    "sousTitre": "full history",
     "statut": {
-      "a_venir": "",
-      "a_retirer": "",
-      "voyage": "",
-      "annule": "",
-      "livre": ""
+      "a_venir": "upcoming",
+      "a_retirer": "to collect",
+      "voyage": "travelled",
+      "annule": "cancelled",
+      "livre": "delivered"
     },
-    "vide": ""
+    "vide": "No trip or parcel yet"
   },
   "devenir": {
     "relais": {
-      "titre": "",
-      "detail": ""
+      "titre": "A shop? Become a relay point",
+      "detail": "200 F per parcel handed over · 3 min"
     },
     "livreur": {
-      "titre": "",
-      "detail": ""
+      "titre": "A moto? Become a courier",
+      "detail": "700 F per delivery · you choose your hours"
     }
   },
   "pied": {
-    "langue": "",
-    "recus": "",
-    "aide": ""
+    "langue": "Language · {{code}}",
+    "recus": "My receipts",
+    "aide": "Help · WhatsApp"
   },
   "etats": {
-    "chargement": "",
-    "indisponible": "",
-    "reessayer": ""
+    "chargement": "Loading your account",
+    "indisponible": "Unavailable for now",
+    "reessayer": "Try again"
   }
 }

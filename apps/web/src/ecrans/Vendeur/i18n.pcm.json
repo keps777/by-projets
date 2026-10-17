@@ -1,64 +1,64 @@
 {
-  "titre": "",
-  "numero": "",
-  "identite": "",
+  "titre": "AfriMove seller",
+  "numero": "no. {{numero}}",
+  "identite": "{{nom}} · {{quartier}} quarter · {{compagnies}} don approve am",
   "vente": {
-    "titre": "",
+    "titre": "Sell to your neighbour · 3 touch",
     "jour": {
-      "aujourdhui": "",
-      "demain": ""
+      "aujourdhui": "today",
+      "demain": "tomorrow"
     },
-    "places_one": "",
-    "places_other": "",
-    "commission": ""
+    "places_one": "{{compagnie}} · {{count}} seat",
+    "places_other": "{{compagnie}} · {{count}} seat dem",
+    "commission": "commission {{montant}} F"
   },
   "bilan": {
     "mois": {
-      "etiquette": "",
-      "detail": ""
+      "etiquette": "Dis month",
+      "detail": "ticket dem wey you sell"
     },
     "gain": {
-      "etiquette": "",
-      "detail": ""
+      "etiquette": "Wetin you earn",
+      "detail": "dem go pay am {{jour}}"
     },
     "clients": {
-      "etiquette": "",
-      "detail_one": "",
-      "detail_other": ""
+      "etiquette": "Customer dem",
+      "detail_one": "{{count}} dey buy often",
+      "detail_other": "{{count}} dey buy often"
     }
   },
   "clients": {
-    "proposition": "",
-    "dernier": ""
+    "proposition": "{{proposition}}?",
+    "dernier": "last: {{date}}"
   },
-  "action": "",
+  "action": "Sell ticket to your neighbour",
   "etats": {
-    "chargement": "",
-    "reessayer": "",
+    "chargement": "Your seller space dey load",
+    "reessayer": "Try again",
     "espace": {
       "erreur": {
-        "titre": "",
-        "detail": ""
+        "titre": "We no fit load your figures",
+        "detail": "Check your network, then try again."
       }
     },
     "departs": {
       "vide": {
-        "titre": "",
-        "detail": ""
+        "titre": "No bus to sell",
+        "detail": "No bus dey open for sell for dis road."
       },
       "erreur": {
-        "titre": "",
-        "detail": ""
+        "titre": "We no fit load di bus dem",
+        "detail": "Check your network, then try again."
       }
     },
     "clients": {
       "vide": {
-        "titre": "",
-        "detail": ""
+        "titre": "No customer yet",
+        "detail": "Your neighbour dem go show here after your first sell."
       },
       "erreur": {
-        "titre": "",
-        "detail": ""
+        "titre": "We no fit load your customer dem",
+        "detail": "Check your network, then try again."
       }
     }
   }

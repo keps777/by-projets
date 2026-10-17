@@ -1,38 +1,38 @@
 {
-  "passer": "",
-  "suivant": "",
-  "etape": "",
-  "rang": "",
-  "carrousel": "",
-  "diapo": "",
+  "passer": "Skip",
+  "suivant": "Next",
+  "etape": "Tutorial · {{n}} / {{total}} · everything in 3 taps",
+  "rang": "{{n}} / {{total}}",
+  "carrousel": "Tutorial in 3 screens",
+  "diapo": "Screen {{n}} of {{total}}",
   "exemple": {
-    "places": "",
-    "choisis": "",
-    "payer": ""
+    "places": "{{n}} seats",
+    "choisis": "choose your seat",
+    "payer": "Pay · MoMo"
   },
   "diapos": {
     "billet": {
-      "titre": "",
-      "texte": "",
-      "detail": ""
+      "titre": "Your ticket,\nyour name, your seat.",
+      "texte": "One departure, one seat, one payment: your ticket arrives by SMS with a QR code and a 4-digit code. At the platform, you are scanned and you board.",
+      "detail": "one departure, one seat, one payment"
     },
     "colis": {
-      "titre": "",
-      "texte": "",
-      "detail": "",
+      "titre": "Your parcel tracked all the way",
+      "texte": "You drop off your parcel, we take a photo of it, then the recipient gets a pick-up code. You follow every step until delivery.",
+      "detail": "photo, pick-up code, delivery",
       "etapes": {
-        "photo": "",
-        "code": "",
-        "livraison": ""
+        "photo": "Photo",
+        "code": "Pick-up code",
+        "livraison": "Delivery"
       }
     },
     "proches": {
-      "titre": "",
-      "texte": "",
-      "detail": "",
+      "titre": "Your relatives know when you arrive",
+      "texte": "A relative follows your bus live on the map, and gets an automatic SMS when you arrive.",
+      "detail": "live bus, automatic SMS",
       "etapes": {
-        "direct": "",
-        "sms": ""
+        "direct": "Live bus",
+        "sms": "Automatic SMS"
       }
     }
   }

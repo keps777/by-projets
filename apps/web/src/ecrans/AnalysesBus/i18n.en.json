@@ -1,58 +1,58 @@
 {
   "entete": {
-    "retour": "",
-    "places": "",
-    "trajets_one": "",
-    "trajets_other": "",
-    "aSurveiller": ""
+    "retour": "Back",
+    "places": "{{modele}} {{capacite}} seats",
+    "trajets_one": "{{count}} trip this week",
+    "trajets_other": "{{count}} trips this week",
+    "aSurveiller": "KEEP AN EYE ON"
   },
   "chiffres": {
-    "recette": "",
-    "depenses": "",
-    "net": "",
-    "recetteDetail": "",
-    "trajets_one": "",
-    "trajets_other": "",
-    "depensesDetail": "",
-    "netDetail": ""
+    "recette": "Revenue",
+    "depenses": "Expenses",
+    "net": "Net",
+    "recetteDetail": "{{trajets}} · {{taux}} %",
+    "trajets_one": "{{count}} trip",
+    "trajets_other": "{{count}} trips",
+    "depensesDetail": "fuel {{carburant}} · breakdowns {{pannes}}",
+    "netDetail": "fleet: {{net}} on average"
   },
   "semaines": {
-    "titre": "",
-    "tendance": ""
+    "titre": "Net per week · {{count}} weeks",
+    "tendance": "{{variation}} since {{depuis}}"
   },
   "trajets": {
-    "titre": "",
-    "mentionPannes_one": "",
-    "mentionPannes_other": "",
-    "aucun": "",
-    "quand": "",
-    "aLHeure": "",
-    "retard": "",
-    "replaces": "",
-    "gardes": ""
+    "titre": "This week · trip by trip",
+    "mentionPannes_one": "{{trajets}} · {{count}} breakdown",
+    "mentionPannes_other": "{{trajets}} · {{count}} breakdowns",
+    "aucun": "No trip this week.",
+    "quand": "{{jour}} {{heure}} · {{origine}} → {{destination}}",
+    "aLHeure": "on time",
+    "retard": "{{duree}} late",
+    "replaces": "{{count}} rearranged",
+    "gardes": "{{count}} kept"
   },
   "jours": {
-    "lun": "",
-    "mar": "",
-    "mer": "",
-    "jeu": "",
-    "ven": "",
-    "sam": "",
-    "dim": ""
+    "lun": "Mon",
+    "mar": "Tue",
+    "mer": "Wed",
+    "jeu": "Thu",
+    "ven": "Fri",
+    "sam": "Sat",
+    "dim": "Sun"
   },
   "assistant": {
-    "titre": ""
+    "titre": "The assistant"
   },
   "pied": {
-    "flotte": "",
-    "assistant": "",
-    "assistantDetail": ""
+    "flotte": "The whole fleet",
+    "assistant": "Ask the assistant",
+    "assistantDetail": "review on Monday · who replaces?"
   },
   "etats": {
-    "vide": "",
-    "introuvable": "",
-    "erreur": "",
-    "reessayer": "",
-    "chargement": ""
+    "vide": "This bus did not run this week.",
+    "introuvable": "This bus cannot be found.",
+    "erreur": "The bus analysis could not be loaded.",
+    "reessayer": "Try again",
+    "chargement": "Loading the bus analysis"
   }
 }
