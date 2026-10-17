@@ -1,0 +1,52 @@
+{
+  "entete": {
+    "sousTitre": "{{patron}} · {{gares}} · {{bus}}",
+    "gares_one": "{{count}} gare",
+    "gares_other": "{{count}} gares",
+    "bus_one": "{{count}} bus",
+    "bus_other": "{{count}} bus"
+  },
+  "jour": {
+    "etiquette": "Aujourd'hui · en direct",
+    "comparaison": "vs {{jour}}",
+    "billets": "billets",
+    "colis": "colis",
+    "remplissage": "remplissage",
+    "ecart": "écart total"
+  },
+  "assistant": {
+    "titre_one": "L'assistant a {{count}} chose à te dire",
+    "titre_other": "L'assistant a {{count}} choses à te dire"
+  },
+  "tuiles": {
+    "analyses": { "titre": "Analyses", "detail": "semaine · lignes · bus" },
+    "gares": {
+      "titre": "Mes gares, mes gens",
+      "detail": "caisses · quais · {{count}} pers.",
+      "detailSansEffectif": "caisses · quais"
+    },
+    "rapports": { "titre": "Rapports", "detail": "chaque soir · 21 h" },
+    "comptable": { "titre": "Comptable", "detail": "exports · rapprochement" },
+    "financement": { "titre": "Financement", "detail": "avance · crédit · paie" },
+    "interAgences": {
+      "titre": "Entre compagnies",
+      "detail": "colis en correspondance · Oméga"
+    },
+    "reglages": { "titre": "Réglages", "detail": "lignes · tarifs · équipe · règles" },
+    "modules": { "titre": "Modules", "detail": "activer · masquer · les {{count}}" },
+    "controle": { "titre": "Salle de contrôle", "detail": "sur ordinateur · tout en direct" }
+  },
+  "alertes": {
+    "titre": "Alertes · {{count}}",
+    "mention": "1 touche · glisser",
+    "hier": "hier",
+    "aucune": "Aucune alerte pour le moment."
+  },
+  "etats": {
+    "chargement": "Chargement de l'accueil",
+    "vide": "Aucune information pour le moment.",
+    "erreur": "L'accueil ne s'est pas chargé. Les raccourcis restent utilisables.",
+    "erreurAlertes": "Les alertes ne se sont pas chargées.",
+    "reessayer": "Réessayer"
+  }
+}
