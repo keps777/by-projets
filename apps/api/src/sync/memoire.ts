@@ -139,11 +139,13 @@ export class SiegesMemoire extends SiegesSync implements StockageSync {
   }
 
   async enregistrerConflit(conflit: ConflitStocke) {
+    const nouveau = !this.lesConflits.has(conflit.evenementId);
     this.lesConflits.set(conflit.evenementId, { ...conflit });
+    return nouveau;
   }
 
   async leverConflit(evenementId: string) {
-    this.lesConflits.delete(evenementId);
+    return this.lesConflits.delete(evenementId);
   }
 
   async conflitsDeAppareil(appareilId: string, depuisIso: string) {
@@ -159,6 +161,8 @@ export class AlertesMemoire extends AlertesSync implements StockageSync {
   readonly lignes: AlerteSync[] = [];
 
   async ajouter(alerte: AlerteSync) {
+    // Une alerte porte un identifiant unique : la recevoir deux fois ne la double pas.
+    if (this.lignes.some((a) => a.id === alerte.id)) return;
     this.lignes.push(alerte);
   }
 

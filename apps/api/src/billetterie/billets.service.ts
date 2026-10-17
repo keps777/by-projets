@@ -162,11 +162,15 @@ export class BilletsService {
   }): Promise<Billet> {
     const { commande, dc } = a;
     const aammjj = aammjjDouala(a.at);
+    // L'identifiant ne change pas d'un essai à l'autre et sert de référence au numéro : réessayer
+    // (code déjà pris) redonne le même numéro, jamais un trou.
+    const billetId = randomUUID();
     for (let essai = 0; ; essai++) {
       const sequence = await this.numerotation.prochaine({
         compagnieId: dc.compagnie.id,
         gareId: dc.origine.id,
         aammjj,
+        reference: billetId,
       });
       const pris = new Set(
         (await this.billets.duDepart(dc.depart.id))
@@ -174,7 +178,7 @@ export class BilletsService {
           .map((b) => b.codeBillet),
       );
       const billet: Billet = {
-        id: randomUUID(),
+        id: billetId,
         numero: numeroBillet({
           agence: dc.compagnie.code,
           gare: dc.origine.code,
@@ -476,10 +480,12 @@ export class BilletsService {
       billet.siege !== null && libres.includes(billet.siege) ? billet.siege : libres[0]!;
 
     const aammjj = aammjjDouala(at);
+    const nouveauId = randomUUID();
     const sequence = await this.numerotation.prochaine({
       compagnieId: cible.compagnie.id,
       gareId: cible.origine.id,
       aammjj,
+      reference: nouveauId,
     });
     const pris = new Set(
       (await this.billets.duDepart(cible.depart.id))
@@ -488,7 +494,7 @@ export class BilletsService {
     );
     const nouveau: Billet = {
       ...billet,
-      id: randomUUID(),
+      id: nouveauId,
       numero: numeroBillet({
         agence: cible.compagnie.code,
         gare: cible.origine.code,

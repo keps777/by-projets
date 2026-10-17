@@ -238,12 +238,20 @@ export abstract class ConversionDevises {
 }
 
 /**
- * Numérotation des ventes en ligne (4001–9999), côté serveur et sans trou (**AM-161** fournit
- * l'adaptateur définitif : compteur par compagnie, gare et jour dans une transaction).
+ * Numérotation des ventes en ligne (4001–9999), côté serveur et sans trou. Version PostgreSQL :
+ * `NumerotationEnLigneServeur` (`postgres.ts`), sur le registre des numéros d'AM-161.
  */
 export abstract class NumerotationEnLigne {
-  /** Lève `PlageEpuisee` quand 9999 est atteint. */
-  abstract prochaine(a: { compagnieId: string; gareId: string; aammjj: string }): Promise<number>;
+  /**
+   * Lève `PlageEpuisee` quand 9999 est atteint. `reference` (l'identifiant du billet) rend l'appel
+   * rejouable avec la version PostgreSQL : la même référence reçoit toujours le même numéro.
+   */
+  abstract prochaine(a: {
+    compagnieId: string;
+    gareId: string;
+    aammjj: string;
+    reference?: string;
+  }): Promise<number>;
 }
 
 /** Signature des QR : la clé privée ne quitte jamais le serveur. */

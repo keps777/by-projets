@@ -150,6 +150,8 @@ describe("rôles stricts (HTTP)", () => {
           "POST /auth/direction/verification",
           // Billetterie : la clé publique qui vérifie les QR hors ligne (JWK, rien de secret).
           "GET /billetterie/cle-publique",
+          // SMS : les accusés de livraison du fournisseur, authentifiés par leur signature HMAC.
+          "POST /sms/webhooks/:fournisseur",
         ].sort(),
       );
     });

@@ -1,5 +1,7 @@
 import { Inject, Injectable, Module, type OnModuleInit } from "@nestjs/common";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { NumerotationModule } from "../numerotation/numerotation.module";
 import {
@@ -10,6 +12,13 @@ import {
   SiegesMemoire,
   type StockageSync,
 } from "./memoire";
+import {
+  AlertesSyncPrisma,
+  AppareilsSyncPrisma,
+  JournalSyncPrisma,
+  ProvisionnementVide,
+  SiegesSyncPrisma,
+} from "./postgres";
 import {
   AlertesSync,
   AppareilsSync,
@@ -61,9 +70,9 @@ export class VerificationStockageSync implements OnModuleInit {
  * Moteur de synchronisation côté serveur (AM-160) : réception idempotente par UUID, rejeu dans
  * l'ordre, détection des conflits de sièges.
  *
- * À importer dans `AppModule` (périmètre du socle). Les ports ci-dessous sont remplaçables : AM-161
- * fournit `ControleNumeros` et `AttributionPlages` ; les adaptateurs PostgreSQL remplacent les
- * versions en mémoire.
+ * Importé par `AppModule`. Les ports ci-dessous sont remplaçables : AM-161 fournit
+ * `ControleNumeros` et `AttributionPlages` ; les adaptateurs PostgreSQL (`postgres.ts`) remplacent
+ * les versions en mémoire en production ou avec `API_STOCKAGE=postgres`.
  */
 @Module({
   imports: [NumerotationModule],
@@ -72,11 +81,37 @@ export class VerificationStockageSync implements OnModuleInit {
     RejeuService,
     VerificationStockageSync,
     { provide: Horloge, useClass: HorlogeSysteme },
-    { provide: AppareilsSync, useClass: AppareilsMemoire },
-    { provide: JournalSync, useClass: JournalMemoire },
-    { provide: SiegesSync, useClass: SiegesMemoire },
-    { provide: AlertesSync, useClass: AlertesMemoire },
-    { provide: ProvisionnementSync, useClass: ProvisionnementMemoire },
+    // PostgreSQL en production (ou avec API_STOCKAGE=postgres), mémoire ailleurs : voir socle/db/stockage.ts.
+    {
+      provide: AppareilsSync,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new AppareilsSyncPrisma(prisma) : new AppareilsMemoire(),
+    },
+    {
+      provide: JournalSync,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new JournalSyncPrisma(prisma) : new JournalMemoire(),
+    },
+    {
+      provide: SiegesSync,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new SiegesSyncPrisma(prisma) : new SiegesMemoire(),
+    },
+    {
+      provide: AlertesSync,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new AlertesSyncPrisma(prisma) : new AlertesMemoire(),
+    },
+    {
+      provide: ProvisionnementSync,
+      inject: [CONFIG],
+      useFactory: (config: AppConfig) =>
+        stockageSurPostgres(config) ? new ProvisionnementVide() : new ProvisionnementMemoire(),
+    },
   ],
   exports: [
     RejeuService,

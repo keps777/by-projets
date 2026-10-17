@@ -2,7 +2,10 @@
 
 Départs, sièges en temps réel, billets nominatifs à QR signé, scan au quai. Module Nest autonome :
 `BilletterieModule`, importé dans `AppModule`. Les tables sont dans `prisma/schema.prisma` ; les
-adaptateurs PostgreSQL restent à écrire (`apps/api/INTEGRATION.md`).
+adaptateurs PostgreSQL sont dans `postgres.ts` (`apps/api/INTEGRATION.md`) : catalogue, billets, inventaire,
+commandes, scans, événements traités, préférences, numérotation en ligne. `Promotions`, `ProchesVoyageur`,
+`ColisDuDepart` et `AvisBillets` restent en mémoire (pas de table) : la production ne démarre pas tant
+qu'ils le sont.
 
 Les routes suivent les contrats de `packages/contrats` (`voyageur` et `agence`) et les chemins de
 `packages/api-client` : le mode HTTP du client d'API fonctionne sans adaptation. Chaque test e2e
@@ -124,8 +127,8 @@ qu'une seule balaie.
 ## Intégration (coordinateur)
 
 1. Fait : `BilletterieModule` est dans `AppModule`.
-2. Écrire les adaptateurs PostgreSQL et les brancher à la place des `…Memoire`
-   (`{ provide: Billets, useClass: BilletsPrisma }`…).
+2. Fait : les adaptateurs PostgreSQL remplacent les `…Memoire` en production ou avec `API_STOCKAGE=postgres`.
+   Reste : `Promotions`, `ProchesVoyageur`, `ColisDuDepart`, `AvisBillets`.
 3. Générer une clé : `node -e "crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign']).then(k=>crypto.subtle.exportKey('jwk',k.privateKey)).then(j=>console.log(JSON.stringify(j)))"`
    et la poser dans `BILLETTERIE_QR_CLE_PRIVEE` (secret, jamais dans le dépôt).
 4. Brancher `AvisBillets` sur la passerelle SMS et les paiements.

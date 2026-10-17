@@ -31,7 +31,7 @@ module métier ──► PasserelleSmsService.envoyer ──► JournalSms (mess
 | `FournisseurSms` (port)               | `envoyer` + `lireRecus` (accusés signés). Adaptateurs : `FournisseurSimule` (programmable), `FournisseurHttp` (agrégateur JSON, `TransportHttp` remplaçable). |
 | `RegistreFournisseurs`, `Disjoncteur` | Principal puis secours ; après 3 échecs d'affilée un fournisseur est coupé 30 s, puis retesté par un appel unique.                                            |
 | `FileEnvoiSms` (port)                 | Forme de BullMQ (`add`, `Worker`, `Job`, `UnrecoverableError`). `FileEnvoiMemoire` : jobId idempotent, délai, priorité, attente exponentielle, concurrence.   |
-| `JournalSms` (port)                   | Messages et essais. `JournalMemoire` en mémoire ; **la version PostgreSQL reste à écrire** (tables ci-dessous).                                               |
+| `JournalSms` (port)                   | Messages et essais. `JournalMemoire` en mémoire ; `JournalSmsPrisma` (`postgres.ts`) sur PostgreSQL, choisi par `API_STOCKAGE` (tables ci-dessous).           |
 | `ReceptionRecusService`               | Accusés de livraison : signature HMAC, désordre et doublons tolérés, jamais de retour en arrière.                                                             |
 | `StatistiquesSmsService`              | Coût, morceaux, perdus et délai médian par type ; objectif « médiane < 5 s ».                                                                                 |
 | `SmsController`                       | Routes ci-dessous.                                                                                                                                            |
@@ -66,7 +66,7 @@ Un accusé ne fait jamais reculer un message ; un statut `livre` ou `non_livre` 
 | ------------------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | `POST /sms/billets`                   | guichetier, convoyeur, vendeur, superviseur             | Envoi du billet à la demande (202). `{ billetId, telephone, renvoi?, compagnie, origine, destination, departA, siege, code, lien }`.         |
 | `GET /sms/messages/:id`               | idem + patron, afrimove                                 | Statut, coût, délai, essais. Le terrain voit ses envois, superviseur et patron ceux de leur compagnie, AfriMove tout ; sinon 404.            |
-| `GET /sms/billets/:billetId`          | idem                                                    | SMS d'un billet (statut de livraison à côté du billet).                                                                                      |
+| `GET /sms/billets/:billetId`          | idem sauf afrimove (aucune route « billet » pour lui)   | SMS d'un billet (statut de livraison à côté du billet).                                                                                      |
 | `GET /sms/couts?du=&au=&compagnieId=` | afrimove (toutes), patron et comptable (leur compagnie) | Coût et délai par type, totaux, objectif de délai. `du` inclus, `au` exclu (`AAAA-MM-JJ` en heure de Douala ou date-heure avec fuseau).      |
 | `GET /sms/etat`                       | afrimove                                                | Mode de la passerelle, circuit de chaque fournisseur, file.                                                                                  |
 | `POST /sms/webhooks/:fournisseur`     | publique, authentifiée par signature                    | Accusés de livraison. `x-sms-horodatage` (secondes) + `x-sms-signature` = HMAC-SHA-256 hex de `<horodatage>.<corps exact>`, tolérance 5 min. |
@@ -77,13 +77,11 @@ envoie un autre SMS (facturé), 2 renvois au plus (`SMS_RENVOIS_BILLET_MAX`) pui
 **Limites anti-abus** (SMS payants) : 60 SMS par compte et par heure, 10 par numéro et par heure
 (hors codes de connexion), liens limités aux domaines de `SMS_HOTES_LIENS`, noms sans adresse web.
 
-## Intégration (coordinateur : `app.module.ts`, `main.ts`, Prisma)
+## Intégration (faite : `AppModule`, `AuthModule`, `main.ts`, Prisma)
 
-1. **`AppModule`** : importer `SmsModule` ; dans `AuthModule`, remplacer `{ provide: SmsGateway, useClass: SmsMock }` par `{ provide: SmsGateway, useExisting: SmsGatewayPasserelle }` (après avoir importé `SmsModule`). Contrairement à `SmsMock`, `SmsGatewayPasserelle.envoyer` met le message en file au lieu de lever une erreur en cas d'échec (voir la décision plus bas).
+1. **`AppModule`** importe `SmsModule`. **`AuthModule`** importe aussi `SmsModule` et fournit `SmsGateway` : `SmsGatewayPasserelle` partout, sauf avec `NODE_ENV=test` où le simulateur `SmsMock` du socle reste en place (les tests du socle, de la caisse et des colis lisent sa boîte). Contrairement à `SmsMock`, `SmsGatewayPasserelle.envoyer` met le message en file au lieu de lever une erreur en cas d'échec (voir la décision plus bas).
 2. **`main.ts`** : `NestFactory.create(AppModule, { rawBody: true, … })`. Sans le corps brut, le webhook répond 401 (il ne peut pas vérifier la signature) et journalise l'erreur.
-3. **Adaptateurs de production** (les ports sont prêts, les versions durables sont à écrire) :
-   - `JournalSms` sur PostgreSQL (tables ci-dessous) ;
-   - `FileEnvoiSms` sur BullMQ + Redis : `queue.add(nom, donnees, options)` et `new Worker(nom, processeur, { concurrency })` reprennent les signatures du port (correspondance en tête de `file.ts`). Garder `removeOnComplete`/`removeOnFail` courts : la charge utile est chiffrée mais inutile une fois envoyée.
+3. **Journal PostgreSQL** : `JournalSmsPrisma` (`postgres.ts`) sur `sms_message` et `sms_essai` (migrations `sms_et_heure_texte` et `sms_garanties`). Choix par `API_STOCKAGE` comme pour les autres modules (PostgreSQL en production ou avec `API_STOCKAGE=postgres`, mémoire sinon). **Reste à écrire** : `FileEnvoiSms` sur BullMQ + Redis : `queue.add(nom, donnees, options)` et `new Worker(nom, processeur, { concurrency })` reprennent les signatures du port (correspondance en tête de `file.ts`). Garder `removeOnComplete`/`removeOnFail` courts : la charge utile est chiffrée mais inutile une fois envoyée. Tant que la file est en mémoire, `SmsModule` refuse de démarrer en production.
 4. **Variables d'environnement** : `SMS_FOURNISSEUR=http`, `SMS_API_URL`, `SMS_API_KEY`, `SMS_WEBHOOK_SECRET` (32 caractères au moins), `SMS_HOTES_LIENS` (obligatoire en production), éventuellement `SMS_SECOURS_*` ; réglages : `SMS_EXPEDITEUR`, `SMS_COUT_SEGMENT_FCFA`, `SMS_TENTATIVES_MAX`, `SMS_REPRISE_MS`, `SMS_CONCURRENCE`, `SMS_DISJONCTEUR_SEUIL`, `SMS_DISJONCTEUR_OUVERTURE_MS`, `SMS_LIMITE_*`. La liste complète et les règles de production sont dans `config.ts` ; le démarrage échoue en listant toutes les erreurs. `SMS_DRIVER` du socle ne sert plus.
 5. **Ajuster `FournisseurHttp`** à l'agrégateur retenu (format JSON, codes d'erreur, format des accusés dans `lireCorpsRecus`) ; c'est le seul endroit qui connaît son API.
 6. **Écrans** (tâche « brancher les écrans concernés », hors périmètre ici) : bouton « + numéro · envoyer le SMS » (`POST /sms/billets`), statut de livraison (`GET /sms/billets/:id`), tableau des coûts de l'administration (`GET /sms/couts`).
@@ -91,7 +89,9 @@ envoie un autre SMS (facturé), 2 renvois au plus (`SMS_RENVOIS_BILLET_MAX`) pui
 Les autres modules appellent `PasserelleSmsService.envoyer({ type, variables, destinataire, cle?, reference?, compagnieId?, envoyerA? })` :
 la `cle` rend l'appel idempotent (ex. `retrait:<colisId>`), `envoyerA` programme l'alerte au proche 15 minutes avant l'arrivée, `annuler(id)` la retire si le bus est déjà arrivé.
 
-## Tables PostgreSQL attendues (hors périmètre : `apps/api/prisma/**`)
+## Tables PostgreSQL (`apps/api/prisma/schema.prisma`)
+
+Le SQL ci-dessous décrit l'intention ; les noms réels sont ceux du schéma Prisma (`sms_message`, `sms_essai`, colonnes en camelCase) et les garde-fous (CHECK, index unique partiel sur le fournisseur, essais en ajout seul) sont dans la migration `20261017000500_sms_garanties`.
 
 ```sql
 CREATE TABLE sms_message (
@@ -142,7 +142,7 @@ CREATE TABLE sms_essai (
 CREATE INDEX sms_essai_message ON sms_essai (message_id, id);
 ```
 
-- `JournalSms.modifier(id, modifs, seulementSi)` : `UPDATE … WHERE id = $1 AND statut = ANY($2)` ; zéro ligne = `null`. C'est ce qui garde les statuts cohérents quand un accusé et un réessai se croisent.
+- `JournalSms.modifier(id, modifs, seulementSi)` : un seul `UPDATE … WHERE id = $1 AND statut = ANY($2)` ; zéro ligne = `null`. C'est ce qui garde les statuts cohérents quand un accusé et un réessai se croisent.
 - `JournalSms.compter` et `lister` : requêtes à index ; pour `StatistiquesSmsService`, remplacer l'agrégation en mémoire par `GROUP BY type` et `percentile_cont(0.5)` quand le volume le demande.
 - Le texte des SMS n'est **jamais** stocké dans ces tables.
 
@@ -173,5 +173,5 @@ techniques et l'audit ne contiennent ni numéro ni texte (testé). Le simulateur
 `passerelle.service.test.ts` (envoi, idempotence, limites, reprises, secours, disjoncteur, expiration,
 annulation, confidentialité), `reception.service.test.ts` (accusés), `statistiques.service.test.ts`
 (coût par type, délai), `config.test.ts`, `sms.module.test.ts` (garde-fou de production, `SmsGateway`),
-`sms.e2e.test.ts` (HTTP : rôles, périmètre, webhook signé avec corps brut, audit).
+`sms.e2e.test.ts` (HTTP : rôles, périmètre, webhook signé avec corps brut, audit), `montage-app.test.ts` (qui est `SmsGateway` dans l'application) et `postgres.integration.test.ts` (le contrat du journal sur la mémoire et sur PostgreSQL, `testing/contrat-journal.ts`, puis les garanties de la base et l'API de bout en bout sur PostgreSQL ; ignoré sans `DATABASE_URL_TEST`).
 Le montage sans Nest (`testing/montage.ts`) fait avancer l'horloge : aucun test n'attend en vrai.

@@ -412,7 +412,8 @@ export class RejeuService {
         auteurId: perdant.auteurId,
         detecteA: ctx.recuA,
       };
-      await this.sieges.enregistrerConflit(conflit);
+      // Deux rejeux qui se croisent détectent le même conflit : seul le premier l'écrit et le signale.
+      if (!(await this.sieges.enregistrerConflit(conflit))) continue;
       await this.journal.ajouter({
         evenement: {
           id: uuidDeterministe(`billet.a_replacer:${perdant.evenementId}`),
@@ -484,7 +485,7 @@ export class RejeuService {
 
     for (const ancien of connus) {
       if (perdants.some((p) => p.evenementId === ancien.evenementId)) continue;
-      await this.sieges.leverConflit(ancien.evenementId);
+      if (!(await this.sieges.leverConflit(ancien.evenementId))) continue;
       await this.alerter(
         ctx.appareil,
         ctx.utilisateur,

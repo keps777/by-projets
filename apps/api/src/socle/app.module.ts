@@ -6,6 +6,7 @@ import { CaisseModule } from "../caisse/caisse.module";
 import { ColisModule } from "../colis/colis.module";
 import { ModulesModule } from "../modules/modules.module";
 import { NumerotationModule } from "../numerotation/numerotation.module";
+import { SmsModule } from "../sms/sms.module";
 import { SupervisionModule } from "../supervision/supervision.module";
 import { SyncModule } from "../sync/sync.module";
 import { AuditModule } from "./audit/audit.module";
@@ -41,6 +42,7 @@ import { SanteController } from "./sante/sante.controller";
     CaisseModule,
     SupervisionModule,
     ModulesModule,
+    SmsModule,
     ThrottlerModule.forRootAsync({
       inject: [CONFIG],
       useFactory: (config: AppConfig) => ({

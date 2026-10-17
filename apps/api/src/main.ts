@@ -19,6 +19,8 @@ async function demarrer(): Promise<void> {
     throw e;
   }
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    // Corps brut conservé : la signature des accusés de livraison SMS se calcule sur le corps exact.
+    rawBody: true,
     logger:
       config.env === "production" ? ["log", "warn", "error"] : ["log", "warn", "error", "debug"],
   });

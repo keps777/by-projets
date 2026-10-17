@@ -4,6 +4,7 @@ import { ComptesService } from "../comptes/comptes.service";
 import { PersonnesPrisma, PersonnesRepository } from "../comptes/personnes.repository";
 import { CONFIG, type AppConfig } from "../config/config";
 import { Horloge, HorlogeSysteme } from "../horloge";
+import { SmsGatewayPasserelle, SmsModule } from "../../sms/sms.module";
 import { SmsGateway, SmsMock } from "../sms/sms.gateway";
 import { AuthController, MoiController } from "./auth.controller";
 import { AuthService } from "./auth.service";
@@ -15,6 +16,8 @@ import { TokensService } from "./tokens.service";
 @Global()
 @Module({
   imports: [
+    // Les codes de connexion partent par la passerelle SMS (file, reprise, secours, journal).
+    SmsModule,
     JwtModule.registerAsync({
       inject: [CONFIG],
       useFactory: (config: AppConfig) => ({ secret: config.jwt.secret }),
@@ -30,7 +33,15 @@ import { TokensService } from "./tokens.service";
     GardeRoles,
     { provide: PersonnesRepository, useClass: PersonnesPrisma },
     { provide: DefisRepository, useClass: DefisPrisma },
-    { provide: SmsGateway, useClass: SmsMock },
+    {
+      provide: SmsGateway,
+      inject: [CONFIG, SmsGatewayPasserelle],
+      // Hors test : la passerelle (file, reprise, secours, journal). En test (NODE_ENV=test), le
+      // simulateur du socle, dont les tests lisent la boîte (`dernierCode`, `messages()`) ; la
+      // passerelle a ses propres tests dans src/sms.
+      useFactory: (config: AppConfig, passerelle: SmsGatewayPasserelle): SmsGateway =>
+        config.env === "test" ? new SmsMock(config) : passerelle,
+    },
     { provide: Horloge, useClass: HorlogeSysteme },
   ],
   exports: [

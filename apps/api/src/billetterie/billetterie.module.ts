@@ -1,5 +1,9 @@
 import { Inject, Injectable, Module, type OnModuleInit } from "@nestjs/common";
+import { NumerotationModule } from "../numerotation/numerotation.module";
+import { NumerotationService } from "../numerotation/numerotation.service";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { AgenceController } from "./agence.controller";
 import { AgenceService } from "./agence.service";
@@ -28,6 +32,16 @@ import {
 } from "./memoire";
 import { Passagers } from "./passagers";
 import { OPTIONS_BILLETTERIE, OPTIONS_PAR_DEFAUT, PasserelleTempsReel } from "./passerelle";
+import {
+  BilletsPrisma,
+  CataloguePrisma,
+  CommandesPrisma,
+  EvenementsTraitesPrisma,
+  InventairePrisma,
+  NumerotationEnLigneServeur,
+  PreferencesPrisma,
+  ScansPrisma,
+} from "./postgres";
 import {
   AvisBillets,
   Billets,
@@ -75,6 +89,14 @@ export function creerSignataire(brut: string | undefined): SignataireQrEcdsa {
 }
 
 /**
+ * Les ports qui ne gardent aucune donnée : `ConversionDevises` (taux indicatifs) et
+ * `DiffusionTempsReel` (diffusion dans le processus). Un redémarrage ne leur fait rien perdre, ils ne
+ * bloquent donc pas la production. Plusieurs instances de l'API demanderont Redis ou LISTEN/NOTIFY
+ * pour la diffusion (README).
+ */
+const SANS_DONNEES: ReadonlySet<string> = new Set(["ConversionDevises", "DiffusionTempsReel"]);
+
+/**
  * Garde-fou : en production, refuse de démarrer tant qu'un port de la billetterie est encore en
  * mémoire (billets, sièges et événements reçus seraient perdus au premier redémarrage).
  */
@@ -119,6 +141,7 @@ export class VerificationStockageBilletterie implements OnModuleInit {
       ["AvisBillets", this.avis],
     ];
     const volatils = ports
+      .filter(([nom]) => !SANS_DONNEES.has(nom))
       .filter(([, port]) => (port as Partial<StockageBilletterie>).durable === false)
       .map(([nom]) => nom);
     if (volatils.length > 0) {
@@ -141,6 +164,7 @@ export class VerificationStockageBilletterie implements OnModuleInit {
  * paiements). Les paiements appellent `CommandesService.confirmerPaiement`.
  */
 @Module({
+  imports: [NumerotationModule],
   controllers: [VoyageurController, AgenceController, ExploitationController],
   providers: [
     Passagers,
@@ -154,17 +178,63 @@ export class VerificationStockageBilletterie implements OnModuleInit {
     VerificationStockageBilletterie,
     { provide: Horloge, useClass: HorlogeSysteme },
     { provide: OPTIONS_BILLETTERIE, useValue: OPTIONS_PAR_DEFAUT },
-    { provide: Catalogue, useClass: CatalogueMemoire },
-    { provide: Billets, useClass: BilletsMemoire },
-    { provide: Inventaire, useClass: InventaireMemoire },
-    { provide: Commandes, useClass: CommandesMemoire },
-    { provide: Scans, useClass: ScansMemoire },
-    { provide: EvenementsTraites, useClass: EvenementsTraitesMemoire },
-    { provide: PreferencesVoyageur, useClass: PreferencesMemoire },
+    // PostgreSQL en production (ou avec API_STOCKAGE=postgres), mémoire ailleurs : voir socle/db/stockage.ts.
+    {
+      provide: Catalogue,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new CataloguePrisma(prisma) : new CatalogueMemoire(),
+    },
+    {
+      provide: Billets,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new BilletsPrisma(prisma) : new BilletsMemoire(),
+    },
+    {
+      provide: Inventaire,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new InventairePrisma(prisma) : new InventaireMemoire(),
+    },
+    {
+      provide: Commandes,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new CommandesPrisma(prisma) : new CommandesMemoire(),
+    },
+    {
+      provide: Scans,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new ScansPrisma(prisma) : new ScansMemoire(),
+    },
+    {
+      provide: EvenementsTraites,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config)
+          ? new EvenementsTraitesPrisma(prisma)
+          : new EvenementsTraitesMemoire(),
+    },
+    {
+      provide: PreferencesVoyageur,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new PreferencesPrisma(prisma) : new PreferencesMemoire(),
+    },
     { provide: Promotions, useClass: PromotionsMemoire },
     { provide: ProchesVoyageur, useClass: ProchesMemoire },
     { provide: ConversionDevises, useClass: ConversionMemoire },
-    { provide: NumerotationEnLigne, useClass: NumerotationEnLigneMemoire },
+    // Les numéros 4001–9999 viennent du registre de la numérotation (AM-161) sur PostgreSQL.
+    {
+      provide: NumerotationEnLigne,
+      inject: [CONFIG, NumerotationService],
+      useFactory: (config: AppConfig, numerotation: NumerotationService) =>
+        stockageSurPostgres(config)
+          ? new NumerotationEnLigneServeur(numerotation)
+          : new NumerotationEnLigneMemoire(),
+    },
     { provide: ColisDuDepart, useClass: ColisMemoire },
     { provide: AvisBillets, useClass: AvisMemoire },
     { provide: DiffusionTempsReel, useClass: DiffusionMemoire },
