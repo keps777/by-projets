@@ -9,7 +9,7 @@ import { lireSessionStockee } from "./session";
 describe("garde de rôle (hors mode démo)", () => {
   it("renvoie vers /connexion quand personne n'est connecté et que l'espace est celui d'un agent", async () => {
     const { routeur } = rendreApp({ url: "/guichet/accueil", demo: false, session: null });
-    await screen.findByRole("heading", { level: 1, name: fr.ecrans.Connexion.titre });
+    await screen.findByRole("heading", { level: 1, name: "Ton numéro, c'est ton compte." });
     expect(routeur.state.location.pathname).toBe("/connexion");
   });
 

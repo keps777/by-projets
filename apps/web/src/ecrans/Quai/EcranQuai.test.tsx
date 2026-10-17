@@ -113,9 +113,11 @@ describe("Quai · scan continu par la caméra", () => {
 
     await waitFor(() => expect(carteScan()).toHaveTextContent("Tchoumi Paul"));
     expect(carteScan()).toHaveAttribute("data-ton", "ok");
-    expect(carteScan()).toHaveTextContent("siège 24");
-    expect(carteScan()).toHaveTextContent("08:25:00");
-    expect(carteScan()).toHaveTextContent("ALP-DLA-270105-0185 · CNI ···· 8820 · Classique");
+    await waitFor(() => {
+      expect(carteScan()).toHaveTextContent("siège 24");
+      expect(carteScan()).toHaveTextContent("08:25:00");
+      expect(carteScan()).toHaveTextContent("ALP-DLA-270105-0185 · CNI ···· 8820 · Classique");
+    });
     await waitFor(() =>
       expect(screen.getByRole("region", { name: "embarqués" })).toHaveTextContent("32/40"),
     );
