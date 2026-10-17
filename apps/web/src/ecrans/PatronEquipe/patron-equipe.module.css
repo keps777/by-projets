@@ -1,0 +1,425 @@
+/*
+ * « Mes gares, mes gens » (PatronEquipe.dc.html). Couleurs, tailles et espacements relevés dans la planche ; les couleurs,
+ * polices et espacements sont les variables --am-* de @afrimove/design.
+ *
+ * Dans la planche, seul le conteneur racine pose `box-sizing: border-box` : tout le reste est en `content-box`. Les
+ * hauteurs minimales des lignes (46 et 48 px), des boutons du pied (56 px) et des avatars (30 px) s'y ajoutent donc au
+ * remplissage et au bord ; on reprend ce que la planche dessine réellement.
+ */
+
+/* Corps : 8 px entre les blocs, 2 px en haut, rien en bas ; défile si l'écran est plus court que la planche (844 px). */
+.corps.corps {
+  gap: var(--am-space-8);
+  padding: var(--am-space-2) var(--am-gutter) 0;
+  overflow-y: auto;
+}
+
+/* ---------------------------------------------------------------- cartes à en-tête (gares, gens) */
+
+.carte {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-16);
+}
+
+.carteTete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px var(--am-space-12);
+  background: var(--am-profond);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+}
+
+.carteTitre {
+  margin: 0;
+  color: var(--am-ambre);
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+.carteAide {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--am-space-4);
+  color: var(--am-craie-2);
+}
+
+.liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.liste > li + li {
+  border-top: 1px solid var(--am-surface-2);
+}
+
+/* Liste des gens : 240 px de haut, qui défile, avec un dégradé en bas. */
+.zone {
+  position: relative;
+  height: 240px;
+}
+
+.defilement {
+  height: 100%;
+  overflow-y: auto;
+  background: var(--am-surface);
+}
+
+.degrade {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 16px;
+  background: linear-gradient(180deg, transparent, var(--am-surface));
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------- une gare */
+
+.ligneGare,
+.lignePersonne {
+  display: grid;
+  gap: var(--am-space-8);
+  align-items: center;
+  box-sizing: content-box;
+  padding: 0 var(--am-space-12);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-size: var(--am-fs-12);
+  text-decoration: none;
+}
+
+.ligneGare {
+  grid-template-columns: 1fr auto;
+  min-height: 46px;
+}
+
+.lignePersonne {
+  grid-template-columns: 34px 1fr auto;
+  min-height: 48px;
+}
+
+.ligneGare:focus-visible,
+.lignePersonne:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: -2px;
+}
+
+.colonne {
+  display: flex;
+  flex-direction: column;
+  line-height: var(--am-lh-serree);
+}
+
+.colonneDroite {
+  align-items: flex-end;
+}
+
+.nom {
+  font-size: var(--am-fs-13);
+  font-weight: 700;
+}
+
+.detail {
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-11);
+}
+
+.caisse {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-12);
+  font-weight: 700;
+}
+
+.etatGare {
+  font-size: var(--am-fs-10);
+}
+
+.etatGare[data-ton="vert"] {
+  color: var(--am-vert);
+}
+
+.etatGare[data-ton="ambre"] {
+  color: var(--am-ambre);
+}
+
+.etatGare[data-ton="rouge"] {
+  color: var(--am-rouge);
+}
+
+/* ---------------------------------------------------------------- les effectifs par rôle */
+
+.effectifs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--am-space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.effectif,
+.repere {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-2);
+  box-sizing: content-box;
+  padding: var(--am-space-8) var(--am-space-10);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-12);
+  background: var(--am-surface);
+}
+
+.effectifLibelle {
+  color: var(--am-gris);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette-serree);
+  text-transform: uppercase;
+}
+
+.effectifNombre {
+  color: var(--am-craie);
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-18);
+  font-weight: 800;
+  line-height: var(--am-lh-plein);
+}
+
+.effectifDetail {
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-10);
+}
+
+/* ---------------------------------------------------------------- une personne */
+
+.avatar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  background: var(--am-trait);
+  font-size: var(--am-fs-11);
+  font-weight: 800;
+}
+
+.avatar[data-ton="ambre"] {
+  color: var(--am-ambre);
+}
+
+.avatar[data-ton="bleu"] {
+  color: var(--am-bleu);
+}
+
+.avatar[data-ton="vert"] {
+  color: var(--am-vert);
+}
+
+.avatar[data-ton="gris"] {
+  color: var(--am-craie-2);
+}
+
+.role {
+  color: var(--am-craie-2);
+  font-weight: 500;
+}
+
+.indicateur {
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-11);
+}
+
+.indicateur[data-ton="ambre"] {
+  color: var(--am-ambre);
+}
+
+.indicateur[data-ton="rouge"] {
+  color: var(--am-rouge);
+}
+
+.etatPersonne {
+  font-size: var(--am-fs-11);
+  font-weight: 700;
+  text-align: right;
+}
+
+.etatPersonne[data-ton="vert"] {
+  color: var(--am-vert);
+}
+
+.etatPersonne[data-ton="gris"] {
+  color: var(--am-gris);
+}
+
+.etatPersonne[data-ton="rouge"] {
+  color: var(--am-rouge);
+}
+
+/* ---------------------------------------------------------------- les trois repères */
+
+.reperes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--am-space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.repere {
+  line-height: var(--am-lh-serree);
+}
+
+.repere[data-ton="vert"] {
+  border-color: var(--am-vert-bord);
+  background: var(--am-vert-fond);
+}
+
+.repere[data-ton="ambre"] {
+  border-color: var(--am-ambre);
+  background: var(--am-ambre-fond);
+}
+
+.repereLibelle {
+  color: var(--am-gris);
+  font-size: var(--am-fs-10);
+}
+
+.repere[data-ton="vert"] .repereLibelle {
+  color: var(--am-vert);
+}
+
+.repere[data-ton="ambre"] .repereLibelle {
+  color: var(--am-ambre);
+}
+
+.repereValeur {
+  font-size: var(--am-fs-12);
+  font-weight: 700;
+}
+
+/* ---------------------------------------------------------------- le pied : ajouter, payer */
+
+.pied.pied {
+  display: grid;
+  grid-template-columns: 1fr 1.7fr;
+  gap: var(--am-space-8);
+  padding: var(--am-space-8) var(--am-gutter) 18px;
+}
+
+.pied[data-seul] {
+  grid-template-columns: 1fr;
+}
+
+.ajouter.ajouter {
+  box-sizing: content-box;
+  min-height: 56px;
+  padding: 0;
+  border-radius: var(--am-radius-16);
+  color: var(--am-craie);
+  line-height: var(--am-lh-serree);
+  text-align: center;
+}
+
+.payer.payer {
+  padding: 0 var(--am-gutter);
+}
+
+/* ---------------------------------------------------------------- états chargement, vide, erreur */
+
+.etat {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--am-space-10);
+}
+
+.bandeau {
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-10);
+  padding: var(--am-space-10) var(--am-space-12);
+  border: 1px solid var(--am-surface-2);
+  border-radius: var(--am-radius-12);
+  background: var(--am-carte-sombre);
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+}
+
+.bandeau p {
+  margin: 0;
+}
+
+.point {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--am-ambre);
+}
+
+.squelette {
+  display: block;
+  border-radius: var(--am-radius-6);
+  background: var(--am-surface-2);
+}
+
+/* Mêmes hauteurs que les éléments qu'ils remplacent : la mise en page ne bouge pas quand les données arrivent. */
+.squeletteSousTitre {
+  width: 190px;
+  height: 12px;
+  margin-top: var(--am-space-3);
+}
+
+.squelettePastille {
+  width: 104px;
+  height: 31px;
+  border-radius: var(--am-radius-pill);
+}
+
+.squeletteLigne {
+  display: flex;
+  align-items: center;
+  box-sizing: content-box;
+  min-height: 46px;
+  padding: 0 var(--am-space-12);
+  background: var(--am-surface);
+}
+
+.squeletteLigne[data-haute] {
+  min-height: 48px;
+}
+
+.squeletteTrait {
+  width: 100%;
+  height: 28px;
+}
+
+.squeletteEffectif {
+  height: 49px;
+  border-radius: var(--am-radius-12);
+}
+
+.squeletteRepere {
+  height: 56px;
+  border-radius: var(--am-radius-12);
+}
+
+.squeletteBouton {
+  min-height: 56px;
+  border-radius: var(--am-radius-16);
+}
