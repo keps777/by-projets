@@ -1,5 +1,7 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { useParams } from "react-router";
+import { EcranFinancementDemande } from "@/ecrans/FinancementDemande";
 
 export default function Page() {
-  return <EcranVide planche="FinancementDemande" />;
+  const { dossierId } = useParams();
+  return <EcranFinancementDemande dossierId={dossierId} />;
 }
