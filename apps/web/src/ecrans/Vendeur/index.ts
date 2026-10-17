@@ -1,0 +1,1 @@
+export { EcranVendeur } from "./EcranVendeur";

@@ -1,0 +1,65 @@
+{
+  "titre": "",
+  "numero": "",
+  "identite": "",
+  "vente": {
+    "titre": "",
+    "jour": {
+      "aujourdhui": "",
+      "demain": ""
+    },
+    "places_one": "",
+    "places_other": "",
+    "commission": ""
+  },
+  "bilan": {
+    "mois": {
+      "etiquette": "",
+      "detail": ""
+    },
+    "gain": {
+      "etiquette": "",
+      "detail": ""
+    },
+    "clients": {
+      "etiquette": "",
+      "detail_one": "",
+      "detail_other": ""
+    }
+  },
+  "clients": {
+    "proposition": "",
+    "dernier": ""
+  },
+  "action": "",
+  "etats": {
+    "chargement": "",
+    "reessayer": "",
+    "espace": {
+      "erreur": {
+        "titre": "",
+        "detail": ""
+      }
+    },
+    "departs": {
+      "vide": {
+        "titre": "",
+        "detail": ""
+      },
+      "erreur": {
+        "titre": "",
+        "detail": ""
+      }
+    },
+    "clients": {
+      "vide": {
+        "titre": "",
+        "detail": ""
+      },
+      "erreur": {
+        "titre": "",
+        "detail": ""
+      }
+    }
+  }
+}
