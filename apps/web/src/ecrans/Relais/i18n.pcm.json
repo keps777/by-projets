@@ -1,0 +1,53 @@
+{
+  "retour": "",
+  "carte": {
+    "libelle_one": "",
+    "libelle_other": "",
+    "libelleSansMarche_one": "",
+    "libelleSansMarche_other": "",
+    "vide": "",
+    "etiquette": "",
+    "sousTitre_one": "",
+    "sousTitre_other": ""
+  },
+  "liste": {
+    "libelle": ""
+  },
+  "etat": {
+    "ouvert": "",
+    "fermeBientot": "",
+    "ferme": ""
+  },
+  "detail": {
+    "deChez": "",
+    "colisRemis_one": "",
+    "colisRemis_other": ""
+  },
+  "supplement": "",
+  "choisir": {
+    "libelle": "",
+    "prix": ""
+  },
+  "messages": {
+    "complet": "",
+    "tropLourd": "",
+    "echec": ""
+  },
+  "etats": {
+    "chargement": "",
+    "aucun": {
+      "titre": "",
+      "detail": ""
+    },
+    "introuvable": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    },
+    "retourColis": ""
+  }
+}
