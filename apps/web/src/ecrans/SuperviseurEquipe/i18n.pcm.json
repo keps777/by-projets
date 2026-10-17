@@ -1,0 +1,128 @@
+{
+  "titre": "",
+  "retour": "",
+  "sousTitre_one": "",
+  "sousTitre_other": "",
+  "ajouter": "",
+  "liste": {
+    "titre": "",
+    "aide": "",
+    "ligne": "",
+    "ligneSansAffectation": "",
+    "autres_one": "",
+    "autres_other": "",
+    "autresDetail_one": "",
+    "autresDetail_other": ""
+  },
+  "roles": {
+    "guichetier": "",
+    "guichetier_f": "",
+    "convoyeur": "",
+    "convoyeur_f": "",
+    "chauffeur": "",
+    "chauffeur_f": "",
+    "controleur": "",
+    "controleur_f": "",
+    "superviseur": "",
+    "superviseur_f": ""
+  },
+  "statut": {
+    "en_service": "",
+    "a_bord": "",
+    "bloquee": "",
+    "bloquee_f": ""
+  },
+  "pin": {
+    "ok": "",
+    "aRenouveler": "",
+    "bloque": "",
+    "bloque_f": ""
+  },
+  "fiche": {
+    "detail_one": "",
+    "detail_other": "",
+    "detailSimple": "",
+    "detailRole": "",
+    "actions": {
+      "renouveler_pin": {
+        "titre": "",
+        "detail": ""
+      },
+      "changer_affectation": {
+        "titre": "",
+        "detail": ""
+      },
+      "voir_journal": {
+        "titre": "",
+        "detail": ""
+      },
+      "desactiver": {
+        "titre": "",
+        "detail": ""
+      }
+    },
+    "debloquer": "",
+    "monPin": "",
+    "regle": "",
+    "dureeHeures": "",
+    "dureeMinutes": ""
+  },
+  "pied": {
+    "annuler": "",
+    "renouveler": {
+      "libelle": "",
+      "detail": ""
+    }
+  },
+  "feuille": {
+    "fermer": "",
+    "pin": {
+      "titre": "",
+      "aide": "",
+      "regle": ""
+    },
+    "affectation": {
+      "guichet": "",
+      "guichetN": "",
+      "role": "",
+      "aucunGuichet": ""
+    },
+    "monPin": {
+      "titre": "",
+      "detail": ""
+    },
+    "journal": {
+      "chargement": "",
+      "vide": "",
+      "erreur": "",
+      "reessayer": "",
+      "signe": "",
+      "chaineRompue": ""
+    },
+    "message": {
+      "choixManquant": "",
+      "echec": "",
+      "inconnue": "",
+      "refusee": ""
+    }
+  },
+  "resultat": {
+    "pinRenouvele": "",
+    "debloque": "",
+    "desactive": "",
+    "affectation": "",
+    "monPin": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
