@@ -1,0 +1,66 @@
+{
+  "titre": "",
+  "retour": "",
+  "sousTitre": "",
+  "partenaireAttendu": "",
+  "avance": {
+    "titre": "",
+    "statut": {
+      "eligible": "",
+      "non_eligible": "",
+      "en_cours": ""
+    },
+    "plafond": "",
+    "equivalence_one": "",
+    "equivalence_other": "",
+    "montant": "",
+    "rembourse": "",
+    "rembourseValeur": "",
+    "duree": "",
+    "dureeValeur_one": "",
+    "dureeValeur_other": "",
+    "cout": "",
+    "coutAttendu": "",
+    "coutValeur": "",
+    "coutFixe": "",
+    "garantie": ""
+  },
+  "credit": {
+    "titre": "",
+    "detail": ""
+  },
+  "paie": {
+    "titre": "",
+    "detail_one": "",
+    "detail_other": "",
+    "precision": ""
+  },
+  "voyageurs": {
+    "titre": "",
+    "aide": "",
+    "exemple": ""
+  },
+  "action": {
+    "demander": "",
+    "masque": ""
+  },
+  "pin": {
+    "titre": "",
+    "sousTitre": "",
+    "note": "",
+    "fermer": "",
+    "echec": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
