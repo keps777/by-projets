@@ -1,8 +1,10 @@
+import type { ClientApi } from "@afrimove/api-client";
 import { ConceptionProvider } from "@afrimove/ui";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState, type ComponentType } from "react";
 import { I18nextProvider } from "react-i18next";
 import { RouterProvider, createBrowserRouter, type DataRouter } from "react-router";
+import { FournisseurApiApplication } from "@/api/fournisseur";
 import { BandeauMiseAJour } from "@/coquille/bandeau-mise-a-jour";
 import { construireRoutes, type SourcesRoutes } from "@/coquille/arbre-routes";
 import { HorlogeProvider, creerHorloge, type Horloge } from "@/coquille/horloge";
@@ -33,6 +35,8 @@ export interface PropsApp {
   /** Routeur imposé (tests : routeur en mémoire). Sinon un routeur de navigateur sur les routes de `src/routes/`. */
   routeur?: DataRouter;
   queryClient?: QueryClient;
+  /** Client d'API imposé (tests). Sinon mock ou HTTP selon `VITE_API_MODE`. */
+  clientApi?: ClientApi;
 }
 
 export function App(props: PropsApp) {
@@ -61,14 +65,18 @@ export function App(props: PropsApp) {
       <HorlogeProvider horloge={horloge}>
         <I18nextProvider i18n={i18n}>
           <QueryClientProvider client={queryClient}>
-            <SessionProvider {...(props.session !== undefined ? { initiale: props.session } : {})}>
-              <ModulesProvider masques={parametres.modulesMasques}>
-                <ConceptionProvider actif={parametres.conception}>
-                  <BandeauMiseAJour />
-                  <RouterProvider router={routeur} />
-                </ConceptionProvider>
-              </ModulesProvider>
-            </SessionProvider>
+            <FournisseurApiApplication {...(props.clientApi ? { client: props.clientApi } : {})}>
+              <SessionProvider
+                {...(props.session !== undefined ? { initiale: props.session } : {})}
+              >
+                <ModulesProvider masques={parametres.modulesMasques}>
+                  <ConceptionProvider actif={parametres.conception}>
+                    <BandeauMiseAJour />
+                    <RouterProvider router={routeur} />
+                  </ConceptionProvider>
+                </ModulesProvider>
+              </SessionProvider>
+            </FournisseurApiApplication>
           </QueryClientProvider>
         </I18nextProvider>
       </HorlogeProvider>

@@ -126,9 +126,15 @@ importers:
 
   apps/web:
     dependencies:
+      '@afrimove/api-client':
+        specifier: workspace:*
+        version: link:../../packages/api-client
       '@afrimove/design':
         specifier: workspace:*
         version: link:../../packages/design
+      '@afrimove/fixtures':
+        specifier: workspace:*
+        version: link:../../packages/fixtures
       '@afrimove/ui':
         specifier: workspace:*
         version: link:../../packages/ui

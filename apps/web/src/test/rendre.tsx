@@ -1,3 +1,4 @@
+import { creerClientMock } from "@afrimove/api-client";
 import { render } from "@testing-library/react";
 import { createMemoryRouter, type DataRouter, type RouteObject } from "react-router";
 import { App, sourcesRoutes } from "@/app";
@@ -49,6 +50,7 @@ export function rendreApp(options: OptionsRendu = {}): { routeur: DataRouter } {
   render(
     <App
       routeur={routeur}
+      clientApi={creerClientMock({ latenceMs: 0 })}
       parametres={parametres}
       session={session}
       {...(horloge ? { horloge } : {})}
