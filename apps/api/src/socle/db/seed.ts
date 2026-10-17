@@ -24,6 +24,8 @@ export interface CompteSemis {
   role: Role;
   telephone: string;
   secret: string;
+  /** PIN de signature (le superviseur valide les caisses et les annulations avec lui). */
+  pinSignature?: string;
   cree: boolean;
 }
 
@@ -64,7 +66,7 @@ export async function executerSeed(ctx: ContexteSeed): Promise<CompteSemis[]> {
     update: {},
     create: { compagnieId: compagnie.id, code: "YDE", nom: "Gare de Yaoundé", ville: "Yaoundé" },
   });
-  await prisma.guichet.upsert({
+  const guichet1 = await prisma.guichet.upsert({
     where: { gareId_rang: { gareId: douala.id, rang: 1 } },
     update: {},
     create: { gareId: douala.id, rang: 1 },
@@ -122,6 +124,7 @@ export async function executerSeed(ctx: ContexteSeed): Promise<CompteSemis[]> {
     },
   ];
 
+  const pinSuperviseur = env["SEED_PIN_SUPERVISEUR"] ?? pinAleatoire();
   const resultat: CompteSemis[] = [];
   for (const c of aCreer) {
     const existant = await comptes.trouverParTelephone(c.telephone);
@@ -130,7 +133,7 @@ export async function executerSeed(ctx: ContexteSeed): Promise<CompteSemis[]> {
       continue;
     }
     const estPin = c.role === "guichetier";
-    await comptes.creer({
+    const personne = await comptes.creer({
       nom: c.nom,
       telephone: c.telephone,
       roles: [c.role],
@@ -138,13 +141,42 @@ export async function executerSeed(ctx: ContexteSeed): Promise<CompteSemis[]> {
       gareId: c.gare ? douala.id : null,
       ...(estPin ? { pin: c.secret } : { motDePasse: c.secret }),
     });
+    // Le superviseur se connecte par mot de passe mais valide avec un PIN : sans `pinHache`, aucune caisse ni
+    // annulation ne peut être validée (`POST /agence/superviseur/pin` répond 401 ; constat de la recette, AM-181).
+    if (c.role === "superviseur") {
+      await prisma.personne.update({
+        where: { id: personne.id },
+        data: { pinHache: await comptes.hacherPin(pinSuperviseur) },
+      });
+      resultat.push({
+        role: c.role,
+        telephone: c.telephone,
+        secret: c.secret,
+        pinSignature: pinSuperviseur,
+        cree: true,
+      });
+      continue;
+    }
     resultat.push({ role: c.role, telephone: c.telephone, secret: c.secret, cree: true });
+  }
+
+  // Le guichetier de démonstration tient le guichet 1 : sans ce lien, `GET /agence/vente/contexte` répond 404
+  // GUICHET_INCONNU et le guichetier ne peut rien vendre (constat de la recette, AM-181). Rejouable, comptes déjà
+  // existants compris.
+  const guichetier = await comptes.trouverParTelephone(TELEPHONES_DEMO.guichetier);
+  if (guichetier) {
+    await prisma.personne.update({
+      where: { id: guichetier.id },
+      data: { guichetId: guichet1.id },
+    });
   }
 
   journal(`Compagnie ${compagnie.code}, gares DLA/YDE, guichet 1 : prêts.`);
   for (const r of resultat) {
     journal(
-      `  ${r.role.padEnd(11)} ${r.telephone}  ${r.cree ? `secret : ${r.secret}` : "déjà présent"}`,
+      `  ${r.role.padEnd(11)} ${r.telephone}  ${r.cree ? `secret : ${r.secret}` : "déjà présent"}${
+        r.pinSignature ? `  PIN de validation : ${r.pinSignature}` : ""
+      }`,
     );
   }
   await semerFixtures(ctx);

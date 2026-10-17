@@ -174,7 +174,10 @@ export class AgenceService {
           },
         );
       }
-    } else if (paiement.recu !== du || paiement.rendu !== 0) {
+    } else if (paiement.rendu !== 0 || (paiement.recu !== 0 && paiement.recu !== du)) {
+      // Le contrat dit « `recu` et `rendu` ne servent qu'au cash (0 sinon) » et l'écran de vente envoie 0 pour un
+      // paiement mobile : l'API refusait ces ventes (422), constat de la recette AM-181. Un mobile se règle du montant
+      // exact : `recu` vaut donc 0 (contrat) ou le montant dû (les écrans du convoyeur et du contrôleur l'envoient).
       throw invalide("PAIEMENT_INVALIDE", "Un paiement mobile doit être du montant exact", { du });
     }
   }

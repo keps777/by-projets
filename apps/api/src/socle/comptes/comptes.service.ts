@@ -65,6 +65,15 @@ export class ComptesService {
     return this.chiffrement.dechiffrer(personne.telephoneChiffre, CONTEXTE_TELEPHONE);
   }
 
+  /**
+   * Le haché (argon2id avec poivre) d'un PIN, pour un compte qui se connecte par mot de passe mais signe avec un PIN
+   * (le superviseur valide une caisse ou une annulation avec `POST /agence/superviseur/pin`).
+   */
+  async hacherPin(pin: string): Promise<string> {
+    verifierPin(pin);
+    return this.hachage.hacher(pin);
+  }
+
   async creer(demande: DemandeCompte): Promise<PersonneEnregistree> {
     const roles = validerRoles(demande.roles);
     const methodes = new Set(roles.map((r) => METHODE_PAR_ROLE[r]));

@@ -462,6 +462,37 @@ importers:
         specifier: 3.2.4
         version: 3.2.4(@types/node@22.19.1)(jiti@2.7.0)(jsdom@26.1.0)(terser@5.51.2)(tsx@4.20.6)
 
+  tests/recette:
+    dependencies:
+      '@afrimove/api-client':
+        specifier: workspace:*
+        version: link:../../packages/api-client
+      '@afrimove/contrats':
+        specifier: workspace:*
+        version: link:../../packages/contrats
+      '@afrimove/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
+      '@afrimove/sync':
+        specifier: workspace:*
+        version: link:../../packages/sync
+      playwright:
+        specifier: 1.56.1
+        version: 1.56.1
+    devDependencies:
+      '@types/node':
+        specifier: 22.19.1
+        version: 22.19.1
+      fake-indexeddb:
+        specifier: 6.2.6
+        version: 6.2.6
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: 3.2.4
+        version: 3.2.4(@types/node@22.19.1)(jiti@2.7.0)(jsdom@26.1.0)(terser@5.51.2)(tsx@4.20.6)
+
   tools/fidelite:
     dependencies:
       pixelmatch:

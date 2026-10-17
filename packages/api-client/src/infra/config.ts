@@ -3,6 +3,7 @@ import { ErreurConfiguration } from "./erreurs";
 import { horlogeDepuis, horlogeGelee } from "./horloge";
 import type { Horloge } from "./horloge";
 import { creerClientHttp } from "./http";
+import { jetonDepuisStockage } from "./jeton";
 import type { OptionsHttp } from "./http";
 import { creerClientMock } from "./mock";
 import type { OptionsMock } from "./mock";
@@ -79,7 +80,12 @@ export type DependancesClient = Omit<OptionsMock, "scenario"> & Omit<OptionsHttp
  */
 export function creerClient(config: ConfigClient, deps: DependancesClient = {}): ClientApi {
   if (config.mode === "http") {
-    return creerClientHttp({ ...deps, urlBase: config.urlBase });
+    // Sans source de jeton imposée, le jeton de l'appareil (stockage local) : sinon l'API répond 401 partout.
+    return creerClientHttp({
+      obtenirJeton: () => jetonDepuisStockage(),
+      ...deps,
+      urlBase: config.urlBase,
+    });
   }
   const horloge = deps.horloge ?? (config.horloge ? analyserHorloge(config.horloge) : undefined);
   const options: OptionsMock = { ...deps, scenario: config.scenario };

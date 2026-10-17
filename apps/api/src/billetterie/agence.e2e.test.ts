@@ -46,7 +46,12 @@ function venteEvt(
     telephone?: string | null;
     id?: string;
     billetId?: string;
-    paiement?: ReturnType<typeof especes>;
+    paiement?: {
+      mode: "cash" | "momo" | "orange_money";
+      recu: number;
+      rendu: number;
+      reference: string | null;
+    };
     numeroPlage?: number;
   } = {},
 ) {
@@ -213,6 +218,36 @@ describe("billet.vendu : POST /agence/billets", () => {
     expect(r.body.code).toBe("PAIEMENT_INVALIDE");
     // Le siège n'a pas été pris par une vente refusée.
     expect((await t.inventaire.plan(DEPART)).occupes[8]).toBeUndefined();
+  });
+
+  it("accepte un paiement mobile du montant exact, avec « reçu » à 0 (contrat, écran de vente) ou égal au prix (recette AM-181)", async () => {
+    const zero = await poster(
+      "/agence/billets",
+      venteEvt({ siege: 19, paiement: { mode: "momo", recu: 0, rendu: 0, reference: null } }),
+    );
+    expect(zero.status).toBe(200);
+    expect(zero.body.accuse.statut).toBe("accepte");
+    const egal = await poster(
+      "/agence/billets",
+      venteEvt({
+        siege: 39,
+        paiement: { mode: "orange_money", recu: 4000, rendu: 0, reference: "OM-1" },
+      }),
+    );
+    expect(egal.status).toBe(200);
+  });
+
+  it("refuse un paiement mobile d'un autre montant ou avec de la monnaie rendue : 422 PAIEMENT_INVALIDE", async () => {
+    for (const [siege, paiement] of [
+      [22, { mode: "momo" as const, recu: 3000, rendu: 0, reference: null }],
+      [37, { mode: "momo" as const, recu: 5000, rendu: 1000, reference: null }],
+      [38, { mode: "orange_money" as const, recu: 0, rendu: 500, reference: "OM-2" }],
+    ] as const) {
+      const r = await poster("/agence/billets", venteEvt({ siege, paiement }));
+      expect(r.status, `siège ${siege}`).toBe(422);
+      expect(r.body.code).toBe("PAIEMENT_INVALIDE");
+      expect((await t.inventaire.plan(DEPART)).occupes[siege]).toBeUndefined();
+    }
   });
 
   it("refuse un prix qui n'est pas le tarif de la ligne", async () => {

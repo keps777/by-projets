@@ -89,6 +89,9 @@ export function creerTransportHttp(options: OptionsTransportHttp): TransportSync
       signal?.removeEventListener("abort", surAbandon);
     }
     if (reponse.ok) {
+      // `PUT /sync/appareils/:id/cle` répond 204, sans corps : ce n'est pas une réponse illisible (constat de la
+      // recette contre la vraie API, AM-181).
+      if (reponse.status === 204) return undefined;
       try {
         return await reponse.json();
       } catch {
