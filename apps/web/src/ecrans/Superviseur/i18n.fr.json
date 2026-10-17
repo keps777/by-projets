@@ -1,0 +1,49 @@
+{
+  "entete": {
+    "titre": "Superviseur · {{gare}}",
+    "sousTitre": "{{superviseur}} · {{guichets}} guichets · {{quais}} quais · {{heure}}",
+    "synchro": "{{synchronises}} / {{total}} sync"
+  },
+  "demandes": {
+    "titre_one": "{{count}} demande attend ton PIN",
+    "titre_other": "{{count}} demandes attendent ton PIN",
+    "aide": "touche 1 · PIN · fait",
+    "cloture": {
+      "titre": "Clôture guichet {{rang}}",
+      "detail": "· {{agent}} · écart {{ecart}} · compté {{compte}}",
+      "action": "Valider · PIN"
+    },
+    "annulation": {
+      "titre": "Annulation",
+      "detail": "· guichet {{rang}} · billet {{billet}} · {{montant}} · « {{motif}} »",
+      "action": "Voir · PIN"
+    }
+  },
+  "guichets": {
+    "libelle": "Guichet {{rang}}",
+    "ecartOuvert": "écart {{ecart}} · ouvert",
+    "aValider": "{{ecart}} · à valider",
+    "ouvertA": "ouvert {{heure}}",
+    "ferme": "fermé"
+  },
+  "departs": {
+    "titre": "Départs de l'après-midi",
+    "aide": "remplissage",
+    "ligne": "{{destination}} · quai {{quai}}",
+    "bus": "{{bus}}",
+    "fusion": "fusion proposée avec {{heure}}",
+    "remplissage": "{{vendus}}/{{capacite}}"
+  },
+  "raccourcis": {
+    "controle": "Contrôle",
+    "equipe": "Équipe · PIN",
+    "debloquer": "Débloquer 12 h",
+    "rapport": "Rapport 21 h"
+  },
+  "etats": {
+    "chargement": "Chargement de la gare",
+    "vide": "Aucune information pour cette gare pour le moment.",
+    "erreur": "La gare ne s'est pas chargée. Les raccourcis restent utilisables.",
+    "reessayer": "Réessayer"
+  }
+}
