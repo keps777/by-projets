@@ -1,0 +1,150 @@
+import { ecran } from "../ecran";
+import {
+  ALAIN_B,
+  D_TCHINDA,
+  ESSONO,
+  JOSEPH_M,
+  K_FOTSO,
+  MARIE_T,
+  M_NANA,
+  O_ESSOMBA,
+  PAULINE_N,
+  R_MBALLA,
+} from "../monde";
+import { TOTAL_EQUIPE } from "../partage/equipe";
+
+/** 30b · Mes gares, mes gens, 14:02 : les trois gares d'Alpha, les effectifs, dix des 23 personnes. */
+export const PatronEquipe = ecran({
+  planche: "PatronEquipe",
+  maintenant: "14:02",
+  donnees: {
+    titre: "Mes gares, mes gens",
+    detail: `3 gares · ${TOTAL_EQUIPE} personnes · 14 bus · 14:02`,
+    badge: "19 EN SERVICE",
+    gares: {
+      titre: "Mes gares · aujourd’hui",
+      aide: "touche une gare",
+      liste: [
+        {
+          nom: "Akwa · Mme Essono",
+          detail: "3 guichets · 2 quais",
+          caisse: 1_412_000,
+          etat: "3 / 3 sync · écart − 1 000",
+        },
+        {
+          nom: "Mvan · Yaoundé · O. Essomba",
+          detail: "2 guichets · 1 quai",
+          caisse: 948_000,
+          etat: "2 / 2 sync · écart 0",
+        },
+        {
+          nom: "Bafoussam · T. Kamga",
+          detail: "1 guichet · 1 quai",
+          caisse: 386_000,
+          etat: "hors ligne 40 min",
+        },
+      ],
+    },
+    effectifs: [
+      { libelle: "Guichets", nombre: 9, detail: "8 en service" },
+      { libelle: "Superv.", nombre: 3, detail: "3 en service" },
+      { libelle: "Convoy.", nombre: 7, detail: "5 à bord" },
+      { libelle: "Chauff.", nombre: 4, detail: "3 en route" },
+    ],
+    gens: {
+      titre: `Mes gens · ${TOTAL_EQUIPE}`,
+      aide: "touche un nom · glisser",
+      personnes: [
+        {
+          _personneId: JOSEPH_M.id,
+          initiales: "JM",
+          nom: "Joseph M.",
+          role: "guichetier · Akwa guichet 2",
+          detail: "3 écarts · PIN à renouveler",
+          etat: "en service",
+        },
+        {
+          _personneId: MARIE_T.id,
+          initiales: "MT",
+          nom: "Marie T.",
+          role: "guichetière · Akwa guichet 1",
+          detail: "1 204 billets · 0 écart",
+          etat: "en service",
+        },
+        {
+          _personneId: ESSONO.id,
+          initiales: "ES",
+          nom: "Mme Essono",
+          role: "superviseure · Akwa",
+          detail: "2 validations en attente",
+          etat: "en service",
+        },
+        {
+          _personneId: ALAIN_B.id,
+          initiales: "AB",
+          nom: "Alain B.",
+          role: "convoyeur · LT 412 AB",
+          detail: "52 colis scannés · 0 litige",
+          etat: "à bord",
+        },
+        {
+          _personneId: PAULINE_N.id,
+          initiales: "PN",
+          nom: "Pauline N.",
+          role: "guichetière · Akwa guichet 3",
+          detail: "bloquée · 3 PIN faux 09:40",
+          etat: "bloquée",
+        },
+        {
+          _personneId: M_NANA.id,
+          initiales: "NB",
+          nom: "M. Nana",
+          role: "chauffeur · LT 207 AB",
+          detail: "2 pannes · 1 retard",
+          etat: "repos",
+        },
+        {
+          _personneId: K_FOTSO.id,
+          initiales: "KF",
+          nom: "K. Fotso",
+          role: "chauffeur · LT 118 AB",
+          detail: "8 trajets · à l’heure",
+          etat: "en route",
+        },
+        {
+          _personneId: O_ESSOMBA.id,
+          initiales: "OE",
+          nom: "O. Essomba",
+          role: "superviseur · Mvan",
+          detail: "rapport 21 h envoyé 4 / 4",
+          etat: "en service",
+        },
+        {
+          _personneId: D_TCHINDA.id,
+          initiales: "DT",
+          nom: "D. Tchinda",
+          role: "guichetier · Mvan guichet 1",
+          detail: "612 billets · 0 écart",
+          etat: "en service",
+        },
+        {
+          _personneId: R_MBALLA.id,
+          initiales: "RM",
+          nom: "R. Mballa",
+          role: "chauffeur · LT 148 AB",
+          detail: "visite technique en cours",
+          etat: "indisponible",
+        },
+      ],
+    },
+    repere: [
+      { libelle: "Le plus régulier", valeur: "Marie T. · 0 écart en 90 j" },
+      { libelle: "À voir cette semaine", valeur: "Joseph M. · 3 écarts" },
+      { libelle: "Paie du mois", valeur: "23 salaires · le 30 · MoMo" },
+    ],
+    actions: {
+      ajouter: "+ personne · + gare",
+      payer: { libelle: "Payer les 23 salaires", detail: "le 30 · par MoMo · 1 touche" },
+    },
+  },
+});

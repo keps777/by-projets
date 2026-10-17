@@ -10,7 +10,12 @@ export interface CaseParcours {
   detail?: string;
 }
 
-const c = (_planche: NomPlanche, titre: string, detail?: string, touche?: number): CaseParcours => ({
+const c = (
+  _planche: NomPlanche,
+  titre: string,
+  detail?: string,
+  touche?: number,
+): CaseParcours => ({
   _planche,
   titre,
   ...(detail !== undefined ? { detail } : {}),

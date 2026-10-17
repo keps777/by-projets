@@ -1,4 +1,5 @@
-/** Un scénario par planche, indexé par le nom du fichier de la maquette (sans .dc.html). */
+import type { Ecran } from "../ecran";
+import type { NomPlanche } from "../planches";
 import { Splash } from "./Splash";
 import { Connexion } from "./Connexion";
 import { Tuto } from "./Tuto";
@@ -55,7 +56,29 @@ import { CadenceQuai } from "./CadenceQuai";
 import { SuperviseurValider } from "./SuperviseurValider";
 import { SuperviseurVoir } from "./SuperviseurVoir";
 import { SuperviseurEquipe } from "./SuperviseurEquipe";
+import { SuperviseurDebloquer } from "./SuperviseurDebloquer";
+import { AssistantReponse } from "./AssistantReponse";
+import { AnalysesLigne } from "./AnalysesLigne";
+import { AnalysesBus } from "./AnalysesBus";
+import { ConfigLigne } from "./ConfigLigne";
+import { ComptableRapprochement } from "./ComptableRapprochement";
+import { ComptableApercu } from "./ComptableApercu";
+import { ComptableCloture } from "./ComptableCloture";
+import { FinancementDemande } from "./FinancementDemande";
+import { InterAgencesConvention } from "./InterAgencesConvention";
+import { PatronEquipe } from "./PatronEquipe";
+import { PatronGare } from "./PatronGare";
+import { PatronPersonne } from "./PatronPersonne";
+import { ConfigEquipeListe } from "./ConfigEquipeListe";
+import { ConfigPersonne } from "./ConfigPersonne";
+import { ConfigRegles } from "./ConfigRegles";
+import { RelaisDevenir } from "./RelaisDevenir";
+import { RelaisInscription } from "./RelaisInscription";
+import { RelaisVerification } from "./RelaisVerification";
+import { LivreurDevenir } from "./LivreurDevenir";
+import { LivreurVerification } from "./LivreurVerification";
 
+/** Un scénario par planche, indexé par le nom du fichier de la maquette (sans .dc.html). */
 export const ecrans = {
   Splash,
   Connexion,
@@ -113,6 +136,25 @@ export const ecrans = {
   SuperviseurValider,
   SuperviseurVoir,
   SuperviseurEquipe,
-};
-
-// Planches sans scénario : 21
+  SuperviseurDebloquer,
+  AssistantReponse,
+  AnalysesLigne,
+  AnalysesBus,
+  ConfigLigne,
+  ComptableRapprochement,
+  ComptableApercu,
+  ComptableCloture,
+  FinancementDemande,
+  InterAgencesConvention,
+  PatronEquipe,
+  PatronGare,
+  PatronPersonne,
+  ConfigEquipeListe,
+  ConfigPersonne,
+  ConfigRegles,
+  RelaisDevenir,
+  RelaisInscription,
+  RelaisVerification,
+  LivreurDevenir,
+  LivreurVerification,
+} satisfies Record<NomPlanche, Ecran<unknown>>;
