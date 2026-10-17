@@ -1,0 +1,29 @@
+{
+  "lieuEtHeure": "",
+  "langue": {
+    "groupe": ""
+  },
+  "logo": "",
+  "signature": "",
+  "slogan": {
+    "ligne1": "",
+    "ligne2": ""
+  },
+  "jingle": {
+    "titre": "",
+    "paroles": "",
+    "ecouter": "",
+    "arreter": "",
+    "echec": ""
+  },
+  "actions": {
+    "principale": "",
+    "secondaire": ""
+  },
+  "pied": {
+    "debut": "",
+    "compagnies_one": "",
+    "compagnies_other": "",
+    "fin": ""
+  }
+}
