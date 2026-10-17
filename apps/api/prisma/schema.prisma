@@ -1283,3 +1283,91 @@ model SmsEssai {
   @@index([messageId, id])
   @@map("sms_essai")
 }
+
+// ============================================================================================
+// LOT A · Intégration API : adaptateurs PostgreSQL de gps, paiements, rapport, auth-voyageur, ussd,
+// whatsapp et whatsapp-achat (journaux). Bloc contigu, à la fin du fichier, pour faciliter la fusion.
+//
+// Migrations 20261017000710 à 20261017000770. Mêmes règles que le bloc « modules métier » : les
+// garde-fous que Prisma ne sait pas dire (CHECK, index uniques partiels, ajout seul) sont écrits en
+// SQL dans les migrations et signalés ici par « SQL : ». Les colonnes gardent le nom Prisma
+// (camelCase), les tables celui du README de chaque module. Aucune clé étrangère vers les tables des
+// autres modules : ce que ces modules écrivent vient d'appareils, de webhooks ou d'identifiants que
+// d'autres modules créent ; on ne refuse jamais d'enregistrer un paiement reçu ou une position pour
+// un motif de référence. Seule exception : un remboursement appartient à un paiement.
+// ============================================================================================
+
+// ------------------------------------------------------------------------------ GPS (AM-170)
+
+/// Une position envoyée par le téléphone d'un chauffeur, d'un convoyeur ou d'un livreur.
+/// Clé : (sujet, auteur, instant) ; un lot renvoyé ne crée rien (INSERT … ON CONFLICT DO NOTHING).
+model PositionGps {
+  /// `bus:<departId>` ou `livraison:<colisId>`.
+  sujet      String
+  auteurId   String   @db.Uuid
+  instant    DateTime @db.Timestamptz(3)
+  latitude   Float
+  longitude  Float
+  precisionM Float?
+  vitesseKmh Float?
+  recuA      DateTime @db.Timestamptz(3)
+
+  @@id([sujet, auteurId, instant])
+  @@index([sujet, instant(sort: Desc)])
+  @@map("position_gps")
+}
+
+/// L'état de suivi d'un départ : une ligne par départ, écrite en comparant la version.
+model SuiviDepart {
+  departId           String    @id @db.Uuid
+  version            Int
+  derniereInstant    DateTime? @db.Timestamptz(3)
+  derniereLatitude   Float?
+  derniereLongitude  Float?
+  derniereVitesseKmh Float?
+  progressionKm      Float
+  /// Premier passage à chaque arrêt : { arretId: instant ISO }.
+  passages           Json
+  immobileDepuis     DateTime? @db.Timestamptz(3)
+  immobileLatitude   Float?
+  immobileLongitude  Float?
+  alerteId           String?   @db.Uuid
+
+  @@map("suivi_depart")
+}
+
+/// Bus arrêté plus de dix minutes hors arrêt. SQL : une seule alerte ouverte par départ (index
+/// unique partiel sur departId quand resolueA est nul).
+model AlerteArret {
+  id              String    @id @db.Uuid
+  departId        String    @db.Uuid
+  compagnieId     String    @db.Uuid
+  immatriculation String
+  apres           String
+  arretDepuis     DateTime  @db.Timestamptz(3)
+  ouverteA        DateTime  @db.Timestamptz(3)
+  latitude        Float
+  longitude       Float
+  /// SQL : panne | retard | autre
+  soupcon         String
+  aBord           Int?
+  resolueA        DateTime? @db.Timestamptz(3)
+
+  @@map("alerte_arret")
+}
+
+/// Le SMS « j'arrive » d'un voyageur à un proche : un par billet et par proche.
+model PrevenirProche {
+  billetId            String    @db.Uuid
+  procheId            String
+  voyageurId          String    @db.Uuid
+  departId            String    @db.Uuid
+  /// SQL : de 1 à 120.
+  minutesAvantArrivee Int
+  actif               Boolean
+  creeA               DateTime  @db.Timestamptz(3)
+  envoyeA             DateTime? @db.Timestamptz(3)
+
+  @@id([billetId, procheId])
+  @@map("prevenir_proche")
+}

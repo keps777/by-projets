@@ -103,14 +103,34 @@ développement). `GpsModule` **refuse de démarrer en production** tant qu'un po
 | `ProchesASuivre`                                             | Comptes (AM-013) / `ProchesVoyageur` de la billetterie | Proche d'un voyageur et proche proposé par défaut                                                                                                                                     |
 | `MissionsSuivies`                                            | Colis (AM-163)                                         | Mission du livreur, points de retrait et de remise                                                                                                                                    |
 | `OffresDeMontee`                                             | Billetterie                                            | Places libres à l'arrêt et prix au prorata                                                                                                                                            |
-| `Positions`, `EtatsSuivi`, `AlertesArret`, `PrevenirProches` | **Ce module** (PostgreSQL)                             | `ajouter` : clé (sujet, auteur, instant) ; `ecrire` : comparer la version ; `ouvrir` : index unique partiel                                                                           |
+| `Positions`, `EtatsSuivi`, `AlertesArret`, `PrevenirProches` | **Ce module** : `postgres.ts` (fait)                   | PostgreSQL ou mémoire selon `API_STOCKAGE` ; `ajouter` : clé (sujet, auteur, instant) ; `ecrire` : comparer la version ; `ouvrir` : index unique partiel                              |
 | `AvisSuivi`                                                  | SMS (AM-166), notifications                            | `prevenirProche` : gabarit `alerte_proche` (`voyageur`, `gare`, `arriveeA`, `compagnie`), `cle` = clé d'idempotence ; `alerteArret` : SMS ou notification au superviseur et au patron |
 | `DiffusionGps`                                               | Intégration                                            | Redis ou NOTIFY entre instances                                                                                                                                                       |
+
+## Stockage PostgreSQL (fait, lot A)
+
+`postgres.ts` donne les quatre adaptateurs des ports que le module écrit : `PositionsPrisma`,
+`EtatsSuiviPrisma`, `AlertesArretPrisma`, `PrevenirProchesPrisma`. Ils sont choisis dans `GpsModule` par
+`API_STOCKAGE` (voir `apps/api/INTEGRATION.md`) : PostgreSQL en production ou avec `API_STOCKAGE=postgres`,
+mémoire sinon. Migration `20261017000710_gps_suivi` (tables, `CHECK`, index uniques partiels).
+
+- **Les colonnes sont en camelCase** (`departId`, `resolueA`…), comme les autres tables écrites par Prisma, et non
+  en snake_case comme dans l'esquisse ci-dessous ; les noms de tables sont ceux de l'esquisse.
+- **Aucune clé étrangère** vers `depart`, `billet`, `compagnie` : une position d'un téléphone ne se refuse
+  jamais pour un motif de référence (même règle que le journal de synchronisation).
+- Garanties de la base, testées sous requêtes simultanées (`postgres.integration.test.ts`) : douze envois
+  du même lot = une position ; dix écritures de la version 1 de l'état = une seule gagne, puis une seule
+  de la version 2 ; dix positions qui franchissent les dix minutes = une alerte (index unique partiel) ;
+  huit fermetures = une ; huit envois du SMS au proche = un seul noté.
+- **Reste en mémoire, donc refuse encore la production** : `ReseauTransport` (a besoin des colonnes
+  `latitude`, `longitude`, `arret_minutes`, `point_de_montee` de `arret` et de `depart.parti_a`, voir plus bas),
+  `BilletsSuivis`, `ProchesASuivre`, `MissionsSuivies`, `OffresDeMontee`, `AvisSuivi`, `DiffusionGps`.
 
 ## Tables PostgreSQL attendues
 
 Dates en `timestamptz` (affichées en `+01:00`). Les tables lues existent déjà dans
-`prisma/schema.prisma` (`depart`, `ligne`, `arret`, `bus`, `billet`, `colis`, `personne`).
+`prisma/schema.prisma` (`depart`, `ligne`, `arret`, `bus`, `billet`, `colis`, `personne`). Les quatre
+tables écrites par le module existent (voir ci-dessus) ; ce qui suit est l'esquisse d'origine.
 
 **Manque dans le schéma, pour `ReseauTransport`** : `arret` n'a ni `latitude` ni `longitude`
 (`double precision`, obligatoires pour le suivi), ni durée d'arrêt (`arret_minutes`, entier, nul si le
@@ -143,8 +163,9 @@ Tables écrites par le module :
 
 1. Importer `GpsModule` dans `AppModule` ; les routes `/gps/*`, `/voyageur/…` et `/patron/controle/bus`
    ne se heurtent à aucune route des autres modules.
-2. Ajouter à `prisma/schema.prisma` les colonnes de `arret` et les quatre tables ci-dessus, puis écrire
-   les adaptateurs PostgreSQL de `Positions`, `EtatsSuivi`, `AlertesArret`, `PrevenirProches`.
+2. **Fait** : les quatre tables et les adaptateurs PostgreSQL de `Positions`, `EtatsSuivi`, `AlertesArret`,
+   `PrevenirProches`. **Reste** : les colonnes de `arret` (coordonnées, durée d'arrêt, point de montée) et
+   `depart.parti_a`, pour `ReseauTransport`.
 3. Brancher `ReseauTransport`, `BilletsSuivis`, `ProchesASuivre`, `MissionsSuivies`, `OffresDeMontee`
    sur les modules billetterie, colis et comptes.
 4. Brancher `AvisSuivi` sur la passerelle SMS (AM-166).
@@ -159,8 +180,10 @@ Tables écrites par le module :
 `pnpm --filter @afrimove/api test` : règles pures (horaire, estimation, immobilité, livreur), géométrie,
 lecteurs comparés aux schémas zod, e2e Nest (gardes réelles, adaptateurs en mémoire) pour les
 positions, « Mon bus en direct », prévenir un proche, l'alerte d'arrêt et la salle de contrôle,
-monter en route, le livreur, et les canaux WebSocket (vrais sockets). `testing/app-gps-test.ts`
-monte l'API avec deux compagnies, la ligne Douala – Yaoundé (Edéa, Pouma, Makak…) et ses départs.
+monter en route, le livreur, et les canaux WebSocket (vrais sockets). `postgres.integration.test.ts` (si `DATABASE_URL_TEST` est donnée) passe
+`testing/contrat-stockage.ts` sur la mémoire et sur PostgreSQL, puis les garanties sous requêtes
+simultanées, les `CHECK`, et l'API avec `API_STOCKAGE=postgres` (positions, alerte, redémarrage).
+`testing/app-gps-test.ts` monte l'API avec deux compagnies, la ligne Douala – Yaoundé (Edéa, Pouma, Makak…) et ses départs.
 
 ## Décisions à confirmer et limites
 

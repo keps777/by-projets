@@ -1,5 +1,7 @@
 import { Inject, Injectable, Module, type OnModuleInit } from "@nestjs/common";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { ControleBusService } from "./controle.service";
 import {
@@ -24,6 +26,12 @@ import {
 } from "./memoire";
 import { MonteeService } from "./montee.service";
 import { OPTIONS_GPS, OPTIONS_GPS_PAR_DEFAUT, PasserelleGps } from "./passerelle";
+import {
+  AlertesArretPrisma,
+  EtatsSuiviPrisma,
+  PositionsPrisma,
+  PrevenirProchesPrisma,
+} from "./postgres";
 import {
   AlertesArret,
   AvisSuivi,
@@ -93,10 +101,11 @@ export class VerificationStockageGps implements OnModuleInit {
  * Suivi GPS en temps réel (AM-170) : position des bus (chauffeur et convoyeur) et des livreurs
  * toutes les 30 s, arrivée estimée, retard, alerte d'arrêt anormal, SMS au proche.
  *
- * À importer dans `AppModule` (périmètre du socle). Chaque port est remplaçable : l'intégration
- * branche les adaptateurs PostgreSQL (Positions, EtatsSuivi, AlertesArret, PrevenirProches) et
- * ceux des autres modules (ReseauTransport, BilletsSuivis, ProchesASuivre, MissionsSuivies,
- * OffresDeMontee, AvisSuivi : SMS).
+ * À importer dans `AppModule` (périmètre du socle). Chaque port est remplaçable. Les quatre ports
+ * que le module écrit (Positions, EtatsSuivi, AlertesArret, PrevenirProches) ont leur version
+ * PostgreSQL (`postgres.ts`), choisie par `API_STOCKAGE` ; restent à brancher ceux des autres modules
+ * (ReseauTransport, BilletsSuivis, ProchesASuivre, MissionsSuivies, OffresDeMontee, AvisSuivi : SMS)
+ * et DiffusionGps, qui font encore refuser le démarrage en production.
  */
 @Module({
   controllers: [PositionsController, VoyageurGpsController, ControleGpsController],
@@ -114,10 +123,32 @@ export class VerificationStockageGps implements OnModuleInit {
     { provide: ProchesASuivre, useClass: ProchesMemoire },
     { provide: MissionsSuivies, useClass: MissionsMemoire },
     { provide: OffresDeMontee, useClass: OffresMemoire },
-    { provide: Positions, useClass: PositionsMemoire },
-    { provide: EtatsSuivi, useClass: EtatsSuiviMemoire },
-    { provide: AlertesArret, useClass: AlertesMemoire },
-    { provide: PrevenirProches, useClass: PrevenirMemoire },
+    // Les quatre ports que ce module écrit : PostgreSQL en production (ou avec API_STOCKAGE=postgres),
+    // mémoire ailleurs (socle/db/stockage.ts).
+    {
+      provide: Positions,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService): Positions =>
+        stockageSurPostgres(config) ? new PositionsPrisma(prisma) : new PositionsMemoire(),
+    },
+    {
+      provide: EtatsSuivi,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService): EtatsSuivi =>
+        stockageSurPostgres(config) ? new EtatsSuiviPrisma(prisma) : new EtatsSuiviMemoire(),
+    },
+    {
+      provide: AlertesArret,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService): AlertesArret =>
+        stockageSurPostgres(config) ? new AlertesArretPrisma(prisma) : new AlertesMemoire(),
+    },
+    {
+      provide: PrevenirProches,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService): PrevenirProches =>
+        stockageSurPostgres(config) ? new PrevenirProchesPrisma(prisma) : new PrevenirMemoire(),
+    },
     { provide: AvisSuivi, useClass: AvisMemoire },
     { provide: DiffusionGps, useClass: DiffusionMemoire },
   ],

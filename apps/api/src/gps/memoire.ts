@@ -197,7 +197,7 @@ export class PositionsMemoire extends Positions implements StockageGps {
   }
 
   async recentes(sujet: string, nombre: number) {
-    return this.duSujet(sujet).slice(-nombre).map(copie);
+    return nombre <= 0 ? [] : this.duSujet(sujet).slice(-nombre).map(copie);
   }
 
   /** Test : nombre de positions gardées pour un sujet. */
