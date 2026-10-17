@@ -1,0 +1,77 @@
+{
+  "boutique": {
+    "note": "",
+    "inscrire": ""
+  },
+  "resume": {
+    "enGarde": "",
+    "capacite": "",
+    "arrivent": "",
+    "arriventVers": "",
+    "semaine": "",
+    "semaineDetail": ""
+  },
+  "actions": {
+    "remettre": {
+      "titre": "",
+      "detail": ""
+    },
+    "recevoir": {
+      "titre": "",
+      "detail": ""
+    }
+  },
+  "remise": {
+    "titre": "",
+    "pour": "",
+    "code": "",
+    "pieceVerifiee": "",
+    "pieceAVerifier": "",
+    "consigne": "",
+    "pieceCase": "",
+    "vide": ""
+  },
+  "garde": {
+    "titre": "",
+    "reprise": "",
+    "depuis": "",
+    "depuisRappel": "",
+    "vide": ""
+  },
+  "pied": {
+    "remis": ""
+  },
+  "reception": {
+    "titre": "",
+    "champ": "",
+    "valider": "",
+    "reussie": "",
+    "vide": "",
+    "introuvable": "",
+    "refuse": "",
+    "echec": ""
+  },
+  "messages": {
+    "reussie": "",
+    "codeIncomplet": "",
+    "pieceNonVerifiee": "",
+    "aucuneRemise": "",
+    "codeInvalide_one": "",
+    "codeInvalide_other": "",
+    "codeBloque": "",
+    "etatIncompatible": "",
+    "echec": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}

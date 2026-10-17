@@ -1,5 +1,5 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { EcranRelaisApp } from "@/ecrans/RelaisApp";
 
 export default function Page() {
-  return <EcranVide planche="RelaisApp" />;
+  return <EcranRelaisApp />;
 }
