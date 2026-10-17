@@ -667,7 +667,12 @@ export function installerLivraison(sc: ScenarioEnConstruction, d: DonneesScenari
 
   sc.flux.push(
     simulerFlux(CANAL_POSITION_LIVREUR, (p, ctx) => {
-      verifier(p.colisId);
+      try {
+        verifier(p.colisId);
+      } catch (e) {
+        ctx.echouer(e as ErreurApi);
+        return;
+      }
       let restant = minutes;
       const emettre = (): void => {
         ctx.emettre({ colisId: p.colisId, minutesRestantes: restant, arriveeEstimee });
