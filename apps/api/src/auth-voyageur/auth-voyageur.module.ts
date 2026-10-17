@@ -9,6 +9,8 @@ import {
   type Provider,
 } from "@nestjs/common";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { ComptesVoyageurSocle, EmetteurSessionJwt } from "./adaptateurs";
 import { ConnexionVoyageurController, FiltreReessai } from "./connexion.controller";
@@ -20,6 +22,7 @@ import {
   FichesVoyageurMemoire,
   StockageConnexionMemoire,
 } from "./memoire";
+import { FichesVoyageurPrisma, StockageConnexionPrisma } from "./postgres";
 import {
   ComptesVoyageur,
   EmetteurSession,
@@ -85,8 +88,9 @@ export interface AdaptateursAuthVoyageur {
  * (5 essais puis attente, 1 envoi par 40 s) et SMS au format WebOTP.
  *
  * Module autonome : il s'appuie sur les services globaux du socle (configuration, audit, comptes,
- * jetons). Les ports (codes, fiches, envoi par SMS et WhatsApp) ont des versions en mémoire ; le
- * coordinateur branche les vraies avec `AuthVoyageurModule.avec({ … })` (README).
+ * jetons). Les codes, les essais et les fiches suivent `API_STOCKAGE` (PostgreSQL en production, mémoire
+ * ailleurs, `postgres.ts`) ; l'envoi par SMS et par WhatsApp a des versions en mémoire que le
+ * coordinateur remplace avec `AuthVoyageurModule.avec({ … })` (README).
  */
 @Module({
   controllers: [ConnexionVoyageurController],
@@ -98,8 +102,22 @@ export interface AdaptateursAuthVoyageur {
         chargerConfigAuthVoyageur(process.env, config.env === "production"),
     },
     { provide: Horloge, useClass: HorlogeSysteme },
-    { provide: StockageConnexion, useClass: StockageConnexionMemoire },
-    { provide: FichesVoyageur, useClass: FichesVoyageurMemoire },
+    {
+      provide: StockageConnexion,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService): StockageConnexion =>
+        stockageSurPostgres(config)
+          ? new StockageConnexionPrisma(prisma)
+          : new StockageConnexionMemoire(),
+    },
+    {
+      provide: FichesVoyageur,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService): FichesVoyageur =>
+        stockageSurPostgres(config)
+          ? new FichesVoyageurPrisma(prisma)
+          : new FichesVoyageurMemoire(),
+    },
     {
       provide: EnvoiCodeSms,
       inject: [CONFIG],

@@ -1514,3 +1514,50 @@ model RapportSoir {
   @@id([compagnieId, jour])
   @@map("rapport_soir")
 }
+
+// ------------------------------------------------------------------------------ Connexion du voyageur (AM-023)
+
+/// Un code de connexion émis. Jamais le code lui-même : son empreinte HMAC-SHA-256 (liée à l'identifiant et
+/// au poivre du serveur) et l'index aveugle du numéro. SQL : canal connu, échéance après la création,
+/// déclencheur qui ne laisse changer que « consommé » (une fois, de vide à rempli).
+model CodeConnexionVoyageur {
+  id             String    @id @db.Uuid
+  /// HMAC du numéro (regles.indexTelephone), jamais le numéro.
+  telephoneIndex String
+  /// Hexadécimal de 64 caractères (SQL).
+  codeHache      String
+  /// SQL : sms | whatsapp
+  canal          String
+  creeA          DateTime  @db.Timestamptz(3)
+  expireA        DateTime  @db.Timestamptz(3)
+  /// Usage unique : posé par un UPDATE conditionnel (consommeA IS NULL).
+  consommeA      DateTime? @db.Timestamptz(3)
+
+  @@index([telephoneIndex, creeA(sort: Desc)])
+  @@map("code_connexion_voyageur")
+}
+
+/// Mauvais codes et blocages d'un numéro (essais cumulés tous codes confondus). Une ligne par numéro.
+model LimiteConnexionVoyageur {
+  telephoneIndex String    @id
+  echecs         Int       @default(0)
+  blocages       Int       @default(0)
+  bloqueJusqua   DateTime? @db.Timestamptz(3)
+  dernierEchecA  DateTime? @db.Timestamptz(3)
+
+  @@map("limite_connexion_voyageur")
+}
+
+/// Ce que le profil du voyageur affiche en plus du nom et du numéro. Une fiche par personne, créée à la
+/// première connexion.
+model FicheVoyageur {
+  personneId          String   @id @db.Uuid
+  inscritA            DateTime @db.Timestamptz(3)
+  /// SQL : fr | en
+  langue              String   @default("fr")
+  pieceVerifiee       Boolean  @default(false)
+  /// Quatre chiffres (SQL).
+  pieceQuatreDerniers String?
+
+  @@map("fiche_voyageur")
+}

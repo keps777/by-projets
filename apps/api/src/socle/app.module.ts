@@ -44,8 +44,8 @@ import { SanteController } from "./sante/sante.controller";
 
 /**
  * Connexion du voyageur (AM-023) : le code part par la passerelle SMS (gabarit `code_connexion`, au
- * format WebOTP). Les codes et les fiches restent en mémoire tant que leurs tables n'existent pas : le
- * module refuse de démarrer en production (voir apps/api/INTEGRATION.md).
+ * format WebOTP). Les codes, les essais et les fiches suivent `API_STOCKAGE` (adaptateurs PostgreSQL du lot A
+ * choisis dans `AuthVoyageurModule`).
  */
 const authVoyageur = AuthVoyageurModule.avec({
   imports: [SmsModule],
