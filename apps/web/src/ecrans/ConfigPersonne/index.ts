@@ -1,0 +1,1 @@
+export { EcranConfigPersonne } from "./EcranConfigPersonne";
