@@ -20,6 +20,9 @@ export const ConditionsAvanceSchema = z.strictObject({
   coutTotalPct: z.number().nonnegative().nullable(),
 });
 
+/** Numéro d'un dossier d'avance : `AV-2027-0042`. */
+export const NumeroDossierSchema = z.string().regex(/^AV-\d{4}-\d{4}$/);
+
 export const OffreFinancementSchema = z.strictObject({
   /** Nom du partenaire ; `null` tant que la convention n'est pas signée. */
   partenaire: z.string().nullable(),
@@ -31,6 +34,11 @@ export const OffreFinancementSchema = z.strictObject({
     montantPropose: FcfaPositifSchema,
     conditions: ConditionsAvanceSchema,
     versementSousHeures: z.number().int().positive(),
+    /**
+     * Dossier de la demande en cours : présent quand `statut` vaut `en_cours`, pour que l'écran renvoie vers
+     * le suivi (`patron.financement.dossier`). Absent sinon.
+     */
+    dossierId: NumeroDossierSchema.optional(),
   }),
   creditMateriel: z.strictObject({
     description: z.string(),
@@ -73,7 +81,7 @@ export const EtapeSuiviSchema = z.strictObject({
 });
 
 export const DossierFinancementSchema = z.strictObject({
-  id: z.string().regex(/^AV-\d{4}-\d{4}$/),
+  id: NumeroDossierSchema,
   produit: z.literal("avance"),
   statut: StatutDossierSchema,
   partenaire: z.string().nullable(),
@@ -108,3 +116,16 @@ export const DemandeRetireeSchema = AccuseSigneSchema.extend({
   dossier: DossierFinancementSchema,
 });
 export type DemandeRetiree = z.infer<typeof DemandeRetireeSchema>;
+
+/* ----------------------------------------------------------------------- billet en 2 fois */
+
+/**
+ * Activer ou couper le paiement du billet en 2 fois pour l'agence (`PUT /patron/financement/billet-en-deux-fois`).
+ * Signé par le PIN comme toute écriture du patron ; l'effet se lit ensuite dans
+ * `OffreFinancement.billetEnDeuxFois.actif`.
+ */
+export const ReglerBilletEnDeuxFoisSchema = commandeSignee({ actif: z.boolean() });
+export type ReglerBilletEnDeuxFois = z.infer<typeof ReglerBilletEnDeuxFoisSchema>;
+
+export const BilletEnDeuxFoisRegleSchema = AccuseSigneSchema.extend({ actif: z.boolean() });
+export type BilletEnDeuxFoisRegle = z.infer<typeof BilletEnDeuxFoisRegleSchema>;

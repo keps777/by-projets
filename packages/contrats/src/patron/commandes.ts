@@ -1,6 +1,10 @@
 import { AppliquerPropositionSchema } from "./assistant";
 import { AppliquerRapprochementSchema, CloturerMoisSchema } from "./comptable";
-import { DemanderAvanceSchema, RetirerDemandeSchema } from "./financement";
+import {
+  DemanderAvanceSchema,
+  ReglerBilletEnDeuxFoisSchema,
+  RetirerDemandeSchema,
+} from "./financement";
 import { ChangerModuleSchema } from "./modules";
 import {
   ChangerCompteMomoSchema,
@@ -40,6 +44,7 @@ export const COMMANDES_FINANCIERES = {
   "patron.comptable.cloturer": CloturerMoisSchema,
   "patron.financement.demander": DemanderAvanceSchema,
   "patron.financement.retirer": RetirerDemandeSchema,
+  "patron.financement.billetEnDeuxFois": ReglerBilletEnDeuxFoisSchema,
   "patron.paie.lancer": LancerPaieSchema,
 } as const;
 

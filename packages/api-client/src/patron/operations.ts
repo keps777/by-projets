@@ -368,6 +368,18 @@ export const OP_RETIRER_DEMANDE = definirOperation<c.RetirerDemande, c.DemandeRe
   reponse: c.DemandeRetireeSchema,
 });
 
+export const OP_REGLER_BILLET_EN_DEUX_FOIS = definirOperation<
+  c.ReglerBilletEnDeuxFois,
+  c.BilletEnDeuxFoisRegle
+>({
+  nom: "patron.financement.billetEnDeuxFois",
+  methode: "PUT",
+  chemin: () => "/patron/financement/billet-en-deux-fois",
+  corps: (p) => p,
+  reponse: c.BilletEnDeuxFoisRegleSchema,
+  idempotente: false,
+});
+
 /* ----------------------------------------------------------------------- entre compagnies */
 
 export const OP_INTER_AGENCES = definirOperation<void, c.InterAgences>({
@@ -422,5 +434,6 @@ export const OPERATIONS_SIGNEES = {
   "patron.comptable.cloturer": OP_CLOTURER,
   "patron.financement.demander": OP_DEMANDER_AVANCE,
   "patron.financement.retirer": OP_RETIRER_DEMANDE,
+  "patron.financement.billetEnDeuxFois": OP_REGLER_BILLET_EN_DEUX_FOIS,
   "patron.paie.lancer": OP_LANCER_PAIE,
 } as const satisfies Record<c.NomCommandeSignee, Operation<never, unknown>>;

@@ -106,9 +106,10 @@ export class FinancementController {
   @Put("financement/billet-en-deux-fois")
   @HttpCode(200)
   @ApiOperation({
-    summary:
-      "Patron : activer ou couper le paiement du billet en 2 fois (route absente des contrats)",
-    description: "Corps `{ actif, signature }`, réponse `{ actif, journalId, signeA, signePar }`.",
+    summary: "Patron : activer ou couper le paiement du billet en 2 fois",
+    description:
+      "`patron.financement.billetEnDeuxFois` : corps `ReglerBilletEnDeuxFois` (`{ actif, signature }`), " +
+      "réponse `BilletEnDeuxFoisRegle`.",
   })
   billetEnDeuxFois(@UtilisateurCourant() u: Utilisateur, @Body() corps: unknown) {
     return this.deuxFois.regler(u, corps);

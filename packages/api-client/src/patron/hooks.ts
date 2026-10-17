@@ -296,6 +296,14 @@ export function useRetirerDemande(): Ecriture<c.RetirerDemande, c.DemandeRetiree
   return useEcriture(op.OP_RETIRER_DEMANDE, [op.OP_DOSSIER_FINANCEMENT, op.OP_OFFRE_FINANCEMENT]);
 }
 
+/** Activer ou couper le paiement du billet en 2 fois pour l'agence (signé par le PIN). */
+export function useReglerBilletEnDeuxFois(): Ecriture<
+  c.ReglerBilletEnDeuxFois,
+  c.BilletEnDeuxFoisRegle
+> {
+  return useEcriture(op.OP_REGLER_BILLET_EN_DEUX_FOIS, [op.OP_OFFRE_FINANCEMENT]);
+}
+
 /* ----------------------------------------------------------------------- entre compagnies */
 
 export function useInterAgences(): Lecture<c.InterAgences> {

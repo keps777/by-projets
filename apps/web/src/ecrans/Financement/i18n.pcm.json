@@ -42,14 +42,19 @@
   },
   "action": {
     "demander": "",
-    "masque": ""
+    "masque": "",
+    "suivre": ""
   },
   "pin": {
     "titre": "",
     "sousTitre": "",
     "note": "",
     "fermer": "",
-    "echec": ""
+    "echec": "",
+    "deuxFoisActiver": "",
+    "deuxFoisCouper": "",
+    "noteDeuxFois": "",
+    "echecDeuxFois": ""
   },
   "etats": {
     "chargement": "",

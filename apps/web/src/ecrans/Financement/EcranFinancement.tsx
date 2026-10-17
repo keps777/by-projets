@@ -8,11 +8,14 @@ import { VueFinancement, type EtatFinancement } from "./vue";
  * et paiement en 2 fois pour les voyageurs.
  *
  * Les données viennent de `useOffreFinancement`. « Demander 6 M » signe le mandat avec le PIN (toute écriture du
- * patron est signée), crée le dossier par `useDemanderAvance` puis ouvre FinancementDemande sur ce dossier.
+ * patron est signée), crée le dossier par `useDemanderAvance` puis ouvre FinancementDemande sur ce dossier. L'interrupteur
+ * du paiement en 2 fois passe par `useReglerBilletEnDeuxFois` (même feuille PIN) ; une demande en cours renvoie vers son
+ * dossier (`avance.dossierId`).
  */
 export function EcranFinancement() {
   const offre = patron.useOffreFinancement();
   const demander = patron.useDemanderAvance();
+  const reglerDeuxFois = patron.useReglerBilletEnDeuxFois();
   const signer = patron.useSignaturePin();
   const navigate = useNavigate();
 
@@ -30,6 +33,9 @@ export function EcranFinancement() {
       onDemander={async (montant, pin) => {
         const reponse = await demander.mutateAsync({ montant, signature: signer(pin) });
         void navigate(urlPlanche("FinancementDemande", { dossierId: reponse.dossier.id }));
+      }}
+      onReglerDeuxFois={async (actif, pin) => {
+        await reglerDeuxFois.mutateAsync({ actif, signature: signer(pin) });
       }}
     />
   );

@@ -170,6 +170,7 @@ describe("Financement · données de l'offre", () => {
                 offre={offre}
                 onReessayer={() => {}}
                 onDemander={onDemander}
+                onReglerDeuxFois={async () => {}}
               />
             </MemoryRouter>
           </ConceptionProvider>
@@ -306,6 +307,150 @@ describe("Financement · demander l'avance", () => {
   });
 });
 
+describe("Financement · demande en cours", () => {
+  const rendreEnCours = async (dossierId: string | undefined) => {
+    const client = creerClientMock({
+      source: sourceScenariosFixtures(),
+      scenario: "Financement",
+      latenceMs: 0,
+    });
+    const offre = await client.executer(patron.OP_OFFRE_FINANCEMENT, undefined);
+    render(
+      <I18nextProvider i18n={creerI18n("fr")}>
+        <FournisseurApi client={client}>
+          <ConceptionProvider actif={false}>
+            <MemoryRouter>
+              <VueFinancement
+                etat="pret"
+                offre={{
+                  ...offre,
+                  avance: {
+                    ...offre.avance,
+                    statut: "en_cours",
+                    ...(dossierId ? { dossierId } : {}),
+                  },
+                }}
+                onReessayer={() => {}}
+                onDemander={async () => {}}
+                onReglerDeuxFois={async () => {}}
+              />
+            </MemoryRouter>
+          </ConceptionProvider>
+        </FournisseurApi>
+      </I18nextProvider>,
+    );
+  };
+
+  it("renvoie vers le suivi du dossier ouvert et ne propose plus de nouvelle demande", async () => {
+    await rendreEnCours("AV-2027-0042");
+    expect(screen.getByText("en cours")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Suivre ma demande" })).toHaveAttribute(
+      "href",
+      "/financement/demande/AV-2027-0042",
+    );
+    expect(screen.queryByRole("button", { name: /Demander/ })).not.toBeInTheDocument();
+  });
+
+  it("sans numéro de dossier, aucun lien n'est inventé", async () => {
+    await rendreEnCours(undefined);
+    expect(screen.queryByRole("link", { name: "Suivre ma demande" })).not.toBeInTheDocument();
+  });
+
+  it("dans l'application : demander l'avance, revenir sur l'écran, l'offre renvoie vers le dossier", async () => {
+    const { routeur } = rendre();
+    await attendreEcran();
+    const user = userEvent.setup();
+    await user.click(screen.getByRole("button", { name: /Demander 6 M/ }));
+    await taperPin(PIN_VALIDE);
+    await waitFor(() => expect(routeur.state.location.pathname).toMatch(/demande\/AV-2027-0042/));
+    await routeur.navigate("/financement");
+    const lien = await screen.findByRole("link", { name: "Suivre ma demande" });
+    expect(lien).toHaveAttribute("href", "/financement/demande/AV-2027-0042");
+    expect(screen.queryByRole("button", { name: /Demander/ })).not.toBeInTheDocument();
+  });
+});
+
+describe("Financement · paiement du billet en 2 fois", () => {
+  const interrupteur = () => screen.getByRole("switch");
+
+  it("l'interrupteur ouvre la feuille PIN, le bon PIN envoie la commande signée et l'allume", async () => {
+    const envoyes: unknown[] = [];
+    rendre((nom, impl) =>
+      nom === patron.OP_REGLER_BILLET_EN_DEUX_FOIS.nom
+        ? ({
+            operation: impl.operation,
+            repondre: (params: unknown, ctx: unknown) => {
+              envoyes.push(params);
+              return (impl.repondre as (p: unknown, c: unknown) => unknown)(params, ctx);
+            },
+          } as Impl)
+        : impl,
+    );
+    await attendreEcran();
+    expect(interrupteur()).toHaveAttribute("aria-checked", "false");
+    const user = userEvent.setup();
+    await user.click(interrupteur());
+    const feuille = await screen.findByRole("dialog");
+    expect(
+      within(feuille).getByText("Activer le paiement du billet en 2 fois"),
+    ).toBeInTheDocument();
+    expect(envoyes).toHaveLength(0);
+
+    await taperPin(PIN_VALIDE);
+    await waitFor(() => expect(interrupteur()).toHaveAttribute("aria-checked", "true"));
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    expect(envoyes).toEqual([
+      { actif: true, signature: expect.objectContaining({ pin: PIN_VALIDE, methode: "pin" }) },
+    ]);
+  });
+
+  it("un second toucher le coupe, avec sa propre signature", async () => {
+    rendre();
+    await attendreEcran();
+    const user = userEvent.setup();
+    await user.click(interrupteur());
+    await taperPin(PIN_VALIDE);
+    await waitFor(() => expect(interrupteur()).toHaveAttribute("aria-checked", "true"));
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+
+    await user.click(interrupteur());
+    const feuille = await screen.findByRole("dialog");
+    expect(within(feuille).getByText("Couper le paiement du billet en 2 fois")).toBeInTheDocument();
+    await taperPin(PIN_VALIDE);
+    await waitFor(() => expect(interrupteur()).toHaveAttribute("aria-checked", "false"));
+  });
+
+  it("un PIN refusé ne change rien : l'interrupteur reste éteint et la feuille compte l'essai", async () => {
+    rendre();
+    await attendreEcran();
+    fireEvent.click(interrupteur());
+    await taperPin(patron.PIN_REFUSE_PAR_LE_MOCK);
+    expect(await screen.findByText("PIN incorrect. 2 essais restants.")).toBeInTheDocument();
+    expect(interrupteur()).toHaveAttribute("aria-checked", "false");
+  });
+
+  it("une panne est annoncée dans la feuille, l'interrupteur ne bouge pas", async () => {
+    rendre((nom, impl) => (nom === patron.OP_REGLER_BILLET_EN_DEUX_FOIS.nom ? panne(impl) : impl));
+    await attendreEcran();
+    fireEvent.click(interrupteur());
+    await taperPin(PIN_VALIDE);
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Le changement n'a pas pu être enregistré. Réessaie.",
+    );
+    expect(interrupteur()).toHaveAttribute("aria-checked", "false");
+  });
+
+  it("fermer la feuille abandonne le changement", async () => {
+    rendre();
+    await attendreEcran();
+    const user = userEvent.setup();
+    await user.click(interrupteur());
+    await user.click(await screen.findByRole("button", { name: "Fermer" }));
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    expect(interrupteur()).toHaveAttribute("aria-checked", "false");
+  });
+});
+
 describe("Financement · états chargement, vide et erreur", () => {
   function rendreVue(etat: EtatFinancement, reessayer: () => void = () => {}) {
     render(
@@ -318,6 +463,7 @@ describe("Financement · états chargement, vide et erreur", () => {
                 offre={undefined}
                 onReessayer={reessayer}
                 onDemander={async () => {}}
+                onReglerDeuxFois={async () => {}}
               />
             </MemoryRouter>
           </ConceptionProvider>

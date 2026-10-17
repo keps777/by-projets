@@ -272,6 +272,8 @@ describe("financement : offre, demande d'avance, suivi et retrait", () => {
       expect(patron.DossierFinancementSchema.parse(lu.body)).toEqual(r.body.dossier);
       const o = patron.OffreFinancementSchema.parse((await offre()).body);
       expect(o.avance.statut).toBe("en_cours");
+      // L'offre renvoie vers le dossier ouvert (écran FinancementDemande).
+      expect(o.avance.dossierId).toBe(r.body.dossier.id);
       expect(o.avance.montantPropose).toBe(4_000_000);
       expect(o.avance.conditions.dureeEstimeeSemaines).toBe(
         r.body.dossier.conditions.dureeEstimeeSemaines,
@@ -476,6 +478,7 @@ describe("financement : offre, demande d'avance, suivi et retrait", () => {
       await retirer(id);
       const o = patron.OffreFinancementSchema.parse((await offre()).body);
       expect(o.avance.statut).toBe("eligible");
+      expect(o.avance.dossierId).toBeUndefined();
       expect((await demander(3_000_000)).status).toBe(201);
     });
 

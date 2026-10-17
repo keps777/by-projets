@@ -58,7 +58,7 @@ Toutes sont réservées au rôle `patron` ; une écriture porte `signature` (PIN
 | `POST /patron/financement/demandes/:dossierId/retrait` | `patron.financement.retirer`  | `DemandeRetiree`     |
 | `POST /patron/paie`                                    | `patron.paie.lancer`          | `PaieLancee`         |
 
-Routes **ajoutées**, absentes des contrats (à confirmer ou à déplacer dans les contrats) :
+Route **ajoutée** (`PUT …/billet-en-deux-fois` est désormais dans les contrats) :
 
 | Route                                         | Rôle   | Usage                                                                   |
 | --------------------------------------------- | ------ | ----------------------------------------------------------------------- |
@@ -204,19 +204,17 @@ convention n'est pas signée). Écrite par un agent AfriMove (aucune route ici).
 
 ## Champs et opérations manquants relevés dans les écrans
 
-Les contrats n'ont **pas** été modifiés (hors périmètre) ; l'API respecte les schémas actuels. À trancher :
+Les points 1 et 3 ont été repris dans les contrats ; les autres restent à trancher :
 
-1. **Identifiant du dossier en cours** : `OffreFinancement.avance` ne porte pas l'identifiant du dossier ouvert.
-   Quand `statut` vaut `en_cours`, l'écran Financement ne sait pas ouvrir FinancementDemande (il n'a l'identifiant
-   qu'à la création) ; l'accueil du patron (alerte « Avance 6 M · dossier AV-… ») est dans le même cas. Proposition :
-   `avance.dossierId: string | null`.
+1. ~~Identifiant du dossier en cours~~ : **fait**. `OffreFinancement.avance.dossierId` (optionnel) porte le numéro du
+   dossier ouvert quand `statut` vaut `en_cours` ; l'écran Financement renvoie vers FinancementDemande.
 2. **`useLancerPaie`** : l'opération et le hook existent, mais aucun écran ne les appelle (la carte « Paie des
    équipages » est une simple information ; PatronEquipe renvoie vers Financement « où la paie se signe »).
    `PaieLancee` ne dit pas combien de salaires sont en attente ou refusés (l'API peut répondre 200 avec des lignes
    en attente) : ajouter `nbVerses` / `nbEnAttente` / `nbRefuses`. `PaieLancee.total` est nullable dans le contrat,
    jamais nul ici.
-3. **Activation du paiement en 2 fois** : `OffreFinancement.billetEnDeuxFois` est en lecture seule. Route ajoutée
-   `PUT /patron/financement/billet-en-deux-fois` (voir plus haut) à reprendre dans les contrats.
+3. ~~Activation du paiement en 2 fois~~ : **fait**. Opération `patron.financement.billetEnDeuxFois` (`ReglerBilletEnDeuxFois` →
+   `BilletEnDeuxFoisRegle`), dans `COMMANDES_SIGNEES`, utilisée par l'interrupteur de l'écran Financement.
 4. **Détails de suivi** : `EtapeSuivi.detail` est une phrase déjà écrite, relative à l'heure de lecture
    (« aujourd'hui 10:04 · accusé reçu du partenaire »). Les écrans ne peuvent ni la traduire (en, pcm) ni la
    mettre en forme. Proposition : des champs structurés (`accuseRecu`, `at`, `reponseAvant`, `versement.at`, issue).

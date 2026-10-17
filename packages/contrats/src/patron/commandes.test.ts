@@ -70,6 +70,7 @@ const CORPS: Record<NomCommandeSignee, Record<string, unknown>> = {
   "patron.comptable.cloturer": { mois: "2026-12", envoyerAuCabinet: true },
   "patron.financement.demander": { montant: 6_000_000 },
   "patron.financement.retirer": { dossierId: "AV-2027-0041" },
+  "patron.financement.billetEnDeuxFois": { actif: true },
   "patron.paie.lancer": { mois: "2027-01" },
 };
 
