@@ -1,0 +1,55 @@
+{
+  "retour": "",
+  "carte": {
+    "libelle": "",
+    "duree_one": "",
+    "duree_other": "",
+    "mode": {
+      "moto": "",
+      "taxi": "",
+      "avec_valises": ""
+    },
+    "chauffeur": ""
+  },
+  "depart": {
+    "consigne": "",
+    "heure": "",
+    "trajet": "",
+    "bus": ""
+  },
+  "modes": {
+    "groupe": ""
+  },
+  "chauffeur": {
+    "verifie": "",
+    "appeler": "",
+    "appelIndisponible": ""
+  },
+  "recap": {
+    "cherche": "",
+    "arrivee": "",
+    "paiementBillet": "",
+    "paiement": ""
+  },
+  "reserver": {
+    "libelle_moto": "",
+    "libelle_taxi": "",
+    "libelle_avec_valises": "",
+    "echec": ""
+  },
+  "pied": {
+    "rappel": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
