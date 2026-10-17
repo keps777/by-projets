@@ -1,5 +1,7 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { useParams } from "react-router";
+import { EcranSuperviseurValider } from "@/ecrans/SuperviseurValider";
 
 export default function Page() {
-  return <EcranVide planche="SuperviseurValider" />;
+  const { sessionId } = useParams();
+  return <EcranSuperviseurValider sessionId={sessionId} />;
 }

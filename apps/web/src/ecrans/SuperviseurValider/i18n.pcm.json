@@ -1,0 +1,71 @@
+{
+  "titre": "",
+  "retour": "",
+  "sousTitre": "",
+  "badge": "",
+  "bilan": {
+    "libelle": "",
+    "attendu": "",
+    "compte": "",
+    "ecart": ""
+  },
+  "session": {
+    "billets_one": "",
+    "billets_other": "",
+    "colis_one": "",
+    "colis_other": "",
+    "annulations_one": "",
+    "annulations_other": "",
+    "periode": ""
+  },
+  "controles": {
+    "tolerance": {
+      "libelle": "",
+      "dans": "",
+      "hors": ""
+    },
+    "historique": {
+      "libelle_one": "",
+      "libelle_other": "",
+      "valeur_one": "",
+      "valeur_other": ""
+    },
+    "cadence": ""
+  },
+  "commentaire": {
+    "libelle": ""
+  },
+  "pin": {
+    "titre": "",
+    "aide": "",
+    "regle": ""
+  },
+  "actions": {
+    "refuser": "",
+    "valider": {
+      "libelle": "",
+      "detail": ""
+    }
+  },
+  "message": {
+    "pinRequis": "",
+    "pinSaisi": "",
+    "pinIncorrect_one": "",
+    "pinIncorrect_other": "",
+    "pinBloque": "",
+    "echec": "",
+    "dejaTraitee": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
