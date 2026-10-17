@@ -1,5 +1,7 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { useParams } from "react-router";
+import { EcranAnalysesBus } from "@/ecrans/AnalysesBus";
 
 export default function Page() {
-  return <EcranVide planche="AnalysesBus" />;
+  const { busId } = useParams();
+  return <EcranAnalysesBus busId={busId} />;
 }

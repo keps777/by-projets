@@ -1,0 +1,58 @@
+{
+  "entete": {
+    "retour": "",
+    "places": "",
+    "trajets_one": "",
+    "trajets_other": "",
+    "aSurveiller": ""
+  },
+  "chiffres": {
+    "recette": "",
+    "depenses": "",
+    "net": "",
+    "recetteDetail": "",
+    "trajets_one": "",
+    "trajets_other": "",
+    "depensesDetail": "",
+    "netDetail": ""
+  },
+  "semaines": {
+    "titre": "",
+    "tendance": ""
+  },
+  "trajets": {
+    "titre": "",
+    "mentionPannes_one": "",
+    "mentionPannes_other": "",
+    "aucun": "",
+    "quand": "",
+    "aLHeure": "",
+    "retard": "",
+    "replaces": "",
+    "gardes": ""
+  },
+  "jours": {
+    "lun": "",
+    "mar": "",
+    "mer": "",
+    "jeu": "",
+    "ven": "",
+    "sam": "",
+    "dim": ""
+  },
+  "assistant": {
+    "titre": ""
+  },
+  "pied": {
+    "flotte": "",
+    "assistant": "",
+    "assistantDetail": ""
+  },
+  "etats": {
+    "vide": "",
+    "introuvable": "",
+    "erreur": "",
+    "reessayer": "",
+    "chargement": ""
+  }
+}
