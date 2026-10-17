@@ -1,0 +1,363 @@
+/*
+ * Planche « LivreurVerification » (docs/maquettes-v3/LivreurVerification.dc.html). Valeurs relevées dans la planche ; les
+ * couleurs, polices et espacements sont les variables --am-* de @afrimove/design.
+ *
+ * Surcharges du kit (le kit n'est pas modifié) : le sélecteur est doublé (`.x.x`) pour passer devant la règle d'un seul
+ * sélecteur du composant du kit quel que soit l'ordre des feuilles.
+ *
+ * Dans la planche, seul le conteneur racine pose `box-sizing: border-box` : le bouton de retour et les boutons du pied
+ * sont en `content-box`, leur hauteur minimale (44, 56 px) s'ajoute au bord. On reprend ce que la planche dessine.
+ */
+
+/* ------------------------------------------------------------------ en-tête */
+
+/* La planche pose 14 px 16 px 6 px, le kit 16 px 16 px 8 px. */
+.entete.entete {
+  padding: 14px var(--am-gutter) var(--am-space-6);
+}
+
+/* Bouton retour : 44 px + 1 px de bord de chaque côté dans la planche, le kit le dessine à 44 px. */
+.entete.entete > a:first-child {
+  box-sizing: content-box;
+}
+
+/* ------------------------------------------------------------------ corps */
+
+/* 8 px entre les blocs, 2 px sous l'en-tête (le kit en met 10 et 4). Un écran plus court que la planche défile. */
+.corps.corps {
+  gap: var(--am-space-8);
+  padding-top: var(--am-space-2);
+  overflow: hidden auto;
+  scrollbar-width: none;
+}
+
+.corps.corps::-webkit-scrollbar {
+  display: none;
+}
+
+/* ------------------------------------------------------------------ frise */
+
+.frise {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--am-space-8);
+  padding: var(--am-space-12) var(--am-space-14);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-16);
+  background: var(--am-surface);
+}
+
+.friseTitre,
+.recitTitre,
+.particularitesTitre {
+  margin: 0;
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  font-weight: 400;
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+}
+
+.friseTitre,
+.recitTitre {
+  color: var(--am-bleu);
+}
+
+.etapes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.etape {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  align-items: start;
+  gap: var(--am-space-10);
+  color: var(--am-craie);
+  font-size: var(--am-fs-12);
+}
+
+/* Le jalon en cours garde le texte clair de la planche ; seuls ceux qui n'ont pas commencé s'estompent. */
+.etape[data-etat="a_venir"] {
+  color: var(--am-craie-2);
+}
+
+.etapeTexte {
+  line-height: var(--am-lh-normale);
+}
+
+.rond {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 18px;
+  height: 18px;
+  border-radius: 9px;
+}
+
+.rond[data-etat="fait"] {
+  background: var(--am-vert);
+  color: var(--am-nuit);
+}
+
+.rond[data-etat="en_cours"] {
+  background: var(--am-bleu);
+}
+
+.rond[data-etat="a_venir"] {
+  border: 2px solid var(--am-trait);
+}
+
+/* ------------------------------------------------------------------ badge réservé et démo */
+
+.tuiles {
+  display: grid;
+  flex: none;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--am-space-8);
+}
+
+.tuile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-4);
+  padding: var(--am-space-10) var(--am-space-12);
+  border: 1px solid var(--am-surface-2);
+  border-radius: var(--am-radius-14);
+  background: var(--am-carte-sombre);
+  line-height: 1.2;
+}
+
+.tuileEtiquette {
+  color: var(--am-gris);
+  font-size: var(--am-fs-10);
+}
+
+.badge {
+  color: var(--am-bleu);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-20);
+  font-weight: 700;
+}
+
+.tuileDetail {
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-10);
+}
+
+.demo {
+  color: var(--am-craie);
+  text-decoration: none;
+}
+
+.demo:focus-visible,
+.modifier:focus-visible,
+.retour:focus-visible,
+.reessayer:focus-visible {
+  outline: 2px solid var(--am-orange);
+  outline-offset: 2px;
+}
+
+.demoTitre {
+  font-size: var(--am-fs-13);
+  font-weight: 700;
+}
+
+.demoDetail {
+  color: var(--am-bleu);
+  font-size: var(--am-fs-10);
+}
+
+/* À 390 px la planche tient la ligne entière (flèche comprise) ; sur un écran plus étroit elle passe à la ligne. */
+@media (min-width: 390px) {
+  .demoDetail {
+    white-space: nowrap;
+  }
+}
+
+/* ------------------------------------------------------------------ première soirée */
+
+.recit {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--am-space-6);
+  padding: var(--am-space-12) var(--am-space-14);
+  border: 1px solid var(--am-bleu);
+  border-radius: var(--am-radius-16);
+  background: var(--am-bleu-fond);
+}
+
+.recitTexte {
+  margin: 0;
+  font-size: var(--am-fs-12);
+  line-height: var(--am-lh-texte);
+}
+
+/* ------------------------------------------------------------------ particularités */
+
+.particularites {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--am-space-4);
+  padding: var(--am-space-10) var(--am-space-12);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-14);
+  background: var(--am-surface);
+  font-size: var(--am-fs-12);
+  line-height: 1.35;
+}
+
+.particularitesTitre {
+  color: var(--am-ambre);
+}
+
+.particularitesTexte {
+  margin: 0;
+}
+
+/* ------------------------------------------------------------------ pied */
+
+/* 8 px au-dessus, 18 px sous les boutons (le kit : 10 px et 8 px). */
+.pied.pied {
+  display: grid;
+  grid-template-columns: 1fr 1.7fr;
+  gap: var(--am-space-8);
+  padding: var(--am-space-8) var(--am-gutter) 18px;
+  border-top: 1px solid var(--am-surface-2);
+  background: var(--am-profond);
+}
+
+.modifier,
+.retour {
+  box-sizing: content-box;
+  min-height: 56px;
+  border-radius: var(--am-radius-16);
+  text-decoration: none;
+}
+
+.modifier {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.retour {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--am-space-16);
+  background: var(--am-bleu);
+  color: var(--am-nuit);
+}
+
+.retourTextes {
+  display: flex;
+  flex-direction: column;
+  line-height: var(--am-lh-compacte);
+}
+
+.retourTitre {
+  font-size: var(--am-fs-15);
+  font-weight: 700;
+}
+
+.retourDetail {
+  font-size: var(--am-fs-11);
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------------ chargement, vide, erreur */
+
+.squelette {
+  display: block;
+  flex: none;
+  background: var(--am-surface-2);
+}
+
+.squelettePastille {
+  display: block;
+  width: 78px;
+  height: 31px;
+  border-radius: var(--am-radius-pill);
+  background: var(--am-surface-2);
+}
+
+/* Mêmes hauteurs que les blocs qu'ils remplacent : la mise en page ne bouge pas quand le suivi arrive. */
+.squeletteFrise {
+  height: 187px;
+  border-radius: var(--am-radius-16);
+}
+
+.squeletteTuiles {
+  height: 69px;
+  border-radius: var(--am-radius-14);
+}
+
+.squeletteRecit {
+  height: 130px;
+  border-radius: var(--am-radius-16);
+}
+
+.squeletteParticularites {
+  height: 75px;
+  border-radius: var(--am-radius-14);
+}
+
+.etat {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--am-space-10);
+  padding: var(--am-space-14);
+  border: 1px solid var(--am-surface-2);
+  border-radius: var(--am-radius-16);
+  background: var(--am-carte-sombre);
+}
+
+.etatTitre {
+  margin: 0;
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-18);
+  font-weight: 800;
+  letter-spacing: var(--am-ls-sous-titre);
+  line-height: var(--am-lh-compacte);
+}
+
+.etatDetail {
+  margin: 0;
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+  line-height: var(--am-lh-normale);
+}
+
+.reessayer {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  min-height: 44px;
+  padding: 0 var(--am-space-16);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-12);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font: inherit;
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}

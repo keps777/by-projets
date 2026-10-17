@@ -1,5 +1,5 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { EcranLivreurVerification } from "@/ecrans/LivreurVerification";
 
 export default function Page() {
-  return <EcranVide planche="LivreurVerification" />;
+  return <EcranLivreurVerification />;
 }
