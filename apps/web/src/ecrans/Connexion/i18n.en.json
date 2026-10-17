@@ -1,0 +1,37 @@
+{
+  "retour": "",
+  "etape": "",
+  "titre": {
+    "ligne1": "",
+    "ligne2": ""
+  },
+  "explication": "",
+  "telephone": {
+    "libelle": ""
+  },
+  "code": {
+    "titre": "",
+    "canaux": {
+      "sms": "",
+      "whatsapp": ""
+    },
+    "renvoi": "",
+    "renvoyer": "",
+    "aide": ""
+  },
+  "actions": {
+    "continuer": "",
+    "whatsapp": "",
+    "ussd": ""
+  },
+  "mentions": "",
+  "erreurs": {
+    "telephone": "",
+    "envoi": "",
+    "codeIncomplet": "",
+    "codeFaux_one": "",
+    "codeFaux_other": "",
+    "verification": "",
+    "tropEssais": ""
+  }
+}
