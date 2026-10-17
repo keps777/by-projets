@@ -24,8 +24,8 @@ export interface FiltreComptage {
 
 /**
  * Port de persistance des messages et de leurs essais. `journal-memoire.ts` en est la version en
- * mémoire. **La version PostgreSQL n'est pas écrite** (tables `sms_message` et `sms_essai`, voir le
- * README du dossier : elles demandent `apps/api/prisma/**`, hors du périmètre d'AM-166).
+ * mémoire, `postgres.ts` la version PostgreSQL (tables `sms_message` et `sms_essai`) ;
+ * `testing/contrat-journal.ts` fait passer le même contrat aux deux.
  */
 export abstract class JournalSms {
   /** `true` pour un adaptateur qui garde ses données après un redémarrage. */

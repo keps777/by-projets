@@ -188,7 +188,9 @@ export class SmsController {
     return this.avecEssais(m);
   }
 
-  @Roles(...ROLES_LECTURE)
+  // Pas AfriMove : aucune route « billet » ne lui est ouverte (invariant du socle, roles.e2e.test.ts).
+  // Il lit un SMS par son identifiant et les coûts.
+  @Roles(...ROLES_ENVOI_BILLET, "patron")
   @Get("billets/:billetId")
   @ApiOperation({ summary: "SMS envoyés pour un billet, du plus récent au plus ancien" })
   async parBillet(

@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { Logger } from "@nestjs/common";
 import {
   ENTETE_HORODATAGE,
@@ -66,6 +67,11 @@ export class FournisseurSimule extends FournisseurSms {
   private panne: { code: string; definitive: boolean } | null = null;
   private readonly parReference = new Map<string, string>();
   private compteur = 0;
+  /**
+   * Propre à chaque instance : avec un journal durable, un redémarrage ne doit pas redonner un
+   * identifiant déjà porté par un ancien message (index unique sur le fournisseur et son identifiant).
+   */
+  private readonly instance = randomUUID().slice(0, 8);
 
   constructor(options: OptionsFournisseurSimule = {}) {
     super();
@@ -110,7 +116,7 @@ export class FournisseurSimule extends FournisseurSms {
     }
 
     const connu = this.parReference.get(demande.reference);
-    const idFournisseur = connu ?? `${this.nom}-${++this.compteur}`;
+    const idFournisseur = connu ?? `${this.nom}-${this.instance}-${++this.compteur}`;
     if (connu === undefined) {
       this.parReference.set(demande.reference, idFournisseur);
       this.envoyes.push({ ...demande, idFournisseur, at: this.maintenant() });

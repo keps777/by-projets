@@ -427,7 +427,11 @@ export class ScansMemoire extends Scans implements StockageBilletterie {
   }
 
   async duDepart(departId: string) {
-    return this.lignes.filter((s) => s.departId === departId).map(copie);
+    // Dans l'ordre où les scans ont eu lieu (comme la version PostgreSQL).
+    return this.lignes
+      .filter((s) => s.departId === departId)
+      .sort((a, b) => enMs(a.at) - enMs(b.at) || a.evenementId.localeCompare(b.evenementId))
+      .map(copie);
   }
 
   async parEvenement(evenementId: string) {
@@ -543,12 +547,17 @@ export class ConversionMemoire extends ConversionDevises implements StockageBill
 export class NumerotationEnLigneMemoire extends NumerotationEnLigne implements StockageBilletterie {
   readonly durable = false;
   private readonly compteurs = new Map<string, number>();
+  private readonly references = new Map<string, number>();
 
-  async prochaine(a: { compagnieId: string; gareId: string; aammjj: string }) {
+  async prochaine(a: { compagnieId: string; gareId: string; aammjj: string; reference?: string }) {
     const cle = `${a.compagnieId}|${a.gareId}|${a.aammjj}`;
+    // Même référence, même numéro (comme le registre PostgreSQL).
+    const deja = a.reference ? this.references.get(`${cle}|${a.reference}`) : undefined;
+    if (deja !== undefined) return deja;
     const suivant = this.compteurs.get(cle) ?? PLAGE_EN_LIGNE.debut;
     if (suivant > PLAGE_EN_LIGNE.fin) throw new PlageEpuisee(PLAGE_EN_LIGNE);
     this.compteurs.set(cle, suivant + 1);
+    if (a.reference) this.references.set(`${cle}|${a.reference}`, suivant);
     return suivant;
   }
 }

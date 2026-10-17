@@ -7,6 +7,8 @@ import {
   type OnModuleInit,
 } from "@nestjs/common";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { SmsGateway } from "../socle/sms/sms.gateway";
 import { CONFIG_SMS, chargerConfigSms, type ConfigSms } from "./config";
@@ -17,6 +19,7 @@ import { TransportFetch, TransportHttp } from "./fournisseur-http";
 import { JournalSms } from "./journal";
 import { JournalMemoire } from "./journal-memoire";
 import { PasserelleSmsService } from "./passerelle.service";
+import { JournalSmsPrisma } from "./postgres";
 import { ReceptionRecusService } from "./reception.service";
 import { RegistreFournisseurs, construireRegistre } from "./registre";
 import { SmsController } from "./sms.controller";
@@ -97,9 +100,9 @@ export class SmsGatewayPasserelle extends SmsGateway {
  * BullMQ, gabarits français, reprise sur échec, statuts de livraison, coût par type.
  *
  * Module autonome : il n'importe que les modules globaux du socle (configuration, chiffrement,
- * audit). Les ports de stockage (`JournalSms`, `FileEnvoiSms`) sont remplaçables ; les versions
- * PostgreSQL et Redis restent à écrire (README). À importer dans `AppModule` par le coordinateur, qui
- * branche aussi `{ provide: SmsGateway, useExisting: SmsGatewayPasserelle }` dans `AuthModule`.
+ * audit). Les ports de stockage (`JournalSms`, `FileEnvoiSms`) sont remplaçables : le journal a sa
+ * version PostgreSQL (`postgres.ts`, choisie par `API_STOCKAGE`), la file Redis (BullMQ) reste à écrire
+ * (README). Importé par `AppModule` ; `AuthModule` y prend `SmsGatewayPasserelle` comme `SmsGateway`.
  */
 @Module({
   controllers: [SmsController],
@@ -111,7 +114,13 @@ export class SmsGatewayPasserelle extends SmsGateway {
         chargerConfigSms(process.env, config.env === "production"),
     },
     { provide: Horloge, useClass: HorlogeSysteme },
-    { provide: JournalSms, useClass: JournalMemoire },
+    // PostgreSQL en production (ou avec API_STOCKAGE=postgres), mémoire ailleurs : voir socle/db/stockage.ts.
+    {
+      provide: JournalSms,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new JournalSmsPrisma(prisma) : new JournalMemoire(),
+    },
     {
       provide: FileEnvoiSms,
       inject: [Horloge, CONFIG_SMS],

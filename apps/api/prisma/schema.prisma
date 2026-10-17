@@ -748,6 +748,8 @@ model JournalEvenement {
   id            String   @unique @db.Uuid
   type          String
   at            DateTime @db.Timestamptz(3)
+  /// L'heure telle que l'appareil l'a écrite (ISO Douala) : la signature porte sur ce texte, on le garde pour pouvoir la revérifier.
+  atTexte       String?
   appareilId    String?
   auteurId      String?
   cibleType     String
@@ -1178,4 +1180,75 @@ model ModuleException {
   @@unique([compagnieId, code, gareId])
   @@unique([compagnieId, code, villeCle])
   @@map("module_exception")
+}
+
+/**
+ * ------------------------------------------------------------------ SMS (AM-166)
+ */
+
+/// Un SMS au journal. Le texte n'est JAMAIS stocké (il peut porter un code ou un PIN) ; le numéro
+/// n'y est que chiffré, avec son index aveugle et sa version masquée. La clé d'idempotence est unique :
+/// `INSERT … ON CONFLICT (cle) DO NOTHING` décide qui crée le message. SQL : valeurs de type, statut,
+/// encodage ; 1 à 3 morceaux ; un identifiant de fournisseur n'appartient qu'à un message.
+model SmsMessage {
+  id                  String    @id @db.Uuid
+  /// SQL : billet | code_retrait | alerte_proche | retard | pin_provisoire | systeme
+  type                String
+  cle                 String    @unique
+  referenceType       String?
+  referenceId         String?
+  compagnieId         String?   @db.Uuid
+  demandeurId         String?   @db.Uuid
+  destinataireChiffre String
+  destinataireIndex   String
+  destinataireMasque  String
+  expediteur          String
+  /// SQL : en_file | en_reprise | envoye | livre | non_livre | echec | expire | annule
+  statut              String
+  /// SQL : gsm7 | ucs2
+  encodage            String
+  caracteres          Int
+  segments            Int
+  /// Facturé à l'acceptation par le fournisseur ; 0 avant.
+  coutFcfa            Int       @default(0)
+  coutEstimeFcfa      Int
+  tentatives          Int       @default(0)
+  fournisseur         String?
+  idFournisseur       String?
+  /// Code court, jamais de texte du message.
+  derniereErreur      String?
+  creeA               DateTime  @db.Timestamptz(3)
+  planifieA           DateTime? @db.Timestamptz(3)
+  expireA             DateTime? @db.Timestamptz(3)
+  envoyeA             DateTime? @db.Timestamptz(3)
+  livreA              DateTime? @db.Timestamptz(3)
+  delaiEnvoiMs        Int?
+
+  essais SmsEssai[]
+
+  // SQL : unique (fournisseur, idFournisseur) quand l'identifiant est connu.
+  @@index([compagnieId, creeA(sort: Desc)])
+  @@index([referenceType, referenceId])
+  @@index([demandeurId, creeA])
+  @@index([destinataireIndex, creeA])
+  @@index([statut, creeA])
+  @@map("sms_message")
+}
+
+/// Un appel à un fournisseur : qui, quand, combien de temps, quel résultat. EN AJOUT SEUL (SQL).
+model SmsEssai {
+  id          BigInt   @id @default(autoincrement())
+  messageId   String   @db.Uuid
+  numero      Int
+  fournisseur String
+  at          DateTime @db.Timestamptz(3)
+  dureeMs     Int
+  /// SQL : accepte | temporaire | definitif
+  resultat    String
+  code        String?
+
+  message SmsMessage @relation(fields: [messageId], references: [id])
+
+  @@index([messageId, id])
+  @@map("sms_essai")
 }

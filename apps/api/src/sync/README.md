@@ -48,12 +48,12 @@ signalé (`deblocage_sur_place`) : le serveur ne peut pas le vérifier.
 Tout passe par des classes abstraites (`ports.ts`) ; `memoire.ts` en donne des versions en mémoire pour
 les tests. `SyncModule` **refuse de démarrer en production** tant qu'un port est en mémoire.
 
-| Port                                                        | À fournir                                                                                                |
-| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `AppareilsSync`, `JournalSync`, `SiegesSync`, `AlertesSync` | adaptateurs PostgreSQL (tables ci-dessous)                                                               |
-| `ProvisionnementSync`                                       | parts de sièges hors ligne par appareil, vérificateurs de PIN des superviseurs de la gare                |
-| `ControleNumeros` (**AM-161**)                              | `enregistrer(entree)` : doublon / hors plage ; `trous(appareilId, jour, genre, plage)`                   |
-| `AttributionPlages` (**AM-161**)                            | `plageDe(appareil)` : la plage attribuée (par défaut : celle du rang, `plageGuichet` / `plageConvoyeur`) |
+| Port                                                        | À fournir                                                                                                                                                       |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AppareilsSync`, `JournalSync`, `SiegesSync`, `AlertesSync` | adaptateurs PostgreSQL faits (`postgres.ts`, tables ci-dessous), choisis par `API_STOCKAGE`                                                                     |
+| `ProvisionnementSync`                                       | parts de sièges hors ligne par appareil, vérificateurs de PIN des superviseurs de la gare (sur PostgreSQL : `ProvisionnementVide`, aucune part ni vérificateur) |
+| `ControleNumeros` (**AM-161**)                              | `enregistrer(entree)` : doublon / hors plage ; `trous(appareilId, jour, genre, plage)`                                                                          |
+| `AttributionPlages` (**AM-161**)                            | `plageDe(appareil)` : la plage attribuée (par défaut : celle du rang, `plageGuichet` / `plageConvoyeur`)                                                        |
 
 `SyncModule` importe `NumerotationModule` (AM-161), qui fournit `ControleNumeros` et `AttributionPlages`
 (adaptateurs PostgreSQL disponibles) : `RejeuService` n'a pas changé. `ControleNumeros.trous` sert à
@@ -62,8 +62,8 @@ l'alerte « numéro manquant » de fin de journée.
 ## Tables PostgreSQL
 
 Elles existent dans `apps/api/prisma/schema.prisma` (migration `20261017000200_modules_metier`) sous les
-noms ci-dessous en snake_case/camelCase du schéma ; les adaptateurs ne sont pas encore écrits (voir
-`apps/api/INTEGRATION.md`). Descriptif de ce qu'elles doivent garder :
+noms ci-dessous en snake_case/camelCase du schéma ; les adaptateurs sont dans `postgres.ts` (voir
+`apps/api/INTEGRATION.md`). Descriptif de ce qu'elles gardent :
 
 - `appareil_sync` : `id`, `cle_publique` (jsonb), `genre`, `rang`, `nb_convoyeurs`, `plage_debut`,
   `plage_fin`, `gare_id`, `compagnie_id`, `derniere_sync_a`, `dernier_ordre`, `octroi` (jsonb), `retire`.
@@ -83,8 +83,9 @@ du même lot se croisent : `ajouter` doit répondre `null` sur conflit, comme la
 
 ## À faire pour brancher le module (hors périmètre)
 
-- écrire les adaptateurs PostgreSQL (`AppareilsSync`, `JournalSync`, `SiegesSync`, `AlertesSync`,
-  `ProvisionnementSync`) ; `SyncModule` est déjà dans `AppModule` ;
+- `ProvisionnementSync` sur PostgreSQL : les parts de sièges hors ligne et les vérificateurs de PIN des
+  superviseurs viennent de la billetterie et des comptes ; `ProvisionnementVide` ne les fournit pas
+  (un superviseur ne peut pas valider un déblocage sur place) ; `SyncModule` est déjà dans `AppModule` ;
 - créer l'administration des appareils (`AppareilsSync.declarer` : AM-093, AM-120) ;
 - si les lots grossissent : le corps JSON est plafonné par Express (100 ko par défaut) ; le moteur
   réduit son lot de moitié sur un 413, mais `configurerApp` peut relever la limite pour cette route.
@@ -93,7 +94,7 @@ du même lot se croisent : `ajouter` doit répondre `null` sur conflit, comme la
 
 `pnpm --filter @afrimove/api run test` : `parite.test.ts` (règles recopiées = règles sources, signature
 appareil → serveur), `protocole.test.ts`, `sieges.test.ts`, `sync.e2e.test.ts` (HTTP, rôles, idempotence,
-rejets partiels, conflits, déblocage, alertes), `sync.integration.test.ts` (3 appareils réels, 4 h hors
+rejets partiels, conflits, déblocage, alertes), `postgres.integration.test.ts` (le contrat des ports sur la mémoire et sur PostgreSQL, `testing/contrat-ports.ts`, ajout seul, idempotence par UUID, deux rejeux simultanés, l'API avec `API_STOCKAGE=postgres` et un redémarrage ; ignoré sans `DATABASE_URL_TEST`), `sync.integration.test.ts` (3 appareils réels, 4 h hors
 ligne, puis synchronisation sans doublon ni trou ; réponse perdue ; siège vendu deux fois ; blocage 12 h
 puis déblocage par un superviseur). Le montage de test est `testing/app-sync-test.ts` (il importe
 `SyncModule` à côté de `AppModule`, sans toucher au socle de test).

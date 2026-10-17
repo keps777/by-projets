@@ -7,10 +7,10 @@ import type { OperationSiege } from "./sieges";
  * Ports de persistance de la synchronisation.
  *
  * La logique (rejeu, conflits, blocage) ne parle qu'à ces classes abstraites. `memoire.ts` en
- * fournit des versions en mémoire (tests, développement). **Les versions PostgreSQL ne sont pas
- * encore écrites** : les tables existent (migration `modules_metier`, voir
- * `apps/api/INTEGRATION.md`) mais pas les adaptateurs. Tant que ces ports ne sont pas branchés sur
- * la base, `SyncModule` refuse de démarrer en production.
+ * fournit des versions en mémoire (tests, développement) et `postgres.ts` des versions PostgreSQL
+ * (Prisma) ; `testing/contrat-ports.ts` fait passer le même contrat aux deux. `SyncModule` choisit
+ * selon `API_STOCKAGE` (voir `socle/db/stockage.ts`) et refuse de démarrer en production avec un
+ * port en mémoire.
  */
 
 export interface Octroi {
@@ -104,8 +104,10 @@ export abstract class SiegesSync {
   abstract definirBillet(billetId: string, departId: string, siege: number): Promise<void>;
   abstract conflit(evenementId: string): Promise<ConflitStocke | null>;
   abstract conflitsDuSiege(departId: string, siege: number): Promise<ConflitStocke[]>;
-  abstract enregistrerConflit(conflit: ConflitStocke): Promise<void>;
-  abstract leverConflit(evenementId: string): Promise<void>;
+  /** `true` si le conflit est nouveau, `false` s'il était déjà là (deux rejeux qui se croisent). */
+  abstract enregistrerConflit(conflit: ConflitStocke): Promise<boolean>;
+  /** `true` si le conflit existait et vient d'être levé, `false` sinon (déjà levé par un autre rejeu). */
+  abstract leverConflit(evenementId: string): Promise<boolean>;
   /**
    * Les billets de cet appareil passés « à replacer » depuis `depuisIso`. Sans état de lecture :
    * si la réponse se perd (application tuée), l'appareil les reverra à la synchronisation suivante.
