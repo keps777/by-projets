@@ -1,0 +1,42 @@
+{
+  "titre": "",
+  "retour": "",
+  "sousTitre": "",
+  "appCompte": {
+    "titre": "",
+    "periode": "",
+    "billetsCash": "",
+    "colisCash": "",
+    "fond": "",
+    "annulations": "",
+    "momo": "",
+    "cashAttendu": ""
+  },
+  "jeCompte": {
+    "titre": "",
+    "aide": ""
+  },
+  "ecart": {
+    "libelle": "",
+    "tolerance": "",
+    "historique": ""
+  },
+  "cloture": {
+    "libelle": "",
+    "detail": "",
+    "echec": ""
+  },
+  "minuit": "",
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}

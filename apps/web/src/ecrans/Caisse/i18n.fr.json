@@ -1,0 +1,42 @@
+{
+  "titre": "Fermer ma caisse",
+  "retour": "Retour au guichet",
+  "sousTitre": "{{numero}} · {{agent}} · ouverte {{heure}} avec {{fond}}",
+  "appCompte": {
+    "titre": "Ce que l'app a compté",
+    "periode": "{{debut}} → {{fin}}",
+    "billetsCash": "Billets cash · {{nombre}}",
+    "colisCash": "Colis cash · {{nombre}}",
+    "fond": "Fond de caisse",
+    "annulations": "Annulations validées (PIN sup.) · {{nombre}}",
+    "momo": "MoMo · {{nombre}} ventes (pas en caisse)",
+    "cashAttendu": "Cash attendu"
+  },
+  "jeCompte": {
+    "titre": "Ce que je compte · touche les billets",
+    "aide": "ou tape le total"
+  },
+  "ecart": {
+    "libelle": "Écart",
+    "tolerance": "Tolérance de l'agence : {{montant}}.",
+    "historique": "Hier : {{hier}} · cette semaine : {{semaine}}"
+  },
+  "cloture": {
+    "libelle": "Clôturer · faire valider par le superviseur",
+    "detail": "il met son PIN, l'écart est tracé, le rapport part à 21 h",
+    "echec": "La clôture n'a pas été envoyée. Réessayez."
+  },
+  "minuit": "Votre caisse n'avait pas été fermée : elle s'est clôturée seule à minuit.",
+  "etats": {
+    "chargement": "Chargement de votre caisse",
+    "vide": {
+      "titre": "Aucune caisse ouverte",
+      "detail": "Il n'y a pas de session de caisse à fermer."
+    },
+    "erreur": {
+      "titre": "Impossible de charger votre caisse",
+      "detail": "Vérifiez la connexion, puis réessayez.",
+      "reessayer": "Réessayer"
+    }
+  }
+}

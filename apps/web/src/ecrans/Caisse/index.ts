@@ -1,0 +1,1 @@
+export { EcranCaisse } from "./EcranCaisse";
