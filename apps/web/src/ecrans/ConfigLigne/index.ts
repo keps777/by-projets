@@ -1,0 +1,1 @@
+export { EcranConfigLigne } from "./EcranConfigLigne";
