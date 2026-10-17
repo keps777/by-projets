@@ -1,0 +1,93 @@
+{
+  "titre": "",
+  "mode": {
+    "aria": "",
+    "entreVilles": "",
+    "enVille": "",
+    "glisse": ""
+  },
+  "role": {
+    "aria": "",
+    "passager": "",
+    "conducteur": ""
+  },
+  "pastille": {
+    "verifie": "",
+    "aVerifier": ""
+  },
+  "resume": {
+    "semaine": "",
+    "semaineDetail": "",
+    "trajets": "",
+    "annulations_one": "",
+    "annulations_other": "",
+    "pieces": "",
+    "piecesOk": "",
+    "piecesAFaire": "",
+    "piecesDetail": ""
+  },
+  "jours": {
+    "dim": "",
+    "lun": "",
+    "mar": "",
+    "mer": "",
+    "jeu": "",
+    "ven": "",
+    "sam": ""
+  },
+  "publies": {
+    "titre": "",
+    "gerer": "",
+    "trajet": "",
+    "places_one": "",
+    "places_other": "",
+    "reservees_one": "",
+    "reservees_other": "",
+    "libres_one": "",
+    "libres_other": "",
+    "payee": "",
+    "visible_one": "",
+    "visible_other": "",
+    "vide": "",
+    "gestion": {
+      "prix": "",
+      "passager": "",
+      "aucune": ""
+    }
+  },
+  "demandes": {
+    "titre": "",
+    "sens": "",
+    "places_one": "",
+    "places_other": "",
+    "proposer": "",
+    "vide": ""
+  },
+  "paiement": "",
+  "action": {
+    "libelle": "",
+    "detail": "",
+    "touche": ""
+  },
+  "verification": {
+    "aria": "",
+    "titre": "",
+    "detail": "",
+    "identite": "",
+    "permis": "",
+    "carteGrise": "",
+    "voiture": ""
+  },
+  "messages": {
+    "envoyee": "",
+    "echec": ""
+  },
+  "etats": {
+    "chargement": "",
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
