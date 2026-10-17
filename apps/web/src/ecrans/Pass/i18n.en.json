@@ -1,0 +1,51 @@
+{
+  "retour": "",
+  "partager": {
+    "libelle": "",
+    "message": ""
+  },
+  "statut": {
+    "paye": "",
+    "payeSansSms": "",
+    "reserve": "",
+    "embarque": "",
+    "voyage": "",
+    "annule": "",
+    "reporte": "",
+    "nonPresente": ""
+  },
+  "horsLigne": "",
+  "billet": {
+    "passager": "",
+    "passagerSansPiece": "",
+    "consigne": "",
+    "classe": {
+      "vip": "",
+      "classique": ""
+    }
+  },
+  "actions": {
+    "suivre": {
+      "titre": "",
+      "detail": ""
+    },
+    "moto": {
+      "titre": "",
+      "detail": ""
+    },
+    "annulation": "",
+    "colis": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
