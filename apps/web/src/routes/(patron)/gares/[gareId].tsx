@@ -1,5 +1,7 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { useParams } from "react-router";
+import { EcranPatronGare } from "@/ecrans/PatronGare";
 
 export default function Page() {
-  return <EcranVide planche="PatronGare" />;
+  const { gareId } = useParams();
+  return <EcranPatronGare gareId={gareId} />;
 }

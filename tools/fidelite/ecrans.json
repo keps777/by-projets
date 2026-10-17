@@ -196,7 +196,7 @@
       "route": "/gares"
     },
     "PatronGare": {
-      "route": "/gares/dla-akwa"
+      "route": "/gares/gare-alp-dla"
     },
     "PatronPersonne": {
       "route": "/personnes/pers-joseph"

@@ -1,0 +1,426 @@
+/*
+ * Une gare en détail (PatronGare.dc.html). Couleurs, tailles et espacements relevés dans la planche ; les couleurs,
+ * polices et espacements sont les variables --am-* de @afrimove/design.
+ *
+ * Dans la planche, seul le conteneur racine pose `box-sizing: border-box` : les lignes des trois blocs, le bouton de
+ * retour et les deux boutons du pied sont en `content-box`. Leur hauteur minimale (48, 42, 36, 56 px) s'y ajoute au
+ * bord ; on reprend ce que la planche dessine réellement.
+ *
+ * Les lignes de départ (42 px dans la planche) gardent leur dessin et reçoivent une zone de touche de 44 px par un
+ * pseudo-élément invisible, posé vers le haut pour ne pas être coupé par l'arrondi du bloc.
+ */
+
+/* ---------------------------------------------------------------- en-tête */
+
+.entete {
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-10);
+  padding: 14px var(--am-gutter) var(--am-space-6);
+}
+
+/* Titre de l'écran pour les lecteurs d'écran : la planche montre le nom de la gare, pas le titre de l'écran. */
+.titreEcran {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.retour {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  box-sizing: content-box;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--am-trait);
+  border-radius: 22px;
+  background: var(--am-surface);
+  color: var(--am-craie);
+}
+
+.retour:focus-visible,
+.ligne:focus-visible,
+.rapport:focus-visible,
+.caisseDirect:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+.textes {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.titre {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-18);
+  font-weight: 800;
+  letter-spacing: var(--am-ls-sous-titre);
+  line-height: var(--am-lh-compacte);
+}
+
+.sousTitre {
+  font-size: var(--am-fs-12);
+  color: var(--am-craie-2);
+}
+
+/* ---------------------------------------------------------------- corps */
+
+/* 8 px entre les blocs, 2 px sous l'en-tête (le kit en met 10 et 4). Un écran plus court que la planche défile. */
+.corps.corps {
+  gap: var(--am-space-8);
+  padding-top: var(--am-space-2);
+  overflow-y: auto;
+}
+
+.chiffres {
+  display: grid;
+  flex: none;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--am-space-6);
+}
+
+.bloc {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-16);
+}
+
+.blocEntete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px var(--am-space-12);
+  background: var(--am-profond);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+}
+
+.blocTitre {
+  color: var(--am-ambre);
+}
+
+.blocMention {
+  color: var(--am-craie-2);
+}
+
+.liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: block;
+  background: var(--am-surface);
+}
+
+.item + .item,
+.attente + .attente {
+  border-top: 1px solid var(--am-surface-2);
+}
+
+/* ---------------------------------------------------------------- lignes */
+
+.ligne {
+  position: relative;
+  display: grid;
+  align-items: center;
+  gap: var(--am-space-8);
+  box-sizing: content-box;
+  padding: 0 var(--am-space-12);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-size: var(--am-fs-12);
+  text-decoration: none;
+}
+
+.ligneGuichet {
+  grid-template-columns: 34px 1fr auto;
+  min-height: 48px;
+}
+
+.ligneQuai {
+  grid-template-columns: 1fr auto;
+  min-height: 42px;
+}
+
+.ligneQuai::after {
+  content: "";
+  position: absolute;
+  inset: -2px 0 0;
+}
+
+.avatar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  background: var(--am-trait);
+  font-size: var(--am-fs-11);
+  font-weight: 800;
+}
+
+.pile {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: var(--am-lh-serree);
+}
+
+.droite {
+  align-items: flex-end;
+}
+
+.ligneTitre {
+  font-size: var(--am-fs-13);
+  font-weight: 700;
+}
+
+.ligneDetail {
+  font-size: var(--am-fs-11);
+}
+
+.caisse {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-12);
+  font-weight: 700;
+}
+
+.etat {
+  font-size: var(--am-fs-10);
+}
+
+.libres {
+  font-size: var(--am-fs-11);
+  font-weight: 700;
+  text-align: right;
+}
+
+.evenement {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: var(--am-space-8);
+  box-sizing: content-box;
+  min-height: 36px;
+  padding: 0 var(--am-space-12);
+  font-size: var(--am-fs-12);
+}
+
+.etatJournal {
+  font-size: var(--am-fs-11);
+  font-weight: 700;
+  text-align: right;
+}
+
+/* Une couleur par ton : vert (tout va bien), ambre (à surveiller), rouge (bloqué), bleu, neutre. */
+:is(.avatar, .ligneDetail, .etat, .libres, .etatJournal)[data-ton="vert"] {
+  color: var(--am-vert);
+}
+
+:is(.avatar, .ligneDetail, .etat, .libres, .etatJournal)[data-ton="ambre"] {
+  color: var(--am-ambre);
+}
+
+:is(.avatar, .ligneDetail, .etat, .libres, .etatJournal)[data-ton="rouge"] {
+  color: var(--am-rouge);
+}
+
+:is(.avatar, .ligneDetail, .etat, .libres, .etatJournal)[data-ton="bleu"] {
+  color: var(--am-bleu);
+}
+
+.ligneDetail[data-ton="neutre"],
+.etatJournal[data-ton="neutre"],
+.avatar[data-ton="neutre"] {
+  color: var(--am-craie-2);
+}
+
+.regle {
+  flex: none;
+  margin: 0;
+  font-size: var(--am-fs-11);
+  line-height: var(--am-lh-normale);
+  color: var(--am-gris);
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------- pied */
+
+.pied.pied {
+  display: grid;
+  grid-template-columns: 1fr 1.7fr;
+  gap: var(--am-space-8);
+  padding: var(--am-space-8) var(--am-gutter) 18px;
+  border-top: 1px solid var(--am-surface-2);
+  background: var(--am-profond);
+}
+
+.rapport {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: content-box;
+  min-height: 56px;
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-16);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  line-height: var(--am-lh-serree);
+  text-align: center;
+  text-decoration: none;
+}
+
+.caisseDirect {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: content-box;
+  min-height: 56px;
+  padding: 0 var(--am-space-16);
+  border-radius: var(--am-radius-16);
+  background: var(--am-orange);
+  color: var(--am-nuit);
+  text-decoration: none;
+}
+
+.caisseTextes {
+  display: flex;
+  flex-direction: column;
+  line-height: var(--am-lh-compacte);
+}
+
+.caisseTitre {
+  font-size: var(--am-fs-15);
+  font-weight: 700;
+}
+
+.caisseDetail {
+  font-size: var(--am-fs-11);
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------- chargement, vide, erreur */
+
+.squelette {
+  display: block;
+  border-radius: var(--am-radius-6);
+  background: var(--am-surface-2);
+}
+
+.squeletteTitre {
+  width: 150px;
+  height: 18px;
+}
+
+.squeletteSousTitre {
+  width: 210px;
+  height: 12px;
+  margin-top: var(--am-space-3);
+}
+
+.squelettePastille {
+  width: 84px;
+  height: 31px;
+  border-radius: var(--am-radius-pill);
+}
+
+/* Même hauteur que les textes qu'ils remplacent : la mise en page ne bouge pas quand les chiffres arrivent. */
+.squeletteChiffre {
+  width: 44px;
+  height: 18px;
+}
+
+.squeletteLigne {
+  width: 100%;
+  height: 14px;
+}
+
+.attente {
+  display: flex;
+  align-items: center;
+  box-sizing: content-box;
+  padding: 0 var(--am-space-12);
+  background: var(--am-surface);
+}
+
+.ligneGuichetAttente {
+  composes: attente;
+  min-height: 48px;
+}
+
+.ligneQuaiAttente {
+  composes: attente;
+  min-height: 42px;
+}
+
+.ligneJournalAttente {
+  composes: attente;
+  min-height: 36px;
+}
+
+.vide {
+  padding: var(--am-space-12) var(--am-space-14);
+  background: var(--am-surface);
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+  line-height: var(--am-lh-normale);
+}
+
+.vide p {
+  margin: 0;
+}
+
+.etatMessage {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--am-space-10);
+}
+
+.bandeau {
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-10);
+  padding: var(--am-space-10) var(--am-space-12);
+  border: 1px solid var(--am-surface-2);
+  border-radius: var(--am-radius-12);
+  background: var(--am-carte-sombre);
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+}
+
+.bandeau p {
+  margin: 0;
+}
+
+.point {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--am-ambre);
+}

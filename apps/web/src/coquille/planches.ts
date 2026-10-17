@@ -146,7 +146,7 @@ export const EXEMPLES_PARAMS: Record<string, string> = {
   busId: "lt-207-ab",
   dossierId: "AV-2027-0041",
   conventionId: "conv-oc-0001",
-  gareId: "dla-akwa",
+  gareId: "gare-alp-dla",
   personneId: "pers-joseph",
 };
 
