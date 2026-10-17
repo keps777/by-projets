@@ -1,0 +1,83 @@
+.indicateur {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-6);
+  align-items: flex-start;
+  font-family: var(--am-font-texte);
+}
+
+.pastille {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--am-space-6);
+  box-sizing: border-box;
+  max-width: 100%;
+  padding: var(--am-space-6) var(--am-space-10);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-pill);
+  background: var(--am-surface-2);
+  color: var(--am-craie-2);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-11);
+  line-height: var(--am-lh-compacte);
+}
+
+.pastille[data-etat="ok"] {
+  border-color: var(--am-vert-bord);
+  color: var(--am-vert);
+}
+
+.pastille[data-etat="deconnectee"],
+.pastille[data-etat="connexion"],
+.pastille[data-etat="non_appairee"] {
+  border-color: var(--am-ambre);
+  color: var(--am-ambre);
+}
+
+.pastille[data-etat="erreur"] {
+  border-color: var(--am-rouge);
+  color: var(--am-rouge);
+}
+
+.point {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--am-radius-pill);
+  background: currentcolor;
+}
+
+.pastille[data-etat="connexion"] .point {
+  animation: pulse var(--am-pulse-duration) infinite;
+}
+
+.attente {
+  color: var(--am-craie-2);
+}
+
+.note {
+  margin: 0;
+  max-width: 320px;
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+  line-height: var(--am-lh-texte);
+}
+
+.action {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 var(--am-space-16);
+  border: 1px solid var(--am-ambre);
+  border-radius: var(--am-radius-pill);
+  background: var(--am-surface);
+  color: var(--am-ambre);
+  font: inherit;
+  font-size: var(--am-fs-13);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.action:focus-visible {
+  outline: 2px solid var(--am-bleu);
+  outline-offset: 2px;
+}
