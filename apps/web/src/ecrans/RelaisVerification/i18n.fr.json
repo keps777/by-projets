@@ -1,0 +1,29 @@
+{
+  "retour": "Retour",
+  "titre": "Devenir point de relais",
+  "suivi": {
+    "titre": "Suivi · en direct",
+    "liste": "Suivi de ta demande",
+    "fait": "Fait : ",
+    "enCours": "En cours : ",
+    "aVenir": "À venir : "
+  },
+  "actions": {
+    "modifier": "Modifier\nma fiche",
+    "modifierNom": "Modifier ma fiche",
+    "retourEspace": "Retour à mon espace",
+    "retourDetail": "je te préviens par SMS {{jour}}"
+  },
+  "etats": {
+    "chargement": "Chargement du suivi de ta demande",
+    "vide": {
+      "titre": "Aucune demande en cours",
+      "detail": "Tu n'as pas envoyé de fiche de point relais."
+    },
+    "erreur": {
+      "titre": "Suivi indisponible",
+      "detail": "Le suivi de ta demande ne s'est pas chargé.",
+      "reessayer": "Réessayer"
+    }
+  }
+}

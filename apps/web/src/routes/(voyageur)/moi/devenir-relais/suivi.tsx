@@ -1,5 +1,5 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { EcranRelaisVerification } from "@/ecrans/RelaisVerification";
 
 export default function Page() {
-  return <EcranVide planche="RelaisVerification" />;
+  return <EcranRelaisVerification />;
 }
