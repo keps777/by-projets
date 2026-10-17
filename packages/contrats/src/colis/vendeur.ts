@@ -78,6 +78,11 @@ export const SchemaClientVendeur = z.object({
   telephoneMasque: SchemaTelephoneMasque,
   /** Proposition de revente en une touche (« vendredi 08:30 »). */
   proposition: z.string().nullable(),
+  /**
+   * Le départ de la proposition : celui que « revendre en 1 touche » ouvre dans la vente. Absent sans proposition.
+   * Ce départ peut ne pas figurer dans `DepartsVendeur` (qui montre le lendemain) : l'identifiant suffit à la vente.
+   */
+  departId: SchemaId.optional(),
   dernierVoyage: SchemaIsoDouala.nullable(),
 });
 export type ClientVendeur = z.infer<typeof SchemaClientVendeur>;

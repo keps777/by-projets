@@ -52,6 +52,12 @@ const clientsDe = (
   ];
 };
 
+/** Une réponse sans le départ proposé (ancienne réponse) : l'écran se rabat sur l'heure de la proposition. */
+const sansDepartId = (client: contrats.ClientVendeur): contrats.ClientVendeur => {
+  const { departId: _departId, ...reste } = client;
+  return reste;
+};
+
 const espaceDe = (
   modifier: (espace: contrats.EspaceVendeur) => contrats.EspaceVendeur,
 ): NonNullable<OptionsRenduVendeur["operations"]> => {
@@ -235,10 +241,42 @@ describe("Vendeur · navigation", () => {
     await waitFor(() => expect(pathname(routeur)).toBe(`/depart/${BETA_ID}`));
   });
 
-  it("revend à un client avec le départ dont l'heure est dans la proposition", async () => {
+  it("revend à un client avec le départ que l'API propose (departId), même absent de la carte de vente", async () => {
     const { routeur } = rendreVendeur({
       operations: clientsDe((liste) =>
-        liste.map((c) => (c.nom === "Mme Ebogo" ? { ...c, proposition: "vendredi 08:00" } : c)),
+        liste.map((c) => (c.nom === "Mme Ebogo" ? { ...c, departId: "dep-vendredi-0830" } : c)),
+      ),
+    });
+    await attendreEcran();
+    expect(lienClient(/^Mme Ebogo/)).toHaveAttribute("href", "/depart/dep-vendredi-0830");
+    await userEvent.click(lienClient(/^Mme Ebogo/));
+    await waitFor(() => expect(pathname(routeur)).toBe("/depart/dep-vendredi-0830"));
+  });
+
+  it("dans la démo, la proposition porte son départ : un client sans proposition n'en a pas", async () => {
+    let clients: contrats.ClientVendeur[] = [];
+    rendreVendeur({
+      operations: clientsDe((liste) => {
+        clients = liste;
+        return liste;
+      }),
+    });
+    await attendreEcran();
+    expect(clients.find((c) => c.nom === "Mme Ebogo")).toMatchObject({
+      proposition: "vendredi 08:30",
+      departId: ALPHA_ID,
+    });
+    const sans = clients.filter((c) => c.proposition === null);
+    expect(sans.length).toBeGreaterThan(0);
+    expect(sans.every((c) => c.departId === undefined)).toBe(true);
+  });
+
+  it("sans departId dans la réponse, revend avec le départ dont l'heure est dans la proposition", async () => {
+    const { routeur } = rendreVendeur({
+      operations: clientsDe((liste) =>
+        liste.map((c) =>
+          c.nom === "Mme Ebogo" ? { ...sansDepartId(c), proposition: "vendredi 08:00" } : c,
+        ),
       ),
     });
     await attendreEcran();
@@ -247,10 +285,12 @@ describe("Vendeur · navigation", () => {
     await waitFor(() => expect(pathname(routeur)).toBe(`/depart/${BETA_ID}`));
   });
 
-  it("revend avec le premier départ quand la proposition n'a pas d'heure ou que l'heure n'existe pas", async () => {
+  it("sans departId, revend avec le premier départ quand la proposition n'a pas d'heure ou que l'heure n'existe pas", async () => {
     const { routeur } = rendreVendeur({
       operations: clientsDe((liste) =>
-        liste.map((c) => (c.nom === "Mme Ebogo" ? { ...c, proposition: "vendredi 23:15" } : c)),
+        liste.map((c) =>
+          c.nom === "Mme Ebogo" ? { ...sansDepartId(c), proposition: "vendredi 23:15" } : c,
+        ),
       ),
     });
     await attendreEcran();
@@ -310,8 +350,10 @@ describe("Vendeur · états", () => {
     expect(await screen.findByText("Aucun départ à vendre")).toBeInTheDocument();
     expect(screen.getByText("83")).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /^08:30/ })).not.toBeInTheDocument();
-    // Les clients restent là : leur lien mène à la recherche de trajets.
-    expect(lienClient(/^Mme Ebogo/)).toHaveAttribute("href", "/voyager");
+    // Les clients restent là. Celui qui a une proposition ouvre le départ de l'API (il n'a pas besoin de la carte) ;
+    // celui qui n'en a pas, sans départ connu, ouvre la recherche de trajets.
+    expect(lienClient(/^Mme Ebogo/)).toHaveAttribute("href", `/depart/${ALPHA_ID}`);
+    expect(lienClient(/^Pasteur Nkou/)).toHaveAttribute("href", "/voyager");
   });
 
   it("dit qu'il n'y a pas encore de client quand la liste est vide", async () => {

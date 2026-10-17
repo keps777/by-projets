@@ -285,13 +285,20 @@ export function Bilan({ espace }: { espace: Lecture<contrats.EspaceVendeur> }) {
 
 /* ------------------------------------------------------------------ mes clients */
 
-function LigneClient({
-  client,
-  depart,
-}: {
-  client: contrats.ClientVendeur;
-  depart: contrats.DepartVendeur | undefined;
-}) {
+/**
+ * Adresse de la revente à un client : le départ que l'API propose (`departId`), même s'il n'est pas dans la carte de
+ * vente du lendemain ; sans lui (ancienne réponse), le départ de la carte dont l'heure est dans la proposition.
+ */
+export function adresseRevente(
+  client: contrats.ClientVendeur,
+  departs: readonly contrats.DepartVendeur[],
+): string {
+  return client.departId !== undefined
+    ? urlPlanche("SiegePay", { departId: client.departId })
+    : adresseVente(departPourClient(departs, client.proposition));
+}
+
+function LigneClient({ client, href }: { client: contrats.ClientVendeur; href: string }) {
   const { t } = useTranslation("Vendeur");
   const suite = [
     client.habitude === null ? client.destination : `${client.destination} ${client.habitude}`,
@@ -299,7 +306,7 @@ function LigneClient({
   ];
   const dernier = client.dernierVoyage === null ? "" : dateCourte(client.dernierVoyage);
   return (
-    <a className={styles.client} href={adresseVente(depart)}>
+    <a className={styles.client} href={href}>
       <span className={styles.clientTexte}>
         <strong>{client.nom}</strong>
         {suite.map((morceau, i) => (
@@ -321,8 +328,9 @@ function LigneClient({
 }
 
 /**
- * « Mes clients · revendre en 1 touche » : un client par ligne, qui ouvre SiegePay. Le contrat ne dit pas quel départ
- * proposer : on prend celui dont l'heure est dans la proposition, sinon le premier départ de la carte de vente.
+ * « Mes clients · revendre en 1 touche » : un client par ligne, qui ouvre SiegePay avec le départ de la proposition
+ * (`client.departId`). Repli pour une réponse sans lui : le départ de la carte dont l'heure est dans la proposition,
+ * sinon le premier.
  */
 export function CartesClients({
   clients,
@@ -358,7 +366,7 @@ export function CartesClients({
             <LigneClient
               key={`${client.nom}-${i}`}
               client={client}
-              depart={departPourClient(departs, client.proposition)}
+              href={adresseRevente(client, departs)}
             />
           ))
         )

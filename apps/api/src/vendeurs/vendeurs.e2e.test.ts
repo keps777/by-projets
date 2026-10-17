@@ -9,6 +9,7 @@ import {
   DEPART_ALPHA,
   DEPART_ELITE_VIP,
   DEPART_PETIT,
+  DEPART_VENDREDI,
   JOUR,
   creerAppVendeursTest,
   heure,
@@ -258,6 +259,8 @@ describe("vendeurs : l'espace, les départs à vendre et les clients", () => {
           habitude: "chaque vendredi",
           telephoneMasque: "6 70 …",
           proposition: "vendredi 08:30",
+          // Le départ de la proposition : celui que « revendre en 1 touche » ouvre.
+          departId: DEPART_VENDREDI,
           dernierVoyage: null,
         },
         {
@@ -288,6 +291,8 @@ describe("vendeurs : l'espace, les départs à vendre et les clients", () => {
         proposition: null,
         dernierVoyage: douala("2026-10-28", "00:00"),
       });
+      // Sans proposition, pas de départ à ouvrir : la clé est absente.
+      expect(rep.body.clients[0]).not.toHaveProperty("departId");
     });
 
     it("ne propose pas un départ complet ni d'un autre trajet", async () => {
@@ -304,6 +309,7 @@ describe("vendeurs : l'espace, les départs à vendre et les clients", () => {
       const rep = await get("/vendeurs/moi/clients", v.jeton);
       expect(rep.body.clients[0]).toMatchObject({ habitude: "chaque vendredi", proposition: null });
       expect(rep.body.clients[0].dernierVoyage).toBe(douala("2026-10-23", "00:00"));
+      expect(rep.body.clients[0]).not.toHaveProperty("departId");
     });
 
     it("les clients les plus récents d'abord, jamais le numéro complet, jamais les ventes sans billet", async () => {

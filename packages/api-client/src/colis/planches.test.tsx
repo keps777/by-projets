@@ -898,6 +898,8 @@ describe("Vendeur · /(vendeur)/accueil", () => {
         habitude: "chaque vendredi",
         telephoneMasque: "6 70 …",
         proposition: "vendredi 08:30",
+        // Le départ de la proposition : celui de 08:30 de la carte de vente.
+        departId: "dep-alp-dlayde-270106-0830",
         dernierVoyage: null,
       },
       {

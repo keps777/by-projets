@@ -7,6 +7,7 @@ import {
   SchemaCodeRetrait,
   SchemaColisPartenaire,
   SchemaColisProprietaire,
+  SchemaClientVendeur,
   SchemaDevisColis,
   SchemaEtatColis,
   SchemaFcfa,
@@ -286,5 +287,30 @@ describe("tarifs du domaine repris dans les contrats", () => {
   it("le supplément relais et la part du livreur sont des entiers du domaine", () => {
     expect(repartitionRelais()).toEqual({ voyageur: 300, relais: 200, afrimove: 100 });
     expect(repartitionLivraison(1000)).toEqual({ livreur: 700, afrimove: 300 });
+  });
+});
+
+describe("vendeur : départ de la proposition de revente", () => {
+  const client = {
+    nom: "Mme Ebogo",
+    destination: "Yaoundé",
+    habitude: "chaque vendredi",
+    telephoneMasque: "6 70 …",
+    proposition: "vendredi 08:30",
+    dernierVoyage: null,
+  };
+
+  it("un client sans departId reste valide (champ ajouté, facultatif)", () => {
+    expect(SchemaClientVendeur.safeParse(client).success).toBe(true);
+  });
+
+  it("la proposition porte le départ à ouvrir, rendu tel quel", () => {
+    const lu = SchemaClientVendeur.parse({ ...client, departId: "dep-alp-dlayde-270108-0830" });
+    expect(lu.departId).toBe("dep-alp-dlayde-270108-0830");
+  });
+
+  it("le departId est un identifiant non vide", () => {
+    expect(SchemaClientVendeur.safeParse({ ...client, departId: "" }).success).toBe(false);
+    expect(SchemaClientVendeur.safeParse({ ...client, departId: 8 }).success).toBe(false);
   });
 });
