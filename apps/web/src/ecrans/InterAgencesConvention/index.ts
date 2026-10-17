@@ -1,0 +1,1 @@
+export { EcranInterAgencesConvention } from "./EcranInterAgencesConvention";
