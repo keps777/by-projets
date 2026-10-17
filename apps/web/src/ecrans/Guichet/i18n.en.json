@@ -1,0 +1,54 @@
+{
+  "agence": {
+    "titre": "",
+    "sousTitre": ""
+  },
+  "synchro": {
+    "sync": "",
+    "horsLigne": ""
+  },
+  "compteurs": {
+    "billets": "",
+    "billetsDetail": "",
+    "colis": "",
+    "colisDetail": "",
+    "caisse": "",
+    "caisseDetail": ""
+  },
+  "actions": {
+    "vendre": {
+      "titre": "",
+      "detail": ""
+    },
+    "colis": {
+      "titre": "",
+      "detail": ""
+    },
+    "depot": {
+      "titre": "",
+      "detail": ""
+    },
+    "quai": {
+      "titre": "",
+      "detail": ""
+    },
+    "caisse": {
+      "titre": "",
+      "detail": ""
+    },
+    "cadence": "",
+    "cadenceSansFile": "",
+    "superviseur": ""
+  },
+  "prochain": {
+    "depart_one": "",
+    "depart_other": "",
+    "ouverture": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": "",
+    "erreur": "",
+    "reessayer": ""
+  }
+}
