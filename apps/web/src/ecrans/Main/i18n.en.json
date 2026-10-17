@@ -1,0 +1,81 @@
+{
+  "marque": "",
+  "salutation": "",
+  "salutationSansNom": "",
+  "direct": "",
+  "classes": {
+    "vip": "",
+    "classique": ""
+  },
+  "mode": {
+    "aria": "",
+    "entreVilles": "",
+    "memeVille": ""
+  },
+  "trajet": {
+    "depart": "",
+    "arrivee": "",
+    "changerDepart": "",
+    "changerArrivee": "",
+    "inverser": "",
+    "position": ""
+  },
+  "jour": {
+    "aujourdhui": "",
+    "demain": ""
+  },
+  "filtre": {
+    "toutes": "",
+    "vip": "",
+    "classique": "",
+    "compagnies_one": "",
+    "compagnies_other": "",
+    "resume": "",
+    "preferees_one": "",
+    "preferees_other": ""
+  },
+  "liste": {
+    "titre": "",
+    "onglets": {
+      "tout": "",
+      "bus": "",
+      "covoit": ""
+    },
+    "covoitDetail_one": "",
+    "covoitDetail_other": "",
+    "bus_one": "",
+    "bus_other": "",
+    "covoiturages_one": "",
+    "covoiturages_other": "",
+    "reseauAujourdhui": "",
+    "reseauAutreJour": "",
+    "et": "",
+    "chargement": "",
+    "vide": "",
+    "erreur": "",
+    "reessayer": ""
+  },
+  "raccourcis": {
+    "colis": "",
+    "proche": "",
+    "groupe": "",
+    "course": "",
+    "arret": "",
+    "ussd": ""
+  },
+  "choixVille": {
+    "titreDepart": "",
+    "titreArrivee": "",
+    "fermer": "",
+    "chargement": "",
+    "vide": "",
+    "erreur": "",
+    "reessayer": ""
+  },
+  "choixJour": {
+    "titre": "",
+    "fermer": "",
+    "aujourdhui": "",
+    "demain": ""
+  }
+}
