@@ -1,0 +1,65 @@
+{
+  "marque": "",
+  "salutation": "",
+  "salutationSansNom": "",
+  "direct": "",
+  "mode": {
+    "aria": "",
+    "entreVilles": "",
+    "memeVille": ""
+  },
+  "ville": {
+    "detectee": "",
+    "changer": "",
+    "titreFeuille": "",
+    "fermer": "",
+    "chargement": "",
+    "vide": "",
+    "erreur": "",
+    "reessayer": ""
+  },
+  "champs": {
+    "depart": "",
+    "arrivee": "",
+    "maPosition": "",
+    "inverser": ""
+  },
+  "quand": {
+    "aria": "",
+    "maintenant": "",
+    "dans1h": "",
+    "chaqueMatin": "",
+    "erreur": ""
+  },
+  "liste": {
+    "resume": "",
+    "filtres": {
+      "aria": "",
+      "tout": "",
+      "moto": "",
+      "covoit": "",
+      "bus": ""
+    },
+    "types": {
+      "covoiturage": "",
+      "moto_taxi": "",
+      "bus_ville": ""
+    },
+    "delai": "",
+    "verifiee": "",
+    "chargement": "",
+    "vide": "",
+    "erreur": "",
+    "reessayer": ""
+  },
+  "raccourcis": {
+    "colis": {
+      "titre": "",
+      "detail": ""
+    },
+    "conduis": {
+      "titre": "",
+      "detail": ""
+    }
+  }
+}

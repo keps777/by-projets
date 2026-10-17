@@ -1,0 +1,1 @@
+export { EcranMainVille } from "./EcranMainVille";
