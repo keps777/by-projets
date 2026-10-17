@@ -175,7 +175,7 @@
       "route": "/analyses/bus/lt-207-ab"
     },
     "ConfigLigne": {
-      "route": "/reglages/ligne/dla-yao"
+      "route": "/reglages/ligne/ligne-alp-dlabaf"
     },
     "ComptableRapprochement": {
       "route": "/comptable/rapprochement"
