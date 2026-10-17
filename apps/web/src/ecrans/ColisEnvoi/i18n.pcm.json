@@ -1,0 +1,67 @@
+{
+  "titre": "",
+  "sousTitre": "",
+  "retour": "",
+  "photo": {
+    "aPrendre": "",
+    "lecture": "",
+    "prise": ""
+  },
+  "champs": {
+    "pour": "",
+    "ou": "",
+    "contenu": "",
+    "valeur": ""
+  },
+  "depart": {
+    "titre": "",
+    "sousTitre": "",
+    "gare": "",
+    "aucun": ""
+  },
+  "modes": {
+    "relais": "",
+    "moto": ""
+  },
+  "assurance": {
+    "libelle": "",
+    "detail": "",
+    "sansValeur": "",
+    "regle": ""
+  },
+  "payer": {
+    "libelle": "",
+    "detail": "",
+    "calcul": ""
+  },
+  "prix": {
+    "mots": {
+      "port": "",
+      "frais": "",
+      "assurance": "",
+      "relais": "",
+      "livraison": ""
+    },
+    "interdits": ""
+  },
+  "messages": {
+    "saisie": "",
+    "photoEchec": "",
+    "aucunDepart": "",
+    "departFerme": "",
+    "devis": "",
+    "echec": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
