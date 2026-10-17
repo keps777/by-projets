@@ -1,0 +1,73 @@
+{
+  "titre": "",
+  "retour": "",
+  "aPayer": "",
+  "unite": "",
+  "question": "",
+  "detail": {
+    "offertAvec": "",
+    "equivalent": ""
+  },
+  "garantie": {
+    "covoiturage": "",
+    "compagnie": ""
+  },
+  "payer": {
+    "libelle": "",
+    "detail": {
+      "mtn_momo": "",
+      "orange_money": "",
+      "carte": ""
+    }
+  },
+  "proche": {
+    "partage": {
+      "titre": "",
+      "message": ""
+    }
+  },
+  "messages": {
+    "attente": "",
+    "consigne": {
+      "mtn_momo": "",
+      "orange_money": "",
+      "carte": ""
+    },
+    "banque": "",
+    "echec": "",
+    "delai": "",
+    "demarrage": "",
+    "dejaEnCours": "",
+    "carteIndisponible": "",
+    "lienEchoue": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "indisponible": {
+      "titre": "",
+      "detail": ""
+    },
+    "payee": {
+      "titre": "",
+      "detail": "",
+      "ouvrir": ""
+    },
+    "expiree": {
+      "titre": "",
+      "detail": ""
+    },
+    "annulee": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}

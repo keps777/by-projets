@@ -1,0 +1,73 @@
+{
+  "titre": "Paiement",
+  "retour": "Retour",
+  "aPayer": "À payer",
+  "unite": "F",
+  "question": "Avec quoi ?",
+  "detail": {
+    "offertAvec": "(offerts avec {{code}})",
+    "equivalent": "Équivalent en {{devise}}"
+  },
+  "garantie": {
+    "covoiturage": "Paiement traité par un établissement agréé. Le prix du trajet va au conducteur à l'arrivée ; seuls les frais vont à AfriMove.",
+    "compagnie": "Paiement traité par un établissement agréé. Le prix du billet va à la compagnie ; seuls les frais vont à AfriMove."
+  },
+  "payer": {
+    "libelle": "Payer {{montant}} F",
+    "detail": {
+      "mtn_momo": "confirmation MoMo · billet par SMS en 10 s",
+      "orange_money": "confirmation Orange Money · billet par SMS en 10 s",
+      "carte": "authentification de la banque · billet par SMS en 10 s"
+    }
+  },
+  "proche": {
+    "partage": {
+      "titre": "Payer mon voyage",
+      "message": "Peux-tu payer mon voyage ? {{libelle}} · {{montant}} F. Paiement sécurisé ici :"
+    }
+  },
+  "messages": {
+    "attente": "Demande envoyée.",
+    "consigne": {
+      "mtn_momo": "Confirme le paiement sur ton téléphone avec ton code MoMo.",
+      "orange_money": "Compose #150# ou confirme dans l'app Orange avec ton code.",
+      "carte": "Authentifie le paiement auprès de ta banque."
+    },
+    "banque": "Ouvrir la page de ma banque",
+    "echec": "Le paiement n'a pas abouti. Rien n'a été débité.",
+    "delai": "Le délai de confirmation est dépassé. Rien n'a été débité.",
+    "demarrage": "Le paiement n'a pas pu démarrer. Réessaie.",
+    "dejaEnCours": "Un paiement est déjà en cours pour cette commande. Confirme-le sur ton téléphone, puis patiente quelques instants.",
+    "carteIndisponible": "La saisie de la carte n'est pas disponible pour le moment. Choisis un autre moyen de paiement.",
+    "lienEchoue": "Le lien pour ton proche n'a pas pu être créé. Réessaie."
+  },
+  "etats": {
+    "chargement": "Chargement du paiement",
+    "vide": {
+      "titre": "Cette commande n'existe plus",
+      "detail": "Reviens en arrière pour refaire ta réservation."
+    },
+    "indisponible": {
+      "titre": "Paiement en ligne indisponible",
+      "detail": "Le paiement en ligne est momentanément indisponible. Réserve ta place, puis paie au guichet de la gare ou en MoMo marchand de l'agence."
+    },
+    "payee": {
+      "titre": "Cette commande est déjà payée",
+      "detail": "Ton billet t'attend.",
+      "ouvrir": "Ouvrir mon billet"
+    },
+    "expiree": {
+      "titre": "Le délai pour payer est dépassé",
+      "detail": "Les places ne sont plus gardées. Reviens en arrière pour refaire ta réservation."
+    },
+    "annulee": {
+      "titre": "Cette commande a été annulée",
+      "detail": "Reviens en arrière pour refaire ta réservation."
+    },
+    "erreur": {
+      "titre": "Impossible de charger ce paiement",
+      "detail": "Vérifie ta connexion, puis réessaie.",
+      "reessayer": "Réessayer"
+    }
+  }
+}
