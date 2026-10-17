@@ -1,5 +1,5 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { EcranCovoitVille } from "@/ecrans/CovoitVille";
 
 export default function Page() {
-  return <EcranVide planche="CovoitVille" />;
+  return <EcranCovoitVille />;
 }
