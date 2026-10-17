@@ -1,0 +1,62 @@
+{
+  "titre": "À plusieurs",
+  "sousTitre": "Places côte à côte, bus entier, cagnotte entre amis",
+  "retour": "Retour",
+  "modes": {
+    "groupe": "Groupe · 2 à 12",
+    "bus_entier": "Bus entier",
+    "cagnotte": "Cagnotte",
+    "nom": "Mode de voyage"
+  },
+  "depart": {
+    "trajet": "{{trajet}} · {{jour}}",
+    "heure": "{{heure}} {{compagnie}}"
+  },
+  "voyageurs": {
+    "nom": "Nombre de voyageurs",
+    "moins": "Moins de voyageurs",
+    "plus": "Plus de voyageurs",
+    "legende": "voyageurs · {{nombre}} places côte à côte"
+  },
+  "reservation": "Sièges {{premier}} à {{dernier}} réservés ensemble, {{minutes}} min pour payer. Les billets partent à chaque numéro.",
+  "cagnotte": {
+    "titre": "Qui paie quoi",
+    "calcul": "{{nombre}} × {{prix}} = {{total}}",
+    "moi": "moi",
+    "statut": {
+      "paye": "payé",
+      "lien_envoye": "lien envoyé",
+      "en_attente": "en attente"
+    }
+  },
+  "actions": {
+    "whatsapp": "Partager sur WhatsApp",
+    "bus": "Louer un bus de {{places}} · devis"
+  },
+  "payer": {
+    "ma_part": "Payer ma part · {{montant}} F",
+    "tout": "ou tout payer pour le groupe : {{montant}} F"
+  },
+  "partage": "Viens voyager avec nous : {{trajet}}, {{jour}} à {{heure}}. Paie ta part de {{part}} F ici : {{lien}}",
+  "messages": {
+    "blocageTermine": "Le blocage des sièges est terminé. Reviens à l'accueil pour recommencer.",
+    "miseAJour": "Le groupe n'a pas pu être mis à jour. Réessaie.",
+    "siegesPris": "Ces sièges ne sont plus bloqués pour toi. Change le nombre de voyageurs pour les réserver à nouveau.",
+    "paiement": "Le paiement n'a pas pu démarrer. Réessaie.",
+    "devisEnvoye": "Demande de devis envoyée pour un bus de {{places}}. Réponse de la compagnie avant {{heure}}.",
+    "devisChiffre": "Devis pour un bus de {{places}} : {{montant}} F.",
+    "devisEchec": "La demande de devis n'a pas abouti. Réessaie."
+  },
+  "etats": {
+    "chargement": "Chargement du groupe",
+    "vide": {
+      "titre": "Aucun départ choisi",
+      "detail": "Choisis ton bus à l'accueil, puis reviens ici pour voyager à plusieurs."
+    },
+    "erreur": {
+      "titre": "Impossible de charger le groupe",
+      "detail": "Vérifie ta connexion, puis réessaie.",
+      "reessayer": "Réessayer"
+    }
+  }
+}
