@@ -34,7 +34,9 @@
     "rxjs": "^7.8.2"
   },
   "devDependencies": {
+    "@afrimove/contrats": "workspace:*",
     "@afrimove/domain": "workspace:*",
+    "@afrimove/sync": "workspace:*",
     "@nestjs/cli": "^11.0.24",
     "@nestjs/schematics": "^11.1.0",
     "@nestjs/testing": "^11.2.7",
@@ -44,6 +46,7 @@
     "@types/pg": "^8.23.1",
     "@types/supertest": "^7.2.1",
     "eslint": "^10.13.0",
+    "fake-indexeddb": "6.2.6",
     "prettier": "3.6.2",
     "prisma": "7.10.1",
     "supertest": "^7.3.1",
