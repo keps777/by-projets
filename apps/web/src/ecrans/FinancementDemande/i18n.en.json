@@ -1,0 +1,63 @@
+{
+  "entete": {
+    "retour": "",
+    "titre": "",
+    "avance": "",
+    "partenaireAbsent": "",
+    "numero": ""
+  },
+  "statut": {
+    "enCours": "",
+    "verse": "",
+    "refuse": "",
+    "retire": ""
+  },
+  "demande": {
+    "devise": "",
+    "rembourse": "",
+    "remboursePart": "",
+    "duree": "",
+    "dureeValeur_one": "",
+    "dureeValeur_other": "",
+    "cout": "",
+    "coutPartenaire": "",
+    "coutAbsent": ""
+  },
+  "pieces": {
+    "titre": "",
+    "aide": ""
+  },
+  "suivi": {
+    "titre": ""
+  },
+  "mention": {
+    "base": "",
+    "retrait": ""
+  },
+  "actions": {
+    "retirer": "",
+    "retour": "",
+    "retourDetail": ""
+  },
+  "signature": {
+    "sousTitre": "",
+    "fermer": "",
+    "clavier": ""
+  },
+  "retrait": {
+    "impossible": "",
+    "echec": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
