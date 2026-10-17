@@ -1,5 +1,5 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { EcranAnalysesLigne } from "@/ecrans/AnalysesLigne";
 
 export default function Page() {
-  return <EcranVide planche="AnalysesLigne" />;
+  return <EcranAnalysesLigne />;
 }
