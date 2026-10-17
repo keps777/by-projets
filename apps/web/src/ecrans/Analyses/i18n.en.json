@@ -1,0 +1,47 @@
+{
+  "entete": {
+    "titre": "",
+    "sousTitre": "",
+    "gares_one": "",
+    "gares_other": "",
+    "retour": "",
+    "periode": ""
+  },
+  "periodes": {
+    "semaine": "",
+    "mois": "",
+    "trimestre": "",
+    "annee": ""
+  },
+  "recette": {
+    "titre": {
+      "semaine": "",
+      "mois": "",
+      "trimestre": "",
+      "annee": ""
+    }
+  },
+  "lignes": {
+    "titre": "",
+    "mention_one": "",
+    "mention_other": "",
+    "colis": "",
+    "aucune": ""
+  },
+  "bus": {
+    "titre": "",
+    "mention": "",
+    "trajets_one": "",
+    "trajets_other": "",
+    "aucun": ""
+  },
+  "pied": {
+    "exporter": "",
+    "assistant": ""
+  },
+  "etats": {
+    "vide": "",
+    "erreur": "",
+    "reessayer": ""
+  }
+}
