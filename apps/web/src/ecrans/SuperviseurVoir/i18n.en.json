@@ -1,0 +1,93 @@
+{
+  "titre": "",
+  "retour": "",
+  "sousTitre": "",
+  "duree": {
+    "minutes": "",
+    "heures": "",
+    "jours_one": "",
+    "jours_other": ""
+  },
+  "badge": "",
+  "billet": {
+    "depart": "",
+    "siege": "",
+    "voyageur": "",
+    "piece": "",
+    "vendu": "",
+    "venteDetail": "",
+    "mode": {
+      "cash": "",
+      "momo": "",
+      "orange_money": ""
+    },
+    "motif": "",
+    "motifValeur": ""
+  },
+  "verifications": {
+    "titre": "",
+    "scanne": {
+      "non": "",
+      "oui": ""
+    },
+    "siege": {
+      "libre": "",
+      "bloque": ""
+    },
+    "delai": {
+      "integral": "",
+      "retenue": ""
+    },
+    "frequence": "",
+    "client": {
+      "present": "",
+      "absent": "",
+      "pieceVue": "",
+      "pieceNonVue": "",
+      "aRendre": ""
+    }
+  },
+  "choix": {
+    "rembourser": "",
+    "reporter": "",
+    "avoir": ""
+  },
+  "pin": {
+    "titre": "",
+    "aide": "",
+    "regle": {
+      "annulation": "",
+      "report": ""
+    }
+  },
+  "actions": {
+    "refuser": "",
+    "annuler": {
+      "rembourser": "",
+      "avoir": "",
+      "reporter": "",
+      "detail": ""
+    }
+  },
+  "message": {
+    "pinRequis": "",
+    "pinSaisi": "",
+    "pinIncorrect_one": "",
+    "pinIncorrect_other": "",
+    "pinBloque": "",
+    "echec": "",
+    "dejaTraitee": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}

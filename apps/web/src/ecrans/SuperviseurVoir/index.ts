@@ -1,0 +1,1 @@
+export { EcranSuperviseurVoir } from "./EcranSuperviseurVoir";
