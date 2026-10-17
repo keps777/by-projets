@@ -3,6 +3,12 @@ import type { voyageur as c } from "@afrimove/contrats";
 import { ErreurHttp } from "../../infra/erreurs";
 import { implementer, simulerFlux } from "../../infra/scenarios";
 import type { FluxMock, ImplementationMock } from "../../infra/scenarios";
+import {
+  OP_CHAUFFEUR_BUS,
+  OP_COLIS_DU_BILLET,
+  OP_NE_PLUS_PREVENIR_PROCHE,
+  OP_SIGNALER_TRAJET,
+} from "../direct";
 import { OP_CREER_COMMANDE, OP_PROCHES } from "../operations";
 import {
   CANAL_POSITION_BUS,
@@ -79,6 +85,7 @@ export function mockDirect(source: EcranSource): {
   const minutesAvant = entier(/(\d+) min avant/.exec(d.prevenir.detail)?.[1] ?? "15");
   const gareArrivee = /avant (\S+)\s*$/.exec(d.prevenir.detail)?.[1] ?? "";
   let prevenirActif = false;
+  let signalements = 0;
 
   const suivi = (): c.SuiviBus => ({
     billetId: d.billet._billetId,
@@ -145,6 +152,30 @@ export function mockDirect(source: EcranSource): {
         minutesAvantArrivee: p.minutesAvantArrivee ?? minutesAvant,
       };
     }),
+    implementer(OP_NE_PLUS_PREVENIR_PROCHE, (p): c.ResultatPrevenirProche => {
+      prevenirActif = false;
+      return {
+        billetId: p.billetId,
+        procheId: p.procheId,
+        actif: false,
+        minutesAvantArrivee: minutesAvant,
+      };
+    }),
+    implementer(OP_SIGNALER_TRAJET, (p, ctx) => ({
+      id: `signalement-${++signalements}`,
+      billetId: p.billetId,
+      motif: p.motif,
+      // Le signalement part à la gare de départ du bus (première étape de la frise).
+      transmisA: etapes[0]?.arret ?? "",
+      creeA: ctx.horloge.iso(),
+    })),
+    // Le chauffeur de la feuille de route du LT 412 AB (planche Chauffeur) : Mbarga, numéro du monde commun.
+    implementer(OP_CHAUFFEUR_BUS, () => ({ nom: "Mbarga", telephone: "+237677000024" })),
+    // Le colis pour Maman du monde commun (C-DLA-270105-0017), celui que montrent Main et ColisCode.
+    implementer(OP_COLIS_DU_BILLET, (p) => ({
+      billetId: p.billetId,
+      colisId: "colis-c-dla-270105-0017",
+    })),
   ];
   return { operations, flux };
 }

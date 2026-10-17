@@ -1,0 +1,1 @@
+export { EcranDirect } from "./EcranDirect";

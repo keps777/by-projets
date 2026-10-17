@@ -1,5 +1,5 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { EcranDirect } from "@/ecrans/Direct";
 
 export default function Page() {
-  return <EcranVide planche="Direct" />;
+  return <EcranDirect />;
 }
