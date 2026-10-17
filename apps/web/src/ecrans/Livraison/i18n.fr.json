@@ -1,0 +1,70 @@
+{
+  "retour": "Retour",
+  "fermer": "Fermer",
+  "statut": "EN LIVRAISON",
+  "destinataire": "le destinataire",
+  "carte": {
+    "libelle_one": "Carte : le livreur est à {{count}} minute de chez {{nom}}",
+    "libelle_other": "Carte : le livreur est à {{count}} minutes de chez {{nom}}",
+    "depart": "{{lieu}} · retiré {{heure}}",
+    "livreur": "{{prenom}} · {{minutes}} min"
+  },
+  "arrivee": {
+    "colis": "colis {{reference}}",
+    "poids": "{{poids}} kg · assuré",
+    "poidsNonAssure": "{{poids}} kg · non assuré"
+  },
+  "livreur": {
+    "titre": "{{nom}} · livreur moto",
+    "verifie": "vérifié",
+    "reputation_one": "{{note}} ★ · {{count}} livraison",
+    "reputation_other": "{{note}} ★ · {{count}} livraisons",
+    "engin": "{{moto}} · gilet AfriMove n° {{gilet}}",
+    "appeler": "Appeler {{prenom}}",
+    "appelIndisponible": "Le numéro de {{prenom}} n'est pas disponible pour le moment."
+  },
+  "remise": {
+    "libelle": "À la remise",
+    "aLeCode": "{{nom}} a le code",
+    "pasLeCode": "{{nom}} n'a pas encore le code",
+    "debut": "{{prenom}} demande le code ",
+    "fin": " et regarde la pièce. Il prend une photo du colis remis. Tu reçois la photo, {{nom}} aussi. Si elle est absente, il attend {{minutes}} min puis dépose chez {{relais}}."
+  },
+  "partager": {
+    "libelle": "Partager le suivi à {{nom}}",
+    "titre": "Partager le suivi",
+    "champ": "Numéro de {{nom}}",
+    "envoyer": "Envoyer le lien",
+    "invalide": "Entre un numéro à 9 chiffres.",
+    "envoye": "Lien de suivi envoyé au {{numero}}.",
+    "echec": "Le suivi n'a pas pu être envoyé. Réessaie."
+  },
+  "adresse": {
+    "libelle": "Changer l'adresse",
+    "champ": "Nouvelle adresse",
+    "valider": "Valider",
+    "vide": "Écris la nouvelle adresse.",
+    "changee": "Adresse changée : {{adresse}}.",
+    "livreurPrevenu": " Le livreur est prévenu.",
+    "echec": "L'adresse n'a pas pu être changée. Réessaie."
+  },
+  "pied": {
+    "livraison": "Livraison {{prix}} F · {{etat}} · {{part}} F pour {{prenom}} à la remise",
+    "payee": "payée",
+    "aPayer": "à payer",
+    "assure": "assuré",
+    "nonAssure": "non assuré"
+  },
+  "etats": {
+    "chargement": "Chargement de la livraison",
+    "vide": {
+      "titre": "Pas de livraison en cours",
+      "detail": "Ce colis n'est pas en livraison moto, ou il n'est pas à toi."
+    },
+    "erreur": {
+      "titre": "Impossible de charger la livraison",
+      "detail": "Vérifie ta connexion, puis réessaie.",
+      "reessayer": "Réessayer"
+    }
+  }
+}

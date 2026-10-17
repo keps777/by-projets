@@ -1,0 +1,70 @@
+{
+  "retour": "",
+  "fermer": "",
+  "statut": "",
+  "destinataire": "",
+  "carte": {
+    "libelle_one": "",
+    "libelle_other": "",
+    "depart": "",
+    "livreur": ""
+  },
+  "arrivee": {
+    "colis": "",
+    "poids": "",
+    "poidsNonAssure": ""
+  },
+  "livreur": {
+    "titre": "",
+    "verifie": "",
+    "reputation_one": "",
+    "reputation_other": "",
+    "engin": "",
+    "appeler": "",
+    "appelIndisponible": ""
+  },
+  "remise": {
+    "libelle": "",
+    "aLeCode": "",
+    "pasLeCode": "",
+    "debut": "",
+    "fin": ""
+  },
+  "partager": {
+    "libelle": "",
+    "titre": "",
+    "champ": "",
+    "envoyer": "",
+    "invalide": "",
+    "envoye": "",
+    "echec": ""
+  },
+  "adresse": {
+    "libelle": "",
+    "champ": "",
+    "valider": "",
+    "vide": "",
+    "changee": "",
+    "livreurPrevenu": "",
+    "echec": ""
+  },
+  "pied": {
+    "livraison": "",
+    "payee": "",
+    "aPayer": "",
+    "assure": "",
+    "nonAssure": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
