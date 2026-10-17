@@ -1,0 +1,590 @@
+/*
+ * Planche « Livreur » (docs/maquettes-v3/Livreur.dc.html). Les valeurs viennent de la maquette ; les couleurs,
+ * polices et espacements sont les variables --am-* de @afrimove/design. La planche ne pose `box-sizing: border-box`
+ * que sur son conteneur : ses blocs gardent donc leurs dimensions en contenu, bord et marge en plus.
+ * Surcharges du kit (le kit n'est pas modifié) : le sélecteur est doublé (`.x.x`) pour passer devant la règle d'un
+ * seul sélecteur du composant.
+ * Zones tactiles : la planche dessine des cibles de 40 px (bouton Disponible, Retirer) ou de 12 px (lien d'invitation) ;
+ * un pseudo-élément transparent les porte à 44 px sans bouger le dessin.
+ */
+
+/* Titre de l'écran pour les lecteurs d'écran : masqué visuellement. */
+.titreEcran {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ------------------------------------------------------------------ en-tête */
+
+.entete {
+  position: relative;
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--am-space-16) var(--am-gutter) var(--am-space-8);
+}
+
+.identite {
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-10);
+  min-width: 0;
+}
+
+/* Rond de 42 px + bord de 2 px (la planche est en box-sizing: content-box). */
+.avatar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  box-sizing: content-box;
+  width: 42px;
+  height: 42px;
+  border: 2px solid var(--am-bleu);
+  border-radius: 21px;
+  background: var(--am-surface-2);
+  color: var(--am-bleu);
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-15);
+  font-weight: 800;
+}
+
+.identiteTextes {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: var(--am-lh-compacte);
+}
+
+.nom {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-17);
+  font-weight: 800;
+}
+
+.detail {
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-11);
+}
+
+.droite {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--am-space-4);
+}
+
+/* Disponible : pastille verte, point qui pulse ; indisponible : même forme en gris. */
+.disponibilite {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--am-space-8);
+  min-height: 40px;
+  margin: 0;
+  padding: 0 var(--am-space-12);
+  border: 1px solid var(--am-vert);
+  border-radius: var(--am-radius-pill);
+  background: var(--am-vert-fond);
+  color: var(--am-vert);
+  font-family: inherit;
+  font-size: var(--am-fs-12);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.disponibilite[aria-pressed="false"] {
+  border-color: var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie-2);
+}
+
+.point {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--am-vert);
+  animation: pulse var(--am-pulse-duration) infinite;
+}
+
+.disponibilite[aria-pressed="false"] .point {
+  background: var(--am-gris);
+  animation: none;
+}
+
+.disponibilite::after,
+.inviter::after,
+.retirer::after {
+  content: "";
+  position: absolute;
+}
+
+/* 40 px -> 44 px : 2 px de zone tactile au-dessus et au-dessous. */
+.disponibilite::after {
+  inset: -2px 0;
+}
+
+.inviter {
+  position: relative;
+  color: var(--am-bleu);
+  font-size: var(--am-fs-10);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.inviter:hover {
+  color: var(--am-ambre);
+}
+
+/* Lien de 12 px : la zone s'étend vers le bas (le haut touche le bouton Disponible) jusqu'à 44 px. */
+.inviter::after {
+  inset: -2px -12px -30px;
+  z-index: 1;
+}
+
+.disponibilite:focus-visible,
+.inviter:focus-visible,
+.passer:focus-visible,
+.accepter:focus-visible,
+.retirer:focus-visible,
+.reessayer:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------ corps */
+
+/* Corps : 4 px sous l'en-tête, 10 px entre les blocs. Un message qui s'ajoute fait défiler, sans barre. */
+.corps.corps {
+  gap: var(--am-space-10);
+  padding: var(--am-space-4) var(--am-gutter) 0;
+  overflow: hidden auto;
+  scrollbar-width: none;
+}
+
+.corps.corps::-webkit-scrollbar {
+  display: none;
+}
+
+.message {
+  flex: none;
+  margin: 0;
+  padding: var(--am-space-10) var(--am-space-14);
+  border: 1px solid var(--am-vert-bord);
+  border-radius: var(--am-radius-12);
+  background: var(--am-vert-fond);
+  color: var(--am-craie);
+  font-size: var(--am-fs-13);
+  line-height: var(--am-lh-normale);
+}
+
+.message[role="alert"] {
+  border-color: var(--am-rouge);
+  background: var(--am-rouge-fond);
+}
+
+/* ------------------------------------------------------------------ mission */
+
+.mission {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--am-space-10);
+  padding: var(--am-space-14);
+  border: 1px solid var(--am-bleu);
+  border-radius: var(--am-radius-18);
+  background: var(--am-surface);
+}
+
+.missionEntete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.etiquetteBleue {
+  color: var(--am-bleu);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+}
+
+.decompte {
+  color: var(--am-ambre);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-13);
+  font-weight: 700;
+}
+
+.missionCorps {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--am-space-10);
+  align-items: center;
+}
+
+.trajet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-4);
+  line-height: 1.2;
+}
+
+.trajetTitre {
+  font-size: var(--am-fs-14);
+  font-weight: 700;
+}
+
+.trajetDetail {
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+}
+
+.gain {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: var(--am-lh-plein);
+}
+
+.gainMontant {
+  color: var(--am-vert);
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-28);
+  font-weight: 800;
+}
+
+.gainLibelle {
+  margin-top: var(--am-space-2);
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-10);
+}
+
+.actionsMission {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--am-space-8);
+}
+
+.passer {
+  min-height: 54px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-14);
+  background: var(--am-nuit);
+  color: var(--am-craie-2);
+  font-family: inherit;
+  font-size: var(--am-fs-14);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.accepter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  border-radius: var(--am-radius-14);
+  background: var(--am-vert);
+  color: var(--am-nuit);
+  font-size: var(--am-fs-15);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.accepter:hover {
+  color: var(--am-nuit);
+}
+
+/* Pas de mission (aucune proposée, ou indisponible) : même place que la carte, bord discret. */
+.aucune {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--am-space-4);
+  padding: var(--am-space-14);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-18);
+  background: var(--am-surface);
+}
+
+.aucuneTitre {
+  margin: 0;
+  font-size: var(--am-fs-14);
+  font-weight: 700;
+}
+
+.aucuneDetail {
+  margin: 0;
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+  line-height: var(--am-lh-normale);
+}
+
+/* Titres de bloc (« Les 3 règles », « Mes pièces ») : des h2 qui gardent le dessin de l'étiquette. */
+.etiquetteTitre {
+  margin: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+
+/* ------------------------------------------------------------------ règles */
+
+.regles {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--am-space-6);
+  padding: var(--am-space-12) var(--am-space-14);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-16);
+  background: var(--am-profond);
+}
+
+.etiquetteAmbre {
+  display: flex;
+  justify-content: space-between;
+  color: var(--am-ambre);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+}
+
+.reglesTexte {
+  margin: 0;
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-13);
+  line-height: var(--am-lh-aere);
+}
+
+.reglesTexte strong {
+  color: var(--am-craie);
+}
+
+/* ------------------------------------------------------------------ bilan */
+
+.bilan {
+  display: grid;
+  flex: none;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--am-space-6);
+}
+
+.tuile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-2);
+  padding: var(--am-space-10);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-12);
+  background: var(--am-surface);
+}
+
+.tuileEtiquette {
+  color: var(--am-gris);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette-serree);
+  text-transform: uppercase;
+}
+
+.tuileValeur {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-22);
+  font-weight: 800;
+  line-height: var(--am-lh-plein);
+}
+
+.tuileValeur[data-ton="vert"] {
+  color: var(--am-vert);
+}
+
+.tuileDetail {
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-10);
+}
+
+/* ------------------------------------------------------------------ pièces */
+
+.pieces {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-16);
+}
+
+.piecesEntete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--am-space-8) var(--am-space-14);
+  background: var(--am-profond);
+  color: var(--am-ambre);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+}
+
+.piecesEtat[data-ton="vert"] {
+  color: var(--am-vert);
+}
+
+.piecesListe {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  background: var(--am-surface);
+  font-size: var(--am-fs-12);
+  list-style: none;
+}
+
+.piece {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-2);
+  padding: var(--am-space-10) var(--am-space-14);
+}
+
+.piece + .piece {
+  border-left: 1px solid var(--am-surface-2);
+}
+
+.pieceLibelle {
+  color: var(--am-craie-2);
+}
+
+.pieceValeur {
+  font-weight: 700;
+}
+
+.pieceValeur[data-ton="vert"] {
+  color: var(--am-vert);
+}
+
+.pieceValeur[data-ton="ambre"] {
+  color: var(--am-ambre);
+}
+
+/* ------------------------------------------------------------------ pied */
+
+.pied.pied {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0;
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+}
+
+.retirer {
+  position: relative;
+  flex: none;
+  min-height: 40px;
+  margin: 0;
+  padding: 0 var(--am-space-14);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-10);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-family: inherit;
+  font-size: var(--am-fs-12);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.retirer::after {
+  inset: -2px 0;
+}
+
+/* ------------------------------------------------------------------ états */
+
+.etat {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--am-space-8);
+  text-align: center;
+}
+
+.etatTitre {
+  margin: 0;
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-18);
+  font-weight: 800;
+  letter-spacing: var(--am-ls-sous-titre);
+}
+
+.etatDetail {
+  margin: 0;
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-13);
+}
+
+.reessayer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  margin-top: var(--am-space-8);
+  padding: 0 var(--am-space-14);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-12);
+  background: var(--am-surface);
+  color: var(--am-craie-2);
+  font-family: inherit;
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Squelettes : les blocs de la planche en gris qui pulse, aux mêmes dimensions que les vrais. */
+.squelette {
+  flex: none;
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-16);
+  background: var(--am-surface);
+}
+
+.squeletteAvatar {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 21px;
+  background: var(--am-surface-2);
+}
+
+.squeletteMission {
+  height: 160px;
+}
+
+.squeletteRegles {
+  height: 90px;
+}
+
+.squeletteBilan {
+  height: 74px;
+}
+
+.squeletteMouvement {
+  height: 64px;
+}

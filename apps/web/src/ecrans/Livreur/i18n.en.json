@@ -1,0 +1,62 @@
+{
+  "disponible": "",
+  "indisponible": "",
+  "inviter": "",
+  "identite": "",
+  "echecDisponibilite": "",
+  "mission": {
+    "titre": "",
+    "trajet": "",
+    "detail": "",
+    "gain": "",
+    "passer": "",
+    "accepter": "",
+    "expiree": "",
+    "dejaPrise": "",
+    "echecAccepter": "",
+    "echecPasser": "",
+    "aucune": {
+      "titre": "",
+      "detail": ""
+    },
+    "horsLigne": {
+      "titre": "",
+      "detail": ""
+    }
+  },
+  "bilan": {
+    "aujourdhui": "",
+    "gagne": "",
+    "semaine": "",
+    "livraisons_one": "",
+    "livraisons_other": "",
+    "total_one": "",
+    "total_other": ""
+  },
+  "pieces": {
+    "titre": "",
+    "aJour": "",
+    "aVerifier": ""
+  },
+  "retrait": {
+    "libelle": "",
+    "action": "",
+    "seuil": "",
+    "seuilServeur": "",
+    "fait": "",
+    "echec": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": "",
+      "devenir": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
