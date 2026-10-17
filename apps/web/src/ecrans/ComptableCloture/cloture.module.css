@@ -1,0 +1,382 @@
+/*
+ * Mois clôturé et envoyé au cabinet (ComptableCloture.dc.html). Couleurs, polices, tailles et espacements relevés dans
+ * la planche ; les couleurs, polices et espacements sont les variables --am-* de @afrimove/design.
+ *
+ * Dans la planche, seul le conteneur racine pose `box-sizing: border-box` : la carte des totaux, la liste des fichiers
+ * et l'aperçu sont en `content-box`, leurs boutons de pied aussi. On reprend ce que la planche dessine réellement.
+ */
+
+/*
+ * Colonne de la hauteur de la fenêtre : la planche est une colonne de 844 px dont le corps prend la place restante, le
+ * pied reste en bas. Le kit laisse l'écran grandir avec son contenu (`min-height`) ; ici le corps défile dans l'écran.
+ */
+.ecran {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  height: 100dvh;
+}
+
+/* Corps : 2 px au-dessus du premier bloc (le kit met 4 px), 8 px entre les blocs (le kit met 10 px). */
+.corps.corps {
+  gap: var(--am-space-8);
+  padding-top: var(--am-space-2);
+  overflow-y: auto;
+}
+
+/* Pied : deux boutons côte à côte, 8 px au-dessus (le kit met 10 px). */
+.pied.pied {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--am-space-8);
+  padding-top: var(--am-space-8);
+}
+
+/* ---------------------------------------------------------------- en-tête */
+
+/* Pastille verte « mois clôturé » : 38 px, coche Nuit. */
+.pastille {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 19px;
+  background: var(--am-vert);
+  color: var(--am-nuit);
+}
+
+/* ---------------------------------------------------------------- total encaissé */
+
+.encaisse {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--am-space-6);
+  padding: var(--am-space-12) var(--am-space-14);
+  border: 1px solid var(--am-vert);
+  border-radius: var(--am-radius-16);
+  background: var(--am-vert-fond);
+}
+
+/* Avant la clôture, la carte n'est pas encore verte : elle prend le ton des cartes de l'écran. */
+.neutre {
+  border-color: var(--am-trait);
+  background: var(--am-surface);
+}
+
+.encaisseHaut {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.total {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-26);
+  font-weight: 800;
+  letter-spacing: var(--am-ls-titre);
+  line-height: 1;
+}
+
+.libelleTotal {
+  font-size: var(--am-fs-12);
+  color: var(--am-craie-2);
+}
+
+.repartition {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--am-space-6);
+  font-size: var(--am-fs-11);
+  color: var(--am-craie-2);
+}
+
+.repartition strong {
+  color: var(--am-craie);
+}
+
+.repartition .ecartNul {
+  color: var(--am-vert);
+}
+
+.repartition .ecartOuvert {
+  color: var(--am-ambre);
+}
+
+.droite {
+  text-align: right;
+}
+
+.verrou {
+  font-size: var(--am-fs-11);
+  line-height: 1.35;
+  color: var(--am-craie-2);
+}
+
+/* ---------------------------------------------------------------- fichiers envoyés */
+
+.fichiers {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-16);
+}
+
+.fichiersTete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px var(--am-space-12);
+  background: var(--am-profond);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+  color: var(--am-ambre);
+}
+
+.recu {
+  color: var(--am-vert);
+}
+
+.listeFichiers {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fichier {
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  gap: var(--am-space-10);
+  align-items: center;
+  padding: var(--am-space-8) var(--am-space-12);
+  background: var(--am-surface);
+  font-size: var(--am-fs-12);
+}
+
+.fichier + .fichier {
+  border-top: 1px solid var(--am-surface-2);
+}
+
+.envoye {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  background: var(--am-vert);
+  color: var(--am-nuit);
+}
+
+/* Mois pas encore clôturé : rien n'est parti, le rond est vide. */
+.enAttente {
+  box-sizing: border-box;
+  border: 1px solid var(--am-trait);
+  background: transparent;
+}
+
+.fichierTextes {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: var(--am-lh-serree);
+}
+
+.fichierNom {
+  font-weight: 700;
+}
+
+.fichierDetail {
+  font-size: var(--am-fs-11);
+  color: var(--am-craie-2);
+}
+
+.fichierFormat {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-11);
+  color: var(--am-craie-2);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------- aperçu du journal des ventes */
+
+.apercu {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--am-space-4);
+  padding: var(--am-space-10) var(--am-space-12);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-14);
+  background: var(--am-profond);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  line-height: var(--am-lh-large);
+  color: var(--am-craie-2);
+  /* Les lignes passent à la ligne aux traits d'union, comme dans la planche ; la ligne d'en-tête, trop longue, défile. */
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.apercu::-webkit-scrollbar {
+  display: none;
+}
+
+.apercu:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+.apercuTitre {
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+  color: var(--am-ambre);
+}
+
+.apercuEntete {
+  color: var(--am-gris);
+}
+
+/* ---------------------------------------------------------------- pied */
+
+/* « Revoir les exports » : 52 px de contenu plus le bord, rayon 14 (le kit dessine le bouton secondaire à 46 px, rayon 12). */
+.revoir.revoir {
+  box-sizing: content-box;
+  min-height: 52px;
+  padding: 0;
+  border-radius: var(--am-radius-14);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-weight: 600;
+}
+
+.revoir.revoir:hover {
+  color: var(--am-craie);
+}
+
+/* « Retour au tableau de bord » : vert, sans bord, texte Nuit en gras. */
+.retour.retour {
+  box-sizing: content-box;
+  min-height: 52px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--am-radius-14);
+  background: var(--am-vert);
+  color: var(--am-nuit);
+  font-weight: 700;
+}
+
+.retour.retour:hover {
+  color: var(--am-nuit);
+}
+
+/* ---------------------------------------------------------------- feuille de signature */
+
+.signature {
+  display: flex;
+  justify-content: center;
+  padding: 0 var(--am-gutter) var(--am-space-16);
+}
+
+/* ---------------------------------------------------------------- états chargement, vide, erreur */
+
+.etat {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--am-space-10);
+}
+
+.bandeau {
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-10);
+  padding: var(--am-space-10) var(--am-space-12);
+  border: 1px solid var(--am-surface-2);
+  border-radius: var(--am-radius-12);
+  background: var(--am-carte-sombre);
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+}
+
+.bandeau p {
+  margin: 0;
+}
+
+.point {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--am-ambre);
+}
+
+.squelette {
+  display: block;
+  border-radius: var(--am-radius-6);
+  background: var(--am-surface-2);
+}
+
+.squeletteSousTitre {
+  width: 180px;
+  height: 12px;
+}
+
+.squeletteTotal {
+  width: 150px;
+  height: 26px;
+}
+
+.squeletteLibelle {
+  width: 120px;
+  height: 12px;
+}
+
+.squeletteDetail {
+  width: 100%;
+  height: 12px;
+}
+
+.squeletteVerrou {
+  width: 100%;
+  height: 28px;
+}
+
+.squeletteTitreEnvoi {
+  width: 120px;
+  height: 10px;
+}
+
+.squeletteRond {
+  width: 18px;
+  height: 18px;
+  border-radius: 9px;
+}
+
+.squeletteNom {
+  width: 150px;
+  height: 12px;
+  margin-bottom: var(--am-space-4);
+}
+
+.squeletteDescription {
+  width: 200px;
+  height: 11px;
+}
+
+.squeletteFormat {
+  width: 70px;
+  height: 11px;
+}
+
+.squeletteCsv {
+  width: 100%;
+  height: 10px;
+}
