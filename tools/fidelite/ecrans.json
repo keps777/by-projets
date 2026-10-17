@@ -169,7 +169,7 @@
       "route": "/assistant/reponse"
     },
     "AnalysesLigne": {
-      "route": "/analyses/ligne/dla-yao"
+      "route": "/analyses/ligne/ligne-alp-dlabaf"
     },
     "AnalysesBus": {
       "route": "/analyses/bus/lt-207-ab"
