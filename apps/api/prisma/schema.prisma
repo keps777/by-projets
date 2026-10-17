@@ -1283,3 +1283,301 @@ model SmsEssai {
   @@index([messageId, id])
   @@map("sms_essai")
 }
+
+/**
+ * ==================================================================================================
+ * LOT B · adaptateurs PostgreSQL de la billetterie (reliquats), du covoiturage, de la livraison, des
+ * relais, des vendeurs, du financement et des inter-agences. Migrations 20261017000800 à
+ * 20261017000899. Bloc contigu en fin de fichier pour faciliter la fusion avec les autres lots.
+ * Ici, aucune relation Prisma vers les tables des lots précédents : les clés étrangères vers
+ * `personne`, `compagnie`, `gare`… sont posées en SQL dans les migrations (« SQL : ») et les
+ * adaptateurs écrivent des identifiants, sans jamais charger la ligne liée.
+ * ==================================================================================================
+ */
+
+/**
+ * ------------------------------------------------------------------ billetterie : reliquats (AM-162)
+ */
+
+/// Code promotionnel (administré par ailleurs). `frais_offerts` : les frais de service sont offerts.
+/// Le code est en majuscules (SQL : CHECK). Les codes `USSD` et `WHATSAPP` sont semés par la migration.
+model Promotion {
+  code  String   @id
+  /// SQL : frais_offerts
+  type  String
+  actif Boolean  @default(true)
+  creeA DateTime @default(now()) @db.Timestamptz(3)
+
+  @@map("promotion")
+}
+
+/// Proche d'un voyageur (celui qui paie à sa place, celui qui est prévenu). Le téléphone n'y est que chiffré.
+/// SQL : clé étrangère `voyageurId` vers `personne`.
+model ProcheVoyageur {
+  id               String   @id @default(uuid(7)) @db.Uuid
+  voyageurId       String   @db.Uuid
+  nom              String
+  telephoneChiffre String?
+  creeA            DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([voyageurId])
+  @@map("proche_voyageur")
+}
+
+/// Avis émis par la billetterie (billet émis, annulé, embarqué…), gardés tels quels : c'est la trace
+/// durable de ce que les écouteurs (SMS, paiements, caisse) ont reçu. EN AJOUT SEUL (SQL).
+model AvisBilletterie {
+  id    BigInt   @id @default(autoincrement())
+  /// `billet.emis`, `billet.annule`, `depart.etat_change`…
+  type  String
+  /// Billet, départ ou commande concernés, selon le type (pour retrouver les avis d'un objet).
+  cible String?
+  /// L'avis tel qu'il a été publié.
+  avis  Json
+  at    DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([cible, id])
+  @@index([type, id])
+  @@map("avis_billetterie")
+}
+
+/**
+ * ------------------------------------------------------------------ covoiturage (AM-054)
+ */
+
+/// Un trajet publié par un conducteur. Les colonnes `*Norm` (minuscules, sans accents, comme `normaliser`)
+/// servent la recherche. SQL : valeurs fermées, places et prix positifs, clé étrangère `conducteurId`,
+/// index partiel de recherche sur les trajets publiés.
+model TrajetCovoiturage {
+  id               String    @id @default(uuid(7)) @db.Uuid
+  conducteurId     String    @db.Uuid
+  /// SQL : entre_villes | ville
+  type             String
+  departVille      String
+  departVilleNorm  String
+  departPoint      String
+  arriveeVille     String
+  arriveeVilleNorm String
+  arriveePoint     String
+  departA          DateTime  @db.Timestamptz(3)
+  dureeMinutes     Int
+  places           Int
+  prixParPlace     Int
+  options          String[]  @default([])
+  vehicule         String
+  immatriculation  String
+  grandBagage      Boolean   @default(false)
+  regulier         Boolean   @default(false)
+  /// Null tant que l'occurrence suivante d'un trajet régulier n'est pas publiée.
+  suivantCreeA     DateTime? @db.Timestamptz(3)
+  /// SQL : publie | annule | termine
+  statut           String
+  creeA            DateTime  @db.Timestamptz(3)
+  annuleA          DateTime? @db.Timestamptz(3)
+
+  vues         VueTrajetCovoiturage[]
+  reservations ReservationCovoiturage[]
+
+  // SQL : index partiel (type, departVilleNorm, arriveeVilleNorm, departA) WHERE statut = 'publie'.
+  @@index([conducteurId, departA])
+  @@map("trajet_covoiturage")
+}
+
+/// Les voyageurs qui ont vu un trajet dans une recherche (chacun compte une fois).
+model VueTrajetCovoiturage {
+  trajetId   String @db.Uuid
+  voyageurId String @db.Uuid
+
+  trajet TrajetCovoiturage @relation(fields: [trajetId], references: [id])
+
+  @@id([trajetId, voyageurId])
+  @@map("vue_trajet_covoiturage")
+}
+
+/// Une réservation = la commande que paie le voyageur (même identifiant). SQL : index unique partiel
+/// (trajetId, passagerId) WHERE statut IN ('en_attente_paiement', 'payee') ; clés étrangères vers les
+/// comptes ; `reserver` et `payer` verrouillent la ligne du trajet.
+model ReservationCovoiturage {
+  id                 String    @id @db.Uuid
+  trajetId           String    @db.Uuid
+  conducteurId       String    @db.Uuid
+  passagerId         String    @db.Uuid
+  places             Int
+  prixParPlace       Int
+  fraisParPlace      Int
+  libelle            String
+  /// SQL : en_attente_paiement | expiree | payee | terminee | annulee
+  statut             String
+  creeA              DateTime  @db.Timestamptz(3)
+  expireA            DateTime  @db.Timestamptz(3)
+  payeeA             DateTime? @db.Timestamptz(3)
+  moyenPaiement      String?
+  departA            DateTime  @db.Timestamptz(3)
+  liberationAutoA    DateTime  @db.Timestamptz(3)
+  libereeA           DateTime? @db.Timestamptz(3)
+  /// SQL : confirmation_passager | delai_depasse | annulation_tardive
+  motifLiberation    String?
+  annuleeA           DateTime? @db.Timestamptz(3)
+  /// SQL : passager | conducteur | systeme
+  annulePar          String?
+  remboursementPrix  Int?
+  remboursementFrais Int?
+  retenue            Int       @default(0)
+
+  trajet TrajetCovoiturage @relation(fields: [trajetId], references: [id])
+
+  @@index([trajetId, statut])
+  @@index([passagerId, departA])
+  @@index([conducteurId, creeA])
+  @@index([statut, expireA])
+  @@index([statut, liberationAutoA])
+  @@map("reservation_covoiturage")
+}
+
+/// Le dossier d'un conducteur : véhicule et numéro de versement (chiffré). Les pièces sont à part.
+/// SQL : le véhicule est complet ou absent ; clé étrangère vers le compte.
+model DossierConducteur {
+  conducteurId            String   @id @db.Uuid
+  vehiculeMarque          String?
+  vehiculeModele          String?
+  vehiculeCouleur         String?
+  vehiculeImmatriculation String?
+  vehiculePlaces          Int?
+  vehiculeGrandBagage     Boolean?
+  /// Numéro MoMo qui reçoit le paiement, chiffré (AES-GCM) ; à défaut, celui du compte.
+  numeroVersementChiffre  String?
+  creeA                   DateTime @db.Timestamptz(3)
+  modifieA                DateTime @db.Timestamptz(3)
+
+  pieces PieceConducteur[]
+
+  @@index([modifieA])
+  @@map("dossier_conducteur")
+}
+
+/// Une pièce du dossier. Le numéro est chiffré ; la photo n'est qu'un identifiant opaque.
+model PieceConducteur {
+  conducteurId  String    @db.Uuid
+  /// SQL : identite | permis | carte_grise | voiture
+  type          String
+  /// SQL : a_verifier | validee | refusee
+  statut        String
+  fichierId     String
+  numeroChiffre String?
+  expireLe      DateTime? @db.Date
+  deposeeA      DateTime  @db.Timestamptz(3)
+  verifieePar   String?   @db.Uuid
+  verifieeA     DateTime? @db.Timestamptz(3)
+  motifRefus    String?
+
+  dossier DossierConducteur @relation(fields: [conducteurId], references: [conducteurId])
+
+  @@id([conducteurId, type])
+  @@index([statut, deposeeA])
+  @@map("piece_conducteur")
+}
+
+/// Paiement du conducteur à l'arrivée : un seul par réservation (idempotence). Jamais de texte du
+/// prestataire, un code d'erreur court seulement.
+model VersementCovoiturage {
+  id             String    @id @db.Uuid
+  reservationId  String    @unique @db.Uuid
+  conducteurId   String    @db.Uuid
+  montant        Int
+  /// SQL : confirmation_passager | delai_depasse | annulation_tardive
+  motif          String
+  /// SQL : a_faire | fait | echoue
+  statut         String
+  reference      String?
+  tentatives     Int       @default(0)
+  prochainEssaiA DateTime? @db.Timestamptz(3)
+  derniereErreur String?
+  creeA          DateTime  @db.Timestamptz(3)
+  faitA          DateTime? @db.Timestamptz(3)
+
+  @@index([statut, prochainEssaiA])
+  @@index([conducteurId, faitA])
+  @@map("versement_covoiturage")
+}
+
+/// Un passager cherche une voiture ; les conducteurs concernés lui proposent un trajet.
+model DemandeCovoiturage {
+  id           String   @id @db.Uuid
+  passagerId   String   @db.Uuid
+  departVille  String
+  arriveeVille String
+  jour         DateTime @db.Date
+  /// SQL : matin | apres_midi | soir (ou null)
+  moment       String?
+  places       Int
+  /// SQL : ouverte | annulee | satisfaite | expiree
+  statut       String
+  creeA        DateTime @db.Timestamptz(3)
+
+  propositions PropositionCovoiturage[]
+
+  @@index([statut, jour])
+  @@index([passagerId, creeA])
+  @@map("demande_covoiturage")
+}
+
+/// Un conducteur propose un de ses trajets pour une demande (une seule fois par trajet).
+model PropositionCovoiturage {
+  demandeId    String   @db.Uuid
+  conducteurId String   @db.Uuid
+  trajetId     String   @db.Uuid
+  envoyeeA     DateTime @db.Timestamptz(3)
+
+  demande DemandeCovoiturage @relation(fields: [demandeId], references: [id])
+
+  @@id([demandeId, conducteurId, trajetId])
+  @@index([conducteurId, envoyeeA])
+  @@map("proposition_covoiturage")
+}
+
+/// Une note de 1 à 5 donnée après le trajet. SQL : unique (reservationId, roleNote), valeur de 1 à 5.
+model NoteCovoiturage {
+  id            String   @id @db.Uuid
+  reservationId String   @db.Uuid
+  /// Qui est noté, et dans quel rôle.
+  noteId        String   @db.Uuid
+  /// SQL : conducteur | passager
+  roleNote      String
+  auteurId      String   @db.Uuid
+  valeur        Int
+  commentaire   String?
+  creeA         DateTime @db.Timestamptz(3)
+
+  @@unique([reservationId, roleNote])
+  @@index([noteId, roleNote])
+  @@map("note_covoiturage")
+}
+
+/// Le trajet du matin d'un passager en ville : un par voyageur.
+model TrajetRegulierPassager {
+  voyageurId   String   @id @db.Uuid
+  ville        String
+  departPoint  String
+  arriveePoint String
+  /// Heure habituelle, « HH:MM ». SQL : format vérifié.
+  departA      String
+  actif        Boolean
+  modifieA     DateTime @db.Timestamptz(3)
+
+  @@map("trajet_regulier_passager")
+}
+
+/// Conseil de prix et de durée d'un trajet entre deux villes (sens indifférent) : lu par le référentiel
+/// du covoiturage. Semé par la migration avec Douala ↔ Kribi (la seule valeur donnée par une maquette).
+model ConseilCovoiturage {
+  villeANorm   String
+  villeBNorm   String
+  villeA       String
+  villeB       String
+  prixMin      Int
+  prixMax      Int
+  dureeMinutes Int
+
+  @@id([villeANorm, villeBNorm])
+  @@map("conseil_covoiturage")
+}

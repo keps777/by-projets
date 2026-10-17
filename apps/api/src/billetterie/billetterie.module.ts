@@ -4,6 +4,7 @@ import { NumerotationService } from "../numerotation/numerotation.service";
 import { ConversionDevisesPaiements } from "../paiements/adaptateurs";
 import { PaiementsModule } from "../paiements/paiements.module";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { ChiffrementService } from "../socle/chiffrement/chiffrement.service";
 import { PrismaService } from "../socle/db/prisma.service";
 import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
@@ -43,6 +44,12 @@ import {
   PreferencesPrisma,
   ScansPrisma,
 } from "./postgres";
+import {
+  AvisBilletsPrisma,
+  ColisDuDepartPrisma,
+  ProchesPrisma,
+  PromotionsPrisma,
+} from "./postgres-annexes";
 import {
   AvisBillets,
   Billets,
@@ -160,9 +167,9 @@ export class VerificationStockageBilletterie implements OnModuleInit {
  *
  * À importer dans `AppModule` (périmètre du socle). Chaque port ci-dessous est remplaçable :
  * l'intégration branche les adaptateurs PostgreSQL (Catalogue, Billets, Inventaire, Commandes,
- * Scans, EvenementsTraites, PreferencesVoyageur) et ceux des autres tickets (Promotions, Proches,
- * ConversionDevises, NumerotationEnLigne : AM-161, ColisDuDepart : AM-163, AvisBillets : SMS et
- * paiements). Les paiements appellent `CommandesService.confirmerPaiement`.
+ * Scans, EvenementsTraites, PreferencesVoyageur, et, lot B, Promotions, Proches, ColisDuDepart,
+ * AvisBillets) et ceux des autres tickets (ConversionDevises, NumerotationEnLigne : AM-161). Les
+ * paiements appellent `CommandesService.confirmerPaiement`.
  */
 @Module({
   // Les paiements importent la billetterie (ils lisent ses commandes) et la billetterie leur emprunte le
@@ -226,8 +233,18 @@ export class VerificationStockageBilletterie implements OnModuleInit {
       useFactory: (config: AppConfig, prisma: PrismaService) =>
         stockageSurPostgres(config) ? new PreferencesPrisma(prisma) : new PreferencesMemoire(),
     },
-    { provide: Promotions, useClass: PromotionsMemoire },
-    { provide: ProchesVoyageur, useClass: ProchesMemoire },
+    {
+      provide: Promotions,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new PromotionsPrisma(prisma) : new PromotionsMemoire(),
+    },
+    {
+      provide: ProchesVoyageur,
+      inject: [CONFIG, PrismaService, ChiffrementService],
+      useFactory: (config: AppConfig, prisma: PrismaService, chiffrement: ChiffrementService) =>
+        stockageSurPostgres(config) ? new ProchesPrisma(prisma, chiffrement) : new ProchesMemoire(),
+    },
     // Taux de l'agrégateur de paiement (AM-165). `ConversionMemoire` (taux indicatifs) reste exportée pour les tests.
     { provide: ConversionDevises, useExisting: ConversionDevisesPaiements },
     // Les numéros 4001–9999 viennent du registre de la numérotation (AM-161) sur PostgreSQL.
@@ -239,8 +256,18 @@ export class VerificationStockageBilletterie implements OnModuleInit {
           ? new NumerotationEnLigneServeur(numerotation)
           : new NumerotationEnLigneMemoire(),
     },
-    { provide: ColisDuDepart, useClass: ColisMemoire },
-    { provide: AvisBillets, useClass: AvisMemoire },
+    {
+      provide: ColisDuDepart,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new ColisDuDepartPrisma(prisma) : new ColisMemoire(),
+    },
+    {
+      provide: AvisBillets,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new AvisBilletsPrisma(prisma) : new AvisMemoire(),
+    },
     { provide: DiffusionTempsReel, useClass: DiffusionMemoire },
     {
       provide: SignataireQr,
