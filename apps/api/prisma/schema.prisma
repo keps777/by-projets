@@ -1371,3 +1371,129 @@ model PrevenirProche {
   @@id([billetId, procheId])
   @@map("prevenir_proche")
 }
+
+// ------------------------------------------------------------------------------ Paiements (AM-165)
+
+/// Un paiement en ligne, au guichet ou à la gare. SQL : valeurs fermées (origine, moyen, statut,
+/// confirmation), index uniques partiels « un paiement en attente par commande » et « un seul jeu de
+/// billets par commande », identifiant du fournisseur unique.
+model Paiement {
+  id                  String    @id @db.Uuid
+  /// Idempotence : guichet = événement de vente, agence = agence:<commande>.
+  cle                 String?   @unique
+  /// SQL : voyageur | proche | guichet | agence
+  origine             String
+  commandeId          String?   @db.Uuid
+  voyageurId          String?   @db.Uuid
+  compagnieId         String    @db.Uuid
+  /// SQL : mtn_momo | orange_money | carte | especes_agence | momo_marchand
+  moyen               String
+  /// SQL : mtn | orange
+  operateur           String?
+  /// FCFA entiers, strictement positifs (SQL).
+  montant             Int
+  deviseCode          String?
+  deviseMontantMineur Int?
+  /// [{ beneficiaire, compteId, montant }]
+  repartition         Json
+  /// SQL : en_attente | reussi | echoue | expire
+  statut              String
+  /// SQL : sans_objet | a_faire | faite | sieges_perdus | commande_annulee | doublon
+  confirmation        String
+  /// Chiffré (contexte « paiement.telephone:<id> »).
+  telephoneChiffre    String?
+  telephoneMasque     String?
+  fournisseur         String?
+  idFournisseur       String?
+  referenceOperateur  String?
+  urlAuthentification String?
+  /// Code court, jamais de texte du fournisseur.
+  cause               String?
+  billetIds           String[]  @default([]) @db.Uuid
+  creeA               DateTime  @db.Timestamptz(3)
+  expireA             DateTime  @db.Timestamptz(3)
+  termineA            DateTime? @db.Timestamptz(3)
+
+  remboursements PaiementRemboursement[]
+
+  // SQL : unique (commandeId) WHERE statut = 'en_attente' ; unique (commandeId) WHERE confirmation = 'faite' ;
+  // unique (fournisseur, idFournisseur) WHERE idFournisseur IS NOT NULL ; index partiels du balayage.
+  @@index([compagnieId, creeA(sort: Desc)])
+  @@index([commandeId])
+  @@map("paiement")
+}
+
+/// Un remboursement vers le moyen d'origine. SQL : plafonds tenus par le code sous verrou de la ligne
+/// du paiement, clé unique.
+model PaiementRemboursement {
+  id                 String    @id @db.Uuid
+  paiementId         String    @db.Uuid
+  /// Idempotence : billet-annule:<billet>, afrimove:<cle>, doublon_paiement:<paiement>…
+  cle                String    @unique
+  /// SQL : billet_annule | depart_annule | sieges_perdus | commande_annulee | doublon_paiement | demande_afrimove
+  cause              String
+  billetId           String?   @db.Uuid
+  /// [{ beneficiaire, montant }]
+  lignes             Json
+  montant            Int
+  /// SQL : demande | reussi | echoue
+  statut             String
+  idFournisseur      String?
+  referenceOperateur String?
+  tentatives         Int       @default(0)
+  prochainEssaiA     DateTime? @db.Timestamptz(3)
+  derniereErreur     String?
+  creeA              DateTime  @db.Timestamptz(3)
+  termineA           DateTime? @db.Timestamptz(3)
+
+  paiement Paiement @relation(fields: [paiementId], references: [id])
+
+  @@index([paiementId])
+  // SQL : index (prochainEssaiA) WHERE statut = 'demande'.
+  @@map("paiement_remboursement")
+}
+
+/// Événements de l'agrégateur déjà traités : un événement rejoué est ignoré (clé primaire).
+model PaiementNotification {
+  fournisseur String
+  evenementId String
+  at          DateTime @db.Timestamptz(3)
+
+  @@id([fournisseur, evenementId])
+  @@map("paiement_notification")
+}
+
+/// Lien de paiement envoyé à un proche. Seule l'empreinte SHA-256 du jeton est gardée.
+/// SQL : un seul lien non révoqué par commande.
+model PaiementLien {
+  id         String    @id @db.Uuid
+  commandeId String    @db.Uuid
+  empreinte  String    @unique
+  creePar    String    @db.Uuid
+  creeA      DateTime  @db.Timestamptz(3)
+  expireA    DateTime  @db.Timestamptz(3)
+  /// Numéro masqué du destinataire.
+  envoyeA    String?
+  revoqueA   DateTime? @db.Timestamptz(3)
+
+  @@map("paiement_lien")
+}
+
+/// Compte de chaque compagnie chez l'agrégateur ; la ligne est supprimée pour retirer le compte.
+model CompteReversement {
+  compagnieId String @id @db.Uuid
+  compteId    String
+
+  @@map("compte_reversement")
+}
+
+/// Réglage du mode dégradé : une seule ligne (SQL : id = 1).
+model ReglagePaiements {
+  id      Int       @id @db.SmallInt
+  degrade Boolean
+  motif   String?
+  parId   String?   @db.Uuid
+  at      DateTime? @db.Timestamptz(3)
+
+  @@map("reglage_paiements")
+}

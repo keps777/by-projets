@@ -123,7 +123,7 @@ dans la répartition) et rend elle-même la monnaie en cas de problème (409 `SI
 
 | Port                                                                                                               | À fournir par                                                                                                                       |
 | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `Paiements`, `Remboursements`, `NotificationsTraitees`, `LiensPaiement`, `ComptesReversement`, `ReglagesPaiements` | **Intégration** : versions PostgreSQL (tables ci-dessous).                                                                          |
+| `Paiements`, `Remboursements`, `NotificationsTraitees`, `LiensPaiement`, `ComptesReversement`, `ReglagesPaiements` | **Fait** : `postgres.ts`, choisi par `API_STOCKAGE` (PostgreSQL en production, mémoire sinon).                                      |
 | `AgregateurPaiement`                                                                                               | `AgregateurSimule` (développement, tests), `AgregateurHttp` (client JSON générique), `AgregateurAbsent` (par défaut en production). |
 | `CommandesAPayer`, `NotifieurPaiements`, `AnnuaireVoyageurs`                                                       | Fournis (`adaptateurs.ts`) par-dessus la billetterie, la passerelle SMS et les comptes.                                             |
 
@@ -138,9 +138,11 @@ est remplaçable : aucun test ne touche le réseau.
 1. **`AppModule`** : importer `PaiementsModule` (il importe déjà `BilletterieModule` et `SmsModule`).
 2. **`main.ts`** : `NestFactory.create(AppModule, { rawBody: true, … })` (déjà demandé par le module SMS). Sans
    corps brut, le webhook répond 401 et journalise l'erreur.
-3. **Adaptateurs PostgreSQL** pour les six ports de stockage, à brancher dans `paiements.module.ts` à la
-   place des six `useClass: …Memoire`. Les contraintes qui garantissent « un seul jeu de billets » sont
-   indispensables (index uniques et comparer-et-remplacer).
+3. **Adaptateurs PostgreSQL** pour les six ports de stockage : **faits** (lot A, `postgres.ts`,
+   migration `20261017000720_paiements`), branchés dans `paiements.module.ts` selon `API_STOCKAGE`. Les
+   contraintes qui garantissent « un seul jeu de billets » sont dans la base (index uniques partiels) et
+   testées sous requêtes simultanées. **Reste pour la production** : `PAIEMENTS_FOURNISSEUR=http` avec les
+   clés de l'agrégateur, `PAIEMENTS_COMPTE_AFRIMOVE`, et l'ouverture des comptes de reversement (point 7).
 4. **Taux de change** : dans `BilletterieModule`, remplacer `ConversionMemoire` (taux indicatifs) par
    `{ provide: ConversionDevises, useExisting: ConversionDevisesPaiements }`.
 5. **Écoute des annulations** : le module enveloppe `AvisBillets.publier` au démarrage
@@ -164,7 +166,22 @@ est remplaçable : aucun test ne touche le réseau.
    la passerelle WebSocket de la billetterie ne sert que `sieges:` et `quai:` ; en attendant, l'écran suit
    `GET /voyageur/paiements/:id` (qui interroge l'agrégateur si besoin).
 
-## Tables PostgreSQL attendues (hors périmètre : `apps/api/prisma/**`)
+## Tables PostgreSQL (faites, lot A)
+
+Les six tables existent (`paiement`, `paiement_remboursement`, `paiement_notification`, `paiement_lien`,
+`compte_reversement`, `reglage_paiements`) : modèles Prisma du bloc « lot A » de `schema.prisma`, garde-fous
+SQL dans la migration `20261017000720_paiements`. Écarts avec l'esquisse ci-dessous, voulus :
+
+- **colonnes en camelCase** (`commandeId`, `creeA`…) comme les autres tables écrites par Prisma ; mêmes noms de tables ;
+- **une seule clé étrangère** : `paiement_remboursement.paiementId` → `paiement`. Pas de clé vers `commande`,
+  `compagnie` ni `personne` : un paiement reçu ne se refuse jamais pour un motif de référence ;
+- `billetIds` est un `uuid[]` nullable avec valeur par défaut `{}` (Prisma ne sait pas écrire `NOT NULL` ici ; l'adaptateur lit `?? []`) ;
+- `LiensPaiement.remplacer` prend un verrou consultatif par commande (espace `7_017_165`) pour que deux liens
+  demandés ensemble s'enchaînent au lieu de se heurter à l'index « un seul lien vivant par commande » ;
+- `Remboursements.ajouter` verrouille la ligne du paiement (`SELECT … FOR UPDATE`) : quatre remboursements de 1 000 F
+  passent pour 4 000 F encaissés, jamais cinq (testé avec dix demandes simultanées).
+
+Esquisse d'origine :
 
 ```sql
 CREATE TABLE paiement (
@@ -302,6 +319,8 @@ ports en mémoire.
 mode dégradé, disjoncteur, encaissement à la gare), `encaissements.service.test.ts` (webhook rejoué, doublons,
 retard, montant inattendu, places perdues, balayage), `remboursements.service.test.ts` (plafonds, reprises,
 annulation d'un billet), `liens.service.test.ts` (lien d'un proche), `contrats.test.ts` (parité avec les schémas
-zod), `paiements.module.test.ts` (garde-fou de production), `paiements.e2e.test.ts` (HTTP avec la vraie billetterie :
+zod), `postgres.integration.test.ts` (si `DATABASE_URL_TEST` est donnée : contrat des six ports sur la
+mémoire et PostgreSQL, requêtes simultanées, `CHECK` et index uniques, vrai parcours de paiement et mode dégradé
+sur PostgreSQL, redémarrage), `paiements.module.test.ts` (garde-fou de production), `paiements.e2e.test.ts` (HTTP avec la vraie billetterie :
 rôles, webhook signé avec corps brut, billet émis une fois, annulation → remboursement, mode dégradé).
 Le montage sans Nest (`testing/montage.ts`) fait avancer l'horloge : aucun test n'attend en vrai.

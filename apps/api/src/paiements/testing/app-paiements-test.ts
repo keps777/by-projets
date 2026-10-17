@@ -48,7 +48,22 @@ import { ComptesReversementMemoire, PaiementsMemoire, RemboursementsMemoire } fr
 import { ModeDegradeService } from "../mode-degrade.service";
 import { PaiementsModule } from "../paiements.module";
 import { PaiementsService } from "../paiements.service";
-import { ComptesReversement, Paiements, Remboursements } from "../ports";
+import {
+  ComptesReversementPrisma,
+  LiensPaiementPrisma,
+  NotificationsTraiteesPrisma,
+  PaiementsPrisma,
+  ReglagesPaiementsPrisma,
+  RemboursementsPrisma,
+} from "../postgres";
+import {
+  ComptesReversement,
+  LiensPaiement,
+  NotificationsTraitees,
+  Paiements,
+  ReglagesPaiements,
+  Remboursements,
+} from "../ports";
 import { RemboursementsService } from "../remboursements.service";
 
 export { AUTRE_COMPAGNIE, COMPAGNIE, DEPART };
@@ -89,6 +104,11 @@ export interface OptionsAppPaiementsTest {
   env?: Record<string, string>;
   /** Pas de compte de reversement pour la compagnie. */
   sansCompte?: boolean;
+  /**
+   * Une vraie connexion Prisma (tests d'intégration PostgreSQL) : les six ports de stockage des
+   * paiements passent sur leurs adaptateurs PostgreSQL, la billetterie reste en mémoire.
+   */
+  prisma?: PrismaService;
 }
 
 /**
@@ -109,7 +129,24 @@ export async function creerAppPaiementsTest(options: OptionsAppPaiementsTest = {
     ...options.env,
   });
 
-  const module = await Test.createTestingModule({ imports: [AppModule, PaiementsModule] })
+  let constructeur = Test.createTestingModule({ imports: [AppModule, PaiementsModule] });
+  if (options.prisma) {
+    const pg = options.prisma;
+    constructeur = constructeur
+      .overrideProvider(Paiements)
+      .useValue(new PaiementsPrisma(pg))
+      .overrideProvider(Remboursements)
+      .useValue(new RemboursementsPrisma(pg))
+      .overrideProvider(NotificationsTraitees)
+      .useValue(new NotificationsTraiteesPrisma(pg))
+      .overrideProvider(LiensPaiement)
+      .useValue(new LiensPaiementPrisma(pg))
+      .overrideProvider(ComptesReversement)
+      .useValue(new ComptesReversementPrisma(pg))
+      .overrideProvider(ReglagesPaiements)
+      .useValue(new ReglagesPaiementsPrisma(pg));
+  }
+  const module = await constructeur
     .overrideProvider(CONFIG)
     .useValue(config)
     .overrideProvider(CONFIG_PAIEMENTS)
@@ -129,7 +166,9 @@ export async function creerAppPaiementsTest(options: OptionsAppPaiementsTest = {
     .overrideProvider(OPTIONS_BILLETTERIE)
     .useValue({ balayageMs: 0, pingMs: 0 })
     .overrideProvider(PrismaService)
-    .useValue({ estJoignable: async () => true, $disconnect: async () => undefined })
+    .useValue(
+      options.prisma ?? { estJoignable: async () => true, $disconnect: async () => undefined },
+    )
     .compile();
 
   const app = module.createNestApplication<NestExpressApplication>({ rawBody: true });
