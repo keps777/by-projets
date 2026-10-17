@@ -121,7 +121,7 @@
       "route": "/equipe"
     },
     "SuperviseurDebloquer": {
-      "route": "/debloquer/app-0003"
+      "route": "/debloquer/appareil-gu3-dla"
     },
     "RapportSoir": {
       "route": "/rapport"

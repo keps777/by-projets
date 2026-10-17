@@ -140,7 +140,7 @@ export const EXEMPLES_PARAMS: Record<string, string> = {
   colisId: "COL-0001",
   sessionId: "session-k-dla-270105-2-1",
   demandeId: "ann-0001",
-  appareilId: "app-0003",
+  appareilId: "appareil-gu3-dla",
   exportId: "exp-2026-12",
   ligneId: "ligne-alp-dlabaf",
   busId: "lt-207-ab",
