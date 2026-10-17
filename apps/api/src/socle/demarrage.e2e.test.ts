@@ -32,6 +32,7 @@ import { CONFIG_RAPPORT, chargerConfigRapport, type ConfigRapport } from "../rap
 import { VerificationRapport } from "../rapport/rapport.module";
 import { SourceRapportSoirPourWhatsApp } from "../rapport/source-whatsapp";
 import { VerificationPortsRelais } from "../relais/relais.module";
+import { VerificationPortsVendeurs } from "../vendeurs/vendeurs.module";
 import { FileEnvoiSms } from "../sms/file";
 import type { FileEnvoiMemoire } from "../sms/file-memoire";
 import type { FournisseurSimule } from "../sms/fournisseur-simule";
@@ -233,6 +234,7 @@ describe("production : l'application refuse de démarrer avec un port en mémoir
     ["covoiturage", VerificationStockageCovoiturage, /CovoiturageModule.*(mémoire|simulés)/],
     ["relais", VerificationPortsRelais, /RelaisModule.*(mémoire|simulés)/],
     ["livraison", VerificationPortsLivraison, /LivraisonModule.*en mémoire/],
+    ["vendeurs", VerificationPortsVendeurs, /VendeursModule.*(mémoire|simulés)/],
   ];
 
   it.each(gardes)(

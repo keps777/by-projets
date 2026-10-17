@@ -20,6 +20,7 @@ import { SmsModule } from "../sms/sms.module";
 import { SupervisionModule } from "../supervision/supervision.module";
 import { SyncModule } from "../sync/sync.module";
 import { UssdModule } from "../ussd/ussd.module";
+import { VendeursModule } from "../vendeurs/vendeurs.module";
 import { EquipeAnnuaire } from "../whatsapp-achat/adaptateurs";
 import { GestionnaireEntrantsAchat } from "../whatsapp-achat/gestionnaire";
 import { ReconnaissanceEquipe } from "../whatsapp-achat/ports";
@@ -117,6 +118,7 @@ const whatsApp = WhatsAppModule.avec({
     CovoiturageModule,
     RelaisModule,
     LivraisonModule,
+    VendeursModule,
     ThrottlerModule.forRootAsync({
       inject: [CONFIG],
       useFactory: (config: AppConfig) => ({

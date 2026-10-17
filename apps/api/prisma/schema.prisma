@@ -1853,3 +1853,133 @@ model InvitationLivreur {
   @@index([livreurId, at])
   @@map("invitation_livreur")
 }
+
+/**
+ * ------------------------------------------------------------------ vendeurs ambulants (AM-149)
+ */
+
+/// Un vendeur ambulant : `id` est le `personne.id` de son compte. Nom et téléphones n'y sont que chiffrés.
+/// SQL : numéro unique, version pour la concurrence optimiste, clé étrangère vers `personne`.
+model Vendeur {
+  id                   String   @id @db.Uuid
+  version              Int      @default(1)
+  /// « V-0412 »
+  numero               String   @unique
+  nomChiffre           String
+  telephoneChiffre     String
+  quartier             String
+  ville                String
+  momoTelephoneChiffre String
+  /// SQL : mtn | orange
+  momoOperateur        String
+  actif                Boolean
+  creeA                DateTime @db.Timestamptz(3)
+
+  agrements AgrementVendeur[]
+  ventes    VenteVendeur[]
+  credits   CreditCommissionVendeur[]
+  debits    DebitCommissionVendeur[]
+
+  @@map("vendeur")
+}
+
+/// L'agrément d'un vendeur par une agence : un agrément retiré est redonné par une mise à jour de la même ligne.
+model AgrementVendeur {
+  vendeurId           String    @db.Uuid
+  compagnieId         String    @db.Uuid
+  compagnieNom        String
+  /// SQL : actif | retire
+  etat                String
+  commissionClassique Int
+  commissionVip       Int
+  accordeLe           DateTime  @db.Timestamptz(3)
+  accordePar          String    @db.Uuid
+  retireLe            DateTime? @db.Timestamptz(3)
+
+  vendeur Vendeur @relation(fields: [vendeurId], references: [id], onDelete: Restrict)
+
+  @@id([vendeurId, compagnieId])
+  @@index([compagnieId])
+  @@map("agrement_vendeur")
+}
+
+/// Une vente à un voisin. SQL : une seule vente en attente par vendeur, un même voisin n'a pas deux billets sur
+/// un départ (index uniques partiels), billet unique.
+model VenteVendeur {
+  id                     String    @id @db.Uuid
+  version                Int       @default(1)
+  vendeurId              String    @db.Uuid
+  compagnieId            String    @db.Uuid
+  departId               String    @db.Uuid
+  billetId               String    @unique @db.Uuid
+  billetNumero           String?
+  siege                  Int?
+  voisinNomChiffre       String
+  voisinTelephoneChiffre String
+  voisinIndex            String
+  empreinte              String
+  origineCode            String
+  origineVille           String
+  destinationCode        String
+  destinationVille       String
+  /// SQL : classique | vip
+  classe                 String
+  departA                DateTime  @db.Timestamptz(3)
+  prix                   Int
+  commission             Int
+  /// SQL : mtn_momo | orange_money
+  moyen                  String
+  /// SQL : en_attente | reglee | terminee | refusee | expiree | a_rembourser
+  etat                   String
+  creeA                  DateTime  @db.Timestamptz(3)
+  expireA                DateTime  @db.Timestamptz(3)
+  reference              String?
+  regleeA                DateTime? @db.Timestamptz(3)
+  cause                  String?
+  termineeA              DateTime? @db.Timestamptz(3)
+  majA                   DateTime  @db.Timestamptz(3)
+
+  vendeur Vendeur                   @relation(fields: [vendeurId], references: [id], onDelete: Restrict)
+  credits CreditCommissionVendeur[]
+
+  @@index([vendeurId, creeA])
+  @@index([etat, creeA])
+  @@map("vente_vendeur")
+}
+
+/// Une commission gagnée : un crédit par vente (la clé est `commission:<venteId>`), jamais modifié.
+model CreditCommissionVendeur {
+  cle         String   @id
+  vendeurId   String   @db.Uuid
+  compagnieId String   @db.Uuid
+  venteId     String   @db.Uuid
+  montant     Int
+  at          DateTime @db.Timestamptz(3)
+
+  vendeur Vendeur      @relation(fields: [vendeurId], references: [id], onDelete: Restrict)
+  vente   VenteVendeur @relation(fields: [venteId], references: [id], onDelete: Restrict)
+
+  @@index([vendeurId, at])
+  @@map("credit_commission_vendeur")
+}
+
+/// Un versement de commissions, réservé avant l'appel à l'opérateur. Le téléphone n'y est que chiffré.
+model DebitCommissionVendeur {
+  cle              String   @id
+  vendeurId        String   @db.Uuid
+  montant          Int
+  at               DateTime @db.Timestamptz(3)
+  /// SQL : en_attente | verse
+  etat             String
+  /// SQL : mtn | orange
+  operateur        String
+  telephoneChiffre String
+  libelle          String
+  reference        String?
+
+  vendeur Vendeur @relation(fields: [vendeurId], references: [id], onDelete: Restrict)
+
+  @@index([vendeurId])
+  @@index([etat])
+  @@map("debit_commission_vendeur")
+}
