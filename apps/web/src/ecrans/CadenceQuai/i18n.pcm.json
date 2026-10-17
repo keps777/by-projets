@@ -1,0 +1,83 @@
+{
+  "retour": "",
+  "enTete": {
+    "titre": "",
+    "sousTitre": ""
+  },
+  "scan": {
+    "libelle": "",
+    "siege": "",
+    "vente": "",
+    "valide": "",
+    "nonValide": ""
+  },
+  "modes": {
+    "cash": "",
+    "momo": "",
+    "orange_money": ""
+  },
+  "completer": {
+    "titre": "",
+    "nom": "",
+    "piece": "",
+    "telephone": "",
+    "aide": "",
+    "erreurs": {
+      "nom": "",
+      "piece": "",
+      "telephone": "",
+      "deja": "",
+      "echec": ""
+    }
+  },
+  "embarquement": {
+    "libelle": "",
+    "nominatifs": "",
+    "completes": "",
+    "depart": ""
+  },
+  "sansNom": {
+    "titre": "",
+    "detail": "",
+    "sms": "",
+    "action": "",
+    "aucun": ""
+  },
+  "rapport": "",
+  "pied": {
+    "vue": "",
+    "embarquer": {
+      "libelle": "",
+      "detail": ""
+    }
+  },
+  "suivant": {
+    "titre": "",
+    "detail": ""
+  },
+  "autreScan": {
+    "titre": {
+      "monte": "",
+      "deja_scanne": "",
+      "introuvable": "",
+      "autre_depart": "",
+      "annule": ""
+    },
+    "echec": {
+      "titre": "",
+      "detail": ""
+    }
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
