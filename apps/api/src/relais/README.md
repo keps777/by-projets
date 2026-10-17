@@ -5,8 +5,8 @@ et vérification par un agent AfriMove (dossier `R-BAF-0215`), réception et rem
 pièce, garde de 7 jours puis reprise, gains (200 F par colis remis, 100 F par colis repris) versés le lundi.
 
 Le module est autonome : tous ses accès extérieurs sont des **ports** (classes abstraites, `ports.ts`) avec une
-version **en mémoire** (`memoire.ts`). Il n'est **pas** dans `AppModule` et n'a **pas** d'adaptateur PostgreSQL :
-l'intégration est faite par le coordinateur (voir « Brancher le module »). Tout changement d'état d'un colis
+version **en mémoire** (`memoire.ts`) et une version **PostgreSQL** (`postgres.ts`, lot B), choisie par
+`API_STOCKAGE` (voir `apps/api/INTEGRATION.md`). Il est dans `AppModule`. Tout changement d'état d'un colis
 passe par `ColisService.executer` (module colis, AM-163) : la machine d'états n'est pas dupliquée.
 
 Le module `LivraisonModule` (livraison moto, `../livraison/README.md`) s'appuie sur celui-ci : portefeuille,
@@ -14,26 +14,30 @@ versements mobiles, attribution de rôles et lieux sont définis ici.
 
 ## Brancher le module
 
-À faire par le coordinateur (le brief interdit de toucher `app.module.ts` et `prisma/schema.prisma`) :
+**Fait (lot B)**
 
-1. Ajouter `RelaisModule` (puis `LivraisonModule`) aux `imports` de `AppModule`.
-2. Brancher le référentiel du colis : `ReferentielColis.relais = RelaisService.reference` (le module colis y
+1. `RelaisModule` (puis `LivraisonModule`) est dans les `imports` de `AppModule`.
+2. Adaptateurs PostgreSQL de `RelaisRepository`, `DemandesRelaisRepository`, `BrouillonsRelais`,
+   `CompteursDossiers`, `ReceptionsRelais`, `Portefeuille`, `Lieux` et `AttributionRoles` (`postgres.ts`),
+   migration `20261017000802_relais`. Les numéros MoMo et les téléphones sont chiffrés par `ChiffrementService`
+   (contexte lié à la colonne), jamais en clair en base.
+3. `Lieux` lit les coordonnées des gares (`coordonnees_gare`) et des adresses déjà géocodées
+   (`adresse_geolocalisee`) ; il n'appelle aucun service de cartographie. `AttributionRoles` ajoute le rôle à
+   `personne.roles` (une seule fois, sans retirer les autres).
+
+**Reste à faire**
+
+1. Brancher le référentiel du colis : `ReferentielColis.relais = RelaisService.reference` (le module colis y
    vérifie qu'un relais existe et est actif quand l'expéditeur ou le guichet en choisit un).
-3. Écrire les adaptateurs PostgreSQL des ports (voir « Tables PostgreSQL ») et les fournir à la place des
-   versions en mémoire : `RelaisRepository`, `DemandesRelaisRepository`, `BrouillonsRelais`, `CompteursDossiers`,
-   `ReceptionsRelais`, `Portefeuille`. Les numéros MoMo et les téléphones sont chiffrés par `ChiffrementService`.
-4. Brancher les ports sans table :
-   - `Lieux` (géocodeur et coordonnées des gares) : sans lui les distances sont inconnues ;
-   - `VersementsMobile` (envoi d'argent MoMo et Orange Money, AM-165), idempotent par clé ;
-   - `AttributionRoles` : ajoute le rôle `relais` ou `livreur` à `personne.roles` (le socle n'a pas d'opération
-     de changement de rôles).
-5. Les tâches de fond (`TachesRelais`) démarrent seules hors tests : rappel et reprise des colis toutes les
+2. `VersementsMobile` (envoi d'argent MoMo et Orange Money, AM-165), idempotent par clé : il reste simulé
+   (`VersementsMemoire`), donc le démarrage en production est refusé tant qu'il n'est pas branché.
+3. Les tâches de fond (`TachesRelais`) démarrent seules hors tests : rappel et reprise des colis toutes les
    minutes, versement du lundi chaque minute (clé d'idempotence par relais et par semaine). Sur plusieurs
    instances, plusieurs tâches tournent ; les écritures conditionnelles et les clés rendent cela sans danger,
    mais un verrou (`pg_advisory_lock`) évitera du travail en double.
 
 En production, `VerificationPortsRelais` **refuse de démarrer** tant qu'un port est en mémoire ou simulé
-(`durable === false`) et nomme les ports concernés.
+(`durable === false`) et nomme les ports concernés (aujourd'hui : `VersementsMobile`).
 
 ## Routes
 
@@ -100,8 +104,13 @@ refusée car le relais est plein), `etat_incompatible` (409), `fiche_invalide` (
 
 ## Tables PostgreSQL
 
-À créer par le coordinateur dans `prisma/schema.prisma`, avec les index et contraintes ci-dessous (ce sont eux
-qui garantissent les propriétés que les ports en mémoire simulent).
+**Écrites par la migration `20261017000802_relais`** (modèles en fin de `schema.prisma`, bloc « lot B »).
+Les noms de tables sont ceux ci-dessous ; comme le reste du schéma, les **colonnes sont en camelCase**
+(`personneId`, `deposeeA`, `momoTelephoneChiffre`…) et les noms de colonne en snake_case ci-dessous se lisent
+ainsi. Ajouts par rapport à la description d'origine : `coordonnees_gare` et `adresse_geolocalisee` (lues par
+`Lieux`), clés étrangères vers `personne` et `colis` (sans cascade), `CHECK` sur les valeurs fermées, les
+montants (> 0) et les coordonnées (bornées, latitude et longitude ensemble), et déclencheurs : un gain est en
+ajout seul (ni modification ni suppression) et un débit versé ne bouge plus.
 
 **`relais`** (`PointRelaisStocke`)
 
@@ -171,12 +180,25 @@ Index `(relais_id)`.
   `{ agent, creneau }`, `{ position?: { lat, lon }, particularite?, capacite? }` et `{ motif }`.
 - Textes SMS et libellés inventés (non fournis par les maquettes) : voir `contenu.ts` et les SMS de
   `inscription.service.ts` et `taches.service.ts`.
+- `Lieux` sur PostgreSQL ne géocode pas : les distances ne sont connues que pour les gares et les adresses dont
+  les coordonnées sont dans les tables. Un service de cartographie reste à brancher (il alimenterait
+  `adresse_geolocalisee`).
+
+## Tests
+
+- `*.test.ts`, `*.e2e.test.ts` : règles, validation et API complète sur les ports en mémoire.
+- `postgres.integration.test.ts` (avec `DATABASE_URL_TEST`) : le contrat des ports (`testing/contrat-ports.ts`)
+  sur la mémoire et sur PostgreSQL : un relais par personne, une seule demande ouverte même sous cinq dépôts
+  simultanés, compteur de dossiers sans trou ni doublon, une réception par colis, gain compté une fois, dix
+  retraits simultanés de 1 000 F sur 3 500 F (trois passent) ; puis les garde-fous de la base (MoMo chiffré,
+  index unique partiel, gains en ajout seul, clés étrangères, coordonnées bornées).
+- `api.postgres.integration.test.ts` : de la fiche à l'activation par un agent, avec rôle `relais` en base,
+  puis redémarrage de l'API.
 
 ## Reste à faire
 
-- Adaptateurs PostgreSQL des ports ci-dessus, tables et migrations Prisma (coordinateur).
-- `Lieux` : géocodage des adresses et coordonnées des gares ; `VersementsMobile` : opérateur (AM-165) ;
-  `AttributionRoles` : écriture de `personne.roles`.
+- `VersementsMobile` : opérateur (AM-165).
+- `Lieux` : géocodage des adresses (cartographie).
 - Brancher `ReferentielColis.relais` sur `RelaisService.reference`.
 - Photos : la façade et la photo de remise sont des références de fichier ; le téléversement est celui du module
   colis (`FichiersPhotos`, encore en mémoire).

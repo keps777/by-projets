@@ -1581,3 +1581,148 @@ model ConseilCovoiturage {
   @@id([villeANorm, villeBNorm])
   @@map("conseil_covoiturage")
 }
+
+/**
+ * ------------------------------------------------------------------ points relais (AM-148)
+ */
+
+/// Un point relais actif (ou suspendu), créé à l'activation de la demande. Le numéro MoMo n'y est que chiffré.
+/// SQL : code et compte uniques, version pour la concurrence optimiste, clé étrangère `personneId`.
+model Relais {
+  id                   String    @id @db.Uuid
+  version              Int       @default(1)
+  /// « R-BAF-0215 » : le numéro du dossier.
+  code                 String    @unique
+  personneId           String    @unique @db.Uuid
+  nom                  String
+  typeBoutique         String
+  ville                String
+  quartier             String
+  repere               String?
+  latitude             Float?
+  longitude            Float?
+  ouvert               String
+  tailleMax            String
+  capacite             Int
+  particularite        String?
+  momoTelephoneChiffre String
+  /// SQL : mtn | orange
+  momoOperateur        String
+  facadeRef            String
+  actif                Boolean
+  note                 Float
+  creeA                DateTime  @db.Timestamptz(3)
+  premierColisA        DateTime? @db.Timestamptz(3)
+
+  // SQL : index (ville, actif) pour la recherche des relais proches.
+  @@index([ville, actif])
+  @@map("relais")
+}
+
+/// La demande d'un voyageur pour devenir relais. `fiche` porte le téléphone MoMo chiffré.
+/// SQL : une seule demande ouverte (recue ou visite_planifiee) par personne.
+model DemandeRelais {
+  dossier    String   @id
+  version    Int      @default(1)
+  personneId String   @db.Uuid
+  fiche      Json
+  /// SQL : recue | visite_planifiee | activee | refusee
+  etat       String
+  deposeeA   DateTime @db.Timestamptz(3)
+  visite     Json?
+  decision   Json?
+  relaisId   String?  @db.Uuid
+
+  @@index([personneId, deposeeA(sort: Desc)])
+  @@map("demande_relais")
+}
+
+/// Le brouillon de la fiche, enregistré à chaque étape.
+model BrouillonRelais {
+  personneId  String   @id @db.Uuid
+  fiche       Json
+  enregistreA DateTime @db.Timestamptz(3)
+
+  @@map("brouillon_relais")
+}
+
+/// Un compteur de numéros de dossier par préfixe (« R-BAF », « L-BAF »), partagé avec la livraison.
+model CompteurDossier {
+  prefixe String @id
+  valeur  Int
+
+  @@map("compteur_dossier")
+}
+
+/// Un colis reçu chez un relais : un colis n'a qu'une réception.
+model ReceptionRelais {
+  colisId        String    @id @db.Uuid
+  relaisId       String    @db.Uuid
+  recuA          DateTime  @db.Timestamptz(3)
+  rappelEnvoyeA  DateTime? @db.Timestamptz(3)
+  remiseOuverteA DateTime? @db.Timestamptz(3)
+
+  @@index([relaisId])
+  @@map("reception_relais")
+}
+
+/// Un gain d'un relais ou d'un livreur. La clé est l'idempotence : un gain n'est compté qu'une fois.
+/// EN AJOUT SEUL (SQL).
+model CreditPartenaire {
+  cle          String   @id
+  /// SQL : relais | livreur
+  type         String
+  partenaireId String   @db.Uuid
+  montant      Int
+  /// SQL : remise | reprise | livraison
+  motif        String
+  reference    String
+  at           DateTime @db.Timestamptz(3)
+
+  @@index([type, partenaireId, at])
+  @@index([type, at])
+  @@map("credit_partenaire")
+}
+
+/// Un versement ou un retrait. « en_attente » compte déjà dans le solde ; seule l'annulation (échec
+/// de l'opérateur) supprime la ligne. Le téléphone est chiffré.
+model DebitPartenaire {
+  cle              String   @id
+  /// SQL : relais | livreur
+  type             String
+  partenaireId     String   @db.Uuid
+  montant          Int
+  /// SQL : versement | retrait
+  motif            String
+  at               DateTime @db.Timestamptz(3)
+  /// SQL : en_attente | verse
+  etat             String
+  /// SQL : mtn | orange
+  operateur        String
+  telephoneChiffre String
+  libelle          String
+  reference        String?
+
+  @@index([type, partenaireId])
+  @@index([etat])
+  @@map("debit_partenaire")
+}
+
+/// Coordonnées d'une gare (relevées par l'exploitation), pour les distances.
+model CoordonneesGare {
+  gareId    String @id @db.Uuid
+  latitude  Float
+  longitude Float
+
+  @@map("coordonnees_gare")
+}
+
+/// Coordonnées d'une adresse de livraison, déjà géocodée. Clé : « ville|adresse » en minuscules.
+/// Aucun géocodeur n'écrit encore ici : une adresse absente reste sans distance.
+model AdresseGeolocalisee {
+  cle       String @id
+  latitude  Float
+  longitude Float
+
+  @@map("adresse_geolocalisee")
+}

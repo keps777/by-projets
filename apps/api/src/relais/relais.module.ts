@@ -1,7 +1,10 @@
 import { Inject, Injectable, Module, type OnModuleInit } from "@nestjs/common";
 import { ColisModule } from "../colis/colis.module";
 import { ColisRepository, ReferentielColis } from "../colis/ports";
+import { ChiffrementService } from "../socle/chiffrement/chiffrement.service";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { AnnuairePersonnes } from "./annuaire";
 import { AgentsRelaisController, InscriptionRelaisController } from "./inscription.controller";
@@ -17,6 +20,16 @@ import {
   RelaisMemoire,
   VersementsMemoire,
 } from "./memoire";
+import {
+  AttributionRolesPrisma,
+  BrouillonsRelaisPrisma,
+  CompteursDossiersPrisma,
+  DemandesRelaisPrisma,
+  LieuxPrisma,
+  PortefeuillePrisma,
+  ReceptionsRelaisPrisma,
+  RelaisPrisma,
+} from "./postgres";
 import {
   AttributionRoles,
   BrouillonsRelais,
@@ -126,15 +139,68 @@ export class BranchementRelaisColis implements OnModuleInit {
     VerificationPortsRelais,
     BranchementRelaisColis,
     { provide: Horloge, useClass: HorlogeSysteme },
-    { provide: RelaisRepository, useClass: RelaisMemoire },
-    { provide: DemandesRelaisRepository, useClass: DemandesRelaisMemoire },
-    { provide: BrouillonsRelais, useClass: BrouillonsRelaisMemoire },
-    { provide: CompteursDossiers, useClass: CompteursDossiersMemoire },
-    { provide: ReceptionsRelais, useClass: ReceptionsRelaisMemoire },
-    { provide: Lieux, useClass: LieuxInconnus },
-    { provide: Portefeuille, useClass: PortefeuilleMemoire },
+    {
+      provide: RelaisRepository,
+      inject: [CONFIG, PrismaService, ChiffrementService],
+      useFactory: (config: AppConfig, prisma: PrismaService, chiffrement: ChiffrementService) =>
+        stockageSurPostgres(config) ? new RelaisPrisma(prisma, chiffrement) : new RelaisMemoire(),
+    },
+    {
+      provide: DemandesRelaisRepository,
+      inject: [CONFIG, PrismaService, ChiffrementService],
+      useFactory: (config: AppConfig, prisma: PrismaService, chiffrement: ChiffrementService) =>
+        stockageSurPostgres(config)
+          ? new DemandesRelaisPrisma(prisma, chiffrement)
+          : new DemandesRelaisMemoire(),
+    },
+    {
+      provide: BrouillonsRelais,
+      inject: [CONFIG, PrismaService, ChiffrementService],
+      useFactory: (config: AppConfig, prisma: PrismaService, chiffrement: ChiffrementService) =>
+        stockageSurPostgres(config)
+          ? new BrouillonsRelaisPrisma(prisma, chiffrement)
+          : new BrouillonsRelaisMemoire(),
+    },
+    {
+      provide: CompteursDossiers,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config)
+          ? new CompteursDossiersPrisma(prisma)
+          : new CompteursDossiersMemoire(),
+    },
+    {
+      provide: ReceptionsRelais,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config)
+          ? new ReceptionsRelaisPrisma(prisma)
+          : new ReceptionsRelaisMemoire(),
+    },
+    {
+      provide: Lieux,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new LieuxPrisma(prisma) : new LieuxInconnus(),
+    },
+    {
+      provide: Portefeuille,
+      inject: [CONFIG, PrismaService, ChiffrementService],
+      useFactory: (config: AppConfig, prisma: PrismaService, chiffrement: ChiffrementService) =>
+        stockageSurPostgres(config)
+          ? new PortefeuillePrisma(prisma, chiffrement)
+          : new PortefeuilleMemoire(),
+    },
+    // L'envoi d'argent MoMo n'existe pas encore : l'adaptateur simulé reste, et refuse la production.
     { provide: VersementsMobile, useClass: VersementsMemoire },
-    { provide: AttributionRoles, useClass: AttributionRolesMemoire },
+    {
+      provide: AttributionRoles,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config)
+          ? new AttributionRolesPrisma(prisma)
+          : new AttributionRolesMemoire(),
+    },
     {
       provide: ColisDuRelais,
       inject: [ColisRepository],
