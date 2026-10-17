@@ -1,0 +1,716 @@
+/*
+ * Salle de contrôle (Controle.dc.html, 1280 px). Couleurs, polices, tailles et espacements relevés dans la planche ; les
+ * couleurs, polices et espacements sont les variables --am-* de @afrimove/design.
+ *
+ * Dans la planche seul le conteneur racine (et `main`) pose `box-sizing: border-box` : tout le reste est en
+ * `content-box`, donc les hauteurs minimales (40 px, 48 px) s'y ajoutent au remplissage et au bord. On reprend ce que la
+ * planche dessine réellement.
+ */
+
+.page :where(*) {
+  box-sizing: content-box;
+}
+
+.page {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-height: 100dvh;
+  background: var(--am-profond);
+  color: var(--am-craie);
+  font-family: var(--am-font-texte);
+}
+
+/* Titre de l'écran pour les lecteurs d'écran : la planche montre le nom de la compagnie à la place. */
+.titreEcran {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------------------------------------------------------------- en-tête */
+
+.entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--am-space-16);
+  padding: var(--am-space-14) var(--am-space-24);
+  border-bottom: 1px solid var(--am-surface-2);
+  background: var(--am-nuit);
+}
+
+.marque {
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-12);
+}
+
+.marque svg {
+  flex: none;
+}
+
+.textes {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.titre {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-18);
+  font-weight: 800;
+}
+
+.sousTitre {
+  font-size: var(--am-fs-12);
+  color: var(--am-craie-2);
+}
+
+.onglets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--am-space-6);
+}
+
+.onglet {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 var(--am-space-14);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-pill);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.ongletActif {
+  border: 0;
+  background: var(--am-orange);
+  color: var(--am-nuit);
+  font-weight: 700;
+}
+
+.pastille {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: var(--am-space-8) var(--am-space-12);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-pill);
+  background: var(--am-surface);
+  color: var(--am-craie-2);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-12);
+}
+
+.pointPastille {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--am-vert);
+}
+
+.pointHorsLigne {
+  background: var(--am-ambre);
+}
+
+/* ---------------------------------------------------------------- corps : colonne principale + colonne latérale */
+
+.principal {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+  gap: var(--am-space-16);
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: var(--am-space-16) var(--am-space-24) var(--am-space-24);
+}
+
+.colonne {
+  display: flex;
+  flex: 999 1 560px;
+  flex-direction: column;
+  gap: var(--am-space-16);
+  min-width: 0;
+}
+
+.lateral {
+  display: flex;
+  flex: 1 1 300px;
+  flex-direction: column;
+  gap: var(--am-space-16);
+  min-width: 0;
+}
+
+/* ---------------------------------------------------------------- les cinq chiffres */
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--am-space-10);
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-4);
+  padding: var(--am-space-14) var(--am-space-16);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-16);
+  background: var(--am-surface);
+}
+
+.kpiAlerte {
+  border-color: var(--am-ambre);
+  background: var(--am-ambre-fond);
+}
+
+.kpiEtiquette {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette-serree);
+  text-transform: uppercase;
+  color: var(--am-gris);
+}
+
+.kpiValeur {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-30);
+  font-weight: 800;
+  line-height: var(--am-lh-plein);
+}
+
+.kpiDetail {
+  font-size: var(--am-fs-12);
+  color: var(--am-craie-2);
+}
+
+.vert {
+  color: var(--am-vert);
+}
+
+.rouge {
+  color: var(--am-rouge);
+}
+
+.ambre {
+  color: var(--am-ambre);
+}
+
+/* ---------------------------------------------------------------- panneaux (carte, gares, à traiter) */
+
+.panneau {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-18);
+}
+
+.panneauCarte {
+  background: var(--am-nuit);
+}
+
+.barre {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--am-space-10) var(--am-space-16);
+  background: var(--am-surface);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-11);
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+  color: var(--am-ambre);
+}
+
+.aide {
+  color: var(--am-craie-2);
+}
+
+/* ---------------------------------------------------------------- la carte */
+
+.carte {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--am-carte-sombre);
+}
+
+.carteVide {
+  aspect-ratio: 3 / 1;
+  background: var(--am-carte-sombre);
+}
+
+.quadrillage {
+  fill: none;
+  stroke: var(--am-surface);
+  stroke-width: 1;
+}
+
+.route12,
+.route10,
+.routeBamenda {
+  fill: none;
+  stroke: var(--am-trait);
+  stroke-linecap: round;
+}
+
+.route12 {
+  stroke-width: 12;
+}
+
+.route10 {
+  stroke-width: 10;
+}
+
+.routeBamenda {
+  stroke-width: 8;
+  stroke-dasharray: 6 10;
+}
+
+.busOrange {
+  fill: var(--am-orange);
+}
+
+.busBleu {
+  fill: var(--am-bleu);
+}
+
+.busVert {
+  fill: var(--am-vert);
+}
+
+.busAlerte {
+  fill: var(--am-rouge);
+}
+
+.ville,
+.villeLointaine {
+  fill: var(--am-nuit);
+  stroke: var(--am-craie);
+  stroke-width: 3;
+}
+
+.villeLointaine {
+  stroke: var(--am-gris);
+}
+
+.nomVille,
+.nomVilleDiscret {
+  fill: var(--am-craie);
+  font-family: var(--am-font-texte);
+  font-size: var(--am-fs-16);
+  font-weight: 700;
+}
+
+.nomVilleDiscret {
+  fill: var(--am-gris);
+  font-size: var(--am-fs-13);
+  font-weight: 400;
+}
+
+.nomAlerte {
+  fill: var(--am-rouge);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-13);
+  font-weight: 700;
+}
+
+.legende {
+  fill: var(--am-craie-2);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-12);
+}
+
+/* ---------------------------------------------------------------- le tableau des gares */
+
+.defilement {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-size: var(--am-fs-13);
+}
+
+.entetesTable {
+  background: var(--am-nuit);
+  color: var(--am-gris);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-11);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.entetesTable th {
+  padding: var(--am-space-8) var(--am-space-12);
+  font-weight: 600;
+  text-align: left;
+}
+
+.entetesTable th.droite {
+  text-align: right;
+}
+
+.entetesTable th.premiere,
+.entetesTable th.derniere {
+  padding-right: var(--am-space-16);
+  padding-left: var(--am-space-16);
+}
+
+.ligneGare {
+  background: var(--am-carte-sombre);
+}
+
+.ligneGare:nth-child(even) {
+  background: var(--am-nuit);
+}
+
+.ligneGare + .ligneGare {
+  border-top: 1px solid var(--am-surface-2);
+}
+
+.cellule {
+  padding: 11px var(--am-space-12);
+}
+
+.cellule.premiere,
+.cellule.derniere {
+  padding-right: var(--am-space-16);
+  padding-left: var(--am-space-16);
+}
+
+.droite {
+  text-align: right;
+}
+
+.mono {
+  font-family: var(--am-font-mono);
+}
+
+.gras {
+  font-weight: 700;
+}
+
+.nomGare {
+  color: var(--am-craie);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.heureDepart {
+  font-family: var(--am-font-mono);
+  color: var(--am-ambre);
+}
+
+.superviseur {
+  color: var(--am-craie-2);
+}
+
+.message {
+  padding: 11px var(--am-space-16);
+  color: var(--am-craie-2);
+}
+
+/* ---------------------------------------------------------------- à traiter */
+
+.ligneATraiter {
+  display: grid;
+  grid-template-columns: 10px 1fr auto;
+  gap: var(--am-space-10);
+  align-items: center;
+  min-height: 48px;
+  padding: 11px var(--am-space-16);
+  background: var(--am-nuit);
+  color: var(--am-craie);
+  text-decoration: none;
+}
+
+.suite {
+  border-top: 1px solid var(--am-surface-2);
+}
+
+.point {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+}
+
+.pointAmbre {
+  background: var(--am-ambre);
+}
+
+.pointRouge {
+  background: var(--am-rouge);
+}
+
+.pointBleu {
+  background: var(--am-bleu);
+}
+
+.pointVert {
+  background: var(--am-vert);
+}
+
+.texteATraiter {
+  font-size: var(--am-fs-13);
+}
+
+.quand {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-11);
+  color: var(--am-gris);
+}
+
+.ligneSqueletteATraiter {
+  padding: 11px var(--am-space-16);
+  background: var(--am-nuit);
+}
+
+.ligneSqueletteATraiter + .ligneSqueletteATraiter {
+  border-top: 1px solid var(--am-surface-2);
+}
+
+.messageATraiter {
+  margin: 0;
+  padding: 11px var(--am-space-16);
+  background: var(--am-nuit);
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-13);
+}
+
+/* ---------------------------------------------------------------- ventes par heure */
+
+.ventes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-8);
+  padding: var(--am-space-14) var(--am-space-16);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-18);
+  background: var(--am-surface);
+}
+
+.enteteVentes {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-11);
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+  color: var(--am-ambre);
+}
+
+.barres {
+  display: grid;
+  grid-template-columns: repeat(var(--colonnes, 12), minmax(0, 1fr));
+  gap: var(--am-space-4);
+  align-items: end;
+  height: 90px;
+}
+
+.colonneBarre {
+  border-radius: 4px 4px 2px 2px;
+}
+
+.barrePic {
+  background: var(--am-ambre);
+}
+
+.barreNormal {
+  background: var(--am-trait);
+}
+
+.barrePrevue {
+  box-sizing: border-box;
+  border: 1px dashed var(--am-trait-fort);
+  background: var(--am-surface-2);
+}
+
+.axe {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-11);
+  color: var(--am-gris);
+}
+
+.lecture {
+  font-size: var(--am-fs-12);
+  color: var(--am-craie-2);
+}
+
+.messageVentes {
+  margin: 0;
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+}
+
+/* ---------------------------------------------------------------- rapport du soir */
+
+.rapport {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-8);
+  padding: var(--am-space-14) var(--am-space-16);
+  border: 1px solid var(--am-vert-bord);
+  border-radius: var(--am-radius-18);
+  background: var(--am-vert-fond);
+}
+
+.etiquetteRapport {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-11);
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+  color: var(--am-vert);
+}
+
+.texteRapport {
+  font-size: var(--am-fs-13);
+  line-height: var(--am-lh-texte);
+}
+
+.lienRapport {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  border-radius: var(--am-radius-10);
+  background: var(--am-vert);
+  color: var(--am-nuit);
+  font-size: var(--am-fs-13);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* ---------------------------------------------------------------- chargement, erreur */
+
+.squelette {
+  display: block;
+  border-radius: var(--am-radius-6);
+  background: var(--am-surface-2);
+}
+
+.squeletteTitre {
+  width: 240px;
+  height: 18px;
+}
+
+.squeletteSousTitre {
+  width: 200px;
+  height: 12px;
+  margin-top: var(--am-space-3);
+}
+
+.squelettePastille {
+  width: 300px;
+  height: 35px;
+  border-radius: var(--am-radius-pill);
+}
+
+/* Même hauteur que les textes qu'ils remplacent : la mise en page ne bouge pas quand les chiffres arrivent. */
+.squeletteValeur {
+  width: 90px;
+  height: 30px;
+}
+
+.squeletteDetail {
+  width: 140px;
+  height: 14px;
+}
+
+.squeletteLigne {
+  width: 100%;
+  height: 17px;
+}
+
+.squeletteBarres {
+  height: 90px;
+}
+
+.squeletteTexteRapport {
+  width: 100%;
+  height: 36px;
+}
+
+.etat {
+  display: flex;
+  flex: 1 1 100%;
+  flex-direction: column;
+  gap: var(--am-space-10);
+}
+
+.bandeau {
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-10);
+  padding: var(--am-space-10) var(--am-space-12);
+  border: 1px solid var(--am-surface-2);
+  border-radius: var(--am-radius-12);
+  background: var(--am-carte-sombre);
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+}
+
+.bandeau p {
+  margin: 0;
+}
+
+.pointBandeau {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--am-ambre);
+}
+
+.reessayer {
+  align-self: flex-start;
+  min-height: 44px;
+  padding: 0 var(--am-space-16);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-10);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font: inherit;
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ---------------------------------------------------------------- tactile : cibles de 44 px au moins */
+
+@media (max-width: 760px), (pointer: coarse) {
+  .onglet {
+    min-height: 44px;
+  }
+
+  .nomGare {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .lienRapport {
+    min-height: 44px;
+  }
+}
