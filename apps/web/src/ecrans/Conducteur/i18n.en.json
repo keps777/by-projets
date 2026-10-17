@@ -1,0 +1,53 @@
+{
+  "titre": "",
+  "retour": "",
+  "conducteur": {
+    "verifie": ""
+  },
+  "trajet": {
+    "villeDepart": "",
+    "villeArrivee": ""
+  },
+  "champs": {
+    "depart": "",
+    "arrivee": ""
+  },
+  "places": "",
+  "prix": {
+    "libelle": "",
+    "aria": "",
+    "conseil": ""
+  },
+  "options": "",
+  "reputation": {
+    "titre_one": "",
+    "titre_other": "",
+    "premier": "",
+    "pieces_one": "",
+    "pieces_other": "",
+    "paiement": ""
+  },
+  "publier": {
+    "libelle": "",
+    "detail": ""
+  },
+  "messages": {
+    "nonVerifie": "",
+    "prix": "",
+    "champs": "",
+    "chevauche": "",
+    "echec": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
