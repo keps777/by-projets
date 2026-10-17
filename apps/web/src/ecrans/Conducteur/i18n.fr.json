@@ -1,0 +1,53 @@
+{
+  "titre": "Proposer mon trajet",
+  "retour": "Retour",
+  "conducteur": {
+    "verifie": "vérifié"
+  },
+  "trajet": {
+    "villeDepart": "Ville de départ",
+    "villeArrivee": "Ville d'arrivée"
+  },
+  "champs": {
+    "depart": "Point de départ",
+    "arrivee": "Arrivée"
+  },
+  "places": "Places",
+  "prix": {
+    "libelle": "Prix / place",
+    "aria": "Prix par place",
+    "conseil": "Prix conseillé {{min}} à {{max}} (carburant partagé). Pas de bénéfice : du partage de frais."
+  },
+  "options": "Options",
+  "reputation": {
+    "titre_one": "Ton trajet · {{note}} ★",
+    "titre_other": "Tes {{count}} trajets · {{note}} ★",
+    "premier": "Ton premier trajet",
+    "pieces_one": "{{pieces}} vérifié",
+    "pieces_other": "{{pieces}} vérifiés",
+    "paiement": "Tu reçois le paiement à l'arrivée, par MoMo, quand le passager confirme ou 2 h après l'heure prévue. AfriMove garde {{frais}} F par place."
+  },
+  "publier": {
+    "libelle": "Publier le trajet",
+    "detail": "visible dans l'app voyageur en 10 s"
+  },
+  "messages": {
+    "nonVerifie": "Ton dossier n'est pas encore vérifié : pièce d'identité, permis, carte grise et voiture doivent être validés par AfriMove avant de publier.",
+    "prix": "Le prix reste entre {{min}} et {{max}} F la place : du partage de frais, pas de bénéfice.",
+    "champs": "Indique la ville et le point de départ, puis ceux d'arrivée.",
+    "chevauche": "Tu as déjà un trajet publié à ce moment-là.",
+    "echec": "Le trajet n'a pas pu être publié. Réessaie."
+  },
+  "etats": {
+    "chargement": "Chargement du formulaire",
+    "vide": {
+      "titre": "Aucune voiture déclarée",
+      "detail": "Déclare ta voiture et fais vérifier tes pièces pour proposer un trajet."
+    },
+    "erreur": {
+      "titre": "Impossible de charger le formulaire",
+      "detail": "Vérifie ta connexion, puis réessaie.",
+      "reessayer": "Réessayer"
+    }
+  }
+}
