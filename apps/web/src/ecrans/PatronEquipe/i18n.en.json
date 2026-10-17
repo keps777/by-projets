@@ -1,0 +1,103 @@
+{
+  "titre": "",
+  "retour": "",
+  "sousTitre": "",
+  "nbGares_one": "",
+  "nbGares_other": "",
+  "nbPersonnes_one": "",
+  "nbPersonnes_other": "",
+  "nbBus_one": "",
+  "nbBus_other": "",
+  "badge": "",
+  "gares": {
+    "titre": "",
+    "aide": "",
+    "ligne": "",
+    "ligneVille": "",
+    "ligneSansResponsable": "",
+    "composition": "",
+    "guichets_one": "",
+    "guichets_other": "",
+    "quais_one": "",
+    "quais_other": "",
+    "etat": "",
+    "etatSansEcart": "",
+    "horsLigne": ""
+  },
+  "effectifs": {
+    "guichetier": {
+      "libelle": "",
+      "detail": ""
+    },
+    "superviseur": {
+      "libelle": "",
+      "detail": ""
+    },
+    "convoyeur": {
+      "libelle": "",
+      "detail": ""
+    },
+    "chauffeur": {
+      "libelle": "",
+      "detail": ""
+    },
+    "relais": {
+      "libelle": "",
+      "detail": ""
+    },
+    "comptable": {
+      "libelle": "",
+      "detail": ""
+    }
+  },
+  "gens": {
+    "titre": "",
+    "titreSansEffectif": "",
+    "aide": "",
+    "liste": "",
+    "lieu": "",
+    "lieuSansPrecision": ""
+  },
+  "roles": {
+    "guichetier": "",
+    "guichetier_f": "",
+    "superviseur": "",
+    "superviseur_f": "",
+    "convoyeur": "",
+    "convoyeur_f": "",
+    "chauffeur": "",
+    "chauffeur_f": "",
+    "relais": "",
+    "relais_f": "",
+    "comptable": "",
+    "comptable_f": ""
+  },
+  "etats": {
+    "en_service": "",
+    "a_bord": "",
+    "en_route": "",
+    "repos": "",
+    "bloquee": "",
+    "bloquee_f": "",
+    "indisponible": "",
+    "hors_service": ""
+  },
+  "paie": {
+    "payer_one": "",
+    "payer_other": "",
+    "detail": ""
+  },
+  "actions": {
+    "ajouter": ""
+  },
+  "chargement": {
+    "libelle": ""
+  },
+  "vide": {
+    "texte": ""
+  },
+  "erreur": {
+    "texte": "",
+    "reessayer": ""
+  }
+}
