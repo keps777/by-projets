@@ -1,0 +1,106 @@
+{
+  "retour": "",
+  "vendu": {
+    "aria": "",
+    "libelle": "",
+    "detail": "",
+    "rendu": "",
+    "restent_one": "",
+    "restent_other": ""
+  },
+  "modes": {
+    "cash": "",
+    "momo": "",
+    "orange_money": ""
+  },
+  "billet": {
+    "aria": "",
+    "siege": "",
+    "classique": "",
+    "vip": "",
+    "nom": "",
+    "aCompleter": "",
+    "piece": "",
+    "pieceFaite": "",
+    "qr": "",
+    "pied": ""
+  },
+  "fait": {
+    "titre": "",
+    "numerote": {
+      "titre": "",
+      "detail": "",
+      "detailTrou": ""
+    },
+    "siege": {
+      "titre": "",
+      "detail": ""
+    },
+    "imprime": {
+      "titre": "",
+      "detail": ""
+    },
+    "impression": {
+      "titre": "",
+      "detail": ""
+    },
+    "caisse": {
+      "titre": "",
+      "detail": "",
+      "detailRendu": ""
+    },
+    "momo": {
+      "titre": "",
+      "detail": ""
+    },
+    "sms": {
+      "titre": "",
+      "sansNumero": "",
+      "action": "",
+      "suite": "",
+      "envoye": "",
+      "envoyeAu": ""
+    },
+    "synchro": {
+      "titre": "",
+      "auRetour": "",
+      "faite": ""
+    }
+  },
+  "manque": {
+    "titre": "",
+    "aide": "",
+    "debut": "",
+    "fin": ""
+  },
+  "actions": {
+    "numero": "",
+    "annuler": ""
+  },
+  "annulation": {
+    "motif": ""
+  },
+  "pied": {
+    "suite": "",
+    "suivant": {
+      "libelle": "",
+      "detail": ""
+    }
+  },
+  "erreurs": {
+    "sms": "",
+    "annulation": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
