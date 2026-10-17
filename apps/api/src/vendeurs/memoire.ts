@@ -247,6 +247,7 @@ export class CommissionsMemoire extends CommissionsVendeurs implements Volatil {
       .filter(
         (c) => enMs(c.at) >= enMs(depuis) && (avant === undefined || enMs(c.at) < enMs(avant)),
       )
+      .sort((a, b) => enMs(a.at) - enMs(b.at) || a.cle.localeCompare(b.cle))
       .map(copie);
   }
 

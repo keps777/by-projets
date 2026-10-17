@@ -30,6 +30,9 @@ import { enMs } from "./temps";
  */
 
 const copie = <T>(valeur: T): T => structuredClone(valeur);
+/** Les gains se lisent du plus ancien au plus récent, à égalité par clé (comme l'index PostgreSQL). */
+const parDateEtCle = (a: { at: string; cle: string }, b: { at: string; cle: string }): number =>
+  enMs(a.at) - enMs(b.at) || a.cle.localeCompare(b.cle);
 
 @Injectable()
 export class RelaisMemoire extends RelaisRepository implements Volatil {
@@ -303,12 +306,14 @@ export class PortefeuilleMemoire extends Portefeuille implements Volatil {
       .filter(
         (c) => enMs(c.at) >= enMs(depuis) && (avant === undefined || enMs(c.at) < enMs(avant)),
       )
+      .sort(parDateEtCle)
       .map(copie);
   }
 
   async creditsPeriode(type: TypePartenaire, depuis: string, avant: string) {
     return [...this.creditsLignes.values()]
       .filter((c) => c.type === type && enMs(c.at) >= enMs(depuis) && enMs(c.at) < enMs(avant))
+      .sort(parDateEtCle)
       .map(copie);
   }
 
@@ -349,6 +354,8 @@ export class AttributionRolesMemoire extends AttributionRoles implements Volatil
   readonly attributions: { personneId: string; role: "relais" | "livreur" }[] = [];
 
   async ajouterRole(personneId: string, role: "relais" | "livreur") {
+    // Comme en base : un rôle ne s'ajoute qu'une fois.
+    if (this.attributions.some((a) => a.personneId === personneId && a.role === role)) return;
     this.attributions.push({ personneId, role });
   }
 }

@@ -12,7 +12,9 @@ import { CaisseModule } from "../caisse/caisse.module";
 import { ColisModule } from "../colis/colis.module";
 import { ComptableModule } from "../comptable/comptable.module";
 import { CovoiturageModule } from "../covoiturage/covoiturage.module";
+import { FinancementModule } from "../financement/financement.module";
 import { GpsModule } from "../gps/gps.module";
+import { InterAgencesModule } from "../inter-agences/inter-agences.module";
 import { LivraisonModule } from "../livraison/livraison.module";
 import { ModulesModule } from "../modules/modules.module";
 import { NumerotationModule } from "../numerotation/numerotation.module";
@@ -25,6 +27,7 @@ import { SmsModule } from "../sms/sms.module";
 import { SupervisionModule } from "../supervision/supervision.module";
 import { SyncModule } from "../sync/sync.module";
 import { UssdModule } from "../ussd/ussd.module";
+import { VendeursModule } from "../vendeurs/vendeurs.module";
 import { EquipeAnnuaire } from "../whatsapp-achat/adaptateurs";
 import { GestionnaireEntrantsAchat } from "../whatsapp-achat/gestionnaire";
 import { ReconnaissanceEquipe } from "../whatsapp-achat/ports";
@@ -134,6 +137,9 @@ const whatsApp = WhatsAppModule.avec({
     AnalysesModule,
     AssistantModule,
     ComptableModule,
+    VendeursModule,
+    FinancementModule,
+    InterAgencesModule,
     ThrottlerModule.forRootAsync({
       inject: [CONFIG],
       useFactory: (config: AppConfig) => ({

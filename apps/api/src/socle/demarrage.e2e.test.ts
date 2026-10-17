@@ -19,7 +19,9 @@ import {
   type ConfigCovoiturage,
 } from "../covoiturage/config";
 import { VerificationStockageCovoiturage } from "../covoiturage/covoiturage.module";
+import { VerificationPortsFinancement } from "../financement/financement.module";
 import { VerificationStockageGps } from "../gps/gps.module";
+import { VerificationPortsInterAgences } from "../inter-agences/inter-agences.module";
 import { VerificationPortsLivraison } from "../livraison/livraison.module";
 import { ConversionDevisesPaiements } from "../paiements/adaptateurs";
 import {
@@ -36,6 +38,7 @@ import { VerificationPortsComptable } from "../comptable/comptable.module";
 import { VerificationRapport } from "../rapport/rapport.module";
 import { SourceRapportSoirPourWhatsApp } from "../rapport/source-whatsapp";
 import { VerificationPortsRelais } from "../relais/relais.module";
+import { VerificationPortsVendeurs } from "../vendeurs/vendeurs.module";
 import { FileEnvoiSms } from "../sms/file";
 import type { FileEnvoiMemoire } from "../sms/file-memoire";
 import type { FournisseurSimule } from "../sms/fournisseur-simule";
@@ -250,6 +253,9 @@ describe("production : l'application refuse de démarrer avec un port en mémoir
     // de remboursement/réclamation et l'application des réglages de l'assistant restent simulés.
     ["comptable", VerificationPortsComptable, /ComptableModule.*(mémoire|simulés)/],
     ["assistant", VerificationAssistant, /AssistantModule.*AppliquerActions.*en mémoire/],
+    ["vendeurs", VerificationPortsVendeurs, /VendeursModule.*(mémoire|simulés)/],
+    ["financement", VerificationPortsFinancement, /FinancementModule.*(mémoire|simulés)/],
+    ["inter-agences", VerificationPortsInterAgences, /InterAgencesModule.*(mémoire|simulés)/],
   ];
 
   it.each(gardes)(

@@ -1284,7 +1284,8 @@ model SmsEssai {
   @@map("sms_essai")
 }
 
-// =====================================================================================
+// ==============================================================================}
+
 // LOT A · Intégration API : adaptateurs PostgreSQL de gps, paiements, rapport, auth-voyageur, ussd,
 // whatsapp et whatsapp-achat (journaux). Bloc contigu, à la fin du fichier, pour faciliter la fusion.
 //
@@ -2065,4 +2066,1029 @@ model AssistantProposition {
   @@id([compagnieId, actionId])
   @@index([compagnieId, expireLe])
   @@map("assistant_proposition")
+}
+
+/**
+ * ==================================================================================================
+ * LOT B · adaptateurs PostgreSQL de la billetterie (reliquats), du covoiturage, de la livraison, des
+ * relais, des vendeurs, du financement et des inter-agences. Migrations 20261017000800 à
+ * 20261017000899. Bloc contigu en fin de fichier pour faciliter la fusion avec les autres lots.
+ * Ici, aucune relation Prisma vers les tables des lots précédents : les clés étrangères vers
+ * `personne`, `compagnie`, `gare`… sont posées en SQL dans les migrations (« SQL : ») et les
+ * adaptateurs écrivent des identifiants, sans jamais charger la ligne liée.
+ * ==================================================================================================
+ */
+
+/**
+ * ------------------------------------------------------------------ billetterie : reliquats (AM-162)
+ */
+
+/// Code promotionnel (administré par ailleurs). `frais_offerts` : les frais de service sont offerts.
+/// Le code est en majuscules (SQL : CHECK). Les codes `USSD` et `WHATSAPP` sont semés par la migration.
+model Promotion {
+  code  String   @id
+  /// SQL : frais_offerts
+  type  String
+  actif Boolean  @default(true)
+  creeA DateTime @default(now()) @db.Timestamptz(3)
+
+  @@map("promotion")
+}
+
+/// Proche d'un voyageur (celui qui paie à sa place, celui qui est prévenu). Le téléphone n'y est que chiffré.
+/// SQL : clé étrangère `voyageurId` vers `personne`.
+model ProcheVoyageur {
+  id               String   @id @default(uuid(7)) @db.Uuid
+  voyageurId       String   @db.Uuid
+  nom              String
+  telephoneChiffre String?
+  creeA            DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([voyageurId])
+  @@map("proche_voyageur")
+}
+
+/// Avis émis par la billetterie (billet émis, annulé, embarqué…), gardés tels quels : c'est la trace
+/// durable de ce que les écouteurs (SMS, paiements, caisse) ont reçu. EN AJOUT SEUL (SQL).
+model AvisBilletterie {
+  id    BigInt   @id @default(autoincrement())
+  /// `billet.emis`, `billet.annule`, `depart.etat_change`…
+  type  String
+  /// Billet, départ ou commande concernés, selon le type (pour retrouver les avis d'un objet).
+  cible String?
+  /// L'avis tel qu'il a été publié.
+  avis  Json
+  at    DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([cible, id])
+  @@index([type, id])
+  @@map("avis_billetterie")
+}
+
+/**
+ * ------------------------------------------------------------------ covoiturage (AM-054)
+ */
+
+/// Un trajet publié par un conducteur. Les colonnes `*Norm` (minuscules, sans accents, comme `normaliser`)
+/// servent la recherche. SQL : valeurs fermées, places et prix positifs, clé étrangère `conducteurId`,
+/// index partiel de recherche sur les trajets publiés.
+model TrajetCovoiturage {
+  id               String    @id @default(uuid(7)) @db.Uuid
+  conducteurId     String    @db.Uuid
+  /// SQL : entre_villes | ville
+  type             String
+  departVille      String
+  departVilleNorm  String
+  departPoint      String
+  arriveeVille     String
+  arriveeVilleNorm String
+  arriveePoint     String
+  departA          DateTime  @db.Timestamptz(3)
+  dureeMinutes     Int
+  places           Int
+  prixParPlace     Int
+  options          String[]  @default([])
+  vehicule         String
+  immatriculation  String
+  grandBagage      Boolean   @default(false)
+  regulier         Boolean   @default(false)
+  /// Null tant que l'occurrence suivante d'un trajet régulier n'est pas publiée.
+  suivantCreeA     DateTime? @db.Timestamptz(3)
+  /// SQL : publie | annule | termine
+  statut           String
+  creeA            DateTime  @db.Timestamptz(3)
+  annuleA          DateTime? @db.Timestamptz(3)
+
+  vues         VueTrajetCovoiturage[]
+  reservations ReservationCovoiturage[]
+
+  // SQL : index partiel (type, departVilleNorm, arriveeVilleNorm, departA) WHERE statut = 'publie'.
+  @@index([conducteurId, departA])
+  @@map("trajet_covoiturage")
+}
+
+/// Les voyageurs qui ont vu un trajet dans une recherche (chacun compte une fois).
+model VueTrajetCovoiturage {
+  trajetId   String @db.Uuid
+  voyageurId String @db.Uuid
+
+  trajet TrajetCovoiturage @relation(fields: [trajetId], references: [id])
+
+  @@id([trajetId, voyageurId])
+  @@map("vue_trajet_covoiturage")
+}
+
+/// Une réservation = la commande que paie le voyageur (même identifiant). SQL : index unique partiel
+/// (trajetId, passagerId) WHERE statut IN ('en_attente_paiement', 'payee') ; clés étrangères vers les
+/// comptes ; `reserver` et `payer` verrouillent la ligne du trajet.
+model ReservationCovoiturage {
+  id                 String    @id @db.Uuid
+  trajetId           String    @db.Uuid
+  conducteurId       String    @db.Uuid
+  passagerId         String    @db.Uuid
+  places             Int
+  prixParPlace       Int
+  fraisParPlace      Int
+  libelle            String
+  /// SQL : en_attente_paiement | expiree | payee | terminee | annulee
+  statut             String
+  creeA              DateTime  @db.Timestamptz(3)
+  expireA            DateTime  @db.Timestamptz(3)
+  payeeA             DateTime? @db.Timestamptz(3)
+  moyenPaiement      String?
+  departA            DateTime  @db.Timestamptz(3)
+  liberationAutoA    DateTime  @db.Timestamptz(3)
+  libereeA           DateTime? @db.Timestamptz(3)
+  /// SQL : confirmation_passager | delai_depasse | annulation_tardive
+  motifLiberation    String?
+  annuleeA           DateTime? @db.Timestamptz(3)
+  /// SQL : passager | conducteur | systeme
+  annulePar          String?
+  remboursementPrix  Int?
+  remboursementFrais Int?
+  retenue            Int       @default(0)
+
+  trajet TrajetCovoiturage @relation(fields: [trajetId], references: [id])
+
+  @@index([trajetId, statut])
+  @@index([passagerId, departA])
+  @@index([conducteurId, creeA])
+  @@index([statut, expireA])
+  @@index([statut, liberationAutoA])
+  @@map("reservation_covoiturage")
+}
+
+/// Le dossier d'un conducteur : véhicule et numéro de versement (chiffré). Les pièces sont à part.
+/// SQL : le véhicule est complet ou absent ; clé étrangère vers le compte.
+model DossierConducteur {
+  conducteurId            String   @id @db.Uuid
+  vehiculeMarque          String?
+  vehiculeModele          String?
+  vehiculeCouleur         String?
+  vehiculeImmatriculation String?
+  vehiculePlaces          Int?
+  vehiculeGrandBagage     Boolean?
+  /// Numéro MoMo qui reçoit le paiement, chiffré (AES-GCM) ; à défaut, celui du compte.
+  numeroVersementChiffre  String?
+  creeA                   DateTime @db.Timestamptz(3)
+  modifieA                DateTime @db.Timestamptz(3)
+
+  pieces PieceConducteur[]
+
+  @@index([modifieA])
+  @@map("dossier_conducteur")
+}
+
+/// Une pièce du dossier. Le numéro est chiffré ; la photo n'est qu'un identifiant opaque.
+model PieceConducteur {
+  conducteurId  String    @db.Uuid
+  /// SQL : identite | permis | carte_grise | voiture
+  type          String
+  /// SQL : a_verifier | validee | refusee
+  statut        String
+  fichierId     String
+  numeroChiffre String?
+  expireLe      DateTime? @db.Date
+  deposeeA      DateTime  @db.Timestamptz(3)
+  verifieePar   String?   @db.Uuid
+  verifieeA     DateTime? @db.Timestamptz(3)
+  motifRefus    String?
+
+  dossier DossierConducteur @relation(fields: [conducteurId], references: [conducteurId])
+
+  @@id([conducteurId, type])
+  @@index([statut, deposeeA])
+  @@map("piece_conducteur")
+}
+
+/// Paiement du conducteur à l'arrivée : un seul par réservation (idempotence). Jamais de texte du
+/// prestataire, un code d'erreur court seulement.
+model VersementCovoiturage {
+  id             String    @id @db.Uuid
+  reservationId  String    @unique @db.Uuid
+  conducteurId   String    @db.Uuid
+  montant        Int
+  /// SQL : confirmation_passager | delai_depasse | annulation_tardive
+  motif          String
+  /// SQL : a_faire | fait | echoue
+  statut         String
+  reference      String?
+  tentatives     Int       @default(0)
+  prochainEssaiA DateTime? @db.Timestamptz(3)
+  derniereErreur String?
+  creeA          DateTime  @db.Timestamptz(3)
+  faitA          DateTime? @db.Timestamptz(3)
+
+  @@index([statut, prochainEssaiA])
+  @@index([conducteurId, faitA])
+  @@map("versement_covoiturage")
+}
+
+/// Un passager cherche une voiture ; les conducteurs concernés lui proposent un trajet.
+model DemandeCovoiturage {
+  id           String   @id @db.Uuid
+  passagerId   String   @db.Uuid
+  departVille  String
+  arriveeVille String
+  jour         DateTime @db.Date
+  /// SQL : matin | apres_midi | soir (ou null)
+  moment       String?
+  places       Int
+  /// SQL : ouverte | annulee | satisfaite | expiree
+  statut       String
+  creeA        DateTime @db.Timestamptz(3)
+
+  propositions PropositionCovoiturage[]
+
+  @@index([statut, jour])
+  @@index([passagerId, creeA])
+  @@map("demande_covoiturage")
+}
+
+/// Un conducteur propose un de ses trajets pour une demande (une seule fois par trajet).
+model PropositionCovoiturage {
+  demandeId    String   @db.Uuid
+  conducteurId String   @db.Uuid
+  trajetId     String   @db.Uuid
+  envoyeeA     DateTime @db.Timestamptz(3)
+
+  demande DemandeCovoiturage @relation(fields: [demandeId], references: [id])
+
+  @@id([demandeId, conducteurId, trajetId])
+  @@index([conducteurId, envoyeeA])
+  @@map("proposition_covoiturage")
+}
+
+/// Une note de 1 à 5 donnée après le trajet. SQL : unique (reservationId, roleNote), valeur de 1 à 5.
+model NoteCovoiturage {
+  id            String   @id @db.Uuid
+  reservationId String   @db.Uuid
+  /// Qui est noté, et dans quel rôle.
+  noteId        String   @db.Uuid
+  /// SQL : conducteur | passager
+  roleNote      String
+  auteurId      String   @db.Uuid
+  valeur        Int
+  commentaire   String?
+  creeA         DateTime @db.Timestamptz(3)
+
+  @@unique([reservationId, roleNote])
+  @@index([noteId, roleNote])
+  @@map("note_covoiturage")
+}
+
+/// Le trajet du matin d'un passager en ville : un par voyageur.
+model TrajetRegulierPassager {
+  voyageurId   String   @id @db.Uuid
+  ville        String
+  departPoint  String
+  arriveePoint String
+  /// Heure habituelle, « HH:MM ». SQL : format vérifié.
+  departA      String
+  actif        Boolean
+  modifieA     DateTime @db.Timestamptz(3)
+
+  @@map("trajet_regulier_passager")
+}
+
+/// Conseil de prix et de durée d'un trajet entre deux villes (sens indifférent) : lu par le référentiel
+/// du covoiturage. Semé par la migration avec Douala ↔ Kribi (la seule valeur donnée par une maquette).
+model ConseilCovoiturage {
+  villeANorm   String
+  villeBNorm   String
+  villeA       String
+  villeB       String
+  prixMin      Int
+  prixMax      Int
+  dureeMinutes Int
+
+  @@id([villeANorm, villeBNorm])
+  @@map("conseil_covoiturage")
+}
+
+/**
+ * ------------------------------------------------------------------ points relais (AM-148)
+ */
+
+/// Un point relais actif (ou suspendu), créé à l'activation de la demande. Le numéro MoMo n'y est que chiffré.
+/// SQL : code et compte uniques, version pour la concurrence optimiste, clé étrangère `personneId`.
+model Relais {
+  id                   String    @id @db.Uuid
+  version              Int       @default(1)
+  /// « R-BAF-0215 » : le numéro du dossier.
+  code                 String    @unique
+  personneId           String    @unique @db.Uuid
+  nom                  String
+  typeBoutique         String
+  ville                String
+  quartier             String
+  repere               String?
+  latitude             Float?
+  longitude            Float?
+  ouvert               String
+  tailleMax            String
+  capacite             Int
+  particularite        String?
+  momoTelephoneChiffre String
+  /// SQL : mtn | orange
+  momoOperateur        String
+  facadeRef            String
+  actif                Boolean
+  note                 Float
+  creeA                DateTime  @db.Timestamptz(3)
+  premierColisA        DateTime? @db.Timestamptz(3)
+
+  // SQL : index (ville, actif) pour la recherche des relais proches.
+  @@index([ville, actif])
+  @@map("relais")
+}
+
+/// La demande d'un voyageur pour devenir relais. `fiche` porte le téléphone MoMo chiffré.
+/// SQL : une seule demande ouverte (recue ou visite_planifiee) par personne.
+model DemandeRelais {
+  dossier    String   @id
+  version    Int      @default(1)
+  personneId String   @db.Uuid
+  fiche      Json
+  /// SQL : recue | visite_planifiee | activee | refusee
+  etat       String
+  deposeeA   DateTime @db.Timestamptz(3)
+  visite     Json?
+  decision   Json?
+  relaisId   String?  @db.Uuid
+
+  @@index([personneId, deposeeA(sort: Desc)])
+  @@map("demande_relais")
+}
+
+/// Le brouillon de la fiche, enregistré à chaque étape.
+model BrouillonRelais {
+  personneId  String   @id @db.Uuid
+  fiche       Json
+  enregistreA DateTime @db.Timestamptz(3)
+
+  @@map("brouillon_relais")
+}
+
+/// Un compteur de numéros de dossier par préfixe (« R-BAF », « L-BAF »), partagé avec la livraison.
+model CompteurDossier {
+  prefixe String @id
+  valeur  Int
+
+  @@map("compteur_dossier")
+}
+
+/// Un colis reçu chez un relais : un colis n'a qu'une réception.
+model ReceptionRelais {
+  colisId        String    @id @db.Uuid
+  relaisId       String    @db.Uuid
+  recuA          DateTime  @db.Timestamptz(3)
+  rappelEnvoyeA  DateTime? @db.Timestamptz(3)
+  remiseOuverteA DateTime? @db.Timestamptz(3)
+
+  @@index([relaisId])
+  @@map("reception_relais")
+}
+
+/// Un gain d'un relais ou d'un livreur. La clé est l'idempotence : un gain n'est compté qu'une fois.
+/// EN AJOUT SEUL (SQL).
+model CreditPartenaire {
+  cle          String   @id
+  /// SQL : relais | livreur
+  type         String
+  partenaireId String   @db.Uuid
+  montant      Int
+  /// SQL : remise | reprise | livraison
+  motif        String
+  reference    String
+  at           DateTime @db.Timestamptz(3)
+
+  @@index([type, partenaireId, at])
+  @@index([type, at])
+  @@map("credit_partenaire")
+}
+
+/// Un versement ou un retrait. « en_attente » compte déjà dans le solde ; seule l'annulation (échec
+/// de l'opérateur) supprime la ligne. Le téléphone est chiffré.
+model DebitPartenaire {
+  cle              String   @id
+  /// SQL : relais | livreur
+  type             String
+  partenaireId     String   @db.Uuid
+  montant          Int
+  /// SQL : versement | retrait
+  motif            String
+  at               DateTime @db.Timestamptz(3)
+  /// SQL : en_attente | verse
+  etat             String
+  /// SQL : mtn | orange
+  operateur        String
+  telephoneChiffre String
+  libelle          String
+  reference        String?
+
+  @@index([type, partenaireId])
+  @@index([etat])
+  @@map("debit_partenaire")
+}
+
+/// Coordonnées d'une gare (relevées par l'exploitation), pour les distances.
+model CoordonneesGare {
+  gareId    String @id @db.Uuid
+  latitude  Float
+  longitude Float
+
+  @@map("coordonnees_gare")
+}
+
+/// Coordonnées d'une adresse de livraison, déjà géocodée. Clé : « ville|adresse » en minuscules.
+/// Aucun géocodeur n'écrit encore ici : une adresse absente reste sans distance.
+model AdresseGeolocalisee {
+  cle       String @id
+  latitude  Float
+  longitude Float
+
+  @@map("adresse_geolocalisee")
+}
+
+/**
+ * ------------------------------------------------------------------ livraison moto (AM-148)
+ */
+
+/// Un livreur actif (ou suspendu), créé à l'activation de la demande ; le dossier devient le badge.
+/// Le numéro MoMo n'y est que chiffré. SQL : badge et compte uniques, version pour la concurrence optimiste.
+model Livreur {
+  id                   String    @id @db.Uuid
+  version              Int       @default(1)
+  /// « L-BAF-0087 »
+  badge                String    @unique
+  numero               Int
+  personneId           String    @unique @db.Uuid
+  nom                  String
+  ville                String
+  /// SQL : moto | velo | pied | tricycle
+  deplacement          String
+  zone                 String
+  heures               String
+  chargeMax            String
+  momoTelephoneChiffre String
+  /// SQL : mtn | orange
+  momoOperateur        String
+  permisRef            String?
+  assuranceRef         String?
+  permisValideJusqua   DateTime? @db.Date
+  assuranceExpireLe    DateTime? @db.Date
+  moto                 String?
+  disponible           Boolean
+  actif                Boolean
+  note                 Float
+  creeA                DateTime  @db.Timestamptz(3)
+
+  missions    MissionLivraison[]
+  invitations InvitationLivreur[]
+
+  @@index([actif, disponible, ville])
+  @@map("livreur")
+}
+
+/// La demande d'un voyageur pour devenir livreur. SQL : une seule demande ouverte (recue) par personne.
+model DemandeLivreur {
+  dossier              String    @id
+  version              Int       @default(1)
+  personneId           String    @db.Uuid
+  numero               Int
+  ville                String
+  deplacement          String
+  zone                 String
+  heures               String
+  chargeMax            String
+  momoTelephoneChiffre String
+  momoOperateur        String
+  permisRef            String?
+  assuranceRef         String?
+  deposeeA             DateTime  @db.Timestamptz(3)
+  verifIdentiteA       DateTime? @db.Timestamptz(3)
+  verifPiecesA         DateTime? @db.Timestamptz(3)
+  permisValideJusqua   DateTime? @db.Date
+  assuranceExpireLe    DateTime? @db.Date
+  verifFormationA      DateTime? @db.Timestamptz(3)
+  /// SQL : recue | activee | refusee
+  etat                 String
+  decision             Json?
+  livreurId            String?   @db.Uuid
+
+  @@index([personneId, deposeeA(sort: Desc)])
+  @@map("demande_livreur")
+}
+
+/// Une mission de livraison d'un colis « moto ». SQL : une seule mission ouverte par colis (index unique partiel),
+/// `UPDATE … WHERE id AND version` pour chaque changement.
+model MissionLivraison {
+  id            String    @id @db.Uuid
+  version       Int       @default(1)
+  colisId       String    @db.Uuid
+  colisNumero   String
+  /// SQL : en_attente | proposee | acceptee | livree | repli | sans_livreur | annulee
+  etat          String
+  livreurId     String?   @db.Uuid
+  proposeeA     DateTime? @db.Timestamptz(3)
+  expireA       DateTime? @db.Timestamptz(3)
+  essais        Json
+  tour          Int
+  prochaineA    DateTime? @db.Timestamptz(3)
+  creeA         DateTime  @db.Timestamptz(3)
+  accepteeA     DateTime? @db.Timestamptz(3)
+  livreeA       DateTime? @db.Timestamptz(3)
+  trajet        Json
+  distanceM     Int
+  dureeMinutes  Int
+  prixLivraison Int
+  gain          Int
+  absence       Json?
+  repliA        DateTime? @db.Timestamptz(3)
+
+  livreur Livreur? @relation(fields: [livreurId], references: [id], onDelete: Restrict)
+
+  @@index([etat, expireA])
+  @@index([livreurId, etat])
+  @@index([colisId, creeA(sort: Desc)])
+  @@map("mission_livraison")
+}
+
+/// Un lien de suivi partagé : seul le hachage du jeton est gardé.
+model PartageSuivi {
+  jetonHache String   @id
+  colisId    String   @db.Uuid
+  creeA      DateTime @db.Timestamptz(3)
+  expireA    DateTime @db.Timestamptz(3)
+
+  @@index([colisId])
+  @@map("partage_suivi")
+}
+
+/// Une invitation envoyée par un livreur (limitée par jour).
+model InvitationLivreur {
+  id        BigInt   @id @default(autoincrement())
+  livreurId String   @db.Uuid
+  at        DateTime @db.Timestamptz(3)
+
+  livreur Livreur @relation(fields: [livreurId], references: [id])
+
+  @@index([livreurId, at])
+  @@map("invitation_livreur")
+}
+
+/**
+ * ------------------------------------------------------------------ vendeurs ambulants (AM-149)
+ */
+
+/// Un vendeur ambulant : `id` est le `personne.id` de son compte. Nom et téléphones n'y sont que chiffrés.
+/// SQL : numéro unique, version pour la concurrence optimiste, clé étrangère vers `personne`.
+model Vendeur {
+  id                   String   @id @db.Uuid
+  version              Int      @default(1)
+  /// « V-0412 »
+  numero               String   @unique
+  nomChiffre           String
+  telephoneChiffre     String
+  quartier             String
+  ville                String
+  momoTelephoneChiffre String
+  /// SQL : mtn | orange
+  momoOperateur        String
+  actif                Boolean
+  creeA                DateTime @db.Timestamptz(3)
+
+  agrements AgrementVendeur[]
+  ventes    VenteVendeur[]
+  credits   CreditCommissionVendeur[]
+  debits    DebitCommissionVendeur[]
+
+  @@map("vendeur")
+}
+
+/// L'agrément d'un vendeur par une agence : un agrément retiré est redonné par une mise à jour de la même ligne.
+model AgrementVendeur {
+  vendeurId           String    @db.Uuid
+  compagnieId         String    @db.Uuid
+  compagnieNom        String
+  /// SQL : actif | retire
+  etat                String
+  commissionClassique Int
+  commissionVip       Int
+  accordeLe           DateTime  @db.Timestamptz(3)
+  accordePar          String    @db.Uuid
+  retireLe            DateTime? @db.Timestamptz(3)
+
+  vendeur Vendeur @relation(fields: [vendeurId], references: [id], onDelete: Restrict)
+
+  @@id([vendeurId, compagnieId])
+  @@index([compagnieId])
+  @@map("agrement_vendeur")
+}
+
+/// Une vente à un voisin. SQL : une seule vente en attente par vendeur, un même voisin n'a pas deux billets sur
+/// un départ (index uniques partiels), billet unique.
+model VenteVendeur {
+  id                     String    @id @db.Uuid
+  version                Int       @default(1)
+  vendeurId              String    @db.Uuid
+  compagnieId            String    @db.Uuid
+  departId               String    @db.Uuid
+  billetId               String    @unique @db.Uuid
+  billetNumero           String?
+  siege                  Int?
+  voisinNomChiffre       String
+  voisinTelephoneChiffre String
+  voisinIndex            String
+  empreinte              String
+  origineCode            String
+  origineVille           String
+  destinationCode        String
+  destinationVille       String
+  /// SQL : classique | vip
+  classe                 String
+  departA                DateTime  @db.Timestamptz(3)
+  prix                   Int
+  commission             Int
+  /// SQL : mtn_momo | orange_money
+  moyen                  String
+  /// SQL : en_attente | reglee | terminee | refusee | expiree | a_rembourser
+  etat                   String
+  creeA                  DateTime  @db.Timestamptz(3)
+  expireA                DateTime  @db.Timestamptz(3)
+  reference              String?
+  regleeA                DateTime? @db.Timestamptz(3)
+  cause                  String?
+  termineeA              DateTime? @db.Timestamptz(3)
+  majA                   DateTime  @db.Timestamptz(3)
+
+  vendeur Vendeur                   @relation(fields: [vendeurId], references: [id], onDelete: Restrict)
+  credits CreditCommissionVendeur[]
+
+  @@index([vendeurId, creeA])
+  @@index([etat, creeA])
+  @@map("vente_vendeur")
+}
+
+/// Une commission gagnée : un crédit par vente (la clé est `commission:<venteId>`), jamais modifié.
+model CreditCommissionVendeur {
+  cle         String   @id
+  vendeurId   String   @db.Uuid
+  compagnieId String   @db.Uuid
+  venteId     String   @db.Uuid
+  montant     Int
+  at          DateTime @db.Timestamptz(3)
+
+  vendeur Vendeur      @relation(fields: [vendeurId], references: [id], onDelete: Restrict)
+  vente   VenteVendeur @relation(fields: [venteId], references: [id], onDelete: Restrict)
+
+  @@index([vendeurId, at])
+  @@map("credit_commission_vendeur")
+}
+
+/// Un versement de commissions, réservé avant l'appel à l'opérateur. Le téléphone n'y est que chiffré.
+model DebitCommissionVendeur {
+  cle              String   @id
+  vendeurId        String   @db.Uuid
+  montant          Int
+  at               DateTime @db.Timestamptz(3)
+  /// SQL : en_attente | verse
+  etat             String
+  /// SQL : mtn | orange
+  operateur        String
+  telephoneChiffre String
+  libelle          String
+  reference        String?
+
+  vendeur Vendeur @relation(fields: [vendeurId], references: [id], onDelete: Restrict)
+
+  @@index([vendeurId])
+  @@index([etat])
+  @@map("debit_commission_vendeur")
+}
+
+/**
+ * ------------------------------------------------------------------ financement, crédit et paie (AM-134)
+ */
+
+/// Un dossier d'avance sur recettes. AfriMove ne détient jamais les fonds : aucune colonne ne porte un solde.
+/// SQL : une seule avance ouverte par agence (index unique partiel), référence du partenaire unique,
+/// version pour la concurrence optimiste, mandat de prélèvement en colonnes.
+model DossierFinancement {
+  /// « AV-2027-0041 »
+  id                     String    @id
+  version                Int       @default(1)
+  agenceId               String    @db.Uuid
+  demandePar             String    @db.Uuid
+  montant                Int
+  /// SQL : envoye | en_analyse | verse | refuse | retire
+  statut                 String
+  partenaire             String?
+  referencePartenaire    String?   @unique
+  /// remboursementPctVentesMomo, dureeEstimeeSemaines, coutTotalPct
+  conditions             Json
+  envoyeA                DateTime  @db.Timestamptz(3)
+  reponseAvant           DateTime  @db.Timestamptz(3)
+  accuseA                DateTime? @db.Timestamptz(3)
+  decisionA              DateTime? @db.Timestamptz(3)
+  verseA                 DateTime? @db.Timestamptz(3)
+  retireA                DateTime? @db.Timestamptz(3)
+  motifRefus             String?
+  /// Les quatre pièces figées à l'envoi.
+  pieces                 Json
+  mandatPourcentage      Int
+  mandatSigneA           DateTime  @db.Timestamptz(3)
+  mandatSignePar         String    @db.Uuid
+  /// Référence du compte marchand, jamais le numéro.
+  mandatCompteMarchandId String
+  /// SQL : mtn | orange
+  mandatOperateur        String
+  mandatActif            Boolean
+  resteDu                Int?
+  rembourseA             DateTime? @db.Timestamptz(3)
+
+  prelevements PrelevementAvance[]
+
+  @@index([statut])
+  @@index([agenceId, envoyeA(sort: Desc)])
+  @@map("dossier_financement")
+}
+
+/// Un numéro d'avance par année : « AV-2027-0041 » est la valeur 41 de 2027.
+model CompteurAvance {
+  annee  Int @id
+  valeur Int
+
+  @@map("compteur_avance")
+}
+
+/// Un prélèvement sur une vente MoMo, versé directement au partenaire. La clé est `prelevement:<venteId>`.
+model PrelevementAvance {
+  cle          String   @id
+  dossierId    String
+  agenceId     String   @db.Uuid
+  venteId      String   @unique
+  montantVente Int
+  montant      Int
+  at           DateTime @db.Timestamptz(3)
+  /// SQL : en_attente | execute
+  etat         String
+  reference    String?
+
+  dossier DossierFinancement @relation(fields: [dossierId], references: [id], onDelete: Restrict)
+
+  @@index([dossierId])
+  @@index([etat])
+  @@map("prelevement_avance")
+}
+
+/// Un lot de paie par agence et par mois. SQL : unique (agenceId, mois).
+model LotPaie {
+  id       String   @id @db.Uuid
+  version  Int      @default(1)
+  agenceId String   @db.Uuid
+  /// « AAAA-MM »
+  mois     String
+  lancePar String   @db.Uuid
+  lanceA   DateTime @db.Timestamptz(3)
+  total    Int
+
+  lignes LignePaie[]
+
+  @@unique([agenceId, mois])
+  @@map("lot_paie")
+}
+
+/// Un salaire du lot. Le numéro MoMo n'y est que chiffré.
+model LignePaie {
+  lotId            String  @db.Uuid
+  personneId       String  @db.Uuid
+  /// Place dans le lot : l'ordre d'écriture est conservé.
+  rang             Int
+  nom              String
+  montant          Int
+  /// SQL : mtn | orange
+  operateur        String?
+  telephoneChiffre String?
+  /// SQL : en_attente | verse | refuse
+  etat             String
+  tentative        Int
+  reference        String?
+  motif            String?
+
+  lot LotPaie @relation(fields: [lotId], references: [id], onDelete: Restrict)
+
+  @@id([lotId, personneId])
+  @@index([etat])
+  @@map("ligne_paie")
+}
+
+/// Réglages de l'agence propres au financement.
+model ReglageFinancement {
+  agenceId         String  @id @db.Uuid
+  billetEnDeuxFois Boolean @default(false)
+  jourDePaie       String  @default("vendredi")
+
+  @@map("reglage_financement")
+}
+
+/// La convention avec l'établissement partenaire (écrite par un agent AfriMove, aucune route ici).
+model ConventionFinancement {
+  agenceId   String    @id @db.Uuid
+  partenaire String
+  signeeA    DateTime? @db.Timestamptz(3)
+
+  @@map("convention_financement")
+}
+
+/// L'offre de crédit matériel faite par le partenaire (écrite par le partenaire ou un agent, aucune route ici).
+model OffreCreditMateriel {
+  agenceId          String @id @db.Uuid
+  description       String
+  montantTotal      Int
+  mensualites       Int
+  montantMensualite Int
+
+  @@map("offre_credit_materiel")
+}
+
+/**
+ * ------------------------------------------------------------------ inter-agences (AM-135)
+ */
+
+/// Une convention entre deux compagnies (A propose, B accepte). SQL : une seule convention ouverte par paire de
+/// compagnies, quel que soit l'ordre (index unique partiel sur la paire triée), version pour la concurrence optimiste.
+model ConventionInterAgences {
+  id             String    @id @db.Uuid
+  version        Int       @default(1)
+  compagnieAId   String    @db.Uuid
+  compagnieBId   String    @db.Uuid
+  /// SQL : proposee | active | suspendue | resiliee
+  statut         String
+  /// SQL : trimestriel | annuel
+  renouvellement String
+  /// Le colis type et le tableau des parts.
+  parts          Json
+  /// Garantie, attente et lignes des billets en correspondance.
+  voyageurs      Json
+  proposeeLe     DateTime  @db.Timestamptz(3)
+  activeLe       DateTime? @db.Timestamptz(3)
+  /// Qui demande la sortie, quand, et quand elle prend effet.
+  denonciation   Json?
+
+  signatures SignatureConvention[]
+  colis      PlanColisInterAgences[]
+  billets    BilletCorrespondance[]
+  reglements ReglementInterAgences[]
+
+  @@index([compagnieAId])
+  @@index([compagnieBId])
+  @@map("convention_inter_agences")
+}
+
+/// La signature d'une compagnie : une par compagnie et par convention.
+model SignatureConvention {
+  conventionId String   @db.Uuid
+  compagnieId  String   @db.Uuid
+  personneId   String   @db.Uuid
+  signeLe      DateTime @db.Timestamptz(3)
+  /// Place dans la convention : l'ordre des signatures est conservé.
+  rang         Int
+
+  convention ConventionInterAgences @relation(fields: [conventionId], references: [id], onDelete: Restrict)
+
+  @@id([conventionId, compagnieId])
+  @@map("signature_convention")
+}
+
+/// Le plan d'un colis qui change de compagnie en route : un par colis. Les tronçons et les passages de témoin
+/// sont figés en JSON ; `compagnieIds` (les compagnies des tronçons) sert à retrouver les échanges d'une compagnie.
+model PlanColisInterAgences {
+  colisId      String   @id @db.Uuid
+  version      Int      @default(1)
+  numero       String
+  conventionId String   @db.Uuid
+  emettriceId  String   @db.Uuid
+  prix         Int
+  troncons     Json
+  compagnieIds String[] @db.Uuid
+  transferts   Json
+  creeLe       DateTime @db.Timestamptz(3)
+  creePar      String   @db.Uuid
+
+  convention ConventionInterAgences @relation(fields: [conventionId], references: [id], onDelete: Restrict)
+
+  @@index([conventionId])
+  @@map("colis_inter_agences")
+}
+
+/// Un billet voyageur en plusieurs tronçons, sous le numéro du billet vendu. Nom et téléphone du voyageur
+/// ne sont écrits que chiffrés.
+model BilletCorrespondance {
+  /// Le billet vendu.
+  id                       String   @id @db.Uuid
+  version                  Int      @default(1)
+  numero                   String   @unique
+  conventionId             String   @db.Uuid
+  emettriceId              String   @db.Uuid
+  voyageurNomChiffre       String
+  voyageurTelephoneChiffre String
+  prix                     Int
+  troncons                 Json
+  compagnieIds             String[] @db.Uuid
+  arriveePremierBus        Json?
+  replacement              Json?
+  creeLe                   DateTime @db.Timestamptz(3)
+  creePar                  String   @db.Uuid
+
+  convention ConventionInterAgences @relation(fields: [conventionId], references: [id], onDelete: Restrict)
+
+  @@index([conventionId])
+  @@map("billet_correspondance")
+}
+
+/// Un règlement arrêté : un par convention et par lundi (`<conventionId>:<AAMMJJ>`).
+model ReglementInterAgences {
+  cle          String    @id
+  conventionId String    @db.Uuid
+  paiementLe   DateTime  @db.Timestamptz(3)
+  gelLe        DateTime  @db.Timestamptz(3)
+  /// Les créances réglées, telles qu'arrêtées.
+  lignes       Json
+  /// Nuls quand le solde est nul.
+  debiteurId   String?   @db.Uuid
+  creancierId  String?   @db.Uuid
+  montant      Int
+  /// SQL : a_payer | paye | sans_solde
+  etat         String
+  reference    String?
+  payeLe       DateTime? @db.Timestamptz(3)
+  erreur       String?
+
+  convention ConventionInterAgences @relation(fields: [conventionId], references: [id], onDelete: Restrict)
+  creances   CreanceReglee[]
+
+  @@index([conventionId, paiementLe])
+  @@map("reglement_inter_agences")
+}
+
+/// Une opération réglée (`colis:<id>:<rang>`, `billet:<id>:<rang>`, `replacement:<id>`) : la clé primaire garantit
+/// qu'elle ne l'est qu'une fois, dans un seul règlement. En ajout seul.
+model CreanceReglee {
+  cle          String @id
+  reglementCle String
+
+  reglement ReglementInterAgences @relation(fields: [reglementCle], references: [cle], onDelete: Restrict)
+
+  @@index([reglementCle])
+  @@map("creance_reglee")
+}
+
+/// Une contestation du relevé de la semaine.
+model ContestationReglement {
+  /// `CTX-AAMMJJ-n`
+  reference     String    @id
+  conventionIds String[]  @db.Uuid
+  compagnieId   String    @db.Uuid
+  personneId    String    @db.Uuid
+  motif         String
+  /// Les opérations contestées (`cle` des créances), figées au dépôt.
+  cles          String[]
+  deposeeLe     DateTime  @db.Timestamptz(3)
+  recevable     Boolean
+  /// SQL : ouverte | accordee | rejetee | irrecevable
+  statut        String
+  resolueLe     DateTime? @db.Timestamptz(3)
+  resoluePar    String?   @db.Uuid
+
+  @@index([statut])
+  @@index([compagnieId])
+  @@map("contestation_reglement")
+}
+
+/// Une invitation envoyée à une autre compagnie. SQL : `cle` unique (une par compagnie, numéro et jour).
+model InvitationCompagnie {
+  /// `INV-AAMMJJ-n`
+  reference        String   @id
+  /// `<compagnieId>:<téléphone>:<AAMMJJ>`
+  cle              String   @unique
+  compagnieId      String   @db.Uuid
+  personneId       String   @db.Uuid
+  nomCompagnie     String
+  telephoneChiffre String
+  envoyeeLe        DateTime @db.Timestamptz(3)
+
+  @@map("invitation_compagnie")
+}
+
+/// Le compte mobile money d'une compagnie, qui paie et reçoit le solde net des règlements. Le numéro n'y est
+/// que chiffré. Aucune route ne l'écrit encore.
+model CompteMomoCompagnie {
+  compagnieId      String @id @db.Uuid
+  telephoneChiffre String
+  /// SQL : mtn | orange
+  operateur        String
+
+  @@map("compte_momo_compagnie")
 }

@@ -166,6 +166,8 @@ describe("rôles stricts (HTTP)", () => {
           "POST /ussd/:operateur",
           // Livraison : le lien de suivi qu'un client reçoit (jeton long, position jamais exacte).
           "GET /suivi/:jeton",
+          // Financement : le partenaire financier notifie (accusé, versement, refus), authentifié par son port.
+          "POST /financement/partenaire/notifications",
         ].sort(),
       );
     });

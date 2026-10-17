@@ -217,6 +217,9 @@ export async function creerAppColisTest(options: OptionsAppColisTest = {}) {
   }
 
   const referentiel = app.get(ReferentielColis) as ReferentielMemoire;
+  // `InterAgencesModule` (dans `AppModule`) branche ce calcul sur les conventions en vigueur au démarrage ;
+  // les tests du colis pilotent le drapeau du référentiel en mémoire.
+  referentiel.interAgencesDisponible = async () => referentiel.interAgences;
   referentiel.gares.set(GARE_DLA.id, GARE_DLA);
   referentiel.gares.set(GARE_BAF.id, GARE_BAF);
   referentiel.gares.set(AUTRE_GARE.id, AUTRE_GARE);

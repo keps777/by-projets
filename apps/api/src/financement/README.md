@@ -13,18 +13,26 @@ l'ordre, `PartenaireFinancier.prelever`) ; la paie part du compte de l'agence ve
 (`VersementsPaie`). Aucune table du module ne porte un solde d'AfriMove.
 
 Le module est autonome : tous ses accès extérieurs sont des **ports** (classes abstraites, `ports.ts`) avec une
-version **en mémoire** (`memoire.ts`). Il n'est **pas** dans `AppModule` et n'a **pas** d'adaptateur PostgreSQL :
-l'intégration est faite par le coordinateur (voir « Brancher le module »).
+version **en mémoire** (`memoire.ts`). Pour le stockage (dossiers, prélèvements, lots de paie, réglages,
+conventions, offres de crédit) il a aussi une version **PostgreSQL** (`postgres.ts`, lot B) choisie par
+`API_STOCKAGE` (voir `apps/api/INTEGRATION.md`). Il est dans `AppModule`. Le partenaire financier, les versements
+de paie, les salaires et les données de l'agence restent simulés ou en mémoire.
 
 ## Brancher le module
 
-À faire par le coordinateur (le brief interdit de toucher `app.module.ts` et `prisma/schema.prisma`) :
+**Fait (lot B)**
 
-1. Ajouter `FinancementModule` aux `imports` de `AppModule`. Le module fournit lui-même `VerificateurSignature`
-   (importé de `../modules/signature`, le même contrôle de PIN que les modules : 3 essais, 15 minutes de blocage).
-2. Créer les tables (voir « Tables PostgreSQL ») et fournir les adaptateurs à la place des versions en mémoire :
-   `DossiersFinancement`, `Prelevements`, `LotsPaie`, `ReglagesFinancement`, `ConventionsFinancement`,
-   `OffresCredit`. Les numéros MoMo des salariés (`ligne_paie.telephone`) sont chiffrés par `ChiffrementService`.
+1. `FinancementModule` est dans les `imports` de `AppModule` (il fournit lui-même `VerificateurSignature`, le
+   même contrôle de PIN que les modules : 3 essais, 15 minutes de blocage). La route publique
+   `POST /financement/partenaire/notifications` est dans la liste des routes publiques de
+   `socle/auth/roles.e2e.test.ts`.
+2. Adaptateurs PostgreSQL de `DossiersFinancement`, `Prelevements`, `LotsPaie`, `ReglagesFinancement`,
+   `ConventionsFinancement` et `OffresCredit` (`postgres.ts`), migration `20261017000805_financement`. Les
+   numéros MoMo des salariés (`ligne_paie.telephoneChiffre`) sont chiffrés par `ChiffrementService` (contexte
+   `financement.paie.telephone`).
+
+**Reste à faire**
+
 3. Brancher les ports sans table :
    - `PartenaireFinancier` : l'adaptateur de l'établissement choisi (envoi du dossier et des pièces, retrait,
      état, ordre de prélèvement, authentification de ses appels). **Aucun partenaire n'est choisi** : seul
@@ -32,7 +40,9 @@ l'intégration est faite par le coordinateur (voir « Brancher le module »).
    - `VersementsPaie` : envoi d'argent MoMo / Orange Money depuis le compte marchand de l'agence (AM-165) ;
    - `DonneesAgence` : ventes certifiées sur 90 jours (billetterie et colis), relevés MoMo rapprochés
      (rapprochement comptable, AM-114), pièces de l'agence (inscription), compte marchand MoMo, prix du billet VIP ;
-   - `SalairesAgence` : salaires du mois calculés sur les trajets et les primes (module équipe).
+   - `SalairesAgence` : salaires du mois calculés sur les trajets et les primes (module équipe). Les
+     `personneId` rendus doivent être de vrais comptes (`personne.id`) : `ligne_paie.personneId` est une clé
+     étrangère.
 4. Appeler `PrelevementsService.enregistrerVenteMomo({ agenceId, venteId, montant, at })` à chaque vente
    encaissée en MoMo par la billetterie (paiement confirmé), avec un identifiant de vente stable.
 5. Appeler `DeuxFoisService.plan(agenceId, prix)` depuis la billetterie pour savoir si l'agence propose le
@@ -40,9 +50,13 @@ l'intégration est faite par le coordinateur (voir « Brancher le module »).
 6. Créer l'application avec `rawBody: true` (déjà fait par `main.ts`) : la route du partenaire signe le corps exact.
 7. Poser `@ModuleRequis("financement")` sur `FinancementController` si l'agence doit pouvoir masquer le module
    (`financement` est éteint par défaut dans le catalogue). Non fait ici pour que le module reste autonome.
+8. Écrire les conventions (`convention_financement`) et les offres de crédit (`offre_credit_materiel`) : aucune
+   route, c'est le travail d'un agent AfriMove ou du partenaire. Sans ligne, l'agence n'a pas de convention (donc
+   pas d'avance) et pas d'offre de crédit.
 
 En production, `VerificationPortsFinancement` **refuse de démarrer** tant qu'un port est en mémoire ou simulé
-(`durable === false`) et nomme les ports concernés.
+(`durable === false`) et nomme les ports concernés (aujourd'hui : `SalairesAgence`, `VersementsPaie`,
+`PartenaireFinancier`, `DonneesAgence`).
 
 ## Routes
 
@@ -120,8 +134,15 @@ Corps d'erreur : `{ statusCode, code, message, details? }`. Codes repris du mock
 
 ## Tables PostgreSQL
 
-À créer par le coordinateur dans `prisma/schema.prisma`, avec les index et contraintes ci-dessous (ce sont eux
-qui garantissent les propriétés que les ports en mémoire simulent).
+**Écrites par la migration `20261017000805_financement`** (modèles en fin de `schema.prisma`, bloc « lot B »).
+Comme le reste du schéma, les **colonnes sont en camelCase** (`agenceId`, `mandatActif`…) : les noms en
+snake_case ci-dessous se lisent ainsi. Écarts avec la description d'origine : `ligne_paie.telephone` s'appelle
+`telephoneChiffre`, `ligne_paie.rang` conserve l'ordre d'écriture des lignes, et `lot_paie.version` existe mais
+n'est pas incrémentée (aucune écriture ne la lit). Ajouts : clés étrangères vers `compagnie` et `personne`
+(agence, patron, signataire du mandat, salarié), `CHECK` sur les valeurs fermées et les montants, numéro
+d'avance `AV-AAAA-NNNN`, mois `AAAA-MM`, index partiel des envois sans accusé, dossiers, lots et lignes de paie qui
+ne se suppriment pas (déclencheurs), prélèvement exécuté qui ne se modifie ni ne se supprime. Ce sont ces
+contraintes qui garantissent les propriétés que les ports en mémoire simulent.
 
 **`dossier_financement`** (`DossierStocke`)
 
@@ -241,14 +262,29 @@ Les contrats n'ont **pas** été modifiés (hors périmètre) ; l'API respecte l
 - Messages d'erreur : voir `erreurs.ts` et les services (`CONVENTION_NON_SIGNEE`, `COMPTE_MARCHAND_ABSENT`,
   `MOIS_INVALIDE`, `AUCUN_SALAIRE`, `PAIE_DEJA_LANCEE`…). Libellé du versement : « Salaire AAAA-MM ».
 
+## Tests
+
+- `*.test.ts`, `*.e2e.test.ts` : règles, validation et API complète sur les ports en mémoire.
+- `postgres.integration.test.ts` (avec `DATABASE_URL_TEST`) : le contrat des ports (`testing/contrat-ports.ts`)
+  sur la mémoire et sur PostgreSQL : une seule avance ouverte par agence même sous dix demandes simultanées,
+  un numéro d'avance sans trou ni doublon sous vingt appels simultanés, jamais plus prélevé que dû sous douze
+  ventes simultanées, un lot de paie par agence et par mois sous cinq lancements simultanés, un salaire relancé
+  une seule fois sous cinq relances simultanées ; puis les garde-fous de la base (numéros MoMo jamais en clair,
+  index unique partiel par SQL direct, valeurs fermées, dossiers qui ne se suppriment pas, prélèvement exécuté
+  figé, lignes de paie cohérentes) et la reprise après une nouvelle connexion.
+- `api.postgres.integration.test.ts` : de l'offre à la paie, sur PostgreSQL : demande d'avance signée par le
+  PIN du patron, deuxième demande refusée (409), versement par le partenaire simulé, cinq ventes MoMo
+  simultanées prélevées une fois chacune, paie de trois salariés (un sans compte MoMo), billet en deux fois, puis
+  redémarrage de l'API.
+
 ## Reste à faire
 
-- Adaptateurs PostgreSQL des ports ci-dessus, tables et migrations Prisma (coordinateur).
 - Un adaptateur `PartenaireFinancier` réel (aucun établissement n'est choisi) : format de ses appels, sa
   signature, la génération des pièces PDF et CSV à partir des données du dossier (`DossierTransmis.pieces` ne
   porte aujourd'hui que le nom, le détail et le format).
 - `VersementsPaie` (AM-165), `DonneesAgence`, `SalairesAgence`.
 - Appeler `PrelevementsService.enregistrerVenteMomo` depuis la billetterie et `DeuxFoisService.plan` depuis les
-  paiements ; verrou d'instance pour `TachesFinancement` si l'API tourne sur plusieurs processus.
+  paiements ; verrou d'instance (`pg_advisory_lock`) pour `TachesFinancement` si l'API tourne sur plusieurs
+  processus.
 - Brancher les écrans sur l'adaptateur HTTP : les chemins, corps et réponses sont ceux de `operations.ts`
   (`parite.test.ts`) ; l'adaptateur HTTP lui-même n'a pas été lancé contre cette API ici.

@@ -3,6 +3,8 @@ import { PaiementsModule } from "../paiements/paiements.module";
 import { Verrous } from "../paiements/verrous";
 import { SmsModule } from "../sms/sms.module";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import {
   AbonnementPaiementsCovoiturage,
@@ -30,6 +32,16 @@ import {
   TrajetsReguliersMemoire,
   VersementsMemoire,
 } from "./memoire";
+import {
+  DemandesPrisma,
+  DossiersPrisma,
+  NotesPrisma,
+  ReferentielLignesPrisma,
+  ReservationsPrisma,
+  TrajetsPrisma,
+  TrajetsReguliersPrisma,
+  VersementsPrisma,
+} from "./postgres";
 import {
   AnnuaireCovoiturage,
   Demandes,
@@ -129,15 +141,60 @@ export class VerificationStockageCovoiturage implements OnModuleInit {
         chargerConfigCovoiturage(process.env, config.env === "production"),
     },
     Verrous,
-    { provide: Trajets, useClass: TrajetsMemoire },
-    { provide: Reservations, useClass: ReservationsMemoire },
-    { provide: Dossiers, useClass: DossiersMemoire },
-    { provide: Versements, useClass: VersementsMemoire },
+    {
+      provide: Trajets,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new TrajetsPrisma(prisma) : new TrajetsMemoire(),
+    },
+    {
+      provide: Reservations,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new ReservationsPrisma(prisma) : new ReservationsMemoire(),
+    },
+    {
+      provide: Dossiers,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new DossiersPrisma(prisma) : new DossiersMemoire(),
+    },
+    {
+      provide: Versements,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new VersementsPrisma(prisma) : new VersementsMemoire(),
+    },
+    // Le décaissement MoMo n'existe pas encore : l'adaptateur simulé reste, et refuse la production.
     { provide: PasserelleVersements, useClass: PasserelleVersementsSimulee },
-    { provide: Demandes, useClass: DemandesMemoire },
-    { provide: Notes, useClass: NotesMemoire },
-    { provide: TrajetsReguliersPassagers, useClass: TrajetsReguliersMemoire },
-    { provide: ReferentielCovoiturage, useClass: ReferentielMemoire },
+    {
+      provide: Demandes,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new DemandesPrisma(prisma) : new DemandesMemoire(),
+    },
+    {
+      provide: Notes,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new NotesPrisma(prisma) : new NotesMemoire(),
+    },
+    {
+      provide: TrajetsReguliersPassagers,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config)
+          ? new TrajetsReguliersPrisma(prisma)
+          : new TrajetsReguliersMemoire(),
+    },
+    {
+      provide: ReferentielCovoiturage,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config)
+          ? new ReferentielLignesPrisma(prisma)
+          : new ReferentielMemoire(),
+    },
     { provide: AnnuaireCovoiturage, useClass: AnnuaireComptesCovoiturage },
     { provide: NotifieurCovoiturage, useClass: NotifieurSmsCovoiturage },
     { provide: RemboursementsCovoiturage, useClass: RemboursementsViaPaiements },

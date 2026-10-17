@@ -79,13 +79,16 @@ le prix des places. Un guichetier ne peut donc ni lire ni encaisser une réserva
    est enregistré au démarrage chez les paiements. `PUT /paiements/comptes-reversement/:compagnieId` ne
    convient **pas** : il exige une compagnie du catalogue de la billetterie, et la compagnie de séquestre n'y
    est pas. Sans ce compte, payer une réservation échoue (422 `COMPAGNIE_SANS_COMPTE`).
-3. Remplacer les ports en mémoire par des adaptateurs PostgreSQL (tables ci-dessous) : `Trajets`,
-   `Reservations`, `Dossiers`, `Versements`, `Demandes`, `Notes`, `TrajetsReguliersPassagers`.
+3. **Fait (lot B)** : les adaptateurs PostgreSQL de `Trajets`, `Reservations`, `Dossiers`, `Versements`,
+   `Demandes`, `Notes`, `TrajetsReguliersPassagers` et `ReferentielCovoiturage` sont dans `postgres.ts`,
+   choisis par `API_STOCKAGE` (voir `apps/api/INTEGRATION.md`). Migration `20261017000801_covoiturage`.
 4. Écrire `PasserelleVersements` : le **décaissement MoMo** de l'agrégateur (`verser({ cle, montant, telephone })`,
    idempotent par `cle`). Le module paiements ne fait que des encaissements et des remboursements ; ce
    décaissement n'existe pas encore. En attendant, l'adaptateur simulé journalise sans envoyer d'argent.
-5. Brancher `ReferentielCovoiturage` sur le référentiel des villes et des lignes (nom d'une ville, fourchette de
-   prix conseillée, durée). Celui en mémoire ne connaît que quelques villes et Douala ↔ Kribi.
+5. **Fait (lot B)** : `ReferentielLignesPrisma` lit le nom d'une ville dans les gares du réseau (code de ville ou
+   nom) et dans `conseil_covoiturage`, et la fourchette de prix et la durée dans `conseil_covoiturage` (sens
+   indifférent). La migration ne sème que Douala ↔ Kribi (3 500 à 4 500 F, 2 h 30, la seule valeur donnée par une
+   maquette) : les autres conseils s'ajoutent par SQL, un trajet sans conseil reçoit le plafond général.
 6. Service de fichiers : `PUT …/verification/pieces/:type` reçoit un `fichierId` déjà déposé ailleurs ; l'envoi
    des photos (et leur lecture par AfriMove) reste à brancher sur le service de dépôt.
 7. Accueil : `RechercheService.pourListe(voyageurId, { depart, arrivee, jour })` rend les covoiturages du jour
@@ -156,7 +159,13 @@ Erreurs (corps `{ code, message, details? }`) : 403 `CONDUCTEUR_NON_VERIFIE`, 42
 | `COVOITURAGE_VERSEMENT_REPRISE_MS`    | `60000`                                | attente avant le deuxième essai (doublée à chaque essai)          |
 | `COVOITURAGE_ABONNER_PAIEMENTS`       | `true`                                 | branche les réservations sur les paiements au démarrage           |
 
-## Tables PostgreSQL attendues
+## Tables PostgreSQL
+
+**Écrites par la migration `20261017000801_covoiturage`** (modèles en fin de `schema.prisma`, bloc « lot B »).
+Les noms de tables sont ceux ci-dessous ; comme le reste du schéma, les **colonnes sont en camelCase**
+(`conducteurId`, `departA`, `suivantCreeA`…) et les noms de colonne ci-dessous en snake_case se lisent
+ainsi. Ajouts : `conseil_covoiturage` (couple de villes, fourchette de prix, durée), clés étrangères vers
+`personne` (sans cascade), `CHECK` sur les valeurs fermées, les quantités et la complétude du véhicule.
 
 Montants en FCFA entiers (`integer`), dates en `timestamptz`, identifiants `uuid`. Noms en français, comme
 le reste du schéma. Les index uniques et les écritures « comparer et remplacer » sont ce qui rend le module
@@ -216,7 +225,13 @@ pour l'audit.
 - `covoiturage.e2e.test.ts` : l'API complète (gardes, rôles, audit) avec la vraie billetterie et les paiements,
   paiement par webhook signé, réponses validées par les schémas de `@afrimove/contrats` ;
 - `covoiturage.module.test.ts` : le démarrage en production est refusé tant qu'un port est en mémoire ;
-- `covoiturage.sequestre.test.ts` : sans compte de séquestre, payer une réservation est refusé.
+- `covoiturage.sequestre.test.ts` : sans compte de séquestre, payer une réservation est refusé ;
+- `postgres.integration.test.ts` (avec `DATABASE_URL_TEST`) : le contrat des ports (`testing/contrat-ports.ts`)
+  sur la mémoire et sur PostgreSQL : places jamais dépassées sous dix réservations simultanées, une réservation
+  en cours par passager, un versement par réservation, changements d'état « comparer et remplacer » ; puis les
+  garde-fous de la base et le référentiel ;
+- `api.postgres.integration.test.ts` : l'API entière sur PostgreSQL (vérification du conducteur, publication,
+  recherche, réservation, paiement par webhook, arrivée, versement, redémarrage).
 
 ## Décisions à confirmer
 
@@ -239,5 +254,6 @@ isolées dans `regles.ts` :
 
 - Aucun appel réel à un agrégateur : l'encaissement passe par l'agrégateur simulé, le versement au conducteur
   par une passerelle simulée.
-- Aucune base PostgreSQL : les index et transactions décrits ci-dessus ne sont pas exécutés.
+- Les adaptateurs PostgreSQL sont testés sur une base locale (PostgreSQL 16), pas sur celle de production.
+- Le décaissement MoMo reste simulé : `PasserelleVersements` refuse toujours la production.
 - Les distances d'itinéraire en ville ne sont pas calculées (`distanceKm: 0`), faute de service de cartographie.

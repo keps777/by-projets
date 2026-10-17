@@ -6,8 +6,8 @@ du client, destinataire absent (10 minutes d'attente, puis dépôt au point rela
 suivi partageable, gains (70 % du prix de la livraison) versés le soir ou retirés à la demande.
 
 Le module est autonome : tous ses accès extérieurs sont des **ports** (classes abstraites, `ports.ts`) avec une
-version **en mémoire** (`memoire.ts`). Il n'est **pas** dans `AppModule` et n'a **pas** d'adaptateur PostgreSQL :
-l'intégration est faite par le coordinateur (voir « Brancher le module »). Tout changement d'état d'un colis
+version **en mémoire** (`memoire.ts`) et une version **PostgreSQL** (`postgres.ts`, lot B), choisie par
+`API_STOCKAGE` (voir `apps/api/INTEGRATION.md`). Il est dans `AppModule`. Tout changement d'état d'un colis
 (prise en charge, remise, dépôt au relais de repli) passe par `ColisService.executer` (module colis, AM-163).
 
 Il s'appuie sur `RelaisModule` (`../relais/README.md`) pour le portefeuille, les versements mobiles, les
@@ -15,27 +15,33 @@ rôles, les lieux, la numérotation des dossiers et le relais de repli.
 
 ## Brancher le module
 
-À faire par le coordinateur (le brief interdit de toucher `app.module.ts` et `prisma/schema.prisma`) :
+**Fait (lot B)**
 
-1. Ajouter `RelaisModule` puis `LivraisonModule` aux `imports` de `AppModule`.
-2. Écrire les adaptateurs PostgreSQL des ports (voir « Tables PostgreSQL ») et les fournir à la place des
-   versions en mémoire : `LivreursRepository`, `DemandesLivreurRepository`, `MissionsRepository`,
-   `PartagesSuivi`, `Invitations`, ainsi que ceux du relais (`Portefeuille`, `CompteursDossiers`…).
-3. Brancher les ports communs avec le relais : `Lieux` (géocodeur : sans lui la distance est de 3 km par
-   défaut), `VersementsMobile` (opérateur MoMo et Orange Money, AM-165), `AttributionRoles` (`personne.roles`).
-4. Brancher la diffusion en direct (`DiffusionLivraison`) sur les passerelles WebSocket, qui restent à écrire :
+1. `RelaisModule` puis `LivraisonModule` sont dans les `imports` de `AppModule`.
+2. Adaptateurs PostgreSQL de `LivreursRepository`, `DemandesLivreurRepository`, `MissionsRepository`,
+   `PartagesSuivi` et `Invitations` (`postgres.ts`), migration `20261017000803_livraison`. Le portefeuille, les
+   numéros de dossier, les lieux et l'attribution des rôles sont ceux du relais (`../relais/postgres.ts`). Les
+   numéros MoMo sont chiffrés par `ChiffrementService`, le jeton d'un lien de suivi n'est jamais gardé (son
+   hachage seul).
+
+**Reste à faire**
+
+1. Brancher la diffusion en direct (`DiffusionLivraison`) sur les passerelles WebSocket, qui restent à écrire :
    - `/livreurs/moi/missions/direct` : s'abonner avec `LivreursService.suivreMissions` (messages
      `SchemaMessageMissions`) ;
    - `/colis/:colisId/livraison/direct` : s'abonner avec `LivraisonService.suivreEnDirect` (position du
      livreur : minutes restantes, arrivée estimée).
-5. Les tâches de fond (`TachesLivraison`) démarrent seules hors tests : missions toutes les 5 secondes (propositions
+     Tant qu'elle reste dans le processus (`DiffusionLivraisonMemoire`), le démarrage en production est refusé.
+2. `VersementsMobile` (opérateur MoMo et Orange Money, AM-165) : commun avec le relais, encore simulé.
+3. Les tâches de fond (`TachesLivraison`) démarrent seules hors tests : missions toutes les 5 secondes (propositions
    expirées, nouvelles missions, attentes d'absence, positions diffusées), versements des livreurs chaque
    minute (le soir, à partir de 20 h). Sur plusieurs instances, plusieurs tâches tournent : les écritures
    conditionnelles sur `version` et les clés d'idempotence les rendent sans danger, mais un verrou
    (`pg_advisory_lock`) évitera du travail en double et des SMS en double.
 
 En production, `VerificationPortsLivraison` **refuse de démarrer** tant qu'un port est en mémoire
-(`durable === false`) et nomme les ports concernés. `VerificationPortsRelais` fait de même pour le relais.
+(`durable === false`) et nomme les ports concernés (aujourd'hui : `DiffusionLivraison`). `VerificationPortsRelais`
+fait de même pour le relais.
 
 ## Routes
 
@@ -119,9 +125,15 @@ Corps d'erreur : `{ code, message, details? }` (celui du module colis). Codes aj
 
 ## Tables PostgreSQL
 
-À créer par le coordinateur dans `prisma/schema.prisma`. Le portefeuille (`credit_partenaire`,
-`debit_partenaire`) et `compteur_dossier` sont décrits dans `../relais/README.md` et partagés (`type =
-'livreur'`, préfixe `L-BAF`). Les numéros MoMo et les téléphones sont **chiffrés** (`ChiffrementService`).
+**Écrites par la migration `20261017000803_livraison`** (modèles en fin de `schema.prisma`, bloc « lot B »).
+Le portefeuille (`credit_partenaire`, `debit_partenaire`) et `compteur_dossier` sont décrits dans
+`../relais/README.md` et partagés (`type = 'livreur'`, préfixe `L-BAF`). Les noms de tables sont ceux
+ci-dessous ; comme le reste du schéma, les **colonnes sont en camelCase** (`personneId`, `deposeeA`,
+`momoTelephoneChiffre`…) et les noms de colonne en snake_case ci-dessous se lisent ainsi. Ajouts : clés
+étrangères vers `personne`, `colis` et `livreur` (sans cascade : un livreur qui a des missions ne se supprime
+pas), `CHECK` sur les valeurs fermées, les quantités et la cohérence d'une mission (un livreur est nommé dès
+qu'elle lui est proposée ; le gain ne dépasse pas le prix), invitations en ajout seul. Les numéros MoMo sont
+**chiffrés** (`ChiffrementService`).
 
 **`livreur`** (`LivreurStocke`) : `id` (uuid), `version` (int, concurrence optimiste), `badge` (unique,
 `L-BAF-0087`), `numero` (int), `personne_id` (unique), `nom`, `ville`, `deplacement` (`moto`, `velo`, `pied`,
@@ -170,12 +182,26 @@ fond et `(livreur_id, etat)` pour l'espace du livreur.
 - Une pièce vaut jusqu'à minuit de son dernier jour (heure de Douala) ; un livreur à moto sans date de
   permis ou d'assurance ne reçoit rien.
 - Textes inventés (SMS, libellés, statuts de suivi) : voir `contenu.ts` et les SMS des services.
+- Sur PostgreSQL, une mission « moto » se rattache à un vrai colis (clé étrangère) : une mission ne peut pas être
+  créée pour un colis inconnu, ce que la mémoire acceptait.
+
+## Tests
+
+- `*.test.ts`, `*.e2e.test.ts` : règles, validation et API complète sur les ports en mémoire.
+- `postgres.integration.test.ts` (avec `DATABASE_URL_TEST`) : le contrat des ports (`testing/contrat-ports.ts`)
+  sur la mémoire et sur PostgreSQL : une mission ouverte par colis même créée cinq fois en parallèle, deux livreurs
+  qui acceptent en même temps (un seul gagne), une demande ouverte par personne, écritures « comparer et
+  remplacer » ; puis les garde-fous de la base (MoMo chiffré, index uniques partiels, clés étrangères,
+  cohérence d'une mission, invitations en ajout seul).
+- `api.postgres.integration.test.ts` : de la demande du livreur à la livraison payée sur PostgreSQL (vérification,
+  activation, rôle `livreur`, mission proposée, acceptation, mauvais code refusé, remise, gain de 700 F crédité
+  une fois, rejeu refusé), puis redémarrage de l'API.
 
 ## Reste à faire
 
-- Adaptateurs PostgreSQL des ports ci-dessus, tables et migrations Prisma (coordinateur).
-- `Lieux`, `VersementsMobile` (AM-165), `AttributionRoles` (communs avec le relais).
-- Passerelles WebSocket `/livreurs/moi/missions/direct` et `/colis/:colisId/livraison/direct`.
+- Passerelles WebSocket `/livreurs/moi/missions/direct` et `/colis/:colisId/livraison/direct`
+  (`DiffusionLivraison`).
+- `VersementsMobile` (AM-165), commun avec le relais ; `Lieux` : géocodage des adresses (cartographie).
 - Positions GPS du livreur : aucune route d'envoi n'existe dans les contrats ; `diffuserPositions` diffuse
   aujourd'hui une estimation fondée sur la durée de la mission.
 - Verrou d'instance pour les tâches de fond si l'API tourne sur plusieurs processus.

@@ -1,8 +1,12 @@
 import { Inject, Injectable, Module, type OnModuleInit } from "@nestjs/common";
+import { Passagers } from "../billetterie/passagers";
 import { ColisModule } from "../colis/colis.module";
 import { ReferentielColis } from "../colis/ports";
 import { VerificateurSignature } from "../modules/signature";
+import { ChiffrementService } from "../socle/chiffrement/chiffrement.service";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { AnnuairePatrons, SignaturesPatronParPin } from "./annuaire";
 import { BilletsService } from "./billets.service";
@@ -36,6 +40,18 @@ import {
   ReglementsMobile,
   SignaturesPatron,
 } from "./ports";
+import {
+  AnnuaireCompagniesPrisma,
+  BilletsCorrespondancePrisma,
+  BilletsEmisPrisma,
+  ColisInterAgencesPrisma,
+  CompteursReferencesPrisma,
+  ContestationsPrisma,
+  ConventionsPrisma,
+  DepartsInterAgencesPrisma,
+  InvitationsPrisma,
+  ReglementsPrisma,
+} from "./postgres";
 import { ReglementsService } from "./reglements.service";
 import { TachesInterAgences } from "./taches.service";
 import { VuesService } from "./vues.service";
@@ -113,9 +129,10 @@ export class BranchementInterAgencesColis implements OnModuleInit {
  * correspondance garantie et replacement.
  *
  * Module autonome : tous ses accès extérieurs sont des ports (`ports.ts`) avec une version en mémoire
- * (`memoire.ts`). Il n'est pas encore dans `AppModule` : le coordinateur branche les adaptateurs PostgreSQL
- * (tables décrites dans le README), l'annuaire des compagnies, les départs de la billetterie, les billets
- * vendus et l'opérateur de règlement, puis l'ajoute aux `imports`.
+ * (`memoire.ts`). Dans `AppModule`. Le stockage (conventions, colis et billets en correspondance, règlements,
+ * contestations, invitations, références) et les lectures dans la billetterie (compagnies, départs, billets
+ * vendus) ont une version PostgreSQL (`postgres.ts`) et une version en mémoire, choisies par `API_STOCKAGE`.
+ * Reste simulé, et fait donc refuser la production : `ReglementsMobile` (virement du solde net par MoMo).
  */
 @Module({
   imports: [ColisModule],
@@ -131,18 +148,81 @@ export class BranchementInterAgencesColis implements OnModuleInit {
     VerificateurSignature,
     VerificationPortsInterAgences,
     BranchementInterAgencesColis,
+    Passagers,
     { provide: Horloge, useClass: HorlogeSysteme },
     { provide: SignaturesPatron, useClass: SignaturesPatronParPin },
-    { provide: ConventionsRepository, useClass: ConventionsMemoire },
-    { provide: ColisInterAgences, useClass: ColisInterAgencesMemoire },
-    { provide: BilletsCorrespondance, useClass: BilletsCorrespondanceMemoire },
-    { provide: Reglements, useClass: ReglementsMemoire },
-    { provide: Contestations, useClass: ContestationsMemoire },
-    { provide: InvitationsCompagnies, useClass: InvitationsMemoire },
-    { provide: CompteursReferences, useClass: CompteursReferencesMemoire },
-    { provide: AnnuaireCompagnies, useClass: AnnuaireCompagniesMemoire },
-    { provide: DepartsInterAgences, useClass: DepartsMemoire },
-    { provide: BilletsEmis, useClass: BilletsEmisMemoire },
+    {
+      provide: ConventionsRepository,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new ConventionsPrisma(prisma) : new ConventionsMemoire(),
+    },
+    {
+      provide: ColisInterAgences,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config)
+          ? new ColisInterAgencesPrisma(prisma)
+          : new ColisInterAgencesMemoire(),
+    },
+    {
+      provide: BilletsCorrespondance,
+      inject: [CONFIG, PrismaService, ChiffrementService],
+      useFactory: (config: AppConfig, prisma: PrismaService, chiffrement: ChiffrementService) =>
+        stockageSurPostgres(config)
+          ? new BilletsCorrespondancePrisma(prisma, chiffrement)
+          : new BilletsCorrespondanceMemoire(),
+    },
+    {
+      provide: Reglements,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new ReglementsPrisma(prisma) : new ReglementsMemoire(),
+    },
+    {
+      provide: Contestations,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new ContestationsPrisma(prisma) : new ContestationsMemoire(),
+    },
+    {
+      provide: InvitationsCompagnies,
+      inject: [CONFIG, PrismaService, ChiffrementService],
+      useFactory: (config: AppConfig, prisma: PrismaService, chiffrement: ChiffrementService) =>
+        stockageSurPostgres(config)
+          ? new InvitationsPrisma(prisma, chiffrement)
+          : new InvitationsMemoire(),
+    },
+    {
+      provide: CompteursReferences,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config)
+          ? new CompteursReferencesPrisma(prisma)
+          : new CompteursReferencesMemoire(),
+    },
+    {
+      provide: AnnuaireCompagnies,
+      inject: [CONFIG, PrismaService, ChiffrementService],
+      useFactory: (config: AppConfig, prisma: PrismaService, chiffrement: ChiffrementService) =>
+        stockageSurPostgres(config)
+          ? new AnnuaireCompagniesPrisma(prisma, chiffrement)
+          : new AnnuaireCompagniesMemoire(),
+    },
+    {
+      provide: DepartsInterAgences,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new DepartsInterAgencesPrisma(prisma) : new DepartsMemoire(),
+    },
+    {
+      provide: BilletsEmis,
+      inject: [CONFIG, PrismaService, Passagers],
+      useFactory: (config: AppConfig, prisma: PrismaService, passagers: Passagers) =>
+        stockageSurPostgres(config)
+          ? new BilletsEmisPrisma(prisma, passagers)
+          : new BilletsEmisMemoire(),
+    },
     { provide: ReglementsMobile, useClass: ReglementsMobileMemoire },
   ],
   exports: [

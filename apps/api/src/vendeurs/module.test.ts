@@ -8,6 +8,7 @@ import {
   VendeursMemoire,
   VentesMemoire,
 } from "./memoire";
+import { VersementsMemoire } from "../relais/memoire";
 import { chargerOptionsVendeurs } from "./options";
 import { VerificationPortsVendeurs } from "./vendeurs.module";
 
@@ -64,6 +65,7 @@ describe("garde-fou de production", () => {
       new VentesMemoire(),
       new CommissionsMemoire(),
       new ComptesVendeursMemoire(),
+      new VersementsMemoire(),
     ] as const;
 
   const garde = (env: "production" | "test") =>
@@ -71,7 +73,7 @@ describe("garde-fou de production", () => {
 
   it("refuse de démarrer en production tant que le stockage est en mémoire, en nommant les ports", () => {
     expect(() => garde("production").onModuleInit()).toThrow(
-      /VendeursRepository, AgrementsRepository, NumerosVendeurs, VentesRepository, CommissionsVendeurs, ComptesVendeurs/,
+      /VendeursRepository, AgrementsRepository, NumerosVendeurs, VentesRepository, CommissionsVendeurs, ComptesVendeurs, VersementsMobile/,
     );
   });
 

@@ -39,6 +39,9 @@ import { enMs } from "./temps";
 
 const copie = <T>(valeur: T): T => structuredClone(valeur);
 
+/** Comparaison d'octets, comme l'ordre d'un identifiant ou d'une clé en base. */
+const cmp = (a: string, b: string): number => (a < b ? -1 : a > b ? 1 : 0);
+
 const paire = (a: string, b: string): string => [a, b].sort().join("|");
 const OUVERTES = new Set(["proposee", "active", "suspendue"]);
 
@@ -67,7 +70,7 @@ export class ConventionsMemoire extends ConventionsRepository implements Volatil
   async lister(compagnieId: string) {
     return [...this.lignes.values()]
       .filter((c) => c.compagnieA === compagnieId || c.compagnieB === compagnieId)
-      .sort((a, b) => enMs(b.proposeeLe) - enMs(a.proposeeLe))
+      .sort((a, b) => enMs(b.proposeeLe) - enMs(a.proposeeLe) || cmp(a.id, b.id))
       .map(copie);
   }
 
@@ -75,11 +78,14 @@ export class ConventionsMemoire extends ConventionsRepository implements Volatil
     const cle = paire(compagnieA, compagnieB);
     return [...this.lignes.values()]
       .filter((c) => paire(c.compagnieA, c.compagnieB) === cle)
+      .sort((a, b) => enMs(a.proposeeLe) - enMs(b.proposeeLe) || cmp(a.id, b.id))
       .map(copie);
   }
 
   async toutes() {
-    return [...this.lignes.values()].map(copie);
+    return [...this.lignes.values()]
+      .sort((a, b) => enMs(a.proposeeLe) - enMs(b.proposeeLe) || cmp(a.id, b.id))
+      .map(copie);
   }
 
   async remplacer(convention: ConventionStockee, versionAttendue: number) {
@@ -119,7 +125,9 @@ export class ColisInterAgencesMemoire extends ColisInterAgences implements Volat
   }
 
   async lister(filtre?: FiltreEchanges) {
-    return filtrerEchanges(this.lignes.values(), filtre).map(copie);
+    return filtrerEchanges(this.lignes.values(), filtre)
+      .sort((a, b) => enMs(a.creeLe) - enMs(b.creeLe) || cmp(a.colisId, b.colisId))
+      .map(copie);
   }
 
   async remplacer(plan: ColisInterAgencesStocke, versionAttendue: number) {
@@ -154,7 +162,9 @@ export class BilletsCorrespondanceMemoire extends BilletsCorrespondance implemen
   }
 
   async lister(filtre?: FiltreEchanges) {
-    return filtrerEchanges(this.lignes.values(), filtre).map(copie);
+    return filtrerEchanges(this.lignes.values(), filtre)
+      .sort((a, b) => enMs(a.creeLe) - enMs(b.creeLe) || cmp(a.id, b.id))
+      .map(copie);
   }
 
   async remplacer(billet: BilletCorrespondanceStocke, versionAttendue: number) {
@@ -172,6 +182,10 @@ export class ReglementsMemoire extends Reglements implements Volatil {
 
   async ajouter(reglement: ReglementStocke) {
     if (this.lignes.has(reglement.cle)) return false;
+    // Comme la base : une opération déjà réglée par un autre règlement ne se règle pas une seconde fois.
+    const reglees = new Set([...this.lignes.values()].flatMap((r) => r.lignes.map((l) => l.cle)));
+    const doublon = reglement.lignes.find((l) => reglees.has(l.cle));
+    if (doublon) throw new Error(`Opération déjà réglée : ${doublon.cle}`);
     this.lignes.set(reglement.cle, copie(reglement));
     return true;
   }
@@ -184,7 +198,7 @@ export class ReglementsMemoire extends Reglements implements Volatil {
   async lister(conventionId?: string) {
     return [...this.lignes.values()]
       .filter((r) => conventionId === undefined || r.conventionId === conventionId)
-      .sort((a, b) => enMs(a.paiementLe) - enMs(b.paiementLe))
+      .sort((a, b) => enMs(a.paiementLe) - enMs(b.paiementLe) || cmp(a.cle, b.cle))
       .map(copie);
   }
 
@@ -222,7 +236,7 @@ export class ContestationsMemoire extends Contestations implements Volatil {
           (filtre.compagnieId === undefined || c.compagnieId === filtre.compagnieId) &&
           (filtre.statut === undefined || c.statut === filtre.statut),
       )
-      .sort((a, b) => enMs(a.deposeeLe) - enMs(b.deposeeLe))
+      .sort((a, b) => enMs(a.deposeeLe) - enMs(b.deposeeLe) || cmp(a.reference, b.reference))
       .map(copie);
   }
 

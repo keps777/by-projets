@@ -12,37 +12,42 @@ retenu. Sa commission, elle, ne vient jamais du prix du billet : elle est crédi
 versée le lundi.
 
 Le module est autonome : tous ses accès extérieurs sont des **ports** (classes abstraites, `ports.ts`) avec une
-version **en mémoire** (`memoire.ts`) pour ce qui est du stockage. Il n'est **pas** dans `AppModule` et n'a
-**pas** d'adaptateur PostgreSQL : l'intégration est faite par le coordinateur (voir « Brancher le module »).
+version **en mémoire** (`memoire.ts`) pour ce qui est du stockage, et une version **PostgreSQL**
+(`postgres.ts`, lot B) choisie par `API_STOCKAGE` (voir `apps/api/INTEGRATION.md`). Il est dans `AppModule`.
 Pour la billetterie, les paiements et les SMS, le module fournit déjà de **vrais adaptateurs** (`adaptateurs.ts`)
 qui passent par les services exportés des modules existants, sans rien y modifier.
 
 ## Brancher le module
 
-À faire par le coordinateur (le brief interdit de toucher `app.module.ts` et `prisma/schema.prisma`) :
+**Fait (lot B)**
 
-1. Ajouter `VendeursModule` aux `imports` de `AppModule` (il importe lui-même `BilletterieModule`,
+1. `VendeursModule` est dans les `imports` de `AppModule` (il importe lui-même `BilletterieModule`,
    `PaiementsModule`, `SmsModule` et `RelaisModule`).
-2. Écrire les adaptateurs PostgreSQL des ports de stockage (voir « Tables PostgreSQL ») et les fournir à la
-   place des versions en mémoire : `VendeursRepository`, `AgrementsRepository`, `NumerosVendeurs`,
-   `VentesRepository`, `CommissionsVendeurs`. Noms et téléphones sont chiffrés par `ChiffrementService`
-   (index aveugle pour retrouver un voisin).
-3. Brancher `ComptesVendeurs.ouvrir` : retrouver le compte de ce téléphone ou en créer un, lui ajouter le rôle
-   `vendeur` à `personne.roles` (le socle n'a pas d'opération de changement de rôles) et, pour un compte neuf,
-   lui envoyer son PIN provisoire par SMS. L'identifiant du vendeur est le `personne.id` de ce compte.
-4. Le règlement de l'agence (`ReglementsAgence`) passe par `PaiementsService.payerAuGuichet` : il faut que
+2. Adaptateurs PostgreSQL de `VendeursRepository`, `AgrementsRepository`, `NumerosVendeurs`, `VentesRepository`,
+   `CommissionsVendeurs` et `ComptesVendeurs` (`postgres.ts`), migration `20261017000804_vendeurs`. Nom,
+   téléphones et identité du voisin sont chiffrés par `ChiffrementService` (contexte lié à la colonne) ; l'index
+   aveugle du voisin est calculé par le service, comme avant.
+3. `ComptesVendeurs.ouvrir` retrouve le compte de ce téléphone ou en crée un (`ComptesService`), lui ajoute le
+   rôle `vendeur` (une seule fois, sans retirer les autres ; AfriMove ne peut pas devenir vendeur) et, si le
+   compte n'a pas de PIN (le rôle `vendeur` se connecte par PIN), lui donne un PIN provisoire envoyé par SMS.
+   L'identifiant du vendeur est le `personne.id` de ce compte.
+
+**Reste à faire**
+
+1. Le règlement de l'agence (`ReglementsAgence`) passe par `PaiementsService.payerAuGuichet` : il faut que
    chaque compagnie ait un compte de reversement chez l'agrégateur (sinon la vente est refusée proprement, 402).
    Les versements de commissions utilisent `VersementsMobile` (module relais), à brancher sur l'envoi d'argent
-   MoMo et Orange Money (AM-165), idempotent par clé.
-5. Option : brancher l'événement `billet.emis` sur la passerelle SMS. Le SMS du billet vendu a la même clé
+   MoMo et Orange Money (AM-165), idempotent par clé : il reste simulé, donc le démarrage en production est
+   refusé tant qu'il n'est pas branché (`VerificationPortsVendeurs` le contrôle, comme celle du relais).
+2. Option : brancher l'événement `billet.emis` sur la passerelle SMS. Le SMS du billet vendu a la même clé
    (`billet:<id>:<numéro>`) que celui du guichet : le voisin ne reçoit jamais deux messages.
-6. Les tâches de fond (`TachesVendeurs`) démarrent seules hors tests, toutes les 15 secondes : conclusion des
+3. Les tâches de fond (`TachesVendeurs`) démarrent seules hors tests, toutes les 15 secondes : conclusion des
    ventes restées en route, versement du lundi, reprise des versements sans réponse. Sur plusieurs instances,
    plusieurs tâches tournent ; les écritures conditionnelles et les clés d'idempotence rendent cela sans danger.
    Un verrou (`pg_advisory_lock`) évitera du travail en double.
 
-En production, `VerificationPortsVendeurs` **refuse de démarrer** tant qu'un port de stockage est en mémoire
-(`durable === false`) et nomme les ports concernés.
+En production, `VerificationPortsVendeurs` **refuse de démarrer** tant qu'un port est en mémoire ou simulé
+(`durable === false`) et nomme les ports concernés (aujourd'hui : `VersementsMobile`).
 
 Réglages (variables d'environnement, `options.ts`) :
 
@@ -124,8 +129,16 @@ Erreurs (corps `{ code, message, details? }`, celui du module colis) :
 
 ## Tables PostgreSQL
 
-À créer par le coordinateur (le brief interdit de toucher `prisma/schema.prisma`). Les montants sont en francs
-CFA entiers ; les instants en `timestamptz`.
+**Écrites par la migration `20261017000804_vendeurs`** (modèles en fin de `schema.prisma`, bloc « lot B »).
+Les noms de tables sont ceux ci-dessous ; comme le reste du schéma, les **colonnes sont en camelCase**
+(`vendeurId`, `telephoneChiffre`…) et les noms de colonne en snake_case ci-dessous se lisent ainsi. Écarts avec
+la description d'origine : le nom du vendeur est chiffré (`nomChiffre`), les numéros « V-0412 » viennent du
+compteur `compteur_dossier` (préfixe `vendeur`, `INSERT … ON CONFLICT DO UPDATE … RETURNING`, atomique) et non
+d'une séquence, et le crédit d'une commission est rattaché à sa vente (clé étrangère). Ajouts : clés étrangères
+vers `personne`, `compagnie`, `depart` et `vendeur` (sans cascade : un vendeur qui a des ventes ne se supprime
+pas), `CHECK` sur les valeurs fermées et les montants (commission de 0 à 2 000 F, crédit > 0), commissions
+gagnées en ajout seul, versement fait qui ne bouge plus (mêmes déclencheurs que le portefeuille des relais). Les
+montants sont en francs CFA entiers ; les instants en `timestamptz`.
 
 ### `vendeur`
 
@@ -161,8 +174,8 @@ Index sur `compagnie_id` (liste de l'agence).
 
 ### `compteur_numero_vendeur`
 
-Une séquence PostgreSQL (`CREATE SEQUENCE numero_vendeur`) : `NumerosVendeurs.prochain()` renvoie `nextval`. Le
-numéro est mis en forme `V-` + 4 chiffres au moins.
+Une ligne de `compteur_dossier` (préfixe `vendeur`) : `NumerosVendeurs.prochain()` renvoie la valeur incrémentée,
+sans trou ni doublon même demandée en parallèle. Le numéro est mis en forme `V-` + 4 chiffres au moins.
 
 ### `vente_vendeur`
 
@@ -233,8 +246,8 @@ le débit dans la même transaction (verrou sur la ligne du vendeur). `annuler` 
 
 | Port                                                                                                      | Rôle                                            | Version fournie                                                  |
 | --------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------------------- |
-| `VendeursRepository`, `AgrementsRepository`, `NumerosVendeurs`, `VentesRepository`, `CommissionsVendeurs` | Stockage                                        | mémoire (`durable = false`)                                      |
-| `ComptesVendeurs`                                                                                         | Compte et rôle `vendeur`                        | mémoire ; à brancher sur le socle                                |
+| `VendeursRepository`, `AgrementsRepository`, `NumerosVendeurs`, `VentesRepository`, `CommissionsVendeurs` | Stockage                                        | PostgreSQL (`postgres.ts`) ou mémoire (`durable = false`)        |
+| `ComptesVendeurs`                                                                                         | Compte et rôle `vendeur`                        | PostgreSQL (`ComptesService`, PIN par SMS) ou mémoire            |
 | `OffreBillets`                                                                                            | Départs, retenue des sièges, émission du billet | `OffreBilletsBilletterie` (billetterie AM-162)                   |
 | `ReglementsAgence`                                                                                        | Le vendeur paie l'agence par push MoMo          | `ReglementsAgencePaiements` (paiements AM-165, `payerAuGuichet`) |
 | `MessagesVendeurs`                                                                                        | SMS du billet et messages au vendeur            | `MessagesVendeursSms` (SMS AM-166)                               |
@@ -262,14 +275,31 @@ le débit dans la même transaction (verrou sur la ligne du vendeur). `annuler` 
   vente rend le siège dès qu'elle s'arrête.
 - **Fenêtre des clients** : 12 mois, 20 clients au plus.
 - **Commission de 0 F** : aucun crédit n'est écrit.
+- **PIN provisoire** : un compte qui devient vendeur sans avoir de PIN (un voyageur, qui se connecte par code SMS)
+  en reçoit un, envoyé par SMS (texte inventé : « AfriMove : votre compte vendeur est prêt. Votre PIN provisoire
+  est … »). Aucune route ne permet encore de le changer ni de le réinitialiser.
+- **Compte désactivé** : agréer un numéro dont le compte est désactivé répond 409 `compte_inactif` (code inventé).
+- Le nom du vendeur est désormais chiffré en base (il était en clair dans la description d'origine).
+
+## Tests
+
+- `*.test.ts`, `*.e2e.test.ts` : règles, validation et API complète sur les ports en mémoire.
+- `postgres.integration.test.ts` (avec `DATABASE_URL_TEST`) : le contrat des ports (`testing/contrat-ports.ts`)
+  sur la mémoire et sur PostgreSQL : une seule vente en attente par vendeur même sous cinq ventes simultanées, un
+  voisin jamais servi deux fois sur un départ, une vente qui ne se termine qu'une fois, une commission comptée
+  une fois, dix versements simultanés de 1 000 F sur 3 500 F (trois passent) ; puis les garde-fous de la base
+  (rien d'identifiant en clair, index uniques partiels par SQL direct, valeurs fermées, clés étrangères,
+  commissions en ajout seul) et les comptes (rôle donné une fois, PIN provisoire, AfriMove refusé, cinq ouvertures
+  simultanées du même numéro).
+- `api.postgres.integration.test.ts` : de l'agrément par le patron à la commission créditée, sur PostgreSQL
+  (billetterie, paiements simulés et SMS compris), vente rejouée sans doublon, puis redémarrage de l'API.
 
 ## Reste à faire
 
-- Adaptateurs PostgreSQL des cinq ports de stockage et branchement de `ComptesVendeurs` (voir plus haut), puis
-  `VendeursModule` dans `AppModule`.
+- `VersementsMobile` (envoi d'argent MoMo et Orange Money, AM-165), commun avec le relais.
 - Écrans (AM-147) : brancher l'écran Vendeur sur l'adaptateur HTTP d'`api-client` à la place du mock
   (`packages/api-client/src/colis/mock/vendeur.ts`) et vérifier. Hors du périmètre de ce ticket (API seule).
 - Écran de l'agence pour agréer, lister, fixer les commissions et retirer (routes `/agence/vendeurs` prêtes).
 - Suspension d'un vendeur et remboursement des ventes `a_rembourser` dans l'administration AfriMove.
-- Test d'intégration PostgreSQL des adaptateurs (contrat des ports, index uniques partiels, concurrence).
+- Réinitialisation du PIN d'un vendeur.
 - Essai réel avec l'agrégateur MoMo : délais de confirmation du push, comportement des refus.

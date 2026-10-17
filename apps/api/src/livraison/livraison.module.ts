@@ -2,7 +2,10 @@ import { Inject, Injectable, Module, type OnModuleInit } from "@nestjs/common";
 import { ColisModule } from "../colis/colis.module";
 import { ColisRepository } from "../colis/ports";
 import { RelaisModule } from "../relais/relais.module";
+import { ChiffrementService } from "../socle/chiffrement/chiffrement.service";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { AgentsLivreursController, InscriptionLivreurController } from "./inscription.controller";
 import { InscriptionLivreurService } from "./inscription.service";
@@ -22,6 +25,13 @@ import {
   PartagesSuiviMemoire,
 } from "./memoire";
 import { MissionsService } from "./missions.service";
+import {
+  DemandesLivreurPrisma,
+  InvitationsPrisma,
+  LivreursPrisma,
+  MissionsPrisma,
+  PartagesSuiviPrisma,
+} from "./postgres";
 import {
   ColisALivrer,
   ColisALivrerParColis,
@@ -79,9 +89,9 @@ export class VerificationPortsLivraison implements OnModuleInit {
  *
  * Module autonome : tous ses accès extérieurs sont des ports (`ports.ts`) avec une version en mémoire
  * (`memoire.ts`). Il s'appuie sur `RelaisModule` (portefeuille, versements, lieux, rôles) et sur
- * `ColisService.executer` pour tout changement d'état d'un colis. Il n'est pas encore dans `AppModule` :
- * le coordinateur branche les adaptateurs PostgreSQL (tables décrites dans le README) et l'ajoute aux
- * `imports`, avec `RelaisModule`.
+ * `ColisService.executer` pour tout changement d'état d'un colis. Dans `AppModule`. Les ports de
+ * persistance ont une version PostgreSQL (`postgres.ts`) et une version en mémoire, choisies par
+ * `API_STOCKAGE`. Reste dans le processus, et fait donc refuser la production : la diffusion en direct.
  */
 @Module({
   imports: [ColisModule, RelaisModule],
@@ -100,11 +110,42 @@ export class VerificationPortsLivraison implements OnModuleInit {
     TachesLivraison,
     VerificationPortsLivraison,
     { provide: Horloge, useClass: HorlogeSysteme },
-    { provide: LivreursRepository, useClass: LivreursMemoire },
-    { provide: DemandesLivreurRepository, useClass: DemandesLivreurMemoire },
-    { provide: MissionsRepository, useClass: MissionsMemoire },
-    { provide: PartagesSuivi, useClass: PartagesSuiviMemoire },
-    { provide: Invitations, useClass: InvitationsMemoire },
+    {
+      provide: LivreursRepository,
+      inject: [CONFIG, PrismaService, ChiffrementService],
+      useFactory: (config: AppConfig, prisma: PrismaService, chiffrement: ChiffrementService) =>
+        stockageSurPostgres(config)
+          ? new LivreursPrisma(prisma, chiffrement)
+          : new LivreursMemoire(),
+    },
+    {
+      provide: DemandesLivreurRepository,
+      inject: [CONFIG, PrismaService, ChiffrementService],
+      useFactory: (config: AppConfig, prisma: PrismaService, chiffrement: ChiffrementService) =>
+        stockageSurPostgres(config)
+          ? new DemandesLivreurPrisma(prisma, chiffrement)
+          : new DemandesLivreurMemoire(),
+    },
+    {
+      provide: MissionsRepository,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new MissionsPrisma(prisma) : new MissionsMemoire(),
+    },
+    {
+      provide: PartagesSuivi,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new PartagesSuiviPrisma(prisma) : new PartagesSuiviMemoire(),
+    },
+    {
+      provide: Invitations,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new InvitationsPrisma(prisma) : new InvitationsMemoire(),
+    },
+    // La diffusion en direct passe par les passerelles WebSocket, qui restent à écrire : elle reste dans le
+    // processus et refuse la production.
     { provide: DiffusionLivraison, useClass: DiffusionLivraisonMemoire },
     {
       provide: ColisALivrer,

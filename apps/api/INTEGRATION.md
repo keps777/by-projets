@@ -16,83 +16,93 @@ chaque étape d'intégration.
   passerelle WhatsApp (AM-167), les paiements (AM-165), le rapport du soir (AM-171), la connexion du
   voyageur (AM-023), l'USSD (AM-169), l'achat par WhatsApp (AM-168), le covoiturage (AM-054), les relais et
   la livraison moto (AM-148) y sont branchés avec leurs adaptateurs en mémoire (voir « Étape 3 »
-  plus bas). `socle/demarrage.e2e.test.ts` démarre l'application entière et vérifie que les garde-fous de
-  production refusent toujours un port en mémoire (GPS, WhatsApp, covoiturage, relais, livraison…) et que les
-  modules passés sur PostgreSQL par le lot A (paiements, rapport, connexion voyageur, USSD, achat WhatsApp) ont
-  des ports durables en production.
-- **Huit modules ont leurs adaptateurs PostgreSQL** (étapes 1 et 2) : la numérotation, les modules
-  (AM-126), la synchronisation (AM-160), la billetterie (AM-162, sauf quatre ports sans table), le journal
-  des SMS (AM-166), les colis (AM-163), la caisse et la supervision (AM-164).
-- **Le lot A en ajoute sept** (migrations `20261017000710` à `…000770`) : le GPS (AM-170, stockage des
-  positions, états, alertes et « prévenir un proche »), les paiements (AM-165, les six ports de stockage),
-  le rapport du soir (AM-171, référentiel, ventes, colis, annulations, contrôles et rapports arrêtés), la
-  connexion du voyageur (AM-023, codes et fiches), l'USSD (AM-169, sessions, journal, achats), le journal
-  de la passerelle WhatsApp (AM-167) et l'achat par WhatsApp (AM-168, conversations, journal, achats).
-  Voir « Lot A : adaptateurs PostgreSQL » plus bas.
-- **Conséquence en production** : l'API **refuse de démarrer** avec `NODE_ENV=production` tant que la
-  billetterie (promotions, proches, colis du départ, avis) et les SMS (file Redis) ont un port en mémoire (leur `VerificationStockage*` fait son travail). C'est voulu :
-  aucune donnée métier ne doit se perdre au redémarrage. En développement et en test, rien ne change.
+  plus bas). `socle/demarrage.e2e.test.ts` démarre l'application entière et vérifie que chaque garde-fou de
+  production refuse toujours un port en mémoire ou simulé.
+- **Quatorze modules ont leurs adaptateurs PostgreSQL** : la numérotation, les modules (AM-126), la
+  synchronisation (AM-160), la billetterie (AM-162, quatre ports ajoutés au lot B), le journal des SMS
+  (AM-166), les colis (AM-163), la caisse et la supervision (AM-164), puis, au **lot B**, le covoiturage
+  (AM-054), les relais et la livraison moto (AM-148), les vendeurs ambulants, le financement (AM-134) et les
+  inter-agences (AM-135). Financement, inter-agences et vendeurs sont maintenant dans `AppModule`.
+- **Conséquence en production** : l'API **refuse de démarrer** avec `NODE_ENV=production` tant qu'un module a
+  un port en mémoire ou simulé (leur `Verification*` fait son travail ; la liste des ports qui restent est dans
+  « Ce qui manque encore pour la production »). C'est voulu : aucune donnée métier ne doit se perdre au
+  redémarrage. En développement et en test, rien ne change.
+- **Sept modules du lot A** (migrations `20261017000710` à `…000770`) : GPS (AM-170), paiements (AM-165), rapport du soir (AM-171), connexion du voyageur (AM-023), USSD (AM-169), journal de la passerelle WhatsApp (AM-167), achat par WhatsApp (AM-168). Voir « Lot A : adaptateurs PostgreSQL » plus bas. Le **lot C** (comptable, analyses, assistant) est décrit en fin de fichier.
 - **Migrations** : trois de plus, `20261017000400_sms_et_heure_texte` (tables `sms_message` et
   `sms_essai`, colonne `journal_evenement.atTexte` : l'heure telle que l'appareil l'a signée) et
   `20261017000500_sms_garanties` (CHECK, index unique partiel sur le fournisseur, essais en ajout seul), puis, à l'étape 2b,
   `20261017000600_colis_caisse_supervision_garanties` (alertes du patron, tolérance d'écart, choix des
-  colonnes en double de `session_caisse`, garde-fous des colis).
+  colonnes en double de `session_caisse`, garde-fous des colis). Le **lot B** a pris la plage
+  `20261017000800` à `…899` : `…800_billetterie_reliquats`, `…801_covoiturage`, `…802_relais`,
+  `…803_livraison`, `…804_vendeurs`, `…805_financement`, `…806_inter_agences`. Leurs modèles sont en bloc à la
+  fin de `schema.prisma`, sous un commentaire « lot B » ; les garde-fous SQL (clés étrangères vers les tables
+  existantes, `CHECK`, index uniques partiels, déclencheurs d'ajout seul) sont écrits dans la même migration.
 
 ## Choisir le stockage : `API_STOCKAGE`
 
-| Valeur      | Effet                                                                                                                                                                                                                                                                                                   |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| absente     | PostgreSQL si `NODE_ENV=production`, mémoire sinon (les tests restent en mémoire sans rien régler).                                                                                                                                                                                                     |
-| `postgres`  | Les modules qui ont des adaptateurs PostgreSQL les utilisent (numérotation, modules, synchronisation, billetterie, journal des SMS, colis, caisse, supervision, et ceux du lot A : GPS, paiements, rapport, connexion voyageur, USSD, journal WhatsApp, achat WhatsApp), quel que soit l'environnement. |
-| `memoire`   | Mémoire partout (en production, le garde-fou refuse alors de démarrer).                                                                                                                                                                                                                                 |
-| autre chose | L'application ne démarre pas (une faute de frappe ne bascule pas en silence).                                                                                                                                                                                                                           |
+| Valeur      | Effet                                                                                                                                                                                                                                                                 |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| absente     | PostgreSQL si `NODE_ENV=production`, mémoire sinon (les tests restent en mémoire sans rien régler).                                                                                                                                                                   |
+| `postgres`  | Les modules qui ont des adaptateurs PostgreSQL les utilisent (numérotation, modules, synchronisation, billetterie, journal des SMS, colis, caisse, supervision, covoiturage, relais, livraison, vendeurs, financement, inter-agences), quel que soit l'environnement. |
+| `memoire`   | Mémoire partout (en production, le garde-fou refuse alors de démarrer).                                                                                                                                                                                               |
+| autre chose | L'application ne démarre pas (une faute de frappe ne bascule pas en silence).                                                                                                                                                                                         |
 
 Le choix est fait par `socle/db/stockage.ts` (`stockageSurPostgres`) dans les fabriques des modules.
 
 ## État de chaque module
 
-| Module (ticket)          | Dossier                                                                                                                                                                                      | AppModule | Ports                                                                                                                                                                                                                                          | Stockage actuel                                                                                                    |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| Numérotation (AM-161)    | `src/numerotation`                                                                                                                                                                           | oui       | `PlagesAttribuees`, `RegistreNumeros`, `AlertesNumerotation`                                                                                                                                                                                   | **PostgreSQL** (`postgres.ts`) ou mémoire, selon `API_STOCKAGE`                                                    |
-| Modules (AM-126)         | `src/modules`                                                                                                                                                                                | oui       | `ReglagesModules`, `AnnuaireAgences` (`DetailsModules` reste le défaut sans détail)                                                                                                                                                            | **PostgreSQL** (`postgres.ts`) ou mémoire, selon `API_STOCKAGE`                                                    |
-| Synchronisation (AM-160) | `src/sync`                                                                                                                                                                                   | oui       | `AppareilsSync`, `JournalSync`, `SiegesSync`, `AlertesSync`, `ProvisionnementSync`                                                                                                                                                             | **PostgreSQL** (`postgres.ts`) ou mémoire, selon `API_STOCKAGE` (`ProvisionnementSync` : `ProvisionnementVide`)    |
-| Billetterie (AM-162)     | `src/billetterie`                                                                                                                                                                            | oui       | `Catalogue`, `Billets`, `Inventaire`, `Commandes`, `Scans`, `EvenementsTraites`, `PreferencesVoyageur`, `NumerotationEnLigne` ; restent en mémoire : `Promotions`, `ProchesVoyageur`, `ColisDuDepart`, `AvisBillets`                           | **PostgreSQL** (`postgres.ts`) ou mémoire, selon `API_STOCKAGE`                                                    |
-| SMS (AM-166)             | `src/sms`                                                                                                                                                                                    | oui       | `JournalSms` (PostgreSQL) ; `FileEnvoiSms` (BullMQ + Redis, à écrire)                                                                                                                                                                          | Journal **PostgreSQL** (`postgres.ts`) ou mémoire ; file en mémoire                                                |
-| Colis (AM-163)           | `src/colis`                                                                                                                                                                                  | oui       | `ColisRepository`, `PhotosColis`, `ReclamationsRepository`, `FichiersPhotos`, `ReferentielColis`, …                                                                                                                                            | **PostgreSQL** (`postgres.ts`) ou mémoire, selon `API_STOCKAGE`                                                    |
-| Caisse (AM-164)          | `src/caisse`                                                                                                                                                                                 | oui       | `SessionsCaisse`, `MouvementsCaisse`, `GuichetsAgence`, `ReglesAgence`, `AlertesPatron`, journal d'agence (`JournalAgenceRepository`, `EvenementsTraites`)                                                                                     | **PostgreSQL** (`postgres.ts`, `journal/postgres.ts`) ou mémoire, selon `API_STOCKAGE`                             |
-| Supervision (AM-164)     | `src/supervision`                                                                                                                                                                            | oui       | `RegistreBillets`, `DemandesAnnulation`, `SourceGare`, `EquipeGare`, `PinsEquipe`                                                                                                                                                              | **PostgreSQL** (`postgres.ts`) ou mémoire, selon `API_STOCKAGE`                                                    |
-| GPS (AM-170)             | `src/gps`                                                                                                                                                                                    | oui (3)   | `Positions`, `EtatsSuivi`, `AlertesArret`, `PrevenirProches` (**PostgreSQL**) ; `AvisSuivi`, `DiffusionGps`, sources des bus et des livreurs (`ReseauTransport`, `BilletsSuivis`…)                                                             | Stockage **PostgreSQL** (`postgres.ts`) ou mémoire ; sources en mémoire (le garde-fou refuse encore la production) |
-| WhatsApp (AM-167)        | `src/whatsapp`                                                                                                                                                                               | oui (3)   | `JournalWhatsApp` (**PostgreSQL**), file, fournisseur, `SecoursSms` (**branché sur la passerelle SMS**), `SourceRapportSoir` et `AnnuaireRapport` (**branchés**), `GestionnaireEntrants` (**branché sur l'achat**)                             | Journal **PostgreSQL** (`postgres.ts`) ou mémoire ; file en mémoire + fournisseur simulé                           |
-| Paiements (AM-165)       | `src/paiements`                                                                                                                                                                              | oui (3)   | transactions, remboursements, notifications traitées, liens, comptes de reversement, réglages (**PostgreSQL**) ; billetterie par ses ports                                                                                                     | Stockage **PostgreSQL** (`postgres.ts`) ou mémoire ; agrégateur simulé                                             |
-| Rapport du soir (AM-171) | `src/rapport`                                                                                                                                                                                | oui (3)   | `ReferentielRapport`, `VentesBillets`, `ActiviteColis`, `AnnulationsDuJour`, `ControlesEnRoute`, `RapportsSoir` (**PostgreSQL**) ; `DepartsDuJour`, `CaissesDuJour`, `TrousNumerotation` lisent les modules existants (`avecModulesExistants`) | **PostgreSQL** (`postgres.ts`) ou mémoire ; `AssistantRapport` en mémoire                                          |
-| Connexion voyageur       | envoi du code par WhatsApp (`EnvoiCodeWhatsApp`, demande un gabarit Meta approuvé) ; le SMS part déjà par la passerelle (dont la file BullMQ reste à écrire). Le stockage est sur PostgreSQL |
-| USSD (AM-169)            | `src/ussd`                                                                                                                                                                                   | oui (3)   | `SessionsUssd`, `JournalUssd`, `AchatsUssd` (**PostgreSQL**), `NotifieurBilletUssd` ; `SuiviColisUssd`, `SuiviBusUssd` ; la billetterie et les paiements par leurs ports                                                                       | Sessions, journal et achats **PostgreSQL** (`postgres.ts`) ou mémoire ; suivi colis et bus en mémoire              |
-| Achat WhatsApp (AM-168)  | `src/whatsapp-achat`                                                                                                                                                                         | oui (3)   | `ConversationsAchat`, `JournalAchatWhatsApp`, `AchatsWhatsApp` (**PostgreSQL**), `MessagerieAchat` (via la passerelle WhatsApp), `ReconnaissanceEquipe` (**branchée** sur les comptes)                                                         | Stockage **PostgreSQL** (`postgres.ts`) ou mémoire                                                                 |
-| Covoiturage (AM-054)     | `src/covoiturage`                                                                                                                                                                            | oui (3)   | trajets, réservations, demandes, notes, trajets réguliers, référentiel des lignes, décaissement                                                                                                                                                | Mémoire + décaissement simulé                                                                                      |
-| Relais (AM-148)          | `src/relais`                                                                                                                                                                                 | oui (3)   | relais, `Lieux`, `Portefeuille`, `VersementsMobile`, `AttributionRoles` ; répond à `ReferentielColis.relais`                                                                                                                                   | Mémoire                                                                                                            |
-| Livraison moto (AM-148)  | `src/livraison`                                                                                                                                                                              | oui (3)   | livreurs, missions, partages de suivi, invitations, `DiffusionLivraison`                                                                                                                                                                       | Mémoire                                                                                                            |
+| Module (ticket)             | Dossier              | AppModule   | Ports                                                                                                                                                                                                                                                                                                 | Stockage actuel                                                                                                 |
+| --------------------------- | -------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Numérotation (AM-161)       | `src/numerotation`   | oui         | `PlagesAttribuees`, `RegistreNumeros`, `AlertesNumerotation`                                                                                                                                                                                                                                          | **PostgreSQL** (`postgres.ts`) ou mémoire, selon `API_STOCKAGE`                                                 |
+| Modules (AM-126)            | `src/modules`        | oui         | `ReglagesModules`, `AnnuaireAgences` (`DetailsModules` reste le défaut sans détail)                                                                                                                                                                                                                   | **PostgreSQL** (`postgres.ts`) ou mémoire, selon `API_STOCKAGE`                                                 |
+| Synchronisation (AM-160)    | `src/sync`           | oui         | `AppareilsSync`, `JournalSync`, `SiegesSync`, `AlertesSync`, `ProvisionnementSync`                                                                                                                                                                                                                    | **PostgreSQL** (`postgres.ts`) ou mémoire, selon `API_STOCKAGE` (`ProvisionnementSync` : `ProvisionnementVide`) |
+| Billetterie (AM-162)        | `src/billetterie`    | oui         | `Catalogue`, `Billets`, `Inventaire`, `Commandes`, `Scans`, `EvenementsTraites`, `PreferencesVoyageur`, `NumerotationEnLigne`, `Promotions`, `ProchesVoyageur`, `ColisDuDepart`, `AvisBillets` (lot B, `postgres-annexes.ts`) ; hors base : `ConversionDevises`, `DiffusionTempsReel`, `SignataireQr` | **PostgreSQL** (`postgres.ts`) ou mémoire, selon `API_STOCKAGE`                                                 |
+| SMS (AM-166)                | `src/sms`            | oui         | `JournalSms` (PostgreSQL) ; `FileEnvoiSms` (BullMQ + Redis, à écrire)                                                                                                                                                                                                                                 | Journal **PostgreSQL** (`postgres.ts`) ou mémoire ; file en mémoire                                             |
+| Colis (AM-163)              | `src/colis`          | oui         | `ColisRepository`, `PhotosColis`, `ReclamationsRepository`, `FichiersPhotos`, `ReferentielColis`, …                                                                                                                                                                                                   | **PostgreSQL** (`postgres.ts`) ou mémoire, selon `API_STOCKAGE`                                                 |
+| Caisse (AM-164)             | `src/caisse`         | oui         | `SessionsCaisse`, `MouvementsCaisse`, `GuichetsAgence`, `ReglesAgence`, `AlertesPatron`, journal d'agence (`JournalAgenceRepository`, `EvenementsTraites`)                                                                                                                                            | **PostgreSQL** (`postgres.ts`, `journal/postgres.ts`) ou mémoire, selon `API_STOCKAGE`                          |
+| Supervision (AM-164)        | `src/supervision`    | oui         | `RegistreBillets`, `DemandesAnnulation`, `SourceGare`, `EquipeGare`, `PinsEquipe`                                                                                                                                                                                                                     | **PostgreSQL** (`postgres.ts`) ou mémoire, selon `API_STOCKAGE`                                                 |
+| GPS (AM-170)                | `src/gps`            | oui (3)     | stockage, `PrevenirProches`, `AvisSuivi`, `DiffusionGps`, sources des bus et des livreurs                                                                                                                                                                                                             | Mémoire (le garde-fou refuse la production)                                                                     |
+| WhatsApp (AM-167)           | `src/whatsapp`       | oui (3)     | journal, file, fournisseur, `SecoursSms` (**branché sur la passerelle SMS**), `SourceRapportSoir` et `AnnuaireRapport` (**branchés**), `GestionnaireEntrants` (**branché sur l'achat**)                                                                                                               | Mémoire + fournisseur simulé                                                                                    |
+| Paiements (AM-165)          | `src/paiements`      | oui (3)     | transactions, remboursements, liens, comptes de reversement, réglages ; billetterie par ses ports                                                                                                                                                                                                     | Mémoire + agrégateur simulé                                                                                     |
+| Rapport du soir (AM-171)    | `src/rapport`        | oui (3)     | `CaissesDuJour`, `AnnulationsDuJour`, `TrousNumerotation`, `ControlesEnRoute`, `RapportsSoir` ; lit les modules existants (`avecModulesExistants`)                                                                                                                                                    | Mémoire pour `RapportsSoir` (le reste lit les tables existantes)                                                |
+| Connexion voyageur (AM-023) | `src/auth-voyageur`  | oui (3)     | codes et essais, fiches voyageur, `EnvoiCodeSms` (**branché sur la passerelle SMS**, type `code_connexion`)                                                                                                                                                                                           | Mémoire                                                                                                         |
+| USSD (AM-169)               | `src/ussd`           | oui (3)     | sessions, journal, achats, `NotifieurBilletUssd` ; la billetterie et les paiements par leurs ports                                                                                                                                                                                                    | Mémoire                                                                                                         |
+| Achat WhatsApp (AM-168)     | `src/whatsapp-achat` | oui (3)     | conversations, journal, achats, `MessagerieAchat` (via la passerelle WhatsApp), `ReconnaissanceEquipe` (**branchée** sur les comptes)                                                                                                                                                                 | Mémoire                                                                                                         |
+| Covoiturage (AM-054)        | `src/covoiturage`    | oui (3)     | trajets, réservations, dossiers conducteur, versements, demandes, notes, trajets réguliers, référentiel des lignes, `PasserelleVersements`                                                                                                                                                            | **PostgreSQL** (lot B) ou mémoire ; `PasserelleVersements` simulée                                              |
+| Relais (AM-148)             | `src/relais`         | oui (3)     | relais, demandes, brouillons, compteurs, réceptions, `Portefeuille`, `AttributionRoles` (PostgreSQL) ; `Lieux`, `VersementsMobile` (simulés) ; répond à `ReferentielColis.relais`                                                                                                                     | **PostgreSQL** (lot B) ou mémoire ; `Lieux` et `VersementsMobile` simulés                                       |
+| Livraison moto (AM-148)     | `src/livraison`      | oui (3)     | livreurs, demandes, missions, partages de suivi, invitations (PostgreSQL) ; `DiffusionLivraison`                                                                                                                                                                                                      | **PostgreSQL** (lot B) ou mémoire ; `DiffusionLivraison` en mémoire                                             |
+| Vendeurs ambulants          | `src/vendeurs`       | oui (lot B) | vendeurs, agréments, numéros, ventes, commissions, comptes (PostgreSQL) ; `VersementsMobile`                                                                                                                                                                                                          | **PostgreSQL** (lot B) ou mémoire ; `VersementsMobile` simulé                                                   |
+| Financement (AM-134)        | `src/financement`    | oui (lot B) | dossiers, prélèvements, lots de paie, réglages, conventions, offres de crédit (PostgreSQL) ; `PartenaireFinancier`, `VersementsPaie`, `DonneesAgence`, `SalairesAgence`                                                                                                                               | **PostgreSQL** (lot B) ou mémoire ; les quatre autres ports simulés                                             |
+| Inter-agences (AM-135)      | `src/inter-agences`  | oui (lot B) | conventions, colis et billets en correspondance, règlements, contestations, invitations, références, annuaire, départs, billets émis (PostgreSQL) ; `ReglementsMobile`                                                                                                                                | **PostgreSQL** (lot B) ou mémoire ; `ReglementsMobile` simulé                                                   |
 
 Le socle (comptes, authentification, audit, événements) était déjà sur PostgreSQL.
 
 ### Les tables de chaque module
 
-| Module             | Tables (nom SQL)                                                                                                                                       |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Synchronisation    | `appareil_sync`, `journal_evenement` (avec `atTexte`), `siege_operation`, `siege_billet`, `siege_conflit`, `alerte_sync`                               |
-| Numérotation       | `plage_attribuee`, `numero_vu`, `alerte_sync` (alertes de type `trou_dans_la_plage`)                                                                   |
-| Billetterie        | `siege_depart`, `commande`, `scan_quai`, `evenement_traite`, `compagnie_preferee`, `filtres_voyageur`, et les colonnes ajoutées à `billet` et `depart` |
-| Colis              | `photo_colis`, `reclamation_colis`, et les colonnes ajoutées à `colis`                                                                                 |
-| Caisse             | `annulation_caisse`, `journal_agence`, `evenement_agence_traite`, `alerte_patron`, et les colonnes ajoutées à `session_caisse` et `compagnie`          |
-| Supervision        | `demande_annulation`                                                                                                                                   |
-| Modules            | `module_compagnie` (existait), `module_exception`                                                                                                      |
-| SMS                | `sms_message`, `sms_essai`                                                                                                                             |
-| GPS                | `position_gps`, `suivi_depart`, `alerte_arret`, `prevenir_proche`                                                                                      |
-| Paiements          | `paiement`, `paiement_remboursement`, `paiement_notification`, `paiement_lien`, `compte_reversement`, `reglage_paiements`                              |
-| Rapport du soir    | `rapport_soir`                                                                                                                                         |
-| Connexion voyageur | `code_connexion_voyageur`, `limite_connexion_voyageur`, `fiche_voyageur`                                                                               |
-| USSD               | `ussd_session`, `ussd_journal`, `ussd_achat`                                                                                                           |
-| WhatsApp           | `whatsapp_message`, `whatsapp_essai`, `whatsapp_entrant`                                                                                               |
-| Achat WhatsApp     | `whatsapp_achat_conversation`, `whatsapp_achat_journal`, `whatsapp_achat`                                                                              |
+| Module                | Tables (nom SQL)                                                                                                                                                                                                                                                      |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Synchronisation       | `appareil_sync`, `journal_evenement` (avec `atTexte`), `siege_operation`, `siege_billet`, `siege_conflit`, `alerte_sync`                                                                                                                                              |
+| Numérotation          | `plage_attribuee`, `numero_vu`, `alerte_sync` (alertes de type `trou_dans_la_plage`)                                                                                                                                                                                  |
+| Billetterie           | `siege_depart`, `commande`, `scan_quai`, `evenement_traite`, `compagnie_preferee`, `filtres_voyageur`, et les colonnes ajoutées à `billet` et `depart`                                                                                                                |
+| Colis                 | `photo_colis`, `reclamation_colis`, et les colonnes ajoutées à `colis`                                                                                                                                                                                                |
+| Caisse                | `annulation_caisse`, `journal_agence`, `evenement_agence_traite`, `alerte_patron`, et les colonnes ajoutées à `session_caisse` et `compagnie`                                                                                                                         |
+| Supervision           | `demande_annulation`                                                                                                                                                                                                                                                  |
+| Modules               | `module_compagnie` (existait), `module_exception`                                                                                                                                                                                                                     |
+| SMS                   | `sms_message`, `sms_essai`                                                                                                                                                                                                                                            |
+| Billetterie (lot B)   | `promotion`, `proche_voyageur`, `avis_billetterie` (`colis` est lu par `ColisDuDepart`)                                                                                                                                                                               |
+| Covoiturage (lot B)   | `trajet_covoiturage`, `vue_trajet_covoiturage`, `reservation_covoiturage`, `dossier_conducteur`, `piece_conducteur`, `versement_covoiturage`, `demande_covoiturage`, `proposition_covoiturage`, `note_covoiturage`, `trajet_regulier_passager`, `conseil_covoiturage` |
+| Relais (lot B)        | `relais`, `demande_relais`, `brouillon_relais`, `compteur_dossier` (aussi pour les vendeurs, les inter-agences), `reception_relais`, `credit_partenaire`, `debit_partenaire`, `coordonnees_gare`, `adresse_geolocalisee`                                              |
+| Livraison (lot B)     | `livreur`, `demande_livreur`, `mission_livraison`, `partage_suivi`, `invitation_livreur`                                                                                                                                                                              |
+| Vendeurs (lot B)      | `vendeur`, `agrement_vendeur`, `vente_vendeur`, `credit_commission_vendeur`, `debit_commission_vendeur`                                                                                                                                                               |
+| Financement (lot B)   | `dossier_financement`, `compteur_avance`, `prelevement_avance`, `lot_paie`, `ligne_paie`, `reglage_financement`, `convention_financement`, `offre_credit_materiel`                                                                                                    |
+| Inter-agences (lot B) | `convention_inter_agences`, `signature_convention`, `colis_inter_agences`, `billet_correspondance`, `reglement_inter_agences`, `creance_reglee`, `contestation_reglement`, `invitation_compagnie`, `compte_momo_compagnie`                                            |
+| GPS                   | `position_gps`, `suivi_depart`, `alerte_arret`, `prevenir_proche`                                                                                                                                                                                                     |
+| Paiements             | `paiement`, `paiement_remboursement`, `paiement_notification`, `paiement_lien`, `compte_reversement`, `reglage_paiements`                                                                                                                                             |
+| Rapport du soir       | `rapport_soir`                                                                                                                                                                                                                                                        |
+| Connexion voyageur    | `code_connexion_voyageur`, `limite_connexion_voyageur`, `fiche_voyageur`                                                                                                                                                                                              |
+| USSD                  | `ussd_session`, `ussd_journal`, `ussd_achat`                                                                                                                                                                                                                          |
+| WhatsApp              | `whatsapp_message`, `whatsapp_essai`, `whatsapp_entrant`                                                                                                                                                                                                              |
+| Achat WhatsApp        | `whatsapp_achat_conversation`, `whatsapp_achat_journal`, `whatsapp_achat`                                                                                                                                                                                             |
 
 Les tables existantes réutilisées, sans rien casser : `compagnie`, `gare`, `guichet`, `ligne`, `bus`,
 `personne` (colonnes `pinProvisoireJusqua`, `guichetId`), `depart` (quai, chauffeur, convoyeur,
@@ -152,6 +162,29 @@ DO UPDATE … WHERE` (libre, ou bloqué par la même commande) sur `siege_depart
   `session_cloture_copie` et `session_validation_copie` interdisent qu'une session soit à la fois ouverte et
   clôturée, ou que les colonnes interrogeables divergent du JSON qui fait foi (voir les décisions plus bas).
 
+### Garanties du lot B
+
+Chacune est tenue par la base et vérifiée par un test qui écrit en SQL direct ou lance les requêtes ensemble.
+
+- **Une seule demande en cours** : un seul dossier de financement ouvert par agence, une seule convention
+  inter-agences ouverte par paire de compagnies quel que soit l'ordre (index unique partiel sur
+  `LEAST`/`GREATEST`), une seule demande de relais ou de livreur ouverte par personne, une seule mission ouverte
+  par colis, une seule réservation de covoiturage en cours par passager et par trajet (index uniques partiels).
+- **Jamais de double paiement** : `creance_reglee` (clé primaire = créance) ; un règlement par `cle` ; un
+  prélèvement exécuté ne se modifie ni ne se supprime ; une commission, un versement ou un salaire ne se crédite
+  qu'une fois (clé d'idempotence ou d'unicité, `ON CONFLICT DO NOTHING`).
+- **Pas de montant négatif ni de places en trop** : `CHECK` sur les montants et les places d'un trajet de
+  covoiturage ; les écritures qui touchent aux places verrouillent la ligne du trajet (`FOR UPDATE`).
+- **Numéros sans trou ni doublon** : `compteur_dossier`, `compteur_avance` et les numéros de vendeurs par
+  `INSERT … ON CONFLICT DO UPDATE … RETURNING`.
+- **Ce qui est clos ne change plus** : règlement payé, contestation tranchée, prélèvement exécuté, signature,
+  créance réglée, invitation, avis de billetterie (déclencheurs `interdire_modification`). Les conventions,
+  dossiers, lots de paie et règlements ne se suppriment pas (ni `TRUNCATE`).
+- **Rien d'identifiant en clair** : téléphones et noms des voyageurs, proches, salariés, invitations, numéros
+  MoMo, par `ChiffrementService` (un contexte par colonne, lié comme donnée authentifiée).
+- **Rejeu et concurrence** : `UPDATE … WHERE id AND version` (ou `AND etat`) partout où deux requêtes peuvent
+  se croiser ; les listes sont triées de la même façon en mémoire et en base.
+
 ## Tests
 
 ```
@@ -181,7 +214,14 @@ ils tournent l'un après l'autre (verrou consultatif dans `socle/testing/base-in
 - `colis/postgres.integration.test.ts`, `caisse/postgres.integration.test.ts`,
   `supervision/postgres.integration.test.ts` : le contrat des ports sur la mémoire et sur PostgreSQL,
   les garanties de la base (essais du code exacts sous concurrence, une caisse ouverte par agent et par
-  guichet, chaîne du journal falsifiée détectée, décisions simultanées), puis l'API de bout en bout.
+  guichet, chaîne du journal falsifiée détectée, décisions simultanées), puis l'API de bout en bout ;
+- lot B : `billetterie/postgres-annexes.integration.test.ts`, puis, pour chaque module,
+  `covoiturage/`, `relais/`, `livraison/`, `vendeurs/`, `financement/` et `inter-agences/`
+  `postgres.integration.test.ts` (le contrat des ports sur la mémoire et sur PostgreSQL, puis les garanties de
+  la base) et `api.postgres.integration.test.ts` (toute l'application sur PostgreSQL, un scénario complet, puis un
+  redémarrage). Le montage de l'application sur PostgreSQL et les fixtures (compagnies, gares, lignes, bus, départs, billets,
+  personnes) sont dans `relais/testing/fixtures-pg.ts`. Base du lot :
+  `afrimove_lotB_test`.
 
 - Lot A, un fichier par module (`gps/`, `paiements/`, `rapport/`, `auth-voyageur/`, `ussd/`, `whatsapp/`,
   `whatsapp-achat/` : `postgres.integration.test.ts`) : le contrat des ports sur la mémoire et sur PostgreSQL
@@ -193,13 +233,12 @@ ils tournent l'un après l'autre (verrou consultatif dans `socle/testing/base-in
 Chaque nouvel adaptateur suit ce patron : **une suite de contrat écrite une fois, passée par la mémoire
 et par PostgreSQL**. C'est ce qui garantit que la mémoire, sur laquelle tournent tous les autres tests,
 se comporte comme la base. Les suites sont dans `numerotation/testing/contrat-ports.ts`, `sync/testing/contrat-ports.ts`,
-`billetterie/testing/contrat-ports.ts` et `sms/testing/contrat-journal.ts`, `colis/testing/contrat-ports.ts`, `caisse/testing/contrat-ports.ts` et `supervision/testing/contrat-ports.ts` ; `caisse/testing/app-agence-pg.ts` monte l'application sur PostgreSQL pour les tests de bout en bout. Un fichier d'intégration prépare la base une seule fois (`preparerBaseDeTest` vide le schéma public) : n'en imbriquez jamais deux dans le même fichier.
+`billetterie/testing/contrat-ports.ts` (et `contrat-annexes.ts`) et `sms/testing/contrat-journal.ts`, `covoiturage/`, `relais/`, `livraison/`, `vendeurs/`, `financement/` et `inter-agences/testing/contrat-ports.ts`, `colis/testing/contrat-ports.ts`, `caisse/testing/contrat-ports.ts` et `supervision/testing/contrat-ports.ts` ; `caisse/testing/app-agence-pg.ts` monte l'application sur PostgreSQL pour les tests de bout en bout. Un fichier d'intégration prépare la base une seule fois (`preparerBaseDeTest` vide le schéma public) : n'en imbriquez jamais deux dans le même fichier.
 
 ## Ce qui reste à faire, dans l'ordre
 
-1. **Fait : synchronisation** (`src/sync/postgres.ts`) et **billetterie** (`src/billetterie/postgres.ts`).
-   Restent pour la billetterie : `Promotions`, `ProchesVoyageur`, `ColisDuDepart` (à brancher sur les colis)
-   et `AvisBillets`, qui n'ont pas de table et empêchent encore le démarrage en production ; poser
+1. **Fait : synchronisation** (`src/sync/postgres.ts`) et **billetterie** (`src/billetterie/postgres.ts`,
+   `postgres-annexes.ts` au lot B : promotions, proches, colis du départ, avis). Reste : poser
    `BILLETTERIE_QR_CLE_PRIVEE` (secret). `ProvisionnementSync` est branché sur `ProvisionnementVide`
    (aucune part de sièges hors ligne, aucun vérificateur de PIN) : il faudra le rebrancher sur la
    billetterie et les comptes quand l'appareil devra valider un déblocage sur place.
@@ -227,7 +266,11 @@ se comporte comme la base. Les suites sont dans `numerotation/testing/contrat-po
      « une seule en attente par billet » (erreur 23505) : la demande reste alors décidée, à rejouer ;
    - les textes avec un caractère NUL sont refusés par PostgreSQL : non traités à ce stade ;
    - la supervision dérive de ses tables des valeurs que les maquettes fixaient : voir « Décisions ».
-5. **Quand tout est branché** : retirer `API_STOCKAGE=memoire` de tout script, vérifier qu'`API_STOCKAGE`
+5. **Fait (lot B) : covoiturage, relais, livraison, vendeurs, financement, inter-agences.** Il reste, par
+   module, les ports qui parlent à l'extérieur (voir le tableau ci-dessous) : opérateurs MoMo et Orange Money
+   (`PasserelleVersements`, `VersementsMobile`, `VersementsPaie`, `ReglementsMobile`), partenaire financier,
+   géocodage (`Lieux`), diffusion de la livraison, données de l'agence et salaires.
+6. **Quand tout est branché** : retirer `API_STOCKAGE=memoire` de tout script, vérifier qu'`API_STOCKAGE`
    absent + `NODE_ENV=production` démarre, et ajouter un test e2e de bout en bout sur PostgreSQL (un billet
    vendu hors ligne, synchronisé, compté en caisse).
 
@@ -308,10 +351,13 @@ mémoire ou simulé :
 | Achat WhatsApp     | `MessagerieAchat` sur le fournisseur réel ; `TranscriptionVocale` (service de reconnaissance vocale à choisir). Le stockage est sur PostgreSQL                                                                                                                              |
 | Connexion voyageur | codes/essais (Redis ou PostgreSQL) et fiches voyageur ; le SMS part déjà par la passerelle (dont la file BullMQ reste à écrire)                                                                                                                                             |
 | USSD               | `SuiviColisUssd` et `SuiviBusUssd` (modules colis et GPS), `NotifieurBilletUssd` (SMS du billet), jetons des connecteurs MTN et Orange. Sessions, journal et achats sont sur PostgreSQL                                                                                     |
-| Covoiturage        | PostgreSQL pour trajets, réservations, demandes, notes, réguliers ; décaissement MoMo réel ; référentiel des lignes réel (aujourd'hui simulé)                                                                                                                               |
-| Relais             | `Lieux`, `Portefeuille`, `VersementsMobile`, `AttributionRoles` (le dernier doit attribuer le rôle de relais dans les comptes)                                                                                                                                              |
-| Livraison          | PostgreSQL pour livreurs, missions, partages, invitations ; `DiffusionLivraison`                                                                                                                                                                                            |
-| Transverse         | la **file d'envoi BullMQ + Redis** (SMS et WhatsApp) ; la table `promotion` (les codes sans frais USSD/WhatsApp sont en mémoire) ; les ports de billetterie déjà cités plus haut                                                                                            |
+| Covoiturage        | décaissement MoMo réel (`PasserelleVersements`, simulée) ; le reste est sur PostgreSQL (lot B)                                                                                                                                                                              |
+| Relais             | `Lieux` (géocodage) et `VersementsMobile` (retrait MoMo des relais), simulés ; le reste est sur PostgreSQL (lot B)                                                                                                                                                          |
+| Livraison          | `DiffusionLivraison` (suivi en direct, en mémoire) ; le reste est sur PostgreSQL (lot B)                                                                                                                                                                                    |
+| Vendeurs           | `VersementsMobile` (retrait MoMo des commissions, simulé) ; le reste est sur PostgreSQL (lot B)                                                                                                                                                                             |
+| Financement        | `PartenaireFinancier` (aucun établissement choisi), `VersementsPaie` (AM-165), `DonneesAgence`, `SalairesAgence` ; le reste est sur PostgreSQL (lot B)                                                                                                                      |
+| Inter-agences      | `ReglementsMobile` (paiement MoMo / Orange Money du solde net, AM-165) et la saisie des comptes MoMo des compagnies ; le reste est sur PostgreSQL (lot B)                                                                                                                   |
+| Transverse         | la **file d'envoi BullMQ + Redis** (SMS et WhatsApp) ; `BILLETTERIE_QR_CLE_PRIVEE` ; la table `promotion` existe, mais les codes sans frais USSD/WhatsApp n'y sont pas insérés : à créer en base avant d'ouvrir ces canaux                                                  |
 
 ### Décisions à confirmer
 
@@ -331,6 +377,27 @@ mémoire ou simulé :
 4. **Limite horaire du code de connexion** : le code de connexion n'est pas compté dans la limite horaire de la passerelle
    SMS (le module de connexion limite déjà les demandes) ; si on préfère une double limite, retirer
    `code_connexion` de l'exemption dans `sms/passerelle.service.ts`.
+
+### Décisions du lot B à confirmer
+
+1. **Rôles relais et livreur, sans PIN** : `AttributionRolesPrisma` donne le rôle à un compte voyageur, mais ne
+   pose pas de PIN (ces rôles se connectent par PIN). Seuls les vendeurs reçoivent un PIN à l'agrément. À décider :
+   PIN provisoire envoyé par SMS comme pour les vendeurs, ou connexion par un autre moyen.
+2. **Code 409 `compte_inactif`** (agrément d'un vendeur sur un compte désactivé) : code inventé, absent des contrats.
+3. **Nom du vendeur chiffré** et numéros de vendeurs tirés de `compteur_dossier` (une seule table de compteurs
+   pour les relais, les vendeurs et les références d'inter-agences).
+4. **Mission de livraison → colis** : la clé étrangère vers `colis` est plus stricte que la mémoire (la mémoire
+   acceptait une mission sans colis réel).
+5. **Financement** : `lot_paie.version` n'est pas incrémentée (aucune écriture ne la lit) ; dossiers et lots ne se
+   suppriment pas ; les `personneId` des salaires doivent être de vrais comptes (clé étrangère).
+6. **Inter-agences** : `compte_momo_compagnie` n'a aucune route d'écriture ; `AnnuaireCompagnies` rend le nom
+   complet de la compagnie ; le calcul `interAgencesDisponible` du référentiel des
+   colis vient désormais des conventions en vigueur (les tests de colis repilotent l'indicateur en mémoire) ;
+   `prochain` ignore les départs annulés ou fusionnés ; un billet sans téléphone donne un téléphone vide.
+7. **`db.integration.test.ts`** lit désormais la liste des migrations dans le dossier (la liste écrite à la main
+   se périmait à chaque ajout).
+8. **Garde-fous de production** : la garde des vendeurs refuse aussi `VersementsMobile` ; celle de
+   l'inter-agences refuse `ReglementsMobile` ; elles sont dans `socle/demarrage.e2e.test.ts`.
 
 ### Textes inventés à relire
 
