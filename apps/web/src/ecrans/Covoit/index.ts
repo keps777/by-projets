@@ -1,0 +1,1 @@
+export { EcranCovoit } from "./EcranCovoit";

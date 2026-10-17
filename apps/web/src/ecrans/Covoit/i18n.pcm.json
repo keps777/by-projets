@@ -1,0 +1,67 @@
+{
+  "titre": "",
+  "mode": {
+    "aria": "",
+    "entreVilles": "",
+    "enVille": "",
+    "glisse": ""
+  },
+  "role": {
+    "aria": "",
+    "passager": "",
+    "conducteur": ""
+  },
+  "trajet": {
+    "inverser": ""
+  },
+  "quand": {
+    "matin": "",
+    "apresMidi": "",
+    "soir": ""
+  },
+  "filtres": {
+    "aria": "",
+    "tous": "",
+    "clim": "",
+    "femmes": "",
+    "grandBagage": "",
+    "prixMax": ""
+  },
+  "conducteur": {
+    "verifie": "",
+    "verifiee": "",
+    "trajets_one": "",
+    "trajets_other": ""
+  },
+  "offre": {
+    "places_one": "",
+    "places_other": "",
+    "clim": "",
+    "femmes": "",
+    "grandBagage": "",
+    "depart": "",
+    "arrivee": "",
+    "arriveeLieu": "",
+    "arriveeHeure": "",
+    "arrets_one": "",
+    "arrets_other": "",
+    "reserver": "",
+    "touche": ""
+  },
+  "messages": {
+    "indisponible": "",
+    "echec": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
