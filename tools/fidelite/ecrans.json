@@ -190,7 +190,7 @@
       "route": "/financement/demande/AV-2027-0041"
     },
     "InterAgencesConvention": {
-      "route": "/inter-agences/convention/conv-oc-0001"
+      "route": "/inter-agences/convention/convention-alpha-omega"
     },
     "PatronEquipe": {
       "route": "/gares"
