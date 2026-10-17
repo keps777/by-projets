@@ -41,33 +41,48 @@ import {
  * L'API complète (gardes, rôles, audit) avec `RapportModule`, branchée sur les ports en mémoire
  * d'un montage `monterRapport()` que le test remplit avant d'appeler les routes.
  */
-export async function creerAppRapportTest() {
+export interface OptionsAppRapportTest {
+  /**
+   * Une vraie connexion Prisma (tests d'intégration PostgreSQL) : le module garde alors ses
+   * adaptateurs PostgreSQL pour le référentiel, les billets, les colis, les annulations, les
+   * contrôles et les rapports ; seuls les départs, les caisses, les trous de numérotation et
+   * l'assistant restent ceux du montage.
+   */
+  prisma?: PrismaService;
+}
+
+export async function creerAppRapportTest(options: OptionsAppRapportTest = {}) {
   const montage: MontageRapport = monterRapport();
   const config = configTest();
   const auditRepo = new AuditMemoire();
+  const surPostgres = options.prisma !== undefined;
 
   // `AppModule` monte déjà le module du rapport (ponts compris) : les ports en mémoire du montage les remplacent.
-  const module = await Test.createTestingModule({ imports: [AppModule] })
-    .overrideProvider(ReferentielRapport)
-    .useValue(montage.referentiel)
-    .overrideProvider(VentesBillets)
-    .useValue(montage.ventes)
+  let constructeur = Test.createTestingModule({ imports: [AppModule] })
     .overrideProvider(DepartsDuJour)
     .useValue(montage.departs)
-    .overrideProvider(ActiviteColis)
-    .useValue(montage.colis)
     .overrideProvider(CaissesDuJour)
     .useValue(montage.caisses)
-    .overrideProvider(AnnulationsDuJour)
-    .useValue(montage.annulations)
     .overrideProvider(TrousNumerotation)
     .useValue(montage.trous)
-    .overrideProvider(ControlesEnRoute)
-    .useValue(montage.controles)
     .overrideProvider(AssistantRapport)
-    .useValue(montage.assistant)
-    .overrideProvider(RapportsSoir)
-    .useValue(montage.rapports)
+    .useValue(montage.assistant);
+  if (!surPostgres) {
+    constructeur = constructeur
+      .overrideProvider(ReferentielRapport)
+      .useValue(montage.referentiel)
+      .overrideProvider(VentesBillets)
+      .useValue(montage.ventes)
+      .overrideProvider(ActiviteColis)
+      .useValue(montage.colis)
+      .overrideProvider(AnnulationsDuJour)
+      .useValue(montage.annulations)
+      .overrideProvider(ControlesEnRoute)
+      .useValue(montage.controles)
+      .overrideProvider(RapportsSoir)
+      .useValue(montage.rapports);
+  }
+  const module = await constructeur
     .overrideProvider(CONFIG)
     .useValue(config)
     .overrideProvider(PersonnesRepository)
@@ -81,7 +96,9 @@ export async function creerAppRapportTest() {
     .overrideProvider(Horloge)
     .useValue(montage.horloge)
     .overrideProvider(PrismaService)
-    .useValue({ estJoignable: async () => true, $disconnect: async () => undefined })
+    .useValue(
+      options.prisma ?? { estJoignable: async () => true, $disconnect: async () => undefined },
+    )
     .compile();
 
   const app = module.createNestApplication<NestExpressApplication>();

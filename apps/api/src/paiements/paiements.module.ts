@@ -2,6 +2,8 @@ import { Inject, Injectable, Module, forwardRef, type OnModuleInit } from "@nest
 import { BilletterieModule } from "../billetterie/billetterie.module";
 import { SmsModule } from "../sms/sms.module";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { AbonnementAvisBilletterie, AvisPaiements } from "./avis";
 import {
@@ -32,6 +34,14 @@ import {
   RemboursementsMemoire,
 } from "./memoire";
 import { ModeDegradeService } from "./mode-degrade.service";
+import {
+  ComptesReversementPrisma,
+  LiensPaiementPrisma,
+  NotificationsTraiteesPrisma,
+  PaiementsPrisma,
+  ReglagesPaiementsPrisma,
+  RemboursementsPrisma,
+} from "./postgres";
 import { PaiementsService } from "./paiements.service";
 import {
   AnnuaireVoyageurs,
@@ -124,7 +134,7 @@ export class VerificationStockagePaiements implements OnModuleInit {
  * À importer dans `AppModule` par le coordinateur, avec `rawBody: true` dans `main.ts` (signature
  * du webhook). Le module appelle la billetterie par ses ports et `CommandesService.confirmerPaiement`,
  * la passerelle SMS par `PasserelleSmsService.envoyer` ; il ne modifie ni l'un ni l'autre. Les ports de
- * stockage sont remplaçables (versions PostgreSQL à écrire) ; `ConversionDevisesPaiements` est à
+ * stockage sont remplaçables (versions PostgreSQL dans `postgres.ts`, choisies par `API_STOCKAGE`) ; `ConversionDevisesPaiements` est à
  * brancher à la place des taux indicatifs de la billetterie (README).
  */
 @Module({
@@ -158,12 +168,52 @@ export class VerificationStockagePaiements implements OnModuleInit {
     },
     GardeAgregateur,
     Verrous,
-    { provide: Paiements, useClass: PaiementsMemoire },
-    { provide: Remboursements, useClass: RemboursementsMemoire },
-    { provide: NotificationsTraitees, useClass: NotificationsTraiteesMemoire },
-    { provide: LiensPaiement, useClass: LiensPaiementMemoire },
-    { provide: ComptesReversement, useClass: ComptesReversementMemoire },
-    { provide: ReglagesPaiements, useClass: ReglagesPaiementsMemoire },
+    // Les six ports de stockage : PostgreSQL en production (ou avec API_STOCKAGE=postgres), mémoire
+    // ailleurs (socle/db/stockage.ts).
+    {
+      provide: Paiements,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService): Paiements =>
+        stockageSurPostgres(config) ? new PaiementsPrisma(prisma) : new PaiementsMemoire(),
+    },
+    {
+      provide: Remboursements,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService): Remboursements =>
+        stockageSurPostgres(config)
+          ? new RemboursementsPrisma(prisma)
+          : new RemboursementsMemoire(),
+    },
+    {
+      provide: NotificationsTraitees,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService): NotificationsTraitees =>
+        stockageSurPostgres(config)
+          ? new NotificationsTraiteesPrisma(prisma)
+          : new NotificationsTraiteesMemoire(),
+    },
+    {
+      provide: LiensPaiement,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService): LiensPaiement =>
+        stockageSurPostgres(config) ? new LiensPaiementPrisma(prisma) : new LiensPaiementMemoire(),
+    },
+    {
+      provide: ComptesReversement,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService): ComptesReversement =>
+        stockageSurPostgres(config)
+          ? new ComptesReversementPrisma(prisma)
+          : new ComptesReversementMemoire(),
+    },
+    {
+      provide: ReglagesPaiements,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService): ReglagesPaiements =>
+        stockageSurPostgres(config)
+          ? new ReglagesPaiementsPrisma(prisma)
+          : new ReglagesPaiementsMemoire(),
+    },
     { provide: CommandesAPayer, useClass: CommandesBilletterie },
     { provide: NotifieurPaiements, useClass: NotifieurSms },
     { provide: AnnuaireVoyageurs, useClass: AnnuaireComptes },

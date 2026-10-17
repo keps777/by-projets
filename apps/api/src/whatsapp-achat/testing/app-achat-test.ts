@@ -58,6 +58,7 @@ import {
   JournalAchatMemoire,
   TranscriptionMemoire,
 } from "../memoire";
+import { AchatsWhatsAppPrisma, ConversationsAchatPrisma, JournalAchatPrisma } from "../postgres";
 import {
   AchatsWhatsApp,
   ConversationsAchat,
@@ -174,6 +175,13 @@ export interface OptionsAppAchatTest {
   alphaSansCompte?: boolean;
   /** Un assistant reçoit les messages qui ne concernent pas l'achat. */
   avecAssistant?: boolean;
+  /**
+   * Une vraie connexion Prisma (tests d'intégration PostgreSQL) : les conversations, le journal et
+   * les achats sont alors ceux de PostgreSQL ; la billetterie, les paiements et la passerelle WhatsApp
+   * restent en mémoire. Les champs `conversations`, `journal` et `achats` du résultat sont alors des
+   * adaptateurs PostgreSQL (leur type de mémoire ne vaut plus).
+   */
+  prisma?: PrismaService;
 }
 
 /** Un assistant de test : note ce qu'on lui passe. */
@@ -227,7 +235,7 @@ export async function creerAppAchatTest(options: OptionsAppAchatTest = {}) {
   if (!options.sansTranscription) {
     builder = builder.overrideProvider(TranscriptionVocale).useValue(transcription);
   }
-  const module = await builder
+  builder = builder
     .overrideProvider(CONFIG)
     .useValue(config)
     .overrideProvider(CONFIG_PAIEMENTS)
@@ -251,8 +259,19 @@ export async function creerAppAchatTest(options: OptionsAppAchatTest = {}) {
     .overrideProvider(OPTIONS_BILLETTERIE)
     .useValue({ balayageMs: 0, pingMs: 0 })
     .overrideProvider(PrismaService)
-    .useValue({ estJoignable: async () => true, $disconnect: async () => undefined })
-    .compile();
+    .useValue(
+      options.prisma ?? { estJoignable: async () => true, $disconnect: async () => undefined },
+    );
+  if (options.prisma) {
+    builder = builder
+      .overrideProvider(ConversationsAchat)
+      .useValue(new ConversationsAchatPrisma(options.prisma))
+      .overrideProvider(JournalAchatWhatsApp)
+      .useValue(new JournalAchatPrisma(options.prisma))
+      .overrideProvider(AchatsWhatsApp)
+      .useValue(new AchatsWhatsAppPrisma(options.prisma));
+  }
+  const module = await builder.compile();
 
   const app = module.createNestApplication<NestExpressApplication>({ rawBody: true });
   configurerApp(app, config);

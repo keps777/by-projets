@@ -6,8 +6,8 @@ au premier code valide. Ce sont les deux routes de la planche **Connexion** (AM-
 d'API appelle avec `useDemanderCode` et `useVerifierCode` (`OP_DEMANDER_CODE`, `OP_VERIFIER_CODE`).
 
 Le module est **autonome** : il s'appuie sur les services globaux du socle (configuration, audit,
-comptes, jetons) et sur des **ports** (classes abstraites) livrés avec une version en mémoire. Il ne
-touche ni `app.module.ts` ni `prisma/schema.prisma` : le coordinateur les branche (section « Intégration »).
+comptes, jetons) et sur des **ports** (classes abstraites) livrés avec une version en mémoire ; les codes,
+les essais et les fiches ont aussi une version PostgreSQL (`postgres.ts`, lot A) choisie selon `API_STOCKAGE`.
 
 ## Routes
 
@@ -69,21 +69,24 @@ En plus des limites par numéro, chaque route accepte 10 requêtes par minute et
 
 ## Ports et adaptateurs
 
-| Port (`ports.ts`)   | Rôle                                                                    | Par défaut                            | À brancher                                                    |
-| ------------------- | ----------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------- |
-| `StockageConnexion` | codes émis, quota d'envois, essais et blocages (méthodes **atomiques**) | `StockageConnexionMemoire`            | adaptateur PostgreSQL (tables ci-dessous)                     |
-| `FichesVoyageur`    | « inscrit depuis », langue, pièce vérifiée                              | `FichesVoyageurMemoire`               | adaptateur PostgreSQL                                         |
-| `EnvoiCodeSms`      | envoi du texte par SMS                                                  | `EnvoiCodeSmsMemoire`                 | `EnvoiCodeSmsPasserelle` (fourni, sur `PasserelleSmsService`) |
-| `EnvoiCodeWhatsApp` | envoi par WhatsApp (gabarit d'authentification)                         | `EnvoiCodeWhatsAppAbsent` (repli SMS) | à écrire quand le gabarit existe                              |
-| `ComptesVoyageur`   | trouver / créer la personne du numéro                                   | `ComptesVoyageurSocle`                | (fourni, sur `ComptesService` du socle)                       |
-| `EmetteurSession`   | jeton de session                                                        | `EmetteurSessionJwt`                  | (fourni, sur `TokensService` du socle)                        |
+| Port (`ports.ts`)   | Rôle                                                                    | Par défaut                                                                        | À brancher                                                    |
+| ------------------- | ----------------------------------------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `StockageConnexion` | codes émis, quota d'envois, essais et blocages (méthodes **atomiques**) | `StockageConnexionPrisma` (selon `API_STOCKAGE`) sinon `StockageConnexionMemoire` | fourni (tables ci-dessous)                                    |
+| `FichesVoyageur`    | « inscrit depuis », langue, pièce vérifiée                              | `FichesVoyageurPrisma` (selon `API_STOCKAGE`) sinon `FichesVoyageurMemoire`       | fourni                                                        |
+| `EnvoiCodeSms`      | envoi du texte par SMS                                                  | `EnvoiCodeSmsMemoire`                                                             | `EnvoiCodeSmsPasserelle` (fourni, sur `PasserelleSmsService`) |
+| `EnvoiCodeWhatsApp` | envoi par WhatsApp (gabarit d'authentification)                         | `EnvoiCodeWhatsAppAbsent` (repli SMS)                                             | à écrire quand le gabarit existe                              |
+| `ComptesVoyageur`   | trouver / créer la personne du numéro                                   | `ComptesVoyageurSocle`                                                            | (fourni, sur `ComptesService` du socle)                       |
+| `EmetteurSession`   | jeton de session                                                        | `EmetteurSessionJwt`                                                              | (fourni, sur `TokensService` du socle)                        |
 
 `VerificationAuthVoyageur` refuse de démarrer **en production** tant que le stockage ou les fiches sont en
 mémoire ou que l'envoi par SMS est simulé (il les nomme tous). WhatsApp non branché n'empêche pas de
 démarrer (avertissement).
 
-`testing/contrat-stockage.ts` est le **test de contrat** de `StockageConnexion` : il tourne sur la mémoire
-(`stockage.test.ts`) et doit tourner tel quel sur l'adaptateur PostgreSQL du coordinateur (quota et
+`API_STOCKAGE` (`postgres` / `memoire`, sinon PostgreSQL en production et mémoire ailleurs) choisit les
+adaptateurs de `StockageConnexion` et de `FichesVoyageur` au montage du module.
+
+`testing/contrat-stockage.ts` est le **test de contrat** de `StockageConnexion` et de `FichesVoyageur` : il
+tourne sur la mémoire (`stockage.test.ts`) et sur PostgreSQL (`postgres.integration.test.ts`, quota et
 blocage sous requêtes simultanées, usage unique du code).
 
 ## Configuration (variables d'environnement, toutes facultatives hors production)
@@ -100,70 +103,53 @@ blocage sous requêtes simultanées, usage unique du code).
 
 Le poivre (`AUTH_PEPPER`), les clés JWT et `SMS_*` viennent du socle et de la passerelle SMS.
 
-## Intégration (coordinateur : `app.module.ts`, Prisma)
+## Intégration (coordinateur)
 
-1. **`AppModule`** : importer le module.
+1. **`AppModule`** : le module est déjà importé avec la passerelle SMS.
    ```ts
    AuthVoyageurModule.avec({
      imports: [SmsModule], // déjà dans AppModule ; exporte PasserelleSmsService
      providers: [
-       { provide: StockageConnexion, useClass: StockageConnexionPrisma },   // à écrire (tables ci-dessous)
-       { provide: FichesVoyageur, useClass: FichesVoyageurPrisma },          // à écrire
-       { provide: EnvoiCodeSms, useClass: EnvoiCodeSmsPasserelle },          // fourni
-       // { provide: EnvoiCodeWhatsApp, useClass: … },                       // quand le gabarit existe
+       { provide: EnvoiCodeSms, useClass: EnvoiCodeSmsPasserelle }, // fourni
+       // { provide: EnvoiCodeWhatsApp, useClass: … },              // quand le gabarit existe
      ],
    }),
    ```
-   Les adaptateurs durables déclarent `durable = true` ; `EnvoiCodeSmsPasserelle` déclare `reel = true`.
-   Le module n'a pas de bascule `API_STOCKAGE` : en mémoire tant qu'on ne fournit pas les adaptateurs.
-2. **Migration** (hors de mon périmètre, `apps/api/prisma/**`) : ajouter les trois tables ci-dessous.
+   `StockageConnexion` et `FichesVoyageur` n'ont rien à brancher : les adaptateurs PostgreSQL sont choisis par
+   `API_STOCKAGE`. Ils déclarent `durable = true` ; `EnvoiCodeSmsPasserelle` déclare `reel = true`.
+2. **Migration** : `20261017000740_connexion_voyageur` (trois tables ci-dessous, modèles `CodeConnexionVoyageur`,
+   `LimiteConnexionVoyageur` et `FicheVoyageur` du bloc « lot A » de `schema.prisma`).
 3. **Variables** : au moins `AUTH_VOYAGEUR_WEBOTP_DOMAINE` en production.
-4. **Purge** : supprimer `code_connexion_voyageur` de plus de 24 h et `limite_connexion_voyageur` sans
-   blocage ni erreur depuis 24 h (tâche planifiée).
+4. **Purge** (à planifier, pas encore faite) : supprimer `code_connexion_voyageur` de plus de 24 h et
+   `limite_connexion_voyageur` sans blocage ni erreur depuis 24 h. Un code déjà consommé ne peut plus être
+   modifié, mais il peut être supprimé.
 
-### Tables PostgreSQL attendues
+### Tables PostgreSQL
 
-```sql
-CREATE TABLE code_connexion_voyageur (
-  id               uuid PRIMARY KEY,
-  telephone_index  text        NOT NULL,   -- HMAC du numéro (regles.indexTelephone), jamais le numéro
-  code_hache       text        NOT NULL CHECK (code_hache ~ '^[0-9a-f]{64}$'),   -- jamais le code
-  canal            text        NOT NULL CHECK (canal IN ('sms','whatsapp')),
-  cree_a           timestamptz NOT NULL,
-  expire_a         timestamptz NOT NULL CHECK (expire_a > cree_a),
-  consomme_a       timestamptz
-);
-CREATE INDEX code_connexion_voyageur_numero ON code_connexion_voyageur (telephone_index, cree_a DESC);
+| Table                       | Contenu                                                         | Garanties de la base                                                                                                                                                    |
+| --------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `code_connexion_voyageur`   | un code émis : empreinte HMAC, index du numéro, canal, échéance | empreinte de 64 caractères hexadécimaux, canal `sms` / `whatsapp`, échéance après la création ; déclencheur : seul `consommeA` peut changer, une fois, de vide à rempli |
+| `limite_connexion_voyageur` | mauvais codes et blocages d'un numéro (une ligne par numéro)    | compteurs positifs ou nuls                                                                                                                                              |
+| `fiche_voyageur`            | « inscrit depuis », langue, pièce vérifiée, 4 derniers chiffres | une fiche par personne (clé primaire), langue `fr` / `en`, pièce à 4 chiffres                                                                                           |
 
-CREATE TABLE limite_connexion_voyageur (
-  telephone_index  text PRIMARY KEY,
-  echecs           integer     NOT NULL DEFAULT 0 CHECK (echecs >= 0),
-  blocages         integer     NOT NULL DEFAULT 0 CHECK (blocages >= 0),
-  bloque_jusqua    timestamptz,
-  dernier_echec_a  timestamptz
-);
+Colonnes en camelCase comme le reste du schéma Prisma (`telephoneIndex`, `codeHache`, `creeA`, `expireA`,
+`consommeA`, `echecs`, `blocages`, `bloqueJusqua`, `dernierEchecA`, `personneId`, `inscritA`…). Pas de clé
+étrangère de `fiche_voyageur` vers `personne` : le compte est créé juste avant la fiche par le socle, et la
+fiche ne porte aucune donnée sensible.
 
-CREATE TABLE fiche_voyageur (
-  personne_id            uuid PRIMARY KEY REFERENCES personne (id),
-  inscrit_a              timestamptz NOT NULL,
-  langue                 text        NOT NULL DEFAULT 'fr' CHECK (langue IN ('fr','en')),
-  piece_verifiee         boolean     NOT NULL DEFAULT false,
-  piece_quatre_derniers  text        CHECK (piece_quatre_derniers ~ '^[0-9]{4}$')
-);
-```
+Garanties tenues par l'adaptateur `StockageConnexionPrisma` (le test de contrat les vérifie, sur une et sur
+deux instances) :
 
-Garanties à tenir par l'adaptateur `StockageConnexion` (le test de contrat les vérifie) :
-
-- `reserverEnvoi` : une transaction qui prend `pg_advisory_xact_lock(hashtext(telephone_index))`, lit les
-  `cree_a` du numéro sur la dernière heure, applique `decider(...)` (`regles.ts`) puis insère. Deux demandes
-  simultanées ne dépassent ni 1 envoi par 40 s ni 5 par heure.
-- `consommer` : `UPDATE … SET consomme_a = $2 WHERE id = $1 AND consomme_a IS NULL` ; une ligne modifiée =
+- `reserverEnvoi` : une transaction qui prend `pg_advisory_xact_lock(7017166, hashtext(telephoneIndex))`, lit
+  les codes du numéro sur la dernière heure, applique `decider(...)` (`regles.ts`) puis insère. Deux demandes
+  simultanées ne dépassent ni 1 envoi par 40 s ni 5 par heure ; deux numéros ne se gênent pas.
+- `consommer` : `UPDATE … SET consommeA = $2 WHERE id = $1 AND consommeA IS NULL` ; une ligne modifiée =
   `true`. Le code est à usage unique même sous concurrence.
-- `noterEchec` : même verrou par numéro (ou `SELECT … FOR UPDATE` sur `limite_connexion_voyageur` après
-  `INSERT … ON CONFLICT DO NOTHING`), puis `appliquerEchec(...)` (`regles.ts`) et écriture. Un numéro déjà
-  bloqué n'est pas modifié.
+- `noterEchec` : même verrou par numéro, puis `appliquerEchec(...)` (`regles.ts`) et écriture. Un numéro déjà
+  bloqué n'est pas modifié ; douze mauvais codes simultanés bloquent le numéro une seule fois.
 - `annulerEnvoi` : `DELETE` du code (jamais d'`UPDATE` du hachage).
-- `FichesVoyageur.ouvrir` : `INSERT … ON CONFLICT (personne_id) DO NOTHING` puis lecture.
+- `FichesVoyageurPrisma.ouvrir` : `INSERT … ON CONFLICT DO NOTHING` puis lecture : la fiche existante garde sa
+  date d'inscription.
 
 ## À faire hors périmètre (à porter au coordinateur)
 
@@ -180,8 +166,7 @@ dernière ligne")` dans `auth-voyageur.module.test.ts` documente l'écart ; il �
    catégorie _authentification_ chez Meta (`afrimove_code`, bouton « copier le code »), un type `code`
    dans `whatsapp/gabarits.ts`, puis un adaptateur `EnvoiCodeWhatsApp` sur `PasserelleWhatsAppService.envoyer`
    (`branche = true`, `reel = true`, `cle = demande.cle`, `secours: false` : le repli SMS est géré ici).
-3. **Adaptateurs PostgreSQL et migration** (section précédente).
-4. **Routes `/auth/voyageur/*` du socle** : retirées à l'étape 3 (elles faisaient double emploi). Le code
+3. **Routes `/auth/voyageur/*` du socle** : retirées à l'étape 3 (elles faisaient double emploi). Le code
    part désormais par la passerelle SMS, type `code_connexion` (voir `apps/api/INTEGRATION.md`).
 
 ## Décisions à confirmer
@@ -214,7 +199,13 @@ dernière ligne")` dans `auth-voyageur.module.test.ts` documente l'écart ; il �
 - `regles.test.ts` : code à 4 chiffres (zéros de tête), hachage, texte WebOTP (dernière ligne, un seul morceau GSM),
   comptage des essais et blocages (5, puis ×2, plafond, calme), décision d'envoi (40 s, 5 par heure).
 - `validation.test.ts` : parité des lecteurs avec les schémas zod du contrat, configuration.
-- `stockage.test.ts` + `testing/contrat-stockage.ts` : contrat du port (concurrence comprise) sur la mémoire.
+- `stockage.test.ts` + `testing/contrat-stockage.ts` : contrat des ports `StockageConnexion` et `FichesVoyageur`
+  (concurrence comprise) sur la mémoire.
+- `postgres.integration.test.ts` (ignoré sans `DATABASE_URL_TEST`) : le même contrat sur PostgreSQL, le quota,
+  l'usage unique et le blocage sous requêtes simultanées de deux instances, les garde-fous SQL (empreinte,
+  canal, échéance, code jamais réécrit), et l'API de bout en bout avec `API_STOCKAGE=postgres` (aucun code ni
+  numéro en clair en base, blocage conservé après redémarrage) :
+  `DATABASE_URL_TEST=postgresql://user@localhost:5432/afrimove_test pnpm --filter @afrimove/api test -- src/auth-voyageur/postgres`.
 - `connexion.service.test.ts` : le service sur les adaptateurs en mémoire et une horloge qu'on avance
   (envois, essais, blocages, usage unique, WhatsApp et repli, pannes, compte non éligible, **code absent des
   journaux, de l'audit et du stockage**).

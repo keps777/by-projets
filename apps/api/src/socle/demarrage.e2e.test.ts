@@ -47,6 +47,12 @@ import {
   type ConfigAchatWhatsApp,
 } from "../whatsapp-achat/config";
 import { VerificationAchatWhatsApp } from "../whatsapp-achat/whatsapp-achat.module";
+import { AchatsWhatsApp, ConversationsAchat, JournalAchatWhatsApp } from "../whatsapp-achat/ports";
+import { JournalWhatsApp } from "../whatsapp/journal";
+import { AchatsUssd, JournalUssd, SessionsUssd } from "../ussd/ports";
+import { ControlesEnRoute, RapportsSoir } from "../rapport/ports";
+import { NotificationsTraitees, Paiements, Remboursements } from "../paiements/ports";
+import { FichesVoyageur, StockageConnexion } from "../auth-voyageur/ports";
 import { AnnuaireRapportPersonnes, SecoursSmsPasserelle } from "../whatsapp/adaptateurs";
 import { CONFIG_WHATSAPP, chargerConfigWhatsApp, type ConfigWhatsApp } from "../whatsapp/config";
 import {
@@ -224,12 +230,8 @@ describe("production : l'application refuse de démarrer avec un port en mémoir
   const gardes: ReadonlyArray<readonly [string, Type<{ onModuleInit?(): void }>, RegExp]> = [
     ["billetterie", VerificationStockageBilletterie, /BilletterieModule.*en mémoire/],
     ["sms", VerificationSms, /SmsModule.*en mémoire/],
-    ["paiements", VerificationStockagePaiements, /PaiementsModule.*en mémoire/],
-    ["rapport", VerificationRapport, /RapportModule.*en mémoire/],
     ["gps", VerificationStockageGps, /GpsModule.*en mémoire/],
     ["whatsapp", VerificationWhatsApp, /WhatsAppModule.*(mémoire|simulé)/],
-    ["auth-voyageur", VerificationAuthVoyageur, /AuthVoyageurModule.*en mémoire/],
-    ["ussd", VerificationUssd, /UssdModule.*en mémoire/],
     ["covoiturage", VerificationStockageCovoiturage, /CovoiturageModule.*(mémoire|simulés)/],
     ["relais", VerificationPortsRelais, /RelaisModule.*(mémoire|simulés)/],
     ["livraison", VerificationPortsLivraison, /LivraisonModule.*en mémoire/],
@@ -243,9 +245,56 @@ describe("production : l'application refuse de démarrer avec un port en mémoir
     },
   );
 
-  it("l'achat par WhatsApp refuse aussi la production (conversations, journal, achats en mémoire)", () => {
+  // Les modules dont tous les ports de stockage sont sur PostgreSQL (lot A) : en production, `API_STOCKAGE`
+  // les y met tout seul, et leur garde-fou ne trouve plus rien en mémoire.
+  const gardesSurPostgres: ReadonlyArray<readonly [string, Type<{ onModuleInit?(): void }>]> = [
+    ["paiements", VerificationStockagePaiements],
+    ["rapport", VerificationRapport],
+    ["auth-voyageur", VerificationAuthVoyageur],
+    ["ussd", VerificationUssd],
+  ];
+
+  it.each(gardesSurPostgres)(
+    "%s : en production, le stockage est sur PostgreSQL et le garde-fou ne refuse plus",
+    (_nom, garde) => {
+      const instance = module.get(garde, { strict: false });
+      expect(() => instance.onModuleInit?.()).not.toThrow();
+    },
+  );
+
+  it("les ports de stockage de ces modules sont ceux de PostgreSQL en production", () => {
+    const ports = [
+      Paiements,
+      Remboursements,
+      NotificationsTraitees,
+      RapportsSoir,
+      ControlesEnRoute,
+      StockageConnexion,
+      FichesVoyageur,
+      SessionsUssd,
+      JournalUssd,
+      AchatsUssd,
+      ConversationsAchat,
+      JournalAchatWhatsApp,
+      AchatsWhatsApp,
+      JournalWhatsApp,
+    ] as const;
+    for (const port of ports) {
+      const adaptateur = module.get(port, { strict: false }) as { durable: boolean };
+      expect(adaptateur.durable, port.name).toBe(true);
+    }
+  });
+
+  it("l'achat par WhatsApp ne refuse plus la production pour son stockage : il lui reste l'envoi et la passerelle", () => {
     const garde = module.get(VerificationAchatWhatsApp, { strict: false });
-    expect(() => garde.onApplicationBootstrap()).toThrowError(/WhatsAppAchatModule.*en mémoire/);
+    // Conversations, journal et achats sont durables ; ce qui peut encore bloquer n'est plus le stockage.
+    try {
+      garde.onApplicationBootstrap();
+    } catch (e) {
+      expect(String(e)).not.toMatch(
+        /conversations sont en mémoire|journal est en mémoire|achats sont en mémoire/,
+      );
+    }
   });
 
   it("l'application entière refuse de démarrer (init rejetée)", async () => {

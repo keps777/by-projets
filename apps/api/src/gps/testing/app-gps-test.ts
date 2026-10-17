@@ -68,6 +68,8 @@ export const DEBUT = new Date("2026-11-02T07:04:00.000Z");
 export interface OptionsAppGpsTest {
   config?: Record<string, string>;
   debut?: Date;
+  /** Une vraie connexion Prisma (tests d'intégration PostgreSQL) à la place de la doublure. */
+  prisma?: PrismaService;
 }
 
 /**
@@ -96,7 +98,9 @@ export async function creerAppGpsTest(options: OptionsAppGpsTest = {}) {
     .overrideProvider(OPTIONS_GPS)
     .useValue({ pingMs: 0 })
     .overrideProvider(PrismaService)
-    .useValue({ estJoignable: async () => true, $disconnect: async () => undefined })
+    .useValue(
+      options.prisma ?? { estJoignable: async () => true, $disconnect: async () => undefined },
+    )
     .compile();
 
   const app = module.createNestApplication<NestExpressApplication>();

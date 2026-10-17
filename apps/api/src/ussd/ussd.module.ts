@@ -12,6 +12,8 @@ import { BilletterieModule } from "../billetterie/billetterie.module";
 import { PaiementsModule } from "../paiements/paiements.module";
 import { SmsModule } from "../sms/sms.module";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { NotifieurBilletSms, ComptesUssdComptes } from "./adaptateurs";
 import { AchatUssdService } from "./achat.service";
@@ -25,6 +27,7 @@ import {
   SuiviBusAucun,
   SuiviColisAucun,
 } from "./memoire";
+import { AchatsUssdPrisma, JournalUssdPrisma, SessionsUssdPrisma } from "./postgres";
 import {
   AchatsUssd,
   ComptesUssd,
@@ -85,6 +88,31 @@ export class VerificationUssd implements OnModuleInit {
   }
 }
 
+/**
+ * Les trois ports de stockage du USSD, choisis selon `API_STOCKAGE` : PostgreSQL (`postgres.ts`) ou
+ * mémoire. Exportés pour que les tests vérifient le choix sans monter la billetterie et les paiements.
+ */
+export const FOURNISSEURS_STOCKAGE_USSD: Provider[] = [
+  {
+    provide: SessionsUssd,
+    inject: [CONFIG, PrismaService],
+    useFactory: (config: AppConfig, prisma: PrismaService): SessionsUssd =>
+      stockageSurPostgres(config) ? new SessionsUssdPrisma(prisma) : new SessionsMemoire(),
+  },
+  {
+    provide: JournalUssd,
+    inject: [CONFIG, PrismaService],
+    useFactory: (config: AppConfig, prisma: PrismaService): JournalUssd =>
+      stockageSurPostgres(config) ? new JournalUssdPrisma(prisma) : new JournalUssdMemoire(),
+  },
+  {
+    provide: AchatsUssd,
+    inject: [CONFIG, PrismaService],
+    useFactory: (config: AppConfig, prisma: PrismaService): AchatsUssd =>
+      stockageSurPostgres(config) ? new AchatsUssdPrisma(prisma) : new AchatsUssdMemoire(),
+  },
+];
+
 /** Adaptateurs de production à brancher à la place de ceux par défaut (voir `UssdModule.avec`). */
 export interface AdaptateursUssd {
   /** Modules qui fournissent ce dont les adaptateurs ont besoin (Redis, Prisma, colis, GPS…). */
@@ -102,8 +130,9 @@ export interface AdaptateursUssd {
  * journalisation.
  *
  * Module autonome : il s'appuie sur la billetterie et les paiements par leurs services exportés,
- * sans les modifier. Ses ports (sessions, journal, achats, suivi des colis, suivi des bus) ont des
- * versions en mémoire ; le coordinateur branche les vraies avec `UssdModule.avec({ … })` (README).
+ * sans les modifier. Les sessions, le journal et les achats suivent `API_STOCKAGE` (PostgreSQL en
+ * production, mémoire ailleurs) ; le suivi des colis et celui des bus ont des versions en mémoire que le
+ * coordinateur remplace avec `UssdModule.avec({ … })` (README).
  */
 @Module({
   imports: [BilletterieModule, PaiementsModule, SmsModule],
@@ -116,9 +145,7 @@ export interface AdaptateursUssd {
         chargerConfigUssd(process.env, config.env === "production"),
     },
     { provide: Horloge, useClass: HorlogeSysteme },
-    { provide: SessionsUssd, useClass: SessionsMemoire },
-    { provide: JournalUssd, useClass: JournalUssdMemoire },
-    { provide: AchatsUssd, useClass: AchatsUssdMemoire },
+    ...FOURNISSEURS_STOCKAGE_USSD,
     { provide: ComptesUssd, useClass: ComptesUssdComptes },
     { provide: NotifieurBilletUssd, useClass: NotifieurBilletSms },
     { provide: SuiviColisUssd, useClass: SuiviColisAucun },

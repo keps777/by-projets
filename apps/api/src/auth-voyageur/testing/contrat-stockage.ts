@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { describe, expect, it } from "vitest";
-import type { CodeEmis, StockageConnexion } from "../ports";
+import type { CodeEmis, FichesVoyageur, StockageConnexion } from "../ports";
 import type { ReglesEnvoi, ReglesEssais } from "../regles";
 
 /**
@@ -215,6 +215,56 @@ export function contratStockageConnexion(
           bloqueJusqua: null,
           dernierEchecA: null,
         });
+      }));
+  });
+}
+
+/**
+ * Contrat du port `FichesVoyageur` : une fiche par personne, créée à la première ouverture, qui garde
+ * sa date d'inscription (mémoire toujours, PostgreSQL quand une base de test est donnée).
+ */
+export function contratFichesVoyageur(
+  nom: string,
+  creer: () => Promise<{ fiches: FichesVoyageur; fermer?: () => Promise<void> }>,
+): void {
+  describe(`FichesVoyageur : ${nom}`, () => {
+    async function avec<T>(test: (f: FichesVoyageur) => Promise<T>): Promise<T> {
+      const { fiches, fermer } = await creer();
+      try {
+        return await test(fiches);
+      } finally {
+        await fermer?.();
+      }
+    }
+
+    it("crée la fiche à la première ouverture avec les valeurs par défaut", () =>
+      avec(async (fiches) => {
+        const personneId = randomUUID();
+        expect(await fiches.ouvrir(personneId, T0)).toEqual({
+          personneId,
+          inscritA: T0,
+          langue: "fr",
+          pieceVerifiee: false,
+          pieceQuatreDerniers: null,
+        });
+      }));
+
+    it("garde la date d'inscription d'origine aux ouvertures suivantes", () =>
+      avec(async (fiches) => {
+        const personneId = randomUUID();
+        await fiches.ouvrir(personneId, T0);
+        const encore = await fiches.ouvrir(personneId, apres(86_400_000));
+        expect(encore.inscritA).toEqual(T0);
+        expect((await fiches.ouvrir(randomUUID(), apres(1000))).inscritA).toEqual(apres(1000));
+      }));
+
+    it("des ouvertures simultanées donnent la même fiche", () =>
+      avec(async (fiches) => {
+        const personneId = randomUUID();
+        const lues = await Promise.all(
+          Array.from({ length: 8 }, (_, i) => fiches.ouvrir(personneId, apres(i * 1000))),
+        );
+        expect(new Set(lues.map((f) => f.inscritA.getTime())).size).toBe(1);
       }));
   });
 }

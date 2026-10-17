@@ -44,8 +44,8 @@ import { SanteController } from "./sante/sante.controller";
 
 /**
  * Connexion du voyageur (AM-023) : le code part par la passerelle SMS (gabarit `code_connexion`, au
- * format WebOTP). Les codes et les fiches restent en mémoire tant que leurs tables n'existent pas : le
- * module refuse de démarrer en production (voir apps/api/INTEGRATION.md).
+ * format WebOTP). Les codes, les essais et les fiches suivent `API_STOCKAGE` (adaptateurs PostgreSQL du lot A
+ * choisis dans `AuthVoyageurModule`).
  */
 const authVoyageur = AuthVoyageurModule.avec({
   imports: [SmsModule],
@@ -54,15 +54,17 @@ const authVoyageur = AuthVoyageurModule.avec({
 
 /**
  * Rapport du soir (AM-171) branché sur la caisse, la billetterie et la numérotation (`avecModulesExistants`).
- * Le référentiel, les ventes, les colis, les annulations, les contrôles et les rapports arrêtés restent en
- * mémoire tant que leurs adaptateurs PostgreSQL ne sont pas écrits.
+ * Le référentiel, les ventes, les colis, les annulations, les contrôles et les rapports arrêtés suivent
+ * `API_STOCKAGE` (adaptateurs PostgreSQL du lot A choisis dans `RapportModule`).
  */
 const rapport = RapportModule.avecModulesExistants();
 
 /**
  * Achat par WhatsApp (AM-168). Le même objet de module est donné à `WhatsAppModule` : une seule instance,
  * donc une seule file et un seul état de conversations. Les numéros de l'équipe (patron, superviseurs) sont
- * lus dans les comptes : leurs messages vont à l'assistant du rapport, pas à l'achat.
+ * lus dans les comptes : leurs messages vont à l'assistant du rapport, pas à l'achat. Les conversations, le
+ * journal et les achats suivent `API_STOCKAGE` (adaptateurs PostgreSQL du lot A, choisis dans
+ * `WhatsAppAchatModule`).
  */
 const achatWhatsApp = WhatsAppAchatModule.avec({
   providers: [{ provide: ReconnaissanceEquipe, useClass: EquipeAnnuaire }],
@@ -71,7 +73,9 @@ const achatWhatsApp = WhatsAppAchatModule.avec({
 /**
  * Passerelle WhatsApp (AM-167) : repli par SMS sur la passerelle SMS, rapport du soir lu dans le module
  * rapport, destinataires lus dans les comptes, messages reçus confiés à l'achat conversationnel (qui passe à
- * l'assistant ce qui ne le concerne pas, une fois `GESTIONNAIRE_SUIVANT` fourni).
+ * l'assistant ce qui ne le concerne pas, une fois `GESTIONNAIRE_SUIVANT` fourni). Le journal (messages,
+ * essais, messages reçus) suit `API_STOCKAGE` (adaptateur PostgreSQL du lot A, choisi dans `WhatsAppModule`) ;
+ * la file d'envoi reste en mémoire.
  */
 const whatsApp = WhatsAppModule.avec({
   imports: [SmsModule, rapport, achatWhatsApp],

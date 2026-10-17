@@ -31,6 +31,8 @@ export interface OptionsAppAuth {
   config?: Record<string, string>;
   /** Envoi réel des codes par la passerelle SMS (comme `AppModule`) au lieu de la boîte en mémoire. */
   passerelleSms?: boolean;
+  /** Une vraie connexion Prisma (tests d'intégration PostgreSQL) à la place de la doublure. */
+  prisma?: PrismaService;
   /** Fournisseurs de la connexion à remplacer (par exemple `EnvoiCodeWhatsApp`). */
   fournisseurs?: ReadonlyArray<{
     provide: abstract new (...args: never[]) => unknown;
@@ -72,12 +74,15 @@ export async function creerAppAuthTest(options: OptionsAppAuth = {}) {
     .overrideProvider(Horloge)
     .useValue(horloge)
     .overrideProvider(PrismaService)
-    .useValue({ estJoignable: async () => true, $disconnect: async () => undefined })
+    .useValue(
+      options.prisma ?? { estJoignable: async () => true, $disconnect: async () => undefined },
+    )
     .compile();
 
   const app = module.createNestApplication<NestExpressApplication>();
   configurerApp(app, config);
   await app.init();
+  app.getHttpServer().setMaxListeners(0);
 
   let ecoute: Promise<string> | undefined;
   return {

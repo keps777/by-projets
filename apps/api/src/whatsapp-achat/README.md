@@ -120,18 +120,20 @@ autre trajet ou un autre jour.
 Toute dépendance qui n'est ni la billetterie, ni les paiements, ni la passerelle passe par un port
 (classe abstraite) ; `memoire.ts` en donne des versions en mémoire, `WhatsAppAchatModule` refuse de
 démarrer en production tant qu'un port de stockage est en mémoire (`durable = false`) ou que l'envoi
-n'est pas branché sur la passerelle.
+n'est pas branché sur la passerelle. Les trois ports de stockage (conversations, journal, achats) ont leur
+version PostgreSQL (`postgres.ts`) : le module choisit entre elle et la mémoire selon `API_STOCKAGE`
+(`postgres` en production ou si la variable le demande, mémoire sinon).
 
-| Port                   | Rôle                                                                                        | Par défaut (mémoire)               | À brancher en production                                           |
-| ---------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------- | ------------------------------------------------------------------ |
-| `ConversationsAchat`   | État chiffré des conversations, avec échéance                                               | `ConversationsMemoire`             | Redis (`SET … PX`) ou table `whatsapp_achat_conversation`          |
-| `JournalAchatWhatsApp` | Journal technique sans texte                                                                | `JournalAchatMemoire`              | Table `whatsapp_achat_journal`                                     |
-| `AchatsWhatsApp`       | Achats à suivre jusqu'au billet                                                             | `AchatsMemoire`                    | Table `whatsapp_achat`                                             |
-| `ComptesAchat`         | Voyageur d'un numéro WhatsApp                                                               | `ComptesAchatComptes` (réel)       | _(déjà réel : `ComptesService` et `PersonnesRepository` du socle)_ |
-| `MessagerieAchat`      | Envoi des messages                                                                          | `MessagerieAchatPasserelle` (réel) | _(déjà réel : `PasserelleWhatsAppService.repondre`)_               |
-| `TranscriptionVocale`  | Transcrit un vocal (français, anglais, pidgin)                                              | `TranscriptionAucune`              | **À écrire** : un service de reconnaissance vocale à choisir       |
-| `ReconnaissanceEquipe` | Numéros du patron et des superviseurs, dont les messages vont à l'assistant du rapport      | `EquipeAucune`                     | Annuaire des personnes                                             |
-| `GESTIONNAIRE_SUIVANT` | _(facultatif)_ L'assistant du rapport du soir, pour les messages qui ne parlent pas d'achat | aucun                              | Le `GestionnaireEntrants` de l'assistant                           |
+| Port                   | Rôle                                                                                        | Par défaut (mémoire)                     | À brancher en production                                                   |
+| ---------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------- | -------------------------------------------------------------------------- |
+| `ConversationsAchat`   | État chiffré des conversations, avec échéance                                               | `ConversationsMemoire` (hors production) | `ConversationsAchatPrisma` (**fait**, table `whatsapp_achat_conversation`) |
+| `JournalAchatWhatsApp` | Journal technique sans texte                                                                | `JournalAchatMemoire` (hors production)  | `JournalAchatPrisma` (**fait**, table `whatsapp_achat_journal`)            |
+| `AchatsWhatsApp`       | Achats à suivre jusqu'au billet                                                             | `AchatsMemoire` (hors production)        | `AchatsWhatsAppPrisma` (**fait**, table `whatsapp_achat`)                  |
+| `ComptesAchat`         | Voyageur d'un numéro WhatsApp                                                               | `ComptesAchatComptes` (réel)             | _(déjà réel : `ComptesService` et `PersonnesRepository` du socle)_         |
+| `MessagerieAchat`      | Envoi des messages                                                                          | `MessagerieAchatPasserelle` (réel)       | _(déjà réel : `PasserelleWhatsAppService.repondre`)_                       |
+| `TranscriptionVocale`  | Transcrit un vocal (français, anglais, pidgin)                                              | `TranscriptionAucune`                    | **À écrire** : un service de reconnaissance vocale à choisir               |
+| `ReconnaissanceEquipe` | Numéros du patron et des superviseurs, dont les messages vont à l'assistant du rapport      | `EquipeAucune`                           | Annuaire des personnes                                                     |
+| `GESTIONNAIRE_SUIVANT` | _(facultatif)_ L'assistant du rapport du soir, pour les messages qui ne parlent pas d'achat | aucun                                    | Le `GestionnaireEntrants` de l'assistant                                   |
 
 Les adaptateurs durables déclarent `durable = true`, la transcription réelle `branchee = true`.
 
@@ -145,9 +147,8 @@ Les adaptateurs durables déclarent `durable = true`, la transcription réelle `
        /* modules qui fournissent Redis, Prisma, l'annuaire… */
      ],
      providers: [
-       { provide: ConversationsAchat, useClass: ConversationsRedis },
-       { provide: JournalAchatWhatsApp, useClass: JournalAchatPostgres },
-       { provide: AchatsWhatsApp, useClass: AchatsPostgres },
+       // ConversationsAchat, JournalAchatWhatsApp et AchatsWhatsApp : rien à fournir, PostgreSQL
+       // (API_STOCKAGE) est choisi par le module lui-même
        { provide: ReconnaissanceEquipe, useClass: EquipeAnnuaire },
        { provide: TranscriptionVocale, useClass: TranscriptionXxx }, // quand le service est choisi
        { provide: GESTIONNAIRE_SUIVANT, useClass: AssistantRapportSoir }, // facultatif
@@ -210,53 +211,31 @@ Villes reconnues par défaut (codes de la billetterie) : Douala `DLA`, Yaoundé 
 Bamenda `BAM`, Kribi `KRI`, Ngaoundéré `NGA`. Une ville sans gare dans le catalogue donne « Aucun
 départ ».
 
-## Tables PostgreSQL attendues (hors périmètre : `apps/api/prisma/**`)
+## Tables PostgreSQL (migration `20261017000770_whatsapp_achat`)
 
-```sql
--- Conversations en cours. Si Redis est préféré : SET cle charge PX <ttl>, même contenu.
-CREATE TABLE whatsapp_achat_conversation (
-  cle       text        PRIMARY KEY,   -- index aveugle du numéro (contexte « whatsapp-achat.conversation »)
-  expire_a  timestamptz NOT NULL,      -- lire : WHERE cle = $1 AND expire_a > $2 ; purger : DELETE … WHERE expire_a <= $1
-  charge    text        NOT NULL       -- EtatConversation en JSON chiffré (contexte « whatsapp-achat.conversation:<cle> »)
-);
-CREATE INDEX whatsapp_achat_conversation_expire ON whatsapp_achat_conversation (expire_a);
+Colonnes en camelCase, comme le reste du schéma Prisma (`apps/api/prisma/schema.prisma`, bloc « LOT A »).
 
--- Journal technique : aucun texte de message, aucune transcription, aucun numéro.
-CREATE TABLE whatsapp_achat_journal (
-  id               uuid        PRIMARY KEY,
-  at               timestamptz NOT NULL,
-  numero_masque    text,                -- « +237 ••••• 008 »
-  conversation_ref text,                -- 12 premiers caractères d'une empreinte, jamais le numéro
-  evenement        text        NOT NULL CHECK (evenement IN (
-    'message','demande_comprise','departs_proposes','aucun_depart','ville_inconnue','achat_reserve',
-    'siege_change','paiement_demande','paiement_refuse','paiement_echoue','place_reprise','mode_degrade',
-    'achat_annule','achat_abandonne','billet_envoye','billet_envoi_echec','vocal_transcrit','vocal_echec',
-    'hors_sujet','reponse_non_comprise','reponse_non_envoyee','erreur')),
-  etape            text,                -- sans_conversation, departs, confirmation, choix_siege, numero_momo, paiement
-  langue           text CHECK (langue IN ('fr','en','pcm')),
-  source           text CHECK (source IN ('texte','vocal')),
-  code             text,                -- code court (MODE_DEGRADE, SIEGE_PRIS…), jamais un texte
-  duree_ms         integer
-);
-CREATE INDEX whatsapp_achat_journal_date      ON whatsapp_achat_journal (at DESC);
-CREATE INDEX whatsapp_achat_journal_evenement ON whatsapp_achat_journal (evenement, at DESC);
+| Table                         | Contenu                                                                                    | Garanties de la base                                                                                                                                                                                |
+| ----------------------------- | ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `whatsapp_achat_conversation` | Une conversation en cours : index aveugle du numéro, échéance, état en JSON **chiffré**    | Clé primaire = l'index aveugle (une conversation par numéro), charge jamais vide, index sur l'échéance (purge)                                                                                      |
+| `whatsapp_achat_journal`      | Un événement : numéro masqué, empreinte de la conversation, événement, étape, langue, code | Événement, étape, langue et source en **listes fermées**, durée positive, **une entrée ne se modifie pas** (déclencheur contre UPDATE ; la purge par ancienneté reste possible), identifiant unique |
+| `whatsapp_achat`              | Un achat à suivre jusqu'au billet : commande, voyageur, état, langue, numéro chiffré       | Une ligne par commande, état et langue en listes fermées, index `(etat, creeA)` pour le suivi                                                                                                       |
 
--- Achats à suivre jusqu'au billet (une ligne par commande).
-CREATE TABLE whatsapp_achat (
-  commande_id          uuid        PRIMARY KEY,   -- commande de la billetterie
-  voyageur_id          uuid        NOT NULL,
-  etat                 text        NOT NULL CHECK (etat IN ('reservee','paiement_demande','terminee','abandonnee','echouee')),
-  langue               text        NOT NULL CHECK (langue IN ('fr','en','pcm')),
-  destinataire_chiffre text        NOT NULL,      -- numéro qui recevra le billet (« whatsapp-achat.achat:<commande_id> »)
-  cree_a               timestamptz NOT NULL
-);
-CREATE INDEX whatsapp_achat_etat ON whatsapp_achat (etat, cree_a);
-```
+Comment les adaptateurs tiennent les promesses des ports (une seule instruction SQL à chaque fois, donc sûr
+avec plusieurs instances de l'API) :
 
-- `AchatsWhatsApp.transitionner(commandeId, de, vers)` : `UPDATE … SET etat = $3 WHERE commande_id = $1 AND etat = ANY($2) RETURNING *` ;
-  zéro ligne = `null`. C'est ce qui garantit un seul traitement par achat, même avec plusieurs instances.
-- `AchatsWhatsApp.enEtat(etats, limite)` : `WHERE etat = ANY($1) ORDER BY cree_a LIMIT $2`.
-- `ConversationsAchat.lire` ne renvoie rien passé l'échéance, même si la ligne n'est pas encore purgée.
+- `AchatsWhatsApp.ajouter` : `INSERT … ON CONFLICT DO NOTHING` ; un achat déjà connu n'est jamais réécrit.
+- `AchatsWhatsApp.transitionner(commandeId, de, vers)` : `UPDATE … SET etat = $3 WHERE commandeId = $1 AND etat IN (…) RETURNING *` ;
+  zéro ligne = `null`. C'est ce qui garantit un seul traitement par achat, même avec plusieurs instances
+  (le webhook de paiement et le balayage ne peuvent pas tous deux conclure).
+- `AchatsWhatsApp.enEtat(etats, limite)` : `WHERE etat IN (…) ORDER BY creeA, commandeId LIMIT $2`.
+- `ConversationsAchat.lire` ne renvoie rien passé l'échéance, même si la ligne n'est pas encore purgée, et la
+  supprime ; `ecrire` est un `upsert` (une écriture entière l'emporte, jamais un mélange) ; `purger` supprime
+  les lignes échues et rend leur nombre.
+- `JournalAchatWhatsApp.enregistrer` : `INSERT … ON CONFLICT DO NOTHING` sur l'identifiant (rejouer une
+  entrée ne la double pas).
+- Aucune colonne ne peut contenir un texte de message, une transcription ou un numéro en clair (testé) :
+  seuls `charge` et `destinataireChiffre` (chiffrés) et `numeroMasque` touchent au numéro.
 
 ## Textes inventés
 
@@ -312,8 +291,9 @@ le rapport de livraison.
   vérifiés ; le texte libre dans la fenêtre de 24 h et le gabarit « billet » n'ont pas été essayés avec un
   vrai compte.
 - **Agrégateur réel.** Le paiement MoMo est celui de l'AM-165, testé avec l'agrégateur simulé.
-- **Stockage durable.** Les versions PostgreSQL ou Redis des ports ne sont pas écrites ; seules les
-  versions en mémoire sont testées. Les tables ci-dessus sont une proposition.
+- **Stockage durable.** Les trois ports de stockage ont leur version PostgreSQL, testée contre une vraie base
+  (voir « Tests »). La version Redis des conversations n'est pas écrite : la table suffit, une lecture et une
+  écriture par message. Rien ne purge encore le journal (90 jours conseillés) ni les achats anciens.
 - **Charge.** Le traitement en série par numéro est local à un processus : deux instances peuvent traiter
   deux messages du même numéro en même temps (rare ; le second « Oui » est sans effet grâce aux
   transitions d'état et à la commande unique, mais l'ordre des réponses n'est pas garanti).
@@ -333,6 +313,14 @@ simulé, passerelle WhatsApp simulée, webhook signé) :
 - `config.test.ts` : variables d'environnement et villes ;
 - `module.test.ts` : garde-fou de production, repli vers le gabarit « billet », aiguillage de
   `GestionnaireEntrantsAchat`, adaptateurs en mémoire.
+
+**Contre PostgreSQL** : `postgres.integration.test.ts` rejoue le contrat des trois ports
+(`testing/contrat-stockage.ts`) sur la mémoire (toujours) et sur la base (si `DATABASE_URL_TEST` est
+définie : l'URL d'une base vide, dont le schéma est recréé à chaque exécution), puis ce que seule la base
+garantit : deux instances (deux connexions) qui terminent le même achat ou l'ajoutent deux fois, listes
+fermées du journal et des achats, journal non réécrit, aucune colonne de texte ou de numéro en clair,
+choix par `API_STOCKAGE` ; et la conversation de bout en bout (trois réponses jusqu'au billet, « Non »,
+abandon à l'échéance, refus du paiement) avec conversations, journal et achats en base.
 
 `testing/app-achat-test.ts` est le banc réutilisable : application complète, trois compagnies, départs de
 demain, `telephone(app, numéro).dire(texte)`, transcription en mémoire.

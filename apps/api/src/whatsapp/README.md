@@ -44,7 +44,7 @@ Le rapport de 21 h : `PlanificateurRapportSoir.tick()` (toutes les 30 s) ──�
 | `FournisseurWhatsApp` (port)                             | `envoyer`, `lireWebhook`, `verifierAbonnement`, `etatCompte`. Adaptateurs : `FournisseurWhatsAppSimule` (programmable), `FournisseurWhatsAppHttp` (Cloud API, `TransportHttp` remplaçable).        |
 | `DisjoncteurWhatsApp`                                    | Après 3 échecs d'affilée, WhatsApp est coupé 30 s puis retesté par un appel unique ; les messages restent en file.                                                                                 |
 | `FileEnvoiWhatsApp` (port)                               | Forme de BullMQ (`add`, `Worker`, `Job`). `FileEnvoiMemoire` : jobId idempotent, délai, priorité, attente exponentielle, concurrence.                                                              |
-| `JournalWhatsApp` (port)                                 | Messages, essais, messages reçus. `JournalWhatsAppMemoire` ; **la version PostgreSQL reste à écrire** (tables ci-dessous).                                                                         |
+| `JournalWhatsApp` (port)                                 | Messages, essais, messages reçus. `JournalWhatsAppMemoire` et `JournalWhatsAppPrisma` (`postgres.ts`), choisis par `API_STOCKAGE`.                                                                 |
 | `SecoursWhatsAppService`, `SecoursSms` (port)            | Repli par SMS : réservé une seule fois par message, clé d'idempotence `whatsapp-secours:<id>`.                                                                                                     |
 | `ReceptionWhatsAppService`                               | Accusés (signature HMAC, désordre et doublons tolérés, jamais de retour en arrière) et messages reçus ; vérification d'abonnement du webhook.                                                      |
 | `CompteWhatsAppService`                                  | `GET /whatsapp/compte` : nom, vérifié ou non, délai de réponse **mesuré** (médiane sur 7 jours).                                                                                                   |
@@ -116,8 +116,11 @@ fenêtre, seuls les gabarits sont permis.
    adaptateurs ci-dessous.
 2. **`main.ts`** : `NestFactory.create(AppModule, { rawBody: true, … })`. Sans le corps brut, le webhook
    répond 401 (il ne peut pas vérifier la signature) et journalise l'erreur.
-3. **Adaptateurs de production** (les ports sont prêts, les versions durables sont à écrire) :
-   - `{ provide: JournalWhatsApp, useClass: … }` sur PostgreSQL (tables ci-dessous) ;
+3. **Adaptateurs de production** (le journal est sur PostgreSQL ; les autres ports sont prêts, leurs
+   versions durables sont à écrire) :
+   - `JournalWhatsApp` : **fait**. `WhatsAppModule` le monte lui-même selon `API_STOCKAGE`
+     (`postgres` en production ou si la variable le demande, mémoire sinon). La migration
+     `20261017000760_whatsapp` crée les trois tables ci-dessous ; rien à brancher dans `avec(…)` ;
    - `{ provide: FileEnvoiWhatsApp, useClass: … }` sur BullMQ + Redis : `queue.add(nom, donnees, options)` et
      `new Worker(nom, processeur, { concurrency })` reprennent les signatures du port (correspondance en
      tête de `file.ts`). **Une file distincte de celle des SMS** (autre nom). `removeOnComplete` et
@@ -158,78 +161,40 @@ fenêtre, seuls les gabarits sont permis.
 Les autres modules appellent `PasserelleWhatsAppService.envoyer({ type, variables, destinataire, cle?, reference?, compagnieId?, envoyerA?, secours? })` :
 la `cle` rend l'appel idempotent (ex. `billet:<billetId>`), `envoyerA` programme une alerte, `annuler(id)` la retire.
 
-## Tables PostgreSQL attendues (hors périmètre : `apps/api/prisma/**`)
+## Tables PostgreSQL (migration `20261017000760_whatsapp`)
 
-```sql
-CREATE TABLE whatsapp_message (
-  id                   uuid PRIMARY KEY,
-  type                 text        NOT NULL CHECK (type IN ('rapport_soir','billet','colis','alerte_proche','alerte_retard','reponse')),
-  cle                  text        NOT NULL UNIQUE,            -- idempotence : INSERT … ON CONFLICT (cle) DO NOTHING
-  gabarit              text,                                   -- nom chez WhatsApp ; NULL pour une réponse libre
-  reference_type       text,
-  reference_id         text,
-  compagnie_id         uuid,
-  demandeur_id         uuid,
-  destinataire_chiffre text        NOT NULL,                   -- ChiffrementService, contexte « whatsapp.destinataire:<id> »
-  destinataire_index   text        NOT NULL,                   -- index aveugle (limites par numéro, fenêtre de 24 h)
-  destinataire_masque  text        NOT NULL,
-  statut               text        NOT NULL CHECK (statut IN ('en_file','en_reprise','envoye','remis','lu','non_remis','echec','expire','annule')),
-  tentatives           integer     NOT NULL DEFAULT 0,
-  id_fournisseur       text,                                   -- wamid… : clé des accusés
-  derniere_erreur      text,                                   -- code court, jamais de texte du message
-  secours              text        NOT NULL DEFAULT 'aucun' CHECK (secours IN ('aucun','en_cours','sms','echec_sms')),
-  secours_sms_id       text,
-  secours_chiffre      text,                                   -- texte de repli chiffré (« whatsapp.secours:<id> »), effacé à la remise
-  cree_a               timestamptz NOT NULL,
-  planifie_a           timestamptz,
-  expire_a             timestamptz,
-  envoye_a             timestamptz,
-  remis_a              timestamptz,
-  lu_a                 timestamptz,
-  delai_envoi_ms       integer
-);
-CREATE UNIQUE INDEX whatsapp_message_fournisseur ON whatsapp_message (id_fournisseur) WHERE id_fournisseur IS NOT NULL;
-CREATE INDEX whatsapp_message_compagnie_date ON whatsapp_message (compagnie_id, cree_a DESC);
-CREATE INDEX whatsapp_message_reference      ON whatsapp_message (reference_type, reference_id);
-CREATE INDEX whatsapp_message_demandeur      ON whatsapp_message (demandeur_id, cree_a);
-CREATE INDEX whatsapp_message_destinataire   ON whatsapp_message (destinataire_index, cree_a);
-CREATE INDEX whatsapp_message_secours        ON whatsapp_message (cree_a) WHERE secours_chiffre IS NOT NULL;
+Colonnes en camelCase, comme le reste du schéma Prisma (`apps/api/prisma/schema.prisma`, bloc « LOT A »).
 
-CREATE TABLE whatsapp_essai (
-  id          bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  message_id  uuid        NOT NULL REFERENCES whatsapp_message (id),
-  numero      integer     NOT NULL,
-  fournisseur text        NOT NULL,
-  at          timestamptz NOT NULL,
-  duree_ms    integer     NOT NULL,
-  resultat    text        NOT NULL CHECK (resultat IN ('accepte','temporaire','definitif')),
-  code        text
-);
-CREATE INDEX whatsapp_essai_message ON whatsapp_essai (message_id, id);
+| Table              | Contenu                                                                                            | Garanties de la base                                                                                                                                                                                                                  |
+| ------------------ | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `whatsapp_message` | Un message : type, clé d'idempotence, numéro chiffré + index aveugle + masque, statut, repli SMS   | `cle` unique (qui crée : `INSERT … ON CONFLICT DO NOTHING`), `idFournisseur` unique (plusieurs NULL permis), type, statut et repli en listes fermées, compteurs positifs, référence complète (type et identifiant, ou aucun des deux) |
+| `whatsapp_essai`   | Un appel à WhatsApp : numéro d'essai, durée, résultat, code court                                  | **Ajout seul** (UPDATE, DELETE et TRUNCATE refusés par déclencheur), résultat connu, `numero >= 1`, durée positive, clé étrangère vers le message (un message avec des essais ne se supprime pas)                                     |
+| `whatsapp_entrant` | Un message reçu : index aveugle de l'expéditeur, instant de réception, instant et délai de réponse | `idFournisseur` unique (un webhook rejoué est ignoré), `repondueA` et `delaiReponseMs` vont ensemble, délai positif                                                                                                                   |
 
-CREATE TABLE whatsapp_entrant (
-  id                uuid PRIMARY KEY,
-  id_fournisseur    text        NOT NULL UNIQUE,               -- doublons de webhook ignorés
-  expediteur_index  text        NOT NULL,                      -- index aveugle du numéro
-  expediteur_masque text        NOT NULL,
-  type_message      text        NOT NULL,
-  recu_a            timestamptz NOT NULL,
-  repondue_a        timestamptz,
-  delai_reponse_ms  integer
-);
-CREATE INDEX whatsapp_entrant_expediteur ON whatsapp_entrant (expediteur_index, recu_a DESC);
-CREATE INDEX whatsapp_entrant_recu       ON whatsapp_entrant (recu_a) WHERE delai_reponse_ms IS NOT NULL;
-```
+Index utiles : `whatsapp_message (compagnieId, creeA DESC)`, `(referenceType, referenceId)`,
+`(demandeurId, creeA)`, `(destinataireIndex, creeA)` ; partiel `whatsapp_message (creeA) WHERE secoursChiffre IS NOT NULL`
+(nettoyage du texte de repli) ; `whatsapp_entrant (expediteurIndex, recuA DESC)`, partiels
+`(recuA) WHERE delaiReponseMs IS NOT NULL` (mesure) et `(expediteurIndex, recuA) WHERE repondueA IS NULL` (réponse
+du compte).
 
-- `JournalWhatsApp.modifier(id, modifs, seulementSi)` : `UPDATE … WHERE id = $1 AND statut = ANY($2)` ; zéro
-  ligne = `null`. C'est ce qui garde les statuts cohérents quand un accusé et un réessai se croisent.
-- `reserverSecours(id)` : `UPDATE … SET secours = 'en_cours' WHERE id = $1 AND secours = 'aucun' AND secours_chiffre IS NOT NULL RETURNING *`.
-- `effacerSecoursAvant(date)` : met `secours_chiffre` à `NULL` pour les messages créés avant la date (appelé
-  par le planificateur ; le texte de repli est effacé 48 h après la création même sans accusé).
-- `marquerReponse` : met à jour le plus ancien message reçu de ce numéro, sans réponse, reçu depuis moins
-  de 24 h ; `delaisReponse(depuis)` : `SELECT delai_reponse_ms … WHERE recu_a >= $1 AND delai_reponse_ms IS NOT NULL`
-  (ou `percentile_cont(0.5)` directement).
-- Le contenu des messages n'est **jamais** stocké dans ces tables.
+Comment `JournalWhatsAppPrisma` tient les promesses du port (une seule instruction SQL à chaque fois,
+donc sûr avec plusieurs instances de l'API) :
+
+- `creer` : `createMany({ skipDuplicates })` (`ON CONFLICT DO NOTHING`), puis relecture par clé. Un seul des
+  appels simultanés crée le message (`cree: true`) ; les autres reçoivent le premier, intact.
+- `modifier(id, modifs, seulementSi)` : `UPDATE … WHERE id = $1 AND statut IN (…)` ; zéro ligne = `null`.
+  C'est ce qui garde les statuts cohérents quand un accusé et un réessai se croisent. Un identifiant du
+  fournisseur déjà pris par un autre message est refusé par la base (erreur, pas de `null`).
+- `reserverSecours(id)` : `UPDATE … SET secours = 'en_cours' WHERE id = $1 AND secours = 'aucun'` : le
+  repli par SMS n'est réservé qu'une fois, même depuis deux instances.
+- `effacerSecoursAvant(date)` : met `secoursChiffre` à `NULL` pour les messages créés strictement avant la
+  date (le texte de repli est effacé 48 h après la création même sans accusé).
+- `enregistrerEntrant` : `ON CONFLICT DO NOTHING` sur `idFournisseur` ; `false` = doublon de webhook.
+- `marquerReponse` : un `UPDATE … WHERE id = (SELECT … ORDER BY recuA LIMIT 1 FOR UPDATE SKIP LOCKED)` marque
+  le plus ancien message reçu de ce numéro, sans réponse, reçu depuis moins de la fenêtre (24 h). Des
+  réponses simultanées passent chacune au message suivant : aucun n'est marqué deux fois.
+- `delaisReponse(depuis)` : les délais des messages répondus reçus depuis la date.
+- Le contenu des messages n'est **jamais** stocké dans ces tables (aucune colonne n'existe pour lui, testé).
 
 ## Confidentialité
 
@@ -260,6 +225,13 @@ sont pas conservés : seul de quoi mesurer le délai de réponse reste au journa
 - **Questions des destinataires** : le module reçoit et compte les messages, mais l'assistant qui répond
   n'est qu'un port (`GestionnaireEntrants`).
 - **Disjoncteur par processus** : chaque instance de l'API apprend seule l'état de WhatsApp.
+- **La file reste en mémoire** : `FileEnvoiMemoire` perd les envois en attente au redémarrage (le
+  message reste au journal en `en_file`). Le journal est durable ; la file BullMQ + Redis est à brancher
+  (`FileEnvoiWhatsApp`, étape 3). Le démarrage en production refuse toujours une file en mémoire.
+- **Purge des messages reçus et du journal** : aucune purge n'est planifiée ; `whatsapp_entrant` grossit
+  d'une ligne par message reçu. La mesure du délai ne lit que les derniers jours (`WHATSAPP_DELAI_REPONSE_JOURS`).
+- **Les essais ne se purgent pas** (ajout seul) ; une purge par ancienneté demanderait une migration qui
+  assouplit le déclencheur.
 - **Délais mesurés** (envoi, remise) et « répond en N min » : mesure en place et testée avec le simulateur,
   non vérifiée sur un vrai compte.
 
@@ -274,3 +246,12 @@ HTTP, signatures, abonnement), `file-memoire.test.ts` (comportement BullMQ), `pa
 `config.test.ts`, `whatsapp.module.test.ts` (garde-fou de production), `whatsapp.e2e.test.ts` (HTTP : rôles,
 périmètre, webhook signé avec corps brut, vérification d'abonnement, audit).
 Le montage sans Nest (`testing/montage.ts`) fait avancer l'horloge : aucun test n'attend en vrai.
+
+**Contre PostgreSQL** : `postgres.integration.test.ts` rejoue le contrat du journal
+(`testing/contrat-journal.ts`) sur la mémoire (toujours) et sur la base (si `DATABASE_URL_TEST` est
+définie : l'URL d'une base vide, dont le schéma est recréé à chaque exécution), puis ce que seule la base
+garantit : deux instances (deux connexions) qui créent le même message, réservent le même repli,
+changent le même statut, reçoivent le même webhook ou répondent en même temps ; essais en ajout seul ;
+listes fermées ; aucune colonne de contenu ; choix par `API_STOCKAGE` ; et la passerelle de bout en bout
+(relance du rapport, accusés signés, repli par SMS, message reçu rejoué, délai de réponse) sur un journal
+en base.

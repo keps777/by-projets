@@ -35,6 +35,7 @@ import {
   SourceRapportMemoire,
 } from "../memoire";
 import { PasserelleWhatsAppService } from "../passerelle.service";
+import { JournalWhatsAppPrisma } from "../postgres";
 import { AnnuaireRapport, GestionnaireEntrants, SecoursSms, SourceRapportSoir } from "../ports";
 import { PlanificateurRapportSoir } from "../rapport-soir.service";
 import { rapportMaquette } from "./montage";
@@ -43,8 +44,19 @@ export const COMPAGNIE = "00000000-0000-4000-8000-0000000000c1";
 export const AUTRE_COMPAGNIE = "00000000-0000-4000-8000-0000000000c2";
 export const GARE = "00000000-0000-4000-8000-0000000000a1";
 
+export interface OptionsAppWhatsAppTest {
+  /**
+   * Une vraie connexion Prisma (tests d'intégration PostgreSQL) : le journal est alors celui de
+   * PostgreSQL ; la file, le repli SMS, la source du rapport et l'annuaire restent en mémoire.
+   */
+  prisma?: PrismaService;
+}
+
 /** L'API complète (gardes, rôles, audit) avec `WhatsAppModule`, sur les adaptateurs en mémoire. */
-export async function creerAppWhatsAppTest(env: Record<string, string> = {}) {
+export async function creerAppWhatsAppTest(
+  env: Record<string, string> = {},
+  options: OptionsAppWhatsAppTest = {},
+) {
   const config = configTest();
   const horloge = new HorlogeFixe(new Date("2027-01-05T07:00:00.000Z"));
   const auditRepo = new AuditMemoire();
@@ -64,7 +76,13 @@ export async function creerAppWhatsAppTest(env: Record<string, string> = {}) {
 
   // `AppModule` monte déjà la passerelle (repli SMS, source du rapport, annuaire, achat) : les adaptateurs
   // en mémoire de ce montage les remplacent un par un.
-  const module = await Test.createTestingModule({ imports: [AppModule] })
+  let constructeur = Test.createTestingModule({ imports: [AppModule] });
+  if (options.prisma) {
+    constructeur = constructeur
+      .overrideProvider(JournalWhatsApp)
+      .useValue(new JournalWhatsAppPrisma(options.prisma));
+  }
+  const module = await constructeur
     .overrideProvider(SecoursSms)
     .useValue(secoursSms)
     .overrideProvider(SourceRapportSoir)
@@ -90,7 +108,9 @@ export async function creerAppWhatsAppTest(env: Record<string, string> = {}) {
     .overrideProvider(Horloge)
     .useValue(horloge)
     .overrideProvider(PrismaService)
-    .useValue({ estJoignable: async () => true, $disconnect: async () => undefined })
+    .useValue(
+      options.prisma ?? { estJoignable: async () => true, $disconnect: async () => undefined },
+    )
     .compile();
 
   // rawBody : la signature des appels de WhatsApp se calcule sur le corps exact

@@ -1283,3 +1283,480 @@ model SmsEssai {
   @@index([messageId, id])
   @@map("sms_essai")
 }
+
+// ============================================================================================
+// LOT A · Intégration API : adaptateurs PostgreSQL de gps, paiements, rapport, auth-voyageur, ussd,
+// whatsapp et whatsapp-achat (journaux). Bloc contigu, à la fin du fichier, pour faciliter la fusion.
+//
+// Migrations 20261017000710 à 20261017000770. Mêmes règles que le bloc « modules métier » : les
+// garde-fous que Prisma ne sait pas dire (CHECK, index uniques partiels, ajout seul) sont écrits en
+// SQL dans les migrations et signalés ici par « SQL : ». Les colonnes gardent le nom Prisma
+// (camelCase), les tables celui du README de chaque module. Aucune clé étrangère vers les tables des
+// autres modules : ce que ces modules écrivent vient d'appareils, de webhooks ou d'identifiants que
+// d'autres modules créent ; on ne refuse jamais d'enregistrer un paiement reçu ou une position pour
+// un motif de référence. Seule exception : un remboursement appartient à un paiement.
+// ============================================================================================
+
+// ------------------------------------------------------------------------------ GPS (AM-170)
+
+/// Une position envoyée par le téléphone d'un chauffeur, d'un convoyeur ou d'un livreur.
+/// Clé : (sujet, auteur, instant) ; un lot renvoyé ne crée rien (INSERT … ON CONFLICT DO NOTHING).
+model PositionGps {
+  /// `bus:<departId>` ou `livraison:<colisId>`.
+  sujet      String
+  auteurId   String   @db.Uuid
+  instant    DateTime @db.Timestamptz(3)
+  latitude   Float
+  longitude  Float
+  precisionM Float?
+  vitesseKmh Float?
+  recuA      DateTime @db.Timestamptz(3)
+
+  @@id([sujet, auteurId, instant])
+  @@index([sujet, instant(sort: Desc)])
+  @@map("position_gps")
+}
+
+/// L'état de suivi d'un départ : une ligne par départ, écrite en comparant la version.
+model SuiviDepart {
+  departId           String    @id @db.Uuid
+  version            Int
+  derniereInstant    DateTime? @db.Timestamptz(3)
+  derniereLatitude   Float?
+  derniereLongitude  Float?
+  derniereVitesseKmh Float?
+  progressionKm      Float
+  /// Premier passage à chaque arrêt : { arretId: instant ISO }.
+  passages           Json
+  immobileDepuis     DateTime? @db.Timestamptz(3)
+  immobileLatitude   Float?
+  immobileLongitude  Float?
+  alerteId           String?   @db.Uuid
+
+  @@map("suivi_depart")
+}
+
+/// Bus arrêté plus de dix minutes hors arrêt. SQL : une seule alerte ouverte par départ (index
+/// unique partiel sur departId quand resolueA est nul).
+model AlerteArret {
+  id              String    @id @db.Uuid
+  departId        String    @db.Uuid
+  compagnieId     String    @db.Uuid
+  immatriculation String
+  apres           String
+  arretDepuis     DateTime  @db.Timestamptz(3)
+  ouverteA        DateTime  @db.Timestamptz(3)
+  latitude        Float
+  longitude       Float
+  /// SQL : panne | retard | autre
+  soupcon         String
+  aBord           Int?
+  resolueA        DateTime? @db.Timestamptz(3)
+
+  @@map("alerte_arret")
+}
+
+/// Le SMS « j'arrive » d'un voyageur à un proche : un par billet et par proche.
+model PrevenirProche {
+  billetId            String    @db.Uuid
+  procheId            String
+  voyageurId          String    @db.Uuid
+  departId            String    @db.Uuid
+  /// SQL : de 1 à 120.
+  minutesAvantArrivee Int
+  actif               Boolean
+  creeA               DateTime  @db.Timestamptz(3)
+  envoyeA             DateTime? @db.Timestamptz(3)
+
+  @@id([billetId, procheId])
+  @@map("prevenir_proche")
+}
+
+// ------------------------------------------------------------------------------ Paiements (AM-165)
+
+/// Un paiement en ligne, au guichet ou à la gare. SQL : valeurs fermées (origine, moyen, statut,
+/// confirmation), index uniques partiels « un paiement en attente par commande » et « un seul jeu de
+/// billets par commande », identifiant du fournisseur unique.
+model Paiement {
+  id                  String    @id @db.Uuid
+  /// Idempotence : guichet = événement de vente, agence = agence:<commande>.
+  cle                 String?   @unique
+  /// SQL : voyageur | proche | guichet | agence
+  origine             String
+  commandeId          String?   @db.Uuid
+  voyageurId          String?   @db.Uuid
+  compagnieId         String    @db.Uuid
+  /// SQL : mtn_momo | orange_money | carte | especes_agence | momo_marchand
+  moyen               String
+  /// SQL : mtn | orange
+  operateur           String?
+  /// FCFA entiers, strictement positifs (SQL).
+  montant             Int
+  deviseCode          String?
+  deviseMontantMineur Int?
+  /// [{ beneficiaire, compteId, montant }]
+  repartition         Json
+  /// SQL : en_attente | reussi | echoue | expire
+  statut              String
+  /// SQL : sans_objet | a_faire | faite | sieges_perdus | commande_annulee | doublon
+  confirmation        String
+  /// Chiffré (contexte « paiement.telephone:<id> »).
+  telephoneChiffre    String?
+  telephoneMasque     String?
+  fournisseur         String?
+  idFournisseur       String?
+  referenceOperateur  String?
+  urlAuthentification String?
+  /// Code court, jamais de texte du fournisseur.
+  cause               String?
+  billetIds           String[]  @default([]) @db.Uuid
+  creeA               DateTime  @db.Timestamptz(3)
+  expireA             DateTime  @db.Timestamptz(3)
+  termineA            DateTime? @db.Timestamptz(3)
+
+  remboursements PaiementRemboursement[]
+
+  // SQL : unique (commandeId) WHERE statut = 'en_attente' ; unique (commandeId) WHERE confirmation = 'faite' ;
+  // unique (fournisseur, idFournisseur) WHERE idFournisseur IS NOT NULL ; index partiels du balayage.
+  @@index([compagnieId, creeA(sort: Desc)])
+  @@index([commandeId])
+  @@map("paiement")
+}
+
+/// Un remboursement vers le moyen d'origine. SQL : plafonds tenus par le code sous verrou de la ligne
+/// du paiement, clé unique.
+model PaiementRemboursement {
+  id                 String    @id @db.Uuid
+  paiementId         String    @db.Uuid
+  /// Idempotence : billet-annule:<billet>, afrimove:<cle>, doublon_paiement:<paiement>…
+  cle                String    @unique
+  /// SQL : billet_annule | depart_annule | sieges_perdus | commande_annulee | doublon_paiement | demande_afrimove
+  cause              String
+  billetId           String?   @db.Uuid
+  /// [{ beneficiaire, montant }]
+  lignes             Json
+  montant            Int
+  /// SQL : demande | reussi | echoue
+  statut             String
+  idFournisseur      String?
+  referenceOperateur String?
+  tentatives         Int       @default(0)
+  prochainEssaiA     DateTime? @db.Timestamptz(3)
+  derniereErreur     String?
+  creeA              DateTime  @db.Timestamptz(3)
+  termineA           DateTime? @db.Timestamptz(3)
+
+  paiement Paiement @relation(fields: [paiementId], references: [id])
+
+  @@index([paiementId])
+  // SQL : index (prochainEssaiA) WHERE statut = 'demande'.
+  @@map("paiement_remboursement")
+}
+
+/// Événements de l'agrégateur déjà traités : un événement rejoué est ignoré (clé primaire).
+model PaiementNotification {
+  fournisseur String
+  evenementId String
+  at          DateTime @db.Timestamptz(3)
+
+  @@id([fournisseur, evenementId])
+  @@map("paiement_notification")
+}
+
+/// Lien de paiement envoyé à un proche. Seule l'empreinte SHA-256 du jeton est gardée.
+/// SQL : un seul lien non révoqué par commande.
+model PaiementLien {
+  id         String    @id @db.Uuid
+  commandeId String    @db.Uuid
+  empreinte  String    @unique
+  creePar    String    @db.Uuid
+  creeA      DateTime  @db.Timestamptz(3)
+  expireA    DateTime  @db.Timestamptz(3)
+  /// Numéro masqué du destinataire.
+  envoyeA    String?
+  revoqueA   DateTime? @db.Timestamptz(3)
+
+  @@map("paiement_lien")
+}
+
+/// Compte de chaque compagnie chez l'agrégateur ; la ligne est supprimée pour retirer le compte.
+model CompteReversement {
+  compagnieId String @id @db.Uuid
+  compteId    String
+
+  @@map("compte_reversement")
+}
+
+/// Réglage du mode dégradé : une seule ligne (SQL : id = 1).
+model ReglagePaiements {
+  id      Int       @id @db.SmallInt
+  degrade Boolean
+  motif   String?
+  parId   String?   @db.Uuid
+  at      DateTime? @db.Timestamptz(3)
+
+  @@map("reglage_paiements")
+}
+
+// ------------------------------------------------------------------------------ Rapport du soir (AM-171)
+
+/// Le rapport du soir arrêté pour une compagnie et un jour de Douala. EN AJOUT SEUL : ce que le patron
+/// a reçu à 21 h ne change plus (SQL : déclencheurs contre UPDATE, DELETE et TRUNCATE).
+model RapportSoir {
+  compagnieId String   @db.Uuid
+  /// Jour de Douala.
+  jour        DateTime @db.Date
+  /// Instant où le rapport a été arrêté.
+  genereA     DateTime @db.Timestamptz(3)
+  /// Le contrat RapportSoir, tel qu'envoyé.
+  rapport     Json
+
+  @@id([compagnieId, jour])
+  @@map("rapport_soir")
+}
+
+// ------------------------------------------------------------------------------ Connexion du voyageur (AM-023)
+
+/// Un code de connexion émis. Jamais le code lui-même : son empreinte HMAC-SHA-256 (liée à l'identifiant et
+/// au poivre du serveur) et l'index aveugle du numéro. SQL : canal connu, échéance après la création,
+/// déclencheur qui ne laisse changer que « consommé » (une fois, de vide à rempli).
+model CodeConnexionVoyageur {
+  id             String    @id @db.Uuid
+  /// HMAC du numéro (regles.indexTelephone), jamais le numéro.
+  telephoneIndex String
+  /// Hexadécimal de 64 caractères (SQL).
+  codeHache      String
+  /// SQL : sms | whatsapp
+  canal          String
+  creeA          DateTime  @db.Timestamptz(3)
+  expireA        DateTime  @db.Timestamptz(3)
+  /// Usage unique : posé par un UPDATE conditionnel (consommeA IS NULL).
+  consommeA      DateTime? @db.Timestamptz(3)
+
+  @@index([telephoneIndex, creeA(sort: Desc)])
+  @@map("code_connexion_voyageur")
+}
+
+/// Mauvais codes et blocages d'un numéro (essais cumulés tous codes confondus). Une ligne par numéro.
+model LimiteConnexionVoyageur {
+  telephoneIndex String    @id
+  echecs         Int       @default(0)
+  blocages       Int       @default(0)
+  bloqueJusqua   DateTime? @db.Timestamptz(3)
+  dernierEchecA  DateTime? @db.Timestamptz(3)
+
+  @@map("limite_connexion_voyageur")
+}
+
+/// Ce que le profil du voyageur affiche en plus du nom et du numéro. Une fiche par personne, créée à la
+/// première connexion.
+model FicheVoyageur {
+  personneId          String   @id @db.Uuid
+  inscritA            DateTime @db.Timestamptz(3)
+  /// SQL : fr | en
+  langue              String   @default("fr")
+  pieceVerifiee       Boolean  @default(false)
+  /// Quatre chiffres (SQL).
+  pieceQuatreDerniers String?
+
+  @@map("fiche_voyageur")
+}
+
+// ------------------------------------------------------------------------------ USSD *123# (AM-169)
+
+/// Session USSD en cours, partagée entre les instances. La charge est l'état du dialogue en JSON chiffré
+/// (contexte « ussd.session:<cle> ») : rien de personnel en clair. Purgée à l'échéance.
+model UssdSession {
+  /// <opérateur>:<identifiant de session de l'opérateur>
+  cle     String   @id
+  expireA DateTime @db.Timestamptz(3)
+  charge  String
+
+  @@index([expireA])
+  @@map("ussd_session")
+}
+
+/// Journal technique des sessions : ni numéro en clair, ni texte d'écran, ni réponse. SQL : opérateur,
+/// événement et étape parmi des listes fermées ; une entrée ne se modifie pas (déclencheur contre UPDATE),
+/// la purge par ancienneté reste possible.
+model UssdJournal {
+  id           String   @id @db.Uuid
+  at           DateTime @db.Timestamptz(3)
+  /// SQL : mtn | orange
+  operateur    String
+  /// « +237 ••••• 345 »
+  msisdnMasque String?
+  /// Début de l'empreinte HMAC de la clé de session (12 caractères).
+  sessionRef   String?
+  evenement    String
+  etape        String?
+  /// Code court, jamais un écran ni une réponse.
+  code         String?
+  dureeMs      Int?
+
+  @@index([at(sort: Desc)])
+  @@index([sessionRef])
+  @@map("ussd_journal")
+}
+
+/// Un achat fait par USSD, de la place retenue au SMS du billet. SQL : opérateur et état parmi des listes
+/// fermées ; l'état ne bouge que par UPDATE conditionnel sur l'état attendu.
+model UssdAchat {
+  commandeId          String   @id @db.Uuid
+  voyageurId          String   @db.Uuid
+  /// SQL : mtn | orange
+  operateur           String
+  /// SQL : reservee | paiement_demande | terminee | abandonnee
+  etat                String
+  /// Numéro du SMS du billet, chiffré (contexte « ussd.achat:<commandeId> »).
+  destinataireChiffre String
+  creeA               DateTime @db.Timestamptz(3)
+
+  // SQL : index (creeA) WHERE etat IN ('reservee', 'paiement_demande').
+  @@map("ussd_achat")
+}
+
+// ------------------------------------------------------------------------------ Passerelle WhatsApp (AM-167)
+
+/// Un message WhatsApp au journal. Le contenu n'est JAMAIS stocké (chiffres du rapport, code de retrait,
+/// lien du billet) ; le numéro n'y est que chiffré, avec son index aveugle et sa version masquée. La clé
+/// d'idempotence est unique : `INSERT … ON CONFLICT (cle) DO NOTHING` décide qui crée le message. SQL :
+/// valeurs de type, statut et repli fermées ; un identifiant du fournisseur n'appartient qu'à un message
+/// (unique, plusieurs NULL permis).
+model WhatsappMessage {
+  id                  String    @id @db.Uuid
+  /// SQL : rapport_soir | billet | colis | alerte_proche | alerte_retard | reponse
+  type                String
+  /// Idempotence : la même clé ne crée jamais deux messages.
+  cle                 String    @unique
+  /// Nom du gabarit chez WhatsApp ; null pour une réponse en texte libre.
+  gabarit             String?
+  referenceType       String?
+  referenceId         String?
+  compagnieId         String?   @db.Uuid
+  demandeurId         String?   @db.Uuid
+  destinataireChiffre String
+  destinataireIndex   String
+  destinataireMasque  String
+  /// SQL : en_file | en_reprise | envoye | remis | lu | non_remis | echec | expire | annule
+  statut              String
+  tentatives          Int       @default(0)
+  /// wamid… : clé des accusés.
+  idFournisseur       String?   @unique
+  /// Code court, jamais de texte du message.
+  derniereErreur      String?
+  /// SQL : aucun | en_cours | sms | echec_sms
+  secours             String    @default("aucun")
+  secoursSmsId        String?
+  /// Texte du SMS de repli chiffré, effacé à la remise (ou 48 h après la création).
+  secoursChiffre      String?
+  creeA               DateTime  @db.Timestamptz(3)
+  planifieA           DateTime? @db.Timestamptz(3)
+  expireA             DateTime? @db.Timestamptz(3)
+  envoyeA             DateTime? @db.Timestamptz(3)
+  remisA              DateTime? @db.Timestamptz(3)
+  luA                 DateTime? @db.Timestamptz(3)
+  delaiEnvoiMs        Int?
+
+  essais WhatsappEssai[]
+
+  // SQL : index partiel (creeA) WHERE secoursChiffre IS NOT NULL.
+  @@index([compagnieId, creeA(sort: Desc)])
+  @@index([referenceType, referenceId])
+  @@index([demandeurId, creeA])
+  @@index([destinataireIndex, creeA])
+  @@map("whatsapp_message")
+}
+
+/// Un appel à WhatsApp : qui, quand, combien de temps, quel résultat. EN AJOUT SEUL (SQL).
+model WhatsappEssai {
+  id          BigInt   @id @default(autoincrement())
+  messageId   String   @db.Uuid
+  numero      Int
+  fournisseur String
+  at          DateTime @db.Timestamptz(3)
+  dureeMs     Int
+  /// SQL : accepte | temporaire | definitif
+  resultat    String
+  code        String?
+
+  message WhatsappMessage @relation(fields: [messageId], references: [id])
+
+  @@index([messageId, id])
+  @@map("whatsapp_essai")
+}
+
+/// Un message reçu d'une personne. Le texte n'est pas conservé : seul de quoi mesurer le délai de réponse
+/// du compte (« répond en 2 min »). L'identifiant WhatsApp est unique : un webhook rejoué est ignoré.
+model WhatsappEntrant {
+  id               String    @id @db.Uuid
+  idFournisseur    String    @unique
+  expediteurIndex  String
+  expediteurMasque String
+  typeMessage      String
+  recuA            DateTime  @db.Timestamptz(3)
+  repondueA        DateTime? @db.Timestamptz(3)
+  delaiReponseMs   Int?
+
+  // SQL : index partiel (recuA) WHERE delaiReponseMs IS NOT NULL ; repondueA et delaiReponseMs vont ensemble.
+  @@index([expediteurIndex, recuA(sort: Desc)])
+  @@map("whatsapp_entrant")
+}
+
+// ------------------------------------------------------------------------------ Achat par WhatsApp (AM-168)
+
+/// Conversation d'achat en cours, partagée entre les instances. La charge est l'état du dialogue en JSON
+/// chiffré (contexte « whatsapp-achat.conversation:<cle> ») : rien de personnel en clair. Purgée à l'échéance.
+model WhatsappAchatConversation {
+  /// Index aveugle du numéro.
+  cle     String   @id
+  expireA DateTime @db.Timestamptz(3)
+  charge  String
+
+  @@index([expireA])
+  @@map("whatsapp_achat_conversation")
+}
+
+/// Journal technique des conversations : ni texte de message, ni transcription, ni numéro en clair. SQL :
+/// événement, étape, langue et source parmi des listes fermées ; une entrée ne se modifie pas (déclencheur
+/// contre UPDATE), la purge par ancienneté reste possible.
+model WhatsappAchatJournal {
+  id              String   @id @db.Uuid
+  at              DateTime @db.Timestamptz(3)
+  /// « +237 ••••• 345 »
+  numeroMasque    String?
+  /// Début de l'empreinte de la conversation (12 caractères), jamais le numéro.
+  conversationRef String?
+  evenement       String
+  /// SQL : departs | confirmation | choix_siege | numero_momo | paiement
+  etape           String?
+  /// SQL : fr | en | pcm
+  langue          String?
+  /// SQL : texte | vocal
+  source          String?
+  /// Code court (MODE_DEGRADE, SIEGE_PRIS…), jamais un texte de message.
+  code            String?
+  dureeMs         Int?
+
+  // SQL : index (evenement, at DESC).
+  @@index([at(sort: Desc)])
+  @@index([conversationRef])
+  @@map("whatsapp_achat_journal")
+}
+
+/// Un achat fait par WhatsApp, suivi de la place retenue jusqu'au billet. SQL : état et langue parmi des
+/// listes fermées ; l'état ne bouge que par UPDATE conditionnel sur l'état attendu.
+model WhatsappAchat {
+  commandeId          String   @id @db.Uuid
+  voyageurId          String   @db.Uuid
+  /// SQL : reservee | paiement_demande | terminee | abandonnee | echouee
+  etat                String
+  /// SQL : fr | en | pcm
+  langue              String
+  /// Numéro qui recevra le billet, chiffré (contexte « whatsapp-achat.achat:<commandeId> »).
+  destinataireChiffre String
+  creeA               DateTime @db.Timestamptz(3)
+
+  @@index([etat, creeA])
+  @@map("whatsapp_achat")
+}

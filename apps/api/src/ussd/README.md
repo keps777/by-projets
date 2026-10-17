@@ -123,57 +123,40 @@ MoMo, la session Orange débite Orange Money.
 ## Ports et adaptateurs
 
 `ports.ts` déclare des classes abstraites ; `memoire.ts` en donne les versions en mémoire (`durable =
-false`). `UssdModule` **refuse de démarrer en production** tant que les sessions, le journal ou les achats
-sont en mémoire, ou que le SMS du billet n'est pas branché. Le coordinateur branche les vrais avec
-`UssdModule.avec({ imports, providers })`.
+false`) et `postgres.ts` celles de PostgreSQL (lot A). Les sessions, le journal et les achats sont choisis au
+montage par `API_STOCKAGE` (`postgres` / `memoire`, sinon PostgreSQL en production et mémoire ailleurs ;
+`FOURNISSEURS_STOCKAGE_USSD` dans `ussd.module.ts`). `UssdModule` **refuse de démarrer en production** tant que
+les sessions, le journal ou les achats sont en mémoire, ou que le SMS du billet n'est pas branché. Le
+coordinateur remplace le reste avec `UssdModule.avec({ imports, providers })`.
 
-| Port                  | Par défaut                            | À fournir par                                                                                        |
-| --------------------- | ------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `SessionsUssd`        | mémoire                               | **Intégration** : Redis (`SET … PXAT`) ou la table `ussd_session`. Partagé entre instances.          |
-| `JournalUssd`         | mémoire                               | **Intégration** : table `ussd_journal`.                                                              |
-| `AchatsUssd`          | mémoire                               | **Intégration** : table `ussd_achat` (`transitionner` = `UPDATE … WHERE etat = ANY(…) RETURNING *`). |
-| `ComptesUssd`         | `ComptesUssdComptes` (fourni)         | Le compte du numéro, retrouvé ou créé (rôle voyageur, nom vide) par `ComptesService`.                |
-| `NotifieurBilletUssd` | `NotifieurBilletSms` (fourni)         | SMS « billet » par `PasserelleSmsService.envoyerBillet`.                                             |
-| `SuiviColisUssd`      | `SuiviColisAucun` (« introuvable »)   | **AM-163** (colis) : état du colis pour son expéditeur ou son destinataire seulement.                |
-| `SuiviBusUssd`        | `SuiviBusAucun` (« pas de position ») | **AM-170** (GPS) : arrivée estimée, retard et prochain arrêt d'un billet.                            |
+| Port                  | Par défaut                                                                      | À fournir par                                                                                      |
+| --------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `SessionsUssd`        | `SessionsUssdPrisma` (table `ussd_session`) selon `API_STOCKAGE`, sinon mémoire | Fourni. Partagé entre instances. Redis (`SET … PXAT`) reste possible en remplaçant ce fournisseur. |
+| `JournalUssd`         | `JournalUssdPrisma` (table `ussd_journal`) selon `API_STOCKAGE`, sinon mémoire  | Fourni.                                                                                            |
+| `AchatsUssd`          | `AchatsUssdPrisma` (table `ussd_achat`) selon `API_STOCKAGE`, sinon mémoire     | Fourni (`transitionner` = `UPDATE … WHERE etat IN (…)`).                                           |
+| `ComptesUssd`         | `ComptesUssdComptes` (fourni)                                                   | Le compte du numéro, retrouvé ou créé (rôle voyageur, nom vide) par `ComptesService`.              |
+| `NotifieurBilletUssd` | `NotifieurBilletSms` (fourni)                                                   | SMS « billet » par `PasserelleSmsService.envoyerBillet`.                                           |
+| `SuiviColisUssd`      | `SuiviColisAucun` (« introuvable »)                                             | **AM-163** (colis) : état du colis pour son expéditeur ou son destinataire seulement.              |
+| `SuiviBusUssd`        | `SuiviBusAucun` (« pas de position »)                                           | **AM-170** (GPS) : arrivée estimée, retard et prochain arrêt d'un billet.                          |
 
-## Tables PostgreSQL attendues (hors périmètre : `apps/api/prisma/**`)
+## Tables PostgreSQL
 
-```sql
-CREATE TABLE ussd_session (
-  cle      text PRIMARY KEY,                 -- <opérateur>:<identifiant de session de l'opérateur>
-  expire_a timestamptz NOT NULL,
-  charge   text NOT NULL                     -- état du dialogue, JSON chiffré (contexte « ussd.session:<cle> »)
-);
-CREATE INDEX ussd_session_expire ON ussd_session (expire_a);   -- purger(maintenant) : DELETE … WHERE expire_a <= $1
+Migration `20261017000750_ussd` (modèles `UssdSession`, `UssdJournal` et `UssdAchat` du bloc « lot A » de
+`schema.prisma`). Colonnes en camelCase comme le reste du schéma.
 
-CREATE TABLE ussd_journal (
-  id            uuid PRIMARY KEY,
-  at            timestamptz NOT NULL,
-  operateur     text        NOT NULL CHECK (operateur IN ('mtn','orange')),
-  msisdn_masque text,                        -- « +237 ••••• 345 »
-  session_ref   text,                        -- 12 premiers caractères d'un HMAC de la clé de session
-  evenement     text        NOT NULL,
-  etape         text,
-  code          text,                        -- code court, jamais un écran ni une réponse
-  duree_ms      integer
-);
-CREATE INDEX ussd_journal_at      ON ussd_journal (at DESC);
-CREATE INDEX ussd_journal_session ON ussd_journal (session_ref);
+| Table          | Contenu                                                                                                                                     | Garanties de la base                                                                                                                                                                                                         |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ussd_session` | `cle` (`<opérateur>:<session de l'opérateur>`, clé primaire), `expireA`, `charge` (état du dialogue chiffré, contexte `ussd.session:<cle>`) | Charge non vide ; écriture par `INSERT … ON CONFLICT DO UPDATE` ; `lire` ne rend jamais une session échue et la supprime ; index sur `expireA` pour `purger`.                                                                |
+| `ussd_journal` | `id`, `at`, `operateur`, `msisdnMasque`, `sessionRef` (12 caractères d'un HMAC), `evenement`, `etape`, `code` court, `dureeMs`              | Opérateur, événement et étape en listes fermées (un nouvel événement demande une migration) ; déclencheur contre `UPDATE` (la trace ne se réécrit pas), `DELETE` permis pour la purge ; même entrée rejouée = une ligne.     |
+| `ussd_achat`   | `commandeId` (clé primaire), `voyageurId`, `operateur`, `etat`, `destinataireChiffre` (contexte `ussd.achat:<commandeId>`), `creeA`         | Opérateur et état en listes fermées ; `ajouter` en `ON CONFLICT DO NOTHING` ; `transitionner` en `UPDATE … WHERE etat IN (…)` : deux instances ne réussissent jamais la même transition ; index partiel des achats à suivre. |
 
-CREATE TABLE ussd_achat (
-  commande_id          uuid PRIMARY KEY,
-  voyageur_id          uuid        NOT NULL,
-  operateur            text        NOT NULL CHECK (operateur IN ('mtn','orange')),
-  etat                 text        NOT NULL CHECK (etat IN ('reservee','paiement_demande','terminee','abandonnee')),
-  destinataire_chiffre text        NOT NULL, -- numéro du SMS du billet (voyageur ou proche), contexte « ussd.achat:<commande_id> »
-  cree_a               timestamptz NOT NULL
-);
-CREATE INDEX ussd_achat_a_suivre ON ussd_achat (cree_a) WHERE etat IN ('reservee','paiement_demande');
-```
+Le journal ne contient aucune donnée personnelle directe ; **prévoir une purge** (par exemple 90 jours : `DELETE
+FROM ussd_journal WHERE at < now() - interval '90 days'`), ainsi que celle des sessions échues
+(`SessionsUssd.purger`) et des achats terminés ou abandonnés. Aucune de ces purges n'est planifiée aujourd'hui.
 
-Le journal ne contient aucune donnée personnelle directe ; prévoir tout de même une purge (par exemple
-90 jours).
+**Reste en mémoire** : `SuiviColisUssd` (touche 3, modules colis AM-163) et `SuiviBusUssd` (touche 4, GPS AM-170) ne
+sont pas des tables de ce module : leurs adaptateurs lisent les données des autres modules et se branchent
+avec `UssdModule.avec`.
 
 ## Variables d'environnement
 
@@ -190,13 +173,14 @@ Le journal ne contient aucune donnée personnelle directe ; prévoir tout de mê
 | `USSD_ABANDON_MARGE_S`                | 60                        | Marge après la fin de session avant de libérer une place non payée.                        |
 | `USSD_ERREURS_MAX`                    | 3                         | Réponses invalides de suite avant de fermer la session.                                    |
 
-## Intégration (coordinateur : `app.module.ts`, Prisma)
+## Intégration (coordinateur)
 
 1. **`AppModule`** : importer `UssdModule` (il importe déjà `BilletterieModule`, `PaiementsModule` et `SmsModule`).
 2. **Promotions** : créer le code `USSD` (type `frais_offerts`), ou régler `USSD_CODE_SANS_FRAIS` sur un code
    existant. Sans lui, aucun achat n'est possible (« Service indisponible » et une erreur dans les logs).
-3. **Adaptateurs** : `UssdModule.avec({ providers: [{ provide: SessionsUssd, useClass: … }, …] })` pour les
-   sessions (Redis), le journal et les achats (tables ci-dessus), le suivi des colis et celui des bus.
+3. **Adaptateurs** : les sessions, le journal et les achats n'ont rien à brancher (PostgreSQL par
+   `API_STOCKAGE`). Reste à fournir, par `UssdModule.avec({ providers: [ … ] })`, le suivi des colis
+   (`SuiviColisUssd`) et celui des bus (`SuiviBusUssd`).
 4. **Jetons** : un jeton par opérateur (`openssl rand -hex 32`), donné à l'opérateur avec l'adresse
    `https://<api>/ussd/mtn` ou `…/ussd/orange`, et le code court `*123#` à faire router vers cette adresse.
 5. **SMS** : poser `SMS_HOTES_LIENS=afrimove.app` (ou le domaine retenu). Si l'intégration branche aussi
@@ -231,14 +215,25 @@ Le journal ne contient aucune donnée personnelle directe ; prévoir tout de mê
 Aucun opérateur, aucun compte sandbox, aucun réseau : les formats d'échange MTN et Orange, le routage du code
 court, la durée réelle des sessions, la longueur maximale d'un écran (160 caractères retenus, d'après le contrat
 de l'aperçu), le jeton comme moyen d'authentification (les opérateurs filtrent parfois par adresse IP ou
-authentification de base), le push MoMo pendant ou juste après une session USSD, et les adaptateurs de production
-(Redis, tables) n'ont pas été éprouvés. Tout est testé avec l'agrégateur simulé, la vraie billetterie et les ports en
-mémoire. Les tâches « compte et accès sandbox » et « tests en sandbox » du ticket restent à faire avec les opérateurs.
+authentification de base), le push MoMo pendant ou juste après une session USSD, et la tenue en charge des
+adaptateurs PostgreSQL (éprouvés seulement sur une base locale de test) n'ont pas été vérifiés. Tout est testé avec
+l'agrégateur simulé, la vraie billetterie et les ports en mémoire. Les tâches « compte et accès sandbox » et « tests en sandbox » du ticket restent à faire avec les opérateurs.
 
 ## Tests
 
 `pnpm --filter @afrimove/api test` : `textes.test.ts` (parité avec la planche, ASCII, 160 caractères),
 `config.test.ts`, `connecteurs.test.ts` (formats MTN et Orange, numéros), `ussd.module.test.ts` (garde-fou de
-production) et `ussd.e2e.test.ts` (HTTP avec la vraie billetterie et les vrais paiements : les trois réponses chez
+production), `postgres.integration.test.ts` (voir plus bas) et `ussd.e2e.test.ts` (HTTP avec la vraie billetterie et les vrais paiements : les trois réponses chez
 MTN et chez Orange, webhook de confirmation, SMS du billet, abandon, expiration, proche, colis, bus, mode
 dégradé, panne de l'agrégateur, jetons, confidentialité du journal, aperçu au format du contrat).
+
+PostgreSQL (lot A) : `postgres.integration.test.ts`, ignoré sans `DATABASE_URL_TEST` :
+
+    DATABASE_URL_TEST=postgresql://user@localhost:5432/afrimove_test pnpm --filter @afrimove/api test -- src/ussd/postgres
+
+Il rejoue sur la mémoire et sur PostgreSQL le même contrat des trois ports (`testing/contrat-stockage.ts` :
+sessions échues, transitions d'achat qui ne réussissent qu'une fois, journal sans doublon), puis vérifie ce que seule
+la base garantit (deux instances sur la même base, listes fermées, journal non réécrit), le choix du stockage par
+`API_STOCKAGE` et le parcours « trois réponses » de bout en bout avec des sessions, un journal et des achats en base
+(aucun numéro ni écran en clair, place rendue à l'abandon et à l'expiration, cinq achats simultanés sur cinq sièges
+distincts). La billetterie et les paiements y restent en mémoire.

@@ -31,9 +31,9 @@ export interface FiltreComptage {
 
 /**
  * Port de persistance des messages, de leurs essais et des messages reçus. `journal-memoire.ts` en
- * est la version en mémoire. **La version PostgreSQL n'est pas écrite** (tables `whatsapp_message`,
- * `whatsapp_essai`, `whatsapp_entrant`, voir le README du dossier : elles demandent
- * `apps/api/prisma/**`, hors du périmètre d'AM-167).
+ * est la version en mémoire ; `postgres.ts` est celle de PostgreSQL (tables `whatsapp_message`,
+ * `whatsapp_essai`, `whatsapp_entrant`, migration `20261017000760_whatsapp`), choisie par
+ * `API_STOCKAGE`.
  */
 export abstract class JournalWhatsApp {
   /** `true` pour un adaptateur qui garde ses données après un redémarrage. */
