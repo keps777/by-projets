@@ -1,0 +1,191 @@
+/*
+ * Planche « ConfigRegles » (docs/maquettes-v3/ConfigRegles.dc.html). Valeurs relevées dans la planche ; couleurs, polices
+ * et espacements sont les variables --am-* de @afrimove/design.
+ *
+ * Dans la planche, seul le conteneur racine pose `box-sizing: border-box` : les cartes et les liens du pied sont en
+ * `content-box` (leurs hauteurs minimales s'y ajoutent au remplissage et au bord), les champs sont en `border-box`.
+ * Surcharges du kit : sélecteur doublé (`.x.x`) pour passer devant la règle d'un seul sélecteur du composant, quel que
+ * soit l'ordre des feuilles.
+ */
+
+/* Racine : porte les feuilles (ancrées dans les 390 px) et place l'en-tête, le corps et le pied. */
+.racine {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.entete.entete {
+  flex: none;
+}
+
+/* Corps : 2 px au-dessus, 8 px entre les blocs (le kit met 4 et 10) ; il défile si les messages dépassent l'écran. */
+.corps.corps {
+  gap: var(--am-space-8);
+  padding-top: var(--am-space-2);
+  overflow-y: auto;
+}
+
+.corps > * {
+  flex: none;
+}
+
+/* ----------------------------------------------------------------------- blocs de règles */
+
+.bloc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-8);
+  padding: var(--am-space-12) var(--am-space-14);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-16);
+  background: var(--am-surface);
+}
+
+/* La règle qu'on vient modifier (l'annulation) a le bord ambre dans la planche. */
+.blocActif {
+  border-color: var(--am-ambre);
+}
+
+.etiquette {
+  margin: 0;
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  font-weight: 400;
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+  color: var(--am-ambre);
+}
+
+.grille {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--am-space-8);
+}
+
+/*
+ * Les listes de la planche sont des <select> natifs, sans flèche dessinée ni marge à droite : on reprend ce rendu
+ * (le sélecteur du kit dessine sa propre flèche et réserve 34 px à droite).
+ */
+.bloc select {
+  appearance: auto;
+  -webkit-appearance: auto;
+  padding-right: var(--am-space-12);
+  background-image: none;
+}
+
+.note {
+  margin: 0;
+  font-size: var(--am-fs-11);
+  line-height: 1.35;
+  color: var(--am-craie-2);
+}
+
+.historique {
+  margin: 0;
+  font-size: var(--am-fs-11);
+  text-align: center;
+  color: var(--am-gris);
+}
+
+/* ----------------------------------------------------------------------- pied */
+
+/* Pied : 8 px au-dessus des boutons (le kit : 10 px). */
+.pied.pied {
+  padding-top: var(--am-space-8);
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1.7fr;
+  gap: var(--am-space-8);
+}
+
+.annuler.annuler {
+  box-sizing: content-box;
+  min-height: 56px;
+  padding: 0;
+  border-radius: var(--am-radius-16);
+  color: var(--am-craie);
+}
+
+/* « Enregistrer · mon PIN » est ambre dans la planche (le bouton principal du kit est orange). */
+.enregistrer.enregistrer {
+  gap: 0;
+  padding: 0 var(--am-space-16);
+  background: var(--am-ambre);
+}
+
+/* ----------------------------------------------------------------------- feuilles */
+
+.feuillePin {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-8);
+  padding-bottom: var(--am-space-16);
+}
+
+.echec {
+  margin: 0;
+  font-size: var(--am-fs-12);
+  color: var(--am-rouge);
+}
+
+/* ----------------------------------------------------------------------- chargement, vide, erreur */
+
+.etat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-10);
+}
+
+.bandeau {
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-10);
+  padding: var(--am-space-10) var(--am-space-12);
+  border: 1px solid var(--am-surface-2);
+  border-radius: var(--am-radius-12);
+  background: var(--am-carte-sombre);
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+}
+
+.bandeau p {
+  margin: 0;
+}
+
+.point {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--am-ambre);
+}
+
+.squelettes {
+  display: contents;
+}
+
+/* Blocs de chargement : même hauteur que les blocs de la planche, la mise en page ne bouge pas. */
+.squelette {
+  display: block;
+  box-sizing: border-box;
+  border: 1px solid var(--am-surface-2);
+  border-radius: var(--am-radius-16);
+  background: var(--am-surface);
+}
+
+.squeletteAnnulation {
+  height: 159px;
+}
+
+.squeletteCaisse {
+  height: 106px;
+}
+
+.squeletteMomo {
+  height: 159px;
+}

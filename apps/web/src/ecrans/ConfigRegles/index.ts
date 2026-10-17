@@ -1,0 +1,1 @@
+export { EcranConfigRegles } from "./EcranConfigRegles";

@@ -1,0 +1,91 @@
+{
+  "entete": {
+    "titre": "",
+    "sousTitre": "",
+    "retour": "",
+    "gares_one": "",
+    "gares_other": ""
+  },
+  "annulation": {
+    "titre": "",
+    "gratuite": {
+      "libelle": "",
+      "choix": {
+        "1h_avant": "",
+        "2h_avant": "",
+        "veille_20h": "",
+        "jamais": ""
+      }
+    },
+    "retenue": {
+      "libelle": "",
+      "choix": {
+        "selon_classe": "",
+        "dix_pct": "",
+        "cinquante_pct": "",
+        "aucun_remboursement": ""
+      }
+    },
+    "note": ""
+  },
+  "caisse": {
+    "titre": "",
+    "tolerance": "",
+    "erreurTolerance": "",
+    "auDela": {
+      "libelle": "",
+      "choix": {
+        "pin_superviseur_et_patron": "",
+        "pin_superviseur": "",
+        "bloque_guichet": ""
+      }
+    }
+  },
+  "momo": {
+    "titre": "",
+    "mtn": "",
+    "orange": "",
+    "erreurNumero": "",
+    "note": "",
+    "operateur": {
+      "mtn": "",
+      "orange": ""
+    }
+  },
+  "historique": "",
+  "nbChangements_one": "",
+  "nbChangements_other": "",
+  "actions": {
+    "annuler": "",
+    "enregistrer": "",
+    "detail": "",
+    "detailGares_one": "",
+    "detailGares_other": ""
+  },
+  "pin": {
+    "titre": "",
+    "sousTitre": "",
+    "fermer": "",
+    "echec": ""
+  },
+  "compte": {
+    "fermer": "",
+    "code": {
+      "titre": "",
+      "sousTitre": "",
+      "libelle": "",
+      "faux": ""
+    },
+    "pin": {
+      "titre": "",
+      "sousTitre": "",
+      "echec": ""
+    }
+  },
+  "etats": {
+    "chargement": "",
+    "vide": "",
+    "erreur": "",
+    "reessayer": ""
+  }
+}
