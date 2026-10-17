@@ -1,0 +1,62 @@
+{
+  "disponible": "Disponible",
+  "indisponible": "Indisponible",
+  "inviter": "+ inviter un livreur",
+  "identite": "livreur n° {{numero}} · {{ville}} · {{note}} ★",
+  "echecDisponibilite": "Ton statut n'a pas pu être changé. Réessaie.",
+  "mission": {
+    "titre": "Nouvelle mission · {{secondes}} s pour accepter",
+    "trajet": "{{depart}} → {{arrivee}}, chez {{destinataire}}",
+    "detail": "colis {{poids}} kg · {{distance}} km · {{duree}} min · remise contre code",
+    "gain": "pour toi",
+    "passer": "Passer",
+    "accepter": "Accepter · touche 1",
+    "expiree": "Sans réponse en {{secondes}} s, la mission est passée au livreur suivant.",
+    "dejaPrise": "Cette mission est passée au livreur suivant.",
+    "echecAccepter": "La mission n'a pas pu être acceptée. Réessaie.",
+    "echecPasser": "La mission n'a pas pu être passée. Réessaie.",
+    "aucune": {
+      "titre": "Pas de mission pour le moment",
+      "detail": "Reste disponible : la prochaine mission apparaît ici."
+    },
+    "horsLigne": {
+      "titre": "Tu es indisponible",
+      "detail": "Passe en Disponible pour recevoir des missions."
+    }
+  },
+  "bilan": {
+    "aujourdhui": "Aujourd'hui",
+    "gagne": "Gagné",
+    "semaine": "Semaine",
+    "livraisons_one": "livraison",
+    "livraisons_other": "livraisons",
+    "total_one": "{{count}} livraison",
+    "total_other": "{{count}} livraisons"
+  },
+  "pieces": {
+    "titre": "Mes pièces",
+    "aJour": "à jour",
+    "aVerifier": "à vérifier"
+  },
+  "retrait": {
+    "libelle": "Retirer mes gains maintenant (dès {{seuil}} F)",
+    "action": "Retirer",
+    "seuil": "Le retrait est possible dès {{seuil}} F. Il te manque {{manque}} F.",
+    "seuilServeur": "Le retrait est possible dès {{seuil}} F.",
+    "fait": "Retrait de {{montant}} F demandé vers {{moyen}}.",
+    "echec": "Le retrait n'a pas pu être fait. Réessaie."
+  },
+  "etats": {
+    "chargement": "Chargement de l'app du livreur",
+    "vide": {
+      "titre": "Pas d'espace livreur",
+      "detail": "Ce compte n'est pas encore livreur. Dépose ta demande pour recevoir des missions.",
+      "devenir": "Devenir livreur"
+    },
+    "erreur": {
+      "titre": "Impossible de charger l'app du livreur",
+      "detail": "Vérifie ta connexion, puis réessaie.",
+      "reessayer": "Réessayer"
+    }
+  }
+}
