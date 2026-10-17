@@ -1,0 +1,24 @@
+{
+  "entete": {
+    "retour": "",
+    "titre": "",
+    "sousTitre_one": "",
+    "sousTitre_other": ""
+  },
+  "simulation": {
+    "ligne": "",
+    "option": ""
+  },
+  "saisie": {
+    "placeholder": "",
+    "parler": ""
+  },
+  "etats": {
+    "chargement": "",
+    "reponse": "",
+    "vide": "",
+    "erreur": "",
+    "reessayer": "",
+    "envoi": ""
+  }
+}

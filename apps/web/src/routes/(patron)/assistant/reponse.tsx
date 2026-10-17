@@ -1,5 +1,5 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { EcranAssistantReponse } from "@/ecrans/AssistantReponse";
 
 export default function Page() {
-  return <EcranVide planche="AssistantReponse" />;
+  return <EcranAssistantReponse />;
 }
