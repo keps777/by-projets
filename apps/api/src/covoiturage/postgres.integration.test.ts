@@ -33,7 +33,6 @@ import {
   unTrajet,
   uneReservation,
   unVersement,
-  type BancCovoiturage,
 } from "./testing/contrat-ports";
 
 /**

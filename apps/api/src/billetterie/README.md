@@ -3,9 +3,12 @@
 Départs, sièges en temps réel, billets nominatifs à QR signé, scan au quai. Module Nest autonome :
 `BilletterieModule`, importé dans `AppModule`. Les tables sont dans `prisma/schema.prisma` ; les
 adaptateurs PostgreSQL sont dans `postgres.ts` (`apps/api/INTEGRATION.md`) : catalogue, billets, inventaire,
-commandes, scans, événements traités, préférences, numérotation en ligne. `Promotions`, `ProchesVoyageur`,
-`ColisDuDepart` et `AvisBillets` restent en mémoire (pas de table) : la production ne démarre pas tant
-qu'ils le sont.
+commandes, scans, événements traités, préférences, numérotation en ligne, puis (lot B, `postgres-annexes.ts`)
+`Promotions` (`promotion`), `ProchesVoyageur` (`proche_voyageur`, téléphone chiffré), `ColisDuDepart` (lecture de
+`colis`) et `AvisBillets` (`avis_billetterie`, en ajout seul), migration `20261017000800_billetterie_reliquats`.
+Restent hors base : `ConversionDevises` et `DiffusionTempsReel` (aucune donnée à perdre) et `SignataireQr`
+(la clé `BILLETTERIE_QR_CLE_PRIVEE` est un secret, pas une table). La production ne démarre que si cette clé
+est posée.
 
 Les routes suivent les contrats de `packages/contrats` (`voyageur` et `agence`) et les chemins de
 `packages/api-client` : le mode HTTP du client d'API fonctionne sans adaptation. Chaque test e2e
@@ -83,19 +86,19 @@ ou `LISTEN/NOTIFY`.
 développement). `BilletterieModule` **refuse de démarrer en production** tant qu'un port est en
 mémoire (`durable = false`) ou que `BILLETTERIE_QR_CLE_PRIVEE` manque.
 
-| Port                                                             | À fournir par                           | Remarque                                                                                         |
-| ---------------------------------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `Catalogue`                                                      | Intégration (lit les tables ci-dessous) | `changerDepart` : comparer et remplacer sur l'état                                               |
-| `Billets`                                                        | Intégration                             | `transitionner` : comparer et remplacer sur l'état (`UPDATE … WHERE etat = ANY(…)`)              |
-| `Inventaire`                                                     | Intégration                             | Contrainte d'unicité `(depart_id, siege)` ; version du plan incrémentée dans la même transaction |
-| `Commandes`, `Scans`, `EvenementsTraites`, `PreferencesVoyageur` | Intégration                             |                                                                                                  |
-| `NumerotationEnLigne`                                            | **AM-161**                              | 4001–9999 par compagnie, gare et jour, sans trou, dans une transaction                           |
-| `Promotions`, `ProchesVoyageur`                                  | Comptes (AM-013) et promotions          |                                                                                                  |
-| `ConversionDevises`                                              | Paiements (AM-165)                      | La version mémoire a des taux indicatifs                                                         |
-| `ColisDuDepart`                                                  | **AM-163**                              | Colis chargés dans la soute                                                                      |
-| `AvisBillets`                                                    | SMS (AM-166), paiements, caisse         | Reçoit `billet.emis` (envoyer le SMS avec QR et code), `billet.annule` (rembourser), etc.        |
-| `DiffusionTempsReel`                                             | Intégration                             | Redis ou NOTIFY entre instances                                                                  |
-| `SignataireQr`                                                   | Ce module                               | Clé ECDSA P-256 privée (JWK) dans `BILLETTERIE_QR_CLE_PRIVEE`, JSON brut ou en base64            |
+| Port                                                             | À fournir par                           | Remarque                                                                                                 |
+| ---------------------------------------------------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `Catalogue`                                                      | Intégration (lit les tables ci-dessous) | `changerDepart` : comparer et remplacer sur l'état                                                       |
+| `Billets`                                                        | Intégration                             | `transitionner` : comparer et remplacer sur l'état (`UPDATE … WHERE etat = ANY(…)`)                      |
+| `Inventaire`                                                     | Intégration                             | Contrainte d'unicité `(depart_id, siege)` ; version du plan incrémentée dans la même transaction         |
+| `Commandes`, `Scans`, `EvenementsTraites`, `PreferencesVoyageur` | Intégration                             |                                                                                                          |
+| `NumerotationEnLigne`                                            | **AM-161**                              | 4001–9999 par compagnie, gare et jour, sans trou, dans une transaction                                   |
+| `Promotions`, `ProchesVoyageur`                                  | Intégration (lot B, PostgreSQL)         | Tables `promotion` (code en majuscules) et `proche_voyageur` (téléphone chiffré)                         |
+| `ConversionDevises`                                              | Paiements (AM-165)                      | La version mémoire a des taux indicatifs                                                                 |
+| `ColisDuDepart`                                                  | Intégration (lot B, PostgreSQL)         | Colis chargés dans la soute : lecture de la table `colis`                                                |
+| `AvisBillets`                                                    | Intégration (lot B, PostgreSQL)         | Garde `billet.emis`, `billet.annule`… dans `avis_billetterie` (ajout seul) ; SMS et paiements à brancher |
+| `DiffusionTempsReel`                                             | Intégration                             | Redis ou NOTIFY entre instances                                                                          |
+| `SignataireQr`                                                   | Ce module                               | Clé ECDSA P-256 privée (JWK) dans `BILLETTERIE_QR_CLE_PRIVEE`, JSON brut ou en base64                    |
 
 Les paiements appellent `CommandesService.confirmerPaiement(commandeId, moyen)` quand l'agrégateur
 confirme : les billets sont émis. Rappelé (webhook renvoyé), il ne crée rien de plus. Si les sièges
@@ -128,10 +131,11 @@ qu'une seule balaie.
 
 1. Fait : `BilletterieModule` est dans `AppModule`.
 2. Fait : les adaptateurs PostgreSQL remplacent les `…Memoire` en production ou avec `API_STOCKAGE=postgres`.
-   Reste : `Promotions`, `ProchesVoyageur`, `ColisDuDepart`, `AvisBillets`.
+   Lot B : `Promotions`, `ProchesVoyageur`, `ColisDuDepart` et `AvisBillets` aussi (`postgres-annexes.ts`).
 3. Générer une clé : `node -e "crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign']).then(k=>crypto.subtle.exportKey('jwk',k.privateKey)).then(j=>console.log(JSON.stringify(j)))"`
    et la poser dans `BILLETTERIE_QR_CLE_PRIVEE` (secret, jamais dans le dépôt).
-4. Brancher `AvisBillets` sur la passerelle SMS et les paiements.
+4. Faire consommer les avis gardés par `AvisBillets` (table `avis_billetterie`) par la passerelle SMS et les
+   paiements : le port les enregistre, rien ne les envoie encore.
 5. Faire poser le jeton d'accès à `api-client` pour les canaux WebSocket.
 
 ## Tests

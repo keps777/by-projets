@@ -189,7 +189,8 @@ describe("vendeurs : l'agrément par les agences", () => {
       expect(apres.body.commission).toBe(250);
       // Le billet déjà vendu garde sa commission de 100 F.
       const premiere = await t.ventes.duVendeur(v.id, { etats: ["terminee"] });
-      expect(premiere.map((x) => x.commission)).toEqual([100, 250]);
+      // (L'horloge de test est figée : les deux ventes ont le même instant, l'ordre n'est pas celui de la vente.)
+      expect(premiere.map((x) => x.commission).sort((a, b) => a - b)).toEqual([100, 250]);
     });
 
     it("l'agence ne règle que ses propres vendeurs", async () => {
