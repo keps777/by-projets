@@ -1,0 +1,50 @@
+{
+  "fond": {
+    "titre": "",
+    "sousTitre_one": "",
+    "sousTitre_other": "",
+    "retour": ""
+  },
+  "popup": {
+    "titre_one": "",
+    "titre_other": "",
+    "titreSansEffectif": "",
+    "aide": "",
+    "fermer": ""
+  },
+  "roles": {
+    "guichetier_one": "",
+    "guichetier_other": "",
+    "superviseur_one": "",
+    "superviseur_other": "",
+    "convoyeur_one": "",
+    "convoyeur_other": "",
+    "chauffeur_one": "",
+    "chauffeur_other": "",
+    "relais_one": "",
+    "relais_other": "",
+    "comptable_one": "",
+    "comptable_other": ""
+  },
+  "filtres": "",
+  "recherche": "",
+  "liste": "",
+  "modifier": "",
+  "resume": {
+    "enService": "",
+    "bloquees_one": "",
+    "bloquees_other": ""
+  },
+  "signature": "",
+  "actions": {
+    "fermer": "",
+    "ajouter": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": "",
+    "aucun": "",
+    "erreur": "",
+    "reessayer": ""
+  }
+}

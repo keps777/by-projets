@@ -1,5 +1,5 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { EcranConfigEquipeListe } from "@/ecrans/ConfigEquipeListe";
 
 export default function Page() {
-  return <EcranVide planche="ConfigEquipeListe" />;
+  return <EcranConfigEquipeListe />;
 }
