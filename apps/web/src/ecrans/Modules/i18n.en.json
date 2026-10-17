@@ -1,0 +1,28 @@
+{
+  "titre": "",
+  "retour": "",
+  "sousTitre": "",
+  "pied": {
+    "avecAgence": "",
+    "sansAgence": ""
+  },
+  "pin": {
+    "titre": "",
+    "allumer": "",
+    "masquer": "",
+    "note": "",
+    "fermer": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "titre": "Les 12 modules",
+  "retour": "Retour aux réglages",
+  "sousTitre": "Tout est livré. Tu allumes ce que tu utilises, par gare ou par ville.",
+  "pied": {
+    "avecAgence": "Un module masqué disparaît des écrans de tes équipes et de tes voyageurs, sans rien perdre. {{actifs}} sur {{total}} actifs chez {{agence}}.",
+    "sansAgence": "Un module masqué disparaît des écrans de tes équipes et de tes voyageurs, sans rien perdre. {{actifs}} sur {{total}} actifs."
+  },
+  "pin": {
+    "titre": "Confirme avec ton PIN",
+    "allumer": "Allumer « {{module}} »",
+    "masquer": "Masquer « {{module}} »",
+    "note": "Ton PIN date et signe le changement.",
+    "fermer": "Fermer"
+  },
+  "etats": {
+    "chargement": "Chargement des modules",
+    "vide": {
+      "titre": "Aucun module",
+      "detail": "Les modules de ton agence ne sont pas encore disponibles."
+    },
+    "erreur": {
+      "titre": "Impossible de charger les modules",
+      "detail": "Vérifie la connexion, puis réessaie.",
+      "reessayer": "Réessayer"
+    }
+  }
+}
