@@ -1,0 +1,29 @@
+{
+  "retour": "",
+  "statut": {
+    "en_cours": "",
+    "active": "",
+    "refusee": ""
+  },
+  "suivi": {
+    "titre": ""
+  },
+  "actions": {
+    "modifier": "",
+    "retour": "",
+    "retourDetail": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": "",
+      "devenir": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
