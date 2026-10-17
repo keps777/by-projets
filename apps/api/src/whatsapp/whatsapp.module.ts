@@ -10,6 +10,8 @@ import {
   type Provider,
 } from "@nestjs/common";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { CompteWhatsAppService } from "./compte.service";
 import { CONFIG_WHATSAPP, chargerConfigWhatsApp, type ConfigWhatsApp } from "./config";
@@ -23,6 +25,7 @@ import { JournalWhatsApp } from "./journal";
 import { JournalWhatsAppMemoire } from "./journal-memoire";
 import { AnnuaireRapportMemoire, SourceRapportMemoire } from "./memoire";
 import { PasserelleWhatsAppService } from "./passerelle.service";
+import { JournalWhatsAppPrisma } from "./postgres";
 import {
   AnnuaireRapport,
   GestionnaireEntrants,
@@ -100,6 +103,17 @@ export class TravailleurWhatsApp implements OnApplicationBootstrap, OnApplicatio
   }
 }
 
+/**
+ * Le journal suit `API_STOCKAGE` : PostgreSQL (`postgres.ts`) en production ou si la variable le
+ * demande, mémoire sinon. Exporté pour que les tests montent ce choix seul.
+ */
+export const FOURNISSEUR_JOURNAL_WHATSAPP: Provider = {
+  provide: JournalWhatsApp,
+  inject: [CONFIG, PrismaService],
+  useFactory: (config: AppConfig, prisma: PrismaService): JournalWhatsApp =>
+    stockageSurPostgres(config) ? new JournalWhatsAppPrisma(prisma) : new JournalWhatsAppMemoire(),
+};
+
 /** Adaptateurs de production à brancher à la place de ceux en mémoire (voir `WhatsAppModule.avec`). */
 export interface AdaptateursWhatsApp {
   /** Modules qui fournissent ce dont les adaptateurs ont besoin (Prisma, passerelle SMS…). */
@@ -118,9 +132,9 @@ export interface AdaptateursWhatsApp {
  * rapport de 21 h pour le patron et les superviseurs.
  *
  * Module autonome : il n'importe que les modules globaux du socle (configuration, chiffrement,
- * audit). Les ports (journal, file, repli SMS, source du rapport, annuaire, assistant) ont des
- * versions en mémoire ; le coordinateur branche les vraies avec `WhatsAppModule.avec({ … })`
- * (README).
+ * audit) et la base. Le journal suit `API_STOCKAGE` (PostgreSQL en production, mémoire ailleurs,
+ * `postgres.ts`) ; les autres ports (file, repli SMS, source du rapport, annuaire, assistant) ont des
+ * versions en mémoire que le coordinateur remplace avec `WhatsAppModule.avec({ … })` (README).
  */
 @Module({
   controllers: [WhatsAppController],
@@ -132,7 +146,7 @@ export interface AdaptateursWhatsApp {
         chargerConfigWhatsApp(process.env, config.env === "production"),
     },
     { provide: Horloge, useClass: HorlogeSysteme },
-    { provide: JournalWhatsApp, useClass: JournalWhatsAppMemoire },
+    FOURNISSEUR_JOURNAL_WHATSAPP,
     {
       provide: FileEnvoiWhatsApp,
       inject: [Horloge, CONFIG_WHATSAPP],

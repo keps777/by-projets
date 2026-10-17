@@ -71,7 +71,9 @@ const achatWhatsApp = WhatsAppAchatModule.avec({
 /**
  * Passerelle WhatsApp (AM-167) : repli par SMS sur la passerelle SMS, rapport du soir lu dans le module
  * rapport, destinataires lus dans les comptes, messages reçus confiés à l'achat conversationnel (qui passe à
- * l'assistant ce qui ne le concerne pas, une fois `GESTIONNAIRE_SUIVANT` fourni).
+ * l'assistant ce qui ne le concerne pas, une fois `GESTIONNAIRE_SUIVANT` fourni). Le journal (messages,
+ * essais, messages reçus) suit `API_STOCKAGE` (adaptateur PostgreSQL du lot A, choisi dans `WhatsAppModule`) ;
+ * la file d'envoi reste en mémoire.
  */
 const whatsApp = WhatsAppModule.avec({
   imports: [SmsModule, rapport, achatWhatsApp],

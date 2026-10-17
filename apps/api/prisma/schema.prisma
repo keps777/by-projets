@@ -1615,3 +1615,90 @@ model UssdAchat {
   // SQL : index (creeA) WHERE etat IN ('reservee', 'paiement_demande').
   @@map("ussd_achat")
 }
+
+// ------------------------------------------------------------------------------ Passerelle WhatsApp (AM-167)
+
+/// Un message WhatsApp au journal. Le contenu n'est JAMAIS stocké (chiffres du rapport, code de retrait,
+/// lien du billet) ; le numéro n'y est que chiffré, avec son index aveugle et sa version masquée. La clé
+/// d'idempotence est unique : `INSERT … ON CONFLICT (cle) DO NOTHING` décide qui crée le message. SQL :
+/// valeurs de type, statut et repli fermées ; un identifiant du fournisseur n'appartient qu'à un message
+/// (unique, plusieurs NULL permis).
+model WhatsappMessage {
+  id                  String    @id @db.Uuid
+  /// SQL : rapport_soir | billet | colis | alerte_proche | alerte_retard | reponse
+  type                String
+  /// Idempotence : la même clé ne crée jamais deux messages.
+  cle                 String    @unique
+  /// Nom du gabarit chez WhatsApp ; null pour une réponse en texte libre.
+  gabarit             String?
+  referenceType       String?
+  referenceId         String?
+  compagnieId         String?   @db.Uuid
+  demandeurId         String?   @db.Uuid
+  destinataireChiffre String
+  destinataireIndex   String
+  destinataireMasque  String
+  /// SQL : en_file | en_reprise | envoye | remis | lu | non_remis | echec | expire | annule
+  statut              String
+  tentatives          Int       @default(0)
+  /// wamid… : clé des accusés.
+  idFournisseur       String?   @unique
+  /// Code court, jamais de texte du message.
+  derniereErreur      String?
+  /// SQL : aucun | en_cours | sms | echec_sms
+  secours             String    @default("aucun")
+  secoursSmsId        String?
+  /// Texte du SMS de repli chiffré, effacé à la remise (ou 48 h après la création).
+  secoursChiffre      String?
+  creeA               DateTime  @db.Timestamptz(3)
+  planifieA           DateTime? @db.Timestamptz(3)
+  expireA             DateTime? @db.Timestamptz(3)
+  envoyeA             DateTime? @db.Timestamptz(3)
+  remisA              DateTime? @db.Timestamptz(3)
+  luA                 DateTime? @db.Timestamptz(3)
+  delaiEnvoiMs        Int?
+
+  essais WhatsappEssai[]
+
+  // SQL : index partiel (creeA) WHERE secoursChiffre IS NOT NULL.
+  @@index([compagnieId, creeA(sort: Desc)])
+  @@index([referenceType, referenceId])
+  @@index([demandeurId, creeA])
+  @@index([destinataireIndex, creeA])
+  @@map("whatsapp_message")
+}
+
+/// Un appel à WhatsApp : qui, quand, combien de temps, quel résultat. EN AJOUT SEUL (SQL).
+model WhatsappEssai {
+  id          BigInt   @id @default(autoincrement())
+  messageId   String   @db.Uuid
+  numero      Int
+  fournisseur String
+  at          DateTime @db.Timestamptz(3)
+  dureeMs     Int
+  /// SQL : accepte | temporaire | definitif
+  resultat    String
+  code        String?
+
+  message WhatsappMessage @relation(fields: [messageId], references: [id])
+
+  @@index([messageId, id])
+  @@map("whatsapp_essai")
+}
+
+/// Un message reçu d'une personne. Le texte n'est pas conservé : seul de quoi mesurer le délai de réponse
+/// du compte (« répond en 2 min »). L'identifiant WhatsApp est unique : un webhook rejoué est ignoré.
+model WhatsappEntrant {
+  id               String    @id @db.Uuid
+  idFournisseur    String    @unique
+  expediteurIndex  String
+  expediteurMasque String
+  typeMessage      String
+  recuA            DateTime  @db.Timestamptz(3)
+  repondueA        DateTime? @db.Timestamptz(3)
+  delaiReponseMs   Int?
+
+  // SQL : index partiel (recuA) WHERE delaiReponseMs IS NOT NULL ; repondueA et delaiReponseMs vont ensemble.
+  @@index([expediteurIndex, recuA(sort: Desc)])
+  @@map("whatsapp_entrant")
+}
