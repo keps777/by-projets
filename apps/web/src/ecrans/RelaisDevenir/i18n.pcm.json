@@ -1,0 +1,44 @@
+{
+  "entete": {
+    "retour": "",
+    "titre": ""
+  },
+  "badge": "",
+  "chiffres": {
+    "parColis": {
+      "libelle": "",
+      "detail": ""
+    },
+    "exemple": {
+      "detail": ""
+    },
+    "actifs": {
+      "libelle": "",
+      "detail_one": "",
+      "detail_other": ""
+    }
+  },
+  "prerequis": {
+    "titre": ""
+  },
+  "etapes": {
+    "titre": ""
+  },
+  "actions": {
+    "plusTard": "",
+    "inscrire": "",
+    "inscrireDetail": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
