@@ -1,0 +1,39 @@
+{
+  "passer": "",
+  "suivant": "",
+  "etape": "",
+  "rang": "",
+  "carrousel": "",
+  "diapo": "",
+  "exemple": {
+    "places": "",
+    "choisis": "",
+    "payer": ""
+  },
+  "diapos": {
+    "billet": {
+      "titre": "",
+      "texte": "",
+      "detail": ""
+    },
+    "colis": {
+      "titre": "",
+      "texte": "",
+      "detail": "",
+      "etapes": {
+        "photo": "",
+        "code": "",
+        "livraison": ""
+      }
+    },
+    "proches": {
+      "titre": "",
+      "texte": "",
+      "detail": "",
+      "etapes": {
+        "direct": "",
+        "sms": ""
+      }
+    }
+  }
+}
