@@ -1,0 +1,96 @@
+{
+  "entete": {
+    "titre": "",
+    "sousTitre": "",
+    "retour": "",
+    "modules": ""
+  },
+  "lignes": {
+    "titre": "",
+    "ajouter": "",
+    "modifier": "",
+    "propose": "",
+    "detail": {
+      "departs_one": "",
+      "departs_other": "",
+      "classique": "",
+      "vip": "",
+      "bagage": "",
+      "arrets": "",
+      "prorata": ""
+    },
+    "vide": ""
+  },
+  "equipe": {
+    "titre_one": "",
+    "titre_other": "",
+    "ajouter": "",
+    "roles": {
+      "guichetier_one": "",
+      "guichetier_other": "",
+      "superviseur_one": "",
+      "superviseur_other": "",
+      "convoyeur_one": "",
+      "convoyeur_other": "",
+      "chauffeur_one": "",
+      "chauffeur_other": "",
+      "relais_one": "",
+      "relais_other": "",
+      "comptable_one": "",
+      "comptable_other": ""
+    },
+    "filtres": "",
+    "visibles_one": "",
+    "visibles_other": "",
+    "glisser": "",
+    "voirListe": "",
+    "modifier": "",
+    "vide": "",
+    "erreur": "",
+    "reessayer": ""
+  },
+  "regles": {
+    "titre": "",
+    "modifier": "",
+    "annulation": {
+      "debut": "",
+      "debutAucune": "",
+      "delai": {
+        "1h_avant": "",
+        "2h_avant": "",
+        "veille_20h": "",
+        "jamais": ""
+      },
+      "fin": {
+        "1h_avant": "",
+        "2h_avant": "",
+        "veille_20h": "",
+        "jamais": ""
+      },
+      "retenue": {
+        "selon_classe": "",
+        "dix_pct": "",
+        "cinquante_pct": "",
+        "aucun_remboursement": ""
+      }
+    },
+    "tolerance": {
+      "debut": "",
+      "montant": ""
+    },
+    "cadence": "",
+    "fraisService": "",
+    "momo": ""
+  },
+  "signature": {
+    "sousTitre": "",
+    "fermer": "",
+    "clavier": ""
+  },
+  "pied": "",
+  "etats": {
+    "chargement": "",
+    "erreur": "",
+    "reessayer": ""
+  }
+}
