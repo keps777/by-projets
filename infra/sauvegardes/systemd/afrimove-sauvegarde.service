@@ -1,0 +1,19 @@
+# AM-172 · Sauvegarde complète de la base (voir afrimove-sauvegarde.timer).
+# Le même modèle, avec « physique » à la place de « complet », sert à la sauvegarde physique : copier ce
+# fichier et son timer (décalé à 3 h) sous le nom afrimove-sauvegarde-physique.*
+[Unit]
+Description=AfriMove · sauvegarde complète de la base (chiffrée, deux fournisseurs)
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=deploy
+Environment=SAUVEGARDES_ENV=/etc/afrimove/sauvegardes.env
+Environment=RCLONE_CONFIG=/etc/afrimove/rclone.conf
+# Sortie 2 = sauvegarde partielle (un seul fournisseur) : l'alerte est déjà partie, l'unité reste en échec
+# pour que `systemctl --failed` la montre.
+ExecStart=/opt/afrimove/sauvegardes/sauvegarder.sh complet
+TimeoutStartSec=3h
+Nice=10
+IOSchedulingClass=idle

@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+# Faux rclone pour les tests : « nom:chemin » est le dossier $RACINE_DISTANTS/nom/chemin.
+# Commandes : copyto, lsf (--files-only, --format s, --include), deletefile, cat.
+# Pannes : RCLONE_PANNE=<nom> fait échouer toute commande qui touche ce fournisseur ;
+# RCLONE_TRONQUER=<nom> écrit des fichiers incomplets (un octet de moins) chez ce fournisseur.
+set -euo pipefail
+racine="${RACINE_DISTANTS:?RACINE_DISTANTS manque}"
+echo "rclone $*" >>"${JOURNAL_STUBS:-/dev/null}"
+
+est_distant() { [[ "$1" =~ ^[a-z0-9-]+: ]]; }
+nom_distant() { printf '%s' "${1%%:*}"; }
+chemin_local() { printf '%s/%s/%s' "$racine" "${1%%:*}" "${1#*:}"; }
+panne() {
+  if est_distant "$1" && [[ ",${RCLONE_PANNE:-}," == *",$(nom_distant "$1"),"* ]]; then
+    echo "rclone (faux) : panne simulée chez $(nom_distant "$1")" >&2
+    exit 1
+  fi
+}
+
+commande="${1:?}"
+shift
+args=()
+format="" inclure=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --format) format="$2"; shift 2 ;;
+    --include) inclure="$2"; shift 2 ;;
+    -*) shift ;;
+    *) args+=("$1"); shift ;;
+  esac
+done
+
+case "$commande" in
+  copyto)
+    source="${args[0]}" cible="${args[1]}"
+    panne "$source"
+    panne "$cible"
+    if est_distant "$cible"; then dest="$(chemin_local "$cible")"; else dest="$cible"; fi
+    if est_distant "$source"; then src="$(chemin_local "$source")"; else src="$source"; fi
+    [ -f "$src" ] || { echo "rclone (faux) : $source introuvable" >&2; exit 3; }
+    mkdir -p "$(dirname "$dest")"
+    cp "$src" "$dest"
+    if est_distant "$cible" && [ "${RCLONE_TRONQUER:-}" = "$(nom_distant "$cible")" ]; then
+      taille="$(wc -c <"$dest")"
+      truncate -s $((taille - 1)) "$dest"
+    fi
+    ;;
+  lsf)
+    panne "${args[0]}"
+    dossier="$(chemin_local "${args[0]}")"
+    [ -d "$dossier" ] || { echo "rclone (faux) : dossier introuvable" >&2; exit 3; }
+    for f in "$dossier"/*; do
+      [ -f "$f" ] || continue
+      nom="$(basename "$f")"
+      if [ -n "$inclure" ] && [ "$nom" != "$inclure" ]; then continue; fi
+      if [ "$format" = "s" ]; then wc -c <"$f" | tr -d ' '; else printf '%s\n' "$nom"; fi
+    done
+    ;;
+  deletefile)
+    panne "${args[0]}"
+    rm "$(chemin_local "${args[0]}")"
+    ;;
+  cat)
+    panne "${args[0]}"
+    cat "$(chemin_local "${args[0]}")"
+    ;;
+  *)
+    echo "rclone (faux) : commande non gérée : $commande" >&2
+    exit 64
+    ;;
+esac
