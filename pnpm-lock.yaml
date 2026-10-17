@@ -252,7 +252,11 @@ importers:
 
   packages/domain: {}
 
-  packages/fixtures: {}
+  packages/fixtures:
+    dependencies:
+      '@afrimove/domain':
+        specifier: workspace:*
+        version: link:../domain
 
   packages/ui:
     dependencies:
