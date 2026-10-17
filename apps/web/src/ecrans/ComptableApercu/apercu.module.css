@@ -1,0 +1,399 @@
+/*
+ * Aperçu d'un export, pop-up (ComptableApercu.dc.html). Couleurs, polices, tailles et espacements relevés dans la
+ * planche ; les couleurs, polices et espacements sont les variables --am-* de @afrimove/design. Le pop-up lui-même
+ * (voile, poignée, en-tête, tableau) est celui du kit : FeuilleModale et TableauColonnesFixes.
+ *
+ * Dans la planche, seul le conteneur racine pose `box-sizing: border-box` : l'écran Comptable derrière le voile, les
+ * onglets et les boutons du pied sont en `content-box`. Leurs hauteurs minimales (30, 52, 130, 290 px) s'y ajoutent au
+ * bord quand il y en a un ; on reprend ce que la planche dessine réellement.
+ */
+
+/*
+ * Colonne de la hauteur de la fenêtre, repère du voile (le pop-up couvre l'écran, pas la fenêtre du navigateur) :
+ * la planche est une colonne de 844 px.
+ */
+.ecran {
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* Titre de l'écran pour les lecteurs d'écran : masqué visuellement, hors du flux. */
+.titreEcran {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/*
+ * Le « × » du kit mesure 36 px comme dans la planche ; la zone tactile monte à 44 px sans bouger un pixel.
+ */
+.ecran [role="dialog"] button[aria-label] {
+  position: relative;
+}
+
+.ecran [role="dialog"] button[aria-label]::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+}
+
+/* ---------------------------------------------------------------- l'écran Comptable derrière le voile */
+
+.fond {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.fondEntete {
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-10);
+  padding: var(--am-space-14) var(--am-gutter) var(--am-space-6);
+  opacity: 0.35;
+}
+
+.fondRetour {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--am-trait);
+  border-radius: 22px;
+  background: var(--am-surface);
+  color: var(--am-craie);
+}
+
+.fondTextes {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.fondTitre {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-18);
+  font-weight: 800;
+  letter-spacing: var(--am-ls-sous-titre);
+  line-height: var(--am-lh-compacte);
+}
+
+.fondSousTitre {
+  font-size: var(--am-fs-12);
+  color: var(--am-craie-2);
+}
+
+.fondCorps {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--am-space-10);
+  padding: var(--am-space-6) var(--am-gutter) 0;
+  overflow: hidden;
+  opacity: 0.35;
+}
+
+.fondCarte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-8);
+  box-sizing: content-box;
+  min-height: 130px;
+  padding: var(--am-space-14);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-18);
+  background: var(--am-surface);
+}
+
+.etiquette {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+  color: var(--am-ambre);
+}
+
+.fondExports {
+  display: flex;
+  flex-direction: column;
+  box-sizing: content-box;
+  min-height: 290px;
+  overflow: hidden;
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-16);
+  background: var(--am-surface);
+}
+
+.fondExportsTete {
+  padding: var(--am-space-8) var(--am-space-14);
+  background: var(--am-profond);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+  color: var(--am-ambre);
+}
+
+/* ---------------------------------------------------------------- contenu du pop-up */
+
+/* Les blocs du corps du kit ne rétrécissent pas : c'est le corps qui défile si la fenêtre est trop basse. */
+.contenu {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--am-space-10);
+}
+
+/* Onglets et tableau : 8 px entre les deux (le corps du kit met 10 px entre ses blocs). */
+.haut {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--am-space-8);
+}
+
+.onglets {
+  display: flex;
+  flex: none;
+  gap: var(--am-space-6);
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  list-style: none;
+}
+
+/* Pastille d'onglet : la planche pose 30 px de haut mini, 32 avec le bord des pastilles inactives (la rangée étire). */
+.onglet {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: content-box;
+  min-height: 30px;
+  padding: 0 var(--am-space-10);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-pill);
+  background: var(--am-carte-sombre);
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-11);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.onglet[data-actif="oui"] {
+  border: 0;
+  background: var(--am-ambre);
+  color: var(--am-nuit);
+  font-weight: 700;
+}
+
+.total {
+  font-family: var(--am-font-mono);
+  color: var(--am-ambre);
+}
+
+/* Les trois rappels : trois colonnes égales, 6 px entre elles. */
+.garanties {
+  display: grid;
+  flex: none;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--am-space-6);
+}
+
+.garantie {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-2);
+  padding: var(--am-space-8) var(--am-space-10);
+  border-radius: var(--am-radius-10);
+  background: var(--am-nuit);
+  line-height: var(--am-lh-serree);
+}
+
+.garantieTitre {
+  font-size: var(--am-fs-10);
+  color: var(--am-gris);
+}
+
+.garantieDetail {
+  font-size: var(--am-fs-11);
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------- boutons du pied */
+
+/* Fermer · Télécharger · Envoyer au cabinet : 1 / 1 / 1,3 ; sans Télécharger (rien à télécharger), 1 / 1,3. */
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.3fr;
+  gap: var(--am-space-8);
+}
+
+.actions[data-colonnes="2"] {
+  grid-template-columns: 1fr 1.3fr;
+}
+
+.bouton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--am-space-6);
+  box-sizing: content-box;
+  min-height: 52px;
+  margin: 0;
+  padding: 0;
+  border-radius: var(--am-radius-14);
+  font-family: inherit;
+  font-size: var(--am-fs-13);
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.fermer {
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface-2);
+  color: var(--am-craie);
+  font-weight: 600;
+}
+
+.telecharger {
+  border: 1px solid var(--am-bleu);
+  background: var(--am-surface-2);
+  color: var(--am-bleu);
+  font-weight: 700;
+}
+
+.envoyer {
+  border: 0;
+  background: var(--am-orange);
+  color: var(--am-nuit);
+  font-weight: 700;
+}
+
+.bouton:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------- états chargement, vide, introuvable, erreur */
+
+.etat {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--am-space-10);
+}
+
+.bandeau {
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-10);
+  padding: var(--am-space-10) var(--am-space-12);
+  border: 1px solid var(--am-surface-2);
+  border-radius: var(--am-radius-12);
+  background: var(--am-carte-sombre);
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+}
+
+.bandeau p {
+  margin: 0;
+}
+
+.point {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--am-ambre);
+}
+
+/* Annonce du chargement pour les lecteurs d'écran, sans rien changer à la mise en page. */
+.annonce {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.squelette {
+  display: block;
+  border-radius: var(--am-radius-6);
+  background: var(--am-surface-2);
+}
+
+.squeletteFondSousTitre {
+  width: 220px;
+  height: 12px;
+}
+
+.squeletteFondEtiquette {
+  width: 190px;
+  height: 10px;
+}
+
+.squeletteOnglet {
+  flex: none;
+  width: 84px;
+  height: 32px;
+  border-radius: var(--am-radius-pill);
+}
+
+.tableauSquelette {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-12);
+  background: var(--am-nuit);
+}
+
+.tableauSqueletteTete {
+  display: block;
+  height: 28px;
+  background: var(--am-profond);
+}
+
+.tableauSqueletteLigne {
+  display: flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 var(--am-space-8);
+}
+
+.tableauSqueletteLigne:nth-child(even) {
+  background: var(--am-carte-sombre);
+}
+
+.squeletteCellule {
+  width: 100%;
+  height: 10px;
+}
+
+.squeletteGarantie {
+  height: 64px;
+  border-radius: var(--am-radius-10);
+}
+
+.squeletteBouton {
+  min-height: 54px;
+  border-radius: var(--am-radius-14);
+}

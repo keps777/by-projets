@@ -141,7 +141,7 @@ export const EXEMPLES_PARAMS: Record<string, string> = {
   sessionId: "session-k-dla-270105-2-1",
   demandeId: "dem-annulation-billet-alp-dla-270105-0171",
   appareilId: "appareil-gu3-dla",
-  exportId: "exp-2026-12",
+  exportId: "journal_ventes",
   ligneId: "ligne-alp-dlabaf",
   busId: "bus-lt207ab",
   dossierId: "AV-2027-0041",
