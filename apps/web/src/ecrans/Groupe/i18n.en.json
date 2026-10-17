@@ -1,0 +1,62 @@
+{
+  "titre": "",
+  "sousTitre": "",
+  "retour": "",
+  "modes": {
+    "groupe": "",
+    "bus_entier": "",
+    "cagnotte": "",
+    "nom": ""
+  },
+  "depart": {
+    "trajet": "",
+    "heure": ""
+  },
+  "voyageurs": {
+    "nom": "",
+    "moins": "",
+    "plus": "",
+    "legende": ""
+  },
+  "reservation": "",
+  "cagnotte": {
+    "titre": "",
+    "calcul": "",
+    "moi": "",
+    "statut": {
+      "paye": "",
+      "lien_envoye": "",
+      "en_attente": ""
+    }
+  },
+  "actions": {
+    "whatsapp": "",
+    "bus": ""
+  },
+  "payer": {
+    "ma_part": "",
+    "tout": ""
+  },
+  "partage": "",
+  "messages": {
+    "blocageTermine": "",
+    "miseAJour": "",
+    "siegesPris": "",
+    "paiement": "",
+    "devisEnvoye": "",
+    "devisChiffre": "",
+    "devisEchec": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
