@@ -1,0 +1,45 @@
+{
+  "entete": {
+    "titre": "",
+    "titreAvenir": "",
+    "titreAttente": "",
+    "sousTitre": "",
+    "retour": ""
+  },
+  "encaisse": {
+    "libelle": "",
+    "cash": "",
+    "momo": "",
+    "ecart": ""
+  },
+  "verrou": {
+    "traitees_one": "",
+    "traitees_other": "",
+    "clos": "",
+    "aVenir": ""
+  },
+  "envoi": {
+    "titre": "",
+    "titreAvenir": "",
+    "recu": ""
+  },
+  "apercu": {
+    "titre": ""
+  },
+  "boutons": {
+    "revoir": "",
+    "tableauDeBord": "",
+    "cloturer": ""
+  },
+  "signature": {
+    "sousTitre": "",
+    "fermer": "",
+    "clavier": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": "",
+    "erreur": "",
+    "reessayer": ""
+  }
+}
