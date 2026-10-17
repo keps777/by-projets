@@ -1,5 +1,5 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { EcranComptableRapprochement } from "@/ecrans/ComptableRapprochement";
 
 export default function Page() {
-  return <EcranVide planche="ComptableRapprochement" />;
+  return <EcranComptableRapprochement />;
 }

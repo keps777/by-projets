@@ -1,0 +1,67 @@
+{
+  "entete": {
+    "titre": "",
+    "sousTitre_one": "",
+    "sousTitre_other": "",
+    "retour": ""
+  },
+  "intro": "",
+  "tableau": {
+    "reference": "",
+    "montant": "",
+    "total": "",
+    "operateur": {
+      "mtn": "",
+      "orange": ""
+    },
+    "action": {
+      "rembourser": "",
+      "rattacher": "",
+      "demander": ""
+    },
+    "decision": {
+      "rembourser": "",
+      "rattacher": "",
+      "demander": ""
+    }
+  },
+  "explications": {
+    "rembourser": {
+      "titre": "",
+      "detail": ""
+    },
+    "rattacher": {
+      "titre": "",
+      "detail": ""
+    },
+    "demander": {
+      "titre": "",
+      "detail": ""
+    }
+  },
+  "pied_one": "",
+  "pied_other": "",
+  "boutons": {
+    "plusTard": "",
+    "appliquer_one": "",
+    "appliquer_other": "",
+    "remboursement_one": "",
+    "remboursement_other": "",
+    "rattachement_one": "",
+    "rattachement_other": "",
+    "reclamation_one": "",
+    "reclamation_other": ""
+  },
+  "signature": {
+    "sousTitre": "",
+    "fermer": "",
+    "clavier": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": "",
+    "traite": "",
+    "erreur": "",
+    "reessayer": ""
+  }
+}
