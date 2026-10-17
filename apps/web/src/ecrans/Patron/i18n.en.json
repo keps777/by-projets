@@ -1,0 +1,73 @@
+{
+  "entete": {
+    "sousTitre": "",
+    "gares_one": "",
+    "gares_other": "",
+    "bus_one": "",
+    "bus_other": ""
+  },
+  "jour": {
+    "etiquette": "",
+    "comparaison": "",
+    "billets": "",
+    "colis": "",
+    "remplissage": "",
+    "ecart": ""
+  },
+  "assistant": {
+    "titre_one": "",
+    "titre_other": ""
+  },
+  "tuiles": {
+    "analyses": {
+      "titre": "",
+      "detail": ""
+    },
+    "gares": {
+      "titre": "",
+      "detail": "",
+      "detailSansEffectif": ""
+    },
+    "rapports": {
+      "titre": "",
+      "detail": ""
+    },
+    "comptable": {
+      "titre": "",
+      "detail": ""
+    },
+    "financement": {
+      "titre": "",
+      "detail": ""
+    },
+    "interAgences": {
+      "titre": "",
+      "detail": ""
+    },
+    "reglages": {
+      "titre": "",
+      "detail": ""
+    },
+    "modules": {
+      "titre": "",
+      "detail": ""
+    },
+    "controle": {
+      "titre": "",
+      "detail": ""
+    }
+  },
+  "alertes": {
+    "titre": "",
+    "mention": "",
+    "hier": "",
+    "aucune": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": "",
+    "erreur": "",
+    "erreurAlertes": "",
+    "reessayer": ""
+  }
+}
