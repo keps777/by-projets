@@ -3,6 +3,7 @@ import {
   SCENARIO_PAR_DEFAUT,
   agence,
   colis,
+  modules,
   patron,
   voyageur,
   type Scenario,
@@ -32,6 +33,12 @@ export function composerScenario(nom: string, donnees: EcranFixtures): Scenario 
   agence.installerMockAgence(enConstruction as never, donnees as never);
   operations.push(...enConstruction.operations);
   flux.push(...enConstruction.flux);
+
+  // Le client prend la première implémentation d'une opération : les modules passent avant le patron,
+  // pour partager l'état avec la lecture des réglages (README du client des modules).
+  const m = modules.installerMockModules();
+  operations.push(...m.operations);
+  flux.push(...(m.flux ?? []));
 
   const p = patron.installerMockPatron(nom, donnees as never);
   operations.push(...p.operations);
