@@ -1,0 +1,26 @@
+{
+  "titre": "",
+  "retour": "",
+  "resume": {
+    "compagnies_one": "",
+    "compagnies_other": "",
+    "busEnRoute": "",
+    "departsAVenir_one": "",
+    "departsAVenir_other": ""
+  },
+  "carte": {
+    "aria": "",
+    "legende": ""
+  },
+  "lignes": {
+    "titre": "",
+    "aide": "",
+    "des": "",
+    "via": "",
+    "covoiturage": "",
+    "chargement": "",
+    "vide": "",
+    "erreur": "",
+    "reessayer": ""
+  }
+}
