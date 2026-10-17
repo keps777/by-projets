@@ -1,0 +1,52 @@
+{
+  "entete": {
+    "retour": "Retour",
+    "marque": "AfriMove · {{compagnie}}",
+    "marqueSeule": "AfriMove",
+    "verifie": "compte vérifié · répond en 2 min"
+  },
+  "chiffres": {
+    "billets": "Billets",
+    "colis": "Colis",
+    "recette": "Recette",
+    "variation": "{{variation}} vs hier",
+    "litiges_one": "{{count}} litige",
+    "litiges_other": "{{count}} litiges",
+    "repartition": "cash {{cash}} · MoMo {{momo}}"
+  },
+  "gares": {
+    "billets_one": "{{nombre}} billet",
+    "billets_other": "{{nombre}} billets",
+    "ecart": "écart",
+    "aucune": "Aucune gare dans ce rapport."
+  },
+  "enRoute": { "titre": "En route" },
+  "remplissage": {
+    "titre": "Remplissage",
+    "moyen": "{{pct}} % moyen"
+  },
+  "annulations": {
+    "titre": "Annulations",
+    "aucune": "aucune",
+    "detail": "{{nombre}} ({{montant}}), {{pin}}",
+    "toutesAvecPin": "toutes avec PIN",
+    "sansPin": "dont au moins une sans PIN"
+  },
+  "enLigne": {
+    "titre": "En ligne",
+    "billets_one": "{{nombre}} billet ({{pct}} %)",
+    "billets_other": "{{nombre}} billets ({{pct}} %)"
+  },
+  "ouvrirDetail": "Ouvrir le détail dans l'app",
+  "signature": "{{heure}} · signé {{signatures}}",
+  "signatureAucune": "{{heure}} · aucune signature",
+  "voir": "Voir →",
+  "saisie": "Pose une question sur tes chiffres…",
+  "ouvrirAssistant": "Ouvrir l'assistant",
+  "etats": {
+    "chargement": "Chargement du rapport du soir",
+    "vide": "Le rapport du soir n'est pas encore arrivé. Il part chaque soir à 21 h.",
+    "erreur": "Le rapport du soir ne s'est pas chargé.",
+    "reessayer": "Réessayer"
+  }
+}
