@@ -1,0 +1,62 @@
+{
+  "titre": "",
+  "sousTitre": "",
+  "fonction": {
+    "feminin": "",
+    "masculin": ""
+  },
+  "retour": "",
+  "badge": "",
+  "compteurs": {
+    "liste": {
+      "libelle": "",
+      "detail": ""
+    },
+    "comptes": {
+      "libelle": "",
+      "detail": ""
+    },
+    "ecart": {
+      "libelle": "",
+      "sansBillet": "",
+      "aucun": "",
+      "sansVoyageur": ""
+    }
+  },
+  "sieges": {
+    "titre": "",
+    "total": ""
+  },
+  "fiche": {
+    "titre": "",
+    "lieuHeure": "",
+    "declare": "",
+    "aucuneVente": "",
+    "venteTrouvee": "",
+    "regulariser": "",
+    "signaler": "",
+    "regularise": "",
+    "signale": "",
+    "echecRegularisation": "",
+    "echecSignalement": ""
+  },
+  "siege": {
+    "echec": ""
+  },
+  "cloture": {
+    "libelle": "",
+    "echec": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
