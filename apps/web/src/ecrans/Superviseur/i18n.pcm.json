@@ -1,0 +1,49 @@
+{
+  "entete": {
+    "titre": "",
+    "sousTitre": "",
+    "synchro": ""
+  },
+  "demandes": {
+    "titre_one": "",
+    "titre_other": "",
+    "aide": "",
+    "cloture": {
+      "titre": "",
+      "detail": "",
+      "action": ""
+    },
+    "annulation": {
+      "titre": "",
+      "detail": "",
+      "action": ""
+    }
+  },
+  "guichets": {
+    "libelle": "",
+    "ecartOuvert": "",
+    "aValider": "",
+    "ouvertA": "",
+    "ferme": ""
+  },
+  "departs": {
+    "titre": "",
+    "aide": "",
+    "ligne": "",
+    "bus": "",
+    "fusion": "",
+    "remplissage": ""
+  },
+  "raccourcis": {
+    "controle": "",
+    "equipe": "",
+    "debloquer": "",
+    "rapport": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": "",
+    "erreur": "",
+    "reessayer": ""
+  }
+}

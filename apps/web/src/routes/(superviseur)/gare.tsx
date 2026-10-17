@@ -1,5 +1,5 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { EcranSuperviseur } from "@/ecrans/Superviseur";
 
 export default function Page() {
-  return <EcranVide planche="Superviseur" />;
+  return <EcranSuperviseur />;
 }
