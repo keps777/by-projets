@@ -61,6 +61,7 @@ export const SuperviseurVoir = ecran({
     pin: {
       titre: `Mon PIN · ${ESSONO.nom}`,
       aide: "Marie ne peut pas annuler seule",
+      saisie: "6 chiffres saisis sur 6",
       touches: ["Utiliser mon empreinte", "Effacer"],
       regle:
         "L'annulation garde le numéro 0171, passe à l'état « annulé », n'est pas facturée par AfriMove et apparaît nominativement dans le rapport du soir.",

@@ -37,6 +37,7 @@ export const SuperviseurValider = ecran({
     pin: {
       titre: `Mon PIN · ${ESSONO.nom}`,
       aide: "6 chiffres · jamais partagé",
+      saisie: "4 chiffres saisis sur 6",
       touches: ["Utiliser mon empreinte", "Effacer"],
       regle: `${ESSAIS_PIN_MAX} essais, puis blocage ${BLOCAGE_PIN_MINUTES} min et alerte au patron. Le PIN valide, horodaté et signé, part dans le rapport de 21 h.`,
     },
@@ -45,6 +46,6 @@ export const SuperviseurValider = ecran({
       valider: { libelle: "Valider · écart − 1 000", detail: "signé Essono · caisse fermée" },
     },
   },
-  visuel: { chiffresPin: 6, statutEcart: K.evaluation.statut },
+  visuel: { pinSaisis: 4, pinTotal: 6, statutEcart: K.evaluation.statut },
   entites: { sessions: [SESSION_JOSEPH] },
 });
