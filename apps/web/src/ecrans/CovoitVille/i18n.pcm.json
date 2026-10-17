@@ -1,0 +1,48 @@
+{
+  "titre": "",
+  "ville": {
+    "detectee": "",
+    "choisie": ""
+  },
+  "mode": {
+    "aria": "",
+    "entreVilles": "",
+    "enVille": "",
+    "glisse": ""
+  },
+  "role": {
+    "aria": "",
+    "passager": "",
+    "conducteur": ""
+  },
+  "itineraire": {
+    "depart": "",
+    "arrivee": "",
+    "maPosition": "",
+    "detail": "",
+    "maintenant": ""
+  },
+  "maintenant": {
+    "titre": "",
+    "titreSeul": "",
+    "sens": ""
+  },
+  "offre": {
+    "dans": "",
+    "minutes": "",
+    "motoTaxi": "",
+    "verifie": "",
+    "verifiee": "",
+    "regulier": ""
+  },
+  "matin": {
+    "erreur": ""
+  },
+  "securite": "",
+  "etats": {
+    "chargement": "",
+    "vide": "",
+    "erreur": "",
+    "reessayer": ""
+  }
+}

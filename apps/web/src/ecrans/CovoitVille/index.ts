@@ -1,0 +1,1 @@
+export { EcranCovoitVille } from "./EcranCovoitVille";

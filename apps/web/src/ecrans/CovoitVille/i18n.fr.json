@@ -1,0 +1,48 @@
+{
+  "titre": "Covoiturage",
+  "ville": {
+    "detectee": "{{ville}} · détectée ▾",
+    "choisie": "{{ville}} ▾"
+  },
+  "mode": {
+    "aria": "Type de trajet",
+    "entreVilles": "Entre villes",
+    "enVille": "En ville · {{ville}}",
+    "glisse": "glisse pour changer"
+  },
+  "role": {
+    "aria": "Mon rôle",
+    "passager": "Je suis passager",
+    "conducteur": "Je conduis"
+  },
+  "itineraire": {
+    "depart": "Départ",
+    "arrivee": "Arrivée",
+    "maPosition": "ma position",
+    "detail": "{{km}} km · maintenant",
+    "maintenant": "maintenant"
+  },
+  "maintenant": {
+    "titre": "Partent maintenant · {{count}}",
+    "titreSeul": "Partent maintenant",
+    "sens": "dans ta direction"
+  },
+  "offre": {
+    "dans": "dans {{count}} min",
+    "minutes": "{{count}} min",
+    "motoTaxi": "moto-taxi",
+    "verifie": "vérifié",
+    "verifiee": "vérifiée",
+    "regulier": "régulier"
+  },
+  "matin": {
+    "erreur": "Le trajet du matin n'a pas pu être enregistré. Réessaie."
+  },
+  "securite": "Prix fixés à l'avance, jamais négociés dans la voiture. Position partagée avec un proche pendant le trajet.",
+  "etats": {
+    "chargement": "Chargement des covoiturages en ville",
+    "vide": "Aucune voiture ne part maintenant dans ta direction.",
+    "erreur": "Les offres ne se sont pas chargées.",
+    "reessayer": "Réessayer"
+  }
+}
