@@ -1,0 +1,421 @@
+/*
+ * Planche « Relais » (docs/maquettes-v3/Relais.dc.html). Les valeurs viennent de la maquette ; les couleurs, polices
+ * et espacements sont les variables --am-* de @afrimove/design.
+ */
+
+/* Corps : les trois relais et l'invitation tiennent dans la planche ; au-delà, la liste défile sans barre visible. */
+.corps.corps {
+  gap: var(--am-space-8);
+  padding: var(--am-space-12) var(--am-gutter) 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.corps.corps::-webkit-scrollbar {
+  display: none;
+}
+
+/* ------------------------------------------------------------------ carte et titre */
+
+.haut {
+  position: relative;
+  flex: none;
+  height: 340px;
+  background: var(--am-carte-sombre);
+  overflow: hidden;
+}
+
+.carte {
+  display: block;
+}
+
+.carteQuadrillage {
+  fill: none;
+  stroke: var(--am-surface);
+}
+
+.carteRoutes {
+  fill: none;
+  stroke: var(--am-surface-2);
+}
+
+.carteMarche {
+  fill: var(--am-surface-2);
+  stroke: var(--am-trait);
+}
+
+.carteMarcheNom,
+.carteLieu,
+.carteDomicileNom {
+  font-family: var(--am-font-texte);
+}
+
+.carteMarcheNom {
+  fill: var(--am-craie-2);
+  font-size: var(--am-fs-10);
+  font-weight: 600;
+}
+
+.carteLieu {
+  fill: var(--am-craie-2);
+  font-size: var(--am-fs-11);
+  font-weight: 600;
+}
+
+.cartePoint {
+  fill: var(--am-vert);
+}
+
+.carteRang {
+  fill: var(--am-nuit);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-11);
+  font-weight: 700;
+}
+
+.carteDomicile {
+  fill: var(--am-nuit);
+  stroke: var(--am-ambre);
+}
+
+.carteDomicileNom {
+  fill: var(--am-ambre);
+  font-size: var(--am-fs-11);
+  font-weight: 700;
+}
+
+.carteGare {
+  fill: var(--am-orange);
+}
+
+.carteGareIcone {
+  fill: var(--am-nuit);
+}
+
+.retour {
+  position: absolute;
+  top: var(--am-space-16);
+  left: var(--am-space-16);
+}
+
+/*
+ * Le titre de l'écran (clé commune de la coquille) est un h1 masqué : la planche dessine le sien en simple texte,
+ * posé sur la carte.
+ */
+.titreEcran {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.entete {
+  position: absolute;
+  right: var(--am-space-16);
+  bottom: var(--am-space-12);
+  left: var(--am-space-16);
+  display: flex;
+  flex-direction: column;
+  line-height: var(--am-lh-titre);
+}
+
+.etiquette {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-11);
+  letter-spacing: var(--am-ls-etiquette-serree);
+  text-transform: uppercase;
+  color: var(--am-vert);
+}
+
+.sousTitre {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-26);
+  font-weight: 800;
+  letter-spacing: var(--am-ls-titre);
+}
+
+/* ------------------------------------------------------------------ les relais */
+
+.liste {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--am-space-8);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* Une carte est une étiquette cliquable : toucher n'importe où choisit ce relais (le bouton radio est masqué). */
+.relais {
+  position: relative;
+  /* Comme dans la planche, les 64 px sont ceux du contenu : bordure et marges viennent en plus (90 px au total). */
+  box-sizing: content-box;
+  display: grid;
+  grid-template-columns: 30px 1fr auto;
+  gap: var(--am-space-10);
+  align-items: center;
+  min-height: 64px;
+  padding: var(--am-space-12) var(--am-space-14);
+  border-radius: var(--am-radius-14);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  cursor: pointer;
+}
+
+.relais[data-choisi="true"] {
+  border-color: var(--am-vert);
+}
+
+.relais:has(.radio:focus-visible) {
+  outline: 2px solid var(--am-orange);
+  outline-offset: 2px;
+}
+
+.radio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  opacity: 0;
+}
+
+.rang {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 14px;
+  background: var(--am-surface-2);
+  color: var(--am-vert);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-12);
+  font-weight: 700;
+}
+
+.relais[data-choisi="true"] .rang {
+  background: var(--am-vert);
+  color: var(--am-nuit);
+}
+
+.textes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-2);
+  min-width: 0;
+}
+
+.nom {
+  font-size: var(--am-fs-14);
+  font-weight: 700;
+}
+
+.etat {
+  font-size: var(--am-fs-11);
+  font-weight: 600;
+  color: var(--am-vert);
+}
+
+.etat[data-ton="bientot"] {
+  color: var(--am-ambre);
+}
+
+.etat[data-ton="ferme"] {
+  color: var(--am-rouge);
+}
+
+.detail {
+  font-size: var(--am-fs-12);
+  color: var(--am-craie-2);
+}
+
+.supplement {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-13);
+  font-weight: 700;
+  color: var(--am-vert);
+}
+
+/* ------------------------------------------------------------------ devenir point relais */
+
+.devenir {
+  /* Les 52 px sont ceux du contenu (70 px bordure et marges comprises). */
+  box-sizing: content-box;
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--am-space-10);
+  min-height: 52px;
+  padding: var(--am-space-8) var(--am-space-12);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-ambre);
+  background: var(--am-ambre-fond);
+  color: var(--am-craie);
+  text-decoration: none;
+}
+
+.devenir:hover {
+  color: var(--am-craie);
+}
+
+.devenirIcone {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--am-radius-10);
+  background: var(--am-ambre);
+  color: var(--am-nuit);
+}
+
+.devenirTextes {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  line-height: var(--am-lh-serree);
+}
+
+.devenirTitre {
+  font-size: var(--am-fs-12);
+  font-weight: 700;
+}
+
+.devenirDetail {
+  font-size: var(--am-fs-10);
+  color: var(--am-craie-2);
+}
+
+.devenirChevron {
+  display: flex;
+  flex: none;
+  color: var(--am-ambre);
+}
+
+/* ------------------------------------------------------------------ pied : choisir ce relais */
+
+.choisir {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 56px;
+  margin: 0;
+  padding: 0 var(--am-space-18);
+  border: 0;
+  border-radius: var(--am-radius-16);
+  background: var(--am-vert);
+  color: var(--am-nuit);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.choisir[aria-busy="true"] {
+  cursor: progress;
+}
+
+.choisirLibelle {
+  font-size: var(--am-fs-15);
+  font-weight: 700;
+}
+
+.choisirPrix {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-20);
+  font-weight: 800;
+}
+
+.relais:focus-visible,
+.devenir:focus-visible,
+.choisir:focus-visible,
+.reessayer:focus-visible,
+.retourColis:focus-visible {
+  outline: 2px solid var(--am-orange);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------ message d'échec du choix */
+
+.message {
+  margin: 0;
+  padding: var(--am-space-10) var(--am-space-14);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-rouge);
+  background: var(--am-rouge-fond);
+  color: var(--am-craie);
+  font-size: var(--am-fs-13);
+  line-height: var(--am-lh-normale);
+}
+
+/* ------------------------------------------------------------------ états chargement, vide et erreur */
+
+.etatPlanche {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--am-space-8);
+  text-align: center;
+}
+
+.etatTitre {
+  margin: 0;
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-18);
+  font-weight: 800;
+  letter-spacing: var(--am-ls-sous-titre);
+}
+
+.etatDetail {
+  margin: 0;
+  font-size: var(--am-fs-13);
+  color: var(--am-craie-2);
+}
+
+.squelette {
+  flex: none;
+  min-height: 64px;
+  border-radius: var(--am-radius-14);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  animation: pulse var(--am-pulse-duration) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .squelette {
+    animation: none;
+  }
+}
+
+.reessayer,
+.retourColis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  margin-top: var(--am-space-8);
+  padding: 0 var(--am-space-14);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie-2);
+  font-family: inherit;
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
