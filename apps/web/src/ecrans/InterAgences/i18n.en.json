@@ -1,0 +1,49 @@
+{
+  "titre": "",
+  "retour": "",
+  "sousTitre": "",
+  "colis": {
+    "titre": "",
+    "poids": "",
+    "troncon": "",
+    "trajet": "",
+    "horaire": "",
+    "part": "",
+    "aucun": ""
+  },
+  "reglement": {
+    "titre": "",
+    "nousDoit_one": "",
+    "nousDoit_other": "",
+    "nousLeDevons_one": "",
+    "nousLeDevons_other": "",
+    "solde": ""
+  },
+  "jours": {
+    "0": "",
+    "1": "",
+    "2": "",
+    "3": "",
+    "4": "",
+    "5": "",
+    "6": ""
+  },
+  "voyageurs": {
+    "titre": "",
+    "texte": ""
+  },
+  "actions": {
+    "convention": "",
+    "ajouter": ""
+  },
+  "chargement": {
+    "libelle": ""
+  },
+  "vide": {
+    "texte": ""
+  },
+  "erreur": {
+    "texte": "",
+    "reessayer": ""
+  }
+}
