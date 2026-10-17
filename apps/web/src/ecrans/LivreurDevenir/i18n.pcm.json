@@ -1,0 +1,39 @@
+{
+  "retour": "",
+  "titre": "",
+  "sousTitre": "",
+  "pastille": "",
+  "montant": "",
+  "chiffres": {
+    "course": "",
+    "courseDetail": "",
+    "semaine_one": "",
+    "semaine_other": "",
+    "livreurs": "",
+    "villes_one": "",
+    "villes_other": ""
+  },
+  "actions": {
+    "plusTard": "",
+    "inscrire": "",
+    "inscrireDetail": ""
+  },
+  "messages": {
+    "photos": "",
+    "momo": "",
+    "dejaLivreur": "",
+    "echec": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
