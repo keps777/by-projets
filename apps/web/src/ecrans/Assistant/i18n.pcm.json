@@ -1,0 +1,28 @@
+{
+  "entete": {
+    "retour": "",
+    "titre": "",
+    "sousTitre": ""
+  },
+  "fuite": {
+    "etiquette": "",
+    "periode_one": "",
+    "periode_other": ""
+  },
+  "gain": {
+    "etiquette": "",
+    "mention": "",
+    "parMois": ""
+  },
+  "saisie": {
+    "placeholder": "",
+    "parler": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": "",
+    "erreur": "",
+    "reessayer": "",
+    "envoi": ""
+  }
+}
