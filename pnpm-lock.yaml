@@ -211,9 +211,15 @@ importers:
 
   packages/api-client:
     dependencies:
+      '@afrimove/contrats':
+        specifier: workspace:*
+        version: link:../contrats
       '@afrimove/domain':
         specifier: workspace:*
         version: link:../domain
+      '@afrimove/fixtures':
+        specifier: workspace:*
+        version: link:../fixtures
       '@tanstack/react-query':
         specifier: 5.104.3
         version: 5.104.3(react@19.1.1)
@@ -246,7 +252,21 @@ importers:
         specifier: 3.2.4
         version: 3.2.4(@types/node@26.6.5)(jiti@2.7.0)(jsdom@26.1.0)(terser@5.51.2)(tsx@4.20.6)
 
-  packages/contrats: {}
+  packages/contrats:
+    dependencies:
+      '@afrimove/domain':
+        specifier: workspace:*
+        version: link:../domain
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+    devDependencies:
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: 3.2.4
+        version: 3.2.4(@types/node@26.6.5)(jiti@2.7.0)(jsdom@26.1.0)(terser@5.51.2)(tsx@4.20.6)
 
   packages/design: {}
 
