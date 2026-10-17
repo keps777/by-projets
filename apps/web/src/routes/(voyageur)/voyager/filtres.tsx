@@ -1,5 +1,5 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { EcranMainFiltres } from "@/ecrans/MainFiltres";
 
 export default function Page() {
-  return <EcranVide planche="MainFiltres" />;
+  return <EcranMainFiltres />;
 }
