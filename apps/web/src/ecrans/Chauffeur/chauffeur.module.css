@@ -1,0 +1,520 @@
+/*
+ * Planche « Chauffeur » (docs/maquettes-v3/Chauffeur.dc.html). Les valeurs viennent de la maquette ; les couleurs,
+ * polices et espacements sont les variables --am-* de @afrimove/design.
+ *
+ * Surcharges du kit (variantes locales, le kit n'est pas modifié) : le sélecteur est doublé (`.x.x`) pour passer
+ * devant la règle d'un seul sélecteur du composant du kit quel que soit l'ordre des feuilles.
+ */
+
+/* Corps : 8 px entre les cartes (le kit met 10 px). */
+.corps.corps {
+  gap: var(--am-space-8);
+}
+
+/* Pied : 8 px au-dessus du bouton, aucun écart entre éléments (le kit : 10 px au-dessus, 8 px d'écart). */
+.pied.pied {
+  gap: var(--am-space-8);
+  padding-top: var(--am-space-8);
+}
+
+/* Pastille « GPS » de l'en-tête. */
+.gps {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 11px;
+  border-radius: var(--am-radius-pill);
+  background: var(--am-surface);
+  border: 1px solid var(--am-trait);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-11);
+  color: var(--am-craie-2);
+}
+
+.gpsPoint {
+  width: 7px;
+  height: 7px;
+  border-radius: 4px;
+  background: var(--am-vert);
+  animation: pulse var(--am-pulse-duration) infinite;
+}
+
+.gpsPoint[data-actif="false"] {
+  background: var(--am-gris);
+  animation: none;
+}
+
+/* Étiquette mono en capitales (Trajet en cours, Dépenses du trajet). */
+.etiquette {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+  color: var(--am-ambre);
+}
+
+/* Trajet en cours. */
+.trajet {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--am-space-10);
+  align-items: center;
+  padding: var(--am-space-14);
+  border-radius: var(--am-radius-18);
+  background: var(--am-surface);
+  border: 1px solid var(--am-trait);
+}
+
+.trajetTextes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-2);
+  line-height: var(--am-lh-compacte);
+}
+
+.trajetRoute {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-22);
+  font-weight: 800;
+}
+
+.trajetDetail {
+  font-size: var(--am-fs-12);
+  color: var(--am-craie-2);
+}
+
+.vitesse {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: var(--am-lh-plein);
+}
+
+.vitesseValeur {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-30);
+  font-weight: 800;
+  color: var(--am-vert);
+}
+
+.vitesseValeur[data-exces="true"] {
+  color: var(--am-rouge);
+}
+
+.vitesseUnite {
+  margin-top: var(--am-space-2);
+  font-size: var(--am-fs-10);
+  color: var(--am-craie-2);
+}
+
+/* Dépenses du trajet. */
+.depenses {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-6);
+  padding: var(--am-space-12) var(--am-space-14);
+  border-radius: var(--am-radius-16);
+  background: var(--am-profond);
+  border: 1px solid var(--am-trait);
+}
+
+.depensesTete {
+  display: flex;
+  justify-content: space-between;
+}
+
+.depensesRappel {
+  color: var(--am-craie-2);
+}
+
+.lignes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ligne {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: var(--am-space-8);
+  align-items: center;
+  min-height: 36px;
+  font-size: var(--am-fs-13);
+}
+
+/* La planche pose min-height: 36px sans border-box : la ligne à filet fait donc 37 px. */
+.ligne + .ligne {
+  min-height: 37px;
+  border-top: 1px solid var(--am-surface-2);
+}
+
+.ligneAutre {
+  color: var(--am-craie-2);
+}
+
+.montant {
+  font-family: var(--am-font-mono);
+  font-weight: 700;
+}
+
+.montantAucun {
+  font-family: var(--am-font-mono);
+  color: var(--am-gris);
+}
+
+.justificatif {
+  font-size: var(--am-fs-11);
+  font-weight: 700;
+  color: var(--am-vert);
+}
+
+.justificatif[data-manquant="true"] {
+  color: var(--am-rouge);
+}
+
+/* « + ajouter » : 32 px dessinés comme la planche, zone tactile portée à 44 px par le pseudo-élément. */
+.ajouter {
+  position: relative;
+  min-height: 32px;
+  padding: 0 var(--am-space-10);
+  border-radius: 8px;
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-family: inherit;
+  font-size: var(--am-fs-11);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ajouter::after {
+  content: "";
+  position: absolute;
+  inset: -6px -4px;
+}
+
+.ajouter:focus-visible,
+.action:focus-visible,
+.arrivee:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+/* Incident et retard. */
+.actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--am-space-8);
+}
+
+.action {
+  box-sizing: border-box;
+  min-height: 72px;
+  margin: 0;
+  /* La planche garde le remplissage par défaut d'un bouton (1 px 6 px) : le détail passe à la ligne au même endroit. */
+  padding: 1px 6px;
+  border-radius: var(--am-radius-16);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--am-space-4);
+  line-height: var(--am-lh-compacte);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.action[aria-busy="true"] {
+  cursor: progress;
+}
+
+.actionIncident {
+  border-color: var(--am-rouge);
+  background: var(--am-rouge-fond);
+}
+
+.actionTitre {
+  font-size: var(--am-fs-14);
+  font-weight: 700;
+}
+
+.actionDetail {
+  font-size: var(--am-fs-11);
+  color: var(--am-craie-2);
+}
+
+/* Retour d'une action (incident, retard) ou d'une erreur : n'apparaît qu'après le geste. */
+.retour {
+  margin: 0;
+  padding: var(--am-space-10) var(--am-space-14);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-vert);
+  background: var(--am-vert-fond);
+  color: var(--am-craie);
+  font-size: var(--am-fs-13);
+  line-height: var(--am-lh-normale);
+}
+
+.retour[data-ton="erreur"] {
+  border-color: var(--am-rouge);
+  background: var(--am-rouge-fond);
+}
+
+/* Ma semaine. */
+.semaine {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-6);
+  padding: var(--am-space-12) var(--am-space-14);
+  border-radius: var(--am-radius-16);
+  background: var(--am-surface);
+  border: 1px solid var(--am-trait);
+}
+
+.semaineTete {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.semaineTitre {
+  font-size: var(--am-fs-13);
+  font-weight: 700;
+}
+
+.semainePaie {
+  font-size: var(--am-fs-11);
+  color: var(--am-craie-2);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--am-space-6);
+  margin: 0;
+  text-align: center;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  padding: var(--am-space-8) var(--am-space-4);
+  border-radius: var(--am-radius-10);
+  background: var(--am-carte-sombre);
+}
+
+.statValeur {
+  margin: 0;
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-18);
+  font-weight: 800;
+}
+
+.statValeur[data-ton="bon"] {
+  color: var(--am-vert);
+}
+
+.statValeur[data-ton="exces"] {
+  color: var(--am-rouge);
+}
+
+.statLibelle {
+  margin: 0;
+  font-size: var(--am-fs-10);
+  color: var(--am-craie-2);
+}
+
+/* Bouton d'arrivée : vert, centré, 56 px (le bouton « assistant » du kit est aligné à gauche avec une flèche). */
+.arrivee {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--am-space-8);
+  box-sizing: border-box;
+  min-height: 56px;
+  border-radius: var(--am-radius-16);
+  background: var(--am-vert);
+  color: var(--am-nuit);
+  font-size: var(--am-fs-15);
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.arrivee[aria-busy="true"] {
+  cursor: progress;
+}
+
+/* Bandeau d'échec de l'arrivée, au-dessus du bouton. */
+.alerte {
+  margin: 0;
+  padding: var(--am-space-10) var(--am-space-14);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-rouge);
+  background: var(--am-rouge-fond);
+  color: var(--am-craie);
+  font-size: var(--am-fs-13);
+  line-height: var(--am-lh-normale);
+}
+
+/* États chargement, vide et erreur : même cadre nuit, mêmes cartes. */
+.etat {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--am-space-8);
+  text-align: center;
+}
+
+.etatTitre {
+  margin: 0;
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-18);
+  font-weight: 800;
+  letter-spacing: var(--am-ls-sous-titre);
+}
+
+.etatDetail {
+  margin: 0;
+  font-size: var(--am-fs-13);
+  color: var(--am-craie-2);
+}
+
+.squelette {
+  min-height: 96px;
+  border-radius: var(--am-radius-16);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  animation: pulse var(--am-pulse-duration) infinite;
+}
+
+.reessayer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  margin-top: var(--am-space-8);
+  padding: 0 var(--am-space-14);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie-2);
+  font-family: inherit;
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Feuille « Ajouter une dépense » : colonne de 390 px centrée, même sur grand écran. */
+.voile.voile {
+  align-items: center;
+}
+
+.voile.voile > div {
+  max-width: 390px;
+}
+
+.formulaire {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-10);
+  padding-bottom: var(--am-space-4);
+}
+
+.groupeCategories {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--am-space-6);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.groupeLegende {
+  padding: 0;
+  margin-bottom: var(--am-space-3);
+  font-size: var(--am-fs-11);
+  font-weight: 600;
+  color: var(--am-craie-2);
+}
+
+.categorie {
+  min-height: 44px;
+  border-radius: var(--am-radius-10);
+  border: 1px solid var(--am-trait);
+  background: var(--am-nuit);
+  color: var(--am-craie-2);
+  font-family: inherit;
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.categorie[aria-checked="true"] {
+  border-color: var(--am-ambre);
+  background: var(--am-ambre-fond);
+  color: var(--am-craie);
+}
+
+.photo {
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-10);
+}
+
+.photoBouton {
+  flex: none;
+  min-height: 44px;
+  padding: 0 var(--am-space-14);
+  border-radius: var(--am-radius-10);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface-2);
+  color: var(--am-craie);
+  font-family: inherit;
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.photoJointe {
+  min-width: 0;
+  font-size: var(--am-fs-12);
+  font-weight: 700;
+  color: var(--am-vert);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.erreur {
+  margin: 0;
+  font-size: var(--am-fs-12);
+  color: var(--am-rouge);
+}
+
+.boutonFeuille {
+  min-height: 46px;
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface-2);
+  color: var(--am-craie);
+  font-family: inherit;
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.boutonFeuillePrincipal {
+  border-color: var(--am-orange);
+  background: var(--am-orange);
+  color: var(--am-nuit);
+  font-weight: 700;
+}

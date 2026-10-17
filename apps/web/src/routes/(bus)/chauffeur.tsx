@@ -1,5 +1,5 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { EcranChauffeur } from "@/ecrans/Chauffeur";
 
 export default function Page() {
-  return <EcranVide planche="Chauffeur" />;
+  return <EcranChauffeur />;
 }
