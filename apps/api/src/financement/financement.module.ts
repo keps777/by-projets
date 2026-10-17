@@ -1,6 +1,9 @@
 import { Inject, Injectable, Module, type OnModuleInit } from "@nestjs/common";
 import { VerificateurSignature } from "../modules/signature";
+import { ChiffrementService } from "../socle/chiffrement/chiffrement.service";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { DeuxFoisService } from "./deux-fois.service";
 import { EcrituresSignees, PrevenirPatron } from "./ecritures";
@@ -19,6 +22,14 @@ import {
   VersementsPaieMemoire,
 } from "./memoire";
 import { PaieService } from "./paie.service";
+import {
+  ConventionsPrisma,
+  DossiersPrisma,
+  LotsPaiePrisma,
+  OffresCreditPrisma,
+  PrelevementsPrisma,
+  ReglagesPrisma,
+} from "./postgres";
 import {
   ConventionsFinancement,
   DonneesAgence,
@@ -88,9 +99,10 @@ export class VerificationPortsFinancement implements OnModuleInit {
  * AfriMove ne détient jamais les fonds : le partenaire verse, le prélèvement lui revient directement.
  *
  * Module autonome : tous ses accès extérieurs sont des ports (`ports.ts`) avec une version en mémoire
- * (`memoire.ts`). Il n'est pas encore dans `AppModule` : le coordinateur branche les adaptateurs PostgreSQL
- * (tables décrites dans le README), le partenaire, l'agrégateur de versements et les données de l'agence,
- * puis l'ajoute aux `imports`.
+ * (`memoire.ts`). Dans `AppModule`. Les dossiers, prélèvements, lots de paie, réglages, conventions et offres
+ * de crédit ont une version PostgreSQL (`postgres.ts`) et une version en mémoire, choisies par `API_STOCKAGE`.
+ * Restent simulés, et font donc refuser la production : le partenaire financier (aucun n'est choisi), les
+ * versements de paie (agrégateur), les salaires (module équipe) et les données de l'agence.
  */
 @Module({
   controllers: [FinancementController, PartenaireFinancementController],
@@ -105,16 +117,48 @@ export class VerificationPortsFinancement implements OnModuleInit {
     VerificateurSignature,
     VerificationPortsFinancement,
     { provide: Horloge, useClass: HorlogeSysteme },
-    { provide: DossiersFinancement, useClass: DossiersMemoire },
-    { provide: Prelevements, useClass: PrelevementsMemoire },
-    { provide: LotsPaie, useClass: LotsPaieMemoire },
+    {
+      provide: DossiersFinancement,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new DossiersPrisma(prisma) : new DossiersMemoire(),
+    },
+    {
+      provide: Prelevements,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new PrelevementsPrisma(prisma) : new PrelevementsMemoire(),
+    },
+    {
+      provide: LotsPaie,
+      inject: [CONFIG, PrismaService, ChiffrementService],
+      useFactory: (config: AppConfig, prisma: PrismaService, chiffrement: ChiffrementService) =>
+        stockageSurPostgres(config)
+          ? new LotsPaiePrisma(prisma, chiffrement)
+          : new LotsPaieMemoire(),
+    },
     { provide: SalairesAgence, useClass: SalairesMemoire },
     { provide: VersementsPaie, useClass: VersementsPaieMemoire },
     { provide: PartenaireFinancier, useClass: PartenaireSimule },
     { provide: DonneesAgence, useClass: DonneesAgenceMemoire },
-    { provide: ConventionsFinancement, useClass: ConventionsMemoire },
-    { provide: OffresCredit, useClass: OffresCreditMemoire },
-    { provide: ReglagesFinancement, useClass: ReglagesMemoire },
+    {
+      provide: ConventionsFinancement,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new ConventionsPrisma(prisma) : new ConventionsMemoire(),
+    },
+    {
+      provide: OffresCredit,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new OffresCreditPrisma(prisma) : new OffresCreditMemoire(),
+    },
+    {
+      provide: ReglagesFinancement,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new ReglagesPrisma(prisma) : new ReglagesMemoire(),
+    },
   ],
   exports: [
     FinancementService,

@@ -19,6 +19,7 @@ import {
   type ConfigCovoiturage,
 } from "../covoiturage/config";
 import { VerificationStockageCovoiturage } from "../covoiturage/covoiturage.module";
+import { VerificationPortsFinancement } from "../financement/financement.module";
 import { VerificationStockageGps } from "../gps/gps.module";
 import { VerificationPortsLivraison } from "../livraison/livraison.module";
 import { ConversionDevisesPaiements } from "../paiements/adaptateurs";
@@ -235,6 +236,7 @@ describe("production : l'application refuse de démarrer avec un port en mémoir
     ["relais", VerificationPortsRelais, /RelaisModule.*(mémoire|simulés)/],
     ["livraison", VerificationPortsLivraison, /LivraisonModule.*en mémoire/],
     ["vendeurs", VerificationPortsVendeurs, /VendeursModule.*(mémoire|simulés)/],
+    ["financement", VerificationPortsFinancement, /FinancementModule.*(mémoire|simulés)/],
   ];
 
   it.each(gardes)(

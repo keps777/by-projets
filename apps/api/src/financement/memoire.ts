@@ -164,7 +164,8 @@ export class PrelevementsMemoire extends Prelevements implements Volatil {
 
   async confirmer(cle: string, reference: string) {
     const p = this.lignes.get(cle);
-    if (p) this.lignes.set(cle, { ...p, etat: "execute", reference });
+    // Comme la base : un prélèvement déjà exécuté ne change plus.
+    if (p && p.etat === "en_attente") this.lignes.set(cle, { ...p, etat: "execute", reference });
   }
 
   async annuler(cle: string) {
@@ -173,7 +174,10 @@ export class PrelevementsMemoire extends Prelevements implements Volatil {
   }
 
   async enAttente() {
-    return [...this.lignes.values()].filter((p) => p.etat === "en_attente").map(copie);
+    return [...this.lignes.values()]
+      .filter((p) => p.etat === "en_attente")
+      .sort((a, b) => Date.parse(a.at) - Date.parse(b.at) || a.cle.localeCompare(b.cle))
+      .map(copie);
   }
 
   private total(dossierId: string): number {
@@ -234,6 +238,7 @@ export class LotsPaieMemoire extends LotsPaie implements Volatil {
   async incomplets() {
     return [...this.lots.values()]
       .filter((l) => l.lignes.some((x) => x.etat === "en_attente"))
+      .sort((a, b) => Date.parse(a.lanceA) - Date.parse(b.lanceA) || a.id.localeCompare(b.id))
       .map(copie);
   }
 }

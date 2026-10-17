@@ -1983,3 +1983,148 @@ model DebitCommissionVendeur {
   @@index([etat])
   @@map("debit_commission_vendeur")
 }
+
+/**
+ * ------------------------------------------------------------------ financement, crédit et paie (AM-134)
+ */
+
+/// Un dossier d'avance sur recettes. AfriMove ne détient jamais les fonds : aucune colonne ne porte un solde.
+/// SQL : une seule avance ouverte par agence (index unique partiel), référence du partenaire unique,
+/// version pour la concurrence optimiste, mandat de prélèvement en colonnes.
+model DossierFinancement {
+  /// « AV-2027-0041 »
+  id                     String    @id
+  version                Int       @default(1)
+  agenceId               String    @db.Uuid
+  demandePar             String    @db.Uuid
+  montant                Int
+  /// SQL : envoye | en_analyse | verse | refuse | retire
+  statut                 String
+  partenaire             String?
+  referencePartenaire    String?   @unique
+  /// remboursementPctVentesMomo, dureeEstimeeSemaines, coutTotalPct
+  conditions             Json
+  envoyeA                DateTime  @db.Timestamptz(3)
+  reponseAvant           DateTime  @db.Timestamptz(3)
+  accuseA                DateTime? @db.Timestamptz(3)
+  decisionA              DateTime? @db.Timestamptz(3)
+  verseA                 DateTime? @db.Timestamptz(3)
+  retireA                DateTime? @db.Timestamptz(3)
+  motifRefus             String?
+  /// Les quatre pièces figées à l'envoi.
+  pieces                 Json
+  mandatPourcentage      Int
+  mandatSigneA           DateTime  @db.Timestamptz(3)
+  mandatSignePar         String    @db.Uuid
+  /// Référence du compte marchand, jamais le numéro.
+  mandatCompteMarchandId String
+  /// SQL : mtn | orange
+  mandatOperateur        String
+  mandatActif            Boolean
+  resteDu                Int?
+  rembourseA             DateTime? @db.Timestamptz(3)
+
+  prelevements PrelevementAvance[]
+
+  @@index([statut])
+  @@index([agenceId, envoyeA(sort: Desc)])
+  @@map("dossier_financement")
+}
+
+/// Un numéro d'avance par année : « AV-2027-0041 » est la valeur 41 de 2027.
+model CompteurAvance {
+  annee  Int @id
+  valeur Int
+
+  @@map("compteur_avance")
+}
+
+/// Un prélèvement sur une vente MoMo, versé directement au partenaire. La clé est `prelevement:<venteId>`.
+model PrelevementAvance {
+  cle          String   @id
+  dossierId    String
+  agenceId     String   @db.Uuid
+  venteId      String   @unique
+  montantVente Int
+  montant      Int
+  at           DateTime @db.Timestamptz(3)
+  /// SQL : en_attente | execute
+  etat         String
+  reference    String?
+
+  dossier DossierFinancement @relation(fields: [dossierId], references: [id], onDelete: Restrict)
+
+  @@index([dossierId])
+  @@index([etat])
+  @@map("prelevement_avance")
+}
+
+/// Un lot de paie par agence et par mois. SQL : unique (agenceId, mois).
+model LotPaie {
+  id       String   @id @db.Uuid
+  version  Int      @default(1)
+  agenceId String   @db.Uuid
+  /// « AAAA-MM »
+  mois     String
+  lancePar String   @db.Uuid
+  lanceA   DateTime @db.Timestamptz(3)
+  total    Int
+
+  lignes LignePaie[]
+
+  @@unique([agenceId, mois])
+  @@map("lot_paie")
+}
+
+/// Un salaire du lot. Le numéro MoMo n'y est que chiffré.
+model LignePaie {
+  lotId            String  @db.Uuid
+  personneId       String  @db.Uuid
+  /// Place dans le lot : l'ordre d'écriture est conservé.
+  rang             Int
+  nom              String
+  montant          Int
+  /// SQL : mtn | orange
+  operateur        String?
+  telephoneChiffre String?
+  /// SQL : en_attente | verse | refuse
+  etat             String
+  tentative        Int
+  reference        String?
+  motif            String?
+
+  lot LotPaie @relation(fields: [lotId], references: [id], onDelete: Restrict)
+
+  @@id([lotId, personneId])
+  @@index([etat])
+  @@map("ligne_paie")
+}
+
+/// Réglages de l'agence propres au financement.
+model ReglageFinancement {
+  agenceId         String  @id @db.Uuid
+  billetEnDeuxFois Boolean @default(false)
+  jourDePaie       String  @default("vendredi")
+
+  @@map("reglage_financement")
+}
+
+/// La convention avec l'établissement partenaire (écrite par un agent AfriMove, aucune route ici).
+model ConventionFinancement {
+  agenceId   String    @id @db.Uuid
+  partenaire String
+  signeeA    DateTime? @db.Timestamptz(3)
+
+  @@map("convention_financement")
+}
+
+/// L'offre de crédit matériel faite par le partenaire (écrite par le partenaire ou un agent, aucune route ici).
+model OffreCreditMateriel {
+  agenceId          String @id @db.Uuid
+  description       String
+  montantTotal      Int
+  mensualites       Int
+  montantMensualite Int
+
+  @@map("offre_credit_materiel")
+}
