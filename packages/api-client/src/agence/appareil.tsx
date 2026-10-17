@@ -167,8 +167,12 @@ export function useAppareilAgence(): AppareilAgence {
   return useMemo(() => {
     if (fourni) return fourni;
     if (client.mode !== "mock") {
+      // Adaptateur HTTP : l'appareil installé sur ce téléphone (jamais un appareil inventé). Un seul exemplaire par
+      // client : deux hooks d'un même écran partagent ainsi le même compteur de numéros.
+      const installe = appareilInstalle(client);
+      if (installe) return installe;
       throw new Error(
-        "useAppareilAgence : monter un <FournisseurAppareilAgence> sous <FournisseurApi>",
+        "useAppareilAgence : monter un <FournisseurAppareilAgence> sous <FournisseurApi>, ou installer l'appareil (localStorage « afrimove.appareil »)",
       );
     }
     let demo = appareilsDemo.get(client);
@@ -178,4 +182,123 @@ export function useAppareilAgence(): AppareilAgence {
     }
     return demo;
   }, [fourni, client]);
+}
+
+/* ------------------------------------------------------------------ appareil installé (adaptateur HTTP) */
+
+/**
+ * L'appareil de l'agent avec l'adaptateur HTTP (recette AM-181).
+ *
+ * Constat de la recette : `useAppareilAgence` ne savait fabriquer un appareil qu'avec le mock ; avec l'adaptateur
+ * HTTP il levait « monter un <FournisseurAppareilAgence> » et aucun écran d'écriture (vente, quai, caisse) ne
+ * s'affichait. Aucun écran n'installe encore l'appareil (AM-160 branchera le moteur de synchronisation et la plage
+ * attribuée par le serveur) : en attendant, l'identité de l'appareil est lue dans le stockage local, où
+ * l'installation de l'appareil (ou, en recette, le banc) la dépose avec la plage attribuée.
+ *
+ * Le compteur de numéros est réécrit dans le stockage à CHAQUE événement créé : un rechargement de la page, une
+ * coupure ou un redémarrage du téléphone ne fait ni reprendre un numéro déjà imprimé ni en sauter un.
+ */
+export const CLE_APPAREIL = "afrimove.appareil";
+
+export interface ProvisionnementAppareil {
+  appareilId: string;
+  /** La personne connectée sur l'appareil (le compte du jeton : le serveur refuse un autre auteur). */
+  auteurId: string;
+  /** Code agence de 3 lettres. */
+  agence: string;
+  /** Code gare de 3 lettres. */
+  gare: string;
+  plage: Plage;
+  /** État du compteur de numéros, tenu à jour par l'appareil. */
+  etat?: EtatGenerateur;
+}
+
+type Stockage = Pick<Storage, "getItem" | "setItem">;
+
+function stockageLocal(): Stockage | undefined {
+  try {
+    return (globalThis as { localStorage?: Stockage }).localStorage;
+  } catch {
+    return undefined;
+  }
+}
+
+function estProvisionnement(v: unknown): v is ProvisionnementAppareil {
+  if (typeof v !== "object" || v === null) return false;
+  const p = v as Record<string, unknown>;
+  const plage = p["plage"] as Record<string, unknown> | undefined;
+  return (
+    typeof p["appareilId"] === "string" &&
+    typeof p["auteurId"] === "string" &&
+    typeof p["agence"] === "string" &&
+    typeof p["gare"] === "string" &&
+    typeof plage?.["debut"] === "number" &&
+    typeof plage["fin"] === "number"
+  );
+}
+
+/** Ce que l'installation de l'appareil a déposé, ou `null` (rien, illisible ou incomplet). */
+export function lireProvisionnement(stockage = stockageLocal()): ProvisionnementAppareil | null {
+  try {
+    const brut = stockage?.getItem(CLE_APPAREIL);
+    if (!brut) return null;
+    const valeur: unknown = JSON.parse(brut);
+    return estProvisionnement(valeur) ? valeur : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * L'appareil décrit par le stockage local, ou `null` si l'appareil n'a pas été installé. Chaque événement créé
+ * réécrit l'état du compteur dans le stockage (voir plus haut).
+ */
+export function appareilDepuisStockage(
+  horloge: Horloge,
+  stockage: Stockage | undefined = stockageLocal(),
+): AppareilAgence | null {
+  const prov = lireProvisionnement(stockage);
+  if (!prov) return null;
+  const interne = creerAppareilAgence({
+    appareilId: prov.appareilId,
+    auteurId: prov.auteurId,
+    agence: prov.agence,
+    gare: prov.gare,
+    plage: prov.plage,
+    horloge,
+    ...(prov.etat ? { etat: prov.etat } : {}),
+  });
+  return {
+    ...interne,
+    creerEvenement(definition, donnees) {
+      const evenement = interne.creerEvenement(definition, donnees);
+      try {
+        stockage?.setItem(
+          CLE_APPAREIL,
+          JSON.stringify({
+            ...prov,
+            etat: interne.exporterEtat(),
+          } satisfies ProvisionnementAppareil),
+        );
+      } catch {
+        // Stockage plein ou bloqué : la vente continue, le compteur repartira de la dernière valeur écrite.
+      }
+      return evenement;
+    },
+  };
+}
+
+const appareilsInstalles = new WeakMap<object, { identite: string; appareil: AppareilAgence }>();
+
+/** L'appareil installé, partagé par tous les hooks du client ; refait si l'installation a changé d'appareil ou de personne. */
+function appareilInstalle(client: { horloge: Horloge }): AppareilAgence | null {
+  const prov = lireProvisionnement();
+  if (!prov) return null;
+  const identite = `${prov.appareilId}|${prov.auteurId}|${prov.agence}|${prov.gare}`;
+  const connu = appareilsInstalles.get(client);
+  if (connu && connu.identite === identite) return connu.appareil;
+  const appareil = appareilDepuisStockage(client.horloge);
+  if (!appareil) return null;
+  appareilsInstalles.set(client, { identite, appareil });
+  return appareil;
 }

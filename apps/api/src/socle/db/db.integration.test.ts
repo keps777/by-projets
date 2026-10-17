@@ -8,6 +8,7 @@ import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { AppModule } from "../app.module";
 import { AuditService } from "../audit/audit.service";
+import { HachageService } from "../auth/hachage.service";
 import { ComptesService } from "../comptes/comptes.service";
 import { CONFIG } from "../config/config";
 import { configurerApp } from "../configurer-app";
@@ -71,7 +72,7 @@ describe.skipIf(!URL_BASE)("PostgreSQL réel", () => {
     await executerSeed({
       prisma,
       comptes: app.get(ComptesService),
-      env: { SEED_PIN: "482915", SEED_MOT_DE_PASSE: MOT_DE_PASSE },
+      env: { SEED_PIN: "482915", SEED_MOT_DE_PASSE: MOT_DE_PASSE, SEED_PIN_SUPERVISEUR: "739152" },
       journal: () => undefined,
     });
   });
@@ -79,6 +80,40 @@ describe.skipIf(!URL_BASE)("PostgreSQL réel", () => {
   afterAll(async () => {
     await app?.close();
     await base?.fermer();
+  });
+
+  it("le seed lie le guichetier de démonstration à son guichet (sinon la vente répond 404 GUICHET_INCONNU)", async () => {
+    const guichetier = await app
+      .get(ComptesService)
+      .trouverParTelephone(TELEPHONES_DEMO.guichetier);
+    const { rows } = await requete(
+      `SELECT g."rang", ga."code" FROM "personne" p JOIN "guichet" g ON g."id" = p."guichetId" JOIN "gare" ga ON ga."id" = g."gareId" WHERE p."id" = $1`,
+      [guichetier?.id],
+    );
+    expect(rows).toEqual([{ rang: 1, code: "DLA" }]);
+    // Rejouer le seed ne casse rien et ne crée pas de doublon.
+    await executerSeed({
+      prisma,
+      comptes: app.get(ComptesService),
+      env: { SEED_PIN: "482915", SEED_MOT_DE_PASSE: MOT_DE_PASSE },
+      journal: () => undefined,
+    });
+    const { rows: apres } = await requete(`SELECT count(*)::int AS n FROM "guichet"`);
+    expect(apres).toEqual([{ n: 1 }]);
+  });
+
+  it("le seed donne un PIN de validation au superviseur (sinon il ne peut valider ni caisse ni annulation)", async () => {
+    const superviseur = await app
+      .get(ComptesService)
+      .trouverParTelephone(TELEPHONES_DEMO.superviseur);
+    const { rows } = await requete(`SELECT "pinHache" FROM "personne" WHERE "id" = $1`, [
+      superviseur?.id,
+    ]);
+    const hache = (rows[0] as { pinHache: string | null }).pinHache;
+    expect(hache).toMatch(/^\$argon2id\$/);
+    const hachage = app.get(HachageService);
+    expect(await hachage.verifier(hache!, "739152")).toBe(true);
+    expect(await hachage.verifier(hache!, "482915")).toBe(false);
   });
 
   async function connexionDirection(telephone: string, role: string): Promise<string> {
