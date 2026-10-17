@@ -237,7 +237,11 @@ describe("ConfigPersonne · modifier une personne", () => {
     await remplacerTexte(champ("Nom"), "Joseph Mbappé Ndi");
     await userEvent.click(boutonEnregistrer());
     await saisirPin("123456");
-    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("dialog", { name: "Signer l'enregistrement" }),
+      ).not.toBeInTheDocument(),
+    );
 
     const relue = await client.executer(patron.OP_PERSONNE_EDITABLE, { personneId: PERSONNE });
     expect(relue.nom).toBe("Joseph Mbappé Ndi");
