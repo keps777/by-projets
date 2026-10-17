@@ -1,0 +1,54 @@
+{
+  "entete": {
+    "retour": "",
+    "marque": "",
+    "marqueSeule": "",
+    "verifie": ""
+  },
+  "chiffres": {
+    "billets": "",
+    "colis": "",
+    "recette": "",
+    "variation": "",
+    "litiges_one": "",
+    "litiges_other": "",
+    "repartition": ""
+  },
+  "gares": {
+    "billets_one": "",
+    "billets_other": "",
+    "ecart": "",
+    "aucune": ""
+  },
+  "enRoute": {
+    "titre": ""
+  },
+  "remplissage": {
+    "titre": "",
+    "moyen": ""
+  },
+  "annulations": {
+    "titre": "",
+    "aucune": "",
+    "detail": "",
+    "toutesAvecPin": "",
+    "sansPin": ""
+  },
+  "enLigne": {
+    "titre": "",
+    "billets_one": "",
+    "billets_other": ""
+  },
+  "ouvrirDetail": "",
+  "signature": "",
+  "signatureAucune": "",
+  "voir": "",
+  "saisie": "",
+  "ouvrirAssistant": "",
+  "etats": {
+    "chargement": "",
+    "vide": "",
+    "erreur": "",
+    "reessayer": ""
+  }
+}
