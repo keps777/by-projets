@@ -1,0 +1,61 @@
+{
+  "reglages": "",
+  "profil": {
+    "cni": "",
+    "depuis": "",
+    "indisponible": ""
+  },
+  "fidelite": {
+    "libelle": "",
+    "points": "",
+    "equivalence": ""
+  },
+  "parrainage": {
+    "libelle": "",
+    "ami_one": "",
+    "ami_other": "",
+    "detail": ""
+  },
+  "proches": {
+    "titre": "",
+    "ajouter": "",
+    "payer": "",
+    "demander": "",
+    "prevenu": "",
+    "prevenue": "",
+    "payeMesVoyages": "",
+    "vide": ""
+  },
+  "historique": {
+    "titre": "",
+    "sousTitre": "",
+    "statut": {
+      "a_venir": "",
+      "a_retirer": "",
+      "voyage": "",
+      "annule": "",
+      "livre": ""
+    },
+    "vide": ""
+  },
+  "devenir": {
+    "relais": {
+      "titre": "",
+      "detail": ""
+    },
+    "livreur": {
+      "titre": "",
+      "detail": ""
+    }
+  },
+  "pied": {
+    "langue": "",
+    "recus": "",
+    "aide": ""
+  },
+  "etats": {
+    "chargement": "",
+    "indisponible": "",
+    "reessayer": ""
+  }
+}
