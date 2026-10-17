@@ -1,0 +1,30 @@
+{
+  "titre": "",
+  "retour": "",
+  "position": "",
+  "positionInconnue": "",
+  "gps": "",
+  "ligne": {
+    "etiquette": "",
+    "toi": ""
+  },
+  "bus": {
+    "dans": "",
+    "places_one": "",
+    "places_other": "",
+    "parti": "",
+    "arrive": "",
+    "classe": {
+      "classique": "",
+      "vip": ""
+    },
+    "prorata": ""
+  },
+  "note": "",
+  "etats": {
+    "chargement": "",
+    "vide": "",
+    "erreur": "",
+    "reessayer": ""
+  }
+}

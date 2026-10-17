@@ -1,5 +1,5 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { EcranArret } from "@/ecrans/Arret";
 
 export default function Page() {
-  return <EcranVide planche="Arret" />;
+  return <EcranArret />;
 }
