@@ -1,29 +1,29 @@
 {
-  "retour": "",
+  "retour": "Go back",
   "statut": {
-    "en_cours": "",
-    "active": "",
-    "refusee": ""
+    "en_cours": "E DEY GO ON",
+    "active": "ACTIVE",
+    "refusee": "DEM REFUSE"
   },
   "suivi": {
-    "titre": ""
+    "titre": "Tracking · live"
   },
   "actions": {
-    "modifier": "",
-    "retour": "",
-    "retourDetail": ""
+    "modifier": "Change my form",
+    "retour": "Go back to my space",
+    "retourDetail": "I go tell you as soon as dem put am on"
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Tracking of your application dey load",
     "vide": {
-      "titre": "",
-      "detail": "",
-      "devenir": ""
+      "titre": "No application dey go on",
+      "detail": "You never submit application to become delivery man.",
+      "devenir": "Become delivery man"
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "We no fit load di tracking",
+      "detail": "Check your network, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

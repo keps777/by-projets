@@ -1,28 +1,28 @@
 {
   "entete": {
-    "retour": "",
-    "titre": "",
-    "sousTitre": ""
+    "retour": "Back",
+    "titre": "The assistant",
+    "sousTitre": "It reads your figures, explains, suggests. You decide."
   },
   "fuite": {
-    "etiquette": "",
-    "periode_one": "",
-    "periode_other": ""
+    "etiquette": "{{rang}} · Money leaking",
+    "periode_one": "last {{count}} day",
+    "periode_other": "last {{count}} days"
   },
   "gain": {
-    "etiquette": "",
-    "mention": "",
-    "parMois": ""
+    "etiquette": "{{rang}} · Money to gain",
+    "mention": "simulation",
+    "parMois": "per month"
   },
   "saisie": {
-    "placeholder": "",
-    "parler": ""
+    "placeholder": "Ask in French, by voice too…",
+    "parler": "Speak"
   },
   "etats": {
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": "",
-    "envoi": ""
+    "chargement": "Loading the assistant",
+    "vide": "The assistant has nothing to flag for now.",
+    "erreur": "The assistant could not be loaded.",
+    "reessayer": "Try again",
+    "envoi": "Your question was not sent. Try again."
   }
 }

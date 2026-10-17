@@ -242,12 +242,21 @@ describe("Splash · langue", () => {
     expect(lire(CLES.langue)).toBe("en");
   });
 
-  it("démarre avec la langue mémorisée et se replie sur le français quand le texte manque", async () => {
+  it("démarre avec la langue mémorisée, en pidgin puis en anglais, jamais avec une clé brute", async () => {
     await rendre({ langue: "pcm" });
-    expect(screen.getByRole("button", { name: "Pidgin" })).toHaveAttribute("aria-pressed", "true");
-    // Les textes pidgin ne sont pas encore écrits : le français s'affiche, jamais une clé brute.
-    expect(screen.getByText("A · comme Avance")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Commencer · 30 secondes" })).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "Pidgin" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    expect(screen.getByText("A · as for Avance")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Start · 30 seconds" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "I don get account" })).toBeInTheDocument();
+    cleanup();
+    await rendre({ langue: "en" });
+    await screen.findByRole("button", { name: "Pidgin" });
+    expect(screen.getByText("A · as in Avance")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "I already have an account" })).toBeInTheDocument();
+    expect(document.body.textContent).not.toMatch(/slogan\.|actions\.|jingle\./);
   });
 });
 

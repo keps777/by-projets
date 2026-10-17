@@ -1,56 +1,56 @@
 {
-  "retour": "",
-  "titre": "",
-  "sousTitre": "",
+  "retour": "Go back to di bus park",
+  "titre": "Conductor · {{nom}}",
+  "sousTitre": "Bus {{bus}} · {{origine}} → {{destination}} · e comot {{heure}}",
   "reseau": {
-    "horsLigne": "",
-    "sync": ""
+    "horsLigne": "NO NETWORK",
+    "sync": "SYNC"
   },
   "tuiles": {
-    "aBord": "",
-    "aBordDetail": "",
-    "libres": "",
-    "libresDetail": "",
-    "enRoute": "",
-    "enRouteDetail": ""
+    "aBord": "For inside bus",
+    "aBordDetail": "don scan",
+    "libres": "Free",
+    "libresDetail": "{{n}} don book {{arret}}",
+    "enRoute": "For road",
+    "enRouteDetail": "sold · {{montant}}"
   },
   "vente": {
-    "titre": "",
-    "titreTouche": "",
-    "trajet": "",
-    "moins": "",
-    "plus": "",
-    "place_one": "",
-    "place_other": "",
-    "siege_one": "",
-    "siege_other": "",
-    "voyageur": "",
-    "cash": "",
-    "cashDetail": "",
-    "cashDetailTouche": "",
-    "momo": "",
-    "momoDetail": "",
-    "note": "",
-    "confirmation_one": "",
-    "confirmation_other": "",
-    "erreur": ""
+    "titre": "Sell for road",
+    "titreTouche": "Sell for road · touch {{n}}",
+    "trajet": "{{montee}} → {{destination}}",
+    "moins": "One seat less",
+    "plus": "One seat more",
+    "place_one": "seat",
+    "place_other": "seat dem",
+    "siege_one": "seat {{siege}} · pro rata price wey di agency set",
+    "siege_other": "seat {{siege}} to {{dernier}} · pro rata price wey di agency set",
+    "voyageur": "Name · phone (no must, for di SMS)",
+    "cash": "CASH {{montant}}",
+    "cashDetail": "ticket by SMS",
+    "cashDetailTouche": "touch {{n}} · ticket by SMS",
+    "momo": "MOMO",
+    "momoDetail": "push · dem confirm for inside bus",
+    "note": "Number don put for my range ({{plage}}) even if no network. Di patron go see every sale for road tonight, wit di time and GPS location.",
+    "confirmation_one": "Ticket {{numeros}} don record.",
+    "confirmation_other": "Ticket dem {{numeros}} don record.",
+    "erreur": "Dem no record di sale. Check di free seat dem and start again."
   },
   "actions": {
-    "scanner": "",
-    "scannerSansArret": "",
-    "colis": "",
-    "colisSansNombre": "",
-    "incident": ""
+    "scanner": "Scan for {{arret}}",
+    "scannerSansArret": "Scan",
+    "colis": "Parcel dem to carry down · {{n}}",
+    "colisSansNombre": "Parcel dem to carry down",
+    "incident": "Incident · bus spoil"
   },
   "pied": {
-    "liste": "",
-    "listeSansNombre": "",
-    "montrer": ""
+    "liste": "List wit name: {{n}} for inside bus · dem fit check any time",
+    "listeSansNombre": "List wit name · dem fit check any time",
+    "montrer": "show"
   },
   "etats": {
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "chargement": "Bus status dey load",
+    "vide": "No bus dey go on for dis conductor.",
+    "erreur": "Bus status no load.",
+    "reessayer": "Try again"
   }
 }

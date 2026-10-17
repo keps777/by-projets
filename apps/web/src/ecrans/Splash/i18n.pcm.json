@@ -1,29 +1,29 @@
 {
-  "lieuEtHeure": "",
+  "lieuEtHeure": "Douala · {{heure}}",
   "langue": {
-    "groupe": ""
+    "groupe": "Language"
   },
-  "logo": "",
-  "signature": "",
+  "logo": "AfriMove logo: sign wey get shutter, amber A",
+  "signature": "A · as for Avance",
   "slogan": {
-    "ligne1": "",
-    "ligne2": ""
+    "ligne1": "Anywhere you dey,",
+    "ligne2": "we go find you."
   },
   "jingle": {
-    "titre": "",
-    "paroles": "",
-    "ecouter": "",
-    "arreter": "",
-    "echec": ""
+    "titre": "AfriMove jingle · 10 s",
+    "paroles": "\"Anywhere you dey, we go find you: Afri… Move!\"",
+    "ecouter": "Listen to di jingle",
+    "arreter": "Stop di jingle",
+    "echec": "Di sound no fit start for dis phone."
   },
   "actions": {
-    "principale": "",
-    "secondaire": ""
+    "principale": "Start · 30 seconds",
+    "secondaire": "I don get account"
   },
   "pied": {
-    "debut": "",
-    "compagnies_one": "",
-    "compagnies_other": "",
-    "fin": ""
+    "debut": "Ticket, parcel and carpooling",
+    "compagnies_one": "{{count}} partner company",
+    "compagnies_other": "{{count}} partner company dem",
+    "fin": "e dey work even without internet"
   }
 }

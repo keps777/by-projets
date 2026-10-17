@@ -1,85 +1,85 @@
 {
-  "retour": "",
+  "retour": "Go back to di ticket",
   "carte": {
-    "libelle": "",
-    "vitesse": ""
+    "libelle": "Map of di {{depart}} – {{arrivee}} road, bus after {{apres}}",
+    "vitesse": "{{vitesse}} km/h"
   },
   "statut": {
-    "direct": "",
-    "sansSignal": ""
+    "direct": "LIVE",
+    "sansSignal": "NO SIGNAL"
   },
   "arrivee": {
-    "etiquette": "",
-    "detail": "",
-    "retard": "",
-    "aLHeure": ""
+    "etiquette": "Time wey e go reach",
+    "detail": "di plan na {{prevue}} · {{retard}}",
+    "retard": "{{minutes}} min late",
+    "aLHeure": "on time"
   },
   "bus": {
-    "compagnieSiege": ""
+    "compagnieSiege": "{{compagnie}} · seat {{siege}}"
   },
   "prevenir": {
-    "titre": "",
-    "detail": "",
-    "interrupteur": "",
+    "titre": "Tell {{nom}} when I reach",
+    "detail": "1 touch · dem go send am SMS {{minutes}} min before {{gare}}",
+    "interrupteur": "SMS wey I reach for {{nom}}",
     "annonce": {
-      "active": "",
-      "annule": ""
+      "active": "{{nom}} go get SMS {{minutes}} min before e reach",
+      "annule": "{{nom}} no go get SMS again"
     },
-    "erreur": "",
+    "erreur": "We no fit set di SMS. Try again.",
     "sansProche": {
-      "titre": "",
-      "detail": ""
+      "titre": "Tell one person wey dey close to you when I reach",
+      "detail": "Add di person for Me · dem go get SMS before e reach"
     }
   },
   "frise": {
-    "libelle": "",
-    "prochain": ""
+    "libelle": "Stop dem for di road",
+    "prochain": "next stop"
   },
   "actions": {
-    "chauffeur": "",
-    "signaler": "",
-    "colis": ""
+    "chauffeur": "Driver",
+    "signaler": "Report",
+    "colis": "My parcel"
   },
   "feuille": {
-    "fermer": "",
-    "terminer": ""
+    "fermer": "Close",
+    "terminer": "E don finish"
   },
   "signaler": {
-    "titre": "",
+    "titre": "Report wahala",
     "motifs": {
       "retard": {
-        "titre": "",
-        "detail": ""
+        "titre": "Delay",
+        "detail": "Di bus dey late pass wetin dem plan"
       },
       "conduite": {
-        "titre": "",
-        "detail": ""
+        "titre": "How dem dey drive",
+        "detail": "Over speed or dangerous driving"
       },
       "incident": {
-        "titre": "",
-        "detail": ""
+        "titre": "Incident",
+        "detail": "Bus spoil, accident or wahala for inside bus"
       }
     },
-    "transmis": "",
-    "erreur": ""
+    "transmis": "Dem don send di report go {{gare}} station",
+    "erreur": "Di report no go. Try again."
   },
   "chauffeur": {
-    "titre": "",
-    "chargement": "",
-    "consigne": "",
-    "appeler": "",
-    "erreur": ""
+    "titre": "Call di driver",
+    "chargement": "Dem dey find di driver",
+    "consigne": "{{nom}} dey drive your bus. Call only if e dey urgent.",
+    "appeler": "Call {{nom}}",
+    "erreur": "Di driver number no load."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Di bus tracking dey load",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "We no see di bus",
+      "detail": "Dis ticket no dey again or e no dey for your name."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "Di tracking no load",
+      "detail": "Check your network, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

@@ -1,40 +1,40 @@
 {
   "entete": {
-    "titreAttente": "",
-    "sousTitre": "",
-    "retour": ""
+    "titreAttente": "Agreement between company dem",
+    "sousTitre": "Dem sign am {{date}} · {{renouvellement}}",
+    "retour": "Go back"
   },
   "statuts": {
-    "active": "",
-    "suspendue": "",
-    "resiliee": ""
+    "active": "ACTIVE",
+    "suspendue": "DEM SUSPEND AM",
+    "resiliee": "DEM END AM"
   },
   "signatures": {
-    "signePour": "",
-    "valeur": "",
-    "moi": ""
+    "signePour": "Dem sign am for {{compagnie}}",
+    "valeur": "{{signataire}} · patron PIN · {{quand}}",
+    "moi": "You"
   },
   "trimestre": {
-    "etiquette": "",
-    "echanges_one": "",
-    "echanges_other": "",
-    "litiges": "",
-    "litigesRegle_one": "",
-    "litigesRegle_other": "",
-    "litigesOuvert": "",
-    "litigesAucun": "",
-    "netRecu": "",
-    "lundis_one": "",
-    "lundis_other": ""
+    "etiquette": "Quarter",
+    "echanges_one": "parcel wey dem exchange",
+    "echanges_other": "parcels wey dem exchange",
+    "litiges": "Dispute dem",
+    "litigesRegle_one": "dem settle am for {{count}} day",
+    "litigesRegle_other": "dem settle am for {{count}} days",
+    "litigesOuvert": "e dey go on",
+    "litigesAucun": "no dispute",
+    "netRecu": "Net wey you receive",
+    "lundis_one": "{{count}} Monday",
+    "lundis_other": "{{count}} Mondays"
   },
   "boutons": {
-    "historique": "",
-    "retour": ""
+    "historique": "History · settlements",
+    "retour": "Go back · between company dem"
   },
   "etats": {
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "chargement": "Di agreement dey load",
+    "vide": "We no see dis agreement.",
+    "erreur": "Di agreement no load.",
+    "reessayer": "Try again"
   }
 }

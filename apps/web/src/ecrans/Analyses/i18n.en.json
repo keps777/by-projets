@@ -1,47 +1,47 @@
 {
   "entete": {
-    "titre": "",
-    "sousTitre": "",
-    "gares_one": "",
-    "gares_other": "",
-    "retour": "",
-    "periode": ""
+    "titre": "Analytics",
+    "sousTitre": "{{periode}} · {{gares}}",
+    "gares_one": "{{count}} station",
+    "gares_other": "{{count}} stations",
+    "retour": "Back",
+    "periode": "Period"
   },
   "periodes": {
-    "semaine": "",
-    "mois": "",
-    "trimestre": "",
-    "annee": ""
+    "semaine": "Week",
+    "mois": "Month",
+    "trimestre": "Quarter",
+    "annee": "Year"
   },
   "recette": {
     "titre": {
-      "semaine": "",
-      "mois": "",
-      "trimestre": "",
-      "annee": ""
+      "semaine": "Revenue per day",
+      "mois": "Revenue per week",
+      "trimestre": "Revenue per week",
+      "annee": "Revenue per month"
     }
   },
   "lignes": {
-    "titre": "",
-    "mention_one": "",
-    "mention_other": "",
-    "colis": "",
-    "aucune": ""
+    "titre": "By route · fill rate",
+    "mention_one": "{{count}} route · swipe",
+    "mention_other": "{{count}} routes · swipe",
+    "colis": "Parcels · all routes",
+    "aucune": "No route in this period."
   },
   "bus": {
-    "titre": "",
-    "mention": "",
-    "trajets_one": "",
-    "trajets_other": "",
-    "aucun": ""
+    "titre": "By bus · net",
+    "mention": "{{count}} buses · swipe",
+    "trajets_one": "{{count}} trip",
+    "trajets_other": "{{count}} trips",
+    "aucun": "No bus in this period."
   },
   "pied": {
-    "exporter": "",
-    "assistant": ""
+    "exporter": "Export to Excel",
+    "assistant": "Ask the assistant"
   },
   "etats": {
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "vide": "No information for this period.",
+    "erreur": "The analytics could not be loaded.",
+    "reessayer": "Try again"
   }
 }

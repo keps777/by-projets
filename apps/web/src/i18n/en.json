@@ -1,297 +1,297 @@
 {
   "coquille": {
-    "chargement": "",
+    "chargement": "Loading",
     "introuvable": {
-      "titre": "",
-      "retour": ""
+      "titre": "Page not found",
+      "retour": "Back to home"
     },
     "miseAJour": {
-      "message": "",
-      "action": ""
+      "message": "New version ready",
+      "action": "Update"
     },
     "langue": {
-      "aria": "",
-      "fr": "",
-      "en": "",
-      "pcm": ""
+      "aria": "Language",
+      "fr": "FR",
+      "en": "EN",
+      "pcm": "Pidgin"
     },
     "demo": {
-      "titre": "",
-      "role": "",
-      "ouvrir": "",
-      "kit": "",
-      "roles": ""
+      "titre": "Demo mode",
+      "role": "Role",
+      "ouvrir": "Open the workspace",
+      "kit": "UI kit",
+      "roles": "Roles"
     },
     "ecranVide": {
-      "etiquette": ""
+      "etiquette": "Screen to be built"
     },
     "controle": {
-      "titre": "",
-      "connexion": "",
-      "aide": "",
-      "action": "",
-      "demoMention": ""
+      "titre": "Control room",
+      "connexion": "Owner sign-in",
+      "aide": "Sign in with the owner account to open the control room.",
+      "action": "Sign in as owner",
+      "demoMention": "Simulated sign-in (demonstration)"
     },
     "acces": {
-      "refuse": ""
+      "refuse": "This space is not the one for your account."
     }
   },
   "navigation": {
     "voyageur": {
-      "aria": "",
-      "voyager": "",
-      "colis": "",
-      "covoit": "",
-      "moi": ""
+      "aria": "Navigation",
+      "voyager": "Travel",
+      "colis": "Parcels",
+      "covoit": "Carpool",
+      "moi": "Me"
     },
     "guichet": {
-      "aria": "",
-      "guichet": "",
-      "vendre": "",
-      "colis": "",
-      "quai": "",
-      "caisse": ""
+      "aria": "Ticket office navigation",
+      "guichet": "Ticket office",
+      "vendre": "Sell",
+      "colis": "Parcels",
+      "quai": "Platform",
+      "caisse": "Cash desk"
     },
     "superviseur": {
-      "aria": "",
-      "gare": "",
-      "caisses": "",
-      "quais": "",
-      "patron": ""
+      "aria": "Supervisor navigation",
+      "gare": "Station",
+      "caisses": "Cash desks",
+      "quais": "Platforms",
+      "patron": "Owner"
     },
     "patron": {
-      "aria": "",
-      "aujourdhui": "",
-      "analyses": "",
-      "gares": "",
-      "reglages": ""
+      "aria": "Owner navigation",
+      "aujourdhui": "Today",
+      "analyses": "Analytics",
+      "gares": "Stations",
+      "reglages": "Settings"
     }
   },
   "ecrans": {
     "Splash": {
-      "titre": ""
+      "titre": "First launch · logo, jingle, language"
     },
     "Connexion": {
-      "titre": ""
+      "titre": "Sign-in · number + SMS code · WhatsApp · USSD"
     },
     "Tuto": {
-      "titre": ""
+      "titre": "Tutorial · 3 screens · everything in 3 taps"
     },
     "Main": {
-      "titre": ""
+      "titre": "Home — live departures (1 tap to everything)"
     },
     "SiegePay": {
-      "titre": ""
+      "titre": "Seat + payment on one screen (tap 2 → 3)"
     },
     "Pass": {
-      "titre": ""
+      "titre": "Ticket · QR · 4-digit code"
     },
     "Direct": {
-      "titre": ""
+      "titre": "My bus live · notify a relative"
     },
     "Reseau": {
-      "titre": ""
+      "titre": "The network live · all companies"
     },
     "Covoit": {
-      "titre": ""
+      "titre": "Carpooling · intercity and in town"
     },
     "Paiement": {
-      "titre": ""
+      "titre": "Payment · MoMo · OM · card · from abroad"
     },
     "Course": {
-      "titre": ""
+      "titre": "Moto or taxi to the station"
     },
     "MainVille": {
-      "titre": ""
+      "titre": "Home · \"same city\" mode (detected city, departure, arrival)"
     },
     "CovoitVille": {
-      "titre": ""
+      "titre": "Carpooling · in town · passenger"
     },
     "CovoitConducteur": {
-      "titre": ""
+      "titre": "Carpooling · I'm driving (offer my trip)"
     },
     "MainFiltres": {
-      "titre": ""
+      "titre": "Home · dropdown filter: class, companies (one, several, all), favourites"
     },
     "Arret": {
-      "titre": ""
+      "titre": "Board along the way · stops"
     },
     "Groupe": {
-      "titre": ""
+      "titre": "Group · whole bus · shared pot"
     },
     "USSD": {
-      "titre": ""
+      "titre": "USSD *123# and WhatsApp · basic phone"
     },
     "Moi": {
-      "titre": ""
+      "titre": "Me · loyalty · referral · relatives · history"
     },
     "ColisEnvoi": {
-      "titre": ""
+      "titre": "Send a parcel · scan + form on one screen"
     },
     "ColisCode": {
-      "titre": ""
+      "titre": "Parcel · code · tracking · photo"
     },
     "Relais": {
-      "titre": ""
+      "titre": "Relay points · map"
     },
     "Livraison": {
-      "titre": ""
+      "titre": "Moto delivery in progress"
     },
     "Proche": {
-      "titre": ""
+      "titre": "Pay a relative's trip · from abroad"
     },
     "Guichet": {
-      "titre": ""
+      "titre": "Ticket office — agent home (everything in 1 tap)"
     },
     "Vente": {
-      "titre": ""
+      "titre": "Sale on one screen · seat · traveller · payment · print"
     },
     "Cadence": {
-      "titre": ""
+      "titre": "Rush mode (5 h) · 2 taps per ticket"
     },
     "CadenceBillet": {
-      "titre": ""
+      "titre": "Rush · next: printed ticket, number, seat, cash, SMS"
     },
     "CadenceQuai": {
-      "titre": ""
+      "titre": "Rush · at the platform: scan, name and ID filled in, boarding"
     },
     "GuichetColis": {
-      "titre": ""
+      "titre": "Parcels at the ticket office · label"
     },
     "Depot": {
-      "titre": ""
+      "titre": "Prepaid parcel drop-off · code"
     },
     "Quai": {
-      "titre": ""
+      "titre": "Platform · scan · count · luggage hold"
     },
     "Convoyeur": {
-      "titre": ""
+      "titre": "On-board seller · sales on the road"
     },
     "Chauffeur": {
-      "titre": ""
+      "titre": "Driver · waybill · incidents"
     },
     "Controleur": {
-      "titre": ""
+      "titre": "Spot check"
     },
     "Caisse": {
-      "titre": ""
+      "titre": "Cash desk · opening · closing · discrepancy"
     },
     "Superviseur": {
-      "titre": ""
+      "titre": "Station supervisor · PIN · cancellations"
     },
     "SuperviseurValider": {
-      "titre": ""
+      "titre": "Supervisor · approve a closing with the PIN"
     },
     "SuperviseurVoir": {
-      "titre": ""
+      "titre": "Supervisor · view and decide on a cancellation with the PIN"
     },
     "SuperviseurEquipe": {
-      "titre": ""
+      "titre": "Supervisor · team, PIN, accounts"
     },
     "SuperviseurDebloquer": {
-      "titre": ""
+      "titre": "Supervisor · unblock an offline ticket office since 12:00"
     },
     "RapportSoir": {
-      "titre": ""
+      "titre": "Evening report · WhatsApp 9 p.m."
     },
     "Patron": {
-      "titre": ""
+      "titre": "Owner — home (everything in 1 tap)"
     },
     "Assistant": {
-      "titre": ""
+      "titre": "The owner's assistant"
     },
     "Analyses": {
-      "titre": ""
+      "titre": "Analytics · week · routes · buses"
     },
     "Comptable": {
-      "titre": ""
+      "titre": "Accountant · exports · reconciliation"
     },
     "Config": {
-      "titre": ""
+      "titre": "Configuration · routes · fares · team"
     },
     "Modules": {
-      "titre": ""
+      "titre": "Modules · enable or hide (all 12)"
     },
     "Financement": {
-      "titre": ""
+      "titre": "Financing · advance · equipment loan · salaries"
     },
     "InterAgences": {
-      "titre": ""
+      "titre": "Parcels between companies · connection"
     },
     "RelaisApp": {
-      "titre": ""
+      "titre": "Relay point app"
     },
     "Livreur": {
-      "titre": ""
+      "titre": "Moto courier app"
     },
     "Conducteur": {
-      "titre": ""
+      "titre": "Carpool driver"
     },
     "Vendeur": {
-      "titre": ""
+      "titre": "Street seller · commission"
     },
     "Controle": {
-      "titre": ""
+      "titre": "Control room (web)"
     },
     "AssistantReponse": {
-      "titre": ""
+      "titre": "The assistant answers · why Bafoussam is dropping"
     },
     "AnalysesLigne": {
-      "titre": ""
+      "titre": "Analytics · one route in detail"
     },
     "AnalysesBus": {
-      "titre": ""
+      "titre": "Analytics · one bus in detail"
     },
     "ConfigLigne": {
-      "titre": ""
+      "titre": "Configuration · edit a route"
     },
     "ComptableRapprochement": {
-      "titre": ""
+      "titre": "Accountant · 4 MoMo transactions with no match"
     },
     "ComptableApercu": {
-      "titre": ""
+      "titre": "Accountant · export preview (pop-up)"
     },
     "ComptableCloture": {
-      "titre": ""
+      "titre": "Accountant · December closed · sent to the firm"
     },
     "FinancementDemande": {
-      "titre": ""
+      "titre": "Financing · application sent · tracking"
     },
     "InterAgencesConvention": {
-      "titre": ""
+      "titre": "Alpha – Oméga agreement"
     },
     "PatronEquipe": {
-      "titre": ""
+      "titre": "Owner · my stations, my people"
     },
     "PatronGare": {
-      "titre": ""
+      "titre": "Owner · one station in detail"
     },
     "PatronPersonne": {
-      "titre": ""
+      "titre": "Owner · one team member"
     },
     "ConfigEquipeListe": {
-      "titre": ""
+      "titre": "Settings · the team list (pop-up, filter by role)"
     },
     "ConfigPersonne": {
-      "titre": ""
+      "titre": "Settings · edit or add a person"
     },
     "ConfigRegles": {
-      "titre": ""
+      "titre": "Settings · edit a rule"
     },
     "RelaisDevenir": {
-      "titre": ""
+      "titre": "Become a relay point · open programme (traveller app)"
     },
     "RelaisInscription": {
-      "titre": ""
+      "titre": "Become a relay point · the form in 3 min"
     },
     "RelaisVerification": {
-      "titre": ""
+      "titre": "Become a relay point · verification · activation"
     },
     "LivreurDevenir": {
-      "titre": ""
+      "titre": "Become a courier · open programme · specifics"
     },
     "LivreurVerification": {
-      "titre": ""
+      "titre": "Become a courier · verification · first delivery"
     }
   }
 }

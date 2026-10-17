@@ -1,62 +1,62 @@
 {
-  "titre": "",
-  "sousTitre": "",
-  "retour": "",
+  "titre": "For plenty people",
+  "sousTitre": "Seat dem wey dey one side, full bus, contribution pot between friend dem",
+  "retour": "Go back",
   "modes": {
-    "groupe": "",
-    "bus_entier": "",
-    "cagnotte": "",
-    "nom": ""
+    "groupe": "Group · 2 to 12",
+    "bus_entier": "Full bus",
+    "cagnotte": "Contribution pot",
+    "nom": "How you wan travel"
   },
   "depart": {
-    "trajet": "",
-    "heure": ""
+    "trajet": "{{trajet}} · {{jour}}",
+    "heure": "{{heure}} {{compagnie}}"
   },
   "voyageurs": {
-    "nom": "",
-    "moins": "",
-    "plus": "",
-    "legende": ""
+    "nom": "How many passengers",
+    "moins": "Reduce passengers",
+    "plus": "Add passengers",
+    "legende": "passengers · {{nombre}} seat dem wey dey one side"
   },
-  "reservation": "",
+  "reservation": "Dem don book seat {{premier}} to {{dernier}} together, {{minutes}} min to pay. Di tickets go reach each number.",
   "cagnotte": {
-    "titre": "",
-    "calcul": "",
-    "moi": "",
+    "titre": "Who pay wetin",
+    "calcul": "{{nombre}} × {{prix}} = {{total}}",
+    "moi": "me",
     "statut": {
-      "paye": "",
-      "lien_envoye": "",
-      "en_attente": ""
+      "paye": "don pay",
+      "lien_envoye": "link don go",
+      "en_attente": "dem dey wait"
     }
   },
   "actions": {
-    "whatsapp": "",
-    "bus": ""
+    "whatsapp": "Share for WhatsApp",
+    "bus": "Rent bus of {{places}} seat · quote"
   },
   "payer": {
-    "ma_part": "",
-    "tout": ""
+    "ma_part": "Pay my own part · {{montant}} F",
+    "tout": "or pay for di whole group: {{montant}} F"
   },
-  "partage": "",
+  "partage": "Make we travel together: {{trajet}}, {{jour}} by {{heure}}. Pay your own part of {{part}} F here: {{lien}}",
   "messages": {
-    "blocageTermine": "",
-    "miseAJour": "",
-    "siegesPris": "",
-    "paiement": "",
-    "devisEnvoye": "",
-    "devisChiffre": "",
-    "devisEchec": ""
+    "blocageTermine": "Di time to hold di seat don finish. Go back to home to start again.",
+    "miseAJour": "We no fit update di group. Try again.",
+    "siegesPris": "Dem no dey hold dis seat dem for you again. Change how many passengers to book dem again.",
+    "paiement": "Di payment no fit start. Try again.",
+    "devisEnvoye": "Dem don send quote request for bus of {{places}} seat. Di company go answer before {{heure}}.",
+    "devisChiffre": "Quote for bus of {{places}} seat: {{montant}} F.",
+    "devisEchec": "Di quote request no pass. Try again."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Di group dey load",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "You never choose bus",
+      "detail": "Choose your bus for home, then come back here to travel together."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "We no fit load di group",
+      "detail": "Check your network, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

@@ -1,29 +1,29 @@
 {
-  "retour": "",
-  "titre": "",
+  "retour": "Back",
+  "titre": "Become a relay point",
   "suivi": {
-    "titre": "",
-    "liste": "",
-    "fait": "",
-    "enCours": "",
-    "aVenir": ""
+    "titre": "Tracking · live",
+    "liste": "Tracking of your application",
+    "fait": "Done: ",
+    "enCours": "In progress: ",
+    "aVenir": "Coming up: "
   },
   "actions": {
-    "modifier": "",
-    "modifierNom": "",
-    "retourEspace": "",
-    "retourDetail": ""
+    "modifier": "Edit\nmy form",
+    "modifierNom": "Edit my form",
+    "retourEspace": "Back to my space",
+    "retourDetail": "I will notify you by SMS {{jour}}"
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Loading the tracking of your application",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No application in progress",
+      "detail": "You haven't sent a relay point form."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "Tracking unavailable",
+      "detail": "The tracking of your application could not be loaded.",
+      "reessayer": "Try again"
     }
   }
 }

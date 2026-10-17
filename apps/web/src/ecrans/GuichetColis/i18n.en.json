@@ -1,65 +1,65 @@
 {
-  "titre": "",
-  "retour": "",
-  "sousTitre": "",
+  "titre": "Register a parcel",
+  "retour": "Back to the ticket office",
+  "sousTitre": "{{numero}} · counter {{guichet}}",
   "photo": {
-    "prise": "",
-    "reprendre": "",
-    "aPrendre": ""
+    "prise": "Photo taken ✓",
+    "reprendre": "retake",
+    "aPrendre": "Take the photo"
   },
   "champs": {
-    "expediteur": "",
-    "destinataire": "",
-    "contenu": "",
-    "poids": "",
-    "valeur": ""
+    "expediteur": "Sender · phone",
+    "destinataire": "Recipient · phone",
+    "contenu": "Declared contents",
+    "poids": "Weight",
+    "valeur": "Value"
   },
   "departs": {
-    "soute": "",
-    "taux": "",
+    "soute": "{{destination}} · hold {{pct}} %",
+    "taux": "{{destination}} · {{pct}} %",
     "autreVille": {
-      "titre": "",
-      "detail": ""
+      "titre": "Other city",
+      "detail": "via another company"
     }
   },
   "etiquette": {
-    "mention": "",
-    "mentionSansCompagnie": "",
+    "mention": "{{compagnie}} · afrimove.cm · no code here",
+    "mentionSansCompagnie": "afrimove.cm · no code here",
     "imprimante": {
-      "ok": "",
-      "papier_vide": "",
-      "hors_service": "",
-      "absente": ""
+      "ok": "printer OK",
+      "papier_vide": "out of paper",
+      "hors_service": "printer out of service",
+      "absente": "no printer"
     }
   },
   "paiement": {
-    "cash": "",
-    "cashMontant": "",
-    "momo": "",
-    "momoMontant": "",
-    "assurance": "",
-    "sansAssurance": ""
+    "cash": "Cash",
+    "cashMontant": "Cash · {{montant}}",
+    "momo": "MoMo",
+    "momoMontant": "MoMo · {{montant}}",
+    "assurance": "Insurance ✓ {{montant}}",
+    "sansAssurance": "Insurance {{montant}}"
   },
   "encaisser": {
-    "libelle": "",
-    "detail": "",
-    "reimprimer": ""
+    "libelle": "Collect · print the label",
+    "detail": "pick-up code sent to the recipient only",
+    "reimprimer": "Parcel registered · print the label"
   },
   "alertes": {
-    "saisie": "",
-    "echec": "",
-    "echecImpression": ""
+    "saisie": "Complete the photo and the fields in red.",
+    "echec": "The parcel was not registered. Try again.",
+    "echecImpression": "Parcel registered, but the label did not come out. Try printing again."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Loading the parcel",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No departure to load onto",
+      "detail": "There is no departure left for this parcel today."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "Unable to load the parcel",
+      "detail": "Check the connection, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

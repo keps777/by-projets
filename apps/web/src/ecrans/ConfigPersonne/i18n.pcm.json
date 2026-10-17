@@ -1,87 +1,87 @@
 {
-  "retour": "",
-  "depuis": "",
-  "aucun": "",
+  "retour": "Go back",
+  "depuis": "since {{date}}",
+  "aucun": "—",
   "nouvelle": {
-    "titre": "",
-    "sousTitre": "",
-    "badge": ""
+    "titre": "New person",
+    "sousTitre": "Dem add am to di team · temporary PIN by SMS",
+    "badge": "NEW"
   },
   "roles": {
-    "guichetier": "",
-    "superviseur": "",
-    "convoyeur": "",
-    "chauffeur": "",
-    "relais": "",
-    "comptable": ""
+    "guichetier": "Counter agent",
+    "superviseur": "Supervisor",
+    "convoyeur": "Conductor",
+    "chauffeur": "Driver",
+    "relais": "Relay agent",
+    "comptable": "Accountant"
   },
   "guichets": {
-    "1": "",
-    "2": "",
-    "3": "",
-    "nuit": ""
+    "1": "Counter 1",
+    "2": "Counter 2",
+    "3": "Counter 3",
+    "nuit": "Night"
   },
   "champs": {
-    "nom": "",
-    "telephone": "",
-    "operateur": "",
-    "role": "",
-    "gare": "",
-    "guichet": "",
-    "salaire": ""
+    "nom": "Name",
+    "telephone": "Phone · e go receive di PIN",
+    "operateur": "Operator",
+    "role": "Role",
+    "gare": "Station",
+    "guichet": "Counter",
+    "salaire": "Salary · dem go pay am {{jour}}"
   },
   "erreurs": {
-    "nom": "",
-    "telephone": "",
-    "gare": "",
-    "guichet": "",
-    "salaire": ""
+    "nom": "Put di name.",
+    "telephone": "Put 9-digit number.",
+    "gare": "Choose di station.",
+    "guichet": "Choose di counter.",
+    "salaire": "Put di salary."
   },
   "droits": {
-    "titre": "",
-    "defaut": "",
-    "exceptions_one": "",
-    "exceptions_other": "",
+    "titre": "Wetin im fit do",
+    "defaut": "default for di role",
+    "exceptions_one": "{{count}} exception · dem record am",
+    "exceptions_other": "{{count}} exception dem · dem record dem",
     "liste": {
-      "vendreBilletsEtColis": "",
-      "annulerSansPinSuperviseur": "",
-      "modeCadence": "",
-      "voirCaissesDesAutres": ""
+      "vendreBilletsEtColis": "Sell ticket dem and parcel dem · cash and MoMo",
+      "annulerSansPinSuperviseur": "Cancel ticket without di supervisor PIN",
+      "modeCadence": "Rush mode (sell without name)",
+      "voirCaissesDesAutres": "See cash desk of di other counter dem"
     }
   },
   "liens": {
     "pin": {
-      "titre": "",
-      "detail": ""
+      "titre": "New temporary PIN",
+      "detail": "SMS · e go valid for 1 h"
     },
     "fiche": {
-      "titre": "",
-      "detail": ""
+      "titre": "See im record · 90 days",
+      "detail": "ticket dem, difference dem, log"
     }
   },
-  "note": "",
+  "note": "For new person: same screen, di place dem empty. E go receive im temporary PIN and di app link by SMS; im account go open when e first login.",
   "actions": {
     "desactiver": {
-      "libelle": "",
-      "detail": ""
+      "libelle": "Put di account off",
+      "detail": "at once · dem record am"
     },
     "enregistrer": {
-      "libelle": "",
-      "detail": ""
+      "libelle": "Save am · my PIN",
+      "detail": "get date, signature, and dem go see am for di evening report"
     }
   },
   "pin": {
-    "enregistrer": "",
-    "provisoire": "",
-    "desactiver": "",
-    "sousTitre": "",
-    "fermer": "",
-    "echec": ""
+    "enregistrer": "Sign di save",
+    "provisoire": "Sign di sending of di temporary PIN",
+    "desactiver": "Sign di deactivation",
+    "sousTitre": "{{nom}} · dem record am for di journal",
+    "fermer": "Close",
+    "echec": "Dem no save di action. Nothing change."
   },
   "etats": {
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "chargement": "Di record dey load",
+    "vide": "Dis person no dey or e no dey for di team again.",
+    "erreur": "Di record no load.",
+    "reessayer": "Try again"
   }
 }

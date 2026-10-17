@@ -1,49 +1,49 @@
 {
-  "titre": "",
-  "retour": "",
-  "sousTitre": "",
+  "titre": "Between company dem",
+  "retour": "Go back",
+  "sousTitre": "Parcel go change bus for road. Each company go get pay for im own part.",
   "colis": {
-    "titre": "",
-    "poids": "",
-    "troncon": "",
-    "trajet": "",
-    "horaire": "",
-    "part": "",
-    "aucun": ""
+    "titre": "{{origine}} → {{destination}} · parcel {{numero}}",
+    "poids": "{{kg}} kg",
+    "troncon": "Part {{rang}} · {{compagnie}}",
+    "trajet": "{{origine}} → {{destination}}",
+    "horaire": "{{depart}} · {{bus}} · e go reach {{arrivee}}",
+    "part": "{{montant}} · for {{compagnie}}",
+    "aucun": "No parcel wey dey connect for now."
   },
   "reglement": {
-    "titre": "",
-    "nousDoit_one": "",
-    "nousDoit_other": "",
-    "nousLeDevons_one": "",
-    "nousLeDevons_other": "",
-    "solde": ""
+    "titre": "Settlement between company dem · week",
+    "nousDoit_one": "{{compagnie}} owe you · {{count}} parcel wey you carry for dem",
+    "nousDoit_other": "{{compagnie}} owe you · {{count}} parcels wey you carry for dem",
+    "nousLeDevons_one": "You owe {{compagnie}} · {{count}} parcel wey dey connect",
+    "nousLeDevons_other": "You owe {{compagnie}} · {{count}} parcels wey dey connect",
+    "solde": "Net balance · dem go settle am by MoMo {{jour}} {{heure}}"
   },
   "jours": {
-    "0": "",
-    "1": "",
-    "2": "",
-    "3": "",
-    "4": "",
-    "5": "",
-    "6": ""
+    "0": "Sunday",
+    "1": "Monday",
+    "2": "Tuesday",
+    "3": "Wednesday",
+    "4": "Thursday",
+    "5": "Friday",
+    "6": "Saturday"
   },
   "voyageurs": {
-    "titre": "",
-    "texte": ""
+    "titre": "Also for passengers",
+    "texte": "{{depart}} → {{arrivee}} for one ticket: {{premiere}} reach {{correspondance}}, {{seconde}} after dat, wit {{garantie}} min connection wey dem guarantee. If di first bus late, di second one go wait {{attente}} min or dem go put di passenger for another bus free."
   },
   "actions": {
-    "convention": "",
-    "ajouter": ""
+    "convention": "Agreement wit {{avec}} · see am",
+    "ajouter": "Add company"
   },
   "chargement": {
-    "libelle": ""
+    "libelle": "Exchange between company dem dey load"
   },
   "vide": {
-    "texte": ""
+    "texte": "No exchange between company dem for now."
   },
   "erreur": {
-    "texte": "",
-    "reessayer": ""
+    "texte": "Di exchange between company dem no load. Di shortcut dem still dey work.",
+    "reessayer": "Try again"
   }
 }

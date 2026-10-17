@@ -1,24 +1,24 @@
 {
   "entete": {
-    "retour": "",
-    "titre": "",
-    "sousTitre_one": "",
-    "sousTitre_other": ""
+    "retour": "Go back",
+    "titre": "Di assistant",
+    "sousTitre_one": "Answer for {{secondes}} s · based on your figures of di last day",
+    "sousTitre_other": "Answer for {{secondes}} s · based on your figures of di last {{count}} days"
   },
   "simulation": {
-    "ligne": "",
-    "option": ""
+    "ligne": "simulation: {{options}}",
+    "option": "{{gain}} / month for {{libelle}}"
   },
   "saisie": {
-    "placeholder": "",
-    "parler": ""
+    "placeholder": "Another question…",
+    "parler": "Talk"
   },
   "etats": {
-    "chargement": "",
-    "reponse": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": "",
-    "envoi": ""
+    "chargement": "Answer of di assistant dey load",
+    "reponse": "Di assistant dey prepare im answer",
+    "vide": "Ask di assistant your question, e go answer based on your figures.",
+    "erreur": "Answer of di assistant no load.",
+    "reessayer": "Try again",
+    "envoi": "Your question no go. Try again."
   }
 }

@@ -1,31 +1,39 @@
 {
-  "titre": "",
-  "retour": "",
-  "champs": { "nom": "" },
+  "titre": "Your shop",
+  "retour": "Back",
+  "champs": {
+    "nom": "Shop name"
+  },
   "actions": {
-    "plusTard": { "libelle": "", "detail": "" },
-    "envoyer": { "libelle": "", "detail": "" }
+    "plusTard": {
+      "libelle": "Later",
+      "detail": "draft saved"
+    },
+    "envoyer": {
+      "libelle": "Send my form",
+      "detail": "an agent calls you back within 72 h"
+    }
   },
   "erreurs": {
-    "nom": "",
-    "position": "",
-    "momo": ""
+    "nom": "Write your shop's name.",
+    "position": "Write your location as City · Neighbourhood, landmark.",
+    "momo": "Write your full MoMo number (9 digits)."
   },
   "messages": {
-    "facade": "",
-    "echec": "",
-    "dejaRelais": ""
+    "facade": "Add the photo of the shopfront to send your form.",
+    "echec": "The form was not sent. Try again.",
+    "dejaRelais": "You are already a relay point."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Loading the form",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "Form unavailable",
+      "detail": "This form is not available for now."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "The form could not be loaded",
+      "detail": "Check your connection and try again.",
+      "reessayer": "Try again"
     }
   }
 }

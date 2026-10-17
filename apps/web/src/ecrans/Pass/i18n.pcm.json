@@ -1,51 +1,51 @@
 {
-  "retour": "",
+  "retour": "Go back for home",
   "partager": {
-    "libelle": "",
-    "message": ""
+    "libelle": "Share di ticket",
+    "message": "My {{compagnie}} ticket: {{depart}} → {{arrivee}}, for {{date}} by {{heure}}. {{lien}}"
   },
   "statut": {
-    "paye": "",
-    "payeSansSms": "",
-    "reserve": "",
-    "embarque": "",
-    "voyage": "",
-    "annule": "",
-    "reporte": "",
-    "nonPresente": ""
+    "paye": "Paid · ticket don go by SMS",
+    "payeSansSms": "Paid",
+    "reserve": "Booked",
+    "embarque": "E don enter bus",
+    "voyage": "E dey travel",
+    "annule": "Cancelled",
+    "reporte": "Dem don move am",
+    "nonPresente": "E no show"
   },
-  "horsLigne": "",
+  "horsLigne": "Di ticket dey saved for dis phone, e go update as di network come back.",
   "billet": {
-    "passager": "",
-    "passagerSansPiece": "",
-    "consigne": "",
+    "passager": "{{nom}} · ID card ··· {{piece}}",
+    "passagerSansPiece": "{{nom}}",
+    "consigne": "Reach di bus park {{minutes}} min before, wit your ID.",
     "classe": {
-      "vip": "",
-      "classique": ""
+      "vip": "VIP",
+      "classique": "Standard"
     }
   },
   "actions": {
     "suivre": {
-      "titre": "",
-      "detail": ""
+      "titre": "Follow my bus",
+      "detail": "and tell one person wey dey close to you"
     },
     "moto": {
-      "titre": "",
-      "detail": ""
+      "titre": "Moto go station",
+      "detail": "e dey go by {{heure}} · {{prix}}"
     },
-    "annulation": "",
-    "colis": ""
+    "annulation": "Move am or cancel am · e free till {{heure}}",
+    "colis": "+ parcel"
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Di ticket dey load",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "We no see di ticket",
+      "detail": "Dis ticket no dey again or e no dey for your name."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "Di ticket no load",
+      "detail": "Check your network, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

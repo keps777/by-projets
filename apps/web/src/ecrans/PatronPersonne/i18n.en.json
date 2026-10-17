@@ -1,86 +1,86 @@
 {
-  "retour": "",
-  "depuis": "",
+  "retour": "Back",
+  "depuis": "since {{date}}",
   "roles": {
-    "guichetier": "",
-    "superviseur": "",
-    "convoyeur": "",
-    "chauffeur": "",
-    "relais": "",
-    "comptable": ""
+    "guichetier": "Counter agent",
+    "superviseur": "Supervisor",
+    "convoyeur": "Conductor",
+    "chauffeur": "Driver",
+    "relais": "Relay agent",
+    "comptable": "Accountant"
   },
   "badge": {
-    "ecarts_one": "",
-    "ecarts_other": ""
+    "ecarts_one": "{{count}} DISCREPANCY",
+    "ecarts_other": "{{count}} DISCREPANCIES"
   },
   "fiche": {
-    "operateur": "",
-    "salaire": "",
-    "superviseur": "",
-    "superviseure": "",
-    "depuisHeure": "",
+    "operateur": "{{numero}} · {{operateur}}",
+    "salaire": "Salary {{montant}} · paid on {{jour}} by MoMo",
+    "superviseur": "Supervisor: {{nom}}",
+    "superviseure": "Supervisor: {{nom}}",
+    "depuisHeure": "since {{heure}}",
     "etats": {
-      "en_service": "",
-      "a_bord": "",
-      "en_route": "",
-      "repos": "",
-      "indisponible": "",
-      "bloquee": ""
+      "en_service": "on duty",
+      "a_bord": "on board",
+      "en_route": "on the road",
+      "repos": "off duty",
+      "indisponible": "unavailable",
+      "bloquee": "account locked"
     }
   },
   "chiffres": {
-    "billets": "",
-    "colis": "",
-    "annulations": "",
-    "ecarts": "",
-    "jours_one": "",
-    "jours_other": "",
-    "litiges_one": "",
-    "litiges_other": "",
-    "annulationsNormales": "",
-    "annulationsElevees": "",
-    "ecartsDetail": ""
+    "billets": "Tickets",
+    "colis": "Parcels",
+    "annulations": "Canc.",
+    "ecarts": "Discrepancies",
+    "jours_one": "{{count}} day",
+    "jours_other": "{{count}} days",
+    "litiges_one": "{{count}} dispute",
+    "litiges_other": "{{count}} disputes",
+    "annulationsNormales": "{{taux}} · normal",
+    "annulationsElevees": "{{taux}} · keep an eye on it",
+    "ecartsDetail": "{{jours}} · {{total}}"
   },
   "ecarts": {
-    "titre_one": "",
-    "titre_other": "",
-    "tolerance": "",
-    "aria": "",
-    "ariaJour": "",
-    "ariaAucun": ""
+    "titre_one": "Cash desk discrepancy · last day",
+    "titre_other": "Cash desk discrepancy · last {{count}} days",
+    "tolerance": "tolerance ± {{montant}}",
+    "aria": "Cash desk discrepancy per day: {{liste}}",
+    "ariaJour": "on {{jour}}: {{ecart}}",
+    "ariaAucun": "Cash desk discrepancy per day: no discrepancy"
   },
   "journal": {
-    "titre_one": "",
-    "titre_other": "",
-    "valides_one": "",
-    "valides_other": "",
-    "ligne": "",
-    "aucun": ""
+    "titre_one": "Log · last discrepancy",
+    "titre_other": "Log · last {{count}} discrepancies",
+    "valides_one": "approved {{par}}",
+    "valides_other": "approved {{par}}",
+    "ligne": "· counted {{compte}} · expected {{attendu}}",
+    "aucun": "No recent cash desk discrepancy."
   },
   "actions": {
     "gare": {
-      "titre": "",
-      "detail": ""
+      "titre": "Change counter / station",
+      "detail": "from tomorrow · supervisor notified"
     },
     "pin": {
-      "titre": "",
-      "detail": ""
+      "titre": "Request a new PIN",
+      "detail": "the supervisor sends it by SMS"
     }
   },
   "pied": {
     "desactiver": {
-      "libelle": "",
-      "detail": ""
+      "libelle": "Deactivate the account",
+      "detail": "immediate · logged"
     },
     "assistant": {
-      "libelle": "",
-      "detail": ""
+      "libelle": "Talk to the assistant about it",
+      "detail": "what to do about {{prenom}}?"
     }
   },
   "etats": {
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "chargement": "Loading the record",
+    "vide": "This person does not exist or is no longer on the team.",
+    "erreur": "The record could not be loaded.",
+    "reessayer": "Try again"
   }
 }

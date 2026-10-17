@@ -1,53 +1,53 @@
 {
-  "retour": "",
+  "retour": "Go back",
   "carte": {
-    "libelle_one": "",
-    "libelle_other": "",
-    "libelleSansMarche_one": "",
-    "libelleSansMarche_other": "",
-    "vide": "",
-    "etiquette": "",
-    "sousTitre_one": "",
-    "sousTitre_other": ""
+    "libelle_one": "Map of {{ville}} wit {{nombre}} relay point around {{marche}}",
+    "libelle_other": "Map of {{ville}} wit {{nombre}} relay point dem around {{marche}}",
+    "libelleSansMarche_one": "Map of {{ville}} wit {{nombre}} relay point",
+    "libelleSansMarche_other": "Map of {{ville}} wit {{nombre}} relay point dem",
+    "vide": "Map of di town",
+    "etiquette": "Relay point dem · {{ville}}",
+    "sousTitre_one": "{{count}} shop owner wey dey near her",
+    "sousTitre_other": "{{count}} shop owner dem wey dey near her"
   },
   "liste": {
-    "libelle": ""
+    "libelle": "Relay point dem near di person wey go receive"
   },
   "etat": {
-    "ouvert": "",
-    "fermeBientot": "",
-    "ferme": ""
+    "ouvert": "· e open",
+    "fermeBientot": "· e go close by {{heure}}",
+    "ferme": "· e close"
   },
   "detail": {
-    "deChez": "",
-    "colisRemis_one": "",
-    "colisRemis_other": ""
+    "deChez": "{{distance}} from {{surnom}} house",
+    "colisRemis_one": "{{count}} parcel don give out",
+    "colisRemis_other": "{{count}} parcel dem don give out"
   },
-  "supplement": "",
+  "supplement": "+{{montant}}",
   "choisir": {
-    "libelle": "",
-    "prix": ""
+    "libelle": "Choose {{nom}} · tell {{surnom}}",
+    "prix": "{{montant}} F"
   },
   "messages": {
-    "complet": "",
-    "tropLourd": "",
-    "echec": ""
+    "complet": "Dis relay point don full. Choose another one.",
+    "tropLourd": "Dis parcel heavy too much for dis relay point. Choose another one.",
+    "echec": "We no fit save di relay point. Try again."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Di relay point dem dey load",
     "aucun": {
-      "titre": "",
-      "detail": ""
+      "titre": "No relay point near here",
+      "detail": "No shop owner dey available near di person wey go receive for now."
     },
     "introuvable": {
-      "titre": "",
-      "detail": ""
+      "titre": "We no see di parcel",
+      "detail": "Dis parcel no dey, or e no be your own."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "We no fit load di relay point dem",
+      "detail": "Check your network, then try again.",
+      "reessayer": "Try again"
     },
-    "retourColis": ""
+    "retourColis": "Go back to di parcel"
   }
 }

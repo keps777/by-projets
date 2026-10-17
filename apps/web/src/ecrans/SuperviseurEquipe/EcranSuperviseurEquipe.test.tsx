@@ -488,10 +488,10 @@ describe("SuperviseurEquipe · textes", () => {
         : [`${prefixe}${cle}`],
     );
 
-  it("l'anglais et le pidgin ont les mêmes clés que le français, à traduire (vides)", () => {
+  it("l'anglais et le pidgin ont les mêmes clés que le français, toutes remplies", () => {
     expect(cles(en)).toEqual(cles(fr));
     expect(cles(pcm)).toEqual(cles(fr));
-    expect(JSON.stringify(en)).not.toMatch(/"[^"]+":\s*"[^"]/);
-    expect(JSON.stringify(pcm)).not.toMatch(/"[^"]+":\s*"[^"]/);
+    expect(JSON.stringify(en)).not.toMatch(/":\s*""/);
+    expect(JSON.stringify(pcm)).not.toMatch(/":\s*""/);
   });
 });

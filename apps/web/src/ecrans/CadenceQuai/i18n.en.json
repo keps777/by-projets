@@ -1,83 +1,83 @@
 {
-  "retour": "",
+  "retour": "Back",
   "enTete": {
-    "titre": "",
-    "sousTitre": ""
+    "titre": "Platform {{quai}} · {{heure}} {{destination}}",
+    "sousTitre": "Conductor {{convoyeur}} · scan + complete the rush tickets"
   },
   "scan": {
-    "libelle": "",
-    "siege": "",
-    "vente": "",
-    "valide": "",
-    "nonValide": ""
+    "libelle": "Scanned · rush ticket, no name",
+    "siege": "seat {{numero}}",
+    "vente": "Sold at {{heure}} at counter {{guichet}} · {{mode}} {{montant}} · {{validite}}",
+    "valide": "valid for this departure",
+    "nonValide": "not valid for this departure"
   },
   "modes": {
-    "cash": "",
-    "momo": "",
-    "orange_money": ""
+    "cash": "cash",
+    "momo": "MoMo",
+    "orange_money": "Orange Money"
   },
   "completer": {
-    "titre": "",
-    "nom": "",
-    "piece": "",
-    "telephone": "",
-    "aide": "",
+    "titre": "Complete · the customer shows their ID",
+    "nom": "Name",
+    "piece": "ID · last 4",
+    "telephone": "Phone (optional, SMS)",
+    "aide": "The name is typed once here, never at the ticket office during rush. Without a name, no boarding.",
     "erreurs": {
-      "nom": "",
-      "piece": "",
-      "telephone": "",
-      "deja": "",
-      "echec": ""
+      "nom": "Without a name, no boarding.",
+      "piece": "ID: type the last 4 digits.",
+      "telephone": "Phone: 9 digits, or leave the field empty.",
+      "deja": "This ticket already has a name.",
+      "echec": "The ticket was not completed. Try again."
     }
   },
   "embarquement": {
-    "libelle": "",
-    "nominatifs": "",
-    "completes": "",
-    "depart": ""
+    "libelle": "boarded",
+    "nominatifs": "named ·",
+    "completes": "rush completed",
+    "depart": "departure {{heure}}"
   },
   "sansNom": {
-    "titre": "",
-    "detail": "",
-    "sms": "",
-    "action": "",
-    "aucun": ""
+    "titre": "Rush tickets still without a name",
+    "detail": "· seat {{siege}} · {{heure}} · {{mode}}",
+    "sms": "SMS sent",
+    "action": "at scan",
+    "aucun": "No rush ticket without a name"
   },
-  "rapport": "",
+  "rapport": "A rush ticket never scanned or completed at departure appears in the evening report as \"sold, not boarded, no name\". This is what the owner and the assistant watch.",
   "pied": {
-    "vue": "",
+    "vue": "Platform view",
     "embarquer": {
-      "libelle": "",
-      "detail": ""
+      "libelle": "Board · seat {{siege}}",
+      "detail": "the ticket becomes named · next scan"
     }
   },
   "suivant": {
-    "titre": "",
-    "detail": ""
+    "titre": "Boarded · {{nom}}",
+    "detail": "The ticket is named. Scan the next ticket."
   },
   "autreScan": {
     "titre": {
-      "monte": "",
-      "deja_scanne": "",
-      "introuvable": "",
-      "autre_depart": "",
-      "annule": ""
+      "monte": "Last scan · OK · boards",
+      "deja_scanne": "Refused · ticket already scanned",
+      "introuvable": "Refused · ticket not found",
+      "autre_depart": "Refused · other departure",
+      "annule": "Refused · ticket cancelled"
     },
     "echec": {
-      "titre": "",
-      "detail": ""
+      "titre": "Scan not sent",
+      "detail": "Check the connection, then scan again."
     }
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Loading the rush ticket",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No rush ticket to complete",
+      "detail": "No rush ticket has been scanned at this platform yet."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "Unable to load the ticket",
+      "detail": "Check the connection, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

@@ -1,62 +1,62 @@
 {
-  "titre": "",
-  "retour": "",
+  "titre": "Seat and payment",
+  "retour": "Go back to di departure dem",
   "classe": {
-    "vip": "",
-    "classique": ""
+    "vip": "VIP",
+    "classique": "Standard"
   },
   "pour": {
-    "moi": "",
-    "proche": "",
-    "plusieurs": ""
+    "moi": "For me",
+    "proche": "For your person",
+    "plusieurs": "For plenty people"
   },
   "plan": {
-    "titre": "",
-    "siege": "",
-    "siegeEmplacement": "",
-    "aucunSiege": "",
-    "placesLibres_one": "",
-    "placesLibres_other": ""
+    "titre": "Choose your seat",
+    "siege": "Seat <fort>{{numero}}</fort>",
+    "siegeEmplacement": "Seat <fort>{{numero}}</fort> · {{emplacement}}",
+    "aucunSiege": "Touch one free seat",
+    "placesLibres_one": "{{count}} free seat",
+    "placesLibres_other": "{{count}} free seat dem"
   },
   "voyageur": {
-    "modifier": ""
+    "modifier": "change am"
   },
   "recap": {
-    "offertAvec": ""
+    "offertAvec": "(free wit {{code}})"
   },
   "payer": {
-    "libelle": "",
+    "libelle": "Pay and collect di ticket",
     "detail": {
-      "mtn_momo": "",
-      "orange_money": "",
-      "carte": ""
+      "mtn_momo": "MoMo confirmation for your phone",
+      "orange_money": "Orange Money confirmation for your phone",
+      "carte": "card payment for di next step"
     },
-    "garantie": ""
+    "garantie": "Di ticket money dey go {{compagnie}}. AfriMove no dey keep am."
   },
   "messages": {
-    "choisirSiege": "",
-    "siegePris": "",
-    "blocageEchoue": "",
-    "blocageTermine": "",
-    "attente": "",
-    "echec": "",
-    "delai": "",
-    "demarrage": ""
+    "choisirSiege": "Choose your seat before you pay.",
+    "siegePris": "Another passenger don just take seat {{numero}}. Choose another seat.",
+    "blocageEchoue": "We no fit hold dis seat. Try again.",
+    "blocageTermine": "We no dey hold your seat again. Touch am again to keep am.",
+    "attente": "Request don go. Confirm di payment for your phone wit your {{moyen}} code.",
+    "echec": "Di payment no pass. We don free your seat: choose am again to try again.",
+    "delai": "Di time to confirm don finish. We don free your seat: choose am again to try again.",
+    "demarrage": "Di payment no fit start. Try again."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Di departure dey load",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "Dem no dey offer dis departure again",
+      "detail": "Go back to di departure dem to choose another one."
     },
     "complet": {
-      "titre": "",
-      "detail": ""
+      "titre": "No seat remain",
+      "detail": "Dis departure don full. Go back to di departure dem to choose another one."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "We no fit load dis departure",
+      "detail": "Check your network, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

@@ -1,106 +1,106 @@
 {
-  "retour": "",
+  "retour": "Back to rush mode",
   "vendu": {
-    "aria": "",
-    "libelle": "",
-    "detail": "",
-    "rendu": "",
-    "restent_one": "",
-    "restent_other": ""
+    "aria": "Rush sale",
+    "libelle": "Sold · {{duree}} s",
+    "detail": "ticket {{numero}} · seat {{siege}} · {{mode}} {{montant}}",
+    "rendu": " · change {{rendu}}",
+    "restent_one": "remains",
+    "restent_other": "remain"
   },
   "modes": {
-    "cash": "",
-    "momo": "",
-    "orange_money": ""
+    "cash": "cash",
+    "momo": "MoMo",
+    "orange_money": "Orange Money"
   },
   "billet": {
-    "aria": "",
-    "siege": "",
-    "classique": "",
-    "vip": "",
-    "nom": "",
-    "aCompleter": "",
-    "piece": "",
-    "pieceFaite": "",
-    "qr": "",
-    "pied": ""
+    "aria": "Ticket {{numero}}",
+    "siege": "SEAT",
+    "classique": "STANDARD",
+    "vip": "VIP",
+    "nom": "NAME:",
+    "aCompleter": "to be completed at the platform",
+    "piece": "ID: ____ (4 digits)",
+    "pieceFaite": "ID: …{{piece}}",
+    "qr": "Ticket QR code",
+    "pied": "At the platform 20 min before · afrimove.cm"
   },
   "fait": {
-    "titre": "",
+    "titre": "In 2 seconds, the app did",
     "numerote": {
-      "titre": "",
-      "detail": "",
-      "detailTrou": ""
+      "titre": "Numbered",
+      "detail": "{{numero}}, no gap in my range",
+      "detailTrou": "{{numero}}, a gap in my range"
     },
     "siege": {
-      "titre": "",
-      "detail": ""
+      "titre": "Seat {{siege}}",
+      "detail": "blocked on the bus plan"
     },
     "imprime": {
-      "titre": "",
-      "detail": ""
+      "titre": "Printed",
+      "detail": "· QR + code {{code}}"
     },
     "impression": {
-      "titre": "",
-      "detail": ""
+      "titre": "Printing",
+      "detail": "waiting for the printer"
     },
     "caisse": {
-      "titre": "",
-      "detail": "",
-      "detailRendu": ""
+      "titre": "Cash desk",
+      "detail": "+{{montant}} cash",
+      "detailRendu": "+{{montant}} cash, change {{rendu}}"
     },
     "momo": {
-      "titre": "",
-      "detail": ""
+      "titre": "MoMo",
+      "detail": "{{montant}}, nothing in the cash desk"
     },
     "sms": {
-      "titre": "",
-      "sansNumero": "",
-      "action": "",
-      "suite": "",
-      "envoye": "",
-      "envoyeAu": ""
+      "titre": "SMS",
+      "sansNumero": ": no number ·",
+      "action": "+ number",
+      "suite": "to send it",
+      "envoye": ": sent",
+      "envoyeAu": ": sent to {{numero}}"
     },
     "synchro": {
-      "titre": "",
-      "auRetour": "",
-      "faite": ""
+      "titre": "Sync",
+      "auRetour": "when the network is back · offline OK",
+      "faite": "done"
     }
   },
   "manque": {
-    "titre": "",
-    "aide": "",
-    "debut": "",
-    "fin": ""
+    "titre": "What is still missing",
+    "aide": "completed at the platform, at boarding",
+    "debut": "The name and the 4 digits of the ID. The conductor scans the QR or types",
+    "fin": ", the customer shows their ID, the ticket becomes named. Until that is done, the ticket shows as \"rush, no name\" in the departure list and in the evening report."
   },
   "actions": {
-    "numero": "",
-    "annuler": ""
+    "numero": "+ number · send the SMS",
+    "annuler": "Cancel · supervisor PIN"
   },
   "annulation": {
-    "motif": ""
+    "motif": "Cancellation requested at the ticket office, rush sale"
   },
   "pied": {
-    "suite": "",
+    "suite": "See what comes next at the platform",
     "suivant": {
-      "libelle": "",
-      "detail": ""
+      "libelle": "Next ticket",
+      "detail": "seat {{siege}} · {{prix}}"
     }
   },
   "erreurs": {
-    "sms": "",
-    "annulation": ""
+    "sms": "The number was not saved. Try again.",
+    "annulation": "The cancellation request did not go through. Try again."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Loading the ticket",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No ticket to show",
+      "detail": "No rush ticket was sold on this device."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "Unable to load the ticket",
+      "detail": "Check the connection, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

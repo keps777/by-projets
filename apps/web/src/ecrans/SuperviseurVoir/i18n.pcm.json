@@ -1,93 +1,93 @@
 {
-  "titre": "",
-  "retour": "",
-  "sousTitre": "",
+  "titre": "Request to cancel",
+  "retour": "Go back",
+  "sousTitre": "Counter {{rang}} · {{agent}} · dem ask am {{heure}}, {{duree}} don pass",
   "duree": {
-    "minutes": "",
-    "heures": "",
-    "jours_one": "",
-    "jours_other": ""
+    "minutes": "{{count}} min",
+    "heures": "{{heures}} h {{minutes}}",
+    "jours_one": "{{count}} day",
+    "jours_other": "{{count}} days"
   },
-  "badge": "",
+  "badge": "PIN",
   "billet": {
-    "depart": "",
-    "siege": "",
-    "voyageur": "",
-    "piece": "",
-    "vendu": "",
-    "venteDetail": "",
+    "depart": "Bus",
+    "siege": "seat {{siege}}",
+    "voyageur": "Passenger",
+    "piece": "ID card ···· {{quatreDerniers}}",
+    "vendu": "Sold",
+    "venteDetail": "{{heure}} · counter {{rang}} · {{mode}} · {{agent}}",
     "mode": {
-      "cash": "",
-      "momo": "",
-      "orange_money": ""
+      "cash": "cash",
+      "momo": "MoMo",
+      "orange_money": "Orange Money"
     },
-    "motif": "",
-    "motifValeur": ""
+    "motif": "Reason wey dem put",
+    "motifValeur": "\"{{motif}}\""
   },
   "verifications": {
-    "titre": "",
+    "titre": "Wetin di app check",
     "scanne": {
-      "non": "",
-      "oui": ""
+      "non": "Ticket <b>dem never scan am yet</b>",
+      "oui": "Ticket <b>dem don scan am already</b>"
     },
     "siege": {
-      "libre": "",
-      "bloque": ""
+      "libre": "dem fit free seat {{siege}}",
+      "bloque": "dem no fit free seat {{siege}}"
     },
     "delai": {
-      "integral": "",
-      "retenue": ""
+      "integral": "Pass 1 h before di bus go comot · <b>dem go refund all</b> according to di rules of di agency",
+      "retenue": "Less than 1 h before di bus go comot · <b>dem go hold {{retenue}}</b> according to di rules of di agency"
     },
-    "frequence": "",
+    "frequence": "<b>{{rang}}<sup>{{suffixe}}</sup> cancel</b> by {{agent}} today · {{dixJours}} for di last 10 days (average of di counters: {{moyenne}})",
     "client": {
-      "present": "",
-      "absent": "",
-      "pieceVue": "",
-      "pieceNonVue": "",
-      "aRendre": ""
+      "present": "Di customer dey for counter",
+      "absent": "Di customer no dey for counter",
+      "pieceVue": "dem see di ID",
+      "pieceNonVue": "dem no see di ID",
+      "aRendre": "{{montant}} F to give back for cash"
     }
   },
   "choix": {
-    "rembourser": "",
-    "reporter": "",
-    "avoir": ""
+    "rembourser": "Refund",
+    "reporter": "Move am to tomorrow",
+    "avoir": "Credit {{montant}}"
   },
   "pin": {
-    "titre": "",
-    "aide": "",
+    "titre": "My PIN · {{nom}}",
+    "aide": "{{agent}} no fit cancel alone",
     "regle": {
-      "annulation": "",
-      "report": ""
+      "annulation": "Di cancel go keep number {{sequence}}, e go change to \"cancelled\", AfriMove no go bill am and e go show wit name for di evening report.",
+      "report": "Di ticket go keep number {{sequence}}, dem go move am to tomorrow, and di move go show wit name for di evening report."
     }
   },
   "actions": {
-    "refuser": "",
+    "refuser": "Refuse",
     "annuler": {
-      "rembourser": "",
-      "avoir": "",
-      "reporter": "",
-      "detail": ""
+      "rembourser": "Cancel · refund {{montant}}",
+      "avoir": "Cancel · credit {{montant}}",
+      "reporter": "Move am to tomorrow",
+      "detail": "seat {{siege}} don free · {{nom}} don sign"
     }
   },
   "message": {
-    "pinRequis": "",
-    "pinSaisi": "",
-    "pinIncorrect_one": "",
-    "pinIncorrect_other": "",
-    "pinBloque": "",
-    "echec": "",
-    "dejaTraitee": ""
+    "pinRequis": "Put your PIN to decide.",
+    "pinSaisi": "PIN don enter. You fit decide.",
+    "pinIncorrect_one": "PIN no correct. {{count}} try remain.",
+    "pinIncorrect_other": "PIN no correct. {{count}} try dem remain.",
+    "pinBloque": "Dem don lock di keypad: wait make e open again.",
+    "echec": "Dem no send di decision. Try again.",
+    "dejaTraitee": "Dis request don already get decision."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Di cancel request dey load",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "We no see di request",
+      "detail": "Dis cancel request no dey or e no dey wait for decision again."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "We no fit load di request",
+      "detail": "Check di network, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

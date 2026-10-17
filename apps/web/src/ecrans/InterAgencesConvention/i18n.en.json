@@ -1,40 +1,40 @@
 {
   "entete": {
-    "titreAttente": "",
-    "sousTitre": "",
-    "retour": ""
+    "titreAttente": "Agreement between companies",
+    "sousTitre": "Signed on {{date}} · {{renouvellement}}",
+    "retour": "Back"
   },
   "statuts": {
-    "active": "",
-    "suspendue": "",
-    "resiliee": ""
+    "active": "ACTIVE",
+    "suspendue": "SUSPENDED",
+    "resiliee": "TERMINATED"
   },
   "signatures": {
-    "signePour": "",
-    "valeur": "",
-    "moi": ""
+    "signePour": "Signed for {{compagnie}}",
+    "valeur": "{{signataire}} · owner PIN · {{quand}}",
+    "moi": "You"
   },
   "trimestre": {
-    "etiquette": "",
-    "echanges_one": "",
-    "echanges_other": "",
-    "litiges": "",
-    "litigesRegle_one": "",
-    "litigesRegle_other": "",
-    "litigesOuvert": "",
-    "litigesAucun": "",
-    "netRecu": "",
-    "lundis_one": "",
-    "lundis_other": ""
+    "etiquette": "Quarter",
+    "echanges_one": "parcel exchanged",
+    "echanges_other": "parcels exchanged",
+    "litiges": "Disputes",
+    "litigesRegle_one": "settled in {{count}} day",
+    "litigesRegle_other": "settled in {{count}} days",
+    "litigesOuvert": "in progress",
+    "litigesAucun": "no dispute",
+    "netRecu": "Net received",
+    "lundis_one": "{{count}} Monday",
+    "lundis_other": "{{count}} Mondays"
   },
   "boutons": {
-    "historique": "",
-    "retour": ""
+    "historique": "History · settlements",
+    "retour": "Back · between companies"
   },
   "etats": {
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "chargement": "Loading the agreement",
+    "vide": "This agreement cannot be found.",
+    "erreur": "The agreement could not be loaded.",
+    "reessayer": "Try again"
   }
 }

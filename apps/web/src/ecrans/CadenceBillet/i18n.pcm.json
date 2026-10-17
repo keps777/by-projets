@@ -1,106 +1,106 @@
 {
-  "retour": "",
+  "retour": "Go back to rush mode",
   "vendu": {
-    "aria": "",
-    "libelle": "",
-    "detail": "",
-    "rendu": "",
-    "restent_one": "",
-    "restent_other": ""
+    "aria": "Rush sale",
+    "libelle": "Sold · {{duree}} s",
+    "detail": "ticket {{numero}} · seat {{siege}} · {{mode}} {{montant}}",
+    "rendu": " · change {{rendu}}",
+    "restent_one": "remain",
+    "restent_other": "remain"
   },
   "modes": {
-    "cash": "",
-    "momo": "",
-    "orange_money": ""
+    "cash": "cash",
+    "momo": "MoMo",
+    "orange_money": "Orange Money"
   },
   "billet": {
-    "aria": "",
-    "siege": "",
-    "classique": "",
-    "vip": "",
-    "nom": "",
-    "aCompleter": "",
-    "piece": "",
-    "pieceFaite": "",
-    "qr": "",
-    "pied": ""
+    "aria": "Ticket {{numero}}",
+    "siege": "SEAT",
+    "classique": "STANDARD",
+    "vip": "VIP",
+    "nom": "NAME:",
+    "aCompleter": "dem go complete am for di bus park",
+    "piece": "ID: ____ (4 digits)",
+    "pieceFaite": "ID: …{{piece}}",
+    "qr": "QR code of di ticket",
+    "pied": "For di bus park 20 min before · afrimove.cm"
   },
   "fait": {
-    "titre": "",
+    "titre": "For 2 seconds, di app do",
     "numerote": {
-      "titre": "",
-      "detail": "",
-      "detailTrou": ""
+      "titre": "Number don put",
+      "detail": "{{numero}}, no gap for my range",
+      "detailTrou": "{{numero}}, gap dey for my range"
     },
     "siege": {
-      "titre": "",
-      "detail": ""
+      "titre": "Seat {{siege}}",
+      "detail": "don block for di bus plan"
     },
     "imprime": {
-      "titre": "",
-      "detail": ""
+      "titre": "Don print",
+      "detail": "· QR + code {{code}}"
     },
     "impression": {
-      "titre": "",
-      "detail": ""
+      "titre": "Print",
+      "detail": "e dey wait for printer"
     },
     "caisse": {
-      "titre": "",
-      "detail": "",
-      "detailRendu": ""
+      "titre": "Cash desk",
+      "detail": "+{{montant}} cash",
+      "detailRendu": "+{{montant}} cash, change {{rendu}}"
     },
     "momo": {
-      "titre": "",
-      "detail": ""
+      "titre": "MoMo",
+      "detail": "{{montant}}, nothing for cash desk"
     },
     "sms": {
-      "titre": "",
-      "sansNumero": "",
-      "action": "",
-      "suite": "",
-      "envoye": "",
-      "envoyeAu": ""
+      "titre": "SMS",
+      "sansNumero": ": no number ·",
+      "action": "+ number",
+      "suite": "to send am",
+      "envoye": ": don go",
+      "envoyeAu": ": don go to {{numero}}"
     },
     "synchro": {
-      "titre": "",
-      "auRetour": "",
-      "faite": ""
+      "titre": "Sync",
+      "auRetour": "as network come back · no network fine",
+      "faite": "don finish"
     }
   },
   "manque": {
-    "titre": "",
-    "aide": "",
-    "debut": "",
-    "fin": ""
+    "titre": "Wetin still remain",
+    "aide": "dem go complete am for di bus park, as people dey enter bus",
+    "debut": "Di name and di 4 digits of di ID. Di conductor go scan di QR or e go type",
+    "fin": ", di customer go show im ID, di ticket go get name. Until dem do am, di ticket go show as \"rush, no name\" for di bus list and for di evening report."
   },
   "actions": {
-    "numero": "",
-    "annuler": ""
+    "numero": "+ number · send di SMS",
+    "annuler": "Cancel · supervisor PIN"
   },
   "annulation": {
-    "motif": ""
+    "motif": "Dem ask for cancel for counter, rush sale"
   },
   "pied": {
-    "suite": "",
+    "suite": "See wetin go happen next for di bus park",
     "suivant": {
-      "libelle": "",
-      "detail": ""
+      "libelle": "Next ticket",
+      "detail": "seat {{siege}} · {{prix}}"
     }
   },
   "erreurs": {
-    "sms": "",
-    "annulation": ""
+    "sms": "Dem no save di number. Try again.",
+    "annulation": "Di cancel request no go. Try again."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Di ticket dey load",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No ticket to show",
+      "detail": "Dem no sell any rush ticket for dis device."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "We no fit load di ticket",
+      "detail": "Check di network, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

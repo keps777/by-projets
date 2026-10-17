@@ -1,64 +1,64 @@
 {
-  "titre": "",
-  "numero": "",
-  "identite": "",
+  "titre": "AfriMove seller",
+  "numero": "no. {{numero}}",
+  "identite": "{{nom}} · {{quartier}} neighbourhood · approved by {{compagnies}}",
   "vente": {
-    "titre": "",
+    "titre": "Sell to a neighbour · 3 taps",
     "jour": {
-      "aujourdhui": "",
-      "demain": ""
+      "aujourdhui": "today",
+      "demain": "tomorrow"
     },
-    "places_one": "",
-    "places_other": "",
-    "commission": ""
+    "places_one": "{{compagnie}} · {{count}} seat",
+    "places_other": "{{compagnie}} · {{count}} seats",
+    "commission": "commission {{montant}} F"
   },
   "bilan": {
     "mois": {
-      "etiquette": "",
-      "detail": ""
+      "etiquette": "This month",
+      "detail": "tickets sold"
     },
     "gain": {
-      "etiquette": "",
-      "detail": ""
+      "etiquette": "Earned",
+      "detail": "paid on {{jour}}"
     },
     "clients": {
-      "etiquette": "",
-      "detail_one": "",
-      "detail_other": ""
+      "etiquette": "Customers",
+      "detail_one": "including {{count}} regular",
+      "detail_other": "including {{count}} regulars"
     }
   },
   "clients": {
-    "proposition": "",
-    "dernier": ""
+    "proposition": "{{proposition}}?",
+    "dernier": "last: {{date}}"
   },
-  "action": "",
+  "action": "Sell a ticket to a neighbour",
   "etats": {
-    "chargement": "",
-    "reessayer": "",
+    "chargement": "Loading your seller space",
+    "reessayer": "Try again",
     "espace": {
       "erreur": {
-        "titre": "",
-        "detail": ""
+        "titre": "Unable to load your figures",
+        "detail": "Check your connection, then try again."
       }
     },
     "departs": {
       "vide": {
-        "titre": "",
-        "detail": ""
+        "titre": "No departure to sell",
+        "detail": "There is no departure open for sale on this route."
       },
       "erreur": {
-        "titre": "",
-        "detail": ""
+        "titre": "Unable to load the departures",
+        "detail": "Check your connection, then try again."
       }
     },
     "clients": {
       "vide": {
-        "titre": "",
-        "detail": ""
+        "titre": "No customer yet",
+        "detail": "Your neighbours appear here after your first sale."
       },
       "erreur": {
-        "titre": "",
-        "detail": ""
+        "titre": "Unable to load your customers",
+        "detail": "Check your connection, then try again."
       }
     }
   }

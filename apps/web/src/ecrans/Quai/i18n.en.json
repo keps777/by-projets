@@ -1,99 +1,99 @@
 {
-  "retour": "",
+  "retour": "Back to the ticket office",
   "enTete": {
-    "titre": "",
-    "sousTitre": ""
+    "titre": "Platform {{quai}} · {{heure}} {{destination}}",
+    "sousTitre": "Bus {{bus}} · driver {{chauffeur}} · conductor {{convoyeur}}"
   },
   "mode": {
-    "scan": "",
-    "code": "",
-    "saisir": ""
+    "scan": "scan",
+    "code": "code",
+    "saisir": "Enter a 4-digit code"
   },
   "dernierScan": {
     "aucun": {
-      "titre": "",
-      "detail": ""
+      "titre": "Last scan",
+      "detail": "No ticket scanned yet"
     },
     "titre": {
-      "monte": "",
-      "deja_scanne": "",
-      "introuvable": "",
-      "autre_depart": "",
-      "annule": "",
-      "sans_nom": ""
+      "monte": "Last scan · OK · boards",
+      "deja_scanne": "Refused · already scanned at {{heure}}",
+      "introuvable": "Refused · ticket not found",
+      "autre_depart": "Refused · other departure",
+      "annule": "Refused · ticket cancelled",
+      "sans_nom": "Ticket with no name · to be completed"
     },
-    "completer": "",
-    "siege": "",
-    "piece": "",
+    "completer": "Complete the ticket",
+    "siege": "seat {{numero}}",
+    "piece": "ID card ···· {{piece}}",
     "classe": {
-      "vip": "",
-      "classique": ""
+      "vip": "VIP",
+      "classique": "Standard"
     },
-    "bagages_one": "",
-    "bagages_other": "",
+    "bagages_one": "{{count}} hold bag",
+    "bagages_other": "{{count}} hold bags",
     "echec": {
-      "titre": "",
-      "detail": ""
+      "titre": "Scan not sent",
+      "detail": "Check the connection, then scan again."
     }
   },
   "embarquement": {
-    "libelle": "",
-    "attendus": "",
-    "depart": ""
+    "libelle": "boarded",
+    "attendus": "{{attendus}} expected · {{nonPresentes}} no-shows at {{heure}}",
+    "depart": "departure {{heure}}"
   },
   "compteurs": {
-    "soute": "",
-    "colisACharger_one": "",
-    "colisACharger_other": "",
-    "refuses": "",
+    "soute": "Hold",
+    "colisACharger_one": "{{count}} parcel to load",
+    "colisACharger_other": "{{count}} parcels to load",
+    "refuses": "Refused",
     "motif": {
-      "aucun": "",
-      "deja_scanne": "",
-      "autre_depart": "",
-      "annule": "",
-      "introuvable": ""
+      "aucun": "no refusals",
+      "deja_scanne": "already scanned {{heure}}",
+      "autre_depart": "other departure",
+      "annule": "ticket cancelled",
+      "introuvable": "ticket not found"
     },
-    "enRoute": "",
-    "montentA": ""
+    "enRoute": "On the road",
+    "montentA": "board at {{arret}}"
   },
   "absents": {
-    "titre": "",
-    "aide": "",
-    "siege": "",
-    "vendu": "",
-    "retard": "",
-    "appeler": "",
-    "sansNumero": "",
-    "code": "",
-    "liberer": "",
-    "echecLiberer": ""
+    "titre": "Not boarded yet",
+    "aide": "call · 1 tap",
+    "siege": " · seat {{numero}} ",
+    "vendu": "· sold {{heure}}",
+    "retard": "· late, notified",
+    "appeler": "Call {{nom}}",
+    "sansNumero": "No number saved for {{nom}}.",
+    "code": "4-digit code",
+    "liberer": "release",
+    "echecLiberer": "The seat was not released. Try again."
   },
   "pied": {
     "vendre": {
-      "plusieurs": "",
-      "une": "",
-      "aucune": ""
+      "plusieurs": "Sell the {{nombre}} remaining",
+      "une": "Sell the remaining seat",
+      "aucune": "Sell the remaining seats"
     },
-    "depart": "",
-    "echec": ""
+    "depart": "Departure · list to the driver",
+    "echec": "The list was not sent. Try again."
   },
   "feuilleCode": {
-    "titre": "",
-    "aide": "",
-    "champ": "",
-    "echec": "",
-    "fermer": ""
+    "titre": "4-digit code",
+    "aide": "The passenger reads out the 4 digits of their ticket.",
+    "champ": "Ticket code",
+    "echec": "Code not sent. Try again.",
+    "fermer": "Close"
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Loading the platform",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No departure to board",
+      "detail": "No platform is open at the moment."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "Unable to load the platform",
+      "detail": "Check the connection, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

@@ -1,26 +1,26 @@
 {
-  "titre": "",
-  "retour": "",
+  "titre": "The network live",
+  "retour": "Back to home",
   "resume": {
-    "compagnies_one": "",
-    "compagnies_other": "",
-    "busEnRoute": "",
-    "departsAVenir_one": "",
-    "departsAVenir_other": ""
+    "compagnies_one": "{{count}} company",
+    "compagnies_other": "{{count}} companies",
+    "busEnRoute": "{{count}} buses on the road",
+    "departsAVenir_one": "{{count}} upcoming departure",
+    "departsAVenir_other": "{{count}} upcoming departures"
   },
   "carte": {
-    "aria": "",
-    "legende": ""
+    "aria": "Network map: {{villes}}",
+    "legende": "● Bêta  ● Alpha  ● Oméga"
   },
   "lignes": {
-    "titre": "",
-    "aide": "",
-    "des": "",
-    "via": "",
-    "covoiturage": "",
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "titre": "Routes · next departure",
+    "aide": "tap a route",
+    "des": "from {{prix}}",
+    "via": "via {{ville}}",
+    "covoiturage": "carpool",
+    "chargement": "Loading routes",
+    "vide": "No route for this filter.",
+    "erreur": "The network could not be loaded.",
+    "reessayer": "Try again"
   }
 }

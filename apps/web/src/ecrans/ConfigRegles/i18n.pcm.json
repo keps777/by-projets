@@ -1,91 +1,91 @@
 {
   "entete": {
-    "titre": "",
-    "sousTitre": "",
-    "retour": "",
-    "gares_one": "",
-    "gares_other": ""
+    "titre": "Rule dem of di agency",
+    "sousTitre": "Dem dey apply for all station dem · dem sign am wit your PIN",
+    "retour": "Go back",
+    "gares_one": "{{count}} STATION",
+    "gares_other": "{{count}} STATION DEM"
   },
   "annulation": {
-    "titre": "",
+    "titre": "Cancel by di passenger",
     "gratuite": {
-      "libelle": "",
+      "libelle": "Free till",
       "choix": {
-        "1h_avant": "",
-        "2h_avant": "",
-        "veille_20h": "",
-        "jamais": ""
+        "1h_avant": "1 h before di bus go comot",
+        "2h_avant": "2 h before",
+        "veille_20h": "di evening before, 8 pm",
+        "jamais": "never"
       }
     },
     "retenue": {
-      "libelle": "",
+      "libelle": "After dat · dem go hold",
       "choix": {
-        "selon_classe": "",
-        "dix_pct": "",
-        "cinquante_pct": "",
-        "aucun_remboursement": ""
+        "selon_classe": "e depend on di class (VIP {{vip}} %, standard {{classique}} %)",
+        "dix_pct": "10 % for everywhere",
+        "cinquante_pct": "50 % for everywhere",
+        "aucun_remboursement": "no refund"
       }
     },
-    "note": ""
+    "note": "Di refund go back to di same MoMo, di seat go free at once. For counter, after di deadline, na only di supervisor fit cancel wit im PIN."
   },
   "caisse": {
-    "titre": "",
-    "tolerance": "",
-    "erreurTolerance": "",
+    "titre": "Cash desk",
+    "tolerance": "Tolerance for difference",
+    "erreurTolerance": "Put amount for francs.",
     "auDela": {
-      "libelle": "",
+      "libelle": "If e pass",
       "choix": {
-        "pin_superviseur_et_patron": "",
-        "pin_superviseur": "",
-        "bloque_guichet": ""
+        "pin_superviseur_et_patron": "supervisor PIN + dem go tell di patron",
+        "pin_superviseur": "supervisor PIN only",
+        "bloque_guichet": "e go block di counter"
       }
     }
   },
   "momo": {
-    "titre": "",
-    "mtn": "",
-    "orange": "",
-    "erreurNumero": "",
-    "note": "",
+    "titre": "MoMo account dem of di agency",
+    "mtn": "MTN MoMo · merchant",
+    "orange": "Orange Money · merchant",
+    "erreurNumero": "Put 9-digit number.",
+    "note": "If you wan change account, you need your PIN and one confirmation SMS go di old number. Di sell wey dey go on go stay for di old account till midnight.",
     "operateur": {
-      "mtn": "",
-      "orange": ""
+      "mtn": "MTN MoMo",
+      "orange": "Orange Money"
     }
   },
-  "historique": "",
-  "nbChangements_one": "",
-  "nbChangements_other": "",
+  "historique": "Every rule dey keep im history: who, when, old and new value.",
+  "nbChangements_one": "{{count}} change",
+  "nbChangements_other": "{{count}} change dem",
   "actions": {
-    "annuler": "",
-    "enregistrer": "",
-    "detail": "",
-    "detailGares_one": "",
-    "detailGares_other": ""
+    "annuler": "Cancel",
+    "enregistrer": "Save am · my PIN",
+    "detail": "e go work at once",
+    "detailGares_one": "e go work at once · {{count}} station",
+    "detailGares_other": "e go work at once · {{count}} station dem"
   },
   "pin": {
-    "titre": "",
-    "sousTitre": "",
-    "fermer": "",
-    "echec": ""
+    "titre": "Sign di save",
+    "sousTitre": "{{changements}} · dem record am for di journal",
+    "fermer": "Close",
+    "echec": "Dem no save di rule dem. Nothing change for di station dem."
   },
   "compte": {
-    "fermer": "",
+    "fermer": "Close",
     "code": {
-      "titre": "",
-      "sousTitre": "",
-      "libelle": "",
-      "faux": ""
+      "titre": "Confirm di {{operateur}} account",
+      "sousTitre": "6-digit code don go by SMS to di old number, {{numero}}",
+      "libelle": "Code wey you receive by SMS",
+      "faux": "Di code no correct. Check di SMS and try again."
     },
     "pin": {
-      "titre": "",
-      "sousTitre": "",
-      "echec": ""
+      "titre": "Sign di account change",
+      "sousTitre": "{{operateur}} · dem record am for di journal",
+      "echec": "Dem no change di account. Di sell wey dey go on go stay for di old account."
     }
   },
   "etats": {
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "chargement": "Di rule dem dey load",
+    "vide": "Di rule dem of di agency no dey available.",
+    "erreur": "Di rule dem no load.",
+    "reessayer": "Try again"
   }
 }

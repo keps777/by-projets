@@ -1,59 +1,59 @@
 {
   "entete": {
-    "retour": "",
-    "periode": "",
-    "sousTitre_one": "",
-    "sousTitre_other": ""
+    "retour": "Back to analytics",
+    "periode": "Period",
+    "sousTitre_one": "{{libelle}} · {{count}} departure per day",
+    "sousTitre_other": "{{libelle}} · {{count}} departures per day"
   },
   "periodes": {
-    "semaine": "",
-    "mois": "",
-    "trimestre": ""
+    "semaine": "Week",
+    "mois": "Month",
+    "trimestre": "Quarter"
   },
   "chiffres": {
-    "recette": "",
-    "billets": "",
-    "billetsDeparts_one": "",
-    "billetsDeparts_other": "",
-    "remplissage": "",
-    "cible": "",
-    "colis": ""
+    "recette": "Revenue",
+    "billets": "Tickets",
+    "billetsDeparts_one": "{{count}} departure",
+    "billetsDeparts_other": "{{count}} departures",
+    "remplissage": "Fill",
+    "cible": "target {{pct}}",
+    "colis": "Parcels"
   },
   "departs": {
-    "titre": "",
-    "aide": "",
+    "titre": "By departure · average fill rate",
+    "aide": "tap to edit",
     "classe": {
-      "classique": "",
-      "vip": ""
+      "classique": "standard",
+      "vip": "VIP"
     },
-    "concurrent": "",
-    "aucun": ""
+    "concurrent": "{{compagnie}} {{heure}} at {{prix}}",
+    "aucun": "No departure on this route in this period."
   },
   "parJour": {
-    "titre": ""
+    "titre": "By day of the week"
   },
   "canaux": {
-    "enLigne": "",
-    "enLigneDetail_one": "",
-    "enLigneDetail_other": "",
-    "pts_one": "",
-    "pts_other": "",
-    "ptsStable": "",
-    "enRoute": "",
-    "enRouteArrets": "",
-    "enRouteBillets_one": "",
-    "enRouteBillets_other": "",
-    "enregistres": "",
-    "aEnregistrer": ""
+    "enLigne": "Sold online",
+    "enLigneDetail_one": "{{count}} ticket · {{pts}}",
+    "enLigneDetail_other": "{{count}} tickets · {{pts}}",
+    "pts_one": "{{signe}} {{count}} pt",
+    "pts_other": "{{signe}} {{count}} pts",
+    "ptsStable": "stable",
+    "enRoute": "On the road",
+    "enRouteArrets": "On the road ({{arrets}})",
+    "enRouteBillets_one": "{{count}} ticket",
+    "enRouteBillets_other": "{{count}} tickets",
+    "enregistres": "all recorded",
+    "aEnregistrer": "to be recorded"
   },
   "pied": {
-    "pourquoi": "",
-    "modifier": ""
+    "pourquoi": "Why is it dropping?",
+    "modifier": "Edit the route"
   },
   "etats": {
-    "chargement": "",
-    "erreur": "",
-    "introuvable": "",
-    "reessayer": ""
+    "chargement": "Loading the route",
+    "erreur": "The route analysis could not be loaded.",
+    "introuvable": "This route does not exist or is no longer open.",
+    "reessayer": "Try again"
   }
 }

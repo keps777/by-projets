@@ -661,11 +661,12 @@ describe("ConfigRegles · textes", () => {
     expect(vides).toEqual([]);
   });
 
-  it("en anglais comme en pidgin, les clés vides se replient sur le français", () => {
-    for (const langue of ["en", "pcm"] as const) {
-      const i18n = creerI18n(langue);
-      expect(i18n.t("actions.annuler", { ns: "ConfigRegles" })).toBe("Annuler");
-      expect(i18n.t("entete.gares", { ns: "ConfigRegles", count: 3 })).toBe("3 GARES");
-    }
+  it("se lit en anglais et en pidgin, pluriels compris", () => {
+    const en = creerI18n("en");
+    expect(en.t("actions.annuler", { ns: "ConfigRegles" })).toBe("Cancel");
+    expect(en.t("entete.gares", { ns: "ConfigRegles", count: 3 })).toBe("3 STATIONS");
+    const pcm = creerI18n("pcm");
+    expect(pcm.t("actions.annuler", { ns: "ConfigRegles" })).toBe("Cancel");
+    expect(pcm.t("entete.gares", { ns: "ConfigRegles", count: 3 })).toBe("3 STATION DEM");
   });
 });

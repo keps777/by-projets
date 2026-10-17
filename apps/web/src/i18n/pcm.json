@@ -1,297 +1,297 @@
 {
   "coquille": {
-    "chargement": "",
+    "chargement": "E dey load",
     "introuvable": {
-      "titre": "",
-      "retour": ""
+      "titre": "We no see di page",
+      "retour": "Go back for home"
     },
     "miseAJour": {
-      "message": "",
-      "action": ""
+      "message": "New version don ready",
+      "action": "Update am"
     },
     "langue": {
-      "aria": "",
-      "fr": "",
-      "en": "",
-      "pcm": ""
+      "aria": "Language",
+      "fr": "FR",
+      "en": "EN",
+      "pcm": "Pidgin"
     },
     "demo": {
-      "titre": "",
-      "role": "",
-      "ouvrir": "",
-      "kit": "",
-      "roles": ""
+      "titre": "Demo mode",
+      "role": "Role",
+      "ouvrir": "Open di space",
+      "kit": "UI kit",
+      "roles": "Roles"
     },
     "ecranVide": {
-      "etiquette": ""
+      "etiquette": "Screen wey dem never build"
     },
     "controle": {
-      "titre": "",
-      "connexion": "",
-      "aide": "",
-      "action": "",
-      "demoMention": ""
+      "titre": "Control room",
+      "connexion": "Patron login",
+      "aide": "Enter wit di patron account to open di control room.",
+      "action": "Enter as patron",
+      "demoMention": "Sign-in for show only (demonstration)"
     },
     "acces": {
-      "refuse": ""
+      "refuse": "Dis space no be for your account."
     }
   },
   "navigation": {
     "voyageur": {
-      "aria": "",
-      "voyager": "",
-      "colis": "",
-      "covoit": "",
-      "moi": ""
+      "aria": "Navigation",
+      "voyager": "Travel",
+      "colis": "Parcel dem",
+      "covoit": "Carpool",
+      "moi": "Me"
     },
     "guichet": {
-      "aria": "",
-      "guichet": "",
-      "vendre": "",
-      "colis": "",
-      "quai": "",
-      "caisse": ""
+      "aria": "Counter navigation",
+      "guichet": "Counter",
+      "vendre": "Sell",
+      "colis": "Parcel dem",
+      "quai": "Bus park",
+      "caisse": "Cash desk"
     },
     "superviseur": {
-      "aria": "",
-      "gare": "",
-      "caisses": "",
-      "quais": "",
-      "patron": ""
+      "aria": "Supervisor navigation",
+      "gare": "Station",
+      "caisses": "Cash desk dem",
+      "quais": "Bus park dem",
+      "patron": "Patron"
     },
     "patron": {
-      "aria": "",
-      "aujourdhui": "",
-      "analyses": "",
-      "gares": "",
-      "reglages": ""
+      "aria": "Patron navigation",
+      "aujourdhui": "Today",
+      "analyses": "Analytics",
+      "gares": "Station dem",
+      "reglages": "Settings"
     }
   },
   "ecrans": {
     "Splash": {
-      "titre": ""
+      "titre": "First time wey you open · logo, jingle, language"
     },
     "Connexion": {
-      "titre": ""
+      "titre": "Login · number + SMS code · WhatsApp · USSD"
     },
     "Tuto": {
-      "titre": ""
+      "titre": "Tutorial · 3 screen · everything for 3 touch"
     },
     "Main": {
-      "titre": ""
+      "titre": "Home — live departure dem (1 touch go anywhere)"
     },
     "SiegePay": {
-      "titre": ""
+      "titre": "Seat + payment for one screen (touch 2 → 3)"
     },
     "Pass": {
-      "titre": ""
+      "titre": "Ticket · QR · 4-digit code"
     },
     "Direct": {
-      "titre": ""
+      "titre": "My bus live · tell one person wey dey close to you"
     },
     "Reseau": {
-      "titre": ""
+      "titre": "Di network live · all di company dem"
     },
     "Covoit": {
-      "titre": ""
+      "titre": "Carpooling · between town and inside town"
     },
     "Paiement": {
-      "titre": ""
+      "titre": "Payment · MoMo · OM · card · from abroad"
     },
     "Course": {
-      "titre": ""
+      "titre": "Moto or taxi go station"
     },
     "MainVille": {
-      "titre": ""
+      "titre": "Home · \"inside di same town\" mode (town wey dem see, where you dey go from, where you dey go)"
     },
     "CovoitVille": {
-      "titre": ""
+      "titre": "Carpooling · inside town · passenger"
     },
     "CovoitConducteur": {
-      "titre": ""
+      "titre": "Carpooling · I dey drive (put my trip)"
     },
     "MainFiltres": {
-      "titre": ""
+      "titre": "Home · filter wey dey drop: class, company dem (one, plenty, all), favourite dem"
     },
     "Arret": {
-      "titre": ""
+      "titre": "Enter bus for road · stop dem"
     },
     "Groupe": {
-      "titre": ""
+      "titre": "Group · full bus · contribution pot"
     },
     "USSD": {
-      "titre": ""
+      "titre": "USSD *123# and WhatsApp · small phone"
     },
     "Moi": {
-      "titre": ""
+      "titre": "Me · loyalty · referral · people wey dey close to you · history"
     },
     "ColisEnvoi": {
-      "titre": ""
+      "titre": "Send parcel · scan + form for one screen"
     },
     "ColisCode": {
-      "titre": ""
+      "titre": "Parcel · code · tracking · photo"
     },
     "Relais": {
-      "titre": ""
+      "titre": "Relay point dem · map"
     },
     "Livraison": {
-      "titre": ""
+      "titre": "Moto delivery dey go on"
     },
     "Proche": {
-      "titre": ""
+      "titre": "Pay trip for your person · from abroad"
     },
     "Guichet": {
-      "titre": ""
+      "titre": "Counter — agent home (everything for 1 touch)"
     },
     "Vente": {
-      "titre": ""
+      "titre": "Sell for one screen · seat · passenger · payment · print"
     },
     "Cadence": {
-      "titre": ""
+      "titre": "Rush mode (5 h) · 2 touch for each ticket"
     },
     "CadenceBillet": {
-      "titre": ""
+      "titre": "Rush · di next: ticket wey dem print, number, seat, cash, SMS"
     },
     "CadenceQuai": {
-      "titre": ""
+      "titre": "Rush · for di bus park: scan, name and ID don fill, enter bus"
     },
     "GuichetColis": {
-      "titre": ""
+      "titre": "Parcel for counter · label"
     },
     "Depot": {
-      "titre": ""
+      "titre": "Parcel wey dem don pay before dem drop · code"
     },
     "Quai": {
-      "titre": ""
+      "titre": "Bus park · scan · count · luggage space"
     },
     "Convoyeur": {
-      "titre": ""
+      "titre": "On-board seller · sell for road"
     },
     "Chauffeur": {
-      "titre": ""
+      "titre": "Driver · road sheet · incident dem"
     },
     "Controleur": {
-      "titre": ""
+      "titre": "Check wey no dey expect"
     },
     "Caisse": {
-      "titre": ""
+      "titre": "Cash desk · open · close · difference"
     },
     "Superviseur": {
-      "titre": ""
+      "titre": "Station supervisor · PIN · cancel dem"
     },
     "SuperviseurValider": {
-      "titre": ""
+      "titre": "Supervisor · approve closing wit di PIN"
     },
     "SuperviseurVoir": {
-      "titre": ""
+      "titre": "Supervisor · see and decide on cancel wit di PIN"
     },
     "SuperviseurEquipe": {
-      "titre": ""
+      "titre": "Supervisor · team, PIN, account dem"
     },
     "SuperviseurDebloquer": {
-      "titre": ""
+      "titre": "Supervisor · open counter wey no get network since 12:00"
     },
     "RapportSoir": {
-      "titre": ""
+      "titre": "Evening report · WhatsApp 9 pm"
     },
     "Patron": {
-      "titre": ""
+      "titre": "Patron — home (everything for 1 touch)"
     },
     "Assistant": {
-      "titre": ""
+      "titre": "Di patron assistant"
     },
     "Analyses": {
-      "titre": ""
+      "titre": "Analytics · week · line dem · bus dem"
     },
     "Comptable": {
-      "titre": ""
+      "titre": "Accountant · export dem · reconciliation"
     },
     "Config": {
-      "titre": ""
+      "titre": "Configuration · line dem · price dem · team"
     },
     "Modules": {
-      "titre": ""
+      "titre": "Modules · put on or hide (all 12)"
     },
     "Financement": {
-      "titre": ""
+      "titre": "Financing · advance · equipment credit · salary dem"
     },
     "InterAgences": {
-      "titre": ""
+      "titre": "Parcel between company dem · connection"
     },
     "RelaisApp": {
-      "titre": ""
+      "titre": "Relay point app"
     },
     "Livreur": {
-      "titre": ""
+      "titre": "Moto delivery man app"
     },
     "Conducteur": {
-      "titre": ""
+      "titre": "Carpool driver"
     },
     "Vendeur": {
-      "titre": ""
+      "titre": "Seller wey dey waka · commission"
     },
     "Controle": {
-      "titre": ""
+      "titre": "Control room (web)"
     },
     "AssistantReponse": {
-      "titre": ""
+      "titre": "Di assistant dey answer · why Bafoussam dey go down"
     },
     "AnalysesLigne": {
-      "titre": ""
+      "titre": "Analytics · one line well well"
     },
     "AnalysesBus": {
-      "titre": ""
+      "titre": "Analytics · one bus well well"
     },
     "ConfigLigne": {
-      "titre": ""
+      "titre": "Configuration · change one line"
     },
     "ComptableRapprochement": {
-      "titre": ""
+      "titre": "Accountant · 4 MoMo transaction wey no get match"
     },
     "ComptableApercu": {
-      "titre": ""
+      "titre": "Accountant · see export before (pop-up)"
     },
     "ComptableCloture": {
-      "titre": ""
+      "titre": "Accountant · December don close · dem don send am go di firm"
     },
     "FinancementDemande": {
-      "titre": ""
+      "titre": "Financing · file don go · tracking"
     },
     "InterAgencesConvention": {
-      "titre": ""
+      "titre": "Alpha – Oméga agreement"
     },
     "PatronEquipe": {
-      "titre": ""
+      "titre": "Patron · my station dem, my people"
     },
     "PatronGare": {
-      "titre": ""
+      "titre": "Patron · one station well well"
     },
     "PatronPersonne": {
-      "titre": ""
+      "titre": "Patron · one person for di team"
     },
     "ConfigEquipeListe": {
-      "titre": ""
+      "titre": "Settings · di team list (pop-up, filter by role)"
     },
     "ConfigPersonne": {
-      "titre": ""
+      "titre": "Settings · change or add person"
     },
     "ConfigRegles": {
-      "titre": ""
+      "titre": "Settings · change one rule"
     },
     "RelaisDevenir": {
-      "titre": ""
+      "titre": "Become relay point · di programme don open (passenger app)"
     },
     "RelaisInscription": {
-      "titre": ""
+      "titre": "Become relay point · di form for 3 minutes"
     },
     "RelaisVerification": {
-      "titre": ""
+      "titre": "Become relay point · check am · put am on"
     },
     "LivreurDevenir": {
-      "titre": ""
+      "titre": "Become delivery man · di programme don open · special tins"
     },
     "LivreurVerification": {
-      "titre": ""
+      "titre": "Become delivery man · check am · first delivery"
     }
   }
 }

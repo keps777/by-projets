@@ -1,28 +1,28 @@
 {
-  "titre": "",
-  "retour": "",
-  "sousTitre": "",
+  "titre": "Di 12 modules",
+  "retour": "Go back to settings",
+  "sousTitre": "Everything don come. You go put on wetin you dey use, by station or by town.",
   "pied": {
-    "avecAgence": "",
-    "sansAgence": ""
+    "avecAgence": "If you hide module, e go comot from di screen of your team and your passengers, and nothing go loss. {{actifs}} for {{total}} dey active for {{agence}}.",
+    "sansAgence": "If you hide module, e go comot from di screen of your team and your passengers, and nothing go loss. {{actifs}} for {{total}} dey active."
   },
   "pin": {
-    "titre": "",
-    "allumer": "",
-    "masquer": "",
-    "note": "",
-    "fermer": ""
+    "titre": "Confirm wit your PIN",
+    "allumer": "Put on \"{{module}}\"",
+    "masquer": "Hide \"{{module}}\"",
+    "note": "Your PIN go put date and sign di change.",
+    "fermer": "Close"
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Di modules dey load",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No module",
+      "detail": "Di modules of your agency no dey available yet."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "We no fit load di modules",
+      "detail": "Check di network, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

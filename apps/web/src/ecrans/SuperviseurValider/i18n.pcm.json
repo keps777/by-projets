@@ -1,71 +1,71 @@
 {
-  "titre": "",
-  "retour": "",
-  "sousTitre": "",
-  "badge": "",
+  "titre": "Approve di closing",
+  "retour": "Go back",
+  "sousTitre": "Counter {{rang}} · {{agent}} · {{numero}} · {{heure}}",
+  "badge": "PIN",
   "bilan": {
-    "libelle": "",
-    "attendu": "",
-    "compte": "",
-    "ecart": ""
+    "libelle": "Summary of cash desk",
+    "attendu": "Wetin dem expect",
+    "compte": "Wetin dem count",
+    "ecart": "Difference"
   },
   "session": {
-    "billets_one": "",
-    "billets_other": "",
-    "colis_one": "",
-    "colis_other": "",
-    "annulations_one": "",
-    "annulations_other": "",
-    "periode": ""
+    "billets_one": "{{count}} cash ticket",
+    "billets_other": "{{count}} cash ticket dem",
+    "colis_one": "{{count}} parcel",
+    "colis_other": "{{count}} parcel dem",
+    "annulations_one": "{{count}} cancel wey dem approve",
+    "annulations_other": "{{count}} cancel dem wey dem approve",
+    "periode": "{{debut}} → {{fin}}"
   },
   "controles": {
     "tolerance": {
-      "libelle": "",
-      "dans": "",
-      "hors": ""
+      "libelle": "Tolerance of di agency",
+      "dans": "e dey inside di limit",
+      "hors": "e pass di limit"
     },
     "historique": {
-      "libelle_one": "",
-      "libelle_other": "",
-      "valeur_one": "",
-      "valeur_other": ""
+      "libelle_one": "{{agent}} · last {{count}} day",
+      "libelle_other": "{{agent}} · last {{count}} days",
+      "valeur_one": "{{count}} negative difference · {{total}}",
+      "valeur_other": "{{count}} negative differences · {{total}}"
     },
-    "cadence": ""
+    "cadence": "Rush ticket dem wey no get number today"
   },
   "commentaire": {
-    "libelle": ""
+    "libelle": "Comment of di supervisor (di patron fit see am)"
   },
   "pin": {
-    "titre": "",
-    "aide": "",
-    "regle": ""
+    "titre": "My PIN · {{nom}}",
+    "aide": "{{longueur}} digits · no dey share am",
+    "regle": "{{essais}} try, then dem go lock am for {{minutes}} min and dem go alert di patron. Di PIN wey correct, wit time and signature, go enter di 9 pm report."
   },
   "actions": {
-    "refuser": "",
+    "refuser": "Refuse · count again",
     "valider": {
-      "libelle": "",
-      "detail": ""
+      "libelle": "Approve · difference {{ecart}}",
+      "detail": "{{nom}} don sign · cash desk don close"
     }
   },
   "message": {
-    "pinRequis": "",
-    "pinSaisi": "",
-    "pinIncorrect_one": "",
-    "pinIncorrect_other": "",
-    "pinBloque": "",
-    "echec": "",
-    "dejaTraitee": ""
+    "pinRequis": "Put your PIN to decide.",
+    "pinSaisi": "PIN don enter. You fit approve or refuse.",
+    "pinIncorrect_one": "PIN no correct. {{count}} try remain.",
+    "pinIncorrect_other": "PIN no correct. {{count}} try dem remain.",
+    "pinBloque": "Dem don lock di keypad: wait make e open again.",
+    "echec": "Dem no send di decision. Try again.",
+    "dejaTraitee": "Dis closing don already get decision."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Di closing dey load",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No closing to approve",
+      "detail": "Dis cash session no dey wait for approval."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "We no fit load di closing",
+      "detail": "Check di network, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

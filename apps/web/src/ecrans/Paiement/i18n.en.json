@@ -1,73 +1,73 @@
 {
-  "titre": "",
-  "retour": "",
-  "aPayer": "",
-  "unite": "",
-  "question": "",
+  "titre": "Payment",
+  "retour": "Back",
+  "aPayer": "To pay",
+  "unite": "F",
+  "question": "With what?",
   "detail": {
-    "offertAvec": "",
-    "equivalent": ""
+    "offertAvec": "(free with {{code}})",
+    "equivalent": "Equivalent in {{devise}}"
   },
   "garantie": {
-    "covoiturage": "",
-    "compagnie": ""
+    "covoiturage": "Payment processed by a licensed institution. The trip price goes to the driver on arrival; only the fees go to AfriMove.",
+    "compagnie": "Payment processed by a licensed institution. The ticket price goes to the company; only the fees go to AfriMove."
   },
   "payer": {
-    "libelle": "",
+    "libelle": "Pay {{montant}} F",
     "detail": {
-      "mtn_momo": "",
-      "orange_money": "",
-      "carte": ""
+      "mtn_momo": "MoMo confirmation · ticket by SMS in 10 s",
+      "orange_money": "Orange Money confirmation · ticket by SMS in 10 s",
+      "carte": "bank authentication · ticket by SMS in 10 s"
     }
   },
   "proche": {
     "partage": {
-      "titre": "",
-      "message": ""
+      "titre": "Pay for my trip",
+      "message": "Can you pay for my trip? {{libelle}} · {{montant}} F. Secure payment here:"
     }
   },
   "messages": {
-    "attente": "",
+    "attente": "Request sent.",
     "consigne": {
-      "mtn_momo": "",
-      "orange_money": "",
-      "carte": ""
+      "mtn_momo": "Confirm the payment on your phone with your MoMo code.",
+      "orange_money": "Dial #150# or confirm in the Orange app with your code.",
+      "carte": "Authenticate the payment with your bank."
     },
-    "banque": "",
-    "echec": "",
-    "delai": "",
-    "demarrage": "",
-    "dejaEnCours": "",
-    "carteIndisponible": "",
-    "lienEchoue": ""
+    "banque": "Open my bank's page",
+    "echec": "The payment did not go through. Nothing was charged.",
+    "delai": "The confirmation time has run out. Nothing was charged.",
+    "demarrage": "The payment could not start. Try again.",
+    "dejaEnCours": "A payment is already in progress for this order. Confirm it on your phone, then wait a few moments.",
+    "carteIndisponible": "Card entry is not available at the moment. Choose another payment method.",
+    "lienEchoue": "The link for your relative could not be created. Try again."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Loading the payment",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "This order no longer exists",
+      "detail": "Go back to redo your booking."
     },
     "indisponible": {
-      "titre": "",
-      "detail": ""
+      "titre": "Online payment unavailable",
+      "detail": "Online payment is temporarily unavailable. Book your seat, then pay at the station ticket office or by the agency's merchant MoMo."
     },
     "payee": {
-      "titre": "",
-      "detail": "",
-      "ouvrir": ""
+      "titre": "This order is already paid",
+      "detail": "Your ticket is waiting for you.",
+      "ouvrir": "Open my ticket"
     },
     "expiree": {
-      "titre": "",
-      "detail": ""
+      "titre": "The time to pay has run out",
+      "detail": "The seats are no longer held. Go back to redo your booking."
     },
     "annulee": {
-      "titre": "",
-      "detail": ""
+      "titre": "This order was cancelled",
+      "detail": "Go back to redo your booking."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "Unable to load this payment",
+      "detail": "Check your connection, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

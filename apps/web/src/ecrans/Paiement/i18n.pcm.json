@@ -1,73 +1,73 @@
 {
-  "titre": "",
-  "retour": "",
-  "aPayer": "",
-  "unite": "",
-  "question": "",
+  "titre": "Payment",
+  "retour": "Go back",
+  "aPayer": "Wetin you go pay",
+  "unite": "F",
+  "question": "How you wan pay?",
   "detail": {
-    "offertAvec": "",
-    "equivalent": ""
+    "offertAvec": "(free wit {{code}})",
+    "equivalent": "Equal to {{devise}}"
   },
   "garantie": {
-    "covoiturage": "",
-    "compagnie": ""
+    "covoiturage": "Payment dey processed by one licensed institution. Di trip price dey go di driver as e reach; na only di fees dey go AfriMove.",
+    "compagnie": "Payment dey processed by one licensed institution. Di ticket price dey go di company; na only di fees dey go AfriMove."
   },
   "payer": {
-    "libelle": "",
+    "libelle": "Pay {{montant}} F",
     "detail": {
-      "mtn_momo": "",
-      "orange_money": "",
-      "carte": ""
+      "mtn_momo": "MoMo confirmation · ticket by SMS for 10 s",
+      "orange_money": "Orange Money confirmation · ticket by SMS for 10 s",
+      "carte": "bank authentication · ticket by SMS for 10 s"
     }
   },
   "proche": {
     "partage": {
-      "titre": "",
-      "message": ""
+      "titre": "Pay for my trip",
+      "message": "You fit pay for my trip? {{libelle}} · {{montant}} F. Secure payment here:"
     }
   },
   "messages": {
-    "attente": "",
+    "attente": "Request don go.",
     "consigne": {
-      "mtn_momo": "",
-      "orange_money": "",
-      "carte": ""
+      "mtn_momo": "Confirm di payment for your phone wit your MoMo code.",
+      "orange_money": "Dial #150# or confirm for di Orange app wit your code.",
+      "carte": "Authenticate di payment wit your bank."
     },
-    "banque": "",
-    "echec": "",
-    "delai": "",
-    "demarrage": "",
-    "dejaEnCours": "",
-    "carteIndisponible": "",
-    "lienEchoue": ""
+    "banque": "Open di page of my bank",
+    "echec": "Di payment no pass. Dem no take any money.",
+    "delai": "Di time to confirm don finish. Dem no take any money.",
+    "demarrage": "Di payment no fit start. Try again.",
+    "dejaEnCours": "One payment dey go on already for dis order. Confirm am for your phone, then wait small time.",
+    "carteIndisponible": "Dem no fit take card details for now. Choose another way to pay.",
+    "lienEchoue": "We no fit create di link for your person. Try again."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Di payment dey load",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "Dis order no dey again",
+      "detail": "Go back to do your booking again."
     },
     "indisponible": {
-      "titre": "",
-      "detail": ""
+      "titre": "Online payment no dey available",
+      "detail": "Online payment no dey available for now. Book your seat, then pay for di counter for station or by di agency merchant MoMo."
     },
     "payee": {
-      "titre": "",
-      "detail": "",
-      "ouvrir": ""
+      "titre": "Dis order don pay already",
+      "detail": "Your ticket dey wait you.",
+      "ouvrir": "Open my ticket"
     },
     "expiree": {
-      "titre": "",
-      "detail": ""
+      "titre": "Di time to pay don finish",
+      "detail": "Dem no dey hold di seat dem again. Go back to do your booking again."
     },
     "annulee": {
-      "titre": "",
-      "detail": ""
+      "titre": "Dem don cancel dis order",
+      "detail": "Go back to do your booking again."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "We no fit load dis payment",
+      "detail": "Check your network, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

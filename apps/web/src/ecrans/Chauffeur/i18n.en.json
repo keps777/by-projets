@@ -1,93 +1,93 @@
 {
-  "titre": "",
-  "sousTitre": "",
-  "retour": "",
+  "titre": "Driver · {{nom}}",
+  "sousTitre": "{{bus}} · waybill of {{jour}} {{mois}}",
+  "retour": "Back",
   "mois": {
-    "1": "",
-    "2": "",
-    "3": "",
-    "4": "",
-    "5": "",
-    "6": "",
-    "7": "",
-    "8": "",
-    "9": "",
-    "10": "",
-    "11": "",
-    "12": ""
+    "1": "Jan.",
+    "2": "Feb.",
+    "3": "Mar.",
+    "4": "Apr.",
+    "5": "May",
+    "6": "Jun.",
+    "7": "Jul.",
+    "8": "Aug.",
+    "9": "Sep.",
+    "10": "Oct.",
+    "11": "Nov.",
+    "12": "Dec."
   },
-  "gps": "",
+  "gps": "GPS",
   "trajet": {
-    "etiquette": "",
-    "route": "",
-    "detail": "",
-    "vitesse": ""
+    "etiquette": "Current trip",
+    "route": "{{origine}} → {{destination}}",
+    "detail": "left {{depart}} · {{abord}} on board · {{colis}} parcels · next stop {{arret}} {{heure}}",
+    "vitesse": "km/h · limit {{limite}}"
   },
   "depenses": {
-    "titre": "",
-    "rappel": "",
-    "photo": "",
-    "sansPhoto": "",
-    "autre": "",
-    "ajouter": "",
-    "aucun": ""
+    "titre": "Trip expenses · photo receipt",
+    "rappel": "reimbursed with the report",
+    "photo": "photo ✓",
+    "sansPhoto": "no photo",
+    "autre": "Other (parking, repair…)",
+    "ajouter": "+ add",
+    "aucun": "—"
   },
   "incident": {
-    "titre": "",
-    "detail": "",
-    "envoye": "",
-    "echec": ""
+    "titre": "Incident · breakdown",
+    "detail": "1 tap · station + passengers notified",
+    "envoye": "Incident reported: the station and {{nombre}} passengers are notified.",
+    "echec": "The incident was not sent. Try again."
   },
   "retard": {
-    "titre": "",
-    "detail": "",
-    "envoye": "",
-    "echec": ""
+    "titre": "Delay · {{minutes}} min",
+    "detail": "automatic SMS to the {{nombre}}",
+    "envoye": "Delay of {{minutes}} min announced: SMS sent to {{nombre}} passengers.",
+    "echec": "The delay was not sent. Try again."
   },
   "semaine": {
-    "titre": "",
-    "paie": "",
-    "trajets": "",
-    "km": "",
-    "excesVitesse": "",
-    "aRecevoir": ""
+    "titre": "My week",
+    "paie": "paid on {{jour}} by MoMo",
+    "trajets": "trips",
+    "km": "km",
+    "excesVitesse": "speeding",
+    "aRecevoir": "to receive"
   },
   "arrivee": {
-    "libelle": "",
-    "echec": ""
+    "libelle": "Arrived at {{arret}} · open the doors",
+    "echec": "The arrival was not recorded. Try again."
   },
   "formulaire": {
-    "titre": "",
-    "sousTitre": "",
-    "fermer": "",
-    "categorie": "",
+    "titre": "Add an expense",
+    "sousTitre": "photo receipt required",
+    "fermer": "Close",
+    "categorie": "Category",
     "categories": {
-      "carburant": "",
-      "peage": "",
-      "autre": ""
+      "carburant": "Fuel",
+      "peage": "Toll",
+      "autre": "Other"
     },
-    "libelle": "",
-    "libelleAide": "",
-    "montant": "",
-    "prendrePhoto": "",
-    "reprendrePhoto": "",
-    "photoJointe": "",
-    "erreurMontant": "",
-    "erreurPhoto": "",
-    "echec": "",
-    "annuler": "",
-    "valider": ""
+    "libelle": "Label",
+    "libelleAide": "parking, repair…",
+    "montant": "Amount (FCFA)",
+    "prendrePhoto": "Take the photo",
+    "reprendrePhoto": "Retake the photo",
+    "photoJointe": "photo attached · {{nom}}",
+    "erreurMontant": "Enter the amount in FCFA.",
+    "erreurPhoto": "Add the receipt photo: without a photo, the expense is not reimbursed.",
+    "echec": "The expense was not sent. Try again.",
+    "annuler": "Cancel",
+    "valider": "Add the expense"
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Loading the waybill",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No waybill",
+      "detail": "No trip is assigned to your bus for now."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "The waybill could not be loaded",
+      "detail": "Check the network, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

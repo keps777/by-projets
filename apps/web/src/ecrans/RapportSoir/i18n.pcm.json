@@ -1,54 +1,54 @@
 {
   "entete": {
-    "retour": "",
-    "marque": "",
-    "marqueSeule": "",
-    "verifie": ""
+    "retour": "Go back",
+    "marque": "AfriMove · {{compagnie}}",
+    "marqueSeule": "AfriMove",
+    "verifie": "account don verify · e dey answer for 2 min"
   },
   "chiffres": {
-    "billets": "",
-    "colis": "",
-    "recette": "",
-    "variation": "",
-    "litiges_one": "",
-    "litiges_other": "",
-    "repartition": ""
+    "billets": "Ticket dem",
+    "colis": "Parcel dem",
+    "recette": "Money wey enter",
+    "variation": "{{variation}} vs yesterday",
+    "litiges_one": "{{count}} dispute",
+    "litiges_other": "{{count}} dispute dem",
+    "repartition": "cash {{cash}} · MoMo {{momo}}"
   },
   "gares": {
-    "billets_one": "",
-    "billets_other": "",
-    "ecart": "",
-    "aucune": ""
+    "billets_one": "{{nombre}} ticket",
+    "billets_other": "{{nombre}} ticket dem",
+    "ecart": "difference",
+    "aucune": "No station for dis report."
   },
   "enRoute": {
-    "titre": ""
+    "titre": "For road"
   },
   "remplissage": {
-    "titre": "",
-    "moyen": ""
+    "titre": "How full",
+    "moyen": "{{pct}} % average"
   },
   "annulations": {
-    "titre": "",
-    "aucune": "",
-    "detail": "",
-    "toutesAvecPin": "",
-    "sansPin": ""
+    "titre": "Cancel dem",
+    "aucune": "none",
+    "detail": "{{nombre}} ({{montant}}), {{pin}}",
+    "toutesAvecPin": "all get PIN",
+    "sansPin": "and at least one no get PIN"
   },
   "enLigne": {
-    "titre": "",
-    "billets_one": "",
-    "billets_other": ""
+    "titre": "Online",
+    "billets_one": "{{nombre}} ticket ({{pct}} %)",
+    "billets_other": "{{nombre}} ticket dem ({{pct}} %)"
   },
-  "ouvrirDetail": "",
-  "signature": "",
-  "signatureAucune": "",
-  "voir": "",
-  "saisie": "",
-  "ouvrirAssistant": "",
+  "ouvrirDetail": "Open di details for di app",
+  "signature": "{{heure}} · dem sign {{signatures}}",
+  "signatureAucune": "{{heure}} · no signature",
+  "voir": "See →",
+  "saisie": "Ask question about your figures…",
+  "ouvrirAssistant": "Open di assistant",
   "etats": {
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "chargement": "Di evening report dey load",
+    "vide": "Di evening report never reach yet. E dey go every evening by 9 pm.",
+    "erreur": "Di evening report no load.",
+    "reessayer": "Try again"
   }
 }

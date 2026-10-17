@@ -1,96 +1,96 @@
 {
   "entete": {
-    "titre": "",
-    "sousTitre": "",
-    "retour": "",
-    "modules": ""
+    "titre": "Settings",
+    "sousTitre": "Line dem, price dem, team, rule dem · everything dey change here",
+    "retour": "Go back",
+    "modules": "Modules"
   },
   "lignes": {
-    "titre": "",
-    "ajouter": "",
-    "modifier": "",
-    "propose": "",
+    "titre": "Line dem and price dem",
+    "ajouter": "+ line",
+    "modifier": "change",
+    "propose": "{{proposition}} dem suggest",
     "detail": {
-      "departs_one": "",
-      "departs_other": "",
-      "classique": "",
-      "vip": "",
-      "bagage": "",
-      "arrets": "",
-      "prorata": ""
+      "departs_one": "{{count}} bus",
+      "departs_other": "{{count}} bus dem",
+      "classique": "standard {{prix}}",
+      "vip": "VIP {{prix}}",
+      "bagage": "luggage {{prix}}",
+      "arrets": "stop dem {{liste}}",
+      "prorata": "pro rata price for road"
     },
-    "vide": ""
+    "vide": "No line for now. Add di first one wit \"+ line\"."
   },
   "equipe": {
-    "titre_one": "",
-    "titre_other": "",
-    "ajouter": "",
+    "titre_one": "Team · {{count}} person",
+    "titre_other": "Team · {{count}} people",
+    "ajouter": "+ person",
     "roles": {
-      "guichetier_one": "",
-      "guichetier_other": "",
-      "superviseur_one": "",
-      "superviseur_other": "",
-      "convoyeur_one": "",
-      "convoyeur_other": "",
-      "chauffeur_one": "",
-      "chauffeur_other": "",
-      "relais_one": "",
-      "relais_other": "",
-      "comptable_one": "",
-      "comptable_other": ""
+      "guichetier_one": "counter agent",
+      "guichetier_other": "counter agent dem",
+      "superviseur_one": "supervisor",
+      "superviseur_other": "supervisor dem",
+      "convoyeur_one": "conductor",
+      "convoyeur_other": "conductor dem",
+      "chauffeur_one": "driver",
+      "chauffeur_other": "driver dem",
+      "relais_one": "relay agent",
+      "relais_other": "relay agent dem",
+      "comptable_one": "accountant",
+      "comptable_other": "accountant dem"
     },
-    "filtres": "",
-    "visibles_one": "",
-    "visibles_other": "",
-    "glisser": "",
-    "voirListe": "",
-    "modifier": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "filtres": "Filter di team by role",
+    "visibles_one": "{{count}} dey show",
+    "visibles_other": "{{count}} dey show",
+    "glisser": "slide",
+    "voirListe": "See di list",
+    "modifier": "change",
+    "vide": "Nobody dey for dis team for now.",
+    "erreur": "Di list no load.",
+    "reessayer": "Try again"
   },
   "regles": {
-    "titre": "",
-    "modifier": "",
+    "titre": "Rule dem",
+    "modifier": "change",
     "annulation": {
-      "debut": "",
-      "debutAucune": "",
+      "debut": "Cancel am free till",
+      "debutAucune": "Cancel am free:",
       "delai": {
-        "1h_avant": "",
-        "2h_avant": "",
-        "veille_20h": "",
-        "jamais": ""
+        "1h_avant": "1 h",
+        "2h_avant": "2 h",
+        "veille_20h": "di evening before, 8 pm",
+        "jamais": "never"
       },
       "fin": {
-        "1h_avant": "",
-        "2h_avant": "",
-        "veille_20h": "",
-        "jamais": ""
+        "1h_avant": "before · then {{retenue}}",
+        "2h_avant": "before · then {{retenue}}",
+        "veille_20h": "· then {{retenue}}",
+        "jamais": "· {{retenue}}"
       },
       "retenue": {
-        "selon_classe": "",
-        "dix_pct": "",
-        "cinquante_pct": "",
-        "aucun_remboursement": ""
+        "selon_classe": "e depend on di class",
+        "dix_pct": "10 % for everywhere",
+        "cinquante_pct": "50 % for everywhere",
+        "aucun_remboursement": "no refund"
       }
     },
     "tolerance": {
-      "debut": "",
-      "montant": ""
+      "debut": "Tolerance for cash desk difference ·",
+      "montant": "{{montant}} F"
     },
-    "cadence": "",
-    "fraisService": "",
-    "momo": ""
+    "cadence": "Phone number must dey for rush mode",
+    "fraisService": "Service fee for passenger ({{montant}} F) na di agency dey pay am",
+    "momo": "MoMo account dem of di agency · MTN {{mtn}} · OM {{orange}}"
   },
   "signature": {
-    "sousTitre": "",
-    "fermer": "",
-    "clavier": ""
+    "sousTitre": "Your PIN go sign dis change",
+    "fermer": "Close",
+    "clavier": "PIN keypad to sign di change"
   },
-  "pied": "",
+  "pied": "Every change get date, signature, and dem go see am for di evening report.",
   "etats": {
-    "chargement": "",
-    "erreur": "",
-    "reessayer": ""
+    "chargement": "Di settings dey load",
+    "erreur": "Di settings no load.",
+    "reessayer": "Try again"
   }
 }

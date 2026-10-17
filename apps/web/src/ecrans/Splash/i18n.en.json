@@ -1,29 +1,29 @@
 {
-  "lieuEtHeure": "",
+  "lieuEtHeure": "Douala · {{heure}}",
   "langue": {
-    "groupe": ""
+    "groupe": "Language"
   },
-  "logo": "",
-  "signature": "",
+  "logo": "AfriMove logo: shutter sign, amber A",
+  "signature": "A · as in Avance",
   "slogan": {
-    "ligne1": "",
-    "ligne2": ""
+    "ligne1": "Wherever you are,",
+    "ligne2": "we find you."
   },
   "jingle": {
-    "titre": "",
-    "paroles": "",
-    "ecouter": "",
-    "arreter": "",
-    "echec": ""
+    "titre": "AfriMove jingle · 10 s",
+    "paroles": "\"Wherever you are, we find you: Afri… Move!\"",
+    "ecouter": "Listen to the jingle",
+    "arreter": "Stop the jingle",
+    "echec": "The sound could not start on this phone."
   },
   "actions": {
-    "principale": "",
-    "secondaire": ""
+    "principale": "Start · 30 seconds",
+    "secondaire": "I already have an account"
   },
   "pied": {
-    "debut": "",
-    "compagnies_one": "",
-    "compagnies_other": "",
-    "fin": ""
+    "debut": "Tickets, parcels and carpooling",
+    "compagnies_one": "{{count}} partner company",
+    "compagnies_other": "{{count}} partner companies",
+    "fin": "also works without internet"
   }
 }

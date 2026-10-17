@@ -1,81 +1,81 @@
 {
-  "marque": "",
-  "salutation": "",
-  "salutationSansNom": "",
-  "direct": "",
+  "marque": "AfriMove",
+  "salutation": "Hello {{prenom}}",
+  "salutationSansNom": "Hello",
+  "direct": "LIVE",
   "classes": {
-    "vip": "",
-    "classique": ""
+    "vip": "VIP",
+    "classique": "Standard"
   },
   "mode": {
-    "aria": "",
-    "entreVilles": "",
-    "memeVille": ""
+    "aria": "Trip type",
+    "entreVilles": "Between cities",
+    "memeVille": "Within the same city"
   },
   "trajet": {
-    "depart": "",
-    "arrivee": "",
-    "changerDepart": "",
-    "changerArrivee": "",
-    "inverser": "",
-    "position": ""
+    "depart": "Departure",
+    "arrivee": "Arrival",
+    "changerDepart": "Change the departure city: {{ville}}",
+    "changerArrivee": "Change the arrival city: {{ville}}",
+    "inverser": "Swap direction",
+    "position": "You are in {{ville}} · {{gareDepart}} → {{gareArrivee}}"
   },
   "jour": {
-    "aujourdhui": "",
-    "demain": ""
+    "aujourdhui": "Today",
+    "demain": "Tmrw"
   },
   "filtre": {
-    "toutes": "",
-    "vip": "",
-    "classique": "",
-    "compagnies_one": "",
-    "compagnies_other": "",
-    "resume": "",
-    "preferees_one": "",
-    "preferees_other": ""
+    "toutes": "All classes",
+    "vip": "VIP",
+    "classique": "Standard",
+    "compagnies_one": "{{count}} company",
+    "compagnies_other": "{{count}} companies",
+    "resume": "{{classe}} · {{compagnies}}",
+    "preferees_one": "{{count}} favourite",
+    "preferees_other": "{{count}} favourites"
   },
   "liste": {
-    "titre": "",
+    "titre": "Departures · real seats",
     "onglets": {
-      "tout": "",
-      "bus": "",
-      "covoit": ""
+      "tout": "All",
+      "bus": "Bus",
+      "covoit": "Carpool"
     },
-    "covoitDetail_one": "",
-    "covoitDetail_other": "",
-    "bus_one": "",
-    "bus_other": "",
-    "covoiturages_one": "",
-    "covoiturages_other": "",
-    "reseauAujourdhui": "",
-    "reseauAutreJour": "",
-    "et": "",
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "covoitDetail_one": "{{lieu}} · {{count}} seat · {{vehicule}}",
+    "covoitDetail_other": "{{lieu}} · {{count}} seats · {{vehicule}}",
+    "bus_one": "{{count}} bus",
+    "bus_other": "{{count}} buses",
+    "covoiturages_one": "{{count}} carpool",
+    "covoiturages_other": "{{count}} carpools",
+    "reseauAujourdhui": "{{resume}} today · see all",
+    "reseauAutreJour": "{{resume}} that day · see all",
+    "et": "{{bus}} and {{covoit}}",
+    "chargement": "Loading departures",
+    "vide": "No departure for this route on that day.",
+    "erreur": "The departures could not be loaded.",
+    "reessayer": "Try again"
   },
   "raccourcis": {
-    "colis": "",
-    "proche": "",
-    "groupe": "",
-    "course": "",
-    "arret": "",
-    "ussd": ""
+    "colis": "Send a parcel",
+    "proche": "Pay for a relative",
+    "groupe": "Group · whole bus",
+    "course": "Moto to the station",
+    "arret": "Board along the way",
+    "ussd": "Without internet"
   },
   "choixVille": {
-    "titreDepart": "",
-    "titreArrivee": "",
-    "fermer": "",
-    "chargement": "",
-    "vide": "",
-    "erreur": "",
-    "reessayer": ""
+    "titreDepart": "Departure city",
+    "titreArrivee": "Arrival city",
+    "fermer": "Close",
+    "chargement": "Loading cities",
+    "vide": "No city served at the moment.",
+    "erreur": "The cities could not be loaded.",
+    "reessayer": "Try again"
   },
   "choixJour": {
-    "titre": "",
-    "fermer": "",
-    "aujourdhui": "",
-    "demain": ""
+    "titre": "Choose the day",
+    "fermer": "Close",
+    "aujourdhui": "Today",
+    "demain": "Tomorrow"
   }
 }

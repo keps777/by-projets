@@ -8,7 +8,9 @@ import { CLE_TUTORIEL_VU, tutorielVu } from "./vu";
 /** Monte l'application sur /tutoriel et attend que la page (chargée à la demande) soit arrivée. */
 async function rendre(options: Parameters<typeof rendreApp>[0] = {}) {
   const rendu = rendreApp({ url: "/tutoriel", langue: "fr", ...options });
-  const region = await screen.findByRole("region", { name: "Tutoriel en 3 écrans" });
+  const region = await screen.findByRole("region", {
+    name: /^(Tutoriel en 3 écrans|Tutorial in 3 screens|Tutorial for 3 screen)$/,
+  });
   return { ...rendu, region };
 }
 
@@ -191,10 +193,17 @@ describe("Tutoriel · « Passer » et affichage unique", () => {
 });
 
 describe("Tutoriel · textes", () => {
-  it("en anglais, les textes non traduits retombent sur le français (aucune clé brute)", async () => {
+  it("s'affiche en anglais, sans clé brute", async () => {
     await rendre({ langue: "en" });
-    expect(screen.getByRole("link", { name: "Passer" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Suivant" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Skip" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Next" })).toBeInTheDocument();
+    expect(document.body.textContent).not.toMatch(/diapos\.|exemple\./);
+  });
+
+  it("s'affiche en pidgin, sans clé brute", async () => {
+    await rendre({ langue: "pcm" });
+    expect(screen.getByRole("button", { name: "Next" })).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Tutorial for 3 screen" })).toBeInTheDocument();
     expect(document.body.textContent).not.toMatch(/diapos\.|exemple\./);
   });
 });

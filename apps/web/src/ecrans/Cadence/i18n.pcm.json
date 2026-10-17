@@ -1,84 +1,84 @@
 {
-  "titre": "",
-  "quitter": "",
-  "touche": "",
+  "titre": "Rush mode",
+  "quitter": "Comot for rush mode",
+  "touche": "touch {{n}} · ",
   "depart": {
-    "libelle": "",
-    "places_one": "",
-    "places_other": ""
+    "libelle": "Bus wey dey go now",
+    "places_one": "seat remain",
+    "places_other": "seat dem remain"
   },
   "dernier": {
-    "libelle": "",
-    "detail": "",
-    "sansNom": "",
-    "aucun": ""
+    "libelle": "Last ticket · {{ecoule}}",
+    "detail": "{{numero}} · seat {{siege}} · {{nom}}",
+    "sansNom": "rush, no name",
+    "aucun": "No ticket don sell"
   },
   "duree": {
-    "secondes": "",
-    "minutes": "",
-    "heures": ""
+    "secondes": "{{n}} s",
+    "minutes": "{{n}} min",
+    "heures": "{{h}} h {{m}}"
   },
-  "prochain": "",
-  "siegeSuivant": "",
-  "noteQuai": "",
+  "prochain": "Next",
+  "siegeSuivant": "Next seat:",
+  "noteQuai": "· name and ID go enter for di bus park by di conductor",
   "paiements": {
     "cash": {
-      "libelle": "",
-      "ligne1": "",
-      "ligne2": ""
+      "libelle": "CASH",
+      "ligne1": "e go print",
+      "ligne2": "+ SMS if number dey"
     },
     "momo": {
-      "libelle": "",
-      "ligne1": "",
-      "pushEnvoye": "",
-      "ligne2": ""
+      "libelle": "MOMO",
+      "ligne1": "push",
+      "pushEnvoye": "push don go",
+      "ligne2": "confirmed"
     }
   },
   "options": {
-    "deuxPlaces": "",
-    "numero": "",
-    "autreDepart": ""
+    "deuxPlaces": "× 2 seat",
+    "numero": "+ number",
+    "autreDepart": "Another bus"
   },
   "pied": {
-    "vendus": "",
-    "annulations_one": "",
-    "annulations_other": "",
+    "vendus": "Wey dem sell for rush:",
+    "annulations_one": "· {{count}} cancel",
+    "annulations_other": "· {{count}} cancel dem",
     "synchro": {
-      "horsLigne": "",
-      "sync": "",
-      "enAttente": ""
+      "horsLigne": "no network fine · sync {{heure}}",
+      "sync": "network dey · sync {{heure}}",
+      "enAttente": "{{n}} to send · sync {{heure}}"
     }
   },
   "numero": {
-    "titre": "",
-    "aide": "",
-    "obligatoire": "",
-    "label": "",
-    "valider": "",
-    "fermer": "",
-    "erreur": ""
+    "titre": "Number of di customer",
+    "aide": "Dem go send di ticket by SMS to dis number.",
+    "obligatoire": "Number must dey for rush mode.",
+    "label": "Phone number",
+    "valider": "Confirm",
+    "fermer": "Close",
+    "erreur": "Put di 9 digits of di number."
   },
   "autreDepart": {
-    "titre": "",
-    "ligne_one": "",
-    "ligne_other": "",
-    "chargement": "",
-    "erreur": ""
+    "titre": "Another bus",
+    "ligne_one": "{{heure}} {{destination}} · {{count}} free seat",
+    "ligne_other": "{{heure}} {{destination}} · {{count}} free seat dem",
+    "chargement": "Di bus dem dey load",
+    "erreur": "We no fit load di bus dem."
   },
   "erreurs": {
-    "vente": "",
-    "imprimante": ""
+    "vente": "Dem no record di sale. Try again.",
+    "imprimante": "Printer no dey available: ticket dem go print as e come back."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Rush mode dey load",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No bus for rush mode",
+      "detail": "No bus dey open for sell for now."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "We no fit load rush mode",
+      "detail": "Check di network, then try again.",
+      "reessayer": "Try again"
     }
   }
 }

@@ -1,39 +1,39 @@
 {
-  "retour": "",
-  "titre": "",
-  "sousTitre": "",
-  "pastille": "",
-  "montant": "",
+  "retour": "Back",
+  "titre": "Become a courier",
+  "sousTitre": "Programme open · moto, bike or on foot · you choose your hours",
+  "pastille": "{{montant}} F / DELIVERY",
+  "montant": "{{montant}} F",
   "chiffres": {
-    "course": "",
-    "courseDetail": "",
-    "semaine_one": "",
-    "semaine_other": "",
-    "livreurs": "",
-    "villes_one": "",
-    "villes_other": ""
+    "course": "The delivery",
+    "courseDetail": "≈ 4 km · paid in the evening",
+    "semaine_one": "the week · {{count}} delivery",
+    "semaine_other": "the week · {{count}} deliveries",
+    "livreurs": "Couriers",
+    "villes_one": "in {{count}} city",
+    "villes_other": "in {{count}} cities"
   },
   "actions": {
-    "plusTard": "",
-    "inscrire": "",
-    "inscrireDetail": ""
+    "plusTard": "Later",
+    "inscrire": "I sign up",
+    "inscrireDetail": "documents · 10 min training · 1st delivery"
   },
   "messages": {
-    "photos": "",
-    "momo": "",
-    "dejaLivreur": "",
-    "echec": ""
+    "photos": "Add the photo of your licence and of your insurance: they are required for the moto.",
+    "momo": "The MoMo number is incomplete: 9 digits, for example 6 75 12 34 09.",
+    "dejaLivreur": "You are already an AfriMove courier.",
+    "echec": "The registration could not be sent. Try again in a moment."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Loading the courier programme",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "The programme is not open for now",
+      "detail": "Come back later: registrations are not open."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "Programme unavailable",
+      "detail": "The courier programme could not be loaded.",
+      "reessayer": "Try again"
     }
   }
 }

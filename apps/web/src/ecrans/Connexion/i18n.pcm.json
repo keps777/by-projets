@@ -1,37 +1,37 @@
 {
-  "retour": "",
-  "etape": "",
+  "retour": "Go back",
+  "etape": "Step 1 for 2 · 30 seconds",
   "titre": {
-    "ligne1": "",
-    "ligne2": ""
+    "ligne1": "Your number,",
+    "ligne2": "na your account."
   },
-  "explication": "",
+  "explication": "No password. One code go reach you by SMS, and your ticket too. Di same number dey work for small phone wit *123#.",
   "telephone": {
-    "libelle": ""
+    "libelle": "Phone number"
   },
   "code": {
-    "titre": "",
+    "titre": "Step 2 · code wey you receive by {{canal}}",
     "canaux": {
-      "sms": "",
-      "whatsapp": ""
+      "sms": "SMS",
+      "whatsapp": "WhatsApp"
     },
-    "renvoi": "",
-    "renvoyer": "",
-    "aide": ""
+    "renvoi": "send am again for {{delai}}",
+    "renvoyer": "Send di code again",
+    "aide": "Di code go fill by itself when di SMS reach. Nobody for AfriMove go ever ask you for am."
   },
   "actions": {
-    "continuer": "",
-    "whatsapp": "",
-    "ussd": ""
+    "continuer": "Continue",
+    "whatsapp": "By WhatsApp",
+    "ussd": "Without internet · *123#"
   },
-  "mentions": "",
+  "mentions": "If you continue, you don agree wit di terms of use and di data policy. Dem no dey ever sell your data.",
   "erreurs": {
-    "telephone": "",
-    "envoi": "",
-    "codeIncomplet": "",
-    "codeFaux_one": "",
-    "codeFaux_other": "",
-    "verification": "",
-    "tropEssais": ""
+    "telephone": "Put your 9-digit number, e dey start wit 6.",
+    "envoi": "We no fit send di code. Check your network and try again.",
+    "codeIncomplet": "Put di 4 digits of di code wey you receive.",
+    "codeFaux_one": "Dis code no correct. You get {{count}} try remain.",
+    "codeFaux_other": "Dis code no correct. You get {{count}} try dem remain.",
+    "verification": "We no fit check di code. Check your network and try again.",
+    "tropEssais": "Too many try. Try again for {{delai}}."
   }
 }

@@ -1,65 +1,65 @@
 {
-  "titre": "",
-  "retour": "",
-  "sousTitre": "",
+  "titre": "Register parcel",
+  "retour": "Go back to counter",
+  "sousTitre": "{{numero}} · counter {{guichet}}",
   "photo": {
-    "prise": "",
-    "reprendre": "",
-    "aPrendre": ""
+    "prise": "Photo don snap ✓",
+    "reprendre": "snap again",
+    "aPrendre": "Snap di photo"
   },
   "champs": {
-    "expediteur": "",
-    "destinataire": "",
-    "contenu": "",
-    "poids": "",
-    "valeur": ""
+    "expediteur": "Person wey send · phone",
+    "destinataire": "Person wey go receive · phone",
+    "contenu": "Wetin dey inside (wey dem talk)",
+    "poids": "Weight",
+    "valeur": "Value"
   },
   "departs": {
-    "soute": "",
-    "taux": "",
+    "soute": "{{destination}} · luggage space {{pct}} %",
+    "taux": "{{destination}} · {{pct}} %",
     "autreVille": {
-      "titre": "",
-      "detail": ""
+      "titre": "Another town",
+      "detail": "by another company"
     }
   },
   "etiquette": {
-    "mention": "",
-    "mentionSansCompagnie": "",
+    "mention": "{{compagnie}} · afrimove.cm · no code here",
+    "mentionSansCompagnie": "afrimove.cm · no code here",
     "imprimante": {
-      "ok": "",
-      "papier_vide": "",
-      "hors_service": "",
-      "absente": ""
+      "ok": "printer dey fine",
+      "papier_vide": "paper don finish",
+      "hors_service": "printer no dey work",
+      "absente": "no printer"
     }
   },
   "paiement": {
-    "cash": "",
-    "cashMontant": "",
-    "momo": "",
-    "momoMontant": "",
-    "assurance": "",
-    "sansAssurance": ""
+    "cash": "Cash",
+    "cashMontant": "Cash · {{montant}}",
+    "momo": "MoMo",
+    "momoMontant": "MoMo · {{montant}}",
+    "assurance": "Insurance ✓ {{montant}}",
+    "sansAssurance": "Insurance {{montant}}"
   },
   "encaisser": {
-    "libelle": "",
-    "detail": "",
-    "reimprimer": ""
+    "libelle": "Collect money · print di label",
+    "detail": "dem go send di code to collect to di person wey go receive only",
+    "reimprimer": "Parcel don register · print di label"
   },
   "alertes": {
-    "saisie": "",
-    "echec": "",
-    "echecImpression": ""
+    "saisie": "Complete di photo and di place dem wey red.",
+    "echec": "Dem no register di parcel. Try again.",
+    "echecImpression": "Parcel don register, but di label no comot. Try print again."
   },
   "etats": {
-    "chargement": "",
+    "chargement": "Di parcel dey load",
     "vide": {
-      "titre": "",
-      "detail": ""
+      "titre": "No bus to load am",
+      "detail": "No bus remain for dis parcel today."
     },
     "erreur": {
-      "titre": "",
-      "detail": "",
-      "reessayer": ""
+      "titre": "We no fit load di parcel",
+      "detail": "Check di network, then try again.",
+      "reessayer": "Try again"
     }
   }
 }
