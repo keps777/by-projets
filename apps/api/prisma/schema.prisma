@@ -1561,3 +1561,57 @@ model FicheVoyageur {
 
   @@map("fiche_voyageur")
 }
+
+// ------------------------------------------------------------------------------ USSD *123# (AM-169)
+
+/// Session USSD en cours, partagée entre les instances. La charge est l'état du dialogue en JSON chiffré
+/// (contexte « ussd.session:<cle> ») : rien de personnel en clair. Purgée à l'échéance.
+model UssdSession {
+  /// <opérateur>:<identifiant de session de l'opérateur>
+  cle     String   @id
+  expireA DateTime @db.Timestamptz(3)
+  charge  String
+
+  @@index([expireA])
+  @@map("ussd_session")
+}
+
+/// Journal technique des sessions : ni numéro en clair, ni texte d'écran, ni réponse. SQL : opérateur,
+/// événement et étape parmi des listes fermées ; une entrée ne se modifie pas (déclencheur contre UPDATE),
+/// la purge par ancienneté reste possible.
+model UssdJournal {
+  id           String   @id @db.Uuid
+  at           DateTime @db.Timestamptz(3)
+  /// SQL : mtn | orange
+  operateur    String
+  /// « +237 ••••• 345 »
+  msisdnMasque String?
+  /// Début de l'empreinte HMAC de la clé de session (12 caractères).
+  sessionRef   String?
+  evenement    String
+  etape        String?
+  /// Code court, jamais un écran ni une réponse.
+  code         String?
+  dureeMs      Int?
+
+  @@index([at(sort: Desc)])
+  @@index([sessionRef])
+  @@map("ussd_journal")
+}
+
+/// Un achat fait par USSD, de la place retenue au SMS du billet. SQL : opérateur et état parmi des listes
+/// fermées ; l'état ne bouge que par UPDATE conditionnel sur l'état attendu.
+model UssdAchat {
+  commandeId          String   @id @db.Uuid
+  voyageurId          String   @db.Uuid
+  /// SQL : mtn | orange
+  operateur           String
+  /// SQL : reservee | paiement_demande | terminee | abandonnee
+  etat                String
+  /// Numéro du SMS du billet, chiffré (contexte « ussd.achat:<commandeId> »).
+  destinataireChiffre String
+  creeA               DateTime @db.Timestamptz(3)
+
+  // SQL : index (creeA) WHERE etat IN ('reservee', 'paiement_demande').
+  @@map("ussd_achat")
+}

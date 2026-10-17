@@ -70,9 +70,17 @@ export class JournalUssdMemoire extends JournalUssd {
   static readonly PLAFOND = 10_000;
   readonly entrees: EntreeJournalUssd[] = [];
 
+  private readonly ids = new Set<string>();
+
   async enregistrer(entree: EntreeJournalUssd) {
+    // Comme `INSERT … ON CONFLICT DO NOTHING` : la même entrée rejouée ne s'écrit pas deux fois.
+    if (this.ids.has(entree.id)) return;
+    this.ids.add(entree.id);
     this.entrees.push({ ...entree });
-    if (this.entrees.length > JournalUssdMemoire.PLAFOND) this.entrees.shift();
+    if (this.entrees.length > JournalUssdMemoire.PLAFOND) {
+      const ancienne = this.entrees.shift();
+      if (ancienne) this.ids.delete(ancienne.id);
+    }
   }
 
   de(evenement: EntreeJournalUssd["evenement"]): EntreeJournalUssd[] {
@@ -86,6 +94,8 @@ export class AchatsUssdMemoire extends AchatsUssd {
   private readonly achats = new Map<string, AchatUssd>();
 
   async ajouter(achat: AchatUssd) {
+    // Comme `INSERT … ON CONFLICT DO NOTHING` : un achat déjà connu ne repart jamais à son état d'origine.
+    if (this.achats.has(achat.commandeId)) return;
     this.achats.set(achat.commandeId, { ...achat });
   }
 

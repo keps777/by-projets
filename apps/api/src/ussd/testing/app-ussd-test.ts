@@ -51,6 +51,7 @@ import {
   SuiviBusMemoire,
   SuiviColisMemoire,
 } from "../memoire";
+import { AchatsUssdPrisma, JournalUssdPrisma, SessionsUssdPrisma } from "../postgres";
 import {
   AchatsUssd,
   JournalUssd,
@@ -163,6 +164,12 @@ export interface OptionsAppUssdTest {
   sansPromotion?: boolean;
   /** Pas de compte de reversement pour Alpha. */
   alphaSansCompte?: boolean;
+  /**
+   * Une vraie connexion Prisma (tests d'intégration PostgreSQL) : les sessions, le journal et les
+   * achats USSD sont alors ceux de PostgreSQL ; la billetterie et les paiements restent en mémoire.
+   * Les champs `sessions`, `journal` et `achats` du résultat sont alors des adaptateurs PostgreSQL.
+   */
+  prisma?: PrismaService;
 }
 
 /**
@@ -209,7 +216,18 @@ export async function creerAppUssdTest(options: OptionsAppUssdTest = {}) {
     .overrideProvider(OPTIONS_BILLETTERIE)
     .useValue({ balayageMs: 0, pingMs: 0 })
     .overrideProvider(PrismaService)
-    .useValue({ estJoignable: async () => true, $disconnect: async () => undefined });
+    .useValue(
+      options.prisma ?? { estJoignable: async () => true, $disconnect: async () => undefined },
+    );
+  if (options.prisma) {
+    builder = builder
+      .overrideProvider(SessionsUssd)
+      .useValue(new SessionsUssdPrisma(options.prisma))
+      .overrideProvider(JournalUssd)
+      .useValue(new JournalUssdPrisma(options.prisma))
+      .overrideProvider(AchatsUssd)
+      .useValue(new AchatsUssdPrisma(options.prisma));
+  }
   const notifieur = new NotifieurBilletMemoire();
   const colis = new SuiviColisMemoire();
   const bus = new SuiviBusMemoire();
