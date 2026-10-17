@@ -1,0 +1,43 @@
+{
+  "titre": "",
+  "retour": "",
+  "partager": {
+    "libelle": "",
+    "texte": "",
+    "copie": "",
+    "echec": ""
+  },
+  "resume": {
+    "assure": "",
+    "nonAssure": ""
+  },
+  "code": {
+    "libelle": "",
+    "envoyer": ""
+  },
+  "frise": {
+    "libelle": ""
+  },
+  "canaux": {
+    "sms": "",
+    "whatsapp": ""
+  },
+  "messages": {
+    "codeEnvoye": "",
+    "envoiEchec": "",
+    "reclamationOuverte": "",
+    "reclamationEchec": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
