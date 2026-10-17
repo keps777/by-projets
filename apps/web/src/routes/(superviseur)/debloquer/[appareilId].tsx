@@ -1,5 +1,7 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { useParams } from "react-router";
+import { EcranSuperviseurDebloquer } from "@/ecrans/SuperviseurDebloquer";
 
 export default function Page() {
-  return <EcranVide planche="SuperviseurDebloquer" />;
+  const { appareilId } = useParams();
+  return <EcranSuperviseurDebloquer appareilId={appareilId} />;
 }
