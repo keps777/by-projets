@@ -115,7 +115,7 @@
       "route": "/cloture/session-k-dla-270105-2-1"
     },
     "SuperviseurVoir": {
-      "route": "/annulation/ann-0001"
+      "route": "/annulation/dem-annulation-billet-alp-dla-270105-0171"
     },
     "SuperviseurEquipe": {
       "route": "/equipe"
@@ -199,13 +199,13 @@
       "route": "/gares/dla-akwa"
     },
     "PatronPersonne": {
-      "route": "/personnes/pers-0001"
+      "route": "/personnes/pers-joseph"
     },
     "ConfigEquipeListe": {
       "route": "/reglages/equipe"
     },
     "ConfigPersonne": {
-      "route": "/reglages/personne/pers-0001"
+      "route": "/reglages/personne/pers-joseph"
     },
     "ConfigRegles": {
       "route": "/reglages/regles"
