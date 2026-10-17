@@ -11,6 +11,8 @@ import { BilletterieModule } from "../billetterie/billetterie.module";
 import { CaisseModule } from "../caisse/caisse.module";
 import { NumerotationModule } from "../numerotation/numerotation.module";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { CollecteRapportService } from "./collecte.service";
 import { CONFIG_RAPPORT, chargerConfigRapport, type ConfigRapport } from "./config";
@@ -26,6 +28,14 @@ import {
   VentesBilletsMemoire,
 } from "./memoire";
 import { PlanificateurRapport } from "./planificateur";
+import {
+  ActiviteColisPrisma,
+  AnnulationsDuJourPrisma,
+  ControlesEnRoutePrisma,
+  RapportsSoirPrisma,
+  ReferentielRapportPrisma,
+  VentesBilletsPrisma,
+} from "./postgres";
 import {
   ActiviteColis,
   AnnulationsDuJour,
@@ -125,16 +135,50 @@ export interface AdaptateursRapport {
         chargerConfigRapport({ ...process.env, NODE_ENV: config.env }, config.env === "production"),
     },
     { provide: Horloge, useClass: HorlogeSysteme },
-    { provide: ReferentielRapport, useClass: ReferentielMemoire },
-    { provide: VentesBillets, useClass: VentesBilletsMemoire },
+    {
+      provide: ReferentielRapport,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService): ReferentielRapport =>
+        stockageSurPostgres(config)
+          ? new ReferentielRapportPrisma(prisma)
+          : new ReferentielMemoire(),
+    },
+    {
+      provide: VentesBillets,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService): VentesBillets =>
+        stockageSurPostgres(config) ? new VentesBilletsPrisma(prisma) : new VentesBilletsMemoire(),
+    },
     { provide: DepartsDuJour, useClass: DepartsMemoire },
-    { provide: ActiviteColis, useClass: ActiviteColisMemoire },
+    {
+      provide: ActiviteColis,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService): ActiviteColis =>
+        stockageSurPostgres(config) ? new ActiviteColisPrisma(prisma) : new ActiviteColisMemoire(),
+    },
     { provide: CaissesDuJour, useClass: CaissesMemoire },
-    { provide: AnnulationsDuJour, useClass: AnnulationsMemoire },
+    {
+      provide: AnnulationsDuJour,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService): AnnulationsDuJour =>
+        stockageSurPostgres(config)
+          ? new AnnulationsDuJourPrisma(prisma)
+          : new AnnulationsMemoire(),
+    },
     { provide: TrousNumerotation, useClass: TrousMemoire },
-    { provide: ControlesEnRoute, useClass: ControlesMemoire },
+    {
+      provide: ControlesEnRoute,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService): ControlesEnRoute =>
+        stockageSurPostgres(config) ? new ControlesEnRoutePrisma(prisma) : new ControlesMemoire(),
+    },
     { provide: AssistantRapport, useClass: AssistantRapportAucun },
-    { provide: RapportsSoir, useClass: RapportsSoirMemoire },
+    {
+      provide: RapportsSoir,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService): RapportsSoir =>
+        stockageSurPostgres(config) ? new RapportsSoirPrisma(prisma) : new RapportsSoirMemoire(),
+    },
     CollecteRapportService,
     RapportSoirService,
     PlanificateurRapport,

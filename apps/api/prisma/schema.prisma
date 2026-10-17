@@ -1497,3 +1497,20 @@ model ReglagePaiements {
 
   @@map("reglage_paiements")
 }
+
+// ------------------------------------------------------------------------------ Rapport du soir (AM-171)
+
+/// Le rapport du soir arrêté pour une compagnie et un jour de Douala. EN AJOUT SEUL : ce que le patron
+/// a reçu à 21 h ne change plus (SQL : déclencheurs contre UPDATE, DELETE et TRUNCATE).
+model RapportSoir {
+  compagnieId String   @db.Uuid
+  /// Jour de Douala.
+  jour        DateTime @db.Date
+  /// Instant où le rapport a été arrêté.
+  genereA     DateTime @db.Timestamptz(3)
+  /// Le contrat RapportSoir, tel qu'envoyé.
+  rapport     Json
+
+  @@id([compagnieId, jour])
+  @@map("rapport_soir")
+}

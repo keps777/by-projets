@@ -54,8 +54,8 @@ const authVoyageur = AuthVoyageurModule.avec({
 
 /**
  * Rapport du soir (AM-171) branché sur la caisse, la billetterie et la numérotation (`avecModulesExistants`).
- * Le référentiel, les ventes, les colis, les annulations, les contrôles et les rapports arrêtés restent en
- * mémoire tant que leurs adaptateurs PostgreSQL ne sont pas écrits.
+ * Le référentiel, les ventes, les colis, les annulations, les contrôles et les rapports arrêtés suivent
+ * `API_STOCKAGE` (adaptateurs PostgreSQL du lot A choisis dans `RapportModule`).
  */
 const rapport = RapportModule.avecModulesExistants();
 

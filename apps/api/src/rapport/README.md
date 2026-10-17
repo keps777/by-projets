@@ -9,8 +9,8 @@ rapport une fois par compagnie et par jour, puis le sert à l'application du pat
 (`patron/rapport.ts`).
 
 Le module est **autonome** : il ne dépend que du socle (configuration, audit, horloge). Tout le reste
-passe par des ports (classes abstraites, `ports.ts`) avec une version en mémoire (`memoire.ts`). Ni
-`app.module.ts` ni `prisma/schema.prisma` ne sont touchés : le branchement est décrit plus bas.
+passe par des ports (classes abstraites, `ports.ts`) avec une version en mémoire (`memoire.ts`) et une
+version PostgreSQL (`postgres.ts`, lot A) choisie selon `API_STOCKAGE` (voir « Ports et adaptateurs »).
 
 ## Ce que fait le module
 
@@ -23,6 +23,7 @@ passe par des ports (classes abstraites, `ports.ts`) avec une version en mémoir
 | `rapport.controller.ts`  | `GET /patron/rapports/soir?jour=AAAA-MM-JJ`, rôle `patron`.                                                              |
 | `source-whatsapp.ts`     | `SourceRapportSoirPourWhatsApp` : le rapport arrêté ici, lu par la passerelle WhatsApp.                                  |
 | `ponts.ts`               | Adaptateurs construits sur les ports de la caisse, de la billetterie et de la numérotation.                              |
+| `postgres.ts`            | Adaptateurs PostgreSQL (Prisma) : référentiel, billets, colis, annulations, contrôles en route, rapports arrêtés.        |
 | `memoire.ts`, `testing/` | Adaptateurs en mémoire (avec `enPanne` pour simuler une panne) et jeu d'essai « planche » de la maquette.                |
 
 ### Route
@@ -74,122 +75,91 @@ passe par des ports (classes abstraites, `ports.ts`) avec une version en mémoir
 
 ## Ports et adaptateurs
 
-| Port                 | Ce qu'il lit                                   | Adaptateur fourni                       |
-| -------------------- | ---------------------------------------------- | --------------------------------------- |
-| `ReferentielRapport` | compagnies et gares                            | mémoire ; **SQL à brancher**            |
-| `VentesBillets`      | billets créés dans le jour                     | mémoire ; **SQL à brancher**            |
-| `DepartsDuJour`      | départs du jour, remplissage, fusions, soute   | mémoire ; **pont billetterie**          |
-| `ActiviteColis`      | colis enregistrés, réclamations ouvertes       | mémoire ; **SQL à brancher**            |
-| `CaissesDuJour`      | sessions de caisse du jour (écart, validation) | mémoire ; **pont caisse**               |
-| `AnnulationsDuJour`  | annulations décidées dans le jour              | mémoire ; **SQL à brancher**            |
-| `TrousNumerotation`  | trous de numérotation ouverts                  | mémoire ; **pont numérotation**         |
-| `ControlesEnRoute`   | contrôles inopinés à bord                      | mémoire ; **SQL à brancher**            |
-| `AssistantRapport`   | question suggérée et sa réponse (AM-109)       | `AssistantRapportAucun` (question vide) |
-| `RapportsSoir`       | les rapports arrêtés (écriture)                | mémoire ; **SQL à brancher**            |
+| Port                 | Ce qu'il lit                                   | Adaptateur fourni                                   |
+| -------------------- | ---------------------------------------------- | --------------------------------------------------- |
+| `ReferentielRapport` | compagnies actives et gares                    | mémoire ; **PostgreSQL** `ReferentielRapportPrisma` |
+| `VentesBillets`      | billets créés dans le jour                     | mémoire ; **PostgreSQL** `VentesBilletsPrisma`      |
+| `DepartsDuJour`      | départs du jour, remplissage, fusions, soute   | mémoire ; **pont billetterie**                      |
+| `ActiviteColis`      | colis enregistrés, réclamations ouvertes       | mémoire ; **PostgreSQL** `ActiviteColisPrisma`      |
+| `CaissesDuJour`      | sessions de caisse du jour (écart, validation) | mémoire ; **pont caisse**                           |
+| `AnnulationsDuJour`  | annulations décidées dans le jour              | mémoire ; **PostgreSQL** `AnnulationsDuJourPrisma`  |
+| `TrousNumerotation`  | trous de numérotation ouverts                  | mémoire ; **pont numérotation**                     |
+| `ControlesEnRoute`   | contrôles inopinés à bord                      | mémoire ; **PostgreSQL** `ControlesEnRoutePrisma`   |
+| `AssistantRapport`   | question suggérée et sa réponse (AM-109)       | `AssistantRapportAucun` (question vide)             |
+| `RapportsSoir`       | les rapports arrêtés (écriture)                | mémoire ; **PostgreSQL** `RapportsSoirPrisma`       |
+
+### Choix du stockage (`API_STOCKAGE`)
+
+`RapportModule` choisit les adaptateurs des six ports ci-dessus au montage, par `stockageSurPostgres(config)` :
+`API_STOCKAGE=postgres` donne PostgreSQL, `API_STOCKAGE=memoire` la mémoire, et sans la variable PostgreSQL en
+production, la mémoire ailleurs (les tests restent en mémoire sans rien configurer). Les trois ports des
+ponts (départs, caisses, trous de numérotation) viennent de `RapportModule.avecModulesExistants()`, que
+`AppModule` utilise déjà ; ils suivent le stockage des modules billetterie, caisse et numérotation.
 
 Un adaptateur en mémoire déclare `durable = false` : `RapportModule` **refuse de démarrer en production**
 tant qu'un port y est resté (`VerificationRapport`).
 
-## Tables PostgreSQL attendues
+## Tables PostgreSQL
 
-Le module n'écrit qu'une table. Tout le reste est lu dans les tables des autres modules (schéma Prisma
-existant). Rien n'est migré ici : le coordinateur intègre.
+Le module n'écrit qu'une table, `rapport_soir` (migration `20261017000730_rapport_soir`, modèle `RapportSoir`
+du schéma Prisma, bloc « lot A »). Tout le reste est lu dans les tables des autres modules.
 
-### `rapport_soir` (nouvelle, en ajout seul)
+### `rapport_soir` (en ajout seul)
 
-```sql
-CREATE TABLE rapport_soir (
-  compagnie_id uuid        NOT NULL REFERENCES compagnie (id),
-  jour         date        NOT NULL,            -- jour de Douala
-  genere_a     timestamptz NOT NULL,            -- instant où le rapport a été arrêté
-  rapport      jsonb       NOT NULL,            -- le contrat RapportSoir, tel qu'envoyé
-  PRIMARY KEY (compagnie_id, jour)
-);
+| Colonne       | Type          | Rôle                                               |
+| ------------- | ------------- | -------------------------------------------------- |
+| `compagnieId` | `uuid`        | Compagnie du rapport (clé primaire avec `jour`).   |
+| `jour`        | `date`        | Jour de Douala, sans fuseau.                       |
+| `genereA`     | `timestamptz` | Instant où le rapport a été arrêté.                |
+| `rapport`     | `jsonb`       | Le contrat `RapportSoir`, tel qu'envoyé au patron. |
 
--- Un rapport arrêté ne change plus : ni UPDATE ni DELETE.
-CREATE FUNCTION rapport_soir_ajout_seul() RETURNS trigger LANGUAGE plpgsql AS $$
-BEGIN
-  RAISE EXCEPTION 'rapport_soir est en ajout seul';
-END $$;
-CREATE TRIGGER rapport_soir_ajout_seul
-  BEFORE UPDATE OR DELETE ON rapport_soir
-  FOR EACH ROW EXECUTE FUNCTION rapport_soir_ajout_seul();
-```
+- **Un rapport par compagnie et par jour** : clé primaire `(compagnieId, jour)`. `RapportsSoir.creer` est un
+  `INSERT … ON CONFLICT DO NOTHING` (`createMany({ skipDuplicates: true })`) : le nombre de lignes écrites dit
+  si le rapport est nouveau, sinon la ligne existante est relue et rendue (`nouveau: false`). Douze instances
+  qui arrêtent le rapport en même temps n'en écrivent qu'un (testé).
+- **Un rapport arrêté ne change plus** : déclencheurs contre `UPDATE`, `DELETE` et `TRUNCATE`
+  (`interdire_modification()`).
+- Pas de clé étrangère vers `compagnie` : comme les autres tables du lot, la cohérence est tenue par le
+  référentiel (une compagnie inconnue n'obtient jamais de rapport) et non par la base.
 
-- `RapportsSoir.trouver(compagnieId, jour)` : `SELECT … WHERE compagnie_id = $1 AND jour = $2`.
-- `RapportsSoir.creer(entree)` : `INSERT … ON CONFLICT (compagnie_id, jour) DO NOTHING RETURNING …` ; si rien
-  n'est retourné, relire la ligne existante et répondre `nouveau: false`.
+### Lectures (jour de Douala, bornes `[00:00, 24:00[` à +01:00, toujours bornées à la compagnie)
 
-### Requêtes de lecture (jour `$2` de Douala, bornes `[$2 00:00+01, $2+1 00:00+01[`)
+| Port                          | Tables lues                            | Définitions retenues                                                                                                                                               |
+| ----------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ReferentielRapport`          | `compagnie` (`actif`), `gare`          | Gares dans l'ordre de leurs identifiants (UUID v7 : ordre de création).                                                                                            |
+| `VentesBillets.duJour`        | `billet`, `depart`                     | `creeA` dans le jour, tous états. Montant = `prix + bagage`. Mode = `paiement ->> 'mode'` (absent = `null`). `departParti` = départ `parti` ou `arrive`.           |
+| `ActiviteColis.enregistresLe` | `colis`                                | `creeA` dans le jour. Colis payé : `prixTotal` (il contient déjà le complément de poids). Port pas encore payé : seul le complément de poids est entré, sans mode. |
+| `ActiviteColis.litiges…`      | `reclamation_colis`                    | `ouverteA` dans le jour.                                                                                                                                           |
+| `AnnulationsDuJour.duJour`    | `demande_annulation`, `billet`         | Demandes `decidee` dans le jour avec décision `rembourser` ou `avoir`, toutes avec PIN. Montant = `montant` (zéro si absent). `reporter` et `refuser` exclues.     |
+| `ControlesEnRoute.duJour`     | `journal_evenement`, `depart`, `ligne` | Événements `controle.regularise`, `controle.convoyeur_signale`, `controle.cloture` du jour, regroupés par `controleId`, départs de la compagnie (via la ligne).    |
 
-`$1` est l'identifiant de la compagnie. `:debut` et `:fin` sont les bornes du jour en `timestamptz`.
+Le **mode de paiement** des billets et des colis est ramené aux trois du rapport (`modeDuRapport`) :
+`cash` / `especes` / `especes_agence` → cash ; `momo` / `mtn` / `mtn_momo` / `momo_marchand` → momo ;
+`orange_money` / `orange` → orange_money ; tout autre (`carte`…) ou absent → `null`, compté en mobile money.
 
-**`VentesBillets.duJour`** (table `billet`, un fait par billet, tous états confondus) :
+Le **lieu d'un contrôle** est le dernier arrêt annoncé par le chauffeur (`chauffeur.arrivee_arret`) pour ce
+départ avant le contrôle ; vide quand aucun arrêt n'a été annoncé (le rapport n'invente pas de lieu).
+Les événements dont la charge est mal formée (départ ou contrôle absent) sont ignorés.
 
-```sql
-SELECT b.id, b.numero, b.gare_id AS "gareId", b.canal::text AS canal,
-       b.paiement ->> 'mode' AS mode,               -- cash | momo | orange_money | NULL
-       b.prix + b.bagage AS montant, b.cree_a AS "venduA", b.etat::text AS etat,
-       b.reporte_de_id AS "reporteDe",
-       b.a_completer_au_quai AS "aCompleterAuQuai",
-       (b.a_completer_au_quai AND b.passager_chiffre IS NULL) AS "sansNom",   -- à confirmer
-       (b.embarque_a IS NOT NULL) AS embarque,
-       (d.etat IN ('parti', 'arrive')) AS "departParti"
-FROM billet b JOIN depart d ON d.id = b.depart_id
-WHERE b.compagnie_id = $1 AND b.cree_a >= :debut AND b.cree_a < :fin;
-```
-
-Le `canal` doit être rendu avec les valeurs du rapport : `guichet`, `convoyeur`, `en_ligne`, `vendeur`
-(l'enum `canal_vente` les porte déjà). Le port est aussi appelé pour la veille : même requête, bornes de la
-veille (le rapport n'en compte que les ventes).
-
-**`ActiviteColis.enregistresLe`** (table `colis`) :
-
-```sql
-SELECT id, numero, gare_origine_id AS "gareId",
-       prix_total + complement_poids AS montant,
-       paiement_moyen AS mode,                       -- à rapprocher de cash | momo | orange_money
-       cree_a AS "creeA"
-FROM colis
-WHERE compagnie_id = $1 AND jour = :aammjj;          -- ou cree_a dans les bornes
-```
-
-**`ActiviteColis.litigesOuvertsLe`** : `SELECT count(*) FROM reclamation_colis WHERE compagnie_id = $1 AND
-ouverte_a >= :debut AND ouverte_a < :fin`.
-
-**`AnnulationsDuJour.duJour`** : les demandes décidées dans le jour, plus les annulations faites en ligne
-par le voyageur :
-
-```sql
-SELECT b.id AS "billetId", b.numero, b.gare_id AS "gareId",
-       coalesce(da.montant, 0) AS montant,           -- montant rendu (remboursement ou avoir)
-       true AS "avecPin", da.decidee_a AS at
-FROM demande_annulation da JOIN billet b ON b.id = da.billet_id
-WHERE da.compagnie_id = $1 AND da.statut = 'decidee' AND da.decision IN ('rembourser', 'avoir')
-  AND da.decidee_a >= :debut AND da.decidee_a < :fin;
-```
-
-Les annulations du voyageur en ligne (sans PIN, `avecPin = false`) viennent de l'historique du billet ou de
-l'événement d'annulation ; ce lien n'existe pas encore dans le schéma (à brancher par le coordinateur). `reporter`
-et `refuser` ne sont pas des annulations remboursées : à confirmer.
-
-**`ControlesEnRoute.duJour`** : les événements `controle.cloture`, `controle.regularise` et
-`controle.convoyeur_signale` de la table `evenement` du jour, regroupés par contrôle (`controleId`, lieu,
-régularisations, ventes non enregistrées). La forme exacte de la charge de ces événements est celle du
-module de contrôle en route (ticket voisin) : à aligner à l'intégration.
-
-**`ReferentielRapport`** : `compagnie (id, nom)` et `gare (id, nom)` filtrées par `compagnie_id`, dans l'ordre
-de rangement. Une compagnie par ligne de `compagnie` active.
+Un billet de cadence est « sans nom » tant que son drapeau `aCompleterAuQuai` est levé : la billetterie le
+baisse quand le nom est complété au quai.
 
 **Ponts déjà fournis** (aucune requête à écrire) : `CaissesDuJourSessions` (`SessionsCaisse.deGare`),
 `DepartsDuJourBilletterie` (`Catalogue`, `Billets`, `ColisDuDepart`), `TrousNumerotationControle`
 (`ControleJourneeService.controler`).
 
+### Ce qui reste hors du rapport
+
+- **Annulations faites en ligne par le voyageur** (sans PIN, `avecPin = false`) : le schéma ne garde pas le
+  montant rendu ; l'événement `billet.annule` passe par les avis de la billetterie. Elles ne sont pas encore
+  comptées (le rapport compte les annulations à PIN). À brancher quand ce lien existera.
+- `AssistantRapport` : tant que l'assistant (AM-109) n'est pas branché, la question suggérée est vide.
+
 ## Intégration (coordinateur)
 
-1. `AppModule` : importer `RapportModule.avecModulesExistants({ providers: [ … ] })` en donnant, pour
-   `ReferentielRapport`, `VentesBillets`, `ActiviteColis`, `AnnulationsDuJour`, `ControlesEnRoute` et
-   `RapportsSoir`, les adaptateurs PostgreSQL ci-dessus. Les trois ponts sont déjà inclus.
+1. `AppModule` : `RapportModule.avecModulesExistants()` est déjà importé ; les six adaptateurs PostgreSQL sont
+   choisis par `API_STOCKAGE` dans le module. Rien d'autre à brancher. (`avec` / `avecModulesExistants`
+   acceptent toujours des fournisseurs qui remplacent ceux par défaut.)
 2. WhatsApp : dans `WhatsAppModule.avec({ imports: [RapportModule], providers: [{ provide: SourceRapportSoir,
 useExisting: SourceRapportSoirPourWhatsApp }, { provide: AnnuaireRapport, useClass: … }] })`. L'annuaire
    des destinataires (le patron et les gérants) reste à fournir. Quand le planificateur de la passerelle passe à
@@ -224,3 +194,13 @@ useExisting: SourceRapportSoirPourWhatsApp }, { provide: AnnuaireRapport, useCla
 1 004 billets, 4 410 000 F dont 2 900 000 F de cash), `rapport.service.test.ts` (idempotence, jour dû, sources
 en panne), `contrat.test.ts` (schéma zod du contrat, validation WhatsApp, intégration avec la passerelle),
 `rapport.e2e.test.ts` (route, rôles, client HTTP réel), `ponts.test.ts`, `module.test.ts`, `temps.test.ts`.
+
+PostgreSQL (lot A) : `postgres.integration.test.ts`, ignoré sans `DATABASE_URL_TEST` :
+
+    DATABASE_URL_TEST=postgresql://user@localhost:5432/afrimove_test pnpm --filter @afrimove/api test -- src/rapport/postgres
+
+Il rejoue sur la mémoire et sur PostgreSQL le même contrat du port `RapportsSoir` (`testing/contrat-stockage.ts`),
+puis vérifie ce que seule la base garantit (ajout seul, clé primaire, douze arrêts simultanés), les cinq
+lectures sur un monde de deux compagnies (bornes du jour de Douala à la milliseconde, périmètre de la
+compagnie, charges mal formées) et l'API de bout en bout avec `API_STOCKAGE=postgres` (rapport calculé sur les
+tables, figé après 21 h, deux instances en concurrence).
