@@ -6,6 +6,7 @@ import {
   garderBrouillon,
   lireMomo,
   lirePosition,
+  momoIntact,
   oublierBrouillon,
   problemesDe,
   reprendreBrouillon,
@@ -21,6 +22,7 @@ const SAISIE: Saisie = {
   position: "Bafoussam · Tamdja, face école publique",
   tailleMax: "Petits et moyens (≤ 10 kg)",
   momo: "6 99 12 34 41 · Orange",
+  momoPropose: "6 99 •• •• 41 · Orange",
   facadeRef: "photo-1",
 };
 
@@ -120,17 +122,33 @@ describe("problemes et fiche complète", () => {
   it("nomme chaque problème", () => {
     expect(problemesDe({ ...SAISIE, nom: "   " })).toMatchObject({ nom: true, momo: false });
     expect(problemesDe({ ...SAISIE, position: "Douala" })).toMatchObject({ position: true });
-    expect(problemesDe({ ...SAISIE, momo: "6 99 •• •• 41 · Orange" })).toMatchObject({
-      momo: true,
-    });
+    // Retapé mais pas en entier : un problème (la fiche ne part pas avec un numéro illisible).
+    expect(problemesDe({ ...SAISIE, momo: "6 99 12" })).toMatchObject({ momo: true });
+    expect(problemesDe({ ...SAISIE, momo: "" })).toMatchObject({ momo: true });
     expect(problemesDe({ ...SAISIE, facadeRef: null })).toMatchObject({ facade: true });
   });
 
   it("ne fabrique pas de fiche tant qu'un champ manque", () => {
     expect(versFiche({ ...SAISIE, nom: "" })).toBeNull();
-    expect(versFiche({ ...SAISIE, momo: "6 99 •• •• 41 · Orange" })).toBeNull();
+    expect(versFiche({ ...SAISIE, momo: "6 99 12" })).toBeNull();
     expect(versFiche({ ...SAISIE, facadeRef: null })).toBeNull();
     expect(estEnvoyable(problemesDe({ ...SAISIE, facadeRef: null }))).toBe(false);
+  });
+
+  it("le MoMo proposé par le serveur, laissé intact, part sans MoMo : le serveur prend celui du compte", () => {
+    const intacte: Saisie = { ...SAISIE, momo: SAISIE.momoPropose };
+    expect(momoIntact(intacte)).toBe(true);
+    expect(problemesDe(intacte).momo).toBe(false);
+    expect(estEnvoyable(problemesDe(intacte))).toBe(true);
+    const fiche = versFiche(intacte);
+    expect(fiche).not.toBeNull();
+    expect(fiche).not.toHaveProperty("momo");
+    expect(fiche?.nom).toBe("Boutique Chez Thérèse");
+  });
+
+  it("un MoMo retapé en entier part avec la fiche, même quand il redonne le numéro du compte", () => {
+    expect(momoIntact(SAISIE)).toBe(false);
+    expect(versFiche(SAISIE)?.momo).toEqual({ telephone: "+237699123441", operateur: "orange" });
   });
 
   it("retire les espaces autour du nom", () => {

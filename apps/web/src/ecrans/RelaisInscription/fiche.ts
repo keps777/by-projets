@@ -4,7 +4,8 @@ import { ecrire, lire, retirer } from "@/coquille/stockage";
 /**
  * La fiche de la boutique telle que l'écran la tient : des textes, comme dans les champs. Les fonctions de ce fichier
  * sont pures (sauf le stockage du brouillon) : elles lisent ce qui est tapé et le mettent au format du contrat
- * (`FicheRelais`, brouillon partiel). Le serveur ne renvoie que le MoMo masqué : le numéro complet se retape.
+ * (`FicheRelais`, brouillon partiel). Le serveur ne renvoie que le MoMo masqué : tant qu'il n'est pas touché, la fiche
+ * part sans MoMo et le serveur prend celui du compte ; s'il est retapé, le numéro complet est envoyé.
  */
 
 export interface Saisie {
@@ -16,13 +17,15 @@ export interface Saisie {
   tailleMax: string;
   /** Ce qui est dans le champ : « 6 99 •• •• 41 · Orange » tant que rien n'est tapé. */
   momo: string;
+  /** Ce que le serveur a proposé dans ce champ (le MoMo du compte, masqué) : le champ intact, la fiche part sans MoMo. */
+  momoPropose: string;
   /** Référence de la photo de la façade ; `null` tant qu'aucune photo n'est prise. */
   facadeRef: string | null;
 }
 
 type Fiche = colis.FicheRelais;
 type Position = Fiche["position"];
-type Momo = Fiche["momo"];
+type Momo = NonNullable<Fiche["momo"]>;
 type Operateur = Momo["operateur"];
 
 /** « Bafoussam · Tamdja, face école publique » → ville, quartier, repère (le contraire de ce que le serveur écrit). */
@@ -67,11 +70,17 @@ export interface Problemes {
   facade: boolean;
 }
 
+/** Le champ MoMo n'a pas été touché : c'est encore le numéro masqué du compte que le serveur a proposé. */
+export function momoIntact(saisie: Pick<Saisie, "momo" | "momoPropose">): boolean {
+  return saisie.momo === saisie.momoPropose;
+}
+
 export function problemesDe(saisie: Saisie): Problemes {
   return {
     nom: saisie.nom.trim() === "",
     position: lirePosition(saisie.position) === null,
-    momo: lireMomo(saisie.momo) === null,
+    // Intact : le serveur prend le MoMo du compte. Retapé : il faut un numéro lisible en entier.
+    momo: !momoIntact(saisie) && lireMomo(saisie.momo) === null,
     facade: saisie.facadeRef === null,
   };
 }
@@ -83,7 +92,7 @@ export function estEnvoyable(problemes: Problemes): boolean {
 /** La fiche complète, au format du contrat ; `null` tant qu'un champ manque ou n'est pas lisible. */
 export function versFiche(saisie: Saisie): Fiche | null {
   const position = lirePosition(saisie.position);
-  const momo = lireMomo(saisie.momo);
+  const momo = momoIntact(saisie) ? undefined : lireMomo(saisie.momo);
   if (saisie.nom.trim() === "" || position === null || momo === null || saisie.facadeRef === null) {
     return null;
   }
@@ -93,7 +102,8 @@ export function versFiche(saisie: Saisie): Fiche | null {
     ouvert: saisie.ouvert,
     position,
     tailleMax: saisie.tailleMax,
-    momo,
+    // Sans MoMo (champ intact), le serveur prend celui du compte.
+    ...(momo !== undefined ? { momo } : {}),
     facadeRef: saisie.facadeRef,
   };
 }

@@ -318,11 +318,31 @@ describe("RelaisInscription · envoyer la fiche", () => {
     expect(screen.queryByText(/Ajoute la photo/)).not.toBeInTheDocument();
   });
 
-  it("demande le numéro en entier tant que le MoMo est encore masqué", async () => {
+  it("en un seul geste : le MoMo du compte laissé tel quel, la fiche part sans MoMo (le serveur prend celui du compte)", async () => {
+    const { envois, operations } = journaux();
+    const { routeur } = rendreFiche({ operations });
+    await attendreFiche();
+    expect(momo()).toHaveValue("6 99 •• •• 41 · Orange");
+    await prendreLaPhoto();
+    await userEvent.click(envoyer());
+
+    await waitFor(() => expect(pathname(routeur)).toBe("/moi/devenir-relais/suivi"));
+    expect(envois).toHaveLength(1);
+    expect(envois[0]).not.toHaveProperty("momo");
+    expect(envois[0]).toMatchObject({
+      nom: "Boutique Chez Thérèse",
+      position: { ville: "Bafoussam", quartier: "Tamdja", repere: "face école publique" },
+    });
+    expect(screen.queryByText("Écris ton numéro MoMo en entier (9 chiffres).")).toBeNull();
+  });
+
+  it("demande le numéro en entier quand on l'a retapé à moitié", async () => {
     const { envois, operations } = journaux();
     const { routeur } = rendreFiche({ operations });
     await attendreFiche();
     await prendreLaPhoto();
+    await userEvent.clear(momo());
+    await userEvent.type(momo(), "699 12");
     await userEvent.click(envoyer());
 
     expect(await screen.findByText("Écris ton numéro MoMo en entier (9 chiffres).")).toBeVisible();

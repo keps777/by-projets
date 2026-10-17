@@ -7,8 +7,11 @@ import {
   SchemaCodeRetrait,
   SchemaColisPartenaire,
   SchemaColisProprietaire,
+  SchemaBrouillonRelais,
   SchemaClientVendeur,
+  SchemaDemandeLivreur,
   SchemaDevisColis,
+  SchemaFicheRelais,
   SchemaEtatColis,
   SchemaFcfa,
   SchemaFcfaPositif,
@@ -312,5 +315,64 @@ describe("vendeur : départ de la proposition de revente", () => {
   it("le departId est un identifiant non vide", () => {
     expect(SchemaClientVendeur.safeParse({ ...client, departId: "" }).success).toBe(false);
     expect(SchemaClientVendeur.safeParse({ ...client, departId: 8 }).success).toBe(false);
+  });
+});
+
+describe("inscriptions : le MoMo du compte quand rien n'est retapé", () => {
+  const momo = { telephone: "+237699123441", operateur: "orange" } as const;
+  const fiche = {
+    nom: "Boutique Chez Thérèse",
+    type: "Boutique · alimentation",
+    ouvert: "7 h – 20 h · lun.–sam.",
+    position: { ville: "Bafoussam", quartier: "Tamdja" },
+    tailleMax: "Petits et moyens (≤ 10 kg)",
+    facadeRef: "photo-1",
+  };
+  const demande = {
+    deplacement: "velo",
+    zone: "Bafoussam · toute la ville",
+    heures: "Soirs 17 h – 21 h",
+    chargeMax: "10 kg · colis courants",
+    pieces: {},
+    reglesAcceptees: true,
+  } as const;
+
+  it("la fiche du relais est valide sans MoMo (le serveur prend celui du compte) et avec", () => {
+    expect(SchemaFicheRelais.safeParse(fiche).success).toBe(true);
+    expect(SchemaFicheRelais.safeParse({ ...fiche, momo }).success).toBe(true);
+    expect(SchemaFicheRelais.parse({ ...fiche, momo }).momo).toEqual(momo);
+  });
+
+  it("la demande du livreur est valide sans MoMo et avec", () => {
+    expect(SchemaDemandeLivreur.safeParse(demande).success).toBe(true);
+    expect(SchemaDemandeLivreur.safeParse({ ...demande, momo }).success).toBe(true);
+  });
+
+  it("un MoMo présent reste contrôlé en entier : numéro international, opérateur connu", () => {
+    for (const mauvais of [
+      { telephone: "699123441", operateur: "orange" },
+      { telephone: "+237699123441", operateur: "camtel" },
+      { telephone: "+237699123441" },
+      {},
+      null,
+    ]) {
+      expect(SchemaFicheRelais.safeParse({ ...fiche, momo: mauvais }).success).toBe(false);
+      expect(SchemaDemandeLivreur.safeParse({ ...demande, momo: mauvais }).success).toBe(false);
+    }
+  });
+
+  it("le reste de la fiche et de la demande reste obligatoire", () => {
+    const { nom: _nom, ...sansNom } = fiche;
+    expect(SchemaFicheRelais.safeParse(sansNom).success).toBe(false);
+    const { facadeRef: _facade, ...sansFacade } = fiche;
+    expect(SchemaFicheRelais.safeParse(sansFacade).success).toBe(false);
+    expect(SchemaDemandeLivreur.safeParse({ ...demande, reglesAcceptees: false }).success).toBe(
+      false,
+    );
+  });
+
+  it("le brouillon garde son MoMo facultatif, comme avant", () => {
+    expect(SchemaBrouillonRelais.safeParse({ fiche: {} }).success).toBe(true);
+    expect(SchemaBrouillonRelais.safeParse({ fiche: { momo } }).success).toBe(true);
   });
 });

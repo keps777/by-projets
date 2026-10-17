@@ -1,4 +1,4 @@
-import { ErreurHttp, colis, voyageur } from "@afrimove/api-client";
+import { ErreurHttp, colis } from "@afrimove/api-client";
 import type { colis as contrats } from "@afrimove/contrats";
 import {
   Bouton,
@@ -45,8 +45,6 @@ export function LivreurDevenirVue({ programme }: { programme: contrats.Programme
   const { t } = useTranslation("LivreurDevenir");
   const navigate = useNavigate();
   const deposer = colis.useDeposerDemandeLivreur();
-  // Le numéro MoMo proposé est celui du compte, masqué : pour l'envoyer en entier, on le relit sur le profil.
-  const profil = voyageur.useProfil();
 
   const { particularites, pieces, regles } = programme;
   const [deplacement, setDeplacement] = useState(particularites.deplacement.choix[0] ?? "");
@@ -73,15 +71,7 @@ export function LivreurDevenirVue({ programme }: { programme: contrats.Programme
     if (pris > 0) setPhotos((avant) => ({ ...avant, [piece]: `photo-${crypto.randomUUID()}` }));
   }
 
-  /** Le numéro saisi en entier ; sinon, laissé tel quel, celui du compte (relu sur le profil s'il n'est pas encore là). */
-  async function telephoneMomo(): Promise<string> {
-    if (neuf !== null) return `+237${neuf}`;
-    if (!momoIntact) return "";
-    const lu = profil.data ?? (await profil.refetch()).data;
-    return lu?.telephone ?? "";
-  }
-
-  async function inscrire() {
+  function inscrire() {
     if (enCours.current) return;
     setTentative(true);
     const mode = deplacementDe(deplacement);
@@ -96,14 +86,17 @@ export function LivreurDevenirVue({ programme }: { programme: contrats.Programme
     }
     setMessage(null);
     enCours.current = true;
-    const telephone = await telephoneMomo();
     deposer.mutate(
       {
         deplacement: mode,
         zone,
         heures,
         chargeMax: charge,
-        momo: { telephone, operateur: operateurDe(momo, neuf) },
+        // Le numéro retapé en entier part avec la demande ; laissé tel quel (le MoMo masqué du compte), il ne part pas :
+        // le serveur prend celui du compte.
+        ...(neuf !== null
+          ? { momo: { telephone: `+237${neuf}`, operateur: operateurDe(momo, neuf) } }
+          : {}),
         pieces: moto
           ? {
               ...(photos.permis !== undefined ? { permisRef: photos.permis } : {}),
@@ -297,7 +290,7 @@ export function LivreurDevenirVue({ programme }: { programme: contrats.Programme
           sousLibelle={t("actions.inscrireDetail")}
           icone={<IconeFleche taille={22} trait={2.6} />}
           aria-busy={deposer.isPending}
-          onClick={() => void inscrire()}
+          onClick={inscrire}
         />
       </EcranPied>
     </div>

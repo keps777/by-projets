@@ -57,6 +57,8 @@ describe("lecteurs des points relais ≡ schémas des contrats", () => {
       { ...FICHE, position: { ville: "Bafoussam", quartier: "Tamdja" } },
       sans(FICHE, "nom"),
       sans(FICHE, "facadeRef"),
+      // Le MoMo est facultatif : sans lui, le serveur prend celui du compte.
+      sans(FICHE, "momo"),
       { ...FICHE, nom: "" },
       { ...FICHE, momo: { telephone: "677", operateur: "mtn" } },
       { ...FICHE, momo: { telephone: "+237670000111", operateur: "camtel" } },
@@ -140,6 +142,7 @@ describe("lecteurs des points relais ≡ schémas des contrats", () => {
   });
 
   it("ne recopie jamais un champ inconnu", () => {
+    expect(lireFicheRelais(sans(FICHE, "momo"))).not.toHaveProperty("momo");
     const fiche = lireFicheRelais({ ...FICHE, role: "patron", __proto__: { admin: true } });
     expect(Object.keys(fiche).sort()).toEqual(
       ["facadeRef", "momo", "nom", "ouvert", "position", "tailleMax", "type"].sort(),

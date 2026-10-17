@@ -25,6 +25,7 @@ import {
   SUITE_DEMANDE_LIVREUR,
   ZONES_PROPOSEES,
 } from "./contenu";
+import type { MomoPartenaire } from "../relais/modele";
 import type { DemandeLivreur, Deplacement, LivreurStocke } from "./modele";
 import { DemandesLivreurRepository, LivreursRepository } from "./ports";
 import { TARIFS, encoreValable, gainLivreur, lireChargeKg, lireHeures, lireZone } from "./regles";
@@ -87,10 +88,7 @@ export class InscriptionLivreurService {
     const [meilleur] = [...parLivreur.entries()].sort((a, b) => b[1].gain - a[1].gain);
     const exemple = meilleur ? await this.livreurs.trouver(meilleur[0]) : null;
     const p = PROGRAMME_LIVREUR.particularites;
-    const momo = {
-      telephone: contact.telephone,
-      operateur: operateurProbable(contact.telephone) ?? ("mtn" as const),
-    };
+    const momo = this.momoDuCompte(contact.telephone);
 
     return {
       titre: PROGRAMME_LIVREUR.titre,
@@ -118,6 +116,11 @@ export class InscriptionLivreurService {
       regles: { ...PROGRAMME_LIVREUR.regles },
       mention: PROGRAMME_LIVREUR.mention,
     };
+  }
+
+  /** Le MoMo du compte : son numéro, et l'opérateur que son préfixe laisse deviner (MTN à défaut). */
+  private momoDuCompte(telephone: string): MomoPartenaire {
+    return { telephone, operateur: operateurProbable(telephone) ?? "mtn" };
   }
 
   /* -------------------------------------------------------------- dépôt */
@@ -185,7 +188,8 @@ export class InscriptionLivreurService {
         zone: saisie.zone,
         heures: saisie.heures,
         chargeMax: saisie.chargeMax,
-        momo: saisie.momo,
+        // Sans MoMo dans la demande : celui du compte, le numéro que le formulaire proposait.
+        momo: saisie.momo ?? this.momoDuCompte(contact.telephone),
         pieces: saisie.pieces,
         deposeeA,
         verifications: {

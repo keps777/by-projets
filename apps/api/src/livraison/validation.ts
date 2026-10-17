@@ -69,24 +69,29 @@ export interface DemandeLivreurSaisie {
   zone: string;
   heures: string;
   chargeMax: string;
-  momo: { telephone: string; operateur: "mtn" | "orange" };
+  /** Absent : le serveur prend le MoMo du compte. */
+  momo?: { telephone: string; operateur: "mtn" | "orange" };
   pieces: { permisRef: string | null; assuranceRef: string | null };
 }
 
 export const lireDemandeLivreur = (brut: unknown): DemandeLivreurSaisie =>
   lire(brut, (l) => {
     l.vrai("reglesAcceptees");
-    const momo = l.objet("momo");
+    const momo = l.present("momo") ? l.objet("momo") : null;
     const pieces = l.objet("pieces");
     return {
       deplacement: l.enumeration("deplacement", DEPLACEMENTS),
       zone: l.chaine("zone", { max: TEXTE_MAX }),
       heures: l.chaine("heures", { max: TEXTE_MAX }),
       chargeMax: l.chaine("chargeMax", { max: TEXTE_MAX }),
-      momo: {
-        telephone: momo.telephone("telephone"),
-        operateur: momo.enumeration("operateur", OPERATEURS),
-      },
+      ...(momo
+        ? {
+            momo: {
+              telephone: momo.telephone("telephone"),
+              operateur: momo.enumeration("operateur", OPERATEURS),
+            },
+          }
+        : {}),
       pieces: {
         permisRef: pieces.chaineOpt("permisRef") ?? null,
         assuranceRef: pieces.chaineOpt("assuranceRef") ?? null,

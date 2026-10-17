@@ -86,6 +86,36 @@ describe("devenir livreur : demande, vérification par un agent, activation", ()
       expect((await deposer(e.expediteur.jeton)).body.dossier).toBe("L-BAF-0002");
     });
 
+    it("sans MoMo dans la demande, le livreur est payé sur le MoMo du compte (le numéro proposé par le formulaire)", async () => {
+      const { momo: _momo, ...sansMomo } = DEMANDE_MOTO;
+      const rep = await deposer(e.inconnu.jeton, sansMomo);
+      expect(rep.status, JSON.stringify(rep.body)).toBe(201);
+      contrats.SchemaDemandeDeposee.parse(rep.body);
+      const [demande] = [...t.demandesLivreur.lignes.values()];
+      expect(demande?.momo).toEqual({ telephone: "+237677000111", operateur: "mtn" });
+
+      // Le MoMo du compte suit la demande jusqu'au livreur activé : c'est là que partent ses gains.
+      const dossier = rep.body.dossier as string;
+      await agent(`${dossier}/verification`, { identite: true });
+      await agent(`${dossier}/verification`, { pieces: VERIFICATION_COMPLETE.pieces });
+      await agent(`${dossier}/verification`, { formation: true });
+      expect((await agent(`${dossier}/activation`, { moto: "OU 517 MT" })).status).toBe(200);
+      const livreur = await t.livreursRepo.parPersonne(e.inconnu.id);
+      expect(livreur?.momo).toEqual({ telephone: "+237677000111", operateur: "mtn" });
+    });
+
+    it("un MoMo donné dans la demande passe avant celui du compte ; un MoMo mal formé reste refusé", async () => {
+      expect((await deposer(e.inconnu.jeton)).status).toBe(201);
+      const [demande] = [...t.demandesLivreur.lignes.values()];
+      expect(demande?.momo).toEqual({ telephone: "+237670000333", operateur: "mtn" });
+
+      for (const momo of [null, "670000333", { telephone: "+237670000333" }, {}]) {
+        const rep = await deposer(e.expediteur.jeton, { ...DEMANDE_MOTO, momo });
+        expect(rep.status, JSON.stringify(momo)).toBe(400);
+      }
+      expect(t.demandesLivreur.lignes.size).toBe(1);
+    });
+
     it("à moto, exige les photos du permis et de l'assurance ; à vélo ou à pied, non", async () => {
       const sansPermis = await deposer(e.inconnu.jeton, {
         ...DEMANDE_MOTO,
