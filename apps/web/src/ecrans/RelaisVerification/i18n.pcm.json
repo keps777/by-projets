@@ -1,0 +1,29 @@
+{
+  "retour": "",
+  "titre": "",
+  "suivi": {
+    "titre": "",
+    "liste": "",
+    "fait": "",
+    "enCours": "",
+    "aVenir": ""
+  },
+  "actions": {
+    "modifier": "",
+    "modifierNom": "",
+    "retourEspace": "",
+    "retourDetail": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
