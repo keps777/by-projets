@@ -1,0 +1,74 @@
+{
+  "titre": "",
+  "retour": "",
+  "sousTitre": "",
+  "departs": {
+    "places": "",
+    "placesCourt": "",
+    "autres": ""
+  },
+  "plan": {
+    "siege": "",
+    "attribue": "",
+    "choisi": "",
+    "libres": "",
+    "siegeLibre": "",
+    "siegePris": "",
+    "indisponible": "",
+    "siegeChoisi": ""
+  },
+  "voyageur": {
+    "nom": "",
+    "telephone": "",
+    "piece": "",
+    "clientConnu": "",
+    "bagage": ""
+  },
+  "paiement": {
+    "cash": "",
+    "rendu": "",
+    "momo": "",
+    "push": "",
+    "orange": "",
+    "reference": ""
+  },
+  "recap": {
+    "recu": "",
+    "aEncaisser": "",
+    "referenceLibelle": "",
+    "billet": "",
+    "bagage": "",
+    "sms": "",
+    "oui": "",
+    "non": ""
+  },
+  "encaisser": {
+    "libelle": "",
+    "detail": "",
+    "detailSansSms": ""
+  },
+  "annuler": "",
+  "erreurs": {
+    "nom": "",
+    "telephone": "",
+    "piece": "",
+    "recu": "",
+    "reference": "",
+    "departAutre": "",
+    "siegePris": "",
+    "vente": "",
+    "impression": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
