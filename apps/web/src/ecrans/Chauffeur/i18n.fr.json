@@ -1,0 +1,93 @@
+{
+  "titre": "Chauffeur · {{nom}}",
+  "sousTitre": "{{bus}} · feuille de route du {{jour}} {{mois}}",
+  "retour": "Retour",
+  "mois": {
+    "1": "janv.",
+    "2": "févr.",
+    "3": "mars",
+    "4": "avr.",
+    "5": "mai",
+    "6": "juin",
+    "7": "juil.",
+    "8": "août",
+    "9": "sept.",
+    "10": "oct.",
+    "11": "nov.",
+    "12": "déc."
+  },
+  "gps": "GPS",
+  "trajet": {
+    "etiquette": "Trajet en cours",
+    "route": "{{origine}} → {{destination}}",
+    "detail": "parti {{depart}} · {{abord}} à bord · {{colis}} colis · prochain arrêt {{arret}} {{heure}}",
+    "vitesse": "km/h · limite {{limite}}"
+  },
+  "depenses": {
+    "titre": "Dépenses du trajet · justificatif photo",
+    "rappel": "remboursées au rapport",
+    "photo": "photo ✓",
+    "sansPhoto": "sans photo",
+    "autre": "Autre (parking, réparation…)",
+    "ajouter": "+ ajouter",
+    "aucun": "—"
+  },
+  "incident": {
+    "titre": "Incident · panne",
+    "detail": "1 touche · gare + voyageurs prévenus",
+    "envoye": "Incident signalé : la gare et {{nombre}} voyageurs sont prévenus.",
+    "echec": "L'incident n'a pas été envoyé. Réessayez."
+  },
+  "retard": {
+    "titre": "Retard · {{minutes}} min",
+    "detail": "SMS automatique aux {{nombre}}",
+    "envoye": "Retard de {{minutes}} min annoncé : SMS envoyé à {{nombre}} voyageurs.",
+    "echec": "Le retard n'a pas été envoyé. Réessayez."
+  },
+  "semaine": {
+    "titre": "Ma semaine",
+    "paie": "paie le {{jour}} par MoMo",
+    "trajets": "trajets",
+    "km": "km",
+    "excesVitesse": "excès vitesse",
+    "aRecevoir": "à recevoir"
+  },
+  "arrivee": {
+    "libelle": "Arrivé à {{arret}} · ouvrir les portes",
+    "echec": "L'arrivée n'a pas été enregistrée. Réessayez."
+  },
+  "formulaire": {
+    "titre": "Ajouter une dépense",
+    "sousTitre": "justificatif photo obligatoire",
+    "fermer": "Fermer",
+    "categorie": "Catégorie",
+    "categories": {
+      "carburant": "Carburant",
+      "peage": "Péage",
+      "autre": "Autre"
+    },
+    "libelle": "Libellé",
+    "libelleAide": "parking, réparation…",
+    "montant": "Montant (FCFA)",
+    "prendrePhoto": "Prendre la photo",
+    "reprendrePhoto": "Reprendre la photo",
+    "photoJointe": "photo jointe · {{nom}}",
+    "erreurMontant": "Indiquez le montant en FCFA.",
+    "erreurPhoto": "Ajoutez la photo du justificatif : sans photo, la dépense n'est pas remboursée.",
+    "echec": "La dépense n'a pas été envoyée. Réessayez.",
+    "annuler": "Annuler",
+    "valider": "Ajouter la dépense"
+  },
+  "etats": {
+    "chargement": "Chargement de la feuille de route",
+    "vide": {
+      "titre": "Aucune feuille de route",
+      "detail": "Aucun trajet n'est affecté à votre bus pour le moment."
+    },
+    "erreur": {
+      "titre": "La feuille de route ne s'est pas chargée",
+      "detail": "Vérifiez le réseau, puis réessayez.",
+      "reessayer": "Réessayer"
+    }
+  }
+}
