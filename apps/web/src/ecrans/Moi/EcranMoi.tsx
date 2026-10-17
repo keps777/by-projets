@@ -1,8 +1,10 @@
 import { voyageur } from "@afrimove/api-client";
 import type { voyageur as c } from "@afrimove/contrats";
 import { EcranCorps } from "@afrimove/ui";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useModules } from "@/coquille/modules";
+import { FeuilleReglages } from "@/feuilles";
 import { LANGUES, changerLangue, estLangue } from "@/i18n";
 import {
   Devenir,
@@ -31,11 +33,12 @@ export function billetPourRecus(historique: readonly c.ElementHistorique[]): str
  * Données : `useProfil`, `useFidelite`, `useParrainage`, `useProches`, `useHistorique` ; chaque bloc a ses propres
  * états (chargement, vide, erreur) pour qu'une panne ne vide pas tout l'écran. Un module masqué retire sa carte :
  * fidélité (les deux tuiles), relais, livraison, colis (lignes de l'historique) et USSD (« Aide · WhatsApp »).
- * Le bouton Réglages n'a pas de feuille dans la planche (ticket AM-183) : `onReglages` la branchera.
+ * Le bouton Réglages ouvre la feuille « Réglages » (ticket AM-183, `@/feuilles`) ; `onReglages` la remplace.
  */
 export function EcranMoi({ onReglages }: { onReglages?: () => void }) {
   const { i18n } = useTranslation("Moi");
   const { moduleActif } = useModules();
+  const [reglagesOuverts, setReglagesOuverts] = useState(false);
 
   const profil = voyageur.useProfil();
   const fidelite = voyageur.useFidelite({ enabled: moduleActif("fidelite") });
@@ -60,7 +63,7 @@ export function EcranMoi({ onReglages }: { onReglages?: () => void }) {
   return (
     <div className={styles.racine}>
       <TitreEcran />
-      <EnteteMoi profil={profil} onReglages={onReglages} />
+      <EnteteMoi profil={profil} onReglages={onReglages ?? (() => setReglagesOuverts(true))} />
       <EcranCorps className={styles.corps} data-planche="Moi">
         {moduleActif("fidelite") && <Tuiles fidelite={fidelite} parrainage={parrainage} />}
         <MesProches requete={proches} />
@@ -73,6 +76,7 @@ export function EcranMoi({ onReglages }: { onReglages?: () => void }) {
           aide={moduleActif("ussd")}
         />
       </EcranCorps>
+      {reglagesOuverts && <FeuilleReglages ouverte onFermer={() => setReglagesOuverts(false)} />}
     </div>
   );
 }

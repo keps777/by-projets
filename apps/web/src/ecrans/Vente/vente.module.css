@@ -10,6 +10,15 @@
  * devant la règle d'un seul sélecteur du composant du kit quel que soit l'ordre des feuilles.
  */
 
+/* Racine : prend la place de l'écran et sert d'ancre à la feuille « Client connu ». */
+.racine {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
 /* Corps : 8 px entre les blocs, 2 px en haut (le kit : 10 px et 4 px). */
 .corps.corps {
   gap: var(--am-space-8);

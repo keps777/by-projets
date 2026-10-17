@@ -9,6 +9,7 @@
 
 /* Racine : prend la place de l'écran au-dessus de la barre d'onglets. */
 .racine {
+  position: relative;
   display: flex;
   flex: 1;
   flex-direction: column;

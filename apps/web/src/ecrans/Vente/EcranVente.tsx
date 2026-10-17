@@ -5,7 +5,9 @@ import { BadgeTouche, Champ, EcranCorps, EcranPied, Entete, useConception } from
 import { useId, useRef, useState, type MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
+import { useHorloge } from "@/coquille/horloge";
 import { urlPlanche } from "@/coquille/planches";
+import { FeuilleClientConnu, memoriserClient, type ClientConnu } from "@/feuilles";
 import {
   afficherTelephone,
   formaterMontant,
@@ -69,6 +71,8 @@ function Vendre({ contexte, impression, recharger }: PropsVendre) {
   const vendre = agence.useVendreBillet();
   const imprimer = agence.useImprimer();
   const identifiant = useId();
+  const horloge = useHorloge();
+  const [clientsOuverts, setClientsOuverts] = useState(false);
 
   const brouillon = contexte.brouillon;
   const { tarifs } = contexte;
@@ -104,6 +108,15 @@ function Vendre({ contexte, impression, recharger }: PropsVendre) {
 
   function changerSiege(numero: number) {
     setSiegeChoisi(numero);
+  }
+
+  /** « Client connu » : le voyageur déjà servi remplit nom, téléphone et pièce du billet. */
+  function remplirAvec(client: ClientConnu) {
+    setNom(client.nom);
+    setTelephone(afficherTelephone(client.telephone));
+    setPiece(client.pieceQuatreDerniers ?? "");
+    setErreurs({});
+    setClientsOuverts(false);
   }
 
   async function imprimerBillet(billet: BilletAImprimer): Promise<boolean> {
@@ -177,6 +190,12 @@ function Vendre({ contexte, impression, recharger }: PropsVendre) {
         sms,
       });
       vendu.current = resultat.billet;
+      memoriserClient({
+        nom,
+        telephone: lu.valeur,
+        pieceQuatreDerniers: pieceLue.valeur,
+        dernierBilletA: horloge.maintenant().toISOString(),
+      });
       if (await imprimerBillet(resultat.billet)) void navigate(urlPlanche("Guichet"));
     } catch (erreur) {
       if (erreur instanceof ErreurHttp && erreur.code === "SIEGE_PRIS") {
@@ -195,7 +214,7 @@ function Vendre({ contexte, impression, recharger }: PropsVendre) {
   const montantRecap = formaterMontant(total);
 
   return (
-    <>
+    <div className={styles.racine}>
       <Entete
         titre={t("titre")}
         sousTitre={t("sousTitre", {
@@ -277,7 +296,7 @@ function Vendre({ contexte, impression, recharger }: PropsVendre) {
             onChange={(e) => setPiece(e.target.value)}
             erreur={erreurs.piece}
           />
-          <button type="button" className={styles.option}>
+          <button type="button" className={styles.option} onClick={() => setClientsOuverts(true)}>
             {t("voyageur.clientConnu")}
           </button>
           <button
@@ -415,6 +434,14 @@ function Vendre({ contexte, impression, recharger }: PropsVendre) {
           </svg>
         </a>
       </EcranPied>
-    </>
+
+      {clientsOuverts && (
+        <FeuilleClientConnu
+          ouverte
+          onFermer={() => setClientsOuverts(false)}
+          onChoisir={remplirAvec}
+        />
+      )}
+    </div>
   );
 }

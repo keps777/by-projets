@@ -1,0 +1,37 @@
+{
+  "fermer": "",
+  "reglages": {
+    "titre": "",
+    "sousTitre": "",
+    "profil": {
+      "chargement": "",
+      "indisponible": "",
+      "reessayer": ""
+    },
+    "langue": {
+      "titre": "",
+      "aria": "",
+      "fr": "",
+      "en": "",
+      "pcm": ""
+    },
+    "alertes": {
+      "titre": "",
+      "voyage": "",
+      "colis": ""
+    },
+    "deconnexion": "",
+    "terminer": ""
+  },
+  "clientConnu": {
+    "titre": "",
+    "sousTitre": "",
+    "recherche": "",
+    "vide": "",
+    "aucun": "",
+    "sansNumero": "",
+    "piece": "",
+    "derniere": "",
+    "liste": ""
+  }
+}
