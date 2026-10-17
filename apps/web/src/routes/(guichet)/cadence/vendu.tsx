@@ -1,5 +1,5 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { EcranCadenceBillet } from "@/ecrans/CadenceBillet";
 
 export default function Page() {
-  return <EcranVide planche="CadenceBillet" />;
+  return <EcranCadenceBillet />;
 }

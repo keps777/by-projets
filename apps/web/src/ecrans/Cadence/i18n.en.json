@@ -1,0 +1,84 @@
+{
+  "titre": "",
+  "quitter": "",
+  "touche": "",
+  "depart": {
+    "libelle": "",
+    "places_one": "",
+    "places_other": ""
+  },
+  "dernier": {
+    "libelle": "",
+    "detail": "",
+    "sansNom": "",
+    "aucun": ""
+  },
+  "duree": {
+    "secondes": "",
+    "minutes": "",
+    "heures": ""
+  },
+  "prochain": "",
+  "siegeSuivant": "",
+  "noteQuai": "",
+  "paiements": {
+    "cash": {
+      "libelle": "",
+      "ligne1": "",
+      "ligne2": ""
+    },
+    "momo": {
+      "libelle": "",
+      "ligne1": "",
+      "pushEnvoye": "",
+      "ligne2": ""
+    }
+  },
+  "options": {
+    "deuxPlaces": "",
+    "numero": "",
+    "autreDepart": ""
+  },
+  "pied": {
+    "vendus": "",
+    "annulations_one": "",
+    "annulations_other": "",
+    "synchro": {
+      "horsLigne": "",
+      "sync": "",
+      "enAttente": ""
+    }
+  },
+  "numero": {
+    "titre": "",
+    "aide": "",
+    "obligatoire": "",
+    "label": "",
+    "valider": "",
+    "fermer": "",
+    "erreur": ""
+  },
+  "autreDepart": {
+    "titre": "",
+    "ligne_one": "",
+    "ligne_other": "",
+    "chargement": "",
+    "erreur": ""
+  },
+  "erreurs": {
+    "vente": "",
+    "imprimante": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
