@@ -137,7 +137,7 @@ export const EXEMPLES_PARAMS: Record<string, string> = {
   departId: "dep-0800",
   billetId: "BEX-DLA-270105-0142",
   commandeId: "cmd-0001",
-  colisId: "COL-0001",
+  colisId: "colis-c-dla-270105-0017",
   sessionId: "session-k-dla-270105-2-1",
   demandeId: "dem-annulation-billet-alp-dla-270105-0171",
   appareilId: "appareil-gu3-dla",

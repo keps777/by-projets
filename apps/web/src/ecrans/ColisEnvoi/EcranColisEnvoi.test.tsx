@@ -238,7 +238,7 @@ describe("ColisEnvoi · payer", () => {
     await userEvent.click(boutonPayer());
     await waitFor(() => expect(creations).toHaveLength(1));
     expect(JSON.stringify(creations[0])).not.toMatch(/code/i);
-    expect(screen.queryByText(/\d{6}/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/\b\d{3} \d{3}\b/)).not.toBeInTheDocument();
   });
 
   it.each([

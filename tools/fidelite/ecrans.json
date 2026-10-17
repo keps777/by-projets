@@ -61,13 +61,13 @@
       "route": "/colis"
     },
     "ColisCode": {
-      "route": "/colis/COL-0001"
+      "route": "/colis/colis-c-dla-270105-0017"
     },
     "Relais": {
-      "route": "/colis/COL-0001/relais"
+      "route": "/colis/colis-c-dla-270105-0017/relais"
     },
     "Livraison": {
-      "route": "/colis/COL-0001/livraison"
+      "route": "/colis/colis-c-dla-270105-0017/livraison"
     },
     "Proche": {
       "route": "/proche"

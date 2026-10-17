@@ -11,7 +11,7 @@ import {
 } from "@afrimove/domain";
 import type { Colis, EtatColis } from "@afrimove/domain";
 import { colis as c } from "@afrimove/contrats";
-import { ErreurHttp } from "../../infra/erreurs";
+import { ErreurHttp, type ErreurApi } from "../../infra/erreurs";
 import { simulerFlux } from "../../infra/scenarios";
 import {
   CANAL_POSITION_LIVREUR,
@@ -465,7 +465,12 @@ export function installerColisCode(sc: ScenarioEnConstruction, d: DonneesScenari
 
   sc.flux.push(
     simulerFlux(CANAL_SUIVI_COLIS, (p, ctx) => {
-      verifier(p.colisId);
+      try {
+        verifier(p.colisId);
+      } catch (e) {
+        ctx.echouer(e as ErreurApi);
+        return;
+      }
       const dernier = [...suivi].reverse().find((s) => s.fait);
       ctx.emettre({
         colisId: p.colisId,
