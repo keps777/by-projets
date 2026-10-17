@@ -3,7 +3,8 @@ import type { Coupure } from "./regles";
 /**
  * Ports de persistance de la caisse. La logique (ouverture, comptage, clôture, validation) ne parle
  * qu'à ces classes abstraites ; `memoire.ts` en fournit des versions en mémoire pour les tests.
- * Les versions PostgreSQL ne sont pas écrites (tables hors du périmètre : voir le README).
+ * Les versions PostgreSQL sont dans `postgres.ts` ; les deux passent la même suite de contrat
+ * (`testing/contrat-ports.ts`).
  */
 
 export type EtatSession = "ouverte" | "cloturee" | "validee";
@@ -80,7 +81,13 @@ export interface SessionStockee {
   evenementOuvertureId: string;
 }
 
-export type RefusCreation = "agent_occupe" | "guichet_occupe" | "identifiant_pris" | "numero_pris";
+export type RefusCreation =
+  | "agent_occupe"
+  | "guichet_occupe"
+  | "identifiant_pris"
+  | "numero_pris"
+  /** L'identifiant n'est pas de la forme que le stockage accepte (UUID en base). */
+  | "identifiant_invalide";
 
 /** Les sessions de caisse. */
 export abstract class SessionsCaisse {

@@ -411,6 +411,9 @@ export class SupervisionService {
           },
         );
       }
+      if (resultat === "identifiant_invalide") {
+        throw invalide("IDENTIFIANT_INVALIDE", "L'identifiant de la demande doit être un UUID");
+      }
       if (resultat === "identifiant_pris") {
         const existante = await this.demandes.trouver(d.demandeId);
         if (existante?.evenementDemandeId !== e.id) {

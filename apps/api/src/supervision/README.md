@@ -4,7 +4,8 @@ Backend du superviseur : accueil de la gare, validation ou refus des clôtures d
 d'annulation et décision, équipe et PIN. **Aucune action sans le PIN du superviseur.**
 
 Module Nest autonome : `SupervisionModule` (importe `CaisseModule`). Branché dans `AppModule`
-; les adaptateurs PostgreSQL restent à écrire (`apps/api/INTEGRATION.md`).
+; ses cinq ports ont une version mémoire et une version PostgreSQL (`postgres.ts`), choisies par
+`API_STOCKAGE` (`apps/api/INTEGRATION.md`).
 
 ## Routes et contrat
 
@@ -83,21 +84,42 @@ saisie, jamais comme preuve.
   (403 `ROLE_PROTEGE`).
 - Alerte d'équipe « N écarts en 10 jours » à partir de 3 clôtures à écart non nul.
 
-## Ports (classes abstraites) et adaptateurs en mémoire
+## Ports (classes abstraites) et adaptateurs
 
 Comme pour la caisse, le module refuse de démarrer en production avec un port en mémoire.
 
-| Port                 | Rôle                                                                                 | Version mémoire                  |
-| -------------------- | ------------------------------------------------------------------------------------ | -------------------------------- | ------------------------ |
-| `RegistreBillets`    | lire un billet ; `appliquer(annuler                                                  | reporter)` en compare-et-échange | `RegistreBilletsMemoire` |
-| `DemandesAnnulation` | demandes : `creer`, `decider` (CAS), `rouvrir`                                       | `DemandesAnnulationMemoire`      |
-| `SourceGare`         | gare, guichets, départs de l'après-midi, cadence sans nom, statistiques d'annulation | `SourceGareMemoire`              |
-| `EquipeGare`         | annuaire de l'équipe, changer d'affectation, désactiver                              | `EquipeMemoire`                  |
-| `PinsEquipe`         | état du PIN provisoire ; écrit le haché dans le compte                               | `PinsEquipeMemoire`              |
+| Port                 | Rôle                                                                                 | Mémoire                     | PostgreSQL                   |
+| -------------------- | ------------------------------------------------------------------------------------ | --------------------------- | ---------------------------- |
+| `RegistreBillets`    | lire un billet ; `appliquer` (annuler ou reporter) en compare-et-échange             | `RegistreBilletsMemoire`    | `RegistreBilletsPrisma`      |
+| `DemandesAnnulation` | demandes : `creer`, `decider` (CAS), `rouvrir`                                       | `DemandesAnnulationMemoire` | `DemandesAnnulationPrisma`   |
+| `SourceGare`         | gare, guichets, départs de l'après-midi, cadence sans nom, statistiques d'annulation | `SourceGareMemoire`         | `SourceGarePrisma` (dérivée) |
+| `EquipeGare`         | annuaire de l'équipe, changer d'affectation, désactiver                              | `EquipeMemoire`             | `EquipeGarePrisma`           |
+| `PinsEquipe`         | état du PIN provisoire ; écrit le haché dans le compte                               | `PinsEquipeMemoire`         | `PinsEquipePrisma`           |
 
 Les comptes (PIN haché, échecs, blocage) sont lus et écrits par `PersonnesRepository` du socle.
 
-## Tables PostgreSQL attendues
+## Tables PostgreSQL
+
+Les tables existent (migrations `…000200`, `…000300`). Ce que fait l'adaptateur :
+
+- `RegistreBilletsPrisma.appliquer` lit le billet `FOR UPDATE`, écrit `UPDATE billet … WHERE id AND etat =
+<lu>`, libère le siège (`siege_depart`) et avance `depart.versionPlan` dans la même transaction, puis
+  trace l'historique ; le numéro n'est jamais modifié. Un billet sans nom de voyageur s'affiche « Voyageur
+  sans nom ».
+- `DemandesAnnulationPrisma` : `decider` est un `UPDATE … WHERE demandeId AND statut = 'en_attente'` (dix
+  décisions simultanées, une seule passe) ; l'index unique partiel garde une demande en attente par billet.
+- `SourceGarePrisma` **dérive** la vue de la gare des tables, sans table dédiée : quais = plus grand quai
+  des départs du jour ; synchronisés = appareils non retirés dont la dernière synchronisation date de moins
+  de 15 minutes ; après-midi = départs non annulés à partir de 12 h à Douala ; `fusionProposeeAvec` toujours
+  `null` ; statistiques d'annulation = demandes faites par l'agent sur 10 jours, moyenne par guichet.
+- `EquipeGarePrisma` dérive la situation du jour : chauffeur ou convoyeur « à bord » si son départ est
+  parti, « en service » s'il est au quai ; guichetier « en service » avec une caisse ouverte ; contrôleur
+  et superviseur « en service » s'ils se sont connectés aujourd'hui. Billets = ceux de la personne sur 90
+  jours. La désactivation écrit `personne.actif = false`.
+- `PinsEquipePrisma` écrit `personne.pinHache` et `personne.pinProvisoireJusqua` (le PIN n'est jamais en
+  clair en base).
+
+Description d'origine des colonnes, gardée comme référence de leur sens (noms indicatifs) :
 
 - **`demande_annulation`** : `demande_id` PK (UUID appareil), `billet_id`, `gare_id`, `compagnie_id`,
   `demandeur_id`, `guichet_rang`, `motif`, `demande_a`, `statut` (`en_attente|decidee`), `decision`
@@ -114,8 +136,7 @@ Les comptes (PIN haché, échecs, blocage) sont lus et écrits par `PersonnesRep
 
 ## À brancher par le coordinateur
 
-1. `SupervisionModule` est dans `AppModule` ; reste à écrire les adaptateurs PostgreSQL des cinq
-   ports.
+1. Fait : `SupervisionModule` est dans `AppModule` et ses cinq ports ont leur adaptateur PostgreSQL.
 2. **La connexion doit refuser un PIN provisoire expiré** (`pin_provisoire_jusqua` dépassé) et imposer
    le changement à la première connexion : ce code est dans le socle, pas dans ce ticket.
 3. `ComptesService.creer` ne range pas de PIN pour un superviseur (il se connecte par mot de passe +
@@ -126,8 +147,8 @@ Les comptes (PIN haché, échecs, blocage) sont lus et écrits par `PersonnesRep
 
 - « Client présent » et « pièce vue » ne remontent pas dans la demande : renvoyés à `false`.
 - L'empreinte (WebAuthn) n'est pas vérifiable côté serveur : `empreinteDisponible: false`.
-- Le détail de la gare (guichets, départs, synchro) vient de `SourceGare`, à alimenter par les modules
-  billetterie et départs.
+- Le détail de la gare (guichets, départs, synchro) vient de `SourceGare`, dérivé des tables en
+  PostgreSQL (voir plus haut), à alimenter en mémoire par les tests.
 
 ## Tests
 
@@ -135,3 +156,8 @@ Les comptes (PIN haché, échecs, blocage) sont lus et écrits par `PersonnesRep
 complète en mémoire, réponses relues avec les schémas du contrat), `parite.test.ts` (lecteurs
 d'événements comparés au contrat), `unitaires.test.ts` (preuve du PIN, PIN provisoire). Harnais :
 `testing/app-supervision-test.ts`.
+
+Sur PostgreSQL (ignorés sans `DATABASE_URL_TEST`) : `postgres.integration.test.ts` passe la suite de
+contrat `testing/contrat-ports.ts` sur la mémoire et sur PostgreSQL, vérifie les garanties de la base
+(décision unique, siège libéré dans la transaction, vue de la gare et de l'équipe dérivée des tables) et
+l'API de bout en bout (validation avec PIN, remboursement en espèces, équipe).

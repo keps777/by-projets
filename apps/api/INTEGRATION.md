@@ -13,25 +13,26 @@ chaque étape d'intégration.
   données existantes) et `20261017000300_modules_metier_garanties` (garde-fous SQL).
 - **Tous les modules sont dans `AppModule`**, la passerelle SMS (AM-166) comprise. Les routes de chaque
   module sont montées ; les tests e2e existants passent toujours.
-- **Cinq modules ont leurs adaptateurs PostgreSQL** : la numérotation, les modules (AM-126), la
-  synchronisation (AM-160), la billetterie (AM-162, sauf quatre ports sans table) et le journal des SMS
-  (AM-166). Les autres restent en mémoire, derrière les mêmes ports.
+- **Huit modules ont leurs adaptateurs PostgreSQL** : la numérotation, les modules (AM-126), la
+  synchronisation (AM-160), la billetterie (AM-162, sauf quatre ports sans table), le journal des SMS
+  (AM-166), les colis (AM-163), la caisse et la supervision (AM-164).
 - **Conséquence en production** : l'API **refuse de démarrer** avec `NODE_ENV=production` tant que la
-  billetterie (promotions, proches, colis du départ, avis), les SMS (file Redis), les colis, la caisse et
-  la supervision ont un port en mémoire (leur `VerificationStockage*` fait son travail). C'est voulu :
+  billetterie (promotions, proches, colis du départ, avis) et les SMS (file Redis) ont un port en mémoire (leur `VerificationStockage*` fait son travail). C'est voulu :
   aucune donnée métier ne doit se perdre au redémarrage. En développement et en test, rien ne change.
-- **Migrations** : deux de plus, `20261017000400_sms_et_heure_texte` (tables `sms_message` et
+- **Migrations** : trois de plus, `20261017000400_sms_et_heure_texte` (tables `sms_message` et
   `sms_essai`, colonne `journal_evenement.atTexte` : l'heure telle que l'appareil l'a signée) et
-  `20261017000500_sms_garanties` (CHECK, index unique partiel sur le fournisseur, essais en ajout seul).
+  `20261017000500_sms_garanties` (CHECK, index unique partiel sur le fournisseur, essais en ajout seul), puis, à l'étape 2b,
+  `20261017000600_colis_caisse_supervision_garanties` (alertes du patron, tolérance d'écart, choix des
+  colonnes en double de `session_caisse`, garde-fous des colis).
 
 ## Choisir le stockage : `API_STOCKAGE`
 
-| Valeur      | Effet                                                                                                                                                               |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| absente     | PostgreSQL si `NODE_ENV=production`, mémoire sinon (les tests restent en mémoire sans rien régler).                                                                 |
-| `postgres`  | Les modules qui ont des adaptateurs PostgreSQL les utilisent (numérotation, modules, synchronisation, billetterie, journal des SMS), quel que soit l'environnement. |
-| `memoire`   | Mémoire partout (en production, le garde-fou refuse alors de démarrer).                                                                                             |
-| autre chose | L'application ne démarre pas (une faute de frappe ne bascule pas en silence).                                                                                       |
+| Valeur      | Effet                                                                                                                                                                                           |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| absente     | PostgreSQL si `NODE_ENV=production`, mémoire sinon (les tests restent en mémoire sans rien régler).                                                                                             |
+| `postgres`  | Les modules qui ont des adaptateurs PostgreSQL les utilisent (numérotation, modules, synchronisation, billetterie, journal des SMS, colis, caisse, supervision), quel que soit l'environnement. |
+| `memoire`   | Mémoire partout (en production, le garde-fou refuse alors de démarrer).                                                                                                                         |
+| autre chose | L'application ne démarre pas (une faute de frappe ne bascule pas en silence).                                                                                                                   |
 
 Le choix est fait par `socle/db/stockage.ts` (`stockageSurPostgres`) dans les fabriques des modules.
 
@@ -44,9 +45,9 @@ Le choix est fait par `socle/db/stockage.ts` (`stockageSurPostgres`) dans les fa
 | Synchronisation (AM-160) | `src/sync`         | oui       | `AppareilsSync`, `JournalSync`, `SiegesSync`, `AlertesSync`, `ProvisionnementSync`                                                                                                                                   | **PostgreSQL** (`postgres.ts`) ou mémoire, selon `API_STOCKAGE` (`ProvisionnementSync` : `ProvisionnementVide`) |
 | Billetterie (AM-162)     | `src/billetterie`  | oui       | `Catalogue`, `Billets`, `Inventaire`, `Commandes`, `Scans`, `EvenementsTraites`, `PreferencesVoyageur`, `NumerotationEnLigne` ; restent en mémoire : `Promotions`, `ProchesVoyageur`, `ColisDuDepart`, `AvisBillets` | **PostgreSQL** (`postgres.ts`) ou mémoire, selon `API_STOCKAGE`                                                 |
 | SMS (AM-166)             | `src/sms`          | oui       | `JournalSms` (PostgreSQL) ; `FileEnvoiSms` (BullMQ + Redis, à écrire)                                                                                                                                                | Journal **PostgreSQL** (`postgres.ts`) ou mémoire ; file en mémoire                                             |
-| Colis (AM-163)           | `src/colis`        | oui       | `ColisRepository`, `PhotosColis`, `ReclamationsRepository`, `FichiersPhotos`, `ReferentielColis`, …                                                                                                                  | Mémoire                                                                                                         |
-| Caisse (AM-164)          | `src/caisse`       | oui       | `SessionsCaisse`, `MouvementsCaisse`, `GuichetsAgence`, `ReglesAgence`, `AlertesPatron`, journal d'agence (`JournalAgenceRepository`, `EvenementsTraites`)                                                           | Mémoire                                                                                                         |
-| Supervision (AM-164)     | `src/supervision`  | oui       | `RegistreBillets`, `DemandesAnnulation`, `SourceGare`, `EquipeGare`, `PinsEquipe`                                                                                                                                    | Mémoire                                                                                                         |
+| Colis (AM-163)           | `src/colis`        | oui       | `ColisRepository`, `PhotosColis`, `ReclamationsRepository`, `FichiersPhotos`, `ReferentielColis`, …                                                                                                                  | **PostgreSQL** (`postgres.ts`) ou mémoire, selon `API_STOCKAGE`                                                 |
+| Caisse (AM-164)          | `src/caisse`       | oui       | `SessionsCaisse`, `MouvementsCaisse`, `GuichetsAgence`, `ReglesAgence`, `AlertesPatron`, journal d'agence (`JournalAgenceRepository`, `EvenementsTraites`)                                                           | **PostgreSQL** (`postgres.ts`, `journal/postgres.ts`) ou mémoire, selon `API_STOCKAGE`                          |
+| Supervision (AM-164)     | `src/supervision`  | oui       | `RegistreBillets`, `DemandesAnnulation`, `SourceGare`, `EquipeGare`, `PinsEquipe`                                                                                                                                    | **PostgreSQL** (`postgres.ts`) ou mémoire, selon `API_STOCKAGE`                                                 |
 
 Le socle (comptes, authentification, audit, événements) était déjà sur PostgreSQL.
 
@@ -58,7 +59,7 @@ Le socle (comptes, authentification, audit, événements) était déjà sur Post
 | Numérotation    | `plage_attribuee`, `numero_vu`, `alerte_sync` (alertes de type `trou_dans_la_plage`)                                                                   |
 | Billetterie     | `siege_depart`, `commande`, `scan_quai`, `evenement_traite`, `compagnie_preferee`, `filtres_voyageur`, et les colonnes ajoutées à `billet` et `depart` |
 | Colis           | `photo_colis`, `reclamation_colis`, et les colonnes ajoutées à `colis`                                                                                 |
-| Caisse          | `annulation_caisse`, `journal_agence`, `evenement_agence_traite`, et les colonnes ajoutées à `session_caisse`                                          |
+| Caisse          | `annulation_caisse`, `journal_agence`, `evenement_agence_traite`, `alerte_patron`, et les colonnes ajoutées à `session_caisse` et `compagnie`          |
 | Supervision     | `demande_annulation`                                                                                                                                   |
 | Modules         | `module_compagnie` (existait), `module_exception`                                                                                                      |
 | SMS             | `sms_message`, `sms_essai`                                                                                                                             |
@@ -102,6 +103,24 @@ DO UPDATE … WHERE` (libre, ou bloqué par la même commande) sur `siege_depart
   (`sms_essai`) sont en ajout seul ; le texte d'un SMS n'a aucune colonne.
 - **Modules** : les 12 codes du catalogue en `CHECK`, une exception par module et par gare ou par ville,
   portée cohérente (une gare nomme une gare, une ville nomme une ville).
+- **Code de retrait d'un colis** (migration `…000400`) : le décompte des essais est exact parce que
+  l'écriture d'un colis est un `UPDATE … WHERE id = $1 AND version = $2` d'un seul tenant : deux essais
+  partis de la même version ne passent jamais tous les deux, le perdant relit et recommence
+  (`ColisService.modifier`). Douze devineurs simultanés : trois essais comptés, colis bloqué. La base refuse
+  en plus un colis à trois essais sans blocage ou à plus de trois essais
+  (`colis_code_bloque_apres_trois_essais`, `colis_code_essais_max`). La numérotation en ligne des colis
+  passe par `numero_vu`.
+- **Une transition de billet ne se fait qu'une fois** : annuler ou reporter lit le billet `FOR UPDATE`,
+  écrit `UPDATE billet … WHERE id AND etat = <lu>`, libère le siège (`siege_depart`) et avance
+  `versionPlan` dans la même transaction. Une décision d'annulation est un compare-et-échange sur
+  `demande_annulation.statut` : dix décisions simultanées, une seule passe.
+- **Journal d'agence signé et chaîné** : une chaîne par compagnie ; l'ajout prend le verrou consultatif
+  `7_017_164`, lit la dernière entrée, insère ; l'index unique `(chaine, precedente)` est le filet. L'identifiant
+  d'événement est unique (idempotence) ; une réservation `en_cours` abandonnée depuis plus de cinq minutes est
+  reprise.
+- **Sessions de caisse** : les `CHECK` `session_etat_cloture`, `session_etat_validation`,
+  `session_cloture_copie` et `session_validation_copie` interdisent qu'une session soit à la fois ouverte et
+  clôturée, ou que les colonnes interrogeables divergent du JSON qui fait foi (voir les décisions plus bas).
 
 ## Tests
 
@@ -115,6 +134,8 @@ ils tournent l'un après l'autre (verrou consultatif dans `socle/testing/base-in
 
 - `socle/db/db.integration.test.ts` : migrations, déclencheurs, contraintes du socle et des modules ;
 - `socle/db/migration-modules-metier.integration.test.ts` : reprise de données déjà présentes ;
+- `caisse/migration-caisse.integration.test.ts` : reprise de sessions de caisse écrites dans l'ancien format
+  (JSON de clôture et de validation reconstruit) et des colis existants ;
 - `numerotation/postgres.integration.test.ts` : le contrat des trois ports sur la mémoire (toujours) et
   sur PostgreSQL, les garanties de la base, les services complets, l'API avec `API_STOCKAGE=postgres` et
   un redémarrage ;
@@ -126,12 +147,16 @@ ils tournent l'un après l'autre (verrou consultatif dans `socle/testing/base-in
   deux fois (requêtes simultanées), double scan refusé, numéros en ligne sans trou, l'API de bout en bout ;
 - `sms/postgres.integration.test.ts` : le contrat du journal, clé d'idempotence, statuts conditionnels,
   essais en ajout seul, aucun texte stocké, l'API (billet, accusé signé en corps brut, reprise,
-  redémarrage).
+  redémarrage) ;
+- `colis/postgres.integration.test.ts`, `caisse/postgres.integration.test.ts`,
+  `supervision/postgres.integration.test.ts` : le contrat des ports sur la mémoire et sur PostgreSQL,
+  les garanties de la base (essais du code exacts sous concurrence, une caisse ouverte par agent et par
+  guichet, chaîne du journal falsifiée détectée, décisions simultanées), puis l'API de bout en bout.
 
 Chaque nouvel adaptateur suit ce patron : **une suite de contrat écrite une fois, passée par la mémoire
 et par PostgreSQL**. C'est ce qui garantit que la mémoire, sur laquelle tournent tous les autres tests,
 se comporte comme la base. Les suites sont dans `numerotation/testing/contrat-ports.ts`, `sync/testing/contrat-ports.ts`,
-`billetterie/testing/contrat-ports.ts` et `sms/testing/contrat-journal.ts`.
+`billetterie/testing/contrat-ports.ts` et `sms/testing/contrat-journal.ts`, `colis/testing/contrat-ports.ts`, `caisse/testing/contrat-ports.ts` et `supervision/testing/contrat-ports.ts` ; `caisse/testing/app-agence-pg.ts` monte l'application sur PostgreSQL pour les tests de bout en bout. Un fichier d'intégration prépare la base une seule fois (`preparerBaseDeTest` vide le schéma public) : n'en imbriquez jamais deux dans le même fichier.
 
 ## Ce qui reste à faire, dans l'ordre
 
@@ -143,15 +168,12 @@ se comporte comme la base. Les suites sont dans `numerotation/testing/contrat-po
    billetterie et les comptes quand l'appareil devra valider un déblocage sur place.
 2. **Fait : journal des SMS** (`src/sms/postgres.ts`). Reste la **file d'envoi** (`FileEnvoiSms` sur
    BullMQ + Redis, voir `src/sms/README.md`) : sans elle `SmsModule` refuse de démarrer en production.
-3. **Colis** (`src/colis`) : `ColisRepository` (version optimiste sur la colonne `version`), `PhotosColis`,
-   `ReclamationsRepository`, `NumerotationColis` (à brancher sur `NumerotationService.prendreEnLigne`,
-   déjà disponible sur PostgreSQL).
-4. **Caisse puis supervision** (`src/caisse`, `src/supervision`) : `SessionsCaisse` (les index uniques
-   rendent l'ouverture atomique), `MouvementsCaisse`, journal d'agence (chaîne d'empreintes : prendre le
-   verrou consultatif, lire la dernière entrée, insérer ; l'index unique est le filet), puis
-   `RegistreBillets`, `DemandesAnnulation`, `SourceGare`, `EquipeGare`, `PinsEquipe`. La caisse doit
-   recevoir les ventes de la billetterie et des colis (`MouvementsCaisse.decompte`).
-5. **Autres reliquats connus** (hors adaptateurs) :
+3. **Colis, caisse, supervision** : faits à l'étape 2b (AM-163, AM-164). Reste à brancher, quand la
+   billetterie sera sur PostgreSQL, ce que la caisse lit des billets : `MouvementsCaisse.decompte` calcule
+   déjà le décompte depuis `billet`, `colis` et `annulation_caisse`, donc une vente écrite par la
+   billetterie PostgreSQL y apparaît sans autre code. Un billet sans paiement connu est compté comme non
+   espèces (mobile money) : à confirmer avec le métier.
+4. **Autres reliquats connus** (hors adaptateurs) :
    - donner un PIN de signature aux comptes patron (ils se connectent par mot de passe ; `personne.pinHache`
      est posé à la main dans les tests) ;
    - la connexion doit refuser un PIN provisoire expiré (`personne.pinProvisoireJusqua`) et imposer le
@@ -161,7 +183,14 @@ se comporte comme la base. Les suites sont dans `numerotation/testing/contrat-po
    - protéger les routes des autres modules avec `@ModuleRequis` au fur et à mesure ;
    - exporter `ModulesActifsSchema` dans `packages/contrats` ;
    - lancer `ControleJourneeService.controler` chaque soir (aucun planificateur n'est fourni).
-6. **Quand tout est branché** : retirer `API_STOCKAGE=memoire` de tout script, vérifier qu'`API_STOCKAGE`
+   - `session_caisse.historique` n'est plus écrite (reste à `[]`) : la retirer dans une migration future ;
+   - les `CHECK` posés `NOT VALID` par la migration `…000400` (sessions, colis) valent pour toute écriture
+     à venir ; les `VALIDATE CONSTRAINT` se feront hors ligne, après contrôle des données de production ;
+   - `rouvrir` d'une demande d'annulation peut, dans une course très rare, se heurter à l'index unique
+     « une seule en attente par billet » (erreur 23505) : la demande reste alors décidée, à rejouer ;
+   - les textes avec un caractère NUL sont refusés par PostgreSQL : non traités à ce stade ;
+   - la supervision dérive de ses tables des valeurs que les maquettes fixaient : voir « Décisions ».
+5. **Quand tout est branché** : retirer `API_STOCKAGE=memoire` de tout script, vérifier qu'`API_STOCKAGE`
    absent + `NODE_ENV=production` démarre, et ajouter un test e2e de bout en bout sur PostgreSQL (un billet
    vendu hors ligne, synchronisé, compté en caisse).
 
@@ -176,14 +205,32 @@ se comporte comme la base. Les suites sont dans `numerotation/testing/contrat-po
   Les identifiants y sont du texte ; le serveur vérifie, signale (alerte) et garde.
 - **`evenement_agence_traite`** : le port du journal d'agence s'appelle `EvenementsTraites`, comme celui de
   la billetterie ; la table de la caisse porte le préfixe pour ne pas se heurter à `evenement_traite`.
-- **`compteur_colis_en_ligne` n'existe pas** : le README du module colis l'annonce, mais le compteur du
+- **`compteur_colis_en_ligne` n'existe pas** : le README du module colis l'annonçait, mais le compteur du
   jour des colis en ligne est le registre `numero_vu` lui-même (genre `colis`), qui donne le plus petit
-  numéro libre de la plage 4001 et suivants. Une seule source de vérité, pas deux compteurs à garder
-  d'accord.
-- **Colonnes en double dans `session_caisse`** : les anciennes colonnes (`cashCompte`, `ecart`, `etat`,
-  `historique`…) restent, les nouvelles (`comptage`, `cloture`, `validation`, `refus`…) portent le détail
-  du module caisse. Aucune n'est supprimée (migrations additives) ; l'adaptateur choisira laquelle fait
-  foi et pourra remplir les deux.
+  numéro libre de la plage 4001 et suivants (`NumerotationColisServeur`, idempotent par référence). Une
+  seule source de vérité, pas deux compteurs à garder d'accord.
+- **Colonnes en double dans `session_caisse` (tranché à l'étape 2b)** : le JSON `cloture` et le JSON
+  `validation` **font foi** (décompte, divergence de l'appareil, identifiant d'événement, commentaire du
+  superviseur). Les colonnes d'origine `clotureeA`, `cashCompte`, `cashAttendu`, `ecart`, `clotureeAuto`,
+  `valideeA`, `valideeParId` sont une **copie interrogeable**, écrite dans la même instruction que le JSON,
+  et les `CHECK` `session_cloture_copie` et `session_validation_copie` refusent qu'elles divergent.
+  `historique` est **abandonnée** (le journal d'agence signé est l'historique) et reste à `[]`. Aucune
+  colonne n'est supprimée (migrations additives). La migration reconstruit le JSON des sessions déjà
+  clôturées ou validées depuis les colonnes d'origine (décompte à zéro, identifiant d'événement tiré au
+  hasard) ; testé par `caisse/migration-caisse.integration.test.ts`.
+- **Tolérance d'écart de caisse** : `compagnie.toleranceEcartCaisse` (nullable, positive) remplace une
+  valeur fixe ; `ReglesAgence` la lit, avec 1 000 F quand elle est absente.
+- **Identifiants non UUID** : les adaptateurs PostgreSQL répondent « identifiant invalide » au lieu de
+  laisser PostgreSQL lever une erreur de conversion ; les services le traduisent en HTTP 422
+  `IDENTIFIANT_INVALIDE`. Les tests en mémoire gardent leurs identifiants de texte (« dem-1 »).
+- **Vue de la gare dérivée des tables (supervision)** : quais = plus grand quai des départs du jour ;
+  « synchronisé » = dernière synchronisation de moins de 15 minutes (appareils non retirés) ; « après-midi »
+  = départs non annulés à partir de 12 h à Douala ; un départ sans quai affiche le quai 1 et sans bus une
+  capacité de 1 (le contrat exige au moins 1) ; `fusionProposeeAvec` est toujours `null` (aucune table de
+  fusion) ; `annulationsAgent` compte les demandes faites par l'agent sur 10 jours, la moyenne étant par
+  guichet de la gare ; un billet de cadence sans nom s'affiche « Voyageur sans nom ».
+- **Reprise d'un événement d'agence** : une réservation d'idempotence `en_cours` plus vieille que cinq
+  minutes (traitement interrompu) est reprise par l'événement suivant de même identifiant.
 - **Les jours** : toutes les dates de jour sont des `AAMMJJ` en heure de Douala (UTC+1,
   sans heure d'été), calculés par `versIsoDouala` ; la reprise de `colis.jour` fait le même calcul en SQL.
 - **`SmsGateway` dans l'application** : `AuthModule` fournit `SmsGatewayPasserelle` (file, reprise,
@@ -195,5 +242,5 @@ se comporte comme la base. Les suites sont dans `numerotation/testing/contrat-po
 - **Heure d'origine du journal de synchronisation** : `journal_evenement.atTexte` garde l'heure telle que
   l'appareil l'a écrite (la signature porte sur ce texte) ; `at` en est la valeur horodatée.
 - **Verrous consultatifs** : `pg_advisory_xact_lock(int, int)` avec un espace par usage (numérotation :
-  `7_017_161`, billetterie : `7_017_162`, tests d'intégration : `7_017_999`). Un nouvel adaptateur qui prend un verrou choisit un
+  `7_017_161`, billetterie : `7_017_162`, journal d'agence et caisse : `7_017_164`, tests d'intégration : `7_017_999`). Un nouvel adaptateur qui prend un verrou choisit un
   nouvel espace, pour ne pas bloquer un autre module.

@@ -13,6 +13,7 @@ import { PersonnesRepository } from "../../socle/comptes/personnes.repository";
 import { CONFIG } from "../../socle/config/config";
 import { configurerApp } from "../../socle/configurer-app";
 import { PrismaService } from "../../socle/db/prisma.service";
+import { VARIABLE_STOCKAGE } from "../../socle/db/stockage";
 import { EvenementsRepository } from "../../socle/evenements/evenements.service";
 import { Horloge } from "../../socle/horloge";
 import { SmsGateway, SmsMock } from "../../socle/sms/sms.gateway";
@@ -127,6 +128,13 @@ export class HorlogeColis extends Horloge {
 export interface OptionsAppColisTest {
   config?: Record<string, string>;
   debut?: Date;
+  /**
+   * Monte le module sur PostgreSQL (`API_STOCKAGE=postgres`, comptes, audit et colis en base) au
+   * lieu de la mémoire. Les lignes que les constantes de ce fichier désignent (compagnies, gares) et
+   * le départ `departId` doivent exister en base ; l'annuaire des départs reste en mémoire et ne
+   * connaît que ce départ.
+   */
+  postgres?: { url: string; departId: string };
 }
 
 /**
@@ -135,28 +143,36 @@ export interface OptionsAppColisTest {
  * au socle : `AppModule` n'importe pas `ColisModule`.
  */
 export async function creerAppColisTest(options: OptionsAppColisTest = {}) {
-  const config = configTest(options.config);
+  const config = configTest({
+    ...options.config,
+    ...(options.postgres ? { DATABASE_URL: options.postgres.url } : {}),
+  });
+  const stockageAvant = process.env[VARIABLE_STOCKAGE];
+  if (options.postgres) process.env[VARIABLE_STOCKAGE] = "postgres";
   const personnes = new PersonnesMemoire();
   const horloge = new HorlogeColis(options.debut);
   const auditRepo = new AuditMemoire();
   const evenements = new EvenementsMemoire();
 
-  const module = await Test.createTestingModule({ imports: [AppModule, ColisModule] })
+  let montage = Test.createTestingModule({ imports: [AppModule, ColisModule] })
     .overrideProvider(CONFIG)
     .useValue(config)
-    .overrideProvider(PersonnesRepository)
-    .useValue(personnes)
-    .overrideProvider(DefisRepository)
-    .useValue(new DefisMemoire())
-    .overrideProvider(AuditRepository)
-    .useValue(auditRepo)
-    .overrideProvider(EvenementsRepository)
-    .useValue(evenements)
     .overrideProvider(Horloge)
-    .useValue(horloge)
-    .overrideProvider(PrismaService)
-    .useValue({ estJoignable: async () => true, $disconnect: async () => undefined })
-    .compile();
+    .useValue(horloge);
+  if (!options.postgres) {
+    montage = montage
+      .overrideProvider(PersonnesRepository)
+      .useValue(personnes)
+      .overrideProvider(DefisRepository)
+      .useValue(new DefisMemoire())
+      .overrideProvider(AuditRepository)
+      .useValue(auditRepo)
+      .overrideProvider(EvenementsRepository)
+      .useValue(evenements)
+      .overrideProvider(PrismaService)
+      .useValue({ estJoignable: async () => true, $disconnect: async () => undefined });
+  }
+  const module = await montage.compile();
 
   const app = module.createNestApplication<NestExpressApplication>();
   configurerApp(app, config);
@@ -205,6 +221,12 @@ export async function creerAppColisTest(options: OptionsAppColisTest = {}) {
   referentiel.gares.set(GARE_BAF.id, GARE_BAF);
   referentiel.gares.set(AUTRE_GARE.id, AUTRE_GARE);
   referentiel.departs.set(DEPART_BAF.id, { ...DEPART_BAF });
+  if (options.postgres) {
+    referentiel.departs.set(options.postgres.departId, {
+      ...DEPART_BAF,
+      id: options.postgres.departId,
+    });
+  }
   referentiel.guichets.set(GUICHET_2.id, GUICHET_2);
   referentiel.lesRelais.set(POINT_RELAIS.id, POINT_RELAIS);
 
@@ -232,7 +254,11 @@ export async function creerAppColisTest(options: OptionsAppColisTest = {}) {
     analyse: app.get(AnalysePhotoColis) as AnalysePhotoMemoire,
     diffusion: app.get(DiffusionSuivi) as DiffusionMemoire,
     referentiel,
-    fermer: () => app.close(),
+    fermer: async () => {
+      await app.close();
+      if (stockageAvant === undefined) delete process.env[VARIABLE_STOCKAGE];
+      else process.env[VARIABLE_STOCKAGE] = stockageAvant;
+    },
   };
 }
 

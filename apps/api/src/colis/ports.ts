@@ -13,7 +13,8 @@ import type { EtatColis } from "./regles";
  * Ports du module colis : tout ce qui sort du processus (base de données, SMS, paiement, assureur,
  * stockage de photos, annuaires des autres modules). La logique ne parle qu'à ces classes
  * abstraites ; `memoire.ts` en donne des versions en mémoire (tests, développement).
- * Les versions PostgreSQL ne sont pas écrites : voir le README pour les tables attendues.
+ * `postgres.ts` en donne les versions PostgreSQL (tables décrites dans le README) ; les deux passent
+ * la même suite de contrat (`testing/contrat-ports.ts`).
  */
 
 /**
@@ -94,8 +95,18 @@ export abstract class ReclamationsRepository {
 
 /** Numérotation côté serveur des colis de l'app (plage 4001–9999, compteur du jour, sans trou). */
 export abstract class NumerotationColis {
-  /** Prochain numéro de la plage « en ligne » pour cette gare ce jour-là (AAMMJJ). Atomique. */
-  abstract prochainEnLigne(gareId: string, jour: string): Promise<number>;
+  /**
+   * Prochain numéro de la plage « en ligne » pour cette gare, le jour (Douala) de `at`. Atomique, et
+   * idempotent par `reference` (l'identifiant du colis) : réessayer après une erreur donne le même
+   * numéro, jamais un second. Lève `RangeError` quand la plage est épuisée.
+   */
+  abstract prochainEnLigne(demande: {
+    gareId: string;
+    compagnieId: string | null;
+    /** Instant de la création : le jour du numéro est celui de Douala. */
+    at: string;
+    reference: string;
+  }): Promise<number>;
 }
 
 /* ------------------------------------------------------------------ services externes */

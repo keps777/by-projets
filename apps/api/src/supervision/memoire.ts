@@ -41,7 +41,8 @@ export class RegistreBilletsMemoire extends RegistreBillets {
     const permis = action === "annuler" ? ETATS_ANNULABLES : ETATS_REPORTABLES;
     if (!permis.includes(b.etat)) return null;
     const etat: EtatBillet = action === "annuler" ? "annule" : "reporte";
-    const siegeLibere = true;
+    // Un billet reporté a déjà rendu son siège au moment du report : rien à libérer.
+    const siegeLibere = b.etat !== "reporte" && b.depart.siege > 0;
     this.lignes.set(billetId, { ...b, etat });
     this.transitions.push({ billetId, action, parId: meta.parId });
     return { etat, siegeLibere };
@@ -54,9 +55,12 @@ export class DemandesAnnulationMemoire extends DemandesAnnulation {
 
   async creer(
     demande: DemandeAnnulationStockee,
-  ): Promise<"ok" | "deja_en_attente" | "identifiant_pris"> {
+  ): Promise<"ok" | "deja_en_attente" | "identifiant_pris" | "identifiant_invalide"> {
     if (this.lignes.has(demande.demandeId)) return "identifiant_pris";
-    const existante = await this.enAttenteDuBillet(demande.billetId);
+    // Pas d'« await » entre la vérification et l'écriture : sinon deux demandes simultanées passeraient.
+    const existante = [...this.lignes.values()].some(
+      (x) => x.billetId === demande.billetId && x.statut === "en_attente",
+    );
     if (existante) return "deja_en_attente";
     this.lignes.set(demande.demandeId, structuredClone(demande));
     return "ok";

@@ -1,5 +1,11 @@
 import { Inject, Injectable, Module, type OnModuleInit } from "@nestjs/common";
+import { NumerotationModule } from "../numerotation/numerotation.module";
+import { NumerotationService } from "../numerotation/numerotation.service";
+import { RegistreNumeros } from "../numerotation/ports";
+import { ChiffrementService } from "../socle/chiffrement/chiffrement.service";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { AgenceColisController } from "./agence.controller";
 import { ColisController } from "./colis.controller";
@@ -18,6 +24,12 @@ import {
   ReferentielMemoire,
 } from "./memoire";
 import { NotificationsColisSms } from "./notifications.sms";
+import {
+  ColisPrisma,
+  NumerotationColisServeur,
+  PhotosColisPrisma,
+  ReclamationsColisPrisma,
+} from "./postgres";
 import {
   AnalysePhotoColis,
   AssureurPartenaire,
@@ -87,11 +99,15 @@ export class VerificationPortsColis implements OnModuleInit {
  * Colis (AM-163) : enregistrement au guichet et dans l'app, photos supprimées à 90 jours, code de
  * retrait haché, états et scans, assurance, complément de poids, réclamations et indemnisation.
  *
- * À importer dans `AppModule` (périmètre du socle). Tous les ports ont une version en mémoire par
- * défaut ; le coordinateur les remplace (`{ provide: ColisRepository, useClass: ColisPrisma }`…).
+ * Dans `AppModule`. Les ports de persistance (colis, photos, réclamations, numéros) ont une version
+ * PostgreSQL (`postgres.ts`) et une version en mémoire, choisies par `API_STOCKAGE` (voir
+ * `socle/db/stockage.ts`). Restent en mémoire ou simulés, et font donc refuser la production :
+ * le stockage des fichiers de photos, l'analyse de photo, les paiements, l'assureur, la diffusion
+ * du suivi en direct et l'annuaire des départs (`ReferentielColis`, qui lira la billetterie).
  * Le SMS, lui, passe par `SmsGateway` du socle.
  */
 @Module({
+  imports: [NumerotationModule],
   controllers: [ColisController, AgenceColisController, ReclamationsController],
   providers: [
     ColisService,
@@ -100,11 +116,40 @@ export class VerificationPortsColis implements OnModuleInit {
     TachesColis,
     VerificationPortsColis,
     { provide: Horloge, useClass: HorlogeSysteme },
-    { provide: ColisRepository, useClass: ColisMemoire },
-    { provide: PhotosColis, useClass: PhotosMemoire },
+    // PostgreSQL en production (ou avec API_STOCKAGE=postgres), mémoire ailleurs : voir socle/db/stockage.ts.
+    {
+      provide: ColisRepository,
+      inject: [CONFIG, PrismaService, ChiffrementService],
+      useFactory: (config: AppConfig, prisma: PrismaService, chiffrement: ChiffrementService) =>
+        stockageSurPostgres(config) ? new ColisPrisma(prisma, chiffrement) : new ColisMemoire(),
+    },
+    {
+      provide: PhotosColis,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new PhotosColisPrisma(prisma) : new PhotosMemoire(),
+    },
     { provide: FichiersPhotos, useClass: FichiersPhotosMemoire },
-    { provide: ReclamationsRepository, useClass: ReclamationsMemoire },
-    { provide: NumerotationColis, useClass: NumerotationMemoire },
+    {
+      provide: ReclamationsRepository,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config)
+          ? new ReclamationsColisPrisma(prisma)
+          : new ReclamationsMemoire(),
+    },
+    {
+      provide: NumerotationColis,
+      inject: [CONFIG, NumerotationService, RegistreNumeros],
+      useFactory: (
+        config: AppConfig,
+        numerotation: NumerotationService,
+        registre: RegistreNumeros,
+      ) =>
+        stockageSurPostgres(config)
+          ? new NumerotationColisServeur(numerotation, registre)
+          : new NumerotationMemoire(),
+    },
     { provide: AnalysePhotoColis, useClass: AnalysePhotoMemoire },
     { provide: PaiementsColis, useClass: PaiementsMemoire },
     { provide: AssureurPartenaire, useClass: AssureurMemoire },
