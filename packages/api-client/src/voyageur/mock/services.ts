@@ -66,6 +66,7 @@ export function mockDirect(source: EcranSource): {
     const monte = /(\d+) places? montent?/.exec(precision ?? "");
     return {
       arret,
+      arretId: slug(arret),
       heure: isoA(jour, e.heure),
       statut:
         rangProchain < 0

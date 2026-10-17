@@ -17,7 +17,7 @@ import styles from "./direct.module.css";
 function arretsDeLaFrise(
   etapes: readonly c.EtapeTrajet[],
   prochainLibelle: string,
-  hrefMontee: (arret: string) => string,
+  hrefMontee: (etape: c.EtapeTrajet) => string,
 ): Arret[] {
   return etapes.map((etape, rang) => {
     const montees = etape.placesQuiMontent;
@@ -33,7 +33,7 @@ function arretsDeLaFrise(
         : etape.statut === "prochain"
           ? { detail: prochainLibelle }
           : {}),
-      ...(monte ? { montees, href: hrefMontee(etape.arret) } : {}),
+      ...(monte ? { montees, href: hrefMontee(etape) } : {}),
     };
   });
 }
@@ -104,7 +104,9 @@ export function DirectVue({ billetId, suivi }: { billetId: string; suivi: c.Suiv
             arrets={arretsDeLaFrise(
               suivi.etapes,
               t("frise.prochain"),
-              (arret) => `${urlPlanche("Arret")}?arretId=${encodeURIComponent(idArret(arret))}`,
+              // L'identifiant vient de l'API ; sans lui (ancienne réponse), il se déduit du nom.
+              (etape) =>
+                `${urlPlanche("Arret")}?arretId=${encodeURIComponent(etape.arretId ?? idArret(etape.arret))}`,
             )}
           />
         )}

@@ -198,3 +198,24 @@ describe("commande, groupe et billet", () => {
     ).toBe(false);
   });
 });
+
+describe("suivi du bus : identifiant d'arrêt", () => {
+  const etape = { arret: "Boumnyebel", heure: ISO, statut: "prochain" };
+
+  it("une étape sans arretId reste valide (champ ajouté, facultatif)", () => {
+    expect(c.SchemaEtapeTrajet.safeParse(etape).success).toBe(true);
+  });
+
+  it("l'étape porte l'identifiant que « Monter en route » lit, et il est rendu tel quel", () => {
+    const lue = c.SchemaEtapeTrajet.parse({ ...etape, arretId: "arret-boumnyebel" });
+    expect(lue.arretId).toBe("arret-boumnyebel");
+    expect(c.SchemaDemandeMonteeEnRoute.parse({ arretId: lue.arretId }).arretId).toBe(
+      "arret-boumnyebel",
+    );
+  });
+
+  it("l'identifiant est une chaîne non vide", () => {
+    expect(c.SchemaEtapeTrajet.safeParse({ ...etape, arretId: "" }).success).toBe(false);
+    expect(c.SchemaEtapeTrajet.safeParse({ ...etape, arretId: 12 }).success).toBe(false);
+  });
+});

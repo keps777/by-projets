@@ -16,6 +16,11 @@ export type StatutEtape = z.infer<typeof SchemaStatutEtape>;
 export const SchemaEtapeTrajet = z.object({
   /** Nom de l'arrêt (« Edéa »). */
   arret: z.string(),
+  /**
+   * Identifiant de l'arrêt, celui que « Monter en route » lit (`DemandeMonteeEnRoute.arretId`). Facultatif : sans lui,
+   * l'écran déduit un identifiant du nom.
+   */
+  arretId: SchemaId.optional(),
   /** Heure de passage réelle ou prévue. */
   heure: SchemaIsoDouala,
   statut: SchemaStatutEtape,
