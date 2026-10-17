@@ -21,7 +21,6 @@ import { rendreApp } from "@/test/rendre";
 import { destinationAction, ligneConcernee } from "./destinations";
 import { gainSimule, numeroter } from "./formats";
 import fr from "./i18n.fr.json";
-import { GRAPHIQUE_DEMO } from "./graphique";
 import { ReponseVue, type EtatReponse } from "./reponse-vue";
 import type { Conversation, Echange } from "./types";
 
@@ -216,7 +215,7 @@ describe("AssistantReponse · rendu de la planche (scénario de démo)", () => {
       barres.flatMap((b, i) => (b.getAttribute("data-ecart") === "true" ? [i + 1] : [])),
     ).toEqual([3, 10]);
     expect(barres.map((b) => b.style.height)).toEqual(
-      GRAPHIQUE_DEMO.remplissageParJour.map((h) => `${h}%`),
+      [80, 78, 42, 74, 90, 100, 70, 76, 72, 38, 70, 86, 96, 66].map((h) => `${h}%`),
     );
   });
 
@@ -492,14 +491,17 @@ describe("AssistantReponse · ce que dit l'API, rien de plus", () => {
   });
 });
 
-describe("AssistantReponse · le graphique", () => {
-  function rendreVue(graphique?: typeof GRAPHIQUE_DEMO) {
+describe("AssistantReponse · le graphique et la ligne des actions viennent de la réponse", () => {
+  function rendreVue(diagnostic: Echange = DIAGNOSTIC) {
     render(
       <I18nextProvider i18n={creerI18n("fr")}>
         <FournisseurApi client={creerClientMock({ latenceMs: 0 })}>
           <ConceptionProvider actif={false}>
             <MemoryRouter>
-              <ReponseVue etat="pret" conversation={CONVERSATION} graphique={graphique} />
+              <ReponseVue
+                etat="pret"
+                conversation={{ ...CONVERSATION, echanges: [diagnostic, SIMULEE] }}
+              />
             </MemoryRouter>
           </ConceptionProvider>
         </FournisseurApi>
@@ -507,17 +509,48 @@ describe("AssistantReponse · le graphique", () => {
     );
   }
 
-  it("sans série (hors démonstration), la réponse n'invente aucun graphique", () => {
+  it("sans graphique dans la réponse, rien n'est inventé", () => {
     rendreVue();
     expect(principal().querySelector("[data-ecart]")).toBeNull();
     expect(screen.getAllByRole("listitem")).toHaveLength(3);
   });
 
-  it("avec une série, une barre par jour : les jours en écart sont en rouge", () => {
-    rendreVue({ remplissageParJour: [50, 60, 10], joursEnEcart: [3] });
+  it("avec un graphique, une barre par jour : les jours en écart sont en rouge", () => {
+    rendreVue({ ...DIAGNOSTIC, graphique: { valeurs: [50, 60, 10], joursEnEcart: [3] } });
     const barres = [...principal().querySelectorAll<HTMLElement>("[data-ecart]")];
     expect(barres.map((b) => b.getAttribute("data-ecart"))).toEqual(["false", "false", "true"]);
     expect(barres.map((b) => b.style.height)).toEqual(["50%", "60%", "10%"]);
+  });
+
+  it("le ligneId de l'action prime sur la ligne devinée dans le texte", () => {
+    rendreVue({
+      ...DIAGNOSTIC,
+      actions: DIAGNOSTIC.actions.map((a) => ({ ...a, ligneId: "ligne-de-l-api" })),
+    });
+    expect(screen.getByRole("link", { name: "Ajouter un départ mardi 17:00" })).toHaveAttribute(
+      "href",
+      "/reglages/ligne/ligne-de-l-api",
+    );
+    expect(screen.getByRole("link", { name: "Voir la ligne en détail" })).toHaveAttribute(
+      "href",
+      "/analyses/ligne/ligne-de-l-api",
+    );
+  });
+
+  it("chaque action garde sa ligne : une action sans ligneId retombe sur la ligne nommée dans le texte ou la liste", () => {
+    rendreVue({
+      ...DIAGNOSTIC,
+      actions: [{ ...DIAGNOSTIC.actions[0]!, ligneId: "ligne-de-l-api" }, DIAGNOSTIC.actions[1]!],
+    });
+    expect(screen.getByRole("link", { name: "Ajouter un départ mardi 17:00" })).toHaveAttribute(
+      "href",
+      "/reglages/ligne/ligne-de-l-api",
+    );
+    // Pas de lignes du réseau connues dans cette vue : repli sur la liste des analyses.
+    expect(screen.getByRole("link", { name: "Voir la ligne en détail" })).toHaveAttribute(
+      "href",
+      "/analyses",
+    );
   });
 
   it("sans lignes connues, les actions ouvrent la liste des analyses et les réglages", () => {

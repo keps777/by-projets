@@ -89,9 +89,9 @@ depuis au moins 7 jours, les colis sont cités à partir de ±3 %, 5 points au p
 
 ### Contournements des limites du contrat
 
-- **Pas de `ligneId` dans les actions** : l'écran retrouve la ligne de « Voir la ligne » par son **nom complet**
-  (« Douala → Bafoussam ») dans la question, le résumé ou les points. Le moteur l'écrit donc toujours dans le
-  résumé, et la vérification l'exige du texte du modèle (`motsObligatoires`).
+- **`ligneId` dans les actions** : « Voir la ligne » et « Ajouter un départ » portent `ligneId` (contrat
+  `ActionAssistant.ligneId`, optionnel) ; l'écran l'utilise, et ne retombe sur le nom complet de la ligne
+  (« Douala → Bafoussam », écrit dans le résumé) que si l'action n'en porte pas.
 - **Points déjà numérotés** (« 1. … ») : l'écran les affiche tels quels ; la vérification renumérote.
 - **Options de simulation** : l'écran écrit « {gain} / mois à {libelle} » : les libellés sont « 09:15 » ou « 3 500 F ».
 - `passagersPourEquilibrer` et `base` ne sont pas dans `SimulationHoraire` du contrat : retirés des réponses.
@@ -211,5 +211,7 @@ d'options (« 09:15 », « 3 500 F ») et les messages d'erreur du tableau ci-de
 - Appel réel à l'API Claude **non vérifié** (pas de réseau ni de clé dans ce ticket) : `ModeleClaude` est testé
   avec un faux `TransportClaude` (forme de la requête, lecture de la réponse, refus, délai) et `TransportFetch`
   seulement sur l'échec de connexion ; un essai réel avec une vraie clé reste à faire. Remplacer `fetch` par le SDK officiel.
-- Graphique de 14 jours de la réponse : absent du contrat, non ajouté.
+- Le graphique de 14 jours (`graphique: { valeurs, joursEnEcart }`, optionnel) accompagne la réponse « pourquoi cette
+  ligne baisse » : remplissage de la ligne jour par jour, les jours du creux repéré en écart. Il est stocké avec
+  l'échange (`reponse` en jsonb, aucune colonne en plus).
 - Purge des anciens échanges, et limite de débit partagée entre instances (aujourd'hui en mémoire du processus).

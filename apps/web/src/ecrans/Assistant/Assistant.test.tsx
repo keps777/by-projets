@@ -279,6 +279,14 @@ describe("Assistant · les actions ouvrent un réglage, elles n'en modifient jam
     expect(destinationAction("ajouter_depart")).toBe("/reglages");
     expect(destinationAction("voir_ligne")).toBe("/analyses");
   });
+
+  it("quand l'action porte sa ligne, « Ajouter un départ » ouvre son réglage et « Voir la ligne » son analyse", () => {
+    expect(destinationAction("ajouter_depart", "ligne-x")).toBe("/reglages/ligne/ligne-x");
+    expect(destinationAction("voir_ligne", "ligne-x")).toBe("/analyses/ligne/ligne-x");
+    // Les autres actions n'ont pas de ligne : elles ignorent l'identifiant.
+    expect(destinationAction("decaler_depart", "ligne-x")).toBe("/reglages");
+    expect(destinationAction("controle_inopine", "ligne-x")).toBe("/inopine");
+  });
 });
 
 describe("Assistant · poser une question", () => {

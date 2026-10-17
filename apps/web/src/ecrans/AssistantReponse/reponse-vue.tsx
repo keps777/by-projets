@@ -16,8 +16,6 @@ export interface PropsReponseVue {
   conversation?: Conversation | undefined;
   /** Les lignes du réseau, pour ouvrir celle dont la réponse parle (sinon les actions ouvrent la liste). */
   lignes?: readonly LigneReseau[] | undefined;
-  /** Le graphique de la réponse détaillée, quand on en a un. */
-  graphique?: Graphique | undefined;
   /** La question qui vient d'être posée et dont la réponse arrive. */
   enAttente?: string | null | undefined;
   /** La dernière question posée n'est pas partie. */
@@ -69,14 +67,15 @@ function Actions({
   lignes: readonly LigneReseau[] | undefined;
 }) {
   if (echange.actions.length === 0) return null;
-  const ligneId = ligneConcernee(echange, lignes ?? []);
+  // La ligne vient de l'action quand l'API la donne ; sinon c'est celle que le texte nomme.
+  const ligneDuTexte = ligneConcernee(echange, lignes ?? []);
   return (
     <div className={styles.actions}>
       {echange.actions.map((action, i) => (
         <a
           key={action.id}
           className={i === 0 ? styles.actionPrincipale : styles.actionSecondaire}
-          href={destinationAction(action.type, ligneId)}
+          href={destinationAction(action.type, action.ligneId ?? ligneDuTexte)}
         >
           {action.libelle}
         </a>
@@ -100,7 +99,7 @@ function Simulation({ echange }: { echange: Echange }) {
 function GraphiqueJours({ graphique }: { graphique: Graphique }) {
   return (
     <div className={styles.barres} aria-hidden="true">
-      {graphique.remplissageParJour.map((hauteur, jour) => (
+      {graphique.valeurs.map((hauteur, jour) => (
         <span
           key={jour}
           className={styles.barre}
@@ -120,12 +119,10 @@ function GraphiqueJours({ graphique }: { graphique: Graphique }) {
 function Reponse({
   echange,
   lignes,
-  graphique,
   dernier,
 }: {
   echange: Echange;
   lignes: readonly LigneReseau[] | undefined;
-  graphique: Graphique | undefined;
   dernier: Ref<HTMLElement> | undefined;
 }) {
   const detaillee = echange.points.length > 0;
@@ -138,7 +135,7 @@ function Reponse({
       {detaillee ? (
         <>
           <h2 className={styles.resume}>{echange.resume}</h2>
-          {graphique && <GraphiqueJours graphique={graphique} />}
+          {echange.graphique && <GraphiqueJours graphique={echange.graphique} />}
           <ol className={styles.points}>
             {numeroter(echange.points).map((point) => (
               <li key={point.numero}>
@@ -208,7 +205,6 @@ export function ReponseVue({
   etat,
   conversation,
   lignes,
-  graphique,
   enAttente,
   erreurEnvoi,
   onPoser,
@@ -272,7 +268,6 @@ export function ReponseVue({
             key={`${i}-${echange.question}`}
             echange={echange}
             lignes={lignes}
-            graphique={graphique}
             dernier={!attend && i === echanges.length - 1 ? dernier : undefined}
           />
         ))}
@@ -321,18 +316,16 @@ export function ReponseVue({
 function QuestionReponse({
   echange,
   lignes,
-  graphique,
   dernier,
 }: {
   echange: Echange;
   lignes: readonly LigneReseau[] | undefined;
-  graphique: Graphique | undefined;
   dernier: Ref<HTMLElement> | undefined;
 }) {
   return (
     <>
       <QuestionPosee question={echange.question} />
-      <Reponse echange={echange} lignes={lignes} graphique={graphique} dernier={dernier} />
+      <Reponse echange={echange} lignes={lignes} dernier={dernier} />
     </>
   );
 }

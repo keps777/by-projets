@@ -137,6 +137,12 @@ describe("POST /patron/assistant/questions et GET conversation", () => {
     expect(lue.resume).toContain("Douala → Bafoussam");
     expect(lue.sources).toContain("Jamais les chiffres d'une autre compagnie");
     expect(r.headers["cache-control"]).toBe("no-store");
+    // Le graphique du diagnostic et la ligne des actions « Voir la ligne » / « Ajouter un départ ».
+    expect(lue.graphique?.valeurs).toHaveLength(14);
+    expect(lue.graphique?.joursEnEcart.length).toBeGreaterThan(0);
+    const voir = lue.actions.find((a) => a.type === "voir_ligne");
+    expect(voir?.ligneId).toBeTruthy();
+    expect(lue.actions.find((a) => a.type === "decaler_depart")?.ligneId).toBeUndefined();
 
     const conv = await get("/patron/assistant/conversation").expect(200);
     const lue2 = patron.ConversationAssistantSchema.parse(conv.body);

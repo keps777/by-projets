@@ -433,6 +433,16 @@ describe("AssistantReponse · /(patron)/assistant/reponse", () => {
     });
     expect(conv.echanges[0]!.points).toHaveLength(3);
     expect(conv.echanges[0]!.actions.map((x) => x.type)).toEqual(["ajouter_depart", "voir_ligne"]);
+    // Les actions qui ouvrent une ligne la portent ; le diagnostic porte son graphique, pas la simulation.
+    expect(conv.echanges[0]!.actions.map((x) => x.ligneId)).toEqual([
+      ALPHA_DLA_BAF.id,
+      ALPHA_DLA_BAF.id,
+    ]);
+    expect(conv.echanges[0]!.graphique).toEqual({
+      valeurs: [80, 78, 42, 74, 90, 100, 70, 76, 72, 38, 70, 86, 96, 66],
+      joursEnEcart: [3, 10],
+    });
+    expect(conv.echanges[1]!.graphique).toBeUndefined();
     expect(conv.echanges[1]!.simulation).toEqual({
       options: [
         { libelle: "09:15", gainMensuel: 1_500_000 },

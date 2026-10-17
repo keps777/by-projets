@@ -68,7 +68,7 @@ function CarteFuite({ fuite, rang }: { fuite: Fuite; rang: number }) {
             <a
               key={action.id}
               className={i === 0 ? styles.actionPrincipale : styles.actionSecondaire}
-              href={destinationAction(action.type)}
+              href={destinationAction(action.type, action.ligneId)}
             >
               {action.libelle}
             </a>
@@ -113,7 +113,10 @@ function CarteGain({ gain, rang }: { gain: Gain; rang: number }) {
         </span>
       </div>
       <span className={styles.texte}>{gain.base}</span>
-      <a className={styles.actionGain} href={destinationAction(gain.action.type)}>
+      <a
+        className={styles.actionGain}
+        href={destinationAction(gain.action.type, gain.action.ligneId)}
+      >
         {gain.action.libelle}
       </a>
     </section>

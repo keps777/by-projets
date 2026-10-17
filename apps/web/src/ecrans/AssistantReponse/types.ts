@@ -12,9 +12,5 @@ export interface LigneReseau {
   nom: string;
 }
 
-/** Le graphique d'une réponse détaillée : une barre par jour, hauteur en %, les jours en écart en rouge. */
-export interface Graphique {
-  remplissageParJour: readonly number[];
-  /** Rangs (1 = le plus ancien) des jours en écart. */
-  joursEnEcart: readonly number[];
-}
+/** Le graphique d'une réponse détaillée : une barre par jour (remplissage en %), les jours en écart en rouge. */
+export type Graphique = NonNullable<Echange["graphique"]>;

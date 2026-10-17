@@ -384,6 +384,16 @@ function pourquoiLigne(interp: Interpretation, e: EntreeMoteur): Brouillon {
   }
 
   const points = numeroter(textes.slice(0, POINTS_MAXIMUM));
+  // Une barre par jour de la période récente ; les jours du creux repéré sont en écart.
+  const jours = Array.from({ length: DEUX_SEMAINES }, (_, i) => decalerJour(f.duRecent, i));
+  const graphique = {
+    valeurs: jours.map((jour) => remplissagePct(recents.filter((d) => d.jour === jour))),
+    joursEnEcart: creux
+      ? jours.flatMap((jour, i) =>
+          jourSemaine(jour) === creux.jour && recents.some((d) => d.jour === jour) ? [i + 1] : [],
+        )
+      : [],
+  };
   return brouillon("pourquoi_ligne", {
     resume,
     points,
@@ -391,6 +401,7 @@ function pourquoiLigne(interp: Interpretation, e: EntreeMoteur): Brouillon {
     sources,
     motsObligatoires: [ligne.nom],
     contexte,
+    graphique,
   });
 }
 

@@ -1,6 +1,4 @@
 import { patron } from "@afrimove/api-client";
-import { useModeDemo } from "@/coquille/parametres";
-import { GRAPHIQUE_DEMO } from "./graphique";
 import { ReponseVue, type EtatReponse } from "./reponse-vue";
 
 /**
@@ -12,14 +10,14 @@ import { ReponseVue, type EtatReponse } from "./reponse-vue";
  * modifie un réglage : chacune ouvre l'écran concerné. Seule écriture : poser une autre question (`usePoserQuestion`,
  * sans PIN, qui ne change rien) ; la réponse s'ajoute en bas de la conversation.
  *
- * Les lignes du réseau (`useAnalyses`) servent à ouvrir celle dont la réponse parle. Le graphique du diagnostic n'est
- * pas dans le contrat : il n'est dessiné que dans la démonstration (voir `graphique.ts`).
+ * Chaque action porte sa ligne (`ligneId`) quand l'API la donne ; sinon les lignes du réseau (`useAnalyses`) servent à
+ * ouvrir celle que le texte nomme. Le graphique du diagnostic vient de la réponse (`graphique`) et n'est dessiné que
+ * si elle en porte un.
  */
 export function EcranAssistantReponse() {
   const conversation = patron.useConversationAssistant();
   const analyses = patron.useAnalyses();
   const poser = patron.usePoserQuestion();
-  const demo = useModeDemo();
 
   const { mutateAsync } = poser;
   async function poserQuestion(question: string): Promise<boolean> {
@@ -37,7 +35,6 @@ export function EcranAssistantReponse() {
       etat={etatDe(conversation)}
       conversation={conversation.data}
       lignes={analyses.data?.lignes}
-      graphique={demo ? GRAPHIQUE_DEMO : undefined}
       enAttente={poser.isPending ? poser.variables.question : null}
       erreurEnvoi={poser.isError}
       onPoser={poserQuestion}
