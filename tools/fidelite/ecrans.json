@@ -112,7 +112,7 @@
       "route": "/gare"
     },
     "SuperviseurValider": {
-      "route": "/cloture/cai-0002"
+      "route": "/cloture/session-k-dla-270105-2-1"
     },
     "SuperviseurVoir": {
       "route": "/annulation/ann-0001"
