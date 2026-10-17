@@ -1,5 +1,5 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { EcranControleur } from "@/ecrans/Controleur";
 
 export default function Page() {
-  return <EcranVide planche="Controleur" />;
+  return <EcranControleur />;
 }
