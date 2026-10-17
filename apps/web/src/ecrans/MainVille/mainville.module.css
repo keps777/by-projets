@@ -1,0 +1,493 @@
+/* Accueil « dans la même ville » (MainVille.dc.html). Couleurs, tailles et espacements relevés dans la planche. */
+
+/*
+ * Comme l'accueil Main : la planche est une toile de 844 px. Tant que cet écran contient l'accueil, on borne l'écran
+ * du layout à la fenêtre, la barre d'onglets reste en bas et le contenu défile au lieu de rallonger la page.
+ */
+:global([data-espace="voyageur"]):has(> .racine) {
+  height: 100dvh;
+  min-height: 0;
+}
+
+/* Racine : prend la place de l'écran au-dessus de la barre d'onglets et sert d'ancre à la feuille. */
+.racine {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* La planche pose 20 px en haut, 10 px en bas et 12 px entre les blocs. */
+.racine .corps {
+  gap: var(--am-space-12);
+  padding: var(--am-space-20) var(--am-gutter) var(--am-space-10);
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.racine .corps::-webkit-scrollbar {
+  display: none;
+}
+
+/* Titre de l'écran pour les lecteurs d'écran : masqué visuellement, hors du flux. */
+.titreEcran {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* En-tête : marque, salutation et pastille DIRECT. */
+.entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.marque {
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-10);
+}
+
+.textes {
+  display: flex;
+  flex-direction: column;
+  line-height: var(--am-lh-titre);
+}
+
+.nom {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-17);
+  font-weight: 800;
+  letter-spacing: var(--am-ls-sous-titre);
+}
+
+.salut {
+  color: var(--am-gris);
+  font-size: var(--am-fs-11);
+}
+
+/* Trajet : mode, ville détectée, départ et arrivée, moments. */
+.trajet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-8);
+  box-sizing: border-box;
+  padding: var(--am-space-10) var(--am-space-14) var(--am-space-12);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-18);
+  background: var(--am-profond);
+}
+
+.villeLigne {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--am-space-8);
+}
+
+.villeNom {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--am-space-6);
+  font-size: var(--am-fs-13);
+  font-weight: 700;
+}
+
+.villePoint {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--am-vert);
+}
+
+.villeDetection {
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-11);
+  font-weight: 500;
+}
+
+.changer {
+  position: relative;
+  min-height: 30px;
+  margin: 0;
+  padding: 0 var(--am-space-10);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-pill);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-family: var(--am-font-texte);
+  font-size: var(--am-fs-11);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Zone tactile : 30 px d'apparence, 44 px de cible. */
+.changer::after {
+  content: "";
+  position: absolute;
+  inset: -7px -4px;
+}
+
+.changer:focus-visible,
+.carte:focus-visible,
+.ligne:focus-visible,
+.champ:focus-visible,
+.option:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+/* Départ et arrivée : deux champs, le bouton « inverser » à droite. */
+.itineraire {
+  display: grid;
+  grid-template-columns: 1fr 44px;
+  gap: var(--am-space-8);
+  align-items: center;
+}
+
+/* Le bouton « inverser » de la planche est vert (mode « dans la même ville »), pas orange. */
+.itineraire .inverser {
+  background: var(--am-vert);
+}
+
+.champs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-6);
+}
+
+.etiquetteChamp {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: var(--am-space-8);
+  align-items: center;
+}
+
+.etiquetteTexte {
+  color: var(--am-ambre);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette-serree);
+  text-transform: uppercase;
+}
+
+.champ {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 42px;
+  margin: 0;
+  padding: 0 var(--am-space-12);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-10);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-family: var(--am-font-texte);
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  outline: none;
+}
+
+/* Le champ Arrivée porte le trait vert de la planche : c'est le champ en cours de saisie. */
+.champ[data-champ="arrivee"] {
+  border-color: var(--am-vert);
+}
+
+.champ:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+/* Moments : Maintenant · Dans 1 h · Chaque matin 07:00. */
+.quand {
+  display: flex;
+  gap: var(--am-space-6);
+}
+
+.trajet .quand .moment {
+  min-height: 30px;
+}
+
+.messageMatin {
+  margin: 0;
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+}
+
+.messageMatin[role="alert"] {
+  color: var(--am-rouge);
+}
+
+/* Liste des offres. */
+.offres {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-16);
+  overflow: hidden;
+}
+
+.offresEntete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--am-space-8);
+  padding: var(--am-space-6) var(--am-space-8) var(--am-space-6) var(--am-space-14);
+  background: var(--am-profond);
+}
+
+.offresTitre {
+  min-width: 0;
+  color: var(--am-vert);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+}
+
+.filtres {
+  display: inline-flex;
+  flex: none;
+  gap: var(--am-space-4);
+}
+
+/* Les lignes de la planche sont en `content-box` : 58 px de contenu plus 2 x 11 de remplissage et le trait du haut. */
+.ligne {
+  display: grid;
+  grid-template-columns: 58px 1fr auto;
+  gap: var(--am-space-10);
+  align-items: center;
+  box-sizing: content-box;
+  min-height: 58px;
+  padding: 11px var(--am-space-14);
+  border-top: 1px solid var(--am-surface-2);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  text-decoration: none;
+}
+
+.moment-heure {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-17);
+  font-weight: 700;
+  color: var(--am-vert);
+}
+
+.ligne[data-type="bus_ville"] .moment-heure {
+  color: var(--am-ambre);
+}
+
+.ligneTextes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-2);
+  min-width: 0;
+}
+
+.ligneTitre {
+  font-size: var(--am-fs-14);
+  font-weight: 700;
+}
+
+.ligneQui {
+  color: var(--am-vert);
+  font-weight: 600;
+}
+
+.ligne[data-type="bus_ville"] .ligneQui {
+  color: var(--am-craie-2);
+  font-weight: 500;
+}
+
+.ligneDetail {
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+}
+
+.prix {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-17);
+  font-weight: 800;
+}
+
+/* États chargement, vide et erreur : même cadre que la liste, la mise en page ne bouge pas. */
+.squelette {
+  display: block;
+  border-radius: var(--am-radius-6);
+  background: var(--am-surface-2);
+}
+
+.squeletteSalut {
+  width: 80px;
+  height: 11px;
+  margin-top: var(--am-space-2);
+}
+
+.squeletteResume {
+  width: 150px;
+  height: 10px;
+}
+
+.ligneSquelette {
+  display: grid;
+  grid-template-columns: 58px 1fr auto;
+  gap: var(--am-space-10);
+  align-items: center;
+  box-sizing: content-box;
+  min-height: 58px;
+  padding: 11px var(--am-space-14);
+  border-top: 1px solid var(--am-surface-2);
+  background: var(--am-surface);
+}
+
+.squeletteTextes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-6);
+}
+
+.squeletteHeure {
+  width: 48px;
+  height: 18px;
+}
+
+.squeletteTitre {
+  width: 70%;
+  height: 14px;
+}
+
+.squeletteDetail {
+  width: 50%;
+  height: 12px;
+}
+
+.squelettePrix {
+  width: 36px;
+  height: 17px;
+}
+
+.etatListe {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--am-space-10);
+  box-sizing: border-box;
+  min-height: 58px;
+  padding: var(--am-space-12) var(--am-space-14);
+  border-top: 1px solid var(--am-surface-2);
+  background: var(--am-surface);
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+}
+
+.etatListe p {
+  margin: 0;
+}
+
+/* Cartes « Colis en ville » et « Je conduis ». */
+.cartes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--am-space-8);
+}
+
+.carte {
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-10);
+  box-sizing: content-box;
+  min-height: 52px;
+  padding: var(--am-space-10) var(--am-space-12);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-14);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  text-decoration: none;
+}
+
+.carteIcone {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: var(--am-surface-2);
+  color: var(--am-ambre);
+}
+
+.carteIcone[data-ton="vert"] {
+  color: var(--am-vert);
+}
+
+.carteTextes {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: var(--am-lh-serree);
+}
+
+.carteTitre {
+  font-size: var(--am-fs-13);
+  font-weight: 700;
+}
+
+.carteDetail {
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-11);
+}
+
+/* Feuille « changer de ville ». */
+.feuille {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-8);
+  padding: 0 var(--am-gutter) var(--am-space-16);
+}
+
+.feuilleEtat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-10);
+  margin: 0;
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+}
+
+.feuilleEtat p {
+  margin: 0;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 46px;
+  margin: 0;
+  padding: 0 var(--am-space-14);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-12);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-family: var(--am-font-texte);
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.option[aria-pressed="true"] {
+  border-color: var(--am-ambre);
+  background: var(--am-surface-2);
+  color: var(--am-ambre);
+}
