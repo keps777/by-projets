@@ -5,6 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
+import { VerrouillageMois } from "../comptable/verrouillage.service";
 import { AuditService } from "../socle/audit/audit.service";
 import type { Utilisateur } from "../socle/auth/decorateurs";
 import { Horloge } from "../socle/horloge";
@@ -77,6 +78,16 @@ export interface ReponseLot {
   conflits: ConflitReponse[];
 }
 
+/** Les événements qui touchent l'argent : ventes, colis, caisses, annulations (pas l'équipe ni les appareils). */
+const TYPES_COMPTABLES: readonly string[] = [
+  "billet.",
+  "colis.",
+  "route.",
+  "controle.",
+  "caisse.",
+  "annulation.",
+];
+
 /** Un octroi plus vieux que 24 h n'est plus renvoyé : un appareil réinstallé ne doit pas le rejouer. */
 const VALIDITE_OCTROI_MS = 24 * MS_PAR_HEURE;
 /** Les billets « à replacer » restent annoncés à l'appareil 72 h. */
@@ -114,6 +125,7 @@ export class RejeuService {
     private readonly attribution: AttributionPlages,
     private readonly horloge: Horloge,
     private readonly audit: AuditService,
+    private readonly verrou: VerrouillageMois,
   ) {}
 
   /* -------------------------------------------------------------- réception */
@@ -327,6 +339,8 @@ export class RejeuService {
       });
     }
 
+    await this.signalerMoisClos(e, ctx);
+
     if (e.numeroPlage !== null && (TYPES_NUMEROTES as readonly string[]).includes(e.type)) {
       const anomalies = await this.numeros.enregistrer({
         appareilId: appareil.id,
@@ -370,6 +384,34 @@ export class RejeuService {
       if (billet) await this.liberer(e, billet.departId, billet.siege, annulee, ctx);
     }
     if (e.type === "appareil.debloque") await this.debloquer(e, ctx);
+  }
+
+  /**
+   * Un appareil resté hors ligne peut envoyer une vente, un colis, une caisse ou une annulation datés d'un
+   * mois déjà clôturé par le comptable. Comme pour tout geste déjà fait sur le terrain (billet imprimé,
+   * argent encaissé), l'événement n'est jamais refusé : il est journalisé, et une alerte nominative
+   * prévient l'agence. Les écritures comptables (billets, caisse) qui en découlent s'inscrivent, elles,
+   * dans le premier mois ouvert (`VerrouillageMois.premierInstantOuvert`) : le mois clos ne bouge pas.
+   */
+  private async signalerMoisClos(e: EvenementRecu, ctx: ContexteLot): Promise<void> {
+    if (!TYPES_COMPTABLES.some((prefixe) => e.type.startsWith(prefixe))) return;
+    const compagnieId = ctx.appareil.compagnieId ?? ctx.utilisateur.compagnieId;
+    if (!compagnieId) return;
+    if (!(await this.verrou.estVerrouille(compagnieId, new Date(e.at)))) return;
+    await this.alerter(
+      ctx.appareil,
+      ctx.utilisateur,
+      ctx.recuA,
+      "evenement_mois_clos",
+      "alerte",
+      e.id,
+      {
+        type: e.type,
+        at: e.at,
+        mois: versIsoDouala(Date.parse(e.at)).slice(0, 7),
+        message: "Événement daté d'un mois déjà clôturé : il s'inscrit dans le premier mois ouvert",
+      },
+    );
   }
 
   private async liberer(

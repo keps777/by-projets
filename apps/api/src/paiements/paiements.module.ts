@@ -1,6 +1,7 @@
 import { Inject, Injectable, Module, forwardRef, type OnModuleInit } from "@nestjs/common";
 import { BilletterieModule } from "../billetterie/billetterie.module";
 import { SmsModule } from "../sms/sms.module";
+import { VerrouillageMoisModule } from "../comptable/verrouillage.module";
 import { CONFIG, type AppConfig } from "../socle/config/config";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { AbonnementAvisBilletterie, AvisPaiements } from "./avis";
@@ -129,7 +130,7 @@ export class VerificationStockagePaiements implements OnModuleInit {
  */
 @Module({
   // forwardRef : la billetterie importe aussi ce module (taux de change, `ConversionDevisesPaiements`).
-  imports: [forwardRef(() => BilletterieModule), SmsModule],
+  imports: [forwardRef(() => BilletterieModule), SmsModule, VerrouillageMoisModule],
   controllers: [
     PaiementsVoyageurController,
     LiensPaiementController,

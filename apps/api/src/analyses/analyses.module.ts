@@ -9,6 +9,8 @@ import {
   type Provider,
 } from "@nestjs/common";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { AnalysesController } from "./analyses.controller";
 import { AnalysesService } from "./analyses.service";
@@ -20,6 +22,13 @@ import {
   ReferentielMemoire,
   ReseauMemoire,
 } from "./memoire";
+import {
+  FaitsCaissePrisma,
+  FaitsDepartsPrisma,
+  OffresPubliquesPrisma,
+  ReferentielAnalysesPrisma,
+  ReseauAnonymePrisma,
+} from "./postgres";
 import {
   FaitsCaisse,
   FaitsDeparts,
@@ -80,8 +89,9 @@ export interface AdaptateursAnalyses {
  * creux d'un jour, billets de cadence sans nom) et simulation d'horaire et de prix. Les trois routes
  * `GET /patron/analyses…` servent les écrans Analyses ; `AnalysesService` sert l'assistant.
  *
- * Module autonome : il ne lit que par des ports (`ports.ts`), n'écrit rien et n'a pas de table. Il n'est
- * pas encore dans `AppModule` : le coordinateur branche les adaptateurs PostgreSQL (README) puis l'ajoute.
+ * Dans `AppModule`. Il ne lit que par des ports (`ports.ts`), n'écrit rien et n'a pas de table à lui. Les
+ * ports ont une version PostgreSQL (`postgres.ts`) et une version en mémoire, choisies par `API_STOCKAGE`
+ * (voir `socle/db/stockage.ts`).
  *
  * Module global : `AnalysesService` est visible de l'assistant (et de tout module qui voudrait lire les
  * mêmes chiffres) sans second import. Un seul `AnalysesModule` (ou `AnalysesModule.avec`) dans `AppModule` :
@@ -98,11 +108,41 @@ export interface AdaptateursAnalyses {
         chargerConfigAnalyses(process.env, config.env === "production"),
     },
     { provide: Horloge, useClass: HorlogeSysteme },
-    { provide: ReferentielAnalyses, useClass: ReferentielMemoire },
-    { provide: FaitsDeparts, useClass: FaitsDepartsMemoire },
-    { provide: FaitsCaisse, useClass: FaitsCaisseMemoire },
-    { provide: OffresPubliques, useClass: OffresPubliquesMemoire },
-    { provide: ReseauAnonyme, useClass: ReseauMemoire },
+    // PostgreSQL en production (ou avec API_STOCKAGE=postgres), mémoire ailleurs : voir socle/db/stockage.ts.
+    {
+      provide: ReferentielAnalyses,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config)
+          ? new ReferentielAnalysesPrisma(prisma)
+          : new ReferentielMemoire(),
+    },
+    {
+      provide: FaitsDeparts,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new FaitsDepartsPrisma(prisma) : new FaitsDepartsMemoire(),
+    },
+    {
+      provide: FaitsCaisse,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new FaitsCaissePrisma(prisma) : new FaitsCaisseMemoire(),
+    },
+    {
+      provide: OffresPubliques,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config)
+          ? new OffresPubliquesPrisma(prisma)
+          : new OffresPubliquesMemoire(),
+    },
+    {
+      provide: ReseauAnonyme,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new ReseauAnonymePrisma(prisma) : new ReseauMemoire(),
+    },
     AnalysesService,
     VerificationAnalyses,
   ],

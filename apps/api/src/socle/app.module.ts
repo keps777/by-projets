@@ -4,15 +4,20 @@ import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
 import { EnvoiCodeSmsPasserelle } from "../auth-voyageur/adaptateurs";
 import { AuthVoyageurModule } from "../auth-voyageur/auth-voyageur.module";
 import { EnvoiCodeSms } from "../auth-voyageur/ports";
+import { AnalysesModule } from "../analyses/analyses.module";
+import { AssistantRapportMoteur } from "../assistant/assistant-rapport";
+import { AssistantModule } from "../assistant/assistant.module";
 import { BilletterieModule } from "../billetterie/billetterie.module";
 import { CaisseModule } from "../caisse/caisse.module";
 import { ColisModule } from "../colis/colis.module";
+import { ComptableModule } from "../comptable/comptable.module";
 import { CovoiturageModule } from "../covoiturage/covoiturage.module";
 import { GpsModule } from "../gps/gps.module";
 import { LivraisonModule } from "../livraison/livraison.module";
 import { ModulesModule } from "../modules/modules.module";
 import { NumerotationModule } from "../numerotation/numerotation.module";
 import { PaiementsModule } from "../paiements/paiements.module";
+import { AssistantRapport } from "../rapport/ports";
 import { RapportModule } from "../rapport/rapport.module";
 import { SourceRapportSoirPourWhatsApp } from "../rapport/source-whatsapp";
 import { RelaisModule } from "../relais/relais.module";
@@ -57,7 +62,11 @@ const authVoyageur = AuthVoyageurModule.avec({
  * Le référentiel, les ventes, les colis, les annulations, les contrôles et les rapports arrêtés restent en
  * mémoire tant que leurs adaptateurs PostgreSQL ne sont pas écrits.
  */
-const rapport = RapportModule.avecModulesExistants();
+const rapport = RapportModule.avecModulesExistants({
+  // Lot C : la phrase d'analyse du rapport du soir vient du moteur de l'assistant du patron (AM-109).
+  imports: [AssistantModule],
+  providers: [{ provide: AssistantRapport, useExisting: AssistantRapportMoteur }],
+});
 
 /**
  * Achat par WhatsApp (AM-168). Le même objet de module est donné à `WhatsAppModule` : une seule instance,
@@ -117,6 +126,10 @@ const whatsApp = WhatsAppModule.avec({
     CovoiturageModule,
     RelaisModule,
     LivraisonModule,
+    // Lot C : analyses (global, lu par l'assistant), assistant du patron, comptable.
+    AnalysesModule,
+    AssistantModule,
+    ComptableModule,
     ThrottlerModule.forRootAsync({
       inject: [CONFIG],
       useFactory: (config: AppConfig) => ({

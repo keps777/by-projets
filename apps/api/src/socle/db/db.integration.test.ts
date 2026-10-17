@@ -1,4 +1,4 @@
-import { cp, mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { cp, mkdtemp, readdir, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { Test } from "@nestjs/testing";
@@ -101,16 +101,17 @@ describe.skipIf(!URL_BASE)("PostgreSQL réel", () => {
       const { rows } = await requete(
         `SELECT migration_name, finished_at FROM "_prisma_migrations" ORDER BY migration_name`,
       );
-      expect(rows.map((r) => r.migration_name)).toEqual([
+      // Toutes les migrations du dossier, appliquées dans l'ordre de leur nom (chaque lot en ajoute).
+      const attendues = (await readdir(DOSSIER_MIGRATIONS, { withFileTypes: true }))
+        .filter((d) => d.isDirectory())
+        .map((d) => d.name)
+        .sort();
+      expect(attendues.slice(0, 3)).toEqual([
         "20261017000000_initial",
         "20261017000100_ajout_seul_et_contraintes",
         "20261017000200_modules_metier",
-        "20261017000300_modules_metier_garanties",
-        "20261017000400_sms_et_heure_texte",
-        "20261017000500_sms_garanties",
-        "20261017000600_colis_caisse_supervision_garanties",
-        "20261017000700_sms_code_connexion",
       ]);
+      expect(rows.map((r) => r.migration_name)).toEqual(attendues);
       expect(rows.every((r) => r.finished_at !== null)).toBe(true);
     });
 

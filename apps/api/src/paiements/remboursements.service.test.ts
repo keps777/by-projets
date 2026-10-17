@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { AvisMemoire } from "../billetterie/memoire";
 import type { AvisBilletterie, Billets } from "../billetterie/ports";
+import type { Cloture } from "../comptable/modele";
 import { AbonnementAvisBilletterie, AvisPaiements, composerAvis } from "./avis";
 import {
+  AUTRE_COMPAGNIE,
   GUICHETIER,
   TEL_MTN,
   VOYAGEUR,
@@ -308,6 +310,70 @@ describe("agrégateur en difficulté : le remboursement n'est jamais perdu", () 
       statut: "echoue",
       derniereErreur: "numero_inactif",
     });
+  });
+
+  it("une notification datée d'un mois clôturé n'est pas refusée : la fin s'inscrit au mois ouvert suivant", async () => {
+    const t = monterPaiements();
+    const p = await paiementRecu(t);
+    t.agregateur.programmerRemboursement({ type: "ok", etat: "en_attente" });
+    const r = await t.remb.demander(p.id, {
+      lignes: lignes(2000),
+      cause: "billet_annule",
+      cle: "k",
+    });
+    // Le comptable a clôturé janvier 2027 entre la demande et la réponse de l'agrégateur.
+    await t.clotures.verrouiller({
+      compagnieId: p.compagnieId,
+      mois: "2027-01",
+    } as unknown as Cloture);
+
+    const resume = await t.encaissements.traiterNotifications(
+      "simule",
+      t.agregateur.fabriquerNotification([
+        {
+          id: "rb-tard",
+          type: "remboursement",
+          transaction: r.idFournisseur!,
+          reference: r.id,
+          etat: "reussi",
+        },
+      ]),
+    );
+    expect(resume.appliques).toBe(1);
+    const apres = (await t.remboursements.trouver(r.id))!;
+    expect(apres.statut).toBe("reussi");
+    // Début de février 2027 à Douala (UTC+1), jamais une date de janvier.
+    expect(apres.termineA?.toISOString()).toBe("2027-01-31T23:00:00.000Z");
+  });
+
+  it("une compagnie dont le mois n'est pas clôturé garde la date de l'agrégateur", async () => {
+    const t = monterPaiements();
+    const p = await paiementRecu(t);
+    t.agregateur.programmerRemboursement({ type: "ok", etat: "en_attente" });
+    const r = await t.remb.demander(p.id, {
+      lignes: lignes(2000),
+      cause: "billet_annule",
+      cle: "k",
+    });
+    await t.clotures.verrouiller({
+      compagnieId: AUTRE_COMPAGNIE,
+      mois: "2027-01",
+    } as unknown as Cloture);
+    await t.encaissements.traiterNotifications(
+      "simule",
+      t.agregateur.fabriquerNotification([
+        {
+          id: "rb-ouvert",
+          type: "remboursement",
+          transaction: r.idFournisseur!,
+          reference: r.id,
+          etat: "reussi",
+        },
+      ]),
+    );
+    const apres = (await t.remboursements.trouver(r.id))!;
+    expect(apres.termineA!.getTime()).toBeGreaterThanOrEqual(t.horloge.maintenant().getTime() - 1);
+    expect(apres.termineA!.toISOString().startsWith("2027-01-05")).toBe(true);
   });
 
   it("la même notification de remboursement rejouée ne change rien", async () => {

@@ -26,6 +26,7 @@ import {
   HorlogeFixe,
   PersonnesMemoire,
 } from "../../socle/testing/memoire";
+import { Clotures } from "../../comptable/ports";
 import { CaisseService } from "../caisse.service";
 import { JournalAgenceMemoire, EvenementsTraitesMemoire } from "../journal/memoire";
 import { EvenementsTraites, JournalAgenceRepository } from "../journal/ports";
@@ -184,6 +185,8 @@ export async function creerAppAgenceTest(options: OptionsAppAgenceTest = {}) {
     guichets,
     regles: app.get(ReglesAgence) as ReglesMemoire,
     alertes: app.get(AlertesPatron) as AlertesPatronMemoire,
+    /** Les clôtures de mois (comptable) : en mémoire ici, `clotures.verrouiller(...)` ferme un mois. */
+    clotures: app.get(Clotures),
     /** Heure de l'horloge de test, au format du contrat (ISO Douala). */
     maintenantIso: () => versIsoDouala(horloge.maintenant()),
     /** Un instant décalé de `ms` par rapport à l'horloge de test, en ISO Douala. */

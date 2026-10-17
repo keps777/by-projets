@@ -1,6 +1,9 @@
 import { Inject, Injectable, Module, type OnModuleInit } from "@nestjs/common";
 import { VerificateurSignature } from "../modules/signature";
+import { ChiffrementService } from "../socle/chiffrement/chiffrement.service";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { CabinetService } from "./cabinet.service";
 import { ClotureService } from "./cloture.service";
@@ -10,7 +13,6 @@ import { ChargeurMois, ChoixDuMois } from "./donnees.service";
 import {
   ActionsMemoire,
   AnnulationsMemoire,
-  ClotureMemoire,
   DecisionsMemoire,
   EnvoisMemoire,
   FacturesPayeesMemoire,
@@ -22,6 +24,19 @@ import {
   SessionsMemoire,
   VentesMemoire,
 } from "./memoire";
+import {
+  ActionsRapprochementPrisma,
+  AnnulationsPrisma,
+  DecisionsPrisma,
+  EnvoisPrisma,
+  FacturesPayeesPrisma,
+  FaitsPrisma,
+  FichiersApercusPrisma,
+  ParametresPrisma,
+  RelevesPrisma,
+  SessionsPrisma,
+  VentesPrisma,
+} from "./postgres";
 import {
   ActionsRapprochement,
   AnnulationsComptables,
@@ -39,7 +54,7 @@ import {
 } from "./ports";
 import { RapprochementService } from "./rapprochement.service";
 import { TachesComptable } from "./taches.service";
-import { VerrouillageMois } from "./verrouillage.service";
+import { VerrouillageMoisModule } from "./verrouillage.module";
 
 /**
  * Garde-fou : en production, refuse de démarrer tant qu'un port du module est branché sur la mémoire ou sur un
@@ -103,13 +118,16 @@ export class VerificationPortsComptable implements OnModuleInit {
  * / rattacher / réclamer) ; clôture signée par le PIN qui verrouille le mois ; envoi au cabinet (le 2 du mois
  * et à la clôture).
  *
- * Module autonome : tous ses accès extérieurs sont des ports (`ports.ts`) avec une version en mémoire
- * (`memoire.ts`). Il n'est pas encore dans `AppModule` : le coordinateur branche les adaptateurs PostgreSQL
- * (tables décrites dans le README), le courriel du cabinet et le remboursement MoMo, puis l'ajoute aux
- * `imports`. `VerrouillageMois` est exporté pour que les autres modules refusent toute écriture datée d'un
- * mois clôturé.
+ * Dans `AppModule`. Les ports ont une version PostgreSQL (`postgres.ts`) et une version en mémoire, choisies
+ * par `API_STOCKAGE` (voir `socle/db/stockage.ts`). Restent simulés (le garde-fou de production les nomme) :
+ * `MessagerieCabinet` (aucune passerelle de courriel) et le remboursement / la réclamation de
+ * `ActionsRapprochement` (le rattachement est réel).
+ *
+ * Les clôtures et `VerrouillageMois` vivent dans `VerrouillageMoisModule`, importé ici et par la caisse, la
+ * billetterie, la synchronisation et les paiements : « un mois verrouillé refuse toute écriture ».
  */
 @Module({
+  imports: [VerrouillageMoisModule],
   controllers: [ComptableController],
   providers: [
     ComptableService,
@@ -119,30 +137,88 @@ export class VerificationPortsComptable implements OnModuleInit {
     TachesComptable,
     ChargeurMois,
     ChoixDuMois,
-    VerrouillageMois,
     VerificateurSignature,
     VerificationPortsComptable,
     { provide: Horloge, useClass: HorlogeSysteme },
-    { provide: VentesComptables, useClass: VentesMemoire },
-    { provide: SessionsComptables, useClass: SessionsMemoire },
-    { provide: AnnulationsComptables, useClass: AnnulationsMemoire },
-    { provide: RelevesOperateur, useClass: RelevesMemoire },
-    { provide: FaitsRapprochement, useClass: FaitsMemoire },
-    { provide: FacturesPayees, useClass: FacturesPayeesMemoire },
-    { provide: ParametresRepository, useClass: ParametresMemoire },
-    { provide: Clotures, useClass: ClotureMemoire },
+    {
+      provide: VentesComptables,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new VentesPrisma(prisma) : new VentesMemoire(),
+    },
+    {
+      provide: SessionsComptables,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new SessionsPrisma(prisma) : new SessionsMemoire(),
+    },
+    {
+      provide: AnnulationsComptables,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new AnnulationsPrisma(prisma) : new AnnulationsMemoire(),
+    },
+    {
+      provide: RelevesOperateur,
+      inject: [CONFIG, PrismaService, ChiffrementService],
+      useFactory: (config: AppConfig, prisma: PrismaService, chiffrement: ChiffrementService) =>
+        stockageSurPostgres(config) ? new RelevesPrisma(prisma, chiffrement) : new RelevesMemoire(),
+    },
+    {
+      provide: FaitsRapprochement,
+      inject: [CONFIG, PrismaService, ChiffrementService],
+      useFactory: (config: AppConfig, prisma: PrismaService, chiffrement: ChiffrementService) =>
+        stockageSurPostgres(config) ? new FaitsPrisma(prisma, chiffrement) : new FaitsMemoire(),
+    },
+    {
+      provide: FacturesPayees,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config)
+          ? new FacturesPayeesPrisma(prisma)
+          : new FacturesPayeesMemoire(),
+    },
+    {
+      provide: ParametresRepository,
+      inject: [CONFIG, PrismaService, ChiffrementService],
+      useFactory: (config: AppConfig, prisma: PrismaService, chiffrement: ChiffrementService) =>
+        stockageSurPostgres(config)
+          ? new ParametresPrisma(prisma, chiffrement)
+          : new ParametresMemoire(),
+    },
     {
       provide: DecisionsRapprochement,
-      inject: [Clotures],
-      useFactory: (clotures: Clotures) => new DecisionsMemoire(clotures),
+      inject: [CONFIG, PrismaService, Clotures],
+      useFactory: (config: AppConfig, prisma: PrismaService, clotures: Clotures) =>
+        stockageSurPostgres(config) ? new DecisionsPrisma(prisma) : new DecisionsMemoire(clotures),
     },
-    { provide: FichiersApercus, useClass: FichiersApercusMemoire },
-    { provide: EnvoisCabinet, useClass: EnvoisMemoire },
-    { provide: ActionsRapprochement, useClass: ActionsMemoire },
+    {
+      provide: FichiersApercus,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config)
+          ? new FichiersApercusPrisma(prisma)
+          : new FichiersApercusMemoire(),
+    },
+    {
+      provide: EnvoisCabinet,
+      inject: [CONFIG, PrismaService, ChiffrementService],
+      useFactory: (config: AppConfig, prisma: PrismaService, chiffrement: ChiffrementService) =>
+        stockageSurPostgres(config) ? new EnvoisPrisma(prisma, chiffrement) : new EnvoisMemoire(),
+    },
+    {
+      provide: ActionsRapprochement,
+      inject: [CONFIG, PrismaService],
+      // Le rattachement s'écrit en base ; rembourser et réclamer restent simulés (voir le README).
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config)
+          ? new ActionsRapprochementPrisma(prisma, new ActionsMemoire())
+          : new ActionsMemoire(),
+    },
     { provide: MessagerieCabinet, useClass: MessagerieMemoire },
   ],
   exports: [
-    VerrouillageMois,
+    VerrouillageMoisModule,
     ComptableService,
     RapprochementService,
     ClotureService,
@@ -156,7 +232,6 @@ export class VerificationPortsComptable implements OnModuleInit {
     FacturesPayees,
     ParametresRepository,
     DecisionsRapprochement,
-    Clotures,
     FichiersApercus,
     EnvoisCabinet,
     ActionsRapprochement,

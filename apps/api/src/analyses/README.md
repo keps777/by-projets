@@ -5,22 +5,29 @@ un bus) et sur lesquels l'**assistant** (`../assistant/README.md`) s'appuie : ag
 ligne, bus, jour, heure, période), règles de détection (fuites d'argent, creux, concurrent moins cher) et
 simulation d'horaire et de prix d'un départ.
 
-Le module est autonome et **ne possède aucune table** : il lit, par des **ports** (classes abstraites,
-`ports.ts`), ce que la billetterie, les colis, la caisse et la flotte ont écrit, et n'écrit rien. Chaque port a
-une version **en mémoire** (`memoire.ts`). Il n'est **pas** dans `AppModule` et n'a **pas** d'adaptateur
-PostgreSQL : l'intégration est faite par le coordinateur (voir « Brancher le module »).
+Le module est dans `AppModule`. Il **n'écrit rien** : il lit, par des **ports** (classes abstraites, `ports.ts`),
+ce que la billetterie, les colis, la caisse et la flotte ont écrit. Chaque port a une version **en mémoire**
+(`memoire.ts`) et une version **PostgreSQL** (`postgres.ts`), choisies par `API_STOCKAGE` (`postgres` ou
+`memoire` ; PostgreSQL par défaut en production, voir `socle/db/stockage.ts`).
 
-## Brancher le module
+## Intégration (faite)
 
-À faire par le coordinateur (le brief interdit de toucher `app.module.ts` et `prisma/schema.prisma`) :
-
-1. Ajouter **un seul** `AnalysesModule` (ou `AnalysesModule.avec({ imports, providers })`) aux `imports` de
-   `AppModule`. Le module est **global** (`@Global()`) : `AnalysesService` et les ports sont visibles de
-   l'assistant sans second import. Un deuxième `AnalysesModule` aurait ses propres ports, donc ses propres données.
-2. Écrire les cinq adaptateurs PostgreSQL (requêtes ci-dessous) et les fournir à la place de ceux en mémoire :
-   `ReferentielAnalyses`, `FaitsDeparts`, `FaitsCaisse`, `OffresPubliques`, `ReseauAnonyme`.
-3. `VerificationAnalyses` **refuse de démarrer en production** tant qu'un port est en mémoire
-   (`durable === false`) et nomme les ports concernés.
+1. `AnalysesModule` est dans les `imports` de `AppModule` (un seul : le module est **global**, `@Global()`,
+   `AnalysesService` et les ports sont visibles de l'assistant sans second import ; un deuxième `AnalysesModule`
+   aurait ses propres ports, donc ses propres données).
+2. Les cinq adaptateurs PostgreSQL existent (`ReferentielAnalysesPrisma`, `FaitsDepartsPrisma`,
+   `FaitsCaissePrisma`, `OffresPubliquesPrisma`, `ReseauAnonymePrisma`) et passent, sur de vraies lignes, les
+   mêmes scénarios que les versions en mémoire (`postgres.integration.test.ts`, conditionné par
+   `DATABASE_URL_TEST`).
+3. Le module **n'a pas de table de résultats**, mais lit quatre petites tables de faits d'exploitation que
+   personne n'écrivait encore, créées par la migration `20261017000900_lot_c_comptable_analyses_assistant`
+   (bloc « lot C » de `prisma/schema.prisma`) : `bus_fiche` (modèle, année, chauffeur habituel, entretien),
+   `depart_observation` (note, retard), `depart_incident` (panne ou autre) et `depart_depense` (carburant,
+   panne, autre). **Rien ne les alimente encore** (les écrans de saisie n'existent pas) : sans fiche, le modèle
+   d'un bus est vide et son année vaut 0 ; sans incident ni dépense, les règles de pannes et de coûts ne
+   détectent rien.
+4. `VerificationAnalyses` **refuse de démarrer en production** tant qu'un port est en mémoire
+   (`durable === false`) et nomme les ports concernés ; avec les adaptateurs PostgreSQL, tous sont durables.
 
 ## Routes
 
@@ -73,13 +80,23 @@ peu élastique (−0,8) pour ne jamais conseiller de baisser un prix sur une hyp
 
 Une valeur invalide fait échouer le démarrage avec toutes les erreurs d'un coup.
 
-## Requêtes PostgreSQL attendues
+## Requêtes PostgreSQL
 
-Le module n'a pas de table à lui. Les noms de tables, de colonnes et de canaux ci-dessous sont **indicatifs**
-(le schéma n'existe pas encore) ; le coordinateur les ajuste. Tables lues : `ligne`,
-`bus`, `personne`, `gare`, `depart`, `billet`, `colis`, `incident`, `depense`, `session_caisse`, `offre_publique`
-(ou la vue de recherche voyageur). Tous les ports reçoivent la compagnie du patron : **chaque requête filtre sur
-`compagnie_id`**, sauf les deux qui regardent hors de la compagnie.
+Le module n'a pas de table de résultats. La description ci-dessous est celle de la conception ; les noms réels
+sont ceux du schéma Prisma (colonnes en camelCase : `compagnieId`, `heureDepart`…) et les requêtes sont dans
+`postgres.ts`. Tables lues : `ligne`, `bus`, `bus_fiche`, `personne`, `gare`, `depart`, `depart_observation`,
+`depart_incident`, `depart_depense`, `billet`, `colis`, `session_caisse`, `compagnie` (les offres des autres
+compagnies sont les départs publiés dans `depart`). Tous les ports reçoivent la compagnie du patron : **chaque
+requête filtre sur `compagnieId`**, sauf les deux qui regardent hors de la compagnie. Les jours sont ceux de
+Douala (`(heure AT TIME ZONE 'UTC') + interval '1 hour'`).
+
+Choix d'interprétation des adaptateurs (à confirmer) :
+
+- la recette d'un billet est `prix + bagage` ; un billet `annule` ou `reporte` ne compte ni dans le remplissage
+  ni dans la recette ;
+- les moyennes du réseau (`ReseauAnonyme`) comptent aussi les compagnies désactivées : ce sont des ventes
+  réelles, et l'anonymat repose sur le nombre de compagnies, pas sur leur état ;
+- `arretsEnRoute` est vide (aucune table ne les enregistre) et `enRouteTousEnregistres` vaut vrai.
 
 - **`ReferentielAnalyses`** : `ligne` (id, nom « Douala → Bafoussam », code `DLABAF`, origine, destination),
   `bus` (immatriculation, modèle, capacité, année, chauffeur habituel, entretien à prévoir), `personne` des
@@ -112,6 +129,8 @@ Le module n'a pas de table à lui. Les noms de tables, de colonnes et de canaux 
 
 ## Reste à faire
 
-- Adaptateurs PostgreSQL des cinq ports et leurs index (coordinateur) ; test de charge sur de vraies données.
+- Écrans (ou import) qui alimentent `bus_fiche`, `depart_observation`, `depart_incident` et `depart_depense`.
+- Test de charge des adaptateurs PostgreSQL sur de vraies données (index ajoutés par la migration :
+  `billet (compagnieId, creeA)` et `colis (compagnieId, creeA)`).
 - Graphique de 14 jours de l'écran « Réponse de l'assistant » : absent du contrat `@afrimove/contrats`, non ajouté.
 - Mise en cache courte des agrégats si la lecture de 30 jours devient lente (aujourd'hui : une lecture par écran).

@@ -125,7 +125,8 @@ export type TypeAlerte =
   | "file_reinitialisee"
   | "horloge_en_avance"
   | "deblocage_sur_place"
-  | "evenement_rejete";
+  | "evenement_rejete"
+  | "evenement_mois_clos";
 
 export interface AlerteSync {
   id: string;

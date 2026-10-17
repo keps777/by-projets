@@ -106,7 +106,7 @@ export class ComptableService {
     const annee = Number(courant.slice(0, 4));
     const tous = new Set<string>([courant, moisPrecedent(courant)]);
     for (const m of await this.ventes.moisAvecActivite(compagnieId)) tous.add(m);
-    for (const c of await this.clotures.lister(compagnieId)) tous.add(c.mois);
+    for (const m of await this.clotures.mois(compagnieId)) tous.add(m);
     const liste = [...tous]
       .filter((m) => m >= PREMIER_MOIS && m <= courant)
       .sort()

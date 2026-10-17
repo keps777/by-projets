@@ -7,6 +7,7 @@ import {
   type OnModuleDestroy,
   type OnModuleInit,
 } from "@nestjs/common";
+import { VerrouillageMoisModule } from "../comptable/verrouillage.module";
 import { CONFIG, type AppConfig } from "../socle/config/config";
 import { PrismaService } from "../socle/db/prisma.service";
 import { stockageSurPostgres } from "../socle/db/stockage";
@@ -103,7 +104,7 @@ export class VerificationStockageCaisse implements OnModuleInit {
  * choisies par `API_STOCKAGE` (voir `socle/db/stockage.ts`).
  */
 @Module({
-  imports: [JournalAgenceModule],
+  imports: [JournalAgenceModule, VerrouillageMoisModule],
   controllers: [CaisseController],
   providers: [
     CaisseService,

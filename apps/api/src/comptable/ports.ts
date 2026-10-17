@@ -17,8 +17,8 @@ import type {
 
 /**
  * Ports du module comptable. La logique ne parle qu'à ces classes abstraites ; `memoire.ts` en donne des
- * versions en mémoire (tests, développement). Les tables PostgreSQL attendues par les adaptateurs réels sont
- * décrites dans le README ; l'intégration (Prisma, `AppModule`) est faite par le coordinateur.
+ * versions en mémoire (tests, développement) ; `postgres.ts` en donne les versions PostgreSQL (tables décrites
+ * dans le README), choisies par `API_STOCKAGE` dans `ComptableModule`.
  *
  * Trois familles :
  *  - **lectures** chez les autres modules (ventes, sessions de caisse, annulations, relevés des opérateurs) ;
@@ -147,8 +147,13 @@ export abstract class DecisionsRapprochement {
 
 export abstract class Clotures {
   abstract trouver(compagnieId: string, mois: string): Promise<Cloture | null>;
+  /**
+   * Ce mois est-il clôturé ? Sans charger les fichiers : c'est la question que tous les modules qui écrivent
+   * des ventes, des caisses ou des paiements posent avant chaque écriture (`VerrouillageMois`).
+   */
+  abstract existe(compagnieId: string, mois: string): Promise<boolean>;
   /** Les mois clôturés de la compagnie, du plus récent au plus ancien. */
-  abstract lister(compagnieId: string): Promise<Cloture[]>;
+  abstract mois(compagnieId: string): Promise<string[]>;
   /**
    * Enregistre la clôture **et ses fichiers** en une seule transaction, sauf si le mois est déjà clôturé
    * (clé primaire `(compagnie_id, mois)`) : de deux clôtures simultanées, une seule gagne. Faux sinon.
