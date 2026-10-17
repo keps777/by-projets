@@ -70,7 +70,8 @@ export const ACCUEIL_ESPACE: Record<Espace, string> = {
 /**
  * Espaces qu'un rôle peut ouvrir. Un compte agent ne voit que son espace, avec trois exceptions voulues par les
  * maquettes : les onglets du guichet mènent au quai, ceux du superviseur à la caisse, au quai et à l'accueil du
- * patron (Guichet.dc.html et Superviseur.dc.html).
+ * patron (Guichet.dc.html et Superviseur.dc.html) ; le vendeur ambulant ouvre la vente d'un billet (SiegePay, espace voyageur) depuis
+ * ses départs et ses clients (Vendeur.dc.html).
  */
 export const ESPACES_AUTORISES: Record<Role, readonly Espace[]> = {
   voyageur: ["voyageur"],
@@ -82,7 +83,7 @@ export const ESPACES_AUTORISES: Record<Role, readonly Espace[]> = {
   patron: ["patron"],
   relais: ["relais"],
   livreur: ["livreur"],
-  vendeur: ["vendeur"],
+  vendeur: ["vendeur", "voyageur"],
 };
 
 export function peutOuvrir(role: Role, espace: Espace): boolean {

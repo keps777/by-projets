@@ -74,10 +74,11 @@ describe("table des rôles", () => {
     }
   });
 
-  it("ne donne aux comptes d'agent que leur espace, hors les trois exceptions des maquettes", () => {
+  it("ne donne aux comptes d'agent que leur espace, hors les exceptions des maquettes", () => {
     const attendu: Partial<Record<Role, string[]>> = {
       guichet: ["guichet", "quai"],
       superviseur: ["superviseur", "guichet", "quai", "patron"],
+      vendeur: ["vendeur", "voyageur"],
     };
     for (const role of ESPACES) {
       expect([...ESPACES_AUTORISES[role]].sort()).toEqual((attendu[role] ?? [role]).sort());
