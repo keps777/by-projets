@@ -1,0 +1,66 @@
+{
+  "titre": "",
+  "sousTitre": "",
+  "retour": "",
+  "code": {
+    "ou": "",
+    "libelle": ""
+  },
+  "trouve": "",
+  "fiche": {
+    "de": "",
+    "pour": "",
+    "declare": "",
+    "depart": "",
+    "declareTexte": "",
+    "assure": "",
+    "nonAssure": "",
+    "departTexte": ""
+  },
+  "poids": {
+    "titre": "",
+    "conforme": "",
+    "complement": "",
+    "arelever": "",
+    "feuille": {
+      "titre": "",
+      "sousTitre": "",
+      "champ": "",
+      "fermer": "",
+      "valider": "",
+      "invalide": "",
+      "conforme": "",
+      "complement": ""
+    }
+  },
+  "photo": {
+    "titre": "",
+    "aprendre": "",
+    "prise": "",
+    "manque": ""
+  },
+  "note": "",
+  "accepter": {
+    "libelle": "",
+    "echec": "",
+    "complement": "",
+    "attente": "",
+    "continuer": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "inconnu": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}

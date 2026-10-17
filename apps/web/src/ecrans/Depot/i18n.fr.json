@@ -1,0 +1,66 @@
+{
+  "titre": "Dépôt prépayé",
+  "sousTitre": "Le client a payé dans l'app · scanner son code",
+  "retour": "Retour au guichet",
+  "code": {
+    "ou": "ou le code",
+    "libelle": "Code du colis prépayé"
+  },
+  "trouve": "Trouvé · payé {{montant}} F dans l'app",
+  "fiche": {
+    "de": "De",
+    "pour": "Pour",
+    "declare": "Déclaré",
+    "depart": "Départ",
+    "declareTexte": "{{contenu}} · {{poids}} kg · {{valeur}} F · {{assurance}}",
+    "assure": "assuré",
+    "nonAssure": "non assuré",
+    "departTexte": "{{heure}} Alpha {{destination}} · soute {{pct}} %"
+  },
+  "poids": {
+    "titre": "Vérifier le poids",
+    "conforme": "{{poids}} kg · conforme",
+    "complement": "{{poids}} kg · complément {{montant}} F",
+    "arelever": "à relever",
+    "feuille": {
+      "titre": "Poids sur la balance",
+      "sousTitre": "Déclaré : {{declare}} kg",
+      "champ": "Poids relevé (kg)",
+      "fermer": "Fermer",
+      "valider": "Valider le poids",
+      "invalide": "Tapez le poids en kilos, par exemple 2,1.",
+      "conforme": "Conforme : {{poids}} kg, écart {{ecart}} kg.",
+      "complement": "Plus de {{seuil}} kg au-dessus du déclaré : le client paie un complément de {{montant}} F par MoMo."
+    }
+  },
+  "photo": {
+    "titre": "Photo au dépôt",
+    "aprendre": "à prendre",
+    "prise": "prise ✓",
+    "manque": "Prenez la photo du colis avant d'accepter."
+  },
+  "note": "Rien à encaisser. Si le poids dépasse de plus de {{seuil}} kg, l'app propose un complément à payer par MoMo au client.",
+  "accepter": {
+    "libelle": "Accepter · imprimer l'étiquette",
+    "echec": "Le dépôt n'a pas été enregistré. Réessayez.",
+    "complement": "Complément de {{montant}} F demandé au client par MoMo.",
+    "attente": "L'étiquette sortira dès que l'imprimante sera prête.",
+    "continuer": "Continuer vers le quai"
+  },
+  "etats": {
+    "chargement": "Recherche du colis",
+    "vide": {
+      "titre": "Aucun code lu",
+      "detail": "Scannez le code du client ou tapez-le dans le champ."
+    },
+    "inconnu": {
+      "titre": "Aucun colis prépayé pour ce code",
+      "detail": "Vérifiez le code affiché sur le téléphone du client."
+    },
+    "erreur": {
+      "titre": "Impossible de charger le colis",
+      "detail": "Vérifiez la connexion, puis réessayez.",
+      "reessayer": "Réessayer"
+    }
+  }
+}

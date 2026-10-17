@@ -1,0 +1,1 @@
+export { EcranDepot } from "./EcranDepot";
