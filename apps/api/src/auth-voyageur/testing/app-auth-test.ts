@@ -20,9 +20,8 @@ import {
   HorlogeFixe,
   PersonnesMemoire,
 } from "../../socle/testing/memoire";
-import { AuthVoyageurModule } from "../auth-voyageur.module";
 import { CONFIG_AUTH_VOYAGEUR, chargerConfigAuthVoyageur } from "../config";
-import type { EnvoiCodeSmsMemoire } from "../memoire";
+import { EnvoiCodeSmsMemoire } from "../memoire";
 import { EnvoiCodeSms, StockageConnexion } from "../ports";
 
 export interface OptionsAppAuth {
@@ -30,8 +29,13 @@ export interface OptionsAppAuth {
   env?: Record<string, string>;
   /** Variables de l'application (`RATE_LIMIT_ENABLED`…). */
   config?: Record<string, string>;
-  /** Modules ou fournisseurs à la place de ceux par défaut. */
-  module?: ReturnType<typeof AuthVoyageurModule.avec> | typeof AuthVoyageurModule;
+  /** Envoi réel des codes par la passerelle SMS (comme `AppModule`) au lieu de la boîte en mémoire. */
+  passerelleSms?: boolean;
+  /** Fournisseurs de la connexion à remplacer (par exemple `EnvoiCodeWhatsApp`). */
+  fournisseurs?: ReadonlyArray<{
+    provide: abstract new (...args: never[]) => unknown;
+    useValue: unknown;
+  }>;
 }
 
 /** L'API complète (gardes, rôles, audit) avec `AuthVoyageurModule`, sur les adaptateurs en mémoire. */
@@ -41,9 +45,18 @@ export async function creerAppAuthTest(options: OptionsAppAuth = {}) {
   const auditRepo = new AuditMemoire();
   const personnes = new PersonnesMemoire();
 
-  const module = await Test.createTestingModule({
-    imports: [AppModule, options.module ?? AuthVoyageurModule],
-  })
+  // `AppModule` monte la connexion du voyageur avec la passerelle SMS ; par défaut ces tests lisent la boîte
+  // en mémoire (`sms`), comme les autres montages lisent celle du socle.
+  let builder = Test.createTestingModule({ imports: [AppModule] });
+  if (!options.passerelleSms) {
+    builder = builder
+      .overrideProvider(EnvoiCodeSms)
+      .useValue(new EnvoiCodeSmsMemoire(config.sms.journaliserCodes));
+  }
+  for (const f of options.fournisseurs ?? []) {
+    builder = builder.overrideProvider(f.provide).useValue(f.useValue);
+  }
+  const module = await builder
     .overrideProvider(CONFIG)
     .useValue(config)
     .overrideProvider(CONFIG_AUTH_VOYAGEUR)

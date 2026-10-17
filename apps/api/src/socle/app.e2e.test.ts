@@ -54,8 +54,8 @@ describe("OpenAPI", () => {
       expect.arrayContaining([
         "/health",
         "/me",
-        "/auth/voyageur/code",
-        "/auth/voyageur/verification",
+        "/voyageur/connexion/code",
+        "/voyageur/connexion/verification",
         "/auth/guichet/connexion",
         "/auth/direction/connexion",
         "/auth/direction/verification",
@@ -63,6 +63,9 @@ describe("OpenAPI", () => {
         "/afrimove/journal-audit/verification",
       ]),
     );
+    // La connexion du voyageur n'existe qu'une fois : celle de `src/auth-voyageur` (4 chiffres, WebOTP).
+    expect(Object.keys(doc.paths)).not.toContain("/auth/voyageur/code");
+    expect(Object.keys(doc.paths)).not.toContain("/auth/voyageur/verification");
     expect(doc.components?.securitySchemes).toHaveProperty("bearer");
     // Les routes protégées déclarent le jeton ; les routes publiques non.
     expect(doc.paths["/patron/journal-audit"]?.get?.security).toEqual([{ bearer: [] }]);

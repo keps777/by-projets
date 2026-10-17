@@ -7,42 +7,22 @@ import {
   ConnexionDirectionDto,
   ConnexionPinDto,
   DefiReponse,
-  DemandeCodeVoyageurDto,
   JetonReponse,
   MoiReponse,
 } from "./auth.dto";
 import { Authentifie, Public, UtilisateurCourant, type Utilisateur } from "./decorateurs";
 import { ROLES_ESPACE_PATRON, ROLES_VENTE } from "./roles";
 
-/** 10 essais par minute et par adresse : la vraie limite (3 essais puis blocage) est dans le service. */
+/**
+ * 10 essais par minute et par adresse : la vraie limite (3 essais puis blocage) est dans le service.
+ * La connexion du voyageur n'est pas ici : elle est dans `src/auth-voyageur` (`/voyageur/connexion/*`).
+ */
 const LIMITE_CONNEXION = { default: { limit: 10, ttl: 60_000 } };
 
 @ApiTags("Authentification")
 @Controller("auth")
 export class AuthController {
   constructor(private readonly auth: AuthService) {}
-
-  @Public()
-  @Throttle(LIMITE_CONNEXION)
-  @Post("voyageur/code")
-  @HttpCode(202)
-  @ApiOperation({ summary: "Voyageur : demander un code SMS" })
-  @ApiResponse({ status: 202, type: DefiReponse })
-  @ApiResponse({ status: 429, description: "Trop de demandes pour ce numéro" })
-  demanderCodeVoyageur(@Body() dto: DemandeCodeVoyageurDto): Promise<DefiReponse> {
-    return this.auth.demanderCodeVoyageur(dto.telephone);
-  }
-
-  @Public()
-  @Throttle(LIMITE_CONNEXION)
-  @Post("voyageur/verification")
-  @HttpCode(200)
-  @ApiOperation({ summary: "Voyageur : valider le code SMS et obtenir un jeton" })
-  @ApiResponse({ status: 200, type: JetonReponse })
-  @ApiResponse({ status: 401, description: "Code invalide ou expiré" })
-  verifierCodeVoyageur(@Body() dto: CodeSmsDto): Promise<JetonReponse> {
-    return this.auth.verifierCodeVoyageur(dto.defiId, dto.code);
-  }
 
   @Public()
   @Throttle(LIMITE_CONNEXION)

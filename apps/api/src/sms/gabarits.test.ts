@@ -40,6 +40,7 @@ const RETARD = {
   minutes: 20,
 };
 const PIN = { pin: "482915", lien: "https://afrimove.app/app" };
+const CODE_CONNEXION = { code: "4821", domaine: "afrimove.app", minutes: 5 };
 
 describe("rendu des gabarits", () => {
   it("billet : trajet, heure de Douala, siège, code à 4 chiffres et lien", () => {
@@ -87,6 +88,19 @@ describe("rendu des gabarits", () => {
     expect(r.sensible).toBe(true);
   });
 
+  it("code de connexion : le saut de ligne reste, `@domaine #code` est la dernière ligne (WebOTP)", () => {
+    const r = rendreSms("code_connexion", CODE_CONNEXION);
+    expect(r.texte).toBe(
+      "AfriMove : ton code est 4821. Valable 5 min. Personne d'AfriMove ne te le demandera jamais.\n\n@afrimove.app #4821",
+    );
+    const lignes = r.texte.split("\n");
+    expect(lignes.at(-1)).toBe("@afrimove.app #4821");
+    expect(r.encodage).toBe("gsm7");
+    expect(r.segments).toBe(1);
+    expect(r.sensible).toBe(true);
+    expect(r.validiteMs).toBe(300_000);
+  });
+
   it("système : texte libre, valable 5 minutes (codes de connexion)", () => {
     const r = rendreSms("systeme", { texte: "Votre code AfriMove est 123456" });
     expect(r.texte).toBe("Votre code AfriMove est 123456");
@@ -101,6 +115,7 @@ describe("rendu des gabarits", () => {
       alerte_proche: PROCHE,
       retard: RETARD,
       pin_provisoire: PIN,
+      code_connexion: CODE_CONNEXION,
       systeme: { texte: "x" },
     } as const;
     for (const type of TYPES_SMS) {
@@ -158,6 +173,24 @@ describe("validation des variables", () => {
   it("le code de retrait a 6 chiffres, le PIN aussi", () => {
     expect(erreurs("code_retrait", { ...RETRAIT, code: "4839" })).not.toHaveLength(0);
     expect(erreurs("pin_provisoire", { ...PIN, pin: "4829" })).not.toHaveLength(0);
+  });
+
+  it.each([
+    ["code", "482"],
+    ["code", "123456789"],
+    ["code", "48a1"],
+    ["domaine", "https://afrimove.app"],
+    ["domaine", "afrimove.app/b"],
+    ["domaine", "AfriMove.app"],
+    ["domaine", ".afrimove.app"],
+    ["domaine", "afri move.app"],
+    ["minutes", 0],
+    ["minutes", 16],
+    ["minutes", "5"],
+  ])("code de connexion : refuse %s = %j", (champ, valeur) => {
+    expect(erreurs("code_connexion", { ...CODE_CONNEXION, [champ]: valeur }).join()).toContain(
+      champ,
+    );
   });
 
   it("les minutes de retard sont un entier entre 1 et 720", () => {

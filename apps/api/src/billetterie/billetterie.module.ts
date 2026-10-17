@@ -1,6 +1,8 @@
-import { Inject, Injectable, Module, type OnModuleInit } from "@nestjs/common";
+import { Inject, Injectable, Module, forwardRef, type OnModuleInit } from "@nestjs/common";
 import { NumerotationModule } from "../numerotation/numerotation.module";
 import { NumerotationService } from "../numerotation/numerotation.service";
+import { ConversionDevisesPaiements } from "../paiements/adaptateurs";
+import { PaiementsModule } from "../paiements/paiements.module";
 import { CONFIG, type AppConfig } from "../socle/config/config";
 import { PrismaService } from "../socle/db/prisma.service";
 import { stockageSurPostgres } from "../socle/db/stockage";
@@ -18,7 +20,6 @@ import {
   CatalogueMemoire,
   ColisMemoire,
   CommandesMemoire,
-  ConversionMemoire,
   DiffusionMemoire,
   EvenementsTraitesMemoire,
   InventaireMemoire,
@@ -164,7 +165,9 @@ export class VerificationStockageBilletterie implements OnModuleInit {
  * paiements). Les paiements appellent `CommandesService.confirmerPaiement`.
  */
 @Module({
-  imports: [NumerotationModule],
+  // Les paiements importent la billetterie (ils lisent ses commandes) et la billetterie leur emprunte le
+  // taux de change : le cycle de modules est voulu, sans cycle entre fournisseurs (forwardRef des deux côtés).
+  imports: [NumerotationModule, forwardRef(() => PaiementsModule)],
   controllers: [VoyageurController, AgenceController, ExploitationController],
   providers: [
     Passagers,
@@ -225,7 +228,8 @@ export class VerificationStockageBilletterie implements OnModuleInit {
     },
     { provide: Promotions, useClass: PromotionsMemoire },
     { provide: ProchesVoyageur, useClass: ProchesMemoire },
-    { provide: ConversionDevises, useClass: ConversionMemoire },
+    // Taux de l'agrégateur de paiement (AM-165). `ConversionMemoire` (taux indicatifs) reste exportée pour les tests.
+    { provide: ConversionDevises, useExisting: ConversionDevisesPaiements },
     // Les numéros 4001–9999 viennent du registre de la numérotation (AM-161) sur PostgreSQL.
     {
       provide: NumerotationEnLigne,

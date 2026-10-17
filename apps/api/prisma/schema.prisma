@@ -1223,7 +1223,7 @@ model ModuleException {
 /// encodage ; 1 à 3 morceaux ; un identifiant de fournisseur n'appartient qu'à un message.
 model SmsMessage {
   id                  String    @id @db.Uuid
-  /// SQL : billet | code_retrait | alerte_proche | retard | pin_provisoire | systeme
+  /// SQL : billet | code_retrait | alerte_proche | retard | pin_provisoire | code_connexion | systeme
   type                String
   cle                 String    @unique
   referenceType       String?

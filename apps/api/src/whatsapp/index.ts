@@ -14,6 +14,7 @@ export {
 } from "./rapport-soir.service";
 export { CompteWhatsAppService, type VueCompteWhatsApp } from "./compte.service";
 export { CONFIG_WHATSAPP, chargerConfigWhatsApp, type ConfigWhatsApp } from "./config";
+export { AnnuaireRapportPersonnes, SecoursSmsPasserelle } from "./adaptateurs";
 export { FournisseurWhatsApp } from "./fournisseur";
 export { FournisseurWhatsAppSimule } from "./fournisseur-simule";
 export { FournisseurWhatsAppHttp, TransportHttp } from "./fournisseur-http";

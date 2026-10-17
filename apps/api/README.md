@@ -83,11 +83,11 @@ Générer de vraies valeurs : `openssl rand -base64 48` (secrets texte), `openss
 
 ## Authentification par rôle
 
-| Rôle(s)                                                                              | Méthode                                            | Routes                                                                 |
-| ------------------------------------------------------------------------------------ | -------------------------------------------------- | ---------------------------------------------------------------------- |
-| `voyageur`                                                                           | numéro + code SMS (compte créé à la 1re connexion) | `POST /auth/voyageur/code` → `POST /auth/voyageur/verification`        |
-| `guichetier`, `convoyeur`, `chauffeur`, `vendeur`, `controleur`, `relais`, `livreur` | numéro + PIN à 6 chiffres                          | `POST /auth/guichet/connexion`                                         |
-| `superviseur`, `patron`, `comptable`, `afrimove`                                     | mot de passe, puis code SMS                        | `POST /auth/direction/connexion` → `POST /auth/direction/verification` |
+| Rôle(s)                                                                              | Méthode                                            | Routes                                                                    |
+| ------------------------------------------------------------------------------------ | -------------------------------------------------- | ------------------------------------------------------------------------- |
+| `voyageur`                                                                           | numéro + code SMS (compte créé à la 1re connexion) | `POST /voyageur/connexion/code` → `POST /voyageur/connexion/verification` |
+| `guichetier`, `convoyeur`, `chauffeur`, `vendeur`, `controleur`, `relais`, `livreur` | numéro + PIN à 6 chiffres                          | `POST /auth/guichet/connexion`                                            |
+| `superviseur`, `patron`, `comptable`, `afrimove`                                     | mot de passe, puis code SMS                        | `POST /auth/direction/connexion` → `POST /auth/direction/verification`    |
 
 - Le jeton ne porte qu'**un rôle actif** (celui de la connexion). À chaque requête, le compte et son
   rôle sont relus en base : désactiver un compte ou retirer un rôle coupe l'accès immédiatement.

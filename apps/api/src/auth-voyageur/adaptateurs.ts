@@ -82,14 +82,10 @@ export class EmetteurSessionJwt extends EmetteurSession {
 }
 
 /**
- * Le code part par la passerelle SMS (type `systeme` : file, reprise, secours, journal sans texte,
- * texte chiffré dans la file). Le texte est confié tel quel.
- *
- * ATTENTION : le gabarit `systeme` de `apps/api/src/sms/gabarits.ts` ramène les sauts de ligne à des
- * espaces (`Lecteur.texte`), donc la dernière ligne `@domaine #code` que WebOTP attend n'existe plus à
- * l'arrivée. Tant que ce gabarit n'est pas corrigé (ou qu'un type `code_connexion` qui conserve les
- * lignes n'est pas ajouté à la passerelle), l'auto-remplissage Chrome ne marche pas ; la saisie
- * manuelle et `autocomplete="one-time-code"` (iOS) marchent. Voir le README, « À faire hors périmètre ».
+ * Le code part par la passerelle SMS (type `code_connexion` : file, reprise, secours, journal sans texte,
+ * texte chiffré dans la file). Le gabarit garde le saut de ligne : le SMS se termine par la ligne
+ * `@<domaine> #<code>` que WebOTP (Chrome Android) lit pour remplir le code tout seul. Le texte rendu est
+ * celui de `texteSms` (`regles.ts`), ce que `auth-voyageur.module.test.ts` vérifie.
  */
 @Injectable()
 export class EnvoiCodeSmsPasserelle extends EnvoiCodeSms {
@@ -102,8 +98,8 @@ export class EnvoiCodeSmsPasserelle extends EnvoiCodeSms {
   async envoyer(demande: DemandeEnvoiCode): Promise<void> {
     try {
       await this.passerelle.envoyer({
-        type: "systeme",
-        variables: { texte: demande.texte },
+        type: "code_connexion",
+        variables: { code: demande.code, domaine: demande.domaine, minutes: demande.ttlMinutes },
         destinataire: demande.telephone,
         cle: demande.cle,
         expireA: demande.expireA,

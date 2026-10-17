@@ -52,7 +52,7 @@ Le client d'API ne relance pas ces POST (opérations non idempotentes) et lit `R
   d'agence), la réponse est identique ; seul un compte éligible reçoit le SMS.
 - **Compte** : une `Personne` du socle avec le seul rôle `voyageur`, créée à la première vérification
   réussie. Un numéro déjà inscrit comme guichetier, patron… ne peut pas ouvrir de session voyageur
-  (même règle que `/auth/voyageur/*`). Le jeton est le JWT du socle (rôle actif `voyageur`).
+  (règle reprise des anciennes routes `/auth/voyageur/*`, retirées). Le jeton est le JWT du socle (rôle actif `voyageur`).
 - **WhatsApp** : si le canal n'est pas branché ou refuse, la demande part **par SMS** et la réponse dit
   `canal: "sms"` (l'écran affiche « code reçu par SMS »).
 - **SMS au format WebOTP** : `AfriMove : ton code est 4821. Valable 5 min. Personne d'AfriMove ne te le
@@ -181,8 +181,8 @@ dernière ligne")` dans `auth-voyageur.module.test.ts` documente l'écart ; il �
    dans `whatsapp/gabarits.ts`, puis un adaptateur `EnvoiCodeWhatsApp` sur `PasserelleWhatsAppService.envoyer`
    (`branche = true`, `reel = true`, `cle = demande.cle`, `secours: false` : le repli SMS est géré ici).
 3. **Adaptateurs PostgreSQL et migration** (section précédente).
-4. **Routes `/auth/voyageur/*` du socle** (code à 6 chiffres, `defiId`) : elles font double emploi avec
-   celles-ci et ne suivent pas le contrat voyageur. À retirer quand plus rien ne les appelle.
+4. **Routes `/auth/voyageur/*` du socle** : retirées à l'étape 3 (elles faisaient double emploi). Le code
+   part désormais par la passerelle SMS, type `code_connexion` (voir `apps/api/INTEGRATION.md`).
 
 ## Décisions à confirmer
 
@@ -197,7 +197,7 @@ dernière ligne")` dans `auth-voyageur.module.test.ts` documente l'écart ; il �
   de la planche annonce 30 jours. Il n'y a ni jeton de rafraîchissement ni durée propre au rôle dans
   `TokensService` ; une session de 30 jours demande de l'ajouter (hors périmètre).
 - **`inscritDepuis`** = première connexion par ces routes (`fiche_voyageur`). Un voyageur créé avant par
-  `/auth/voyageur/*` reçoit la date de sa première connexion ici. `prenom`, `nom` et `initiales` sont vides
+  les anciennes routes `/auth/voyageur/*` reçoit la date de sa première connexion ici. `prenom`, `nom` et `initiales` sont vides
   jusqu'à ce qu'un autre écran (« Moi ») renseigne le nom.
 - **`canal: "ussd"`** refusé en 422 : le code USSD (`*123#`) relève d'un autre ticket.
 - **Coût** : un code = un SMS de 12 F, quota 5 par heure et par numéro, 10 requêtes par minute et par IP.

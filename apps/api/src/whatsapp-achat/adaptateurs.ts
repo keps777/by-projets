@@ -10,6 +10,7 @@ import {
   CompteAchatInactif,
   EnvoiAchatImpossible,
   MessagerieAchat,
+  ReconnaissanceEquipe,
   type MessageAchat,
 } from "./ports";
 
@@ -51,6 +52,32 @@ export class ComptesAchatComptes extends ComptesAchat {
     const personne = await this.personnes.trouverParId(voyageurId);
     const prenom = personne?.nom.trim().split(/\s+/)[0] ?? "";
     return prenom === "" ? null : prenom;
+  }
+}
+
+/**
+ * L'équipe d'une compagnie : un numéro de patron ou de superviseur actif. Ses messages vont à l'assistant du
+ * rapport du soir, jamais à l'achat de billets. Le numéro est retrouvé par son index aveugle, sans rien
+ * déchiffrer.
+ */
+@Injectable()
+export class EquipeAnnuaire extends ReconnaissanceEquipe {
+  constructor(private readonly comptes: ComptesService) {
+    super();
+  }
+
+  async estEquipe(telephone: string): Promise<boolean> {
+    let personne;
+    try {
+      personne = await this.comptes.trouverParTelephone(telephone);
+    } catch {
+      return false; // numéro mal formé : ce n'est pas un membre de l'équipe
+    }
+    return (
+      !!personne &&
+      personne.actif &&
+      personne.roles.some((r) => r === "patron" || r === "superviseur")
+    );
   }
 }
 

@@ -109,6 +109,7 @@ describe.skipIf(!URL_BASE)("PostgreSQL réel", () => {
         "20261017000400_sms_et_heure_texte",
         "20261017000500_sms_garanties",
         "20261017000600_colis_caisse_supervision_garanties",
+        "20261017000700_sms_code_connexion",
       ]);
       expect(rows.every((r) => r.finished_at !== null)).toBe(true);
     });
@@ -296,22 +297,24 @@ describe.skipIf(!URL_BASE)("PostgreSQL réel", () => {
       expect(g.telephoneChiffre).toMatch(/^enc:v1:k1:/);
     });
 
-    it("le code SMS n'est conservé que haché et le numéro du défi est effacé à l'usage", async () => {
+    it("le code SMS n'est conservé que haché, le numéro n'est pas gardé dans le défi", async () => {
       const dem = await request(app.getHttpServer())
-        .post("/auth/voyageur/code")
-        .send({ telephone: "+237655070001" });
+        .post("/auth/direction/connexion")
+        .send({ telephone: TELEPHONES_DEMO.patron, motDePasse: MOT_DE_PASSE, role: "patron" });
+      expect(dem.status).toBe(202);
       const code = /code est (\d{6})/.exec(
         app.get<SmsMock>(SmsGateway).dernier()?.message ?? "",
       )?.[1];
       let { rows } = await requete(`SELECT * FROM defi_otp WHERE id = $1`, [dem.body.defiId]);
       expect(JSON.stringify(rows)).not.toContain(code);
-      expect(rows[0].telephoneChiffre).toMatch(/^enc:v1:/);
+      expect(JSON.stringify(rows)).not.toContain(TELEPHONES_DEMO.patron.slice(4));
+      expect(rows[0].telephoneChiffre).toBeNull();
+      expect(rows[0].consommeA).toBeNull();
       const v = await request(app.getHttpServer())
-        .post("/auth/voyageur/verification")
+        .post("/auth/direction/verification")
         .send({ defiId: dem.body.defiId, code });
       expect(v.status).toBe(200);
       ({ rows } = await requete(`SELECT * FROM defi_otp WHERE id = $1`, [dem.body.defiId]));
-      expect(rows[0].telephoneChiffre).toBeNull();
       expect(rows[0].consommeA).not.toBeNull();
     });
   });

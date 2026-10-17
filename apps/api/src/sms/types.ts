@@ -10,6 +10,7 @@ export const TYPES_SMS = [
   "alerte_proche",
   "retard",
   "pin_provisoire",
+  "code_connexion",
   "systeme",
 ] as const;
 export type TypeSms = (typeof TYPES_SMS)[number];
@@ -21,6 +22,7 @@ export const LIBELLES_TYPES_SMS: Readonly<Record<TypeSms, string>> = {
   alerte_proche: "Alerte au proche (arrivée)",
   retard: "Retard du bus",
   pin_provisoire: "PIN provisoire",
+  code_connexion: "Code de connexion du voyageur",
   systeme: "Codes de connexion et messages système",
 };
 

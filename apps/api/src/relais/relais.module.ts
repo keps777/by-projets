@@ -1,6 +1,6 @@
 import { Inject, Injectable, Module, type OnModuleInit } from "@nestjs/common";
 import { ColisModule } from "../colis/colis.module";
-import { ColisRepository } from "../colis/ports";
+import { ColisRepository, ReferentielColis } from "../colis/ports";
 import { CONFIG, type AppConfig } from "../socle/config/config";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { AnnuairePersonnes } from "./annuaire";
@@ -80,6 +80,25 @@ export class VerificationPortsRelais implements OnModuleInit {
 }
 
 /**
+ * Le module colis vérifie qu'un relais existe et est actif quand l'expéditeur ou le guichet en choisit un
+ * (`ReferentielColis.relais`). Au démarrage, cette question est posée aux relais : le module colis ne
+ * connaît pas ce module (qui l'importe), c'est donc lui qui se branche sur le référentiel.
+ */
+@Injectable()
+export class BranchementRelaisColis implements OnModuleInit {
+  constructor(
+    private readonly referentiel: ReferentielColis,
+    private readonly relais: RelaisService,
+  ) {}
+
+  onModuleInit(): void {
+    // Les relais d'abord ; à défaut, ce que le référentiel savait déjà (les relais posés à la main en test).
+    const avant = this.referentiel.relais.bind(this.referentiel);
+    this.referentiel.relais = async (id: string) => (await this.relais.reference(id)) ?? avant(id);
+  }
+}
+
+/**
  * Points relais (AM-148) : recherche des relais proches et choix par l'expéditeur, inscription et
  * vérification par un agent AfriMove (code R-…), réception et remise des colis contre code + pièce,
  * garde de 7 jours puis reprise, gains (200 F par colis remis, 100 F par colis repris) versés le lundi.
@@ -105,6 +124,7 @@ export class VerificationPortsRelais implements OnModuleInit {
     TachesRelais,
     AnnuairePersonnes,
     VerificationPortsRelais,
+    BranchementRelaisColis,
     { provide: Horloge, useClass: HorlogeSysteme },
     { provide: RelaisRepository, useClass: RelaisMemoire },
     { provide: DemandesRelaisRepository, useClass: DemandesRelaisMemoire },

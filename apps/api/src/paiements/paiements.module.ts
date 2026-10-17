@@ -1,4 +1,4 @@
-import { Inject, Injectable, Module, type OnModuleInit } from "@nestjs/common";
+import { Inject, Injectable, Module, forwardRef, type OnModuleInit } from "@nestjs/common";
 import { BilletterieModule } from "../billetterie/billetterie.module";
 import { SmsModule } from "../sms/sms.module";
 import { CONFIG, type AppConfig } from "../socle/config/config";
@@ -128,7 +128,8 @@ export class VerificationStockagePaiements implements OnModuleInit {
  * brancher à la place des taux indicatifs de la billetterie (README).
  */
 @Module({
-  imports: [BilletterieModule, SmsModule],
+  // forwardRef : la billetterie importe aussi ce module (taux de change, `ConversionDevisesPaiements`).
+  imports: [forwardRef(() => BilletterieModule), SmsModule],
   controllers: [
     PaiementsVoyageurController,
     LiensPaiementController,

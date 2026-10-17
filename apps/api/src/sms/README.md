@@ -23,19 +23,19 @@ module métier ──► PasserelleSmsService.envoyer ──► JournalSms (mess
 
 ## Ce que le module fournit
 
-| Élément                               | Rôle                                                                                                                                                          |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `PasserelleSmsService`                | `envoyer(demande)` (tous les modules), `envoyerBillet` (guichet, idempotent, renvois limités), `annuler`, `obtenir`, `etat`, `traiter` (un essai d'envoi).    |
-| `gabarits.ts`                         | Un gabarit par type : `billet`, `code_retrait`, `alerte_proche`, `retard`, `pin_provisoire`, `systeme`. Variables validées, texte adapté à l'alphabet GSM.    |
-| `gsm.ts`                              | Encodage (GSM 160/153, UCS-2 70/67), découpage en morceaux, `adapterGsm` (ê → e…), masquage des numéros.                                                      |
-| `FournisseurSms` (port)               | `envoyer` + `lireRecus` (accusés signés). Adaptateurs : `FournisseurSimule` (programmable), `FournisseurHttp` (agrégateur JSON, `TransportHttp` remplaçable). |
-| `RegistreFournisseurs`, `Disjoncteur` | Principal puis secours ; après 3 échecs d'affilée un fournisseur est coupé 30 s, puis retesté par un appel unique.                                            |
-| `FileEnvoiSms` (port)                 | Forme de BullMQ (`add`, `Worker`, `Job`, `UnrecoverableError`). `FileEnvoiMemoire` : jobId idempotent, délai, priorité, attente exponentielle, concurrence.   |
-| `JournalSms` (port)                   | Messages et essais. `JournalMemoire` en mémoire ; `JournalSmsPrisma` (`postgres.ts`) sur PostgreSQL, choisi par `API_STOCKAGE` (tables ci-dessous).           |
-| `ReceptionRecusService`               | Accusés de livraison : signature HMAC, désordre et doublons tolérés, jamais de retour en arrière.                                                             |
-| `StatistiquesSmsService`              | Coût, morceaux, perdus et délai médian par type ; objectif « médiane < 5 s ».                                                                                 |
-| `SmsController`                       | Routes ci-dessous.                                                                                                                                            |
-| `SmsModule`                           | Assemble tout. Refuse de démarrer en production tant que le journal ou la file sont en mémoire, ou que le fournisseur principal est simulé.                   |
+| Élément                               | Rôle                                                                                                                                                                         |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PasserelleSmsService`                | `envoyer(demande)` (tous les modules), `envoyerBillet` (guichet, idempotent, renvois limités), `annuler`, `obtenir`, `etat`, `traiter` (un essai d'envoi).                   |
+| `gabarits.ts`                         | Un gabarit par type : `billet`, `code_retrait`, `alerte_proche`, `retard`, `pin_provisoire`, `code_connexion`, `systeme`. Variables validées, texte adapté à l'alphabet GSM. |
+| `gsm.ts`                              | Encodage (GSM 160/153, UCS-2 70/67), découpage en morceaux, `adapterGsm` (ê → e…), masquage des numéros.                                                                     |
+| `FournisseurSms` (port)               | `envoyer` + `lireRecus` (accusés signés). Adaptateurs : `FournisseurSimule` (programmable), `FournisseurHttp` (agrégateur JSON, `TransportHttp` remplaçable).                |
+| `RegistreFournisseurs`, `Disjoncteur` | Principal puis secours ; après 3 échecs d'affilée un fournisseur est coupé 30 s, puis retesté par un appel unique.                                                           |
+| `FileEnvoiSms` (port)                 | Forme de BullMQ (`add`, `Worker`, `Job`, `UnrecoverableError`). `FileEnvoiMemoire` : jobId idempotent, délai, priorité, attente exponentielle, concurrence.                  |
+| `JournalSms` (port)                   | Messages et essais. `JournalMemoire` en mémoire ; `JournalSmsPrisma` (`postgres.ts`) sur PostgreSQL, choisi par `API_STOCKAGE` (tables ci-dessous).                          |
+| `ReceptionRecusService`               | Accusés de livraison : signature HMAC, désordre et doublons tolérés, jamais de retour en arrière.                                                                            |
+| `StatistiquesSmsService`              | Coût, morceaux, perdus et délai médian par type ; objectif « médiane < 5 s ».                                                                                                |
+| `SmsController`                       | Routes ci-dessous.                                                                                                                                                           |
+| `SmsModule`                           | Assemble tout. Refuse de démarrer en production tant que le journal ou la file sont en mémoire, ou que le fournisseur principal est simulé.                                  |
 
 ## Statuts de livraison
 
@@ -96,7 +96,7 @@ Le SQL ci-dessous décrit l'intention ; les noms réels sont ceux du schéma Pri
 ```sql
 CREATE TABLE sms_message (
   id                   uuid PRIMARY KEY,
-  type                 text        NOT NULL CHECK (type IN ('billet','code_retrait','alerte_proche','retard','pin_provisoire','systeme')),
+  type                 text        NOT NULL CHECK (type IN ('billet','code_retrait','alerte_proche','retard','pin_provisoire','code_connexion','systeme')),
   cle                  text        NOT NULL UNIQUE,            -- idempotence : INSERT … ON CONFLICT (cle) DO NOTHING
   reference_type       text,
   reference_id         text,
@@ -160,6 +160,7 @@ techniques et l'audit ne contiennent ni numéro ni texte (testé). Le simulateur
 - **Accents.** `ê î ô û ï ç œ « »` n'existent pas dans l'alphabet GSM ; ils sont remplacés par leur lettre simple (« Bêta » → « Beta ») pour ne pas tripler le prix. À valider côté marque (noms de compagnies).
 - **Expéditeur alphanumérique** « AfriMove » : certains opérateurs (MTN, Orange Cameroun) imposent un enregistrement préalable de l'identifiant ; sans lui, le fournisseur peut le remplacer par un numéro.
 - **`SmsGatewayPasserelle` ne lève plus** en cas d'échec d'envoi (le contrat d'origine le demande) : le message est repris par la file, puis journalisé et audité. Un code de connexion devient caduc après 5 minutes. Si l'authentification doit échouer tout de suite quand aucun SMS ne peut partir, il faut un mode « synchrone » (non fait).
+- **`code_connexion` (connexion du voyageur, AM-023).** Le gabarit garde ses sauts de ligne (permis par l'alphabet GSM) et finit par la ligne `@<domaine> #<code>` que WebOTP exige : le navigateur remplit le code tout seul. Variables : `code` (4 à 8 chiffres), `domaine` (nom d'hôte du site, en minuscules), `minutes` (1 à 15). Sensible (le texte n'est jamais journalisé), urgent, valable 5 minutes, et hors de la limite par destinataire et par heure (le module de connexion a ses propres limites).
 - **Qui voit les coûts.** AfriMove (toutes les compagnies), patron et comptable (leur compagnie). Si les SMS sont à la charge d'AfriMove seul, retirer patron et comptable de `ROLES_COUTS`.
 - **Disjoncteur par processus** : chaque instance de l'API apprend seule l'état d'un fournisseur.
 - **Délai médian < 5 s** : la mesure (demande → acceptation par le fournisseur) est en place et testée avec le simulateur ; elle n'a pas pu être vérifiée sur un vrai agrégateur (pas d'accès réseau ni de compte sandbox). La remise au téléphone dépend de l'opérateur.

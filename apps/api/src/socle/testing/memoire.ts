@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { AuditRepository, type FiltreAudit } from "../audit/audit.repository";
 import { EMPREINTE_INITIALE, type LigneAudit } from "../audit/chaine";
 import { DefisRepository, type Defi, type ObjetDefi } from "../auth/defis.repository";
+import type { Role } from "../auth/roles";
 import {
   PersonnesRepository,
   TelephoneDejaUtilise,
@@ -47,6 +48,12 @@ export class PersonnesMemoire extends PersonnesRepository {
   async enregistrerSucces(id: string) {
     const p = this.lignes.get(id);
     if (p) this.lignes.set(id, { ...p, echecsConnexion: 0, bloqueJusqua: null });
+  }
+
+  async listerActifsParRoles(compagnieId: string, roles: readonly Role[]) {
+    return [...this.lignes.values()].filter(
+      (p) => p.actif && p.compagnieId === compagnieId && p.roles.some((r) => roles.includes(r)),
+    );
   }
 
   /** Test : modifie un compte (désactivation, retrait de rôle…). */

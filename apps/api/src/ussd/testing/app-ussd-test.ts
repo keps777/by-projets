@@ -278,9 +278,10 @@ export async function creerAppUssdTest(options: OptionsAppUssdTest = {}) {
     departType(DEPART_DEMAIN, { ...parBus(alpha), heureDepart: heure("07:00", "2026-11-03") }),
   );
 
-  if (!options.sansPromotion) {
-    (app.get(Promotions) as PromotionsMemoire).ajouter({ code: "USSD", type: "frais_offerts" });
-  }
+  const promotions = app.get(Promotions) as PromotionsMemoire;
+  // Le code existe par défaut en mémoire (comme pour l'application) ; `sansPromotion` le retire.
+  if (options.sansPromotion) promotions.retirer("USSD");
+  else promotions.ajouter({ code: "USSD", type: "frais_offerts" });
   const comptesReversement = app.get(ComptesReversement) as ComptesReversementMemoire;
   await comptesReversement.definir(BETA, "compte-beta");
   if (!options.alphaSansCompte) await comptesReversement.definir(ALPHA, "compte-alpha");

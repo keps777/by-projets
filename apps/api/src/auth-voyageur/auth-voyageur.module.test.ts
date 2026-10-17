@@ -3,9 +3,7 @@ import { FileEnvoiSms } from "../sms/file";
 import type { FileEnvoiMemoire } from "../sms/file-memoire";
 import type { FournisseurSimule } from "../sms/fournisseur-simule";
 import { RegistreFournisseurs } from "../sms/registre";
-import { SmsModule } from "../sms/sms.module";
-import { EnvoiCodeSmsPasserelle } from "./adaptateurs";
-import { AuthVoyageurModule, VerificationAuthVoyageur } from "./auth-voyageur.module";
+import { VerificationAuthVoyageur } from "./auth-voyageur.module";
 import { chargerConfigAuthVoyageur } from "./config";
 import {
   EnvoiCodeSmsMemoire,
@@ -15,7 +13,7 @@ import {
   StockageConnexionMemoire,
 } from "./memoire";
 import { EnvoiCodeSms, EnvoiCodeWhatsApp, FichesVoyageur, StockageConnexion } from "./ports";
-import { formatWebOtp } from "./regles";
+import { formatWebOtp, texteSms } from "./regles";
 import { creerAppAuthTest } from "./testing/app-auth-test";
 
 const production = chargerConfigAuthVoyageur(
@@ -67,13 +65,11 @@ describe("garde-fou de production", () => {
   });
 });
 
-describe("AuthVoyageurModule.avec : remplacer un adaptateur", () => {
+describe("remplacer un adaptateur de AppModule", () => {
   it("branche WhatsApp : la demande par WhatsApp part par WhatsApp", async () => {
     const whatsapp = new EnvoiCodeWhatsAppMemoire();
     const t = await creerAppAuthTest({
-      module: AuthVoyageurModule.avec({
-        providers: [{ provide: EnvoiCodeWhatsApp, useValue: whatsapp }],
-      }),
+      fournisseurs: [{ provide: EnvoiCodeWhatsApp, useValue: whatsapp }],
     });
     try {
       const r = await t
@@ -98,12 +94,7 @@ describe("AuthVoyageurModule.avec : remplacer un adaptateur", () => {
 
 describe("avec la vraie passerelle SMS (AM-166)", () => {
   async function monter() {
-    const t = await creerAppAuthTest({
-      module: AuthVoyageurModule.avec({
-        imports: [SmsModule],
-        providers: [{ provide: EnvoiCodeSms, useClass: EnvoiCodeSmsPasserelle }],
-      }),
-    });
+    const t = await creerAppAuthTest({ passerelleSms: true });
     return {
       t,
       file: t.app.get(FileEnvoiSms) as FileEnvoiMemoire,
@@ -147,13 +138,10 @@ describe("avec la vraie passerelle SMS (AM-166)", () => {
   });
 
   /**
-   * ÉCART CONNU, HORS PÉRIMÈTRE : le gabarit `systeme` de la passerelle SMS ramène les sauts de ligne
-   * à des espaces, donc le SMS arrive en une seule ligne et WebOTP (Chrome Android) ne le reconnaît
-   * pas : il lui faut `@domaine #code` en DERNIÈRE LIGNE. `it.fails` garde ce test vert tant que
-   * l'écart existe et le fera échouer dès que le gabarit sera corrigé (ou qu'un type
-   * `code_connexion` qui garde les lignes sera ajouté) : il suffira alors d'ôter `.fails`.
+   * WebOTP (Chrome Android) ne lit que la DERNIÈRE ligne du SMS : elle doit être `@domaine #code`. Le
+   * type `code_connexion` de la passerelle garde les sauts de ligne (le type `systeme` les écrasait).
    */
-  it.fails("le SMS arrive avec « @domaine #code » en dernière ligne (WebOTP)", async () => {
+  it("le SMS arrive avec « @domaine #code » en dernière ligne (WebOTP)", async () => {
     const { t, file, fournisseur } = await monter();
     try {
       await t.http().post("/voyageur/connexion/code").send({ telephone: "+237691221008" });
@@ -161,6 +149,9 @@ describe("avec la vraie passerelle SMS (AM-166)", () => {
       const texte = fournisseur.envoyes.at(-1)!.texte;
       const code = /#(\d{4})$/.exec(texte)![1]!;
       expect(formatWebOtp(texte, "afrimove.app", code)).toBe(true);
+      // Le gabarit de la passerelle rend exactement le texte que ce module compose.
+      expect(texte).toBe(texteSms(code, 5, "afrimove.app"));
+      expect(texte.split("\n")).toHaveLength(3);
     } finally {
       await t.fermer();
     }

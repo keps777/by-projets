@@ -38,6 +38,11 @@ export abstract class PersonnesRepository {
   abstract creer(personne: NouvellePersonne): Promise<PersonneEnregistree>;
   abstract enregistrerEchec(id: string, echecs: number, bloqueJusqua: Date | null): Promise<void>;
   abstract enregistrerSucces(id: string, at: Date): Promise<void>;
+  /** Les comptes actifs d'une compagnie qui ont l'un de ces rôles (rapport du soir : patron et superviseurs). */
+  abstract listerActifsParRoles(
+    compagnieId: string,
+    roles: readonly Role[],
+  ): Promise<PersonneEnregistree[]>;
 }
 
 @Injectable()
@@ -75,6 +80,17 @@ export class PersonnesPrisma extends PersonnesRepository {
     await this.prisma.personne.update({
       where: { id },
       data: { echecsConnexion: 0, bloqueJusqua: null, derniereConnexionA: at },
+    });
+  }
+
+  async listerActifsParRoles(
+    compagnieId: string,
+    roles: readonly Role[],
+  ): Promise<PersonneEnregistree[]> {
+    if (!/^[0-9a-f-]{36}$/i.test(compagnieId)) return [];
+    return this.prisma.personne.findMany({
+      where: { compagnieId, actif: true, roles: { hasSome: [...roles] } },
+      orderBy: [{ creeA: "asc" }, { id: "asc" }],
     });
   }
 }
