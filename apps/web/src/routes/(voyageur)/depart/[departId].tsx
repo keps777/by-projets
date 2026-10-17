@@ -1,5 +1,7 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { useParams } from "react-router";
+import { EcranSiegePay } from "@/ecrans/SiegePay";
 
 export default function Page() {
-  return <EcranVide planche="SiegePay" />;
+  const { departId = "" } = useParams();
+  return <EcranSiegePay departId={departId} />;
 }
