@@ -1,0 +1,102 @@
+{
+  "entete": {
+    "titre": "",
+    "titreSeul": "",
+    "sousTitre": "",
+    "gares_one": "",
+    "gares_other": "",
+    "bus_one": "",
+    "bus_other": "",
+    "vues": ""
+  },
+  "onglets": {
+    "direct": "",
+    "analyses": "",
+    "comptable": "",
+    "reglages": "",
+    "modules": ""
+  },
+  "direct": {
+    "libelleDirect": "",
+    "libelleHorsLigne": "",
+    "enDirect_one": "",
+    "enDirect_other": "",
+    "horsLigne_one": "",
+    "horsLigne_other": ""
+  },
+  "kpis": {
+    "recette": "",
+    "recetteDetail": "",
+    "billets": "",
+    "billetsDetail": "",
+    "colis": "",
+    "colisDetail": "",
+    "litiges_one": "",
+    "litiges_other": "",
+    "remplissage": "",
+    "remplissageDetail": "",
+    "departs_one": "",
+    "departs_other": "",
+    "fusionnes_one": "",
+    "fusionnes_other": "",
+    "ecarts": "",
+    "ecartsDetail_one": "",
+    "ecartsDetail_other": "",
+    "ecartsAucun": ""
+  },
+  "carte": {
+    "titre": "",
+    "aide": "",
+    "libelle": "",
+    "alerte": "",
+    "alertePanne": "",
+    "legende": ""
+  },
+  "gares": {
+    "titre": "",
+    "aide": "",
+    "colonnes": {
+      "gare": "",
+      "billets": "",
+      "colis": "",
+      "cash": "",
+      "ecart": "",
+      "prochain": "",
+      "superviseur": ""
+    },
+    "prochain": "",
+    "plein": "",
+    "aucunDepart": "",
+    "superviseurEnLigne": "",
+    "superviseurHorsLigne": "",
+    "vide": ""
+  },
+  "aTraiter": {
+    "titre": "",
+    "aide": "",
+    "hier": "",
+    "vide": ""
+  },
+  "ventes": {
+    "titre": "",
+    "aide": "",
+    "libelle": "",
+    "heure": "",
+    "heurePrevu": "",
+    "vide": ""
+  },
+  "rapport": {
+    "titre": "",
+    "envoi_one": "",
+    "envoi_other": "",
+    "caisses": "",
+    "toutesValidees": "",
+    "lien": "",
+    "envoiSeul": ""
+  },
+  "etats": {
+    "chargement": "",
+    "erreur": "",
+    "reessayer": ""
+  }
+}
