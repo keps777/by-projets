@@ -1,0 +1,50 @@
+{
+  "marque": "",
+  "salutation": "",
+  "salutationSansNom": "",
+  "direct": "",
+  "mode": {
+    "aria": "",
+    "entreVilles": "",
+    "memeVille": ""
+  },
+  "trajet": {
+    "aujourdhui": ""
+  },
+  "filtre": {
+    "titre": ""
+  },
+  "classe": {
+    "titre": ""
+  },
+  "compagnies": {
+    "titre": "",
+    "legende": "",
+    "toutesAria": "",
+    "toutes_one": "",
+    "toutes_other": "",
+    "departs_one": "",
+    "departs_other": "",
+    "retirerPreferee": "",
+    "ajouterPreferee": "",
+    "aucune": "",
+    "echecPreferee": ""
+  },
+  "aussi": {
+    "titre": "",
+    "actif": ""
+  },
+  "actions": {
+    "effacer": "",
+    "voir_one": "",
+    "voir_other": "",
+    "voirSansNombre": "",
+    "voirAucun": ""
+  },
+  "note": "",
+  "etats": {
+    "chargement": "",
+    "erreur": "",
+    "reessayer": ""
+  }
+}
