@@ -1,4 +1,5 @@
 import { Inject, Injectable, Module, type OnModuleInit } from "@nestjs/common";
+import { VerrouillageMoisModule } from "../comptable/verrouillage.module";
 import { CONFIG, type AppConfig } from "../socle/config/config";
 import { PrismaService } from "../socle/db/prisma.service";
 import { stockageSurPostgres } from "../socle/db/stockage";
@@ -75,7 +76,7 @@ export class VerificationStockageSync implements OnModuleInit {
  * les versions en mémoire en production ou avec `API_STOCKAGE=postgres`.
  */
 @Module({
-  imports: [NumerotationModule],
+  imports: [NumerotationModule, VerrouillageMoisModule],
   controllers: [SyncController],
   providers: [
     RejeuService,

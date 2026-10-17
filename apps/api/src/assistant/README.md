@@ -9,25 +9,30 @@ fait que **reformuler** des phrases que l'API a déjà calculées, et chaque nom
 « Modèle de langage »). Sans modèle (pas de clé, panne, lenteur, refus), les **règles de l'API** écrivent la
 réponse seules : c'est la réponse de référence.
 
-Le module est autonome : ses accès extérieurs sont des **ports** (`ports.ts`) avec une version **en mémoire**
-(`memoire.ts`). Il n'est **pas** dans `AppModule` et n'a **pas** d'adaptateur PostgreSQL.
+Le module est dans `AppModule` (après `AnalysesModule`, qu'il lit). Ses accès extérieurs sont des **ports**
+(`ports.ts`) avec une version **en mémoire** (`memoire.ts`) et, pour les deux qui ont une table, une version
+**PostgreSQL** (`postgres.ts`), choisies par `API_STOCKAGE` (`postgres` ou `memoire` ; PostgreSQL par défaut en
+production, voir `socle/db/stockage.ts`).
 
-## Brancher le module
+## Intégration (faite) et reste à brancher
 
-À faire par le coordinateur (le brief interdit de toucher `app.module.ts` et `prisma/schema.prisma`) :
-
-1. Ajouter **un seul** `AnalysesModule` (global) puis `AssistantModule` (ou `AssistantModule.avec({ imports,
-providers })`) aux `imports` de `AppModule`. `PersonnesRepository`, `HachageService` et `AuditService` sont
-   déjà globaux (socle) : `AssistantModule` fournit lui-même `VerificateurSignature` et son `Horloge`.
-2. Écrire les adaptateurs PostgreSQL de `ConversationsAssistant` et `PropositionsAssistant` (tables ci-dessous).
-3. Écrire l'adaptateur de production de **`AppliquerActions`** : c'est lui qui change vraiment un réglage. Il
-   appelle le planning (décaler ou ajouter un départ) et la caisse (contrôle inopiné, numéro obligatoire en
-   cadence), qui sont d'**autres tickets**. Il doit être idempotent par `action.id` et lever une
-   `HttpException` `{ statusCode, code, message }` quand l'application n'est plus possible (départ supprimé,
-   règle déjà posée) ; l'API la renvoie en 502 `APPLICATION_IMPOSSIBLE` et libère la proposition.
-4. Fournir au module rapport la question du soir : dans `RapportModule`,
+1. `AnalysesModule` (global) puis `AssistantModule` sont dans les `imports` de `AppModule`. `PersonnesRepository`,
+   `HachageService` et `AuditService` sont déjà globaux (socle) : `AssistantModule` fournit lui-même
+   `VerificateurSignature` et son `Horloge`.
+2. `ConversationsAssistant` et `PropositionsAssistant` ont leur adaptateur PostgreSQL (`ConversationsPrisma`,
+   `PropositionsPrisma`, tables ci-dessous, migration `20261017000900_lot_c_comptable_analyses_assistant` et
+   garde-fous SQL dans `20261017000910_lot_c_garanties`). Ils passent les mêmes tests de contrat que la mémoire
+   (`testing/contrat-ports.ts`, `postgres.integration.test.ts` conditionné par `DATABASE_URL_TEST`).
+3. Dans `AppModule`, le module rapport reçoit la question du soir :
    `{ provide: AssistantRapport, useExisting: AssistantRapportMoteur }` (à la place de `AssistantRapportAucun`).
    Le test `assistant-rapport.test.ts` vérifie la compatibilité de forme avec le port du rapport.
+4. **Reste à écrire : l'adaptateur de production de `AppliquerActions`**. C'est lui qui change vraiment un
+   réglage. Il appelle le planning (décaler ou ajouter un départ) et la caisse (contrôle inopiné, numéro
+   obligatoire en cadence), qui sont d'**autres tickets**. Il doit être idempotent par `action.id` et lever une
+   `HttpException` `{ statusCode, code, message }` quand l'application n'est plus possible (départ supprimé,
+   règle déjà posée) ; l'API la renvoie en 502 `APPLICATION_IMPOSSIBLE` et libère la proposition. Tant qu'il est
+   en mémoire (`AppliquerActionsMemoire`, qui ne fait que mémoriser), `VerificationAssistant` refuse le démarrage
+   en production.
 5. Variables d'environnement (ci-dessous). `ANTHROPIC_API_KEY` vient d'un secret, jamais du dépôt.
 
 `VerificationAssistant` **refuse de démarrer en production** tant que `ConversationsAssistant`,
@@ -144,8 +149,13 @@ analyses (`ANALYSES_NOMMER_CONCURRENTS`, `ANALYSES_SEUIL_ANONYMAT`).
 
 ## Tables PostgreSQL
 
-À créer par le coordinateur dans `prisma/schema.prisma`. Les faits (billets, départs, caisse…) sont lus par les
-ports des analyses : l'assistant n'ajoute que ces deux tables.
+Modèles `AssistantEchange` et `AssistantProposition` du bloc « lot C » de `prisma/schema.prisma` (colonnes en
+camelCase : `compagnieId`, `utilisateurId`, `actionId`, `proposeeLe`… ; le tableau donne la conception, le schéma
+fait foi). Les faits (billets, départs, caisse…) sont lus par les ports des analyses : l'assistant n'ajoute que
+ces deux tables. Ce que la base garantit seule : `assistant_echange` est en ajout seul (déclencheur) ;
+`assistant_proposition` n'accepte qu'une application cohérente (`appliqueePar` et `appliqueeA` ensemble,
+`journalId` seulement si appliquée). L'ordre d'une conversation suit une colonne `seq` (auto-incrémentée) : deux
+questions posées au même instant gardent leur ordre d'arrivée.
 
 **`assistant_echange`** (`EchangeStocke`), ajout seul
 
@@ -206,8 +216,8 @@ d'options (« 09:15 », « 3 500 F ») et les messages d'erreur du tableau ci-de
 
 ## Reste à faire
 
-- Adaptateurs PostgreSQL des deux ports et des cinq ports des analyses ; `AppliquerActions` de production
-  (planning et caisse, autres tickets).
+- `AppliquerActions` de production (planning et caisse, autres tickets) : seul port de l'assistant encore en
+  mémoire.
 - Appel réel à l'API Claude **non vérifié** (pas de réseau ni de clé dans ce ticket) : `ModeleClaude` est testé
   avec un faux `TransportClaude` (forme de la requête, lecture de la réponse, refus, délai) et `TransportFetch`
   seulement sur l'échec de connexion ; un essai réel avec une vraie clé reste à faire. Remplacer `fetch` par le SDK officiel.

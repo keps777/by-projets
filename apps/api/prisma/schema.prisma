@@ -1284,7 +1284,7 @@ model SmsEssai {
   @@map("sms_essai")
 }
 
-// ============================================================================================
+// =====================================================================================
 // LOT A · Intégration API : adaptateurs PostgreSQL de gps, paiements, rapport, auth-voyageur, ussd,
 // whatsapp et whatsapp-achat (journaux). Bloc contigu, à la fin du fichier, pour faciliter la fusion.
 //
@@ -1759,4 +1759,310 @@ model WhatsappAchat {
 
   @@index([etat, creeA])
   @@map("whatsapp_achat")
+}
+
+/**
+ * ================================================================== lot C : comptable, analyses, assistant
+ * Bloc contigu, ajouté en fin de fichier (migration `20261017000900_lot_c_comptable_analyses_assistant`).
+ * Conventions de ce bloc :
+ * - aucune relation vers les modèles des autres lots (les clés étrangères vers `compagnie`,
+ * `personne`, `bus` et `depart` sont posées en SQL dans la migration), pour que ce bloc se fusionne
+ * sans toucher aux modèles existants ;
+ * - « SQL : » signale un garde-fou que Prisma ne sait pas exprimer (CHECK, déclencheurs, index
+ * partiels). Index ajoutés en SQL sur des tables existantes : `billet (compagnieId, creeA)`,
+ * `billet ((paiement ->> 'reference'))` (partiel), `colis (compagnieId, creeA)` et
+ * `colis (paiementReference)` : ils servent aux lectures du rapprochement et des exports.
+ */
+
+/**
+ * ------------------------------------------------------------------ comptable (AM-114)
+ */
+
+/// Réglages de l'agence pour son comptable. L'adresse du cabinet est une donnée personnelle : chiffrée.
+/// SQL : jours de 1 à 28.
+model ParametresComptables {
+  compagnieId         String  @id @db.Uuid
+  nomAgence           String  @default("")
+  /// Chiffrée (AES-256-GCM, contexte `comptable.cabinet`).
+  emailCabinetChiffre String?
+  envoiAutomatique    Boolean @default(false)
+  jourEnvoi           Int     @default(2)
+  jourCloture         Int     @default(5)
+
+  @@map("parametres_comptables")
+}
+
+/// Un mois clôturé : il ne se rouvre jamais. La clé primaire fait que, de deux clôtures simultanées, une
+/// seule gagne. SQL : seul `envoiRecuA` (de NULL à une date) peut changer ; aucune suppression.
+model ClotureMois {
+  compagnieId         String    @db.Uuid
+  /// AAAA-MM (heure de Douala).
+  mois                String
+  clotureA            DateTime  @db.Timestamptz(3)
+  parId               String    @db.Uuid
+  parNom              String
+  /// Ligne du journal d'audit qui a signé la clôture.
+  journalId           String    @db.Uuid
+  /// {total, cash, momo, carte, ecart}
+  encaisse            Json
+  /// {tauxRapprochePct, ventesMobile, recuMarchand, sansCorrespondance}
+  rapprochement       Json
+  /// Les transactions du rapprochement et leur décision au moment de la clôture.
+  lignes              Json
+  /// Description, lignes, statut, format, taille et pages des cinq exports.
+  exports             Json
+  apercuJournal       String[]  @default([])
+  /// Chiffrée (contexte `comptable.cabinet`).
+  destinataireChiffre String?
+  envoiDemande        Boolean   @default(false)
+  envoiRecuA          DateTime? @db.Timestamptz(3)
+
+  fichiers ExportFichier[]
+
+  @@id([compagnieId, mois])
+  @@index([envoiDemande, envoiRecuA])
+  @@map("cloture_mois")
+}
+
+/// Les cinq fichiers d'un mois clôturé, tels qu'ils ont été envoyés. SQL : aucune modification ni suppression.
+model ExportFichier {
+  compagnieId String   @db.Uuid
+  mois        String
+  exportId    String
+  format      String
+  nom         String
+  nomFichier  String
+  typeMime    String
+  contenu     Bytes
+  /// Le tableau JSON de l'aperçu, compressé (gzip).
+  tableauGz   Bytes
+  /// HMAC-SHA-256 en hexadécimal (64 caractères).
+  empreinte   String
+  genereA     DateTime @db.Timestamptz(3)
+  colonnes    Int
+  lignes      Int?
+  pages       Int?
+
+  cloture ClotureMois @relation(fields: [compagnieId, mois], references: [compagnieId, mois])
+
+  @@id([compagnieId, mois, exportId])
+  @@map("export_fichier")
+}
+
+/// Le dernier fichier généré pour l'aperçu d'un mois ouvert (le téléchargement qui suit rend ces octets).
+model ApercuFichier {
+  compagnieId String   @db.Uuid
+  mois        String
+  exportId    String
+  format      String
+  nom         String
+  nomFichier  String
+  typeMime    String
+  contenu     Bytes
+  empreinte   String
+  genereA     DateTime @db.Timestamptz(3)
+  colonnes    Int
+  lignes      Int?
+  pages       Int?
+
+  @@id([compagnieId, mois, exportId])
+  @@map("apercu_fichier")
+}
+
+/// Décision prise sur une transaction sans correspondance : définitive, conservée 7 ans. La clé primaire
+/// (la référence de l'opérateur) rend la décision définitive. SQL : rembourser | rattacher | demander ;
+/// pas de décision dans un mois clôturé ; seule l'exécution (`en_attente` vers `faite`) change ; une
+/// décision ne se supprime que tant qu'elle est `en_attente` (refus définitif de l'opérateur).
+model DecisionRapprochement {
+  compagnieId        String   @db.Uuid
+  mois               String
+  /// Identifiant de la transaction chez l'opérateur.
+  reference          String
+  action             String
+  cible              String?
+  montant            Int
+  operateur          String
+  /// Jamais le numéro en clair.
+  telephoneMasque    String
+  cause              String
+  explication        String
+  decideA            DateTime @db.Timestamptz(3)
+  parId              String   @db.Uuid
+  parNom             String
+  journalId          String   @db.Uuid
+  /// pin | empreinte
+  methode            String
+  /// en_attente | faite
+  execution          String
+  referenceExecution String?
+
+  @@id([compagnieId, mois, reference])
+  @@index([execution, decideA])
+  @@map("decision_rapprochement")
+}
+
+/// Envoi des fichiers au cabinet. La clé (`cloture:<agence>:<mois>` ou `auto:<agence>:<mois>`) est
+/// l'idempotence : un envoi automatique ne part qu'une fois par mois.
+model EnvoiCabinet {
+  cle                 String    @id
+  compagnieId         String    @db.Uuid
+  mois                String
+  /// cloture | automatique
+  nature              String
+  definitif           Boolean
+  /// Chiffré (contexte `comptable.cabinet`).
+  destinataireChiffre String
+  envoyeA             DateTime  @db.Timestamptz(3)
+  recuA               DateTime? @db.Timestamptz(3)
+
+  @@index([compagnieId, envoyeA(sort: Desc)])
+  @@map("envoi_cabinet")
+}
+
+/// Lignes des relevés MTN et Orange du compte marchand de l'agence (alimentées par l'import des relevés).
+model ReleveOperateurLigne {
+  compagnieId      String   @db.Uuid
+  /// Identifiant de la transaction chez l'opérateur.
+  reference        String
+  recueA           DateTime @db.Timestamptz(3)
+  /// Chiffré (contexte `comptable.releve`).
+  telephoneChiffre String
+  /// mtn | orange
+  operateur        String
+  montant          Int
+  importeA         DateTime @default(now()) @db.Timestamptz(3)
+
+  @@id([compagnieId, reference])
+  @@index([compagnieId, recueA])
+  @@map("releve_operateur_ligne")
+}
+
+/// Factures hebdomadaires d'AfriMove réglées par l'agence (une par dimanche de fin de semaine). Alimentée
+/// par le futur module de facturation.
+model FacturePayee {
+  compagnieId  String   @db.Uuid
+  /// AAAA-MM-JJ du dimanche qui termine la semaine facturée.
+  dimanche     String
+  /// AAAA-MM-JJ du paiement.
+  payeeLe      String
+  enregistreeA DateTime @default(now()) @db.Timestamptz(3)
+
+  @@id([compagnieId, dimanche])
+  @@map("facture_payee")
+}
+
+/// Effets du rapprochement déjà joués (rattachement d'une référence à un colis ou un billet). La clé est
+/// celle de la décision : la rejouer rend la même référence et n'écrit rien de plus.
+model ActionRapprochementFaite {
+  cle       String   @id
+  type      String
+  reference String
+  /// Référence de l'opération (rattachement, remboursement, réclamation).
+  resultat  String
+  faiteA    DateTime @default(now()) @db.Timestamptz(3)
+
+  @@map("action_rapprochement_faite")
+}
+
+/**
+ * ------------------------------------------------------------------ analyses (AM-109) : faits d'exploitation
+ */
+
+/// Fiche d'un bus que les analyses affichent (modèle, année, chauffeur habituel, entretien à prévoir).
+/// Saisie à venir (écran flotte) : sans fiche, le modèle est vide et l'année vaut 0.
+model BusFiche {
+  busId               String   @id @db.Uuid
+  modele              String   @default("")
+  annee               Int      @default(0)
+  chauffeurHabituelId String?  @db.Uuid
+  /// « pneus à changer », « visite technique »…
+  entretien           String?
+  misAJourA           DateTime @default(now()) @db.Timestamptz(3)
+
+  @@map("bus_fiche")
+}
+
+/// Ce que le chauffeur ou le superviseur note d'un départ : une remarque (« soute colis », « clim ») et
+/// le retard constaté. Saisie à venir.
+model DepartObservation {
+  departId      String   @id @db.Uuid
+  note          String?
+  retardMinutes Int?
+  misAJourA     DateTime @default(now()) @db.Timestamptz(3)
+
+  @@map("depart_observation")
+}
+
+/// Incident d'un départ. SQL : nature `panne` | `autre`.
+model DepartIncident {
+  id           String   @id @db.Uuid
+  departId     String   @db.Uuid
+  nature       String
+  description  String
+  dureeMinutes Int?
+  signaleA     DateTime @db.Timestamptz(3)
+
+  @@index([departId, signaleA])
+  @@map("depart_incident")
+}
+
+/// Dépense d'un départ, en FCFA entiers. SQL : nature `carburant` | `panne` | `autre`, montant >= 0.
+model DepartDepense {
+  id       String   @id @db.Uuid
+  departId String   @db.Uuid
+  nature   String
+  montant  Int
+  libelle  String?
+  saisieA  DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([departId])
+  @@map("depart_depense")
+}
+
+/**
+ * ------------------------------------------------------------------ assistant du patron (AM-109)
+ */
+
+/// Une question du patron et la réponse reçue. EN AJOUT SEUL. Pas de téléphone ni de nom de voyageur ; la
+/// question est du texte libre du patron (à purger après 90 jours, à confirmer).
+model AssistantEchange {
+  id            String   @id @db.Uuid
+  /// Ordre d'arrivée : rend l'ordre de la conversation exact même pour deux questions au même instant.
+  seq           BigInt   @unique @default(autoincrement())
+  compagnieId   String   @db.Uuid
+  /// Le patron : la mémoire est celle d'un patron, pas de la compagnie.
+  utilisateurId String   @db.Uuid
+  /// pourquoi_ligne | cout_bus | prevision_jour | et_si_prix | ou_part_argent | ambigue | inconnue
+  intention     String
+  /// regles | modele
+  redaction     String
+  /// La `ReponseAssistant` rendue (question comprise).
+  reponse       Json
+  /// {ligneId, departId} : de quoi comprendre « et si… ».
+  contexte      Json
+  creeLe        DateTime @db.Timestamptz(3)
+
+  @@index([compagnieId, utilisateurId, seq(sort: Desc)])
+  @@map("assistant_echange")
+}
+
+/// Ce que l'API a proposé au patron. Il ne peut appliquer que ce qui s'y trouve, avec les paramètres
+/// enregistrés ici. SQL : application cohérente (par et à ensemble) ; `journalId` seulement si appliquée.
+model AssistantProposition {
+  compagnieId  String    @db.Uuid
+  /// Identifiant déterministe de l'action (« decaler_depart:… »).
+  actionId     String
+  /// L'`ActionProposee` complète (type, libellé, paramètres).
+  action       Json
+  proposeeLe   DateTime  @db.Timestamptz(3)
+  expireLe     DateTime  @db.Timestamptz(3)
+  appliqueePar String?   @db.Uuid
+  appliqueeA   DateTime? @db.Timestamptz(3)
+  /// Ligne du journal d'audit, posée par `confirmer`.
+  journalId    String?   @db.Uuid
+  effetA       DateTime? @db.Timestamptz(3)
+
+  @@id([compagnieId, actionId])
+  @@index([compagnieId, expireLe])
+  @@map("assistant_proposition")
 }

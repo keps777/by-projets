@@ -78,7 +78,8 @@ export interface OptionsAppComptableTest {
 
 /**
  * L'API complète (gardes, rôles, journal d'audit) avec le module comptable branché sur ses adaptateurs en
- * mémoire. `AppModule` n'importe pas `ComptableModule` : on refait le montage ici.
+ * mémoire (`API_STOCKAGE` absent en test). `ComptableModule` est déjà dans `AppModule` : l'import ci-dessous
+ * est le même module (Nest ne le monte qu'une fois), gardé pour que le test dise ce qu'il utilise.
  */
 export async function creerAppComptableTest(options: OptionsAppComptableTest = {}) {
   const config = configTest(options.config);

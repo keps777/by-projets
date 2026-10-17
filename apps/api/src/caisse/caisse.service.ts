@@ -1,4 +1,5 @@
 import { HttpException, Injectable, Logger } from "@nestjs/common";
+import { VerrouillageMois } from "../comptable/verrouillage.service";
 import type { Utilisateur } from "../socle/auth/decorateurs";
 import { PersonnesRepository } from "../socle/comptes/personnes.repository";
 import { Horloge } from "../socle/horloge";
@@ -80,7 +81,13 @@ export class CaisseService {
     private readonly journal: JournalSigneService,
     private readonly idem: IdempotenceService,
     private readonly horloge: Horloge,
+    private readonly verrou: VerrouillageMois,
   ) {}
+
+  /** Refuse (409 MOIS_VERROUILLE) une écriture datée d'un mois clôturé ; sans compagnie, rien à verrouiller. */
+  private async exigerMoisOuvert(compagnieId: string | null, cible: string): Promise<void> {
+    if (compagnieId) await this.verrou.exigerOuvert(compagnieId, cible);
+  }
 
   /* ------------------------------------------------------------------ écritures */
 
@@ -95,6 +102,9 @@ export class CaisseService {
         throw interdit("GUICHET_AUTRE_GARE", "Ce guichet n'est pas celui de votre gare");
       }
       this.verifierNumero(d, e.at, guichet.rang, guichet.gareCode);
+      // Une caisse ouverte à une date d'un mois clôturé (appareil resté hors ligne) serait une écriture
+      // dans un mois figé : refusée (409 MOIS_VERROUILLE).
+      await this.exigerMoisOuvert(guichet.compagnieId, e.at);
 
       const session: SessionStockee = {
         id: d.sessionId,
@@ -163,6 +173,7 @@ export class CaisseService {
           },
         );
       }
+      await this.exigerMoisOuvert(session.compagnieId, session.ouverteA);
       let total: number;
       try {
         total = totalCoupures(d.coupures, d.pieces);
@@ -217,6 +228,7 @@ export class CaisseService {
           etat: session.etat,
         });
       }
+      await this.exigerMoisOuvert(session.compagnieId, session.ouverteA);
       if (session.comptage && session.comptage.total !== d.cashCompte) {
         throw invalide(
           "COMPTAGE_DIFFERENT",
@@ -270,6 +282,11 @@ export class CaisseService {
     return nombre;
   }
 
+  /**
+   * La clôture de minuit n'est jamais refusée par le verrou des mois : elle ferme une caisse restée
+   * ouverte (sécurité de l'argent) et ne crée aucun mouvement ; seule une clôture de mois lancée dans la
+   * minute qui suit minuit peut la précéder.
+   */
   private async cloturerAutomatiquement(session: SessionStockee, reference: string) {
     const at = heureClotureAuto(reference);
     const evenementId = uuidDeterministe(`caisse.cloturee.auto:${session.id}:${reference}`);

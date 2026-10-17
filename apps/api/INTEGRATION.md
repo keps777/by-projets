@@ -389,4 +389,49 @@ mémoire ou simulé :
   l'appareil l'a écrite (la signature porte sur ce texte) ; `at` en est la valeur horodatée.
 - **Verrous consultatifs** : `pg_advisory_xact_lock(int, int)` avec un espace par usage (numérotation :
   `7_017_161`, billetterie : `7_017_162`, journal d'agence et caisse : `7_017_164`, paiements : `7_017_165`, connexion du voyageur : `7_017_166`, tests d'intégration : `7_017_999`). Un nouvel adaptateur qui prend un verrou choisit un
-  nouvel espace, pour ne pas bloquer un autre module.
+  nouvel espace, pour ne pas bloquer un autre module. Le lot C ajoute `7_017_114` (clôture d'un mois : verrou
+  exclusif ; décision de rapprochement du même mois : verrou partagé) et `7_017_115` (rattachement d'une
+  référence d'opérateur).
+
+## Lot C : comptable (AM-114), analyses et assistant (AM-109)
+
+Les trois modules sont dans `AppModule` (`AnalysesModule` avant `AssistantModule`, `ComptableModule`) et ont
+leurs adaptateurs PostgreSQL, choisis par `API_STOCKAGE` comme les autres. Migrations (préfixe réservé
+`20261017000900`–`999`) : `20261017000900_lot_c_comptable_analyses_assistant` (tables, clés étrangères, index
+ajoutés sur `billet` et `colis`) et `20261017000910_lot_c_garanties` (CHECK, déclencheurs, verrous). Les modèles
+sont en bloc contigu à la fin de `prisma/schema.prisma` (en-tête « lot C »).
+
+| Module (ticket)    | Dossier         | Tables (nom SQL)                                                                                                                                                                                | Reste en mémoire ou simulé                                                                            |
+| ------------------ | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Comptable (AM-114) | `src/comptable` | `parametres_comptables`, `cloture_mois`, `export_fichier`, `apercu_fichier`, `decision_rapprochement`, `envoi_cabinet`, `releve_operateur_ligne`, `facture_payee`, `action_rapprochement_faite` | `MessagerieCabinet` ; `rembourser` et `reclamer` de `ActionsRapprochement` (le rattachement est réel) |
+| Analyses (AM-109)  | `src/analyses`  | `bus_fiche`, `depart_observation`, `depart_incident`, `depart_depense` (faits d'exploitation que personne n'écrit encore) ; lit les tables des autres modules                                   | rien                                                                                                  |
+| Assistant (AM-109) | `src/assistant` | `assistant_echange` (ajout seul), `assistant_proposition`                                                                                                                                       | `AppliquerActions` (planning et caisse : autres tickets)                                              |
+
+Garanties tenues par la base : un mois clôturé ne se modifie ni ne se supprime (seul l'accusé de réception du
+cabinet passe de NULL à une date) ; de deux clôtures simultanées une seule gagne (clé primaire
+`(compagnieId, mois)`) ; une décision de rapprochement est définitive (clé = référence de l'opérateur), n'entre
+pas dans un mois qui se clôture et ne change que par son exécution ; les fichiers figés ne changent plus ; les
+échanges de l'assistant sont en ajout seul et une proposition ne s'applique qu'une fois (compare-et-échange).
+
+Branchements entre modules :
+
+- **Rapport du soir** : `AssistantRapport` → `AssistantRapportMoteur` (`useExisting`, dans `AppModule`).
+- **Mois clôturés** (`VerrouillageMois`, fourni par `VerrouillageMoisModule`, importé par la caisse, la
+  billetterie, la synchronisation et les paiements ; une seule instance des clôtures) : caisse = refus 409
+  `MOIS_VERROUILLE` (ouverture, comptage, clôture d'une session d'un mois clos ; jamais la clôture de minuit) ;
+  billetterie = une vente hors ligne tardive est acceptée mais datée du début du premier mois ouvert ;
+  synchronisation = événement journalisé et alerte `evenement_mois_clos` ; paiements = fin de remboursement
+  notifiée tard datée du premier mois ouvert (les autres écritures portent l'heure du serveur). Non branché : les
+  validations et refus de caisse du superviseur sur une session d'un mois clos.
+
+Tests (conditionnés par `DATABASE_URL_TEST` pour ceux qui touchent PostgreSQL) : `comptable/postgres.integration.test.ts`,
+`analyses/postgres.integration.test.ts`, `assistant/postgres.integration.test.ts` (contrats passés par la mémoire
+et par PostgreSQL, garanties de la base, API de bout en bout) et `comptable/verrouillage.integration.test.ts`
+(verrou des mois sur l'API PostgreSQL) ; suites de contrat dans `comptable/testing/contrat-ports.ts` et
+`assistant/testing/contrat-ports.ts`. Les tests de verrou en mémoire sont `caisse/verrouillage-mois.e2e.test.ts`,
+`billetterie/verrouillage-mois.e2e.test.ts`, `sync/verrouillage-mois.e2e.test.ts` et
+`paiements/remboursements.service.test.ts`.
+
+Pour la production : `ComptableModule` et `AssistantModule` refusent encore de démarrer tant que
+`MessagerieCabinet`, `rembourser` / `reclamer` et `AppliquerActions` sont simulés ; `releve_operateur_ligne` et
+`facture_payee` sont lues mais rien ne les alimente encore.

@@ -129,6 +129,7 @@ export class RelevesMemoire extends RelevesOperateur implements Volatil {
   async lignes(compagnieId: string, du: string, avant: string): Promise<LigneReleve[]> {
     return (this.parCompagnie.get(compagnieId) ?? [])
       .filter((l) => dans(l.recueA, du, avant))
+      .sort((a, b) => enMs(a.recueA) - enMs(b.recueA) || a.reference.localeCompare(b.reference))
       .map((l) => ({ ...l }));
   }
 }
@@ -232,10 +233,16 @@ export class ClotureMemoire extends Clotures implements Volatil {
     return this.lignes.get(this.cle(compagnieId, mois)) ?? null;
   }
 
-  async lister(compagnieId: string): Promise<Cloture[]> {
+  async existe(compagnieId: string, mois: string): Promise<boolean> {
+    return this.lignes.has(this.cle(compagnieId, mois));
+  }
+
+  async mois(compagnieId: string): Promise<string[]> {
     return [...this.lignes.values()]
       .filter((c) => c.compagnieId === compagnieId)
-      .sort((a, b) => b.mois.localeCompare(a.mois));
+      .map((c) => c.mois)
+      .sort()
+      .reverse();
   }
 
   async verrouiller(cloture: Cloture): Promise<boolean> {
@@ -306,11 +313,16 @@ export class DecisionsMemoire extends DecisionsRapprochement implements Volatil 
   ): Promise<void> {
     const cle = this.cle(compagnieId, mois, reference);
     const d = this.lignes.get(cle);
-    if (d) this.lignes.set(cle, { ...d, execution: "faite", referenceExecution });
+    // Seule transition permise, comme en base : en attente vers faite. Déjà faite, rien ne change.
+    if (d && d.execution === "en_attente") {
+      this.lignes.set(cle, { ...d, execution: "faite", referenceExecution });
+    }
   }
 
   async retirer(compagnieId: string, mois: string, reference: string): Promise<void> {
-    this.lignes.delete(this.cle(compagnieId, mois, reference));
+    const cle = this.cle(compagnieId, mois, reference);
+    // Une décision exécutée ne se retire pas : l'argent est parti.
+    if (this.lignes.get(cle)?.execution === "en_attente") this.lignes.delete(cle);
   }
 
   async enAttente(limite: number): Promise<DecisionRapprochement[]> {

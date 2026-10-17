@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { conflit, inconnu, invalide } from "../billetterie/erreurs";
+import { VerrouillageMois } from "../comptable/verrouillage.service";
 import { AuditService } from "../socle/audit/audit.service";
 import type { Utilisateur } from "../socle/auth/decorateurs";
 import { Horloge } from "../socle/horloge";
@@ -56,6 +57,7 @@ export class RemboursementsService {
     private readonly horloge: Horloge,
     private readonly verrous: Verrous,
     @Inject(CONFIG_PAIEMENTS) private readonly config: ConfigPaiements,
+    private readonly verrou: VerrouillageMois,
   ) {}
 
   /**
@@ -295,6 +297,11 @@ export class RemboursementsService {
     return n;
   }
 
+  private async dateDansUnMoisOuvert(compagnieId: string, instant: Date): Promise<Date> {
+    if (!(await this.verrou.estVerrouille(compagnieId, instant))) return instant;
+    return new Date(await this.verrou.premierInstantOuvert(compagnieId, instant));
+  }
+
   /** Notification de l'agrégateur sur un remboursement. */
   async appliquerNotification(
     n: NotificationAgregateur,
@@ -306,6 +313,10 @@ export class RemboursementsService {
     const paiement = await this.paiements.trouver(r.paiementId);
     if (!paiement) return "inconnu";
     return this.verrous.executer(`paiement:${paiement.id}`, async () => {
+      // La date de fin du remboursement est celle de l'agrégateur. Une notification qui arrive après la
+      // clôture du mois où elle est datée n'est jamais refusée (l'argent est parti) : elle s'inscrit au
+      // début du premier mois ouvert. L'audit garde la vraie heure.
+      const termineA = await this.dateDansUnMoisOuvert(paiement.compagnieId, n.at);
       const commun = {
         idFournisseur: n.idFournisseur,
         referenceOperateur: n.referenceOperateur ?? r.referenceOperateur,
@@ -317,13 +328,13 @@ export class RemboursementsService {
               ...commun,
               statut: "reussi",
               derniereErreur: null,
-              termineA: n.at,
+              termineA,
             })
           : await this.remboursements.transitionner(r.id, ["demande"], {
               ...commun,
               statut: "echoue",
               derniereErreur: n.code ?? "refuse",
-              termineA: n.at,
+              termineA,
             });
       if (!apres) return "ignore";
       await this.audit.enregistrer({

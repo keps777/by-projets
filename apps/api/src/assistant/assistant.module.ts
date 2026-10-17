@@ -11,6 +11,8 @@ import {
 import type { Durable } from "../analyses/ports";
 import { VerificateurSignature } from "../modules/signature";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { AssistantRapportMoteur } from "./assistant-rapport";
 import { AssistantController } from "./assistant.controller";
@@ -18,6 +20,7 @@ import { AssistantService } from "./assistant.service";
 import { CONFIG_ASSISTANT, chargerConfigAssistant, type ConfigAssistant } from "./config";
 import { AppliquerActionsMemoire, ConversationsMemoire, PropositionsMemoire } from "./memoire";
 import { ModeleAucun, ModeleClaude, TransportClaude, TransportFetch } from "./modele-langage";
+import { ConversationsPrisma, PropositionsPrisma } from "./postgres";
 import {
   AppliquerActions,
   ConversationsAssistant,
@@ -82,8 +85,10 @@ export interface AdaptateursAssistant {
  * langage (Claude) ne fait que reformuler des phrases que l'API a calculées, et chaque nombre de sa
  * réponse est vérifié.
  *
- * Module autonome, pas encore dans `AppModule` : le coordinateur branche les adaptateurs PostgreSQL et le
- * planning (README), ajoute le module, et fournit `AssistantRapport` au module rapport.
+ * Dans `AppModule`. Les conversations et les propositions ont leur version PostgreSQL (`postgres.ts`),
+ * choisie par `API_STOCKAGE`. `AppliquerActions` reste simulé tant que le planning n'existe pas : en
+ * production, le garde-fou ci-dessus refuse alors de démarrer (voir README). `AssistantRapport` est
+ * fourni au module rapport par `AppModule` (`AssistantRapportMoteur`).
  */
 @Module({
   controllers: [AssistantController],
@@ -95,8 +100,20 @@ export interface AdaptateursAssistant {
         chargerConfigAssistant(process.env, config.env === "production"),
     },
     { provide: Horloge, useClass: HorlogeSysteme },
-    { provide: ConversationsAssistant, useClass: ConversationsMemoire },
-    { provide: PropositionsAssistant, useClass: PropositionsMemoire },
+    // PostgreSQL en production (ou avec API_STOCKAGE=postgres), mémoire ailleurs : voir socle/db/stockage.ts.
+    {
+      provide: ConversationsAssistant,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new ConversationsPrisma(prisma) : new ConversationsMemoire(),
+    },
+    {
+      provide: PropositionsAssistant,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new PropositionsPrisma(prisma) : new PropositionsMemoire(),
+    },
+    // Reste simulé : le planning (qui applique les réglages acceptés) n'existe pas encore.
     { provide: AppliquerActions, useClass: AppliquerActionsMemoire },
     { provide: TransportClaude, useClass: TransportFetch },
     {

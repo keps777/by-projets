@@ -1,4 +1,6 @@
 import { DiffusionMemoire, ProchesMemoire } from "../../billetterie/memoire";
+import { ClotureMemoire } from "../../comptable/memoire";
+import { VerrouillageMois } from "../../comptable/verrouillage.service";
 import { AuditService } from "../../socle/audit/audit.service";
 import type { Utilisateur } from "../../socle/auth/decorateurs";
 import { ChiffrementService } from "../../socle/chiffrement/chiffrement.service";
@@ -131,6 +133,8 @@ export function monterPaiements(options: OptionsMontage = {}) {
   annuaire.ajouter(VOYAGEUR.id, TEL_ORANGE, "Aïcha");
   annuaire.ajouter(AUTRE_VOYAGEUR.id, TEL_MTN, "Paul");
 
+  const clotures = new ClotureMemoire();
+  const verrou = new VerrouillageMois(clotures);
   const mode = new ModeDegradeService(reglages, garde, audit, horloge, config);
   const remb = new RemboursementsService(
     remboursements,
@@ -140,6 +144,7 @@ export function monterPaiements(options: OptionsMontage = {}) {
     horloge,
     verrous,
     config,
+    verrou,
   );
   const encaissements = new EncaissementsService(
     paiements,
@@ -205,6 +210,8 @@ export function monterPaiements(options: OptionsMontage = {}) {
     notifieur,
     annuaire,
     proches,
+    /** Les mois clôturés (vide au départ) : `clotures.verrouiller({ compagnieId, mois } as Cloture)`. */
+    clotures,
     mode,
     remb,
     encaissements,

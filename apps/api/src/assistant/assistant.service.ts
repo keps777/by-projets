@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { HttpException, Inject, Injectable, Logger } from "@nestjs/common";
 import { AnalysesService } from "../analyses/analyses.service";
 import { erreurApi } from "../analyses/erreurs";
@@ -322,7 +323,7 @@ export class AssistantService {
   ): Promise<void> {
     try {
       await this.conversations.ajouter({
-        id: `echange-${this.horloge.maintenant().getTime()}-${Math.random().toString(36).slice(2, 10)}`,
+        id: randomUUID(),
         compagnieId,
         utilisateurId: utilisateur.id,
         intention: brouillon.intention,

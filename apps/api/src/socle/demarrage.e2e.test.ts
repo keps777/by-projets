@@ -29,6 +29,10 @@ import {
 } from "../paiements/config";
 import { VerificationStockagePaiements } from "../paiements/paiements.module";
 import { CONFIG_RAPPORT, chargerConfigRapport, type ConfigRapport } from "../rapport/config";
+import { AssistantRapportMoteur } from "../assistant/assistant-rapport";
+import { VerificationAssistant } from "../assistant/assistant.module";
+import { AssistantRapport } from "../rapport/ports";
+import { VerificationPortsComptable } from "../comptable/comptable.module";
 import { VerificationRapport } from "../rapport/rapport.module";
 import { SourceRapportSoirPourWhatsApp } from "../rapport/source-whatsapp";
 import { VerificationPortsRelais } from "../relais/relais.module";
@@ -120,6 +124,9 @@ describe("démarrage complet d'AppModule (adaptateurs en mémoire)", () => {
       "GET /voyageur/covoit", // covoiturage
       "GET /relais/moi", // relais
       "GET /livreurs/moi", // livraison
+      "GET /patron/analyses", // analyses (lot C)
+      "POST /patron/comptable/clotures", // comptable (lot C)
+      "POST /patron/assistant/questions", // assistant (lot C)
     ];
     for (const route of attendues) expect(routes, route).toContain(route);
   });
@@ -141,6 +148,10 @@ describe("démarrage complet d'AppModule (adaptateurs en mémoire)", () => {
     expect(resoudre(AnnuaireRapport)).toBeInstanceOf(AnnuaireRapportPersonnes);
     expect(resoudre(SecoursSms)).toBeInstanceOf(SecoursSmsPasserelle);
     expect(resoudre(SecoursSms).branche).toBe(true);
+  });
+
+  it("le rapport du soir prend sa phrase d'analyse dans le moteur de l'assistant du patron", () => {
+    expect(resoudre(AssistantRapport)).toBe(resoudre(AssistantRapportMoteur));
   });
 
   it("le taux de change de la billetterie vient de l'agrégateur de paiement", () => {
@@ -235,6 +246,10 @@ describe("production : l'application refuse de démarrer avec un port en mémoir
     ["covoiturage", VerificationStockageCovoiturage, /CovoiturageModule.*(mémoire|simulés)/],
     ["relais", VerificationPortsRelais, /RelaisModule.*(mémoire|simulés)/],
     ["livraison", VerificationPortsLivraison, /LivraisonModule.*en mémoire/],
+    // Lot C : les ports de données sont sur PostgreSQL, mais la messagerie du cabinet, les actions
+    // de remboursement/réclamation et l'application des réglages de l'assistant restent simulés.
+    ["comptable", VerificationPortsComptable, /ComptableModule.*(mémoire|simulés)/],
+    ["assistant", VerificationAssistant, /AssistantModule.*AppliquerActions.*en mémoire/],
   ];
 
   it.each(gardes)(

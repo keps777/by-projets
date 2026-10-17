@@ -25,7 +25,7 @@ export class VerrouillageMois {
   }
 
   async estVerrouille(compagnieId: string, cible: string | Date): Promise<boolean> {
-    return (await this.clotures.trouver(compagnieId, this.moisDeLa(cible))) !== null;
+    return this.clotures.existe(compagnieId, this.moisDeLa(cible));
   }
 
   /** Lève 409 `MOIS_VERROUILLE` si le mois (ou l'instant) tombe dans un mois clôturé. */

@@ -105,7 +105,8 @@ export class PropositionsMemoire extends PropositionsAssistant {
 
   async liberer(compagnieId: string, actionId: string): Promise<void> {
     const p = this.lignes.get(this.cle(compagnieId, actionId));
-    if (p) p.application = null;
+    // Une application confirmée (ligne du journal posée) ne se libère plus : comme sur PostgreSQL.
+    if (p && (p.application === null || p.application.journalId === null)) p.application = null;
   }
 }
 

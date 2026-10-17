@@ -1,4 +1,5 @@
 import { Inject, Injectable, Module, forwardRef, type OnModuleInit } from "@nestjs/common";
+import { VerrouillageMoisModule } from "../comptable/verrouillage.module";
 import { NumerotationModule } from "../numerotation/numerotation.module";
 import { NumerotationService } from "../numerotation/numerotation.service";
 import { ConversionDevisesPaiements } from "../paiements/adaptateurs";
@@ -167,7 +168,7 @@ export class VerificationStockageBilletterie implements OnModuleInit {
 @Module({
   // Les paiements importent la billetterie (ils lisent ses commandes) et la billetterie leur emprunte le
   // taux de change : le cycle de modules est voulu, sans cycle entre fournisseurs (forwardRef des deux côtés).
-  imports: [NumerotationModule, forwardRef(() => PaiementsModule)],
+  imports: [NumerotationModule, VerrouillageMoisModule, forwardRef(() => PaiementsModule)],
   controllers: [VoyageurController, AgenceController, ExploitationController],
   providers: [
     Passagers,

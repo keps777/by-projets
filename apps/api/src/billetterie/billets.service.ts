@@ -1,5 +1,6 @@
 import { randomBytes, randomUUID } from "node:crypto";
 import { Injectable } from "@nestjs/common";
+import { VerrouillageMois } from "../comptable/verrouillage.service";
 import { Horloge } from "../socle/horloge";
 import { exigerAvantLeDepart, exigerVendable } from "./controles";
 import { Refus, conflit, inconnu, interdit } from "./erreurs";
@@ -78,6 +79,7 @@ export class BilletsService {
     private readonly numerotation: NumerotationEnLigne,
     private readonly avis: AvisBillets,
     private readonly horloge: Horloge,
+    private readonly verrou: VerrouillageMois,
   ) {}
 
   /* -------------------------------------------------------------- émission */
@@ -87,7 +89,8 @@ export class BilletsService {
    * vendu deux fois), puis écrit le billet. Si l'écriture échoue, le siège est rendu.
    * `par` : le voyageur qui détient un blocage sur ce siège (vente en ligne), sinon `null`.
    */
-  async enregistrer(billet: Billet, par: string | null): Promise<Billet> {
+  async enregistrer(origine: Billet, par: string | null): Promise<Billet> {
+    const billet = await this.dateDansUnMoisOuvert(origine);
     const maintenant = this.sieges.maintenant();
     const qr = await this.signataire.signer({
       numero: billet.numero,
@@ -150,6 +153,18 @@ export class BilletsService {
       acheteurId: complet.acheteurId,
     });
     return complet;
+  }
+
+  /**
+   * Un billet vendu hors ligne puis synchronisé après la clôture de son mois ne s'écrit pas dans un mois
+   * figé : sa date de création devient le début du premier mois ouvert (`VerrouillageMois`). Le billet
+   * a bien été vendu, imprimé et encaissé : on ne le refuse jamais. L'historique garde la vraie heure du
+   * geste (audit), et le numéro imprimé ne change pas. Mois ouvert (cas courant) : billet inchangé.
+   */
+  private async dateDansUnMoisOuvert(billet: Billet): Promise<Billet> {
+    const creeA = new Date(billet.creeA);
+    if (!(await this.verrou.estVerrouille(billet.compagnieId, creeA))) return billet;
+    return { ...billet, creeA: await this.verrou.premierInstantOuvert(billet.compagnieId, creeA) };
   }
 
   /** Billet d'une commande payée en ligne : numéro du serveur (4001–9999), code unique du départ. */

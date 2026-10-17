@@ -7,34 +7,24 @@ opérateurs (cause probable de chaque transaction sans vente, action proposée) 
 le PIN, qui fige les fichiers et verrouille le mois ; l'envoi au cabinet comptable (le 2 du mois et à la
 clôture).
 
-Le module est autonome : tous ses accès extérieurs sont des **ports** (classes abstraites, `ports.ts`) avec une
-version **en mémoire** (`memoire.ts`). Il n'est **pas** dans `AppModule` et n'a **pas** d'adaptateur
-PostgreSQL : l'intégration est faite par le coordinateur (voir « Brancher le module »).
+Le module est dans `AppModule`. Tous ses accès extérieurs sont des **ports** (classes abstraites, `ports.ts`) avec
+une version **en mémoire** (`memoire.ts`) et une version **PostgreSQL** (`postgres.ts`), choisies par
+`API_STOCKAGE` (`postgres` ou `memoire` ; PostgreSQL par défaut en production, voir `socle/db/stockage.ts`).
 
-## Brancher le module
+## Intégration (faite)
 
-À faire par le coordinateur (le brief interdit de toucher `app.module.ts` et `prisma/schema.prisma`) :
-
-1. Ajouter `ComptableModule` aux `imports` de `AppModule`.
-2. Écrire les adaptateurs PostgreSQL des ports (voir « Tables PostgreSQL ») et les fournir à la place des
-   versions en mémoire.
-3. Brancher les ports sans table :
-   - `ActionsRapprochement.rembourser` : remboursement MoMo ou Orange Money vers le numéro qui a payé
-     (opération de paiements, AM-165), **idempotent par `cle`** ; le numéro n'est jamais passé au module,
-     l'adaptateur le retrouve par la référence de l'opérateur. Il lève `ActionRefusee` si l'opérateur refuse pour
-     de bon, toute autre erreur veut dire « résultat inconnu » (la tâche de fond rejoue avec la même clé) ;
-   - `ActionsRapprochement.rattacher` : écrit la référence de l'opérateur sur le colis ou le billet ;
-   - `ActionsRapprochement.reclamer` : réclamation auprès de l'opérateur (réponse sous 72 h) ;
-   - `MessagerieCabinet` : envoi du courriel avec pièces jointes (aucune passerelle de courriel n'existe dans
-     l'API), idempotent par `cle`, qui rend l'accusé de réception s'il est déjà connu ;
-   - `RelevesOperateur` : l'import des relevés MTN et Orange du compte marchand (aucun ticket ne le décrit) ;
-   - `FaitsRapprochement` : requêtes de recherche de la cause probable (voir le port) ;
-   - `FacturesPayees` : paiement des factures hebdomadaires (module de facturation, hors ticket).
-4. Les autres modules qui écrivent des ventes, sessions de caisse, annulations ou paiements doivent appeler
-   `VerrouillageMois.exigerOuvert(compagnieId, instant)` avant d'écrire (exporté par `ComptableModule`) :
-   « un mois verrouillé refuse toute écriture » n'est tenu que si **toutes** les écritures datées d'un mois
-   clôturé passent par là. Une écriture tardive s'inscrit au début du premier mois ouvert
-   (`premierInstantOuvert`). Caisse, billetterie, synchronisation hors ligne et paiements sont concernés.
+1. `ComptableModule` est dans les `imports` de `AppModule`. Les clôtures et `VerrouillageMois` vivent dans
+   `VerrouillageMoisModule` (`verrouillage.module.ts`), importé par `ComptableModule` et par la caisse, la
+   billetterie, la synchronisation et les paiements : une seule instance des clôtures dans toute l'application.
+2. Adaptateurs PostgreSQL de tous les ports (voir « Tables PostgreSQL ») : `ParametresPrisma`, `CloturesPrisma`,
+   `DecisionsPrisma`, `EnvoisPrisma`, `FichiersApercusPrisma`, `RelevesPrisma`, `FacturesPayeesPrisma`,
+   `VentesPrisma`, `SessionsPrisma`, `AnnulationsPrisma`, `FaitsPrisma` et `ActionsRapprochementPrisma`. Chacun
+   passe les mêmes tests de contrat que sa version en mémoire (`testing/contrat-ports.ts`).
+3. Migrations `20261017000900_lot_c_comptable_analyses_assistant` (tables) et `20261017000910_lot_c_garanties`
+   (garde-fous que Prisma ne sait pas exprimer : CHECK, mois clos immuable, décision définitive, verrous
+   consultatifs).
+4. `VerrouillageMois` est branché là où une écriture touche un mois clos (voir « Mois clôturés dans les autres
+   modules »).
 5. Les tâches de fond (`TachesComptable`) démarrent seules hors tests, toutes les 15 minutes : reprise des
    remboursements, rattachements et réclamations dont le résultat était inconnu, reprise des envois au cabinet
    non confirmés, envoi automatique du mois écoulé. Chacune est idempotente (clé par opération, clé par envoi) :
@@ -43,8 +33,46 @@ PostgreSQL : l'intégration est faite par le coordinateur (voir « Brancher le m
 6. Réglages des agences : aucune route ne modifie `ParametresComptables` (adresse du cabinet, envoi automatique,
    jours d'envoi et de clôture). Les écrans de réglages sont hors de ce ticket.
 
-En production, `VerificationPortsComptable` **refuse de démarrer** tant qu'un port est en mémoire ou simulé
-(`durable === false`) et nomme les ports concernés.
+**Encore simulés.** En production, `VerificationPortsComptable` **refuse de démarrer** tant qu'un port est en
+mémoire ou simulé (`durable === false`) et nomme les ports concernés. Aujourd'hui :
+
+- `ActionsRapprochement.rembourser` : doit rembourser en MoMo ou Orange Money vers le numéro qui a payé
+  (opération de paiements, AM-165), **idempotent par `cle`** ; le numéro n'est jamais passé au module,
+  l'adaptateur le retrouve par la référence de l'opérateur. Il lève `ActionRefusee` si l'opérateur refuse pour
+  de bon, toute autre erreur veut dire « résultat inconnu » (la tâche de fond rejoue avec la même clé) ;
+- `ActionsRapprochement.reclamer` : réclamation auprès de l'opérateur (réponse sous 72 h) ;
+- `MessagerieCabinet` : envoi du courriel avec pièces jointes (aucune passerelle de courriel n'existe dans
+  l'API), idempotent par `cle`, qui rend l'accusé de réception s'il est déjà connu.
+
+`ActionsRapprochement.rattacher` est réel (il écrit la référence de l'opérateur sur le colis ou le billet) ; son
+adaptateur reste marqué non durable tant que `rembourser` et `reclamer` sont simulés.
+
+**Tables sans écrivain.** `releve_operateur_ligne` (import des relevés MTN et Orange du compte marchand : aucun
+ticket ne le décrit) et `facture_payee` (module de facturation, hors ticket) sont lues par le module mais rien ne
+les alimente encore.
+
+## Mois clôturés dans les autres modules
+
+« Un mois verrouillé refuse toute écriture » n'est tenu que si toutes les écritures datées d'un mois clôturé
+passent par `VerrouillageMois`. Un mois ne se clôture qu'une fois écoulé : seules les écritures **datées par un
+appareil ou par un opérateur** (donc possiblement anciennes) sont concernées, jamais celles qui portent l'heure du
+serveur.
+
+- **Caisse** (`CaisseService`) : ouverture, comptage et clôture d'une session datée d'un mois clos sont
+  **refusés** (409 `MOIS_VERROUILLE`). Un événement déjà accepté puis rejoué répond `deja_recu`. La clôture
+  automatique de minuit n'est jamais refusée (elle ferme une caisse restée ouverte et ne crée aucun mouvement).
+- **Billetterie** (`BilletsService.enregistrer`) : une vente faite hors ligne et synchronisée après la clôture
+  de son mois n'est **jamais refusée** (billet imprimé, argent encaissé) : sa date de création devient le début
+  du premier mois ouvert (`premierInstantOuvert`). Le numéro imprimé et l'historique du billet (heure réelle du
+  geste) ne changent pas.
+- **Synchronisation** (`RejeuService`) : les événements `billet.*`, `colis.*`, `route.*`, `controle.*`,
+  `caisse.*` et `annulation.*` datés d'un mois clos sont **journalisés, jamais refusés** ; une alerte
+  `evenement_mois_clos` prévient l'agence.
+- **Paiements** (`RemboursementsService`) : la fin d'un remboursement notifiée par l'agrégateur après la clôture
+  de son mois n'est **jamais refusée** (l'argent est parti) : `termineA` s'inscrit au début du premier mois ouvert,
+  l'audit garde l'heure réelle. Les autres écritures des paiements portent l'heure du serveur.
+- **Non branché** : les validations et refus de caisse du superviseur (module supervision) sur une session d'un
+  mois clos, à décider (voir « Décisions à confirmer »).
 
 ## Routes
 
@@ -141,8 +169,17 @@ Corps d'erreur : `{ statusCode, code, message }`. Codes : 401 `PIN_REQUIS`, 403 
 
 ## Tables PostgreSQL
 
-À créer par le coordinateur dans `prisma/schema.prisma`. Ces tables sont **nouvelles** (écritures du module) ;
-les lectures s'appuient sur les tables des autres modules (dernier paragraphe).
+Créées par la migration `20261017000900_lot_c_comptable_analyses_assistant` (modèles du bloc « lot C » de
+`prisma/schema.prisma`, colonnes en camelCase comme le reste du schéma, par exemple `compagnieId`, `clotureA`,
+`emailCabinetChiffre`) ; les garde-fous SQL sont dans `20261017000910_lot_c_garanties`. Les noms de colonnes
+ci-dessous sont ceux de la conception ; le schéma Prisma fait foi. Ces tables sont **nouvelles** (écritures du
+module) ; les lectures s'appuient sur les tables des autres modules (dernier paragraphe).
+
+Ajouts de la migration sur des tables existantes : index `billet (compagnieId, creeA)`,
+`billet ((paiement ->> 'reference'))` (partiel), `colis (compagnieId, creeA)` et `colis (paiementReference)`.
+Ce que la base garantit seule : un mois clos ne se modifie ni ne se supprime (seul `envoiRecuA` passe de NULL à
+une date), une décision ne se crée pas dans un mois clôturé (verrou consultatif partagé contre le verrou exclusif
+de la clôture) et ne change plus que par son exécution, les fichiers figés ne changent plus.
 
 **`parametres_comptables`** (`ParametresComptables`) : `compagnie_id` (clé), `nom_agence`, `email_cabinet`
 (nul, **chiffré** avec `ChiffrementService` : c'est une donnée personnelle du cabinet), `envoi_automatique`
@@ -199,6 +236,18 @@ compte marchand. `compagnie_id`, `reference` (l'identifiant de la transaction ch
 
 ## Décisions à confirmer
 
+- **Mois clos et autres modules** (lot C) : caisse = refus, billetterie = date du premier mois ouvert,
+  synchronisation = alerte, paiements = date du premier mois ouvert (voir « Mois clôturés dans les autres
+  modules »). Une caisse ouverte hors ligne dans un mois déjà clôturé est donc refusée, alors qu'une vente du même
+  appareil est acceptée : à confirmer avec le métier.
+- **Lectures PostgreSQL** (`VentesPrisma`, `SessionsPrisma`) : le montant d'un billet est `prix + bagage` ; un billet
+  `reporte` est traité comme annulé ; les moyens de paiement sont ramenés à cash, MTN, Orange ou carte ; les
+  guichets s'appellent `GU<rang>`, `ROUTE`, `VENDEUR` ou `APP` selon le canal ; un colis n'entre dans les ventes que
+  s'il est payé (`paiementEtat = 'paye'`) ; la méthode de validation d'une caisse est toujours `pin`.
+- **Rattachement d'une référence** : l'adaptateur retrouve le colis ou le billet par la référence de l'opérateur
+  sans filtrer sur l'agence (une référence est globale chez l'opérateur) ; l'égalité de l'agence est vérifiée
+  ensuite et protège l'écriture.
+
 - **Cartes bancaires** : leur encaissement est écrit au compte 462 (opérateurs), comme le mobile money, et
   compté dans le total mais ni dans « cash » ni dans « momo » de la clôture. Si le cabinet veut un compte
   d'agrégateur distinct, c'est un changement dans `compteDeEncaissement` (`regles.ts`).
@@ -234,10 +283,10 @@ compte marchand. `compagnie_id`, `reference` (l'identifiant de la transaction ch
 
 ## Reste à faire
 
-- Adaptateurs PostgreSQL des ports ci-dessus, tables et migrations Prisma (coordinateur).
-- Import des relevés MTN et Orange (`RelevesOperateur`), passerelle de courriel (`MessagerieCabinet`),
-  remboursement MoMo (`ActionsRapprochement`, AM-165), module de facturation (`FacturesPayees`).
-- Brancher `VerrouillageMois` dans caisse, billetterie, synchronisation hors ligne et paiements.
+- Import des relevés MTN et Orange (alimenter `releve_operateur_ligne`), passerelle de courriel
+  (`MessagerieCabinet`), remboursement et réclamation MoMo (`ActionsRapprochement`, AM-165), module de
+  facturation (alimenter `facture_payee`). Tant qu'ils manquent, l'API refuse de démarrer en production.
+- Décider du sort des validations et refus de caisse du superviseur sur une session d'un mois clos.
 - Routes de réglages de l'agence (adresse du cabinet, jour d'envoi, envoi automatique) et de saisie du
   paiement des factures.
 - Verrou d'instance pour les tâches de fond si l'API tourne sur plusieurs processus.
