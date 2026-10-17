@@ -1,0 +1,1 @@
+export { EcranPatronPersonne } from "./EcranPatronPersonne";
