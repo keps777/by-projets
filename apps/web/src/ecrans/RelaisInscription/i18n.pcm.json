@@ -1,0 +1,31 @@
+{
+  "titre": "",
+  "retour": "",
+  "champs": { "nom": "" },
+  "actions": {
+    "plusTard": { "libelle": "", "detail": "" },
+    "envoyer": { "libelle": "", "detail": "" }
+  },
+  "erreurs": {
+    "nom": "",
+    "position": "",
+    "momo": ""
+  },
+  "messages": {
+    "facade": "",
+    "echec": "",
+    "dejaRelais": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}

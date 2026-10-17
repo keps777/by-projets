@@ -1,0 +1,31 @@
+{
+  "titre": "Ta boutique",
+  "retour": "Retour",
+  "champs": { "nom": "Nom de la boutique" },
+  "actions": {
+    "plusTard": { "libelle": "Plus tard", "detail": "brouillon gardé" },
+    "envoyer": { "libelle": "Envoyer ma fiche", "detail": "un agent te rappelle sous 72 h" }
+  },
+  "erreurs": {
+    "nom": "Écris le nom de ta boutique.",
+    "position": "Écris ta position sous la forme Ville · Quartier, repère.",
+    "momo": "Écris ton numéro MoMo en entier (9 chiffres)."
+  },
+  "messages": {
+    "facade": "Ajoute la photo de la façade pour envoyer ta fiche.",
+    "echec": "La fiche n'a pas été envoyée. Réessaie.",
+    "dejaRelais": "Tu es déjà point de relais."
+  },
+  "etats": {
+    "chargement": "Chargement de la fiche",
+    "vide": {
+      "titre": "Fiche indisponible",
+      "detail": "Cette fiche n'est pas disponible pour le moment."
+    },
+    "erreur": {
+      "titre": "La fiche ne s'est pas chargée",
+      "detail": "Vérifie ta connexion puis réessaie.",
+      "reessayer": "Réessayer"
+    }
+  }
+}
