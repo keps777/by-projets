@@ -1,0 +1,99 @@
+{
+  "retour": "",
+  "enTete": {
+    "titre": "",
+    "sousTitre": ""
+  },
+  "mode": {
+    "scan": "",
+    "code": "",
+    "saisir": ""
+  },
+  "dernierScan": {
+    "aucun": {
+      "titre": "",
+      "detail": ""
+    },
+    "titre": {
+      "monte": "",
+      "deja_scanne": "",
+      "introuvable": "",
+      "autre_depart": "",
+      "annule": "",
+      "sans_nom": ""
+    },
+    "completer": "",
+    "siege": "",
+    "piece": "",
+    "classe": {
+      "vip": "",
+      "classique": ""
+    },
+    "bagages_one": "",
+    "bagages_other": "",
+    "echec": {
+      "titre": "",
+      "detail": ""
+    }
+  },
+  "embarquement": {
+    "libelle": "",
+    "attendus": "",
+    "depart": ""
+  },
+  "compteurs": {
+    "soute": "",
+    "colisACharger_one": "",
+    "colisACharger_other": "",
+    "refuses": "",
+    "motif": {
+      "aucun": "",
+      "deja_scanne": "",
+      "autre_depart": "",
+      "annule": "",
+      "introuvable": ""
+    },
+    "enRoute": "",
+    "montentA": ""
+  },
+  "absents": {
+    "titre": "",
+    "aide": "",
+    "siege": "",
+    "vendu": "",
+    "retard": "",
+    "appeler": "",
+    "sansNumero": "",
+    "code": "",
+    "liberer": "",
+    "echecLiberer": ""
+  },
+  "pied": {
+    "vendre": {
+      "plusieurs": "",
+      "une": "",
+      "aucune": ""
+    },
+    "depart": "",
+    "echec": ""
+  },
+  "feuilleCode": {
+    "titre": "",
+    "aide": "",
+    "champ": "",
+    "echec": "",
+    "fermer": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
