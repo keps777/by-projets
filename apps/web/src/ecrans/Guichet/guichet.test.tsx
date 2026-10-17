@@ -238,7 +238,13 @@ describe("Guichet · les tuiles suivent chaque vente, même hors ligne", () => {
           (o) => o.operation.nom === agence.OP_GUICHET_ACCUEIL.nom,
         )!;
         const operations: Scenario["operations"] = [
-          ...guichet.operations.filter((o) => o !== lectureAccueil),
+          // le scénario contient aussi les opérations de repli des autres planches : on retire
+          // toutes les implémentations remplacées, pas seulement la première
+          ...guichet.operations.filter(
+            (o) =>
+              o.operation.nom !== agence.OP_GUICHET_ACCUEIL.nom &&
+              o.operation.nom !== agence.ECRITURES.billetVendu.operation.nom,
+          ),
           implementer(agence.OP_GUICHET_ACCUEIL, async (params, ctx) => {
             const a = (await (lectureAccueil.repondre as (p: unknown, c: unknown) => unknown)(
               params,

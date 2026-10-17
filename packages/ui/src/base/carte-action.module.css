@@ -41,7 +41,7 @@
 }
 
 /* Carte Surface verticale (grille de 2). */
-.carte.carte {
+.carte[data-variante="carte"] {
   flex-direction: column;
   gap: var(--am-space-10);
   min-height: 96px;
