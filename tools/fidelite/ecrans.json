@@ -181,7 +181,7 @@
       "route": "/comptable/rapprochement"
     },
     "ComptableApercu": {
-      "route": "/comptable/apercu/exp-2026-12"
+      "route": "/comptable/apercu/journal_ventes"
     },
     "ComptableCloture": {
       "route": "/comptable/cloture"

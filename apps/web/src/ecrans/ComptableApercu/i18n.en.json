@@ -1,0 +1,55 @@
+{
+  "fond": {
+    "titre": "",
+    "periode": "",
+    "rapprochement": "",
+    "exports": ""
+  },
+  "export": {
+    "detail": "",
+    "lignes_one": "",
+    "lignes_other": "",
+    "colonnes_one": "",
+    "colonnes_other": "",
+    "genere": {
+      "instant": "",
+      "minutes": "",
+      "heures": "",
+      "le": ""
+    },
+    "fermer": "",
+    "onglets": ""
+  },
+  "tableau": {
+    "aria": "",
+    "pied": "",
+    "piedComplet": "",
+    "total": ""
+  },
+  "garanties": {
+    "colonnes": {
+      "titre": "",
+      "detail": ""
+    },
+    "onglets": {
+      "titre": ""
+    },
+    "signe": {
+      "titre": "",
+      "detail": ""
+    }
+  },
+  "boutons": {
+    "fermer": "",
+    "telecharger": "",
+    "envoyer": ""
+  },
+  "etats": {
+    "titre": "",
+    "chargement": "",
+    "vide": "",
+    "introuvable": "",
+    "erreur": "",
+    "reessayer": ""
+  }
+}

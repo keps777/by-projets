@@ -1,5 +1,5 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { EcranComptableApercu } from "@/ecrans/ComptableApercu";
 
 export default function Page() {
-  return <EcranVide planche="ComptableApercu" />;
+  return <EcranComptableApercu />;
 }
