@@ -29,4 +29,13 @@ describe("sourceScenariosFixtures", () => {
     const b = await source.charger("Main");
     expect(a.operations).not.toBe(b.operations);
   });
+
+  it("répond aussi aux opérations des autres planches, la planche demandée prime", async () => {
+    const caisse = await source.charger("Caisse");
+    const guichet = await source.charger("Guichet");
+    const noms = (sc: { operations: readonly { operation: { nom: string } }[] }) =>
+      new Set(sc.operations.map((o) => o.operation.nom));
+    // Chaque scénario sait répondre aux opérations de l'autre
+    expect([...noms(caisse)].length).toBeGreaterThanOrEqual(noms(guichet).size);
+  });
 });

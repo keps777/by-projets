@@ -129,9 +129,15 @@ importers:
       '@afrimove/api-client':
         specifier: workspace:*
         version: link:../../packages/api-client
+      '@afrimove/contrats':
+        specifier: workspace:*
+        version: link:../../packages/contrats
       '@afrimove/design':
         specifier: workspace:*
         version: link:../../packages/design
+      '@afrimove/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
       '@afrimove/fixtures':
         specifier: workspace:*
         version: link:../../packages/fixtures

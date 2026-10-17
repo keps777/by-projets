@@ -22,7 +22,9 @@
     "react-router": "7.18.4",
     "workbox-window": "7.4.1",
     "@afrimove/api-client": "workspace:*",
-    "@afrimove/fixtures": "workspace:*"
+    "@afrimove/fixtures": "workspace:*",
+    "@afrimove/domain": "workspace:*",
+    "@afrimove/contrats": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "6.8.0",

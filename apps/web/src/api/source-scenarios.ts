@@ -48,9 +48,26 @@ export function sourceScenariosFixtures(): SourceScenarios {
     noms: () => [SCENARIO_PAR_DEFAUT, ...Object.keys(parNom)],
     instantInitial: (nom) => parNom[cleDe(nom)]?.maintenant,
     charger(nom) {
-      const donnees = parNom[cleDe(nom)];
+      const propre = cleDe(nom);
+      const donnees = parNom[propre];
       if (!donnees) return { nom, operations: [] };
-      return composerScenario(nom, donnees);
+      const scenario = composerScenario(nom, donnees);
+      // Le client prend la première implémentation d'une opération : celles de la planche demandée
+      // priment, puis toutes les autres planches répondent, pour que la navigation de démonstration
+      // (une planche ouverte avec `?scenario=` d'une autre) ne tombe jamais sur « non implémenté ».
+      const operations = [...scenario.operations];
+      const flux = [...(scenario.flux ?? [])];
+      for (const [autre, autresDonnees] of Object.entries(parNom)) {
+        if (autre === propre) continue;
+        try {
+          const s = composerScenario(autre, autresDonnees);
+          operations.push(...s.operations);
+          flux.push(...(s.flux ?? []));
+        } catch {
+          // une planche dont le mock n'est pas installable n'empêche pas les autres
+        }
+      }
+      return { nom, operations, flux };
     },
   };
 }

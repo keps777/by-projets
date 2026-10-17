@@ -22,8 +22,8 @@ export default defineConfig({
   resolve: {
     alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
   },
-  server: { port: 5173, strictPort: true },
-  preview: { port: 5173, strictPort: true },
+  server: { port: Number(process.env.PORT ?? 5173), strictPort: true },
+  preview: { port: Number(process.env.PORT ?? 5173), strictPort: true },
   test: {
     testTimeout: 20000,
     environment: "jsdom",

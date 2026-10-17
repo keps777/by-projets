@@ -93,6 +93,8 @@
 
 /* Bouton rond de 44 px, icône seule. */
 .rond {
+  /* Les planches n'ont pas de reset : 44 px de contenu, bord en plus. */
+  box-sizing: content-box;
   display: flex;
   flex: none;
   align-items: center;

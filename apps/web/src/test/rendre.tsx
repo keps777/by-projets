@@ -1,7 +1,8 @@
-import { creerClientMock } from "@afrimove/api-client";
+import { creerClientMock, type ClientApi } from "@afrimove/api-client";
 import { render } from "@testing-library/react";
 import { createMemoryRouter, type DataRouter, type RouteObject } from "react-router";
 import { App, sourcesRoutes } from "@/app";
+import { sourceScenariosFixtures } from "@/api/source-scenarios";
 import { construireRoutes } from "@/coquille/arbre-routes";
 import type { Horloge } from "@/coquille/horloge";
 import type { ParametresDemo } from "@/coquille/parametres";
@@ -20,6 +21,10 @@ export interface OptionsRendu {
   scenario?: string;
   horloge?: Horloge;
   langue?: Langue;
+  /** Client d'API imposé ; sinon un mock vide (tout répond « non implémenté »). */
+  clientApi?: ClientApi;
+  /** Mock alimenté par les scénarios de `@afrimove/fixtures` (celui de `scenario`, « defaut » sinon). */
+  fixtures?: boolean;
   /** Routes de remplacement (tests de la coquille elle-même) ; sinon les vraies routes de `src/routes/`. */
   routes?: RouteObject[];
 }
@@ -35,8 +40,19 @@ export function rendreApp(options: OptionsRendu = {}): { routeur: DataRouter } {
     scenario,
     horloge,
     langue,
+    clientApi,
+    fixtures = false,
     routes,
   } = options;
+  const client =
+    clientApi ??
+    (fixtures
+      ? creerClientMock({
+          source: sourceScenariosFixtures(),
+          scenario: scenario ?? "defaut",
+          latenceMs: 0,
+        })
+      : creerClientMock({ latenceMs: 0 }));
   const parametres: ParametresDemo = {
     demo,
     conception,
@@ -50,7 +66,7 @@ export function rendreApp(options: OptionsRendu = {}): { routeur: DataRouter } {
   render(
     <App
       routeur={routeur}
-      clientApi={creerClientMock({ latenceMs: 0 })}
+      clientApi={client}
       parametres={parametres}
       session={session}
       {...(horloge ? { horloge } : {})}

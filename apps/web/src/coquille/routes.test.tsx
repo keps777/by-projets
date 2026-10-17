@@ -96,8 +96,15 @@ describe("layouts", () => {
   });
 });
 
+// Une planche dont l'écran est livré (dossier `src/ecrans/<Planche>/`) n'est plus un écran vide :
+// elle est couverte par les tests de son propre dossier.
+const ecransLivres = new Set(
+  Object.keys(import.meta.glob("../ecrans/*/index.ts")).map((chemin) => chemin.split("/")[2]),
+);
+const plancheVides = planches.filter((p) => !ecransLivres.has(p));
+
 describe("écrans vides titrés", () => {
-  it.each(planches)("%s s'ouvre avec le titre de sa planche", async (planche) => {
+  it.each(plancheVides)("%s s'ouvre avec le titre de sa planche", async (planche) => {
     rendreApp({ url: urlExemple(planche) });
     const titre = fr.ecrans[planche].titre;
     expect(await screen.findByRole("heading", { level: 1, name: titre })).toBeInTheDocument();

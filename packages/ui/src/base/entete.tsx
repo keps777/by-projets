@@ -22,12 +22,22 @@ export interface PropsEntete extends Omit<HTMLAttributes<HTMLElement>, "title"> 
   retour?: RetourEntete;
   /** Élément à droite : pastille, badge « TOUCHE n », bouton. */
   droite?: ReactNode;
+  /** `standard` : marges 14/6 (43 planches). `ample` : 16/8 (15 planches). */
+  espace?: "standard" | "ample";
 }
 
 /** En-tête d'écran : retour rond, titre, sous-titre et élément à droite. */
-export function Entete({ titre, sousTitre, retour, droite, className, ...reste }: PropsEntete) {
+export function Entete({
+  titre,
+  sousTitre,
+  retour,
+  droite,
+  espace = "standard",
+  className,
+  ...reste
+}: PropsEntete) {
   return (
-    <header className={cx(styles.entete, className)} {...reste}>
+    <header className={cx(styles.entete, espace === "ample" && styles.ample, className)} {...reste}>
       {retour && (
         <BoutonIcone
           aria-label={retour.libelle}
