@@ -18,19 +18,37 @@ import { horlogeFigee } from "@/coquille/horloge";
 
 export const HORLOGE_PLANCHE = "2027-01-05T07:38:00+01:00";
 
-export type Panne = "cloture" | "comptage" | "vide" | "erreur";
+/**
+ * Panne injectée dans le mock. `deja_fermee` : le serveur répond 409 `SESSION_NON_OUVERTE` à la première
+ * écriture (clôture arrivée par ailleurs, réponse perdue...), puis lit la session clôturée.
+ */
+export type Panne = "cloture" | "comptage" | "vide" | "erreur" | "deja_fermee";
 
-/** Source du scénario « Caisse » des fixtures, avec au besoin une panne injectée dans une opération. */
-export function sourceAvecPanne(panne?: Panne): SourceScenarios {
+/** Événement tel que l'appareil l'envoie (le type et les données suffisent aux tests). */
+export interface EvenementEnvoye {
+  type: string;
+  donnees: Record<string, unknown>;
+}
+
+export interface OptionsSource {
+  panne?: Panne;
+  /** Appelé à chaque écriture de comptage ou de clôture reçue par le mock. */
+  journal?: (evenement: EvenementEnvoye) => void;
+  /** Force l'état de la session lue (ex. une caisse déjà clôturée). */
+  etat?: "ouverte" | "cloturee" | "validee";
+}
+
+type Repondre = (params: unknown, ctx: unknown) => unknown;
+
+/** Source du scénario « Caisse » des fixtures, avec au besoin une panne, un journal des écritures ou un état forcé. */
+export function sourceAvecPanne(options: OptionsSource = {}): SourceScenarios {
+  const { panne, journal, etat } = options;
   const base = sourceScenariosFixtures();
-  if (!panne) return base;
+  if (!panne && !journal && !etat) return base;
   const ecritures = agence.ECRITURES;
-  const cible = {
-    cloture: ecritures.caisseCloturee.operation,
-    comptage: ecritures.caisseComptee.operation,
-    vide: agence.OP_CAISSE_SESSION,
-    erreur: agence.OP_CAISSE_SESSION,
-  }[panne];
+  const comptage: unknown = ecritures.caisseComptee.operation;
+  const cloture: unknown = ecritures.caisseCloturee.operation;
+  const lecture: unknown = agence.OP_CAISSE_SESSION;
   const erreur =
     panne === "vide"
       ? new ErreurHttp(404, "Aucune session de caisse", "INTROUVABLE")
@@ -39,25 +57,48 @@ export function sourceAvecPanne(panne?: Panne): SourceScenarios {
     ...base,
     async charger(nom) {
       const scenario = await base.charger(nom);
+      let fermee = false;
       return {
         ...scenario,
-        operations: scenario.operations.map((implementation) =>
-          implementation.operation === (cible as unknown)
-            ? ({
-                operation: implementation.operation,
-                repondre: () => {
-                  throw erreur;
-                },
-              } as ImplementationMock)
-            : implementation,
-        ),
+        operations: scenario.operations.map((implementation) => {
+          const operation: unknown = implementation.operation;
+          const originale = implementation.repondre as Repondre;
+          const remplacer = (repondre: Repondre): ImplementationMock =>
+            ({ operation: implementation.operation, repondre }) as ImplementationMock;
+
+          const pannePropre =
+            (panne === "cloture" && operation === cloture) ||
+            (panne === "comptage" && operation === comptage) ||
+            ((panne === "vide" || panne === "erreur") && operation === lecture);
+          if (pannePropre) {
+            return remplacer(() => {
+              throw erreur;
+            });
+          }
+          if (operation === comptage || operation === cloture) {
+            return remplacer((params, ctx) => {
+              if (panne === "deja_fermee") {
+                fermee = true;
+                throw new ErreurHttp(409, "Cette caisse est déjà clôturée", "SESSION_NON_OUVERTE");
+              }
+              journal?.(params as EvenementEnvoye);
+              return originale(params, ctx);
+            });
+          }
+          if (operation === lecture && (panne === "deja_fermee" || etat)) {
+            return remplacer((params, ctx) => {
+              const session = originale(params, ctx) as { etat: string };
+              return fermee || etat ? { ...session, etat: etat ?? "cloturee" } : session;
+            });
+          }
+          return implementation;
+        }),
       };
     },
   };
 }
 
-export interface OptionsRenduCaisse {
-  panne?: Panne;
+export interface OptionsRenduCaisse extends OptionsSource {
   /** Instant de l'horloge de l'application (par défaut : celui du banc de fidélité). */
   horloge?: string;
   conception?: boolean;
@@ -72,14 +113,14 @@ export function rendreCaisse(options: OptionsRenduCaisse = {}): {
   client: ClientMock;
 } {
   const {
-    panne,
     horloge = HORLOGE_PLANCHE,
     conception = false,
     latenceMs = 0,
     url = "/guichet/caisse",
+    ...source
   } = options;
   const client = creerClientMock({
-    source: sourceAvecPanne(panne),
+    source: sourceAvecPanne(source),
     scenario: "Caisse",
     latenceMs,
     horloge: horlogeGelee(horloge),

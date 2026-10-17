@@ -1,7 +1,7 @@
 import { agence } from "@afrimove/api-client";
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { rendreCaisse } from "./rendre-caisse";
 
 /** Attend que la session de caisse soit affichée (le titre est déjà là pendant le chargement). */
@@ -188,12 +188,33 @@ describe("Caisse · navigation", () => {
 });
 
 describe("Caisse · clôture automatique de minuit", () => {
-  it("ferme seule une session non clôturée à minuit et alerte", async () => {
+  it("alerte après minuit sans clôturer depuis l'appareil (le serveur la ferme) et fige le comptage", async () => {
     const { client } = rendreCaisse({ horloge: "2027-01-06T00:05:00+01:00" });
     expect(await screen.findByRole("alert")).toHaveTextContent("s'est clôturée seule à minuit");
-    await waitFor(async () =>
-      expect((await client.executer(agence.OP_CAISSE_SESSION, {})).etat).toBe("cloturee"),
-    );
+    await attendreSession();
+    // L'appareil n'envoie ni comptage ni clôture (`auto: true` est réservé au système, 422 côté serveur).
+    const session = await client.executer(agence.OP_CAISSE_SESSION, {});
+    expect(session.etat).toBe("ouverte");
+    expect(session.comptage.total).toBe(694_500);
+
+    // Le comptage est figé : toucher un billet ne change rien.
+    await userEvent.click(screen.getByRole("button", { name: /^Billets de 5 000/ }));
+    expect(total()).toHaveValue("694 500");
+    expect(carteEcart()).toHaveTextContent("− 1 000");
+  });
+
+  it("relit la session après minuit jusqu'à ce que le serveur l'ait fermée", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      const { client } = rendreCaisse({ horloge: "2027-01-06T00:05:00+01:00" });
+      await screen.findByRole("alert");
+      const lectures = vi.spyOn(client, "executer");
+      await vi.advanceTimersByTimeAsync(31_000);
+      const relectures = lectures.mock.calls.filter(([op]) => op === agence.OP_CAISSE_SESSION);
+      expect(relectures.length).toBeGreaterThanOrEqual(2);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("ne touche pas à une session avant minuit", async () => {
@@ -201,6 +222,62 @@ describe("Caisse · clôture automatique de minuit", () => {
     await attendreSession();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect((await client.executer(agence.OP_CAISSE_SESSION, {})).etat).toBe("ouverte");
+  });
+
+  it("« Clôturer » après minuit n'envoie rien et mène au Superviseur", async () => {
+    const { routeur, client } = rendreCaisse({ horloge: "2027-01-06T00:05:00+01:00" });
+    await screen.findByRole("alert");
+    await userEvent.click(
+      screen.getByRole("link", { name: /^Clôturer · faire valider par le superviseur/ }),
+    );
+    await waitFor(() => expect(routeur.state.location.pathname).toBe("/gare"));
+    expect((await client.executer(agence.OP_CAISSE_SESSION, {})).etat).toBe("ouverte");
+  });
+});
+
+describe("Caisse · alignement sur le backend de la caisse", () => {
+  it("envoie des événements `caisse.comptee` puis `caisse.cloturee` avec `auto: false` et un écart cohérent", async () => {
+    const envoyes: Array<{ type: string; donnees: Record<string, unknown> }> = [];
+    const { routeur } = rendreCaisse({ journal: (e) => envoyes.push(e) });
+    await attendreSession();
+    await userEvent.click(screen.getByRole("button", { name: /^Billets de 500/ }));
+    await userEvent.click(
+      screen.getByRole("link", { name: /^Clôturer · faire valider par le superviseur/ }),
+    );
+    await waitFor(() => expect(routeur.state.location.pathname).toBe("/gare"));
+
+    expect(envoyes.map((e) => e.type)).toEqual(["caisse.comptee", "caisse.cloturee"]);
+    const [comptage, cloture] = envoyes;
+    expect(comptage?.donnees).toMatchObject({ pieces: 0, total: 695_000 });
+    expect(cloture?.donnees).toMatchObject({
+      cashCompte: 695_000,
+      cashAttendu: 695_500,
+      ecart: -500,
+      auto: false,
+    });
+    // Le comptage envoyé avant la clôture porte le même total (le serveur refuse sinon COMPTAGE_DIFFERENT).
+    expect(comptage?.donnees["total"]).toBe(cloture?.donnees["cashCompte"]);
+  });
+
+  it("relit la session sans afficher de panne quand le serveur répond que la caisse n'est plus ouverte", async () => {
+    const { routeur } = rendreCaisse({ panne: "deja_fermee" });
+    await attendreSession();
+    await userEvent.click(
+      screen.getByRole("link", { name: /^Clôturer · faire valider par le superviseur/ }),
+    );
+    await waitFor(() => expect(routeur.state.location.pathname).toBe("/gare"));
+    expect(
+      screen.queryByText("La clôture n'a pas été envoyée. Réessayez."),
+    ).not.toBeInTheDocument();
+  });
+
+  it("montre en lecture seule une caisse déjà clôturée, avec le comptage enregistré", async () => {
+    const { client } = rendreCaisse({ etat: "cloturee" });
+    await attendreSession();
+    expect(total()).toHaveValue("694 500");
+    await userEvent.click(screen.getByRole("button", { name: /^Billets de 5 000/ }));
+    expect(total()).toHaveValue("694 500");
+    expect((await client.executer(agence.OP_CAISSE_SESSION, {})).etat).toBe("cloturee");
   });
 });
 

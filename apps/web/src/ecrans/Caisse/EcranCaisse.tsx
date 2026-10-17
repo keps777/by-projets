@@ -41,10 +41,18 @@ export function EcranCaisse() {
       <EtatErreur onReessayer={() => void requete.refetch()} />
     );
   }
-  return <FermerCaisse session={requete.data} />;
+  return <FermerCaisse session={requete.data} recharger={() => void requete.refetch()} />;
 }
 
-function FermerCaisse({ session }: { session: SessionCaisse }) {
+/** Le serveur refuse d'écrire sur une caisse qui n'est plus ouverte (clôturée, validée, fermée à minuit). */
+function dejaFermee(erreur: unknown): boolean {
+  return erreur instanceof ErreurHttp && erreur.code === "SESSION_NON_OUVERTE";
+}
+
+/** Rythme auquel on relit la session après minuit, le temps que le serveur la ferme (il passe chaque minute). */
+const RELECTURE_APRES_MINUIT_MS = 15_000;
+
+function FermerCaisse({ session, recharger }: { session: SessionCaisse; recharger: () => void }) {
   const { t } = useTranslation("Caisse");
   const navigate = useNavigate();
   const maintenant = useMaintenant();
@@ -55,16 +63,37 @@ function FermerCaisse({ session }: { session: SessionCaisse }) {
     depuisSession(session.comptage.coupures, session.comptage.pieces),
   );
   const [echec, setEchec] = useState(false);
-  const [fermeeParMinuit, setFermeeParMinuit] = useState(false);
   const enCours = useRef(false);
 
+  // Une session non clôturée se ferme seule à minuit (Douala) : c'est le serveur qui la ferme (l'appareil n'a pas
+  // le droit d'envoyer `auto: true`). L'écran alerte, fige le comptage et relit la session jusqu'à sa fermeture.
+  const minuitAtteint = session.etat === "ouverte" && minuitPasse(session.ouverteA, maintenant);
+  const [fermeeParMinuit, setFermeeParMinuit] = useState(minuitAtteint);
+  if (minuitAtteint && !fermeeParMinuit) setFermeeParMinuit(true);
+  useEffect(() => {
+    if (!fermeeParMinuit || session.etat !== "ouverte") return;
+    recharger();
+    const minuterie = setInterval(recharger, RELECTURE_APRES_MINUIT_MS);
+    return () => clearInterval(minuterie);
+    // `recharger` change à chaque rendu : seule la présence de l'alerte et l'état de la session comptent.
+  }, [fermeeParMinuit, session.etat]);
+
   const ouverte = session.etat === "ouverte";
-  const compte = totalComptage(comptage);
+  const modifiable = ouverte && !fermeeParMinuit;
+  // Une caisse déjà clôturée se relit : on montre ce que le serveur a enregistré, pas la saisie locale.
+  const comptageAffiche = ouverte
+    ? comptage
+    : depuisSession(session.comptage.coupures, session.comptage.pieces);
+  const compte = totalComptage(comptageAffiche);
   const ecart = evaluerEcart(session.cashAttendu, compte, session.ecart.tolerance);
   const { decompte } = session;
 
-  /** Enregistre le comptage puis clôture : la session passe « clôturée », le superviseur la valide avec son PIN. */
-  async function envoyerCloture(auto: boolean): Promise<boolean> {
+  /**
+   * Enregistre le comptage puis clôture : la session passe « clôturée », le superviseur la valide avec son PIN.
+   * Si le serveur répond qu'elle n'est plus ouverte (clôture déjà arrivée, réponse perdue, minuit), on relit la
+   * session au lieu d'afficher une panne : l'état du serveur fait foi.
+   */
+  async function envoyerCloture(): Promise<boolean> {
     if (enCours.current) return false;
     enCours.current = true;
     try {
@@ -77,10 +106,14 @@ function FermerCaisse({ session }: { session: SessionCaisse }) {
         cashCompte: compte,
         cashAttendu: session.cashAttendu,
         ecart: ecart.montant,
-        auto,
+        auto: false,
       });
       return true;
-    } catch {
+    } catch (erreur) {
+      if (dejaFermee(erreur)) {
+        recharger();
+        return true;
+      }
       return false;
     } finally {
       enCours.current = false;
@@ -90,26 +123,15 @@ function FermerCaisse({ session }: { session: SessionCaisse }) {
   async function surCloture(evenement: MouseEvent<HTMLAnchorElement>) {
     if (evenement.metaKey || evenement.ctrlKey || evenement.shiftKey || evenement.altKey) return;
     evenement.preventDefault();
-    if (ouverte) {
+    if (modifiable) {
       setEchec(false);
-      if (!(await envoyerCloture(false))) {
+      if (!(await envoyerCloture())) {
         setEchec(true);
         return;
       }
     }
     void navigate(urlPlanche("Superviseur"));
   }
-
-  // Une session non clôturée se ferme seule à minuit (Douala), avec une alerte.
-  const minuitAtteint = ouverte && minuitPasse(session.ouverteA, maintenant);
-  const minuitTraite = useRef(false);
-  useEffect(() => {
-    if (!minuitAtteint || minuitTraite.current) return;
-    minuitTraite.current = true;
-    setFermeeParMinuit(true);
-    void envoyerCloture(true);
-    // La clôture automatique ne se déclenche qu'une fois, avec le comptage affiché à ce moment.
-  }, [minuitAtteint]);
 
   return (
     <>
@@ -171,10 +193,10 @@ function FermerCaisse({ session }: { session: SessionCaisse }) {
             <span className={styles.etiquetteDroite}>{t("jeCompte.aide")}</span>
           </div>
           <CompteurCoupures
-            value={comptage}
+            value={comptageAffiche}
             onChange={(suivant) => {
-              // Une session déjà clôturée se relit, elle ne se recompte plus.
-              if (ouverte) setComptage(suivant);
+              // Une session déjà clôturée (ou fermée à minuit) se relit, elle ne se recompte plus.
+              if (modifiable) setComptage(suivant);
             }}
           />
         </section>
