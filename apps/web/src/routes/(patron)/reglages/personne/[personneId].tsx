@@ -1,5 +1,5 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { EcranConfigPersonne } from "@/ecrans/ConfigPersonne";
 
 export default function Page() {
-  return <EcranVide planche="ConfigPersonne" />;
+  return <EcranConfigPersonne />;
 }

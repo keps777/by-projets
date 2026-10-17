@@ -1,0 +1,87 @@
+{
+  "retour": "",
+  "depuis": "",
+  "aucun": "",
+  "nouvelle": {
+    "titre": "",
+    "sousTitre": "",
+    "badge": ""
+  },
+  "roles": {
+    "guichetier": "",
+    "superviseur": "",
+    "convoyeur": "",
+    "chauffeur": "",
+    "relais": "",
+    "comptable": ""
+  },
+  "guichets": {
+    "1": "",
+    "2": "",
+    "3": "",
+    "nuit": ""
+  },
+  "champs": {
+    "nom": "",
+    "telephone": "",
+    "operateur": "",
+    "role": "",
+    "gare": "",
+    "guichet": "",
+    "salaire": ""
+  },
+  "erreurs": {
+    "nom": "",
+    "telephone": "",
+    "gare": "",
+    "guichet": "",
+    "salaire": ""
+  },
+  "droits": {
+    "titre": "",
+    "defaut": "",
+    "exceptions_one": "",
+    "exceptions_other": "",
+    "liste": {
+      "vendreBilletsEtColis": "",
+      "annulerSansPinSuperviseur": "",
+      "modeCadence": "",
+      "voirCaissesDesAutres": ""
+    }
+  },
+  "liens": {
+    "pin": {
+      "titre": "",
+      "detail": ""
+    },
+    "fiche": {
+      "titre": "",
+      "detail": ""
+    }
+  },
+  "note": "",
+  "actions": {
+    "desactiver": {
+      "libelle": "",
+      "detail": ""
+    },
+    "enregistrer": {
+      "libelle": "",
+      "detail": ""
+    }
+  },
+  "pin": {
+    "enregistrer": "",
+    "provisoire": "",
+    "desactiver": "",
+    "sousTitre": "",
+    "fermer": "",
+    "echec": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": "",
+    "erreur": "",
+    "reessayer": ""
+  }
+}
