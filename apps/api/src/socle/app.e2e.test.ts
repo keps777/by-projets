@@ -48,8 +48,10 @@ describe("OpenAPI", () => {
 
   it("décrit toutes les routes du socle, leur sécurité et leurs schémas", () => {
     const doc = documentOpenApi(t.app);
-    expect(Object.keys(doc.paths).sort()).toEqual(
-      [
+    // `AppModule` monte aussi les modules métier (leurs routes ont leurs propres tests) : on
+    // vérifie ici que toutes les routes du socle sont décrites.
+    expect(Object.keys(doc.paths)).toEqual(
+      expect.arrayContaining([
         "/health",
         "/me",
         "/auth/voyageur/code",
@@ -59,7 +61,7 @@ describe("OpenAPI", () => {
         "/auth/direction/verification",
         "/patron/journal-audit",
         "/afrimove/journal-audit/verification",
-      ].sort(),
+      ]),
     );
     expect(doc.components?.securitySchemes).toHaveProperty("bearer");
     // Les routes protégées déclarent le jeton ; les routes publiques non.

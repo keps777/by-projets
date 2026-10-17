@@ -3,8 +3,8 @@
 Backend du superviseur : accueil de la gare, validation ou refus des clôtures de caisse, demandes
 d'annulation et décision, équipe et PIN. **Aucune action sans le PIN du superviseur.**
 
-Module Nest autonome : `SupervisionModule` (importe `CaisseModule`). Non branché dans `AppModule`
-(hors périmètre).
+Module Nest autonome : `SupervisionModule` (importe `CaisseModule`). Branché dans `AppModule`
+; les adaptateurs PostgreSQL restent à écrire (`apps/api/INTEGRATION.md`).
 
 ## Routes et contrat
 
@@ -114,7 +114,7 @@ Les comptes (PIN haché, échecs, blocage) sont lus et écrits par `PersonnesRep
 
 ## À brancher par le coordinateur
 
-1. `AppModule` : importer `SupervisionModule` (après `CaisseModule`) ; adaptateurs PostgreSQL des cinq
+1. `SupervisionModule` est dans `AppModule` ; reste à écrire les adaptateurs PostgreSQL des cinq
    ports.
 2. **La connexion doit refuser un PIN provisoire expiré** (`pin_provisoire_jusqua` dépassé) et imposer
    le changement à la première connexion : ce code est dans le socle, pas dans ce ticket.

@@ -14,21 +14,28 @@ import { configurerApp } from "../configurer-app";
 import { EvenementsService } from "../evenements/evenements.service";
 import { SmsGateway, SmsMock } from "../sms/sms.gateway";
 import { configTest } from "../testing/app-test";
+import {
+  DOSSIER_MIGRATIONS,
+  preparerBaseDeTest,
+  URL_BASE_TEST,
+  type BaseDeTest,
+} from "../testing/base-integration";
 import { appliquerMigrations, MigrationInvalide } from "./migrer";
 import { PrismaService } from "./prisma.service";
 import { executerSeed, TELEPHONES_DEMO } from "./seed";
 
 /**
- * Tests contre un vrai PostgreSQL. Ignorés sans TEST_DATABASE_URL (la CI actuelle n'a pas de base).
+ * Tests contre un vrai PostgreSQL. Ignorés sans DATABASE_URL_TEST (la CI actuelle n'a pas de base).
  *
- *   TEST_DATABASE_URL=postgresql://user@localhost:5432/afrimove_test pnpm --filter @afrimove/api test
+ *   DATABASE_URL_TEST=postgresql://user@localhost:5432/afrimove_test pnpm --filter @afrimove/api test
  *
- * La base doit être JETABLE : son nom finit par « _test » et son schéma public est vidé avant les tests.
+ * La base doit être JETABLE : son nom finit par « _test » et son schéma public est vidé avant les tests
+ * (voir `testing/base-integration.ts`, qui sérialise aussi les fichiers d'intégration).
  */
-const URL_BASE = process.env["TEST_DATABASE_URL"];
-const DOSSIER_MIGRATIONS = path.resolve(__dirname, "../../../prisma/migrations");
+const URL_BASE = URL_BASE_TEST;
 
 describe.skipIf(!URL_BASE)("PostgreSQL réel", () => {
+  let base: BaseDeTest;
   let sql: Client;
   let app: NestExpressApplication;
   let prisma: PrismaService;
@@ -48,19 +55,8 @@ describe.skipIf(!URL_BASE)("PostgreSQL réel", () => {
   };
 
   beforeAll(async () => {
-    const nomBase = new URL(URL_BASE!).pathname.slice(1);
-    if (!nomBase.endsWith("_test")) {
-      throw new Error(
-        `TEST_DATABASE_URL doit viser une base jetable dont le nom finit par _test (reçu : ${nomBase})`,
-      );
-    }
-    sql = new Client({ connectionString: URL_BASE });
-    await sql.connect();
-    await sql.query("DROP SCHEMA public CASCADE");
-    await sql.query("CREATE SCHEMA public");
-
-    const faites = await appliquerMigrations(URL_BASE!, DOSSIER_MIGRATIONS);
-    expect(faites).toHaveLength(2);
+    base = await preparerBaseDeTest(); // schéma vidé, toutes les migrations appliquées
+    sql = base.sql;
 
     const module = await Test.createTestingModule({ imports: [AppModule] })
       .overrideProvider(CONFIG)
@@ -82,7 +78,7 @@ describe.skipIf(!URL_BASE)("PostgreSQL réel", () => {
 
   afterAll(async () => {
     await app?.close();
-    await sql?.end();
+    await base?.fermer();
   });
 
   async function connexionDirection(telephone: string, role: string): Promise<string> {
@@ -108,6 +104,8 @@ describe.skipIf(!URL_BASE)("PostgreSQL réel", () => {
       expect(rows.map((r) => r.migration_name)).toEqual([
         "20261017000000_initial",
         "20261017000100_ajout_seul_et_contraintes",
+        "20261017000200_modules_metier",
+        "20261017000300_modules_metier_garanties",
       ]);
       expect(rows.every((r) => r.finished_at !== null)).toBe(true);
     });
@@ -142,6 +140,18 @@ describe.skipIf(!URL_BASE)("PostgreSQL réel", () => {
         "evenement",
         "journal_audit",
         "defi_otp",
+        // modules métier (migration « modules_metier »)
+        "appareil_sync",
+        "journal_evenement",
+        "plage_attribuee",
+        "numero_vu",
+        "siege_depart",
+        "commande",
+        "photo_colis",
+        "reclamation_colis",
+        "journal_agence",
+        "demande_annulation",
+        "module_exception",
       ]) {
         expect(tables, t).toContain(t);
       }

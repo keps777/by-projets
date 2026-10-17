@@ -8,9 +8,9 @@ import type { OperationSiege } from "./sieges";
  *
  * La logique (rejeu, conflits, blocage) ne parle qu'à ces classes abstraites. `memoire.ts` en
  * fournit des versions en mémoire (tests, développement). **Les versions PostgreSQL ne sont pas
- * écrites** : elles demandent des tables que la migration d'AM-017 n'a pas (`apps/api/prisma/**`,
- * hors du périmètre d'AM-160) ; le README du module liste les tables attendues. Tant que ces ports
- * ne sont pas branchés sur la base, `SyncModule` refuse de démarrer en production.
+ * encore écrites** : les tables existent (migration `modules_metier`, voir
+ * `apps/api/INTEGRATION.md`) mais pas les adaptateurs. Tant que ces ports ne sont pas branchés sur
+ * la base, `SyncModule` refuse de démarrer en production.
  */
 
 export interface Octroi {

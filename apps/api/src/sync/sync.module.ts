@@ -1,11 +1,10 @@
 import { Inject, Injectable, Module, type OnModuleInit } from "@nestjs/common";
 import { CONFIG, type AppConfig } from "../socle/config/config";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
+import { NumerotationModule } from "../numerotation/numerotation.module";
 import {
   AlertesMemoire,
   AppareilsMemoire,
-  AttributionPlagesParRang,
-  ControleNumerosMemoire,
   JournalMemoire,
   ProvisionnementMemoire,
   SiegesMemoire,
@@ -14,7 +13,6 @@ import {
 import {
   AlertesSync,
   AppareilsSync,
-  AttributionPlages,
   ControleNumeros,
   JournalSync,
   ProvisionnementSync,
@@ -68,6 +66,7 @@ export class VerificationStockageSync implements OnModuleInit {
  * versions en mémoire.
  */
 @Module({
+  imports: [NumerotationModule],
   controllers: [SyncController],
   providers: [
     RejeuService,
@@ -78,8 +77,6 @@ export class VerificationStockageSync implements OnModuleInit {
     { provide: SiegesSync, useClass: SiegesMemoire },
     { provide: AlertesSync, useClass: AlertesMemoire },
     { provide: ProvisionnementSync, useClass: ProvisionnementMemoire },
-    { provide: ControleNumeros, useClass: ControleNumerosMemoire },
-    { provide: AttributionPlages, useClass: AttributionPlagesParRang },
   ],
   exports: [
     RejeuService,
@@ -88,8 +85,9 @@ export class VerificationStockageSync implements OnModuleInit {
     SiegesSync,
     AlertesSync,
     ProvisionnementSync,
-    ControleNumeros,
-    AttributionPlages,
+    // `ControleNumeros` et `AttributionPlages` viennent de la numérotation (AM-161) : Nest ne
+    // réexporte pas un jeton importé, on réexporte donc le module qui les fournit.
+    NumerotationModule,
   ],
 })
 export class SyncModule {}

@@ -1,5 +1,4 @@
 import "reflect-metadata";
-import { Module } from "@nestjs/common";
 import type { NestExpressApplication } from "@nestjs/platform-express";
 import { Test } from "@nestjs/testing";
 import request from "supertest";
@@ -14,7 +13,7 @@ import { CONFIG } from "../../socle/config/config";
 import { configurerApp } from "../../socle/configurer-app";
 import { PrismaService } from "../../socle/db/prisma.service";
 import { EvenementsRepository } from "../../socle/evenements/evenements.service";
-import { Horloge, HorlogeSysteme } from "../../socle/horloge";
+import { Horloge } from "../../socle/horloge";
 import { configTest } from "../../socle/testing/app-test";
 import {
   AuditMemoire,
@@ -23,29 +22,17 @@ import {
   HorlogeFixe,
   PersonnesMemoire,
 } from "../../socle/testing/memoire";
-import {
-  AlertesMemoire,
-  AppareilsMemoire,
-  JournalMemoire,
-  ProvisionnementMemoire,
-  SiegesMemoire,
-} from "../../sync/memoire";
+import type { AlertesMemoire, AppareilsMemoire } from "../../sync/memoire";
 import {
   AlertesSync,
   AppareilsSync,
   AttributionPlages,
   ControleNumeros,
-  JournalSync,
-  ProvisionnementSync,
-  SiegesSync,
   type AppareilSync,
   type NouvelAppareil,
 } from "../../sync/ports";
-import { RejeuService } from "../../sync/rejeu.service";
-import { SyncController } from "../../sync/sync.controller";
 import { AlertesNumerotation, PlagesAttribuees, RegistreNumeros } from "../ports";
 import { ControleJourneeService } from "../controle-journee.service";
-import { NumerotationModule } from "../numerotation.module";
 import { NumerotationService } from "../numerotation.service";
 import { PlagesService } from "../plages.service";
 import type { AlertesNumerotationMemoire, RegistreNumerosMemoire } from "../memoire";
@@ -53,29 +40,6 @@ import { COMPAGNIE, GARE } from "./montage";
 
 export { AUTRE_GARE, COMPAGNIE, GARE } from "./montage";
 export const AUTRE_COMPAGNIE = "00000000-0000-4000-8000-0000000000c2";
-
-/**
- * `SyncModule` tel qu'il doit être une fois AM-161 branché : mêmes fournisseurs, mais `ControleNumeros`
- * et `AttributionPlages` viennent de `NumerotationModule` (importé) au lieu des versions en mémoire.
- * C'est exactement la modification de `sync/sync.module.ts` décrite dans le README du dossier ;
- * ce module de test la fait sans toucher au dossier `sync`.
- */
-@Module({
-  imports: [NumerotationModule],
-  controllers: [SyncController],
-  providers: [
-    RejeuService,
-    { provide: Horloge, useClass: HorlogeSysteme },
-    { provide: AppareilsSync, useClass: AppareilsMemoire },
-    { provide: JournalSync, useClass: JournalMemoire },
-    { provide: SiegesSync, useClass: SiegesMemoire },
-    { provide: AlertesSync, useClass: AlertesMemoire },
-    { provide: ProvisionnementSync, useClass: ProvisionnementMemoire },
-  ],
-  // SyncModule exportait ces deux jetons : il réexporte maintenant le module qui les fournit
-  exports: [RejeuService, NumerotationModule],
-})
-export class SyncAvecNumerotation {}
 
 /**
  * L'API complète (gardes, rôles, journal d'audit) avec la synchronisation branchée sur la
@@ -86,7 +50,7 @@ export async function creerAppNumerotationTest(options: { debut?: Date } = {}) {
   const horloge = new HorlogeFixe(options.debut ?? new Date("2027-01-05T20:00:00.000Z"));
   const auditRepo = new AuditMemoire();
 
-  const module = await Test.createTestingModule({ imports: [AppModule, SyncAvecNumerotation] })
+  const module = await Test.createTestingModule({ imports: [AppModule] })
     .overrideProvider(CONFIG)
     .useValue(config)
     .overrideProvider(PersonnesRepository)

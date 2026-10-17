@@ -5,12 +5,12 @@ chaîne (chargement, route, arrivée, remise), code de retrait, photos, assuranc
 réclamations et indemnisation.
 
 Le module est autonome : tous ses accès extérieurs sont des **ports** (classes abstraites, `ports.ts`) avec une
-version **en mémoire** par défaut (`memoire.ts`). Il n'est pas encore branché dans `AppModule` (hors de ce
-périmètre) ni sur PostgreSQL (`prisma/schema.prisma` n'est pas modifié).
+version **en mémoire** par défaut (`memoire.ts`). Il est branché dans `AppModule` ; les tables existent dans
+`prisma/schema.prisma` mais les adaptateurs PostgreSQL ne sont pas écrits (voir `apps/api/INTEGRATION.md`).
 
 ## Brancher le module
 
-1. Ajouter `ColisModule` aux `imports` de `AppModule` (`apps/api/src/socle/app.module.ts`).
+1. Fait : `ColisModule` est dans les `imports` de `AppModule`.
 2. Remplacer les ports en mémoire par des adaptateurs réels, par exemple
    `{ provide: ColisRepository, useClass: ColisPrisma }`. En production, `VerificationPortsColis` **refuse de
    démarrer** tant qu'un port est en mémoire ou simulé (`durable === false`).
