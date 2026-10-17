@@ -73,7 +73,7 @@ describe.skipIf(!URL_BASE_TEST)("PostgreSQL réel · relais, l'API de bout en bo
       .send({ agent: "Éric", creneau: "jeudi 10 h" });
     expect(visite.status, JSON.stringify(visite.body)).toBe(200);
 
-    const [x, y] = await Promise.all(
+    const activations = await Promise.all(
       [1, 2].map(() =>
         t
           .http()
@@ -82,7 +82,10 @@ describe.skipIf(!URL_BASE_TEST)("PostgreSQL réel · relais, l'API de bout en bo
           .send({ position: { lat: 5.4737, lon: 10.4179 }, capacite: 20 }),
       ),
     );
-    expect([x.status, y.status].sort(), JSON.stringify([x.body, y.body])).toContain(200);
+    expect(
+      activations.map((r) => r.status),
+      JSON.stringify(activations.map((r) => r.body)),
+    ).toContain(200);
     expect(await t.prisma.relais.count({ where: { personneId: commercant.id } })).toBe(1);
     const personne = await t.prisma.personne.findUniqueOrThrow({ where: { id: commercant.id } });
     expect(personne.roles.filter((r) => r === "relais")).toHaveLength(1);

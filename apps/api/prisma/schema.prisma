@@ -1726,3 +1726,130 @@ model AdresseGeolocalisee {
 
   @@map("adresse_geolocalisee")
 }
+
+/**
+ * ------------------------------------------------------------------ livraison moto (AM-148)
+ */
+
+/// Un livreur actif (ou suspendu), créé à l'activation de la demande ; le dossier devient le badge.
+/// Le numéro MoMo n'y est que chiffré. SQL : badge et compte uniques, version pour la concurrence optimiste.
+model Livreur {
+  id                   String    @id @db.Uuid
+  version              Int       @default(1)
+  /// « L-BAF-0087 »
+  badge                String    @unique
+  numero               Int
+  personneId           String    @unique @db.Uuid
+  nom                  String
+  ville                String
+  /// SQL : moto | velo | pied | tricycle
+  deplacement          String
+  zone                 String
+  heures               String
+  chargeMax            String
+  momoTelephoneChiffre String
+  /// SQL : mtn | orange
+  momoOperateur        String
+  permisRef            String?
+  assuranceRef         String?
+  permisValideJusqua   DateTime? @db.Date
+  assuranceExpireLe    DateTime? @db.Date
+  moto                 String?
+  disponible           Boolean
+  actif                Boolean
+  note                 Float
+  creeA                DateTime  @db.Timestamptz(3)
+
+  missions    MissionLivraison[]
+  invitations InvitationLivreur[]
+
+  @@index([actif, disponible, ville])
+  @@map("livreur")
+}
+
+/// La demande d'un voyageur pour devenir livreur. SQL : une seule demande ouverte (recue) par personne.
+model DemandeLivreur {
+  dossier              String    @id
+  version              Int       @default(1)
+  personneId           String    @db.Uuid
+  numero               Int
+  ville                String
+  deplacement          String
+  zone                 String
+  heures               String
+  chargeMax            String
+  momoTelephoneChiffre String
+  momoOperateur        String
+  permisRef            String?
+  assuranceRef         String?
+  deposeeA             DateTime  @db.Timestamptz(3)
+  verifIdentiteA       DateTime? @db.Timestamptz(3)
+  verifPiecesA         DateTime? @db.Timestamptz(3)
+  permisValideJusqua   DateTime? @db.Date
+  assuranceExpireLe    DateTime? @db.Date
+  verifFormationA      DateTime? @db.Timestamptz(3)
+  /// SQL : recue | activee | refusee
+  etat                 String
+  decision             Json?
+  livreurId            String?   @db.Uuid
+
+  @@index([personneId, deposeeA(sort: Desc)])
+  @@map("demande_livreur")
+}
+
+/// Une mission de livraison d'un colis « moto ». SQL : une seule mission ouverte par colis (index unique partiel),
+/// `UPDATE … WHERE id AND version` pour chaque changement.
+model MissionLivraison {
+  id            String    @id @db.Uuid
+  version       Int       @default(1)
+  colisId       String    @db.Uuid
+  colisNumero   String
+  /// SQL : en_attente | proposee | acceptee | livree | repli | sans_livreur | annulee
+  etat          String
+  livreurId     String?   @db.Uuid
+  proposeeA     DateTime? @db.Timestamptz(3)
+  expireA       DateTime? @db.Timestamptz(3)
+  essais        Json
+  tour          Int
+  prochaineA    DateTime? @db.Timestamptz(3)
+  creeA         DateTime  @db.Timestamptz(3)
+  accepteeA     DateTime? @db.Timestamptz(3)
+  livreeA       DateTime? @db.Timestamptz(3)
+  trajet        Json
+  distanceM     Int
+  dureeMinutes  Int
+  prixLivraison Int
+  gain          Int
+  absence       Json?
+  repliA        DateTime? @db.Timestamptz(3)
+
+  livreur Livreur? @relation(fields: [livreurId], references: [id], onDelete: Restrict)
+
+  @@index([etat, expireA])
+  @@index([livreurId, etat])
+  @@index([colisId, creeA(sort: Desc)])
+  @@map("mission_livraison")
+}
+
+/// Un lien de suivi partagé : seul le hachage du jeton est gardé.
+model PartageSuivi {
+  jetonHache String   @id
+  colisId    String   @db.Uuid
+  creeA      DateTime @db.Timestamptz(3)
+  expireA    DateTime @db.Timestamptz(3)
+
+  @@index([colisId])
+  @@map("partage_suivi")
+}
+
+/// Une invitation envoyée par un livreur (limitée par jour).
+model InvitationLivreur {
+  id        BigInt   @id @default(autoincrement())
+  livreurId String   @db.Uuid
+  at        DateTime @db.Timestamptz(3)
+
+  livreur Livreur @relation(fields: [livreurId], references: [id])
+
+  @@index([livreurId, at])
+  @@map("invitation_livreur")
+}
