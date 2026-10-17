@@ -1,0 +1,98 @@
+{
+  "retour": "",
+  "sousTitre": "",
+  "nbDeparts_one": "",
+  "nbDeparts_other": "",
+  "nbArrets_one": "",
+  "nbArrets_other": "",
+  "nbChangements_one": "",
+  "nbChangements_other": "",
+  "departs": {
+    "titre": "",
+    "ajouter": "",
+    "heure": "",
+    "heureModifiee": "",
+    "heureNouveau": "",
+    "heureNouveauJour": "",
+    "actif": "",
+    "actifNouveau": "",
+    "classe": {
+      "classique": "",
+      "vip": ""
+    },
+    "etait": "",
+    "nouveau": "",
+    "seulement": "",
+    "places": ""
+  },
+  "jours": {
+    "lun": "",
+    "mar": "",
+    "mer": "",
+    "jeu": "",
+    "ven": "",
+    "sam": "",
+    "dim": ""
+  },
+  "tarifs": {
+    "titre": "",
+    "classique": "",
+    "vip": "",
+    "bagage": "",
+    "champ": {
+      "classique": "",
+      "vip": "",
+      "bagage": ""
+    }
+  },
+  "arrets": {
+    "titre": "",
+    "prorata": "",
+    "prorataAPublier": "",
+    "monteeOui": "",
+    "monteeNon": "",
+    "ajouter": ""
+  },
+  "plan": {
+    "libelle": "",
+    "resume_one": "",
+    "resume_other": "",
+    "detail": "",
+    "rangees_one": "",
+    "rangees_other": "",
+    "modifier": ""
+  },
+  "options": {
+    "venteEnLigne": "",
+    "fusionAuto": ""
+  },
+  "actions": {
+    "annuler": "",
+    "publier": "",
+    "publierDetail": "",
+    "aCorriger": ""
+  },
+  "arret": {
+    "titre": "",
+    "sousTitre": "",
+    "nom": "",
+    "montee": "",
+    "ajouter": "",
+    "annuler": "",
+    "fermer": "",
+    "erreurNom": "",
+    "erreurExiste": ""
+  },
+  "pin": {
+    "titre": "",
+    "sousTitre": "",
+    "fermer": "",
+    "echec": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": "",
+    "erreur": "",
+    "reessayer": ""
+  }
+}
