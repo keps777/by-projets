@@ -50,6 +50,7 @@
     "vide": "Cet export ne contient aucune ligne.",
     "introuvable": "Cet aperçu n'est pas disponible pour cet export.",
     "erreur": "L'aperçu ne s'est pas chargé.",
+    "telechargement": "Le fichier n'a pas pu être téléchargé. Réessaie.",
     "reessayer": "Réessayer"
   }
 }

@@ -5,6 +5,7 @@ import {
   HeureSchema,
   IdSchema,
   IsoDoualaSchema,
+  TauxPctSchema,
   commandeSignee,
 } from "./commun";
 
@@ -25,6 +26,11 @@ export const ActionAssistantSchema = z.strictObject({
     "ajouter_depart",
     "voir_ligne",
   ]),
+  /**
+   * La ligne concernée, pour `voir_ligne` et `ajouter_depart` : l'écran ouvre directement l'analyse ou le réglage
+   * de cette ligne. Absent, l'écran ouvre la liste des lignes (ou les réglages).
+   */
+  ligneId: IdSchema.optional(),
 });
 export type ActionAssistant = z.infer<typeof ActionAssistantSchema>;
 
@@ -82,6 +88,18 @@ export const OptionSimuleeSchema = z.strictObject({
   gainMensuel: FcfaSchema,
 });
 
+/**
+ * Le graphique d'une réponse détaillée (« pourquoi cette ligne baisse ») : une barre par jour de la période
+ * comparée, le plus ancien d'abord.
+ */
+export const GraphiqueReponseSchema = z.strictObject({
+  /** Remplissage de la ligne ce jour-là, en % (0 à 100). */
+  valeurs: z.array(TauxPctSchema),
+  /** Rangs (1 = le plus ancien) des jours en écart, que l'écran met en rouge. */
+  joursEnEcart: z.array(z.number().int().positive()),
+});
+export type GraphiqueReponse = z.infer<typeof GraphiqueReponseSchema>;
+
 export const ReponseAssistantSchema = z.strictObject({
   question: z.string(),
   repondueA: IsoDoualaSchema,
@@ -94,6 +112,8 @@ export const ReponseAssistantSchema = z.strictObject({
   /** Les sources citées : jamais les chiffres d'une autre compagnie. */
   sources: z.string().nullable(),
   simulation: z.strictObject({ options: z.array(OptionSimuleeSchema) }).nullable(),
+  /** Le graphique du diagnostic ; absent quand la réponse n'en a pas. */
+  graphique: GraphiqueReponseSchema.optional(),
 });
 export type ReponseAssistant = z.infer<typeof ReponseAssistantSchema>;
 

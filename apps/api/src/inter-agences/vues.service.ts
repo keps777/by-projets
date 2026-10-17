@@ -392,26 +392,24 @@ export class VuesService {
     const solde = releve ? this.reglements.soldeDe(moi, releve) : null;
     const periode = releve?.periode ?? periodeAffichee(this.reglements.maintenant());
 
-    const colisEnCorrespondance = plan
-      ? await this.colisDuPatron(plan, nom)
-      : {
-          // Contrat: le colis est obligatoire. Sans échange, on donne le colis type de la convention, sans tronçon.
-          colisId: choisie?.id ?? "",
-          numero: "",
-          origine: "",
-          destination: "",
-          poidsKg: choisie?.parts.colisType.poidsKg ?? 1,
-          troncons: [],
-          regle: choisie
-            ? regleDuTransfert(
-                await nom(choisie.compagnieA),
-                await nom(choisie.compagnieB),
-                "la ville de correspondance",
-              )
-            : "",
-        };
+    // Le colis est facultatif au contrat : sans échange en cours (ou sans convention), la clé est absente.
+    const colisEnCorrespondance = plan ? await this.colisDuPatron(plan, nom) : undefined;
+    // L'origine du billet voyageur : la première ligne voyageurs de la convention (celle de `/correspondances`).
+    const ligne = choisie?.voyageurs.lignes[0];
+    const trajet =
+      choisie && ligne
+        ? {
+            origine: ligne.origine,
+            via: ligne.via,
+            destination: ligne.destination,
+            premiere: await nom(ligne.premiere),
+            seconde: await nom(
+              [choisie.compagnieA, choisie.compagnieB].find((x) => x !== ligne.premiere) ?? "",
+            ),
+          }
+        : undefined;
     return {
-      colisEnCorrespondance,
+      ...(colisEnCorrespondance ? { colisEnCorrespondance } : {}),
       reglement: {
         autreCompagnie: choisie ? await nom(autreCompagnie(choisie, moi)) : "",
         nousDoit: solde?.recoit ?? 0,
@@ -424,6 +422,7 @@ export class VuesService {
       correspondanceVoyageurs: {
         minutesGaranties: choisie?.voyageurs.garantieMinutes ?? GARANTIE_CORRESPONDANCE_MINUTES,
         attenteDuSecondBusMinutes: choisie?.voyageurs.attenteMinutes ?? ATTENTE_SECOND_BUS_MINUTES,
+        ...(trajet ? { trajet } : {}),
       },
       conventions: await Promise.all(
         toutes.map(async (c) => ({

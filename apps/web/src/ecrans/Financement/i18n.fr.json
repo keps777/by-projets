@@ -42,14 +42,19 @@
   },
   "action": {
     "demander": "Demander {{montant}} · dossier envoyé en 1 touche",
-    "masque": "Module masqué tant que la convention avec le partenaire n'est pas signée."
+    "masque": "Module masqué tant que la convention avec le partenaire n'est pas signée.",
+    "suivre": "Suivre ma demande"
   },
   "pin": {
     "titre": "Confirme avec ton PIN",
     "sousTitre": "Demander {{montant}} d'avance sur recettes",
     "note": "Ton PIN signe le mandat de prélèvement.",
     "fermer": "Fermer",
-    "echec": "La demande n'a pas pu être envoyée. Réessaie."
+    "echec": "La demande n'a pas pu être envoyée. Réessaie.",
+    "deuxFoisActiver": "Activer le paiement du billet en 2 fois",
+    "deuxFoisCouper": "Couper le paiement du billet en 2 fois",
+    "noteDeuxFois": "Ton PIN signe ce changement.",
+    "echecDeuxFois": "Le changement n'a pas pu être enregistré. Réessaie."
   },
   "etats": {
     "chargement": "Chargement du financement",

@@ -255,6 +255,8 @@ export class VendeursService {
           habitude: habitude ? libelleHabitude(habitude) : null,
           telephoneMasque: masquerTelephone(c.telephone),
           proposition: habitude && proposable ? libelleProposition(habitude) : null,
+          // Le départ de la proposition : « revendre en 1 touche » ouvre la vente de celui-là.
+          ...(habitude && proposable ? { departId: proposable.departId } : {}),
           dernierVoyage: proposable ? null : jourDuVoyage(c.derniere.departA),
         };
       }),

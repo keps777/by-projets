@@ -2,6 +2,7 @@ import type { patron as contrats } from "@afrimove/contrats";
 import { EcranCorps, EcranPied, Entete } from "@afrimove/ui";
 import { useId, useState, type CSSProperties, type ReactNode } from "react";
 import { Trans, useTranslation } from "react-i18next";
+import { Link } from "react-router";
 import { urlPlanche } from "@/coquille/planches";
 import { FeuillePin } from "./FeuillePin";
 import { milliers, montantCourt, partDuPlafond, pourcent } from "./formats";
@@ -15,6 +16,8 @@ interface Props {
   onReessayer: () => void;
   /** Crée le dossier d'avance signé par le PIN, puis ouvre le dossier. Une exception : erreur technique ou PIN refusé. */
   onDemander: (montant: number, pin: string) => Promise<void>;
+  /** Active ou coupe le paiement du billet en 2 fois, signé par le PIN. Une exception : PIN refusé ou erreur technique. */
+  onReglerDeuxFois: (actif: boolean, pin: string) => Promise<void>;
 }
 
 /** En-tête commun : le retour ramène toujours au patron, même quand l'offre ne se charge pas. */
@@ -29,8 +32,10 @@ function EnteteFinancement({ sousTitre }: { sousTitre?: ReactNode }) {
   );
 }
 
-export function VueFinancement({ etat, offre, onReessayer, onDemander }: Props) {
-  if (etat === "pret" && offre) return <Offre offre={offre} onDemander={onDemander} />;
+export function VueFinancement({ etat, offre, onReessayer, onDemander, onReglerDeuxFois }: Props) {
+  if (etat === "pret" && offre) {
+    return <Offre offre={offre} onDemander={onDemander} onReglerDeuxFois={onReglerDeuxFois} />;
+  }
   return <EtatSansOffre etat={etat} onReessayer={onReessayer} />;
 }
 
@@ -77,15 +82,26 @@ function EtatSansOffre({ etat, onReessayer }: { etat: EtatFinancement; onReessay
   );
 }
 
+/** Ce que la feuille du PIN est en train de signer. */
+type Signature = { objet: "avance" } | { objet: "deuxFois"; actif: boolean };
+
 function Offre({
   offre,
   onDemander,
+  onReglerDeuxFois,
 }: {
   offre: contrats.OffreFinancement;
   onDemander: Props["onDemander"];
+  onReglerDeuxFois: Props["onReglerDeuxFois"];
 }) {
   const { t } = useTranslation("Financement");
-  const [feuilleOuverte, setFeuilleOuverte] = useState(false);
+  const [signature, setSignature] = useState<Signature | null>(null);
+  // Garde le dernier objet signé pour que le texte de la feuille ne change pas pendant sa fermeture.
+  const [derniere, setDerniere] = useState<Signature>({ objet: "avance" });
+  const ouvrir = (s: Signature) => {
+    setDerniere(s);
+    setSignature(s);
+  };
   const texteVoyageurs = useId();
   const { avance, creditMateriel, paie, billetEnDeuxFois } = offre;
   const { conditions } = avance;
@@ -203,35 +219,61 @@ function Offre({
                 components={{ sup: <sup /> }}
               />
             </span>
-            {/* Réglage lu seulement : le contrat n'a pas d'écriture pour activer le paiement en 2 fois (voir le README). */}
-            <span
+            {/* Changer le réglage est une écriture du patron : le PIN la signe (feuille ci-dessous). */}
+            <button
+              type="button"
               className={styles.interrupteur}
               role="switch"
               aria-checked={billetEnDeuxFois.actif}
-              aria-readonly="true"
               aria-labelledby={texteVoyageurs}
               data-actif={billetEnDeuxFois.actif}
+              onClick={() => ouvrir({ objet: "deuxFois", actif: !billetEnDeuxFois.actif })}
             >
               <span className={styles.pastille} />
-            </span>
+            </button>
           </div>
         </section>
       </EcranCorps>
 
       <EcranPied className={styles.pied}>
         {avance.statut === "eligible" && (
-          <button type="button" className={styles.demander} onClick={() => setFeuilleOuverte(true)}>
+          <button
+            type="button"
+            className={styles.demander}
+            onClick={() => ouvrir({ objet: "avance" })}
+          >
             {t("action.demander", { montant })}
           </button>
+        )}
+        {avance.statut === "en_cours" && avance.dossierId !== undefined && (
+          <Link
+            className={styles.demander}
+            to={urlPlanche("FinancementDemande", { dossierId: avance.dossierId })}
+          >
+            {t("action.suivre")}
+          </Link>
         )}
         {!offre.conventionSignee && <span className={styles.masque}>{t("action.masque")}</span>}
       </EcranPied>
 
       <FeuillePin
-        ouverte={feuilleOuverte}
-        montant={montant}
-        onFermer={() => setFeuilleOuverte(false)}
-        onPin={(pin) => onDemander(avance.montantPropose, pin)}
+        ouverte={signature !== null}
+        sousTitre={
+          derniere.objet === "avance"
+            ? t("pin.sousTitre", { montant })
+            : t(derniere.actif ? "pin.deuxFoisActiver" : "pin.deuxFoisCouper")
+        }
+        note={t(derniere.objet === "avance" ? "pin.note" : "pin.noteDeuxFois")}
+        messageEchec={t(derniere.objet === "avance" ? "pin.echec" : "pin.echecDeuxFois")}
+        onFermer={() => setSignature(null)}
+        onPin={async (pin) => {
+          if (signature?.objet === "deuxFois") {
+            await onReglerDeuxFois(signature.actif, pin);
+          } else {
+            await onDemander(avance.montantPropose, pin);
+          }
+          setSignature(null);
+        }}
       />
     </>
   );

@@ -1,5 +1,5 @@
 import { patron as c } from "@afrimove/contrats";
-import { jourDecale, heure } from "@afrimove/fixtures";
+import { ALPHA_DLA_BAF, jourDecale, heure } from "@afrimove/fixtures";
 import { ErreurHttp } from "../../infra/erreurs";
 import { implementer } from "../../infra/scenarios";
 import {
@@ -22,8 +22,16 @@ const ACTIONS_CONNUES: Readonly<Record<string, Omit<c.ActionAssistant, "libelle"
     type: "regle_cadence_numero",
   },
   "Décaler le 10:00 à 09:15 dès lundi": { id: "decaler-1000-0915", type: "decaler_depart" },
-  "Ajouter un départ mardi 17:00": { id: "ajouter-depart-mardi-1700", type: "ajouter_depart" },
-  "Voir la ligne en détail": { id: "voir-ligne-dla-baf", type: "voir_ligne" },
+  "Ajouter un départ mardi 17:00": {
+    id: "ajouter-depart-mardi-1700",
+    type: "ajouter_depart",
+    ligneId: ALPHA_DLA_BAF.id,
+  },
+  "Voir la ligne en détail": {
+    id: "voir-ligne-dla-baf",
+    type: "voir_ligne",
+    ligneId: ALPHA_DLA_BAF.id,
+  },
 };
 
 function action(libelle: string): c.ActionAssistant {
@@ -86,6 +94,10 @@ function options(simulation: string): c.ReponseAssistant["simulation"] {
 function echanges(src: SourceFixtures): c.ReponseAssistant[] {
   const e = src.ecran("AssistantReponse");
   const d = e.donnees;
+  const visuel = e.visuel as {
+    remplissageParJour: readonly number[];
+    mercredis: readonly number[];
+  };
   return d.echanges.map((x): c.ReponseAssistant => {
     const r = x.reponse as {
       resume: string;
@@ -103,6 +115,15 @@ function echanges(src: SourceFixtures): c.ReponseAssistant[] {
       actions: (r.actions ?? []).map(action),
       sources: r.sources ?? null,
       simulation: r.simulation ? options(r.simulation) : null,
+      // Le diagnostic (réponse à points) montre le remplissage des 14 jours, les deux mercredis en écart.
+      ...((r.points ?? []).length > 0
+        ? {
+            graphique: {
+              valeurs: [...visuel.remplissageParJour],
+              joursEnEcart: [...visuel.mercredis],
+            },
+          }
+        : {}),
     };
   });
 }

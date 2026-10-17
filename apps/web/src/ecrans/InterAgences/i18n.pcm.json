@@ -9,7 +9,8 @@
     "trajet": "{{origine}} → {{destination}}",
     "horaire": "{{depart}} · {{bus}} · e go reach {{arrivee}}",
     "part": "{{montant}} · for {{compagnie}}",
-    "aucun": "No parcel wey dey connect for now."
+    "aucun": "No parcel wey dey connect for now.",
+    "aucunTitre": "Parcel for transfer"
   },
   "reglement": {
     "titre": "Settlement between company dem · week",

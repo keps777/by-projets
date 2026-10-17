@@ -5,6 +5,7 @@ import {
   OP_DOSSIER_FINANCEMENT,
   OP_LANCER_PAIE,
   OP_OFFRE_FINANCEMENT,
+  OP_REGLER_BILLET_EN_DEUX_FOIS,
   OP_RETIRER_DEMANDE,
 } from "../../../../packages/api-client/src/patron/operations";
 import {
@@ -120,6 +121,27 @@ describe("parité avec le client d'API (écrans Financement et FinancementDemand
     expect((tard.corps as { code: string }).code).toBe("DOSSIER_NON_RETIRABLE");
   });
 
+  it("le paiement en 2 fois : l'opération du client active l'option et l'offre le relit", async () => {
+    const avant = await appel(OP_OFFRE_FINANCEMENT, undefined);
+    expect(avant.valeur!.billetEnDeuxFois.actif).toBe(false);
+    const commande: patron.ReglerBilletEnDeuxFois = { actif: true, signature: t.signature() };
+    const regle = await appel(OP_REGLER_BILLET_EN_DEUX_FOIS, commande);
+    expect(regle.statut, JSON.stringify(regle.corps)).toBe(200);
+    expect(regle.valeur).toMatchObject({ actif: true });
+    const apres = await appel(OP_OFFRE_FINANCEMENT, undefined);
+    expect(apres.valeur!.billetEnDeuxFois.actif).toBe(true);
+    // L'offre renvoie vers le dossier dès qu'une demande est ouverte.
+    const demandee = await appel(OP_DEMANDER_AVANCE, {
+      montant: 1_000_000,
+      signature: t.signature(),
+    });
+    const enCours = await appel(OP_OFFRE_FINANCEMENT, undefined);
+    expect(enCours.valeur!.avance).toMatchObject({
+      statut: "en_cours",
+      dossierId: demandee.valeur!.dossier.id,
+    });
+  });
+
   it("la paie en une touche (écran PatronEquipe et Financement)", async () => {
     const commande: patron.LancerPaie = { mois: "2026-11", signature: t.signature() };
     const lancee = await appel(OP_LANCER_PAIE, commande);
@@ -131,6 +153,7 @@ describe("parité avec le client d'API (écrans Financement et FinancementDemand
     for (const nom of [
       "patron.financement.demander",
       "patron.financement.retirer",
+      "patron.financement.billetEnDeuxFois",
       "patron.paie.lancer",
     ] as const) {
       expect(Object.keys(patron.COMMANDES_SIGNEES)).toContain(nom);

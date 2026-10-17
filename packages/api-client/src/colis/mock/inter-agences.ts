@@ -188,7 +188,8 @@ function dateSignature(texte: string, annee: string): string {
   return isoDu(jour, m[3] ?? "00:00");
 }
 
-export function installerConvention(sc: ScenarioEnConstruction, d: DonneesScenario): void {
+/** La convention de la planche InterAgencesConvention, au contrat unique `colis.SchemaConvention`. */
+export function construireConvention(d: DonneesScenario): c.Convention {
   const e = lire<DonneesConvention>(d);
   const annee = /(\d{4})/.exec(e.detail)?.[1] ?? jourDe(d.horloge).slice(0, 4);
   const [, nomAlpha = "Alpha", nomOmega = "Oméga"] = e.parts.entetes;
@@ -252,7 +253,11 @@ export function installerConvention(sc: ScenarioEnConstruction, d: DonneesScenar
     },
     pied: e.pied,
   };
+  return convention;
+}
 
+export function installerConvention(sc: ScenarioEnConstruction, d: DonneesScenario): void {
+  const convention = construireConvention(d);
   installer(sc, OP_CONVENTION_INTER_AGENCES, ({ conventionId }) => {
     if (conventionId !== CONVENTION_ALPHA_OMEGA) {
       throw new ErreurHttp(404, "Convention introuvable", "convention_introuvable");

@@ -34,8 +34,16 @@ export interface PropsApercuVue {
   onReessayer?: () => void;
   /** Ferme le pop-up (le « × », le voile, Échap) : retour au Comptable. */
   onFermer: () => void;
-  /** « Télécharger » : remet le fichier à l'appareil. */
+  /** « Télécharger » : va chercher le vrai fichier et le remet à l'appareil. */
   onTelecharger: () => void;
+  /** L'onglet montré (un `id` de `apercu.onglets`) ; le premier tant qu'on n'en a pas choisi. */
+  ongletActif?: string | undefined;
+  /** Toucher un onglet : lit son tableau. Sans lui, les onglets ne sont qu'un rappel. */
+  onChoisirOnglet?: ((id: string) => void) | undefined;
+  /** Le fichier arrive : « Télécharger » attend. */
+  enTelechargement?: boolean | undefined;
+  /** Le fichier n'est pas arrivé : on le dit, « Télécharger » peut être retouché. */
+  erreurTelechargement?: boolean | undefined;
 }
 
 function Squelette({ className }: { className: string | undefined }) {
@@ -88,20 +96,41 @@ function FondComptable() {
 
 /* ---------------------------------------------------------------- contenu du pop-up */
 
-function Onglets({ onglets }: { onglets: contrats.ApercuExport["onglets"] }) {
+function Onglets({
+  onglets,
+  actif,
+  onChoisir,
+}: {
+  onglets: contrats.ApercuExport["onglets"];
+  actif: string | undefined;
+  onChoisir: ((id: string) => void) | undefined;
+}) {
   const { t } = useTranslation("ComptableApercu");
   return (
     <ul className={styles.onglets} aria-label={t("export.onglets")}>
-      {onglets.map((onglet, i) => (
-        <li
-          key={onglet.id}
-          className={styles.onglet}
-          data-actif={i === 0 ? "oui" : undefined}
-          aria-current={i === 0 ? "true" : undefined}
-        >
-          {onglet.libelle}
-        </li>
-      ))}
+      {onglets.map((onglet, i) => {
+        const courant = actif === undefined ? i === 0 : onglet.id === actif;
+        return (
+          <li
+            key={onglet.id}
+            className={styles.onglet}
+            data-actif={courant ? "oui" : undefined}
+            aria-current={courant ? "true" : undefined}
+          >
+            {onChoisir ? (
+              <button
+                type="button"
+                className={styles.ongletBouton}
+                onClick={() => onChoisir(onglet.id)}
+              >
+                {onglet.libelle}
+              </button>
+            ) : (
+              onglet.libelle
+            )}
+          </li>
+        );
+      })}
     </ul>
   );
 }
@@ -221,7 +250,17 @@ function Etat({
  *
  * Aucune écriture ici : « Envoyer au cabinet » mène à la clôture, qui envoie le mois entier après confirmation.
  */
-export function ApercuVue({ etat, apercu, onReessayer, onFermer, onTelecharger }: PropsApercuVue) {
+export function ApercuVue({
+  etat,
+  apercu,
+  onReessayer,
+  onFermer,
+  onTelecharger,
+  ongletActif,
+  onChoisirOnglet,
+  enTelechargement,
+  erreurTelechargement,
+}: PropsApercuVue) {
   const { t } = useTranslation("ComptableApercu");
   const maintenant = useMaintenant();
   const donnees = etat === "pret" || etat === "vide" ? apercu : undefined;
@@ -269,7 +308,7 @@ export function ApercuVue({ etat, apercu, onReessayer, onFermer, onTelecharger }
     corps = (
       <div className={styles.contenu} data-etat="pret">
         <div className={styles.haut}>
-          <Onglets onglets={donnees.onglets} />
+          <Onglets onglets={donnees.onglets} actif={ongletActif} onChoisir={onChoisirOnglet} />
           <Tableau apercu={donnees} />
         </div>
         <Garanties apercu={donnees} />
@@ -278,7 +317,7 @@ export function ApercuVue({ etat, apercu, onReessayer, onFermer, onTelecharger }
   } else if (donnees) {
     corps = (
       <div className={styles.contenu} data-etat="vide">
-        <Onglets onglets={donnees.onglets} />
+        <Onglets onglets={donnees.onglets} actif={ongletActif} onChoisir={onChoisirOnglet} />
         <Etat etat="vide" onReessayer={undefined} />
         <Garanties apercu={donnees} />
       </div>
@@ -307,29 +346,38 @@ export function ApercuVue({ etat, apercu, onReessayer, onFermer, onTelecharger }
         {...(sousTitre ? { sousTitre } : {})}
         libelleFermer={t("export.fermer")}
         actions={
-          <div className={styles.actions} data-colonnes={telechargeable || chargement ? 3 : 2}>
-            <a className={`${styles.bouton} ${styles.fermer}`} href={urlPlanche("Comptable")}>
-              {t("boutons.fermer")}
-            </a>
-            {telechargeable ? (
-              <button
-                type="button"
-                className={`${styles.bouton} ${styles.telecharger}`}
-                onClick={onTelecharger}
+          <>
+            {erreurTelechargement && (
+              <p role="alert" className={styles.erreurTelechargement}>
+                {t("etats.telechargement")}
+              </p>
+            )}
+            <div className={styles.actions} data-colonnes={telechargeable || chargement ? 3 : 2}>
+              <a className={`${styles.bouton} ${styles.fermer}`} href={urlPlanche("Comptable")}>
+                {t("boutons.fermer")}
+              </a>
+              {telechargeable ? (
+                <button
+                  type="button"
+                  className={`${styles.bouton} ${styles.telecharger}`}
+                  disabled={enTelechargement === true}
+                  aria-busy={enTelechargement === true ? "true" : undefined}
+                  onClick={onTelecharger}
+                >
+                  <IconeTelecharger />
+                  {t("boutons.telecharger")}
+                </button>
+              ) : chargement ? (
+                <Squelette className={styles.squeletteBouton} />
+              ) : null}
+              <a
+                className={`${styles.bouton} ${styles.envoyer}`}
+                href={urlPlanche("ComptableCloture")}
               >
-                <IconeTelecharger />
-                {t("boutons.telecharger")}
-              </button>
-            ) : chargement ? (
-              <Squelette className={styles.squeletteBouton} />
-            ) : null}
-            <a
-              className={`${styles.bouton} ${styles.envoyer}`}
-              href={urlPlanche("ComptableCloture")}
-            >
-              {t("boutons.envoyer")}
-            </a>
-          </div>
+                {t("boutons.envoyer")}
+              </a>
+            </div>
+          </>
         }
       >
         {corps}

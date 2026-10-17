@@ -400,6 +400,14 @@ describe("ComptableCloture · états chargement, vide, erreur", () => {
   });
 
   it("une seule transaction traitée : accord au singulier", async () => {
+    const client = avecCloture((c) => ({ ...c, transactionsTraitees: 1 }));
+    rendre({ clientApi: client });
+    await attendreEcran();
+    expect(principal()).toHaveTextContent("La transaction sans correspondance est traitée.");
+  });
+
+  it("le nombre de transactions traitées est celui de la clôture, sans lire le rapprochement", async () => {
+    const lectures: string[] = [];
     const base = sourceScenariosFixtures();
     const client = creerClientMock({
       source: {
@@ -407,8 +415,8 @@ describe("ComptableCloture · états chargement, vide, erreur", () => {
         charger: async (nom) => {
           const scenario = await base.charger(nom);
           return avecOperation(scenario, patron.OP_RAPPROCHEMENT.nom, async (suite) => {
-            const r = (await suite()) as contrats.RapprochementMomo;
-            return { ...r, lignes: r.lignes.slice(0, 1) };
+            lectures.push("rapprochement");
+            return suite();
           });
         },
       },
@@ -417,9 +425,26 @@ describe("ComptableCloture · états chargement, vide, erreur", () => {
     });
     rendre({ clientApi: client });
     await attendreEcran();
-    await waitFor(() =>
-      expect(principal()).toHaveTextContent("La transaction sans correspondance est traitée."),
-    );
+    expect(principal()).toHaveTextContent("Les 4 transactions sans correspondance sont traitées.");
+    expect(lectures).toEqual([]);
+  });
+
+  it("sans nombre fourni, la phrase du verrou ne parle pas de transactions", async () => {
+    const client = avecCloture((c) => {
+      const { transactionsTraitees: _ignore, ...sans } = c;
+      return sans;
+    });
+    rendre({ clientApi: client });
+    await attendreEcran();
+    expect(principal()).not.toHaveTextContent(/transactions? sans correspondance/);
+    expect(principal()).toHaveTextContent("Le mois est verrouillé");
+  });
+
+  it("zéro transaction traitée : la phrase n'en parle pas non plus", async () => {
+    const client = avecCloture((c) => ({ ...c, transactionsTraitees: 0 }));
+    rendre({ clientApi: client });
+    await attendreEcran();
+    expect(principal()).not.toHaveTextContent(/transactions? sans correspondance/);
   });
 });
 

@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
-import { cleanup } from "@testing-library/react";
+import { colis as contratsColis } from "@afrimove/contrats";
+import { act, cleanup, renderHook } from "@testing-library/react";
 import {
   ALPHA_AKWA,
   ALPHA_BAFOUSSAM,
@@ -22,6 +23,7 @@ import {
   useConversationAssistant,
   useDossierFinancement,
   useEquipe,
+  useFichierExport,
   useFichePersonne,
   useGare,
   useGares,
@@ -41,7 +43,7 @@ import {
 } from "./hooks";
 import { PLANCHES_PATRON } from "./installer";
 import { ID_CONVENTION_OMEGA } from "./mock/interAgences";
-import { lire, lireErreur } from "./mock/testing";
+import { clientPatron, enveloppe, lire, lireErreur } from "./mock/testing";
 
 afterEach(cleanup);
 
@@ -433,6 +435,16 @@ describe("AssistantReponse · /(patron)/assistant/reponse", () => {
     });
     expect(conv.echanges[0]!.points).toHaveLength(3);
     expect(conv.echanges[0]!.actions.map((x) => x.type)).toEqual(["ajouter_depart", "voir_ligne"]);
+    // Les actions qui ouvrent une ligne la portent ; le diagnostic porte son graphique, pas la simulation.
+    expect(conv.echanges[0]!.actions.map((x) => x.ligneId)).toEqual([
+      ALPHA_DLA_BAF.id,
+      ALPHA_DLA_BAF.id,
+    ]);
+    expect(conv.echanges[0]!.graphique).toEqual({
+      valeurs: [80, 78, 42, 74, 90, 100, 70, 76, 72, 38, 70, 86, 96, 66],
+      joursEnEcart: [3, 10],
+    });
+    expect(conv.echanges[1]!.graphique).toBeUndefined();
     expect(conv.echanges[1]!.simulation).toEqual({
       options: [
         { libelle: "09:15", gainMensuel: 1_500_000 },
@@ -537,6 +549,39 @@ describe("ComptableApercu · /(patron)/comptable/apercu/[exportId]", () => {
     });
     expect(x.signe).toBe(true);
   });
+
+  it("useApercuExport(onglet) : un onglet connu répond, un inconnu est un 404 ONGLET_INCONNU", async () => {
+    const x = await lire("ComptableApercu", () =>
+      useApercuExport("journal_ventes", undefined, "par_jour"),
+    );
+    expect(x.onglets.map((o) => o.id)).toContain("par_jour");
+    const erreur = await lireErreur("ComptableApercu", () =>
+      useApercuExport("journal_ventes", undefined, "nexiste_pas"),
+    );
+    expect(erreur).toMatchObject({ statut: 404, code: "ONGLET_INCONNU" });
+  });
+
+  it("useFichierExport : remet un vrai fichier (nom, type, octets) qui contient les lignes de l'aperçu", async () => {
+    const client = clientPatron("ComptableApercu");
+    const { result } = renderHook(() => useFichierExport(), { wrapper: enveloppe(client) });
+    let fichier!: Awaited<ReturnType<typeof result.current.mutateAsync>>;
+    await act(async () => {
+      fichier = await result.current.mutateAsync({ exportId: "journal_ventes" });
+    });
+    expect(fichier.nom).toBe("journal-des-ventes-decembre.csv");
+    expect(fichier.typeMime).toContain("text/csv");
+    const texte = new TextDecoder().decode(fichier.octets);
+    const lignes = texte.trimEnd().split("\r\n");
+    expect(lignes).toHaveLength(11);
+    expect(lignes[0]).toBe("date;heure;ligne;dép.;siège;classe;prix;mode;guichet");
+    expect(lignes[1]).toBe("2026-12-01;05:52;DLA-YDE;06:00;12;CLASS.;5000;CASH;GU1 · JM");
+
+    const erreur = await result.current.mutateAsync({ exportId: "annulations" }).then(
+      () => null,
+      (e: unknown) => e,
+    );
+    expect(erreur).toMatchObject({ statut: 404 });
+  });
 });
 
 describe("ComptableCloture · /(patron)/comptable/cloture", () => {
@@ -560,6 +605,8 @@ describe("ComptableCloture · /(patron)/comptable/cloture", () => {
     expect(m.envoi.fichiers[0]!.tailleOctets).toBe(1_200_000);
     expect(m.envoi.fichiers[4]).toMatchObject({ pages: 2, tailleOctets: null });
     expect(m.apercuJournal).toHaveLength(4);
+    // Les quatre transactions sans correspondance sont traitées : le nombre vient de la clôture.
+    expect(m.transactionsTraitees).toBe(4);
   });
 });
 
@@ -750,7 +797,7 @@ describe("InterAgences · /(patron)/inter-agences", () => {
       poidsKg: 3,
     });
     expect(
-      v.colisEnCorrespondance.troncons.map((t) => [
+      v.colisEnCorrespondance?.troncons.map((t) => [
         t.rang,
         t.compagnie,
         t.heureDepart,
@@ -774,41 +821,58 @@ describe("InterAgences · /(patron)/inter-agences", () => {
     expect(v.correspondanceVoyageurs).toEqual({
       minutesGaranties: 25,
       attenteDuSecondBusMinutes: 15,
+      // L'origine du billet voyageur (« Yaoundé → Bamenda en un seul billet : Alpha jusqu'à Bafoussam, Oméga ensuite »).
+      trajet: {
+        origine: "Yaoundé",
+        via: "Bafoussam",
+        destination: "Bamenda",
+        premiere: "Alpha",
+        seconde: "Oméga",
+      },
     });
     expect(v.conventions).toEqual([{ id: ID_CONVENTION_OMEGA, avec: "Oméga", statut: "active" }]);
   });
 });
 
 describe("InterAgencesConvention · /(patron)/inter-agences/convention/[conventionId]", () => {
-  it("useConventionInterAgences : parts, 5 règles, 2 signatures, bilan du trimestre", async () => {
+  it("useConventionInterAgences : le contrat unique de la convention (parts, 5 règles, signatures, bilan, pied)", async () => {
     const c = await lire("InterAgencesConvention", () =>
       useConventionInterAgences(ID_CONVENTION_OMEGA),
     );
-    expect(c).toMatchObject({
-      compagnies: ["Alpha", "Oméga"],
-      signeeLe: "2026-10-12",
-      renouvellement: "trimestriel",
-      statut: "active",
+    expect(c).toMatchObject({ id: ID_CONVENTION_OMEGA, statut: "active" });
+    expect(c.titre).toContain("Alpha");
+    expect(c.titre).toContain("Oméga");
+    expect(c.parts.lignes.map((l) => l.troncon)).toEqual([
+      "Douala → Bafoussam",
+      "Bafoussam → Bamenda",
+      "Transbordement à Bafoussam",
+    ]);
+    expect(c.parts.lignes[0]!.parts).toEqual({ Alpha: 1400, Oméga: null });
+    expect(c.parts.total).toMatchObject({
+      prixClient: 3000,
+      fraisAfrimove: 150,
+      parts: { Alpha: 1600, Oméga: 1400 },
     });
-    expect(c.parts.colisType).toEqual({ poidsKg: 3, prix: 3000, fraisAfriMove: 150 });
-    expect(c.parts.lignes).toEqual([
-      { troncon: "Douala → Bafoussam", premiere: 1400, seconde: null },
-      { troncon: "Bafoussam → Bamenda", premiere: null, seconde: 1200 },
-      { troncon: "Transbordement à Bafoussam", premiere: 200, seconde: 200 },
+    expect(c.regles.liste.map((r) => r.rang)).toEqual([1, 2, 3, 4, 5]);
+    expect(c.regles.liste[0]!.titre).toBe("Responsabilité au scan.");
+    expect(c.signatures.map((s) => [s.compagnie, s.signataire, s.moi, s.parPin])).toEqual([
+      ["Alpha", "Toi", true, true],
+      ["Oméga", "E. Tchoua", false, true],
     ]);
-    expect(c.parts.total).toEqual({ premiere: 1600, seconde: 1400 });
-    expect(c.regles.map((r) => r.rang)).toEqual([1, 2, 3, 4, 5]);
-    expect(c.regles[0]!.titre).toBe("Responsabilité au scan");
-    expect(c.signatures.map((s) => [s.compagnie, s.signataire, s.signeA])).toEqual([
-      ["Alpha", "M. Kamga", "2026-10-12T09:40:00.000+01:00"],
-      ["Oméga", "E. Tchoua", "2026-10-12T11:05:00.000+01:00"],
-    ]);
-    expect(c.trimestre).toEqual({
+    expect(c.trimestre).toMatchObject({
       colisEchanges: 184,
       litiges: 1,
       netRecu: 131_000,
-      reglements: 12,
+      lundis: 12,
     });
+    expect(c.pied.length).toBeGreaterThan(0);
+  });
+
+  it("c'est la même convention que celle du module colis : une seule source, un seul contrat", async () => {
+    const c = await lire("InterAgencesConvention", () =>
+      useConventionInterAgences(ID_CONVENTION_OMEGA),
+    );
+    expect(() => contratsColis.SchemaConvention.parse(c)).not.toThrow();
   });
 });
 

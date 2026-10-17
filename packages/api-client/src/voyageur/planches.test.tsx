@@ -379,6 +379,8 @@ describe("mon bus en direct (planche Direct)", () => {
     ]);
     expect(s.etapes[1]?.arretMinutes).toBe(10);
     expect(s.etapes[3]?.placesQuiMontent).toBe(4);
+    // Chaque étape porte l'identifiant de son arrêt : celui que « Monter en route » lit.
+    expect(s.etapes.map((e) => e.arretId)).toEqual(["douala-akwa", "edea", "pouma", "boumnyebel"]);
     expect(s.prevenir).toMatchObject({
       nom: "Maman",
       minutesAvantArrivee: 15,

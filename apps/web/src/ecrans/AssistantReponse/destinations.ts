@@ -10,9 +10,9 @@ import type { ActionAssistant, Echange, LigneReseau } from "./types";
  * - « Contrôle inopiné mardi » -> Controleur ; « Numéro obligatoire en cadence » et « Décaler le 10:00 à 09:15 dès
  *   lundi » -> Config (les propositions de l'assistant y sont déjà en ambre, à valider).
  *
- * La réponse ne porte pas d'identifiant de ligne : `ligneId` est celle que l'écran a reconnue dans le texte. Quand
- * aucune ligne n'est reconnue, l'action ouvre la liste (Analyses) ou les réglages (Config) plutôt qu'une ligne au
- * hasard.
+ * `ligneId` est celle que l'action porte (contrat `ActionAssistant.ligneId`) ; à défaut, celle que l'écran a reconnue
+ * dans le texte. Quand aucune ligne n'est connue, l'action ouvre la liste (Analyses) ou les réglages (Config) plutôt
+ * qu'une ligne au hasard.
  */
 export function destinationAction(type: ActionAssistant["type"], ligneId?: string): string {
   switch (type) {

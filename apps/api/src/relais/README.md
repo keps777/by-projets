@@ -98,6 +98,10 @@ refusée car le relais est plein), `etat_incompatible` (409), `fiche_invalide` (
 - **Inscription** : une seule demande ouverte par personne (`recue` ou `visite_planifiee`, contrainte
   d'unicité) ; numéro de dossier `R-<VILLE>-NNNN` par un compteur atomique, sans trou ni doublon ; brouillon
   enregistré à chaque étape ; l'agent passe sous 72 h. Les champs inconnus du corps ne sont jamais recopiés.
+  **MoMo de la fiche facultatif** (`SchemaFicheRelais.momo`) : le formulaire ne montre que le numéro masqué du
+  compte, qu'on ne peut pas renvoyer. Sans `momo` dans la fiche déposée, le serveur prend celui du brouillon, sinon
+  celui du compte (l'opérateur se devine sur le préfixe, MTN à défaut) ; un `momo` présent est contrôlé en entier
+  et passe avant. La fiche gardée avec la demande porte toujours un MoMo.
 - **Validation** : l'API ne peut pas importer zod à l'exécution ; `validation.ts` relit les corps à la main et
   `validation.test.ts` les compare aux schémas des contrats sur des cas valides et invalides.
 - **Temps** : toutes les heures affichées et les bornes (lundi 8 h, jours de garde) sont celles de Douala.

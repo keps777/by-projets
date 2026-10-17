@@ -7,6 +7,7 @@ import {
   OP_DEMANDER_AVANCE,
   OP_DOSSIER_FINANCEMENT,
   OP_OFFRE_FINANCEMENT,
+  OP_REGLER_BILLET_EN_DEUX_FOIS,
   OP_RETIRER_DEMANDE,
 } from "../operations";
 import { conflit, creerJournal, introuvable, lireCommande } from "./contexte";
@@ -119,10 +120,38 @@ export function mockFinancement(src: SourceFixtures): ContributionMock {
   const base = dossierInitial(src);
   const dossiers = new Map<string, c.DossierFinancement>([[base.id, base]]);
   let compteur = Number(base.id.slice(-4));
+  /** Dossier envoyé pendant la session et pas encore retiré. */
+  let demandeOuverte: string | undefined;
+  /** Paiement en 2 fois réglé pendant la session ; `undefined` : l'état de la maquette. */
+  let deuxFois: boolean | undefined;
 
   return {
     operations: [
-      implementer(OP_OFFRE_FINANCEMENT, () => offre(src)),
+      implementer(OP_OFFRE_FINANCEMENT, (): c.OffreFinancement => {
+        const depart = offre(src);
+        // Une demande envoyée pendant la session et pas retirée : l'avance est « en cours » et renvoie vers son dossier.
+        const ouvert = demandeOuverte ? dossiers.get(demandeOuverte) : undefined;
+        return {
+          ...depart,
+          avance: ouvert
+            ? {
+                ...depart.avance,
+                statut: "en_cours",
+                montantPropose: ouvert.montant,
+                dossierId: ouvert.id,
+              }
+            : depart.avance,
+          billetEnDeuxFois: {
+            ...depart.billetEnDeuxFois,
+            actif: deuxFois ?? depart.billetEnDeuxFois.actif,
+          },
+        };
+      }),
+      implementer(OP_REGLER_BILLET_EN_DEUX_FOIS, (params): c.BilletEnDeuxFoisRegle => {
+        const cmd = lireCommande(c.ReglerBilletEnDeuxFoisSchema, params);
+        deuxFois = cmd.actif;
+        return { ...journal(cmd.signature.signeA), actif: cmd.actif };
+      }),
       implementer(OP_DOSSIER_FINANCEMENT, ({ dossierId }) => {
         const dossier = dossiers.get(dossierId);
         if (!dossier) throw introuvable("Dossier", "DOSSIER_INCONNU", dossierId);
@@ -130,6 +159,9 @@ export function mockFinancement(src: SourceFixtures): ContributionMock {
       }),
       implementer(OP_DEMANDER_AVANCE, (params, ctx): c.AvanceDemandee => {
         const cmd = lireCommande(c.DemanderAvanceSchema, params);
+        if (demandeOuverte) {
+          throw conflit("Une demande d'avance est déjà en cours", "DEMANDE_EN_COURS");
+        }
         const plafond = offre(src).avance.plafond;
         if (cmd.montant > plafond) {
           throw new ErreurHttp(
@@ -154,6 +186,7 @@ export function mockFinancement(src: SourceFixtures): ContributionMock {
           retirable: true,
         };
         dossiers.set(dossier.id, dossier);
+        demandeOuverte = dossier.id;
         return { ...journal(cmd.signature.signeA), dossier };
       }),
       implementer(OP_RETIRER_DEMANDE, (params): c.DemandeRetiree => {
@@ -165,6 +198,7 @@ export function mockFinancement(src: SourceFixtures): ContributionMock {
         }
         const retire: c.DossierFinancement = { ...dossier, statut: "retire", retirable: false };
         dossiers.set(retire.id, retire);
+        if (demandeOuverte === retire.id) demandeOuverte = undefined;
         return { ...journal(cmd.signature.signeA), dossier: retire };
       }),
     ],

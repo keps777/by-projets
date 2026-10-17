@@ -26,6 +26,15 @@ export interface ActionVue {
   id: string;
   libelle: string;
   type: TypeAction;
+  /** La ligne de « Voir la ligne » et « Ajouter un départ » (les autres actions n'en portent pas). */
+  ligneId?: string;
+}
+
+/** Le graphique d'un diagnostic : le remplissage de chaque jour de la période, le plus ancien d'abord. */
+export interface GraphiqueVue {
+  valeurs: number[];
+  /** Rangs (1 = le plus ancien) des jours en écart. */
+  joursEnEcart: number[];
 }
 
 export interface ScenarioVue {
@@ -77,6 +86,7 @@ export interface ReponseVue {
   actions: ActionVue[];
   sources: string | null;
   simulation: { options: OptionSimuleeVue[] } | null;
+  graphique?: GraphiqueVue;
 }
 
 export interface ConversationVue {
@@ -155,6 +165,8 @@ export interface Brouillon {
   actions: ActionProposee[];
   sources: SourceDonnee[];
   simulation: OptionSimuleeVue[] | null;
+  /** Le graphique du diagnostic (« pourquoi cette ligne baisse »). */
+  graphique?: GraphiqueVue;
   /** Les phrases chiffrées que le modèle de langage a le droit de reformuler (rien d'autre). */
   faits: string[];
   /** Textes qu'une reformulation doit garder (le nom complet de la ligne, que l'écran retrouve). */

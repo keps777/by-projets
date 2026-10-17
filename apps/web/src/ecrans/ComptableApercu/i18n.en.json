@@ -50,6 +50,7 @@
     "vide": "This export has no rows.",
     "introuvable": "This preview is not available for this export.",
     "erreur": "The preview could not be loaded.",
+    "telechargement": "The file could not be downloaded. Try again.",
     "reessayer": "Try again"
   }
 }

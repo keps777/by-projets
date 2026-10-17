@@ -508,7 +508,7 @@ describe("règlement hebdomadaire : seulement ce que les scans rendent certain, 
         destination: "Bamenda",
       });
       expect(
-        v.colisEnCorrespondance.troncons.map((x) => [x.compagnie, x.part, x.heureDepart]),
+        v.colisEnCorrespondance?.troncons.map((x) => [x.compagnie, x.part, x.heureDepart]),
       ).toEqual([
         ["Alpha", 1600, "10:00"],
         ["Oméga", 1400, "15:40"],
@@ -525,6 +525,14 @@ describe("règlement hebdomadaire : seulement ce que les scans rendent certain, 
       expect(v.correspondanceVoyageurs).toEqual({
         minutesGaranties: 25,
         attenteDuSecondBusMinutes: 15,
+        // L'origine du billet voyageur : la ligne voyageurs de la convention (même donnée que /correspondances).
+        trajet: {
+          origine: "Yaoundé",
+          via: "Bafoussam",
+          destination: "Bamenda",
+          premiere: "Alpha",
+          seconde: "Oméga",
+        },
       });
       expect(v.conventions).toEqual([{ id: conventionId, avec: "Alpha", statut: "active" }]);
 
@@ -546,6 +554,69 @@ describe("règlement hebdomadaire : seulement ce que les scans rendent certain, 
       expect(rep.status).toBe(200);
       expect(rep.body.conventions).toEqual([]);
       expect(rep.body.reglement.autreCompagnie).toBe("");
+    });
+
+    it("sans colis en correspondance, la planche reste conforme au contrat : la clé est absente, pas un colis vide", async () => {
+      const rep = await t
+        .http()
+        .get("/patron/inter-agences")
+        .set(entete(t.equipe.patronOmega.jeton));
+      expect(rep.status).toBe(200);
+      const v = patron.InterAgencesSchema.parse(rep.body);
+      expect(v.colisEnCorrespondance).toBeUndefined();
+      expect("colisEnCorrespondance" in rep.body).toBe(false);
+      expect(v.conventions).toHaveLength(1);
+      expect(v.correspondanceVoyageurs.trajet).toMatchObject({
+        origine: "Yaoundé",
+        via: "Bafoussam",
+      });
+    });
+
+    it("une compagnie sans aucune convention reçoit tout de même une planche valide (ni colis ni trajet)", async () => {
+      const rep = await t
+        .http()
+        .get("/patron/inter-agences")
+        .set(entete(t.equipe.patronBeta.jeton));
+      expect(rep.status).toBe(200);
+      const v = patron.InterAgencesSchema.parse(rep.body);
+      expect(v.colisEnCorrespondance).toBeUndefined();
+      expect(v.correspondanceVoyageurs.trajet).toBeUndefined();
+      expect(v.conventions).toEqual([]);
+    });
+
+    it("la convention du patron est celle du module colis : un seul contrat, même réponse, même étanchéité", async () => {
+      const jeton = t.equipe.patronOmega.jeton;
+      const patronRep = await t
+        .http()
+        .get(`/patron/inter-agences/conventions/${conventionId}`)
+        .set(entete(jeton));
+      expect(patronRep.status, JSON.stringify(patronRep.body)).toBe(200);
+      const colisRep = await t
+        .http()
+        .get(`/inter-agences/conventions/${conventionId}`)
+        .set(entete(jeton));
+      expect(patronRep.body).toEqual(colisRep.body);
+      const c = patron.ConventionSchema.parse(patronRep.body);
+      expect(c.id).toBe(conventionId);
+      expect(c.signatures.every((s) => s.parPin)).toBe(true);
+      expect(c.pied.length).toBeGreaterThan(0);
+
+      const beta = await t
+        .http()
+        .get(`/patron/inter-agences/conventions/${conventionId}`)
+        .set(entete(t.equipe.patronBeta.jeton));
+      expect(beta.status).toBe(404);
+    });
+
+    it("le trajet voyageur est vu du point de vue de la compagnie : la même ligne, première compagnie inchangée", async () => {
+      const lire = async (jeton: string) =>
+        patron.InterAgencesSchema.parse(
+          (await t.http().get("/patron/inter-agences").set(entete(jeton))).body,
+        );
+      const omega = (await lire(t.equipe.patronOmega.jeton)).correspondanceVoyageurs.trajet;
+      const alpha = (await lire(t.equipe.patronAlpha.jeton)).correspondanceVoyageurs.trajet;
+      expect(alpha).toEqual(omega);
+      expect(alpha?.premiere).toBe("Alpha");
     });
   });
 });

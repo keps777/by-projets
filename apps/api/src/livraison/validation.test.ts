@@ -69,6 +69,8 @@ describe("lecteurs de la livraison ≡ schémas des contrats", () => {
       sans(DEMANDE, "pieces"),
       { ...DEMANDE, pieces: { permisRef: "" } },
       { ...DEMANDE, pieces: { permisRef: 3 } },
+      // Le MoMo est facultatif : sans lui, le serveur prend celui du compte.
+      sans(DEMANDE, "momo"),
       { ...DEMANDE, momo: { telephone: "670000333", operateur: "mtn" } },
       { ...DEMANDE, momo: { telephone: "+237670000333", operateur: "camtel" } },
       { ...DEMANDE, momo: { telephone: "+237670000333" } },
@@ -170,6 +172,7 @@ describe("lecteurs de la livraison ≡ schémas des contrats", () => {
     expect(Object.keys(lireDemandeLivreur({ ...DEMANDE, actif: true, note: 5 })).sort()).toEqual(
       ["chargeMax", "deplacement", "heures", "momo", "pieces", "zone"].sort(),
     );
+    expect(lireDemandeLivreur(sans(DEMANDE, "momo"))).not.toHaveProperty("momo");
   });
 
   it("un identifiant de mission mal formé est une mission introuvable (404)", () => {

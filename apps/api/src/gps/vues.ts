@@ -25,6 +25,7 @@ export function etapesVue(e: Estimation) {
     const precision = precisionEtape(etape, i);
     return {
       arret: etape.arret.nom,
+      arretId: etape.arret.id,
       heure: iso(etape.heureMs),
       statut: etape.statut,
       ...(precision ? { precision } : {}),

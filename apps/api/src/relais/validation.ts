@@ -50,14 +50,17 @@ const lirePosition = (l: Lecteur): FicheRelais["position"] => ({
   repere: l.chaineOpt("repere", { max: TEXTE_MAX, vide: true }) ?? null,
 });
 
-export const lireFicheRelais = (brut: unknown): FicheRelais =>
+/** La fiche telle qu'elle arrive : le MoMo est facultatif, le serveur prend alors celui du compte. */
+export type FicheRelaisRecue = Omit<FicheRelais, "momo"> & { momo?: FicheRelais["momo"] };
+
+export const lireFicheRelais = (brut: unknown): FicheRelaisRecue =>
   lire(brut, (l) => ({
     nom: l.chaine("nom", { max: NOM_MAX }),
     type: l.chaine("type", { max: TEXTE_MAX }),
     ouvert: l.chaine("ouvert", { max: TEXTE_MAX }),
     position: lirePosition(l.objet("position")),
     tailleMax: l.chaine("tailleMax", { max: TEXTE_MAX }),
-    momo: lireMomo(l.objet("momo")),
+    ...(l.present("momo") ? { momo: lireMomo(l.objet("momo")) } : {}),
     facadeRef: l.chaine("facadeRef"),
   }));
 

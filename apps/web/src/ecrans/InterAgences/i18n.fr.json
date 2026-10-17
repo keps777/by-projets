@@ -9,7 +9,8 @@
     "trajet": "{{origine}} → {{destination}}",
     "horaire": "{{depart}} · {{bus}} · arrivée {{arrivee}}",
     "part": "{{montant}} · pour {{compagnie}}",
-    "aucun": "Aucun colis en correspondance pour le moment."
+    "aucun": "Aucun colis en correspondance pour le moment.",
+    "aucunTitre": "Colis en correspondance"
   },
   "reglement": {
     "titre": "Règlement entre compagnies · semaine",

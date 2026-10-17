@@ -128,6 +128,8 @@ export class FinancementService {
         montantPropose: propose,
         conditions: { ...conditions },
         versementSousHeures: REPONSE_SOUS_HEURES,
+        // Le lien vers le suivi quand une demande est ouverte.
+        ...(ouvert ? { dossierId: ouvert.id } : {}),
       },
       // Le contrat n'a pas de « pas d'offre » : sans offre du partenaire, des zéros (voir le README).
       creditMateriel: credit

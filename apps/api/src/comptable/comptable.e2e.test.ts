@@ -1,5 +1,10 @@
 import { patron } from "@afrimove/contrats";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import {
+  OP_APERCU_EXPORT,
+  OP_CLOTURE,
+  OP_FICHIER_EXPORT,
+} from "../../../../packages/api-client/src/patron/operations";
 import { ORPHELINES, ajouterOrphelines, iso, peuplerMois, vente } from "./testing/donnees";
 import {
   AGENCE,
@@ -217,6 +222,40 @@ describe("aperçu et fichier d'un export", () => {
     expect(inconnu.status).toBe(404);
     expect(inconnu.body.code).toBe("ONGLET_INCONNU");
     expect((await lire("/exports/journal_ventes/apercu?onglet=../etc")).status).toBe(400);
+  });
+
+  it("parité avec les opérations du client : chemin, requête (mois, onglet) et fichier remis", async () => {
+    // Le chemin et la requête exacts que fabrique le client, relatifs à /patron/comptable.
+    const adresse = (
+      op: { chemin: (p: never) => string; requete?: (p: never) => Record<string, unknown> },
+      params: unknown,
+    ): string => {
+      const requete = new URLSearchParams();
+      for (const [cle, valeur] of Object.entries(op.requete?.(params as never) ?? {})) {
+        if (valeur !== undefined) requete.set(cle, String(valeur));
+      }
+      const chaine = requete.toString();
+      return op.chemin(params as never).slice(BASE.length) + (chaine ? `?${chaine}` : "");
+    };
+
+    const apercu = patron.ApercuExportSchema.parse(
+      (await lire("/exports/journal_ventes/apercu")).body,
+    );
+    const onglet = apercu.onglets[1]!.id;
+    const params = { exportId: "journal_ventes", mois: MOIS, onglet } as const;
+    const rep = await lire(adresse(OP_APERCU_EXPORT, params));
+    expect(rep.status, JSON.stringify(rep.body)).toBe(200);
+    expect(OP_APERCU_EXPORT.reponse.parse(rep.body).tableau.colonnes).not.toEqual(
+      apercu.tableau.colonnes,
+    );
+
+    const adresseFichier = adresse(OP_FICHIER_EXPORT, { exportId: "journal_ventes", mois: MOIS });
+    expect(adresseFichier).toBe(`/exports/journal_ventes/fichier?mois=${MOIS}`);
+    const fichier = await lire(adresseFichier).buffer(true).parse(binaire);
+    expect(fichier.status).toBe(200);
+    expect(OP_FICHIER_EXPORT.lecture).toBe("binaire");
+    expect(fichier.headers["content-disposition"]).toContain("journal-ventes-2026-12.xlsx");
+    expect(fichier.headers["x-empreinte-afrimove"]).toMatch(/^[0-9a-f]{64}$/);
   });
 
   it("refuse un export inconnu (404) et un mois invalide (400)", async () => {
@@ -504,9 +543,14 @@ describe("clôture du mois", () => {
     // L'en-tête et les trois premières ventes.
     expect(c.apercuJournal).toHaveLength(4);
     expect(c.apercuJournal[0]).toContain("date;heure;ligne");
+    // Aucune des quatre transactions n'est traitée encore ; elles le sont toutes après les décisions.
+    expect(c.transactionsTraitees).toBe(0);
     // L'écart tombe à zéro quand les quatre lignes sont traitées.
     await toutTraiter();
     expect((await lire("/cloture")).body.encaisse.ecart).toBe(0);
+    const apres = patron.ClotureMoisSchema.parse((await lire("/cloture")).body);
+    expect(apres.transactionsTraitees).toBe(TOUTES.length);
+    expect(OP_CLOTURE.chemin({})).toBe("/patron/comptable/cloture");
   });
 
   it("refuse sans signature (401) et avec un mauvais PIN (403) : rien n'est clôturé", async () => {
@@ -556,6 +600,7 @@ describe("clôture du mois", () => {
     expect(r.cloture.clotureA).toMatch(/\+01:00$/);
     expect(r.cloture.encaisse.total).toBe(avant);
     expect(r.cloture.encaisse.ecart).toBe(0);
+    expect(r.cloture.transactionsTraitees).toBe(TOUTES.length);
     expect(r.cloture.envoi.fichiers.map((f) => f.format)).toEqual([
       "xlsx",
       "xlsx",

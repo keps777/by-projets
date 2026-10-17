@@ -119,6 +119,40 @@ describe("Direct · liens de la planche", () => {
     );
   });
 
+  it("« monter en route » reprend l'identifiant d'arrêt de l'API, pas un slug fabriqué avec le nom", async () => {
+    rendreDirect({
+      client: clientDirect(
+        avecSuivi((suivi) => ({
+          ...suivi,
+          etapes: suivi.etapes.map((e) =>
+            e.arret === "Boumnyebel" ? { ...e, arretId: "arret-0042" } : e,
+          ),
+        })),
+      ),
+    });
+    await attendreCarte();
+    expect(lien(/Boumnyebel · 4 places montent ici/)).toHaveAttribute(
+      "href",
+      "/monter-en-route?arretId=arret-0042",
+    );
+  });
+
+  it("sans identifiant d'arrêt dans la réponse, le lien se rabat sur le nom de l'arrêt", async () => {
+    rendreDirect({
+      client: clientDirect(
+        avecSuivi((suivi) => ({
+          ...suivi,
+          etapes: suivi.etapes.map(({ arretId: _id, ...reste }) => reste),
+        })),
+      ),
+    });
+    await attendreCarte();
+    expect(lien(/Boumnyebel · 4 places montent ici/)).toHaveAttribute(
+      "href",
+      "/monter-en-route?arretId=boumnyebel",
+    );
+  });
+
   it("envoie « Mon colis » vers l'envoi d'un colis quand le voyageur n'en a pas sur ce trajet", async () => {
     const { source } = avecPanne(voyageur.OP_COLIS_DU_BILLET.nom, () => new ErreurReseau());
     rendreDirect({ client: clientDirect(source) });

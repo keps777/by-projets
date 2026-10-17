@@ -6,8 +6,12 @@ import styles from "./financement.module.css";
 
 interface Props {
   ouverte: boolean;
-  /** Montant demandé, écrit comme sur la planche (« 6 M »). */
-  montant: string;
+  /** Ce que le PIN signe, en une ligne (« Demander 6 M d'avance sur recettes »). */
+  sousTitre: string;
+  /** Précision sous le clavier. */
+  note: string;
+  /** Message quand l'envoi échoue pour une raison technique. */
+  messageEchec: string;
   onFermer: () => void;
   /** Envoie la demande signée. Une exception : PIN refusé (403) ou erreur technique. */
   onPin: (pin: string) => Promise<void>;
@@ -15,10 +19,10 @@ interface Props {
 
 /**
  * La planche n'a pas de clavier : toute écriture du patron est signée par son PIN, il s'ouvre donc dans une feuille
- * quand on touche « Demander ». Un PIN refusé (403) compte un essai ; une autre erreur est technique, elle ne compte
+ * quand on touche « Demander » ou l'interrupteur du paiement en 2 fois. Un PIN refusé (403) compte un essai ; une autre erreur est technique, elle ne compte
  * pas et la feuille le dit sans rien envoyer.
  */
-export function FeuillePin({ ouverte, montant, onFermer, onPin }: Props) {
+export function FeuillePin({ ouverte, sousTitre, note, messageEchec, onFermer, onPin }: Props) {
   const { t } = useTranslation("Financement");
   const [echec, setEchec] = useState(false);
 
@@ -42,16 +46,16 @@ export function FeuillePin({ ouverte, montant, onFermer, onPin }: Props) {
       ouverte={ouverte}
       onFermer={fermer}
       titre={t("pin.titre")}
-      sousTitre={t("pin.sousTitre", { montant })}
+      sousTitre={sousTitre}
       libelleFermer={t("pin.fermer")}
     >
       <div className={styles.feuillePin}>
         {echec && (
           <p role="alert" className={styles.echec}>
-            {t("pin.echec")}
+            {messageEchec}
           </p>
         )}
-        <ClavierPin onComplet={surPin} note={t("pin.note")} />
+        <ClavierPin onComplet={surPin} note={note} />
       </div>
     </FeuilleModale>
   );

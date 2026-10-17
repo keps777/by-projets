@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { FcfaSchema, HeureSchema, IdSchema, IsoDoualaSchema, JourSchema } from "./commun";
+import { SchemaConvention } from "../colis/inter-agences";
+import { FcfaSchema, HeureSchema, IdSchema, IsoDoualaSchema } from "./commun";
 
 /** Colis entre compagnies (`/(patron)/inter-agences`) : deux tronçons, deux compagnies payées. */
 
@@ -29,21 +30,40 @@ export const ReglementEntreCompagniesSchema = z.strictObject({
   reglementA: IsoDoualaSchema,
 });
 
+/**
+ * Le billet voyageur d'une ligne en correspondance de la convention : d'où il part, par où il passe, où il arrive,
+ * et qui le vend puis qui le termine (`GET /inter-agences/correspondances`).
+ */
+export const TrajetVoyageurCorrespondanceSchema = z.strictObject({
+  origine: z.string(),
+  via: z.string(),
+  destination: z.string(),
+  /** La compagnie qui vend le billet et conduit le premier tronçon. */
+  premiere: z.string(),
+  seconde: z.string(),
+});
+export type TrajetVoyageurCorrespondance = z.infer<typeof TrajetVoyageurCorrespondanceSchema>;
+
 export const InterAgencesSchema = z.strictObject({
-  colisEnCorrespondance: z.strictObject({
-    colisId: IdSchema,
-    numero: z.string(),
-    origine: z.string(),
-    destination: z.string(),
-    poidsKg: z.number().positive(),
-    troncons: z.array(TronconColisSchema),
-    /** Règle de passage de témoin (scan « remis à » / « reçu »). */
-    regle: z.string(),
-  }),
+  /** Absent quand aucun colis n'est en correspondance (aucune convention, ou aucun échange en cours). */
+  colisEnCorrespondance: z
+    .strictObject({
+      colisId: IdSchema,
+      numero: z.string(),
+      origine: z.string(),
+      destination: z.string(),
+      poidsKg: z.number().positive(),
+      troncons: z.array(TronconColisSchema),
+      /** Règle de passage de témoin (scan « remis à » / « reçu »). */
+      regle: z.string(),
+    })
+    .optional(),
   reglement: ReglementEntreCompagniesSchema,
   correspondanceVoyageurs: z.strictObject({
     minutesGaranties: z.number().int().positive(),
     attenteDuSecondBusMinutes: z.number().int().positive(),
+    /** Absent quand la convention n'a pas de ligne voyageurs : le billet n'a alors pas d'origine à montrer. */
+    trajet: TrajetVoyageurCorrespondanceSchema.optional(),
   }),
   conventions: z.array(
     z.strictObject({
@@ -57,39 +77,10 @@ export type InterAgences = z.infer<typeof InterAgencesSchema>;
 
 export const ParamsConventionSchema = z.strictObject({ conventionId: IdSchema });
 
-export const ConventionSchema = z.strictObject({
-  id: IdSchema,
-  compagnies: z.tuple([z.string(), z.string()]),
-  signeeLe: JourSchema,
-  renouvellement: z.enum(["trimestriel", "annuel"]),
-  statut: z.enum(["active", "expiree", "denoncee"]),
-  parts: z.strictObject({
-    colisType: z.strictObject({
-      poidsKg: z.number().positive(),
-      prix: FcfaSchema,
-      fraisAfriMove: FcfaSchema,
-    }),
-    /** `null` : la compagnie n'a pas de part sur ce tronçon. */
-    lignes: z.array(
-      z.strictObject({
-        troncon: z.string(),
-        premiere: FcfaSchema.nullable(),
-        seconde: FcfaSchema.nullable(),
-      }),
-    ),
-    total: z.strictObject({ premiere: FcfaSchema, seconde: FcfaSchema }),
-  }),
-  regles: z.array(
-    z.strictObject({ rang: z.number().int().positive(), titre: z.string(), texte: z.string() }),
-  ),
-  signatures: z.array(
-    z.strictObject({ compagnie: z.string(), signataire: z.string(), signeA: IsoDoualaSchema }),
-  ),
-  trimestre: z.strictObject({
-    colisEchanges: z.number().int().nonnegative(),
-    litiges: z.number().int().nonnegative(),
-    netRecu: FcfaSchema,
-    reglements: z.number().int().nonnegative(),
-  }),
-});
+/**
+ * La convention entre deux compagnies : **un seul contrat**, celui du module colis (`colis.SchemaConvention`,
+ * `GET /inter-agences/conventions/:conventionId`). Il a remplacé l'ancienne forme patron, un sous-ensemble qui
+ * ne portait ni `moi` (signatures), ni `delaiLitigeJours` (trimestre), ni `pied`, et que l'API ne servait pas.
+ */
+export const ConventionSchema = SchemaConvention;
 export type Convention = z.infer<typeof ConventionSchema>;

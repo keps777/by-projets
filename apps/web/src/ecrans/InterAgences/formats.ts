@@ -1,12 +1,5 @@
 /** Formats de « Entre compagnies » (valeurs de la planche : « 19 500 », « + 12 300 », « − 7 200 », « 08:15 »). */
 
-/**
- * Ville de départ du billet voyageur en correspondance (« Yaoundé → Bamenda en un seul billet »). Le contrat
- * `correspondanceVoyageurs` ne porte que les minutes : ce départ ne peut pas se déduire du colis (Douala → Bamenda).
- * À remplacer par le champ du contrat quand AM-135 le fournira.
- */
-export const DEPART_VOYAGEUR_EN_ATTENTE_DU_CONTRAT = "Yaoundé";
-
 /** Groupes de trois chiffres séparés par une espace : `19500` -> `19 500`. */
 export function montant(fcfa: number): string {
   return String(Math.abs(fcfa)).replace(/\B(?=(\d{3})+(?!\d))/g, " ");

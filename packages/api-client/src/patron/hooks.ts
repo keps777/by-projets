@@ -1,5 +1,5 @@
 import { patron as c } from "@afrimove/contrats";
-import { useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useQueryClient } from "@tanstack/react-query";
 import type { UseMutationResult, UseQueryResult } from "@tanstack/react-query";
 import { useCallback } from "react";
 import type { ErreurApi } from "../infra/erreurs";
@@ -161,8 +161,29 @@ export function useSyntheseComptable(mois?: string): Lecture<c.SyntheseComptable
 }
 
 /** Aperçu d'un export (pop-up) : les premières lignes, le total, la signature du fichier. */
-export function useApercuExport(exportId: c.IdExport, mois?: string): Lecture<c.ApercuExport> {
-  return useRequete(op.OP_APERCU_EXPORT, mois ? { exportId, mois } : { exportId });
+export function useApercuExport(
+  exportId: c.IdExport,
+  mois?: string,
+  onglet?: string,
+): Lecture<c.ApercuExport> {
+  // Changer d'onglet garde l'aperçu précédent à l'écran le temps de lire le suivant (pas de saut vers le chargement).
+  return useRequete(
+    op.OP_APERCU_EXPORT,
+    { exportId, ...(mois ? { mois } : {}), ...(onglet ? { onglet } : {}) },
+    { placeholderData: keepPreviousData },
+  );
+}
+
+/**
+ * « Télécharger » : va chercher le vrai fichier de l'export (octets, nom, type, empreinte). Ce n'est pas une écriture
+ * (pas de PIN) : `mutateAsync` est appelé au toucher, rien n'est gardé en cache.
+ */
+export function useFichierExport(): UseMutationResult<
+  c.FichierExport,
+  ErreurApi,
+  c.ParamsFichierExport
+> {
+  return useMutationApi(op.OP_FICHIER_EXPORT);
 }
 
 /** Les transactions MoMo sans billet ni colis, avec la cause probable. */
@@ -294,6 +315,14 @@ export function useDemanderAvance(): Ecriture<c.DemanderAvance, c.AvanceDemandee
 
 export function useRetirerDemande(): Ecriture<c.RetirerDemande, c.DemandeRetiree> {
   return useEcriture(op.OP_RETIRER_DEMANDE, [op.OP_DOSSIER_FINANCEMENT, op.OP_OFFRE_FINANCEMENT]);
+}
+
+/** Activer ou couper le paiement du billet en 2 fois pour l'agence (signé par le PIN). */
+export function useReglerBilletEnDeuxFois(): Ecriture<
+  c.ReglerBilletEnDeuxFois,
+  c.BilletEnDeuxFoisRegle
+> {
+  return useEcriture(op.OP_REGLER_BILLET_EN_DEUX_FOIS, [op.OP_OFFRE_FINANCEMENT]);
 }
 
 /* ----------------------------------------------------------------------- entre compagnies */

@@ -9,7 +9,8 @@
     "trajet": "{{origine}} → {{destination}}",
     "horaire": "{{depart}} · {{bus}} · arrival {{arrivee}}",
     "part": "{{montant}} · for {{compagnie}}",
-    "aucun": "No connecting parcel for now."
+    "aucun": "No connecting parcel for now.",
+    "aucunTitre": "Parcel in transfer"
   },
   "reglement": {
     "titre": "Settlement between companies · week",

@@ -104,6 +104,9 @@ Corps d'erreur : `{ code, message, details? }` (celui du module colis). Codes aj
   seul gagne, l'autre reçoit `mission_deja_traitee`. Un colis n'a qu'une mission ouverte à la fois.
 - **Appartenance** : une mission qui n'est pas proposée ou acceptée par ce livreur est introuvable (404) pour
   lui, même si elle existe ; `ColisService.executer` ne vérifie pas cela, `MissionsService` le fait.
+- **MoMo de la demande facultatif** (`SchemaDemandeLivreur.momo`) : sans lui, le serveur prend le MoMo du compte (le
+  numéro masqué que le formulaire propose ; l'opérateur se devine sur le préfixe, MTN à défaut). Un `momo` présent est
+  contrôlé en entier et passe avant ; la demande gardée puis le livreur activé portent toujours un MoMo.
 - **Remise** : code à 6 chiffres, pièce vue et photo obligatoires, vérifiés par `ColisService.executer`
   (trois essais, blocage). Le livreur ne voit jamais le code.
 - **Gain** : 70 % du prix de la livraison, arrondi à l'inférieur (700 F sur 1 000 F), crédité une seule fois

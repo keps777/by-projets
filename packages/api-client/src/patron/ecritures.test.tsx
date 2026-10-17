@@ -29,6 +29,7 @@ import {
   useRapprochementMomo,
   useRegles,
   useReglages,
+  useReglerBilletEnDeuxFois,
   useRetirerDemande,
   useSignaturePin,
   useSimuler,
@@ -36,6 +37,7 @@ import {
   useClotureMois,
   useOffreFinancement,
 } from "./hooks";
+import { PIN_REFUSE_PAR_LE_MOCK } from "./mock/contexte";
 import { clientPatron, enveloppe } from "./mock/testing";
 
 afterEach(cleanup);
@@ -463,6 +465,89 @@ describe("financement", () => {
       });
     });
     await waitFor(() => expect(result.current.dossier.data?.statut).toBe("retire"));
+  });
+
+  it("une demande envoyée met l'offre « en cours » avec le lien vers son dossier ; la retirer la rend éligible", async () => {
+    const client = clientPatron("Financement");
+    const { result } = renderHook(
+      () => ({
+        offre: useOffreFinancement(),
+        demander: useDemanderAvance(),
+        retirer: useRetirerDemande(),
+        signer: useSignaturePin(),
+      }),
+      { wrapper: enveloppe(client) },
+    );
+    await waitFor(() => expect(result.current.offre.data?.avance.statut).toBe("eligible"));
+    expect(result.current.offre.data?.avance.dossierId).toBeUndefined();
+
+    await act(async () => {
+      await result.current.demander.mutateAsync({
+        montant: 4_000_000,
+        signature: result.current.signer(PIN),
+      });
+    });
+    await waitFor(() => expect(result.current.offre.data?.avance.statut).toBe("en_cours"));
+    expect(result.current.offre.data?.avance).toMatchObject({
+      dossierId: "AV-2027-0042",
+      montantPropose: 4_000_000,
+    });
+    // Une seconde demande est refusée tant que la première est ouverte.
+    const encore = await erreurDe(
+      result.current.demander.mutateAsync({
+        montant: 1_000_000,
+        signature: result.current.signer(PIN),
+      }),
+    );
+    expect(encore).toMatchObject({ statut: 409, code: "DEMANDE_EN_COURS" });
+
+    await act(async () => {
+      await result.current.retirer.mutateAsync({
+        dossierId: "AV-2027-0042",
+        signature: result.current.signer(PIN),
+      });
+    });
+    await waitFor(() => expect(result.current.offre.data?.avance.statut).toBe("eligible"));
+    expect(result.current.offre.data?.avance.dossierId).toBeUndefined();
+  });
+
+  it("activer puis couper le paiement en 2 fois met l'offre à jour ; sans PIN valide, rien ne change", async () => {
+    const client = clientPatron("Financement");
+    const { result } = renderHook(
+      () => ({
+        offre: useOffreFinancement(),
+        regler: useReglerBilletEnDeuxFois(),
+        signer: useSignaturePin(),
+      }),
+      { wrapper: enveloppe(client) },
+    );
+    await waitFor(() => expect(result.current.offre.data?.billetEnDeuxFois.actif).toBe(false));
+
+    const refus = await erreurDe(
+      result.current.regler.mutateAsync({
+        actif: true,
+        signature: result.current.signer(PIN_REFUSE_PAR_LE_MOCK),
+      }),
+    );
+    expect(refus).toMatchObject({ statut: 403, code: "PIN_INCORRECT" });
+    expect(result.current.offre.data?.billetEnDeuxFois.actif).toBe(false);
+
+    await act(async () => {
+      const r = await result.current.regler.mutateAsync({
+        actif: true,
+        signature: result.current.signer(PIN),
+      });
+      expect(r).toMatchObject({ actif: true, journalId: expect.any(String) });
+    });
+    await waitFor(() => expect(result.current.offre.data?.billetEnDeuxFois.actif).toBe(true));
+
+    await act(async () => {
+      await result.current.regler.mutateAsync({
+        actif: false,
+        signature: result.current.signer(PIN),
+      });
+    });
+    await waitFor(() => expect(result.current.offre.data?.billetEnDeuxFois.actif).toBe(false));
   });
 });
 

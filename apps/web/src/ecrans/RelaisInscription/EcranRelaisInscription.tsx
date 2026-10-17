@@ -83,6 +83,7 @@ function Fiche({ formulaire }: { formulaire: contrats.FormulaireRelais }) {
         position: fiche.position.valeur,
         tailleMax: fiche.taille.valeur,
         momo: fiche.momo.valeurMasquee,
+        momoPropose: fiche.momo.valeurMasquee,
         facadeRef: null,
       },
       { type: fiche.type.choix, ouvert: fiche.ouvert.choix, tailleMax: fiche.taille.choix },

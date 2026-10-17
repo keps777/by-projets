@@ -160,8 +160,18 @@ export const OP_APERCU_EXPORT = definirOperation<c.ParamsApercuExport, c.ApercuE
   nom: "patron.comptable.apercu",
   methode: "GET",
   chemin: (p) => `/patron/comptable/exports/${id(p.exportId)}/apercu`,
-  requete: (p) => ({ mois: p.mois }),
+  requete: (p) => ({ mois: p.mois, onglet: p.onglet }),
   reponse: c.ApercuExportSchema,
+});
+
+/** Le vrai fichier d'un export (XLSX, CSV ou PDF), pour « Télécharger ». */
+export const OP_FICHIER_EXPORT = definirOperation<c.ParamsFichierExport, c.FichierExport>({
+  nom: "patron.comptable.fichier",
+  methode: "GET",
+  chemin: (p) => `/patron/comptable/exports/${id(p.exportId)}/fichier`,
+  requete: (p) => ({ mois: p.mois }),
+  reponse: c.FichierExportSchema,
+  lecture: "binaire",
 });
 
 export const OP_RAPPROCHEMENT = definirOperation<c.ParamsMois, c.RapprochementMomo>({
@@ -368,6 +378,18 @@ export const OP_RETIRER_DEMANDE = definirOperation<c.RetirerDemande, c.DemandeRe
   reponse: c.DemandeRetireeSchema,
 });
 
+export const OP_REGLER_BILLET_EN_DEUX_FOIS = definirOperation<
+  c.ReglerBilletEnDeuxFois,
+  c.BilletEnDeuxFoisRegle
+>({
+  nom: "patron.financement.billetEnDeuxFois",
+  methode: "PUT",
+  chemin: () => "/patron/financement/billet-en-deux-fois",
+  corps: (p) => p,
+  reponse: c.BilletEnDeuxFoisRegleSchema,
+  idempotente: false,
+});
+
 /* ----------------------------------------------------------------------- entre compagnies */
 
 export const OP_INTER_AGENCES = definirOperation<void, c.InterAgences>({
@@ -377,6 +399,10 @@ export const OP_INTER_AGENCES = definirOperation<void, c.InterAgences>({
   reponse: c.InterAgencesSchema,
 });
 
+/**
+ * La convention : le contrat unique `colis.SchemaConvention` (comme `colis.OP_CONVENTION_INTER_AGENCES`, servi aussi
+ * sous `/inter-agences/conventions/:conventionId`). La route `/patron/…` est la même convention.
+ */
 export const OP_CONVENTION = definirOperation<{ conventionId: string }, c.Convention>({
   nom: "patron.interAgences.convention",
   methode: "GET",
@@ -422,5 +448,6 @@ export const OPERATIONS_SIGNEES = {
   "patron.comptable.cloturer": OP_CLOTURER,
   "patron.financement.demander": OP_DEMANDER_AVANCE,
   "patron.financement.retirer": OP_RETIRER_DEMANDE,
+  "patron.financement.billetEnDeuxFois": OP_REGLER_BILLET_EN_DEUX_FOIS,
   "patron.paie.lancer": OP_LANCER_PAIE,
 } as const satisfies Record<c.NomCommandeSignee, Operation<never, unknown>>;

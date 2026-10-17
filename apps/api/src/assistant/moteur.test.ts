@@ -120,6 +120,39 @@ describe("« Pourquoi Bafoussam baisse ? »", () => {
     expect(b.actions[2]!.parametres).toEqual({ type: "voir_ligne", ligneId: DLA_BAF.id });
   });
 
+  it("les actions « Ajouter un départ » et « Voir la ligne » portent la ligne (ligneId), les autres non", async () => {
+    const m = planche();
+    const b = await demander(m, "Pourquoi Bafoussam baisse ?");
+    for (const a of b.actions) {
+      const p = a.parametres;
+      expect(p.type === "voir_ligne" || p.type === "ajouter_depart" ? p.ligneId : null).toBe(
+        a.type === "decaler_depart" ? null : DLA_BAF.id,
+      );
+    }
+  });
+
+  it("dessine le graphique : le remplissage des 14 derniers jours, les mercredis en écart", async () => {
+    const m = planche();
+    const b = await demander(m, "Pourquoi Bafoussam baisse ?");
+    const faits = vivants(await m.departs.entre(COMPAGNIE, DU, AU));
+    const jours = Array.from({ length: 14 }, (_, i) => decalerJour(DEBUT_RECENT, i));
+    expect(b.graphique!.valeurs).toEqual(
+      jours.map((j) =>
+        remplissagePct(faits.filter((d) => d.jour === j && d.ligneId === DLA_BAF.id)),
+      ),
+    );
+    expect(b.graphique!.valeurs.every((v) => v >= 0 && v <= 100)).toBe(true);
+    expect(b.graphique!.joursEnEcart).toEqual(
+      jours.flatMap((j, i) => (jourSemaine(j) === 3 ? [i + 1] : [])),
+    );
+    expect(b.graphique!.joursEnEcart).toHaveLength(2);
+    // Le creux se voit : un mercredi est plus bas que la moyenne de la période.
+    const moyenne = b.graphique!.valeurs.reduce((s, v) => s + v, 0) / 14;
+    for (const rang of b.graphique!.joursEnEcart) {
+      expect(b.graphique!.valeurs[rang - 1]!).toBeLessThan(moyenne);
+    }
+  });
+
   it("cite ses sources, sans jamais le nom d'un autre que le concurrent public ni un chiffre qui ne vient pas de l'agence", async () => {
     const m = planche();
     const b = await demander(m, "Pourquoi Bafoussam baisse ?");

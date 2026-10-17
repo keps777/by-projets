@@ -42,14 +42,19 @@
   },
   "action": {
     "demander": "Ask for {{montant}} · file go for 1 touch",
-    "masque": "Dem hide di module until dem sign di agreement wit di partner."
+    "masque": "Dem hide di module until dem sign di agreement wit di partner.",
+    "suivre": "Follow my request"
   },
   "pin": {
     "titre": "Confirm wit your PIN",
     "sousTitre": "Ask for {{montant}} advance for money wey dey enter",
     "note": "Your PIN go sign di mandate to take money from your account.",
     "fermer": "Close",
-    "echec": "We no fit send di request. Try again."
+    "echec": "We no fit send di request. Try again.",
+    "deuxFoisActiver": "Put pay ticket for 2 times on",
+    "deuxFoisCouper": "Put pay ticket for 2 times off",
+    "noteDeuxFois": "Your PIN dey sign dis change.",
+    "echecDeuxFois": "Di change no save. Try again."
   },
   "etats": {
     "chargement": "Di financing dey load",

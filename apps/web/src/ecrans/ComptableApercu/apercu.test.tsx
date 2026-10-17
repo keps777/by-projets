@@ -380,65 +380,164 @@ describe("ComptableApercu · télécharger", () => {
     vi.restoreAllMocks();
   });
 
-  async function contenuDuFichier(): Promise<string> {
+  /** Remplace la réponse du fichier ; `transformer` voit les paramètres reçus. */
+  function avecFichier(
+    repondre: (
+      params: contrats.ParamsFichierExport,
+    ) => contrats.FichierExport | Promise<contrats.FichierExport>,
+  ) {
+    return clientAvec((scenario) => ({
+      ...scenario,
+      operations: scenario.operations.map((impl) =>
+        impl.operation.nom === patron.OP_FICHIER_EXPORT.nom
+          ? implementer(patron.OP_FICHIER_EXPORT, (params) => repondre(params))
+          : impl,
+      ),
+    }));
+  }
+
+  it("va chercher le vrai fichier de l'export, le remet à l'appareil sous son nom, puis revient au Comptable", async () => {
+    const { routeur } = rendre();
+    await attendreEcran();
+    await userEvent.click(screen.getByRole("button", { name: "Télécharger" }));
+    await waitFor(() => expect(routeur.state.location.pathname).toBe("/comptable"));
+    expect(telechargements).toEqual([
+      { nom: "journal-des-ventes-decembre.csv", href: "blob:apercu" },
+    ]);
+  });
+
+  it("le fichier est exactement ce que l'API a remis : mêmes octets, même type, rien d'ajouté", async () => {
+    const octets = new Uint8Array([0x50, 0x4b, 0x03, 0x04, 0x00, 0xff, 0xfe, 0x80]);
+    const demandes: unknown[] = [];
+    const client = avecFichier((params) => {
+      demandes.push(params);
+      return {
+        nom: "journal-ventes-2026-12.xlsx",
+        typeMime: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        empreinte: "ab".repeat(32),
+        octets,
+      };
+    });
+    const { routeur } = rendre({ client });
+    await attendreEcran();
+    await userEvent.click(screen.getByRole("button", { name: "Télécharger" }));
+    await waitFor(() => expect(routeur.state.location.pathname).toBe("/comptable"));
+
+    expect(demandes).toEqual([{ exportId: "journal_ventes" }]);
+    expect(telechargements).toEqual([{ nom: "journal-ventes-2026-12.xlsx", href: "blob:apercu" }]);
+    expect(blobs[0]?.type).toBe(
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    );
+    const lus = await new Promise<ArrayBuffer>((resolve) => {
+      const lecteur = new FileReader();
+      lecteur.onload = () => resolve(lecteur.result as ArrayBuffer);
+      lecteur.readAsArrayBuffer(blobs[0] as Blob);
+    });
+    expect([...new Uint8Array(lus)]).toEqual([...octets]);
+  });
+
+  it("dans la démonstration, le fichier contient l'en-tête et les lignes du tableau que le pop-up montre", async () => {
+    rendre();
+    await attendreEcran();
+    const table = screen.getByRole("table");
+    const colonnes = within(table)
+      .getAllByRole("columnheader")
+      .map((th) => th.textContent);
+    const affichees = texteDesLignes(table);
+    await userEvent.click(screen.getByRole("button", { name: "Télécharger" }));
+    await waitFor(() => expect(blobs).toHaveLength(1));
+
     const octets = await new Promise<ArrayBuffer>((resolve) => {
       const lecteur = new FileReader();
       lecteur.onload = () => resolve(lecteur.result as ArrayBuffer);
       lecteur.readAsArrayBuffer(blobs[0] as Blob);
     });
-    return new TextDecoder("utf-8", { ignoreBOM: true }).decode(octets).replace(/^﻿/, "");
-  }
-
-  it("remet à l'appareil un fichier nommé d'après l'export, puis revient au Comptable", async () => {
-    const { routeur } = rendre();
-    await attendreEcran();
-    await userEvent.click(screen.getByRole("button", { name: "Télécharger" }));
-    expect(telechargements).toEqual([
-      { nom: "journal-des-ventes-decembre-apercu.csv", href: "blob:apercu" },
-    ]);
-    await waitFor(() => expect(routeur.state.location.pathname).toBe("/comptable"));
-  });
-
-  it("le fichier est exactement ce que le pop-up montre : mêmes colonnes, mêmes dix lignes, même ordre", async () => {
-    rendre();
-    await attendreEcran();
-    const table = screen.getByRole("table");
-    const affichees = texteDesLignes(table);
-    const colonnes = within(table)
-      .getAllByRole("columnheader")
-      .map((th) => th.textContent);
-    await userEvent.click(screen.getByRole("button", { name: "Télécharger" }));
-
-    const lignes = (await contenuDuFichier()).trimEnd().split("\r\n");
+    const lignes = new TextDecoder().decode(octets).trimEnd().split("\r\n");
     expect(lignes[0]).toBe(colonnes.join(";"));
     expect(lignes).toHaveLength(1 + affichees.length);
-    lignes.slice(1).forEach((ligne, i) => {
-      const cellules = ligne.split(";");
-      const vues = affichees[i] as string[];
-      expect(cellules).toHaveLength(vues.length);
-      // Le fichier garde les valeurs brutes : seule leur mise en forme change (5000 -> 5 000, 2026-12-01 -> 01/12).
-      cellules.forEach((cellule, j) => {
-        const vue = vues[j] as string;
-        expect(
-          [
-            cellule,
-            cellule === "" ? "—" : cellule.replace(/^\d{4}-(\d{2})-(\d{2})$/, "$2/$1"),
-          ].some((c) => c === vue || c.replace(/\B(?=(\d{3})+$)/g, " ") === vue),
-          `ligne ${i + 1}, colonne ${colonnes[j]} : « ${cellule} » ≠ « ${vue} »`,
-        ).toBe(true);
-      });
-    });
   });
 
-  it("le fichier suit l'aperçu reçu : une autre réponse donne un autre fichier", async () => {
-    const client = avecApercu((r) => ({
-      ...r,
-      tableau: { ...r.tableau, lignes: [["2026-12-02", "x", null, 9, "a;b", "z", 1, "CASH", "q"]] },
-    }));
+  it("une panne du téléchargement est annoncée, rien n'est remis, on reste sur l'aperçu et on peut réessayer", async () => {
+    let essais = 0;
+    const client = avecFichier(() => {
+      essais += 1;
+      if (essais === 1) throw new ErreurReseau();
+      return { nom: "f.csv", typeMime: "text/csv", empreinte: null, octets: new Uint8Array([97]) };
+    });
+    const { routeur } = rendre({ client });
+    await attendreEcran();
+    await userEvent.click(screen.getByRole("button", { name: "Télécharger" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Le fichier n'a pas pu être téléchargé. Réessaie.",
+    );
+    expect(telechargements).toEqual([]);
+    expect(routeur.state.location.pathname).toBe("/comptable/apercu/journal_ventes");
+    expect(screen.getByRole("button", { name: "Télécharger" })).toBeEnabled();
+
+    await userEvent.click(screen.getByRole("button", { name: "Télécharger" }));
+    await waitFor(() => expect(routeur.state.location.pathname).toBe("/comptable"));
+    expect(telechargements).toEqual([{ nom: "f.csv", href: "blob:apercu" }]);
+  });
+
+  it("pendant que le fichier arrive, « Télécharger » attend et un second toucher ne redemande rien", async () => {
+    let demandes = 0;
+    let livrer!: () => void;
+    const attente = new Promise<void>((resolve) => (livrer = resolve));
+    const client = avecFichier(async () => {
+      demandes += 1;
+      await attente;
+      return { nom: "f.csv", typeMime: "text/csv", empreinte: null, octets: new Uint8Array([97]) };
+    });
     rendre({ client });
     await attendreEcran();
     await userEvent.click(screen.getByRole("button", { name: "Télécharger" }));
-    expect((await contenuDuFichier()).split("\r\n")[1]).toBe('2026-12-02;x;;9;"a;b";z;1;CASH;q');
+    const bouton = await screen.findByRole("button", { name: "Télécharger" });
+    await waitFor(() => expect(bouton).toBeDisabled());
+    await userEvent.click(bouton);
+    expect(demandes).toBe(1);
+    livrer();
+    await waitFor(() => expect(telechargements).toHaveLength(1));
+  });
+});
+
+describe("ComptableApercu · onglets", () => {
+  it("toucher un onglet lit ce tableau (paramètre onglet) et le met en avant ; le premier reste actif au départ", async () => {
+    const lus: unknown[] = [];
+    const client = avecApercu((r, _appel, params) => {
+      lus.push(params);
+      return r;
+    });
+    rendre({ client });
+    await attendreEcran();
+    const liste = screen.getByRole("list", { name: "Onglets de l'export" });
+    expect(
+      within(liste)
+        .getAllByRole("listitem")
+        .map((o) => o.getAttribute("aria-current")),
+    ).toEqual(["true", null, null, null]);
+
+    await userEvent.click(within(liste).getByRole("button", { name: planche.export.onglets[1]! }));
+    await waitFor(() =>
+      expect(lus.at(-1)).toEqual({ exportId: "journal_ventes", onglet: "par_jour" }),
+    );
+    expect(
+      within(liste)
+        .getAllByRole("listitem")
+        .map((o) => o.getAttribute("aria-current")),
+    ).toEqual([null, "true", null, null]);
+    // Le pop-up reste en place pendant la lecture : pas de retour au chargement.
+    expect(fenetre()).toBeInTheDocument();
+  });
+
+  it("la première lecture ne demande aucun onglet : l'API montre le premier", async () => {
+    const lus: unknown[] = [];
+    const client = avecApercu((r, _appel, params) => {
+      lus.push(params);
+      return r;
+    });
+    rendre({ client });
+    await attendreEcran();
+    expect(lus).toEqual([{ exportId: "journal_ventes" }]);
   });
 });
 

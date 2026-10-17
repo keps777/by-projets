@@ -50,6 +50,7 @@
     "vide": "Dis export no get any row.",
     "introuvable": "Dis preview no dey available for dis export.",
     "erreur": "Di preview no load.",
+    "telechargement": "Di file no fit download. Try again.",
     "reessayer": "Try again"
   }
 }

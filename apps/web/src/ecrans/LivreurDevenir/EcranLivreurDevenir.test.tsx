@@ -4,7 +4,6 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import {
   PROGRAMME,
-  avecProfil,
   enveloppant,
   espionnerDepot,
   rendreLivreurDevenir,
@@ -164,9 +163,10 @@ describe("LivreurDevenir · choix et demande envoyée", () => {
       zone: "Douala · Akwa, Bonanjo",
       heures: "Week-ends",
       chargeMax: "3 kg · petits colis",
-      momo: { operateur: "mtn" },
       reglesAcceptees: true,
     });
+    // Le MoMo du compte laissé tel quel : la demande n'en porte pas, le serveur prend celui du compte.
+    expect(demande).not.toHaveProperty("momo");
     expect(demande.pieces.permisRef).toMatch(/^photo-/);
     expect(demande.pieces.assuranceRef).toMatch(/^photo-/);
     expect(demande.pieces.permisRef).not.toBe(demande.pieces.assuranceRef);
@@ -254,16 +254,33 @@ describe("LivreurDevenir · choix et demande envoyée", () => {
 });
 
 describe("LivreurDevenir · numéro MoMo", () => {
-  it("laissé tel quel, c'est le numéro du compte (profil) qui part, avec l'opérateur de la planche", async () => {
-    // Le scénario de la planche n'a pas de profil : on le fournit, l'espion reste devant le dépôt.
-    const { source, demandes } = espionnerDepot(avecProfil("+237675120409"));
-    rendreLivreurDevenir(source);
+  it("laissé tel quel (le MoMo masqué du compte), aucun numéro ne part : « Je m'inscris » suffit, en un seul geste", async () => {
+    const { source, demandes } = espionnerDepot();
+    const { routeur } = rendreLivreurDevenir(source);
     await attendreEcran();
+    expect(screen.getByLabelText("MoMo pour être payé")).toHaveValue("6 75 •• •• 09 · MTN");
     const user = userEvent.setup();
     await user.click(screen.getByRole("radio", { name: "Vélo" }));
     await user.click(inscrire());
+    await waitFor(() => expect(pathname(routeur)).toBe("/moi/devenir-livreur/suivi"));
+    expect(demandes).toHaveLength(1);
+    expect(demandes[0]).not.toHaveProperty("momo");
+  });
+
+  it("retapé puis remis comme il était, le MoMo redevient celui du compte : rien ne part", async () => {
+    const { source, demandes } = espionnerDepot();
+    rendreLivreurDevenir(source);
+    await attendreEcran();
+    const user = userEvent.setup();
+    await user.click(screen.getByRole("radio", { name: "À pied" }));
+    const champ = screen.getByLabelText("MoMo pour être payé");
+    await user.clear(champ);
+    await user.type(champ, "6 99 12 34 56 · Orange");
+    await user.clear(champ);
+    await user.type(champ, "6 75 •• •• 09 · MTN");
+    await user.click(inscrire());
     await waitFor(() => expect(demandes).toHaveLength(1));
-    expect(demandes[0]!.momo).toEqual({ telephone: "+237675120409", operateur: "mtn" });
+    expect(demandes[0]).not.toHaveProperty("momo");
   });
 
   it("modifié, c'est le numéro saisi qui part, avec l'opérateur écrit après la puce", async () => {

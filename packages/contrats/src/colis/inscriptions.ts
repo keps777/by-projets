@@ -99,7 +99,11 @@ export const SchemaFicheRelais = z.object({
   ouvert: z.string().min(1),
   position: z.object({ ville: z.string(), quartier: z.string(), repere: z.string().optional() }),
   tailleMax: z.string().min(1),
-  momo: z.object({ telephone: SchemaTelephone, operateur: z.enum(["mtn", "orange"]) }),
+  /**
+   * Le MoMo qui reçoit les versements. Absent : le serveur prend celui du compte (le numéro masqué que le formulaire
+   * propose), le cas courant quand le commerçant ne le change pas.
+   */
+  momo: z.object({ telephone: SchemaTelephone, operateur: z.enum(["mtn", "orange"]) }).optional(),
   facadeRef: SchemaRefPhoto,
 });
 export type FicheRelais = z.infer<typeof SchemaFicheRelais>;
@@ -142,7 +146,8 @@ export const SchemaDemandeLivreur = z.object({
   zone: z.string().min(1),
   heures: z.string().min(1),
   chargeMax: z.string().min(1),
-  momo: z.object({ telephone: SchemaTelephone, operateur: z.enum(["mtn", "orange"]) }),
+  /** Le MoMo des gains. Absent : le serveur prend celui du compte (le numéro masqué que le formulaire propose). */
+  momo: z.object({ telephone: SchemaTelephone, operateur: z.enum(["mtn", "orange"]) }).optional(),
   pieces: z.object({
     permisRef: SchemaRefPhoto.optional(),
     assuranceRef: SchemaRefPhoto.optional(),

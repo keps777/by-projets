@@ -152,5 +152,13 @@ export const EXEMPLES_PARAMS: Record<string, string> = {
 
 /** URL d'une planche avec les valeurs d'exemple (utilisée pour `ecrans.json`). */
 export function urlExemple(planche: Planche): string {
-  return urlPlanche(planche, EXEMPLES_PARAMS);
+  return urlPlanche(planche, EXEMPLES_PARAMS) + (EXEMPLES_RECHERCHE[planche] ?? "");
 }
+
+/**
+ * Paramètres de recherche d'exemple de certaines planches : sans eux, l'écran lit « le dernier » élément et
+ * le banc de fidélité n'a pas le bon scénario (CadenceBillet : le billet 0232 de sa démo).
+ */
+const EXEMPLES_RECHERCHE: Partial<Record<Planche, string>> = {
+  CadenceBillet: "?billet=billet-alp-dla-270105-0232",
+};

@@ -1,14 +1,23 @@
 import type { patron as c } from "@afrimove/contrats";
-import { KAMGA_PATRON, heure, jourDecale } from "@afrimove/fixtures";
+import { heure, jourDecale } from "@afrimove/fixtures";
+import { construireConvention } from "../../colis/mock/inter-agences";
 import { implementer } from "../../infra/scenarios";
 import { OP_CONVENTION, OP_INTER_AGENCES } from "../operations";
 import { introuvable } from "./contexte";
 import type { ContributionMock, SourceFixtures } from "./contexte";
-import { dateFrancaise, entier, instantFrancais, montant, segments } from "./lecture";
+import { entier, segments } from "./lecture";
 
 /** Colis entre compagnies et convention (planches InterAgences, InterAgencesConvention). */
 
 export const ID_CONVENTION_OMEGA = "convention-alpha-omega";
+
+/** « Yaoundé → Bamenda en un seul billet : Alpha jusqu'à Bafoussam, Oméga ensuite » : l'origine du billet. */
+function trajetVoyageur(texte: string): { trajet?: c.TrajetVoyageurCorrespondance } {
+  const m = /^(.+?) → (.+?) en un seul billet : (.+?) jusqu['’]à (.+?), (.+?) ensuite/.exec(texte);
+  if (!m) return {};
+  const [, origine = "", destination = "", premiere = "", via = "", seconde = ""] = m;
+  return { trajet: { origine, via, destination, premiere, seconde } };
+}
 
 function vue(src: SourceFixtures): c.InterAgences {
   const d = src.ecran("InterAgences").donnees;
@@ -52,57 +61,9 @@ function vue(src: SourceFixtures): c.InterAgences {
     correspondanceVoyageurs: {
       minutesGaranties: Number(/correspondance de (\d+) min/.exec(d.voyageurs.texte)?.[1] ?? 0),
       attenteDuSecondBusMinutes: Number(/attend (\d+) min/.exec(d.voyageurs.texte)?.[1] ?? 0),
+      ...trajetVoyageur(d.voyageurs.texte),
     },
     conventions: [{ id: ID_CONVENTION_OMEGA, avec, statut: "active" }],
-  };
-}
-
-function convention(src: SourceFixtures): c.Convention {
-  const d = src.ecran("InterAgencesConvention").donnees;
-  const compagnies = d.titre
-    .replace(/^Convention\s+/, "")
-    .split("–")
-    .map((s) => s.trim()) as [string, string];
-  const chiffre = (libelle: string) => d.trimestre.find((x) => x.libelle === libelle)!;
-  const nombre = (v: string | number): number | null => (typeof v === "number" ? v : null);
-  return {
-    id: ID_CONVENTION_OMEGA,
-    compagnies,
-    signeeLe: dateFrancaise(d.detail).jour,
-    renouvellement: /trimestre/.test(d.detail) ? "trimestriel" : "annuel",
-    statut: d.badge === "ACTIVE" ? "active" : "expiree",
-    parts: {
-      colisType: {
-        poidsKg: entier(d.parts.aide),
-        prix: entier(/paie\s*([\d  ]+)/.exec(d.parts.total.libelle)![1]!),
-        fraisAfriMove: Number(/AfriMove (\d+)/.exec(d.parts.total.libelle)?.[1] ?? 0),
-      },
-      lignes: d.parts.lignes.map((l) => ({
-        troncon: l.troncon,
-        premiere: nombre(l.alpha),
-        seconde: nombre(l.omega),
-      })),
-      total: { premiere: d.parts.total.alpha, seconde: d.parts.total.omega },
-    },
-    regles: d.regles.liste.map((r) => ({
-      rang: entier(r.titre),
-      titre: r.titre.replace(/^\d\s*·\s*/, "").replace(/[.:]\s*$/, ""),
-      texte: r.texte,
-    })),
-    signatures: d.signatures.map((s) => {
-      const [qui = "", , quand = ""] = segments(s.detail);
-      return {
-        compagnie: s.libelle.replace(/^Signé pour\s+/, ""),
-        signataire: qui === "Toi" ? KAMGA_PATRON.nom : qui,
-        signeA: instantFrancais(quand),
-      };
-    }),
-    trimestre: {
-      colisEchanges: entier(chiffre("Trimestre").valeur),
-      litiges: entier(chiffre("Litiges").valeur),
-      netRecu: montant(chiffre("Net reçu").valeur),
-      reglements: entier(chiffre("Net reçu").detail),
-    },
   };
 }
 
@@ -114,7 +75,8 @@ export function mockInterAgences(src: SourceFixtures): ContributionMock {
         if (conventionId !== ID_CONVENTION_OMEGA) {
           throw introuvable("Convention", "CONVENTION_INCONNUE", conventionId);
         }
-        return convention(src);
+        // Le contrat est unique : la même convention que celle de l'écran InterAgencesConvention.
+        return construireConvention(src.ecran("InterAgencesConvention"));
       }),
     ],
     flux: [],

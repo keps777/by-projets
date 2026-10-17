@@ -121,12 +121,24 @@ export function installerVendeur(sc: ScenarioEnConstruction, d: DonneesScenario)
           "00:00",
         );
       }
+      const proposition = dernier ? null : l.action.replace(/\s*\?$/, "");
+      // Le départ de la proposition : celui dont l'heure y figure (« vendredi 08:30 »), sinon le premier de la carte.
+      const heureProposee = proposition === null ? null : /\b(\d{1,2}):(\d{2})\b/.exec(proposition);
+      const voulue = heureProposee
+        ? `${(heureProposee[1] ?? "").padStart(2, "0")}:${heureProposee[2]}`
+        : null;
+      const departPropose =
+        proposition === null
+          ? undefined
+          : (departsPlanche.find((x) => /T(\d{2}:\d{2})/.exec(x.heureDepart)?.[1] === voulue) ??
+            departsPlanche[0]);
       return {
         nom: l.nom,
         destination,
         habitude: habitude.length > 0 ? habitude.join(" ") : null,
         telephoneMasque,
-        proposition: dernier ? null : l.action.replace(/\s*\?$/, ""),
+        proposition,
+        ...(departPropose ? { departId: departPropose.departId } : {}),
         dernierVoyage,
       };
     }),

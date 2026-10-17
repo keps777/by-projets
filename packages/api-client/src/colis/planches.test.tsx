@@ -669,6 +669,21 @@ describe("RelaisInscription · inscription du relais (fiche)", () => {
     expect(depot.dossier).toBe("R-BAF-0215");
     expect(depot.suite).toBe("un agent te rappelle sous 72 h");
   });
+
+  it("useEnvoyerFicheRelais accepte une fiche sans MoMo : le serveur prend celui du compte", async () => {
+    const { result } = rendreHooks(bancDe("RelaisInscription"), () => useEnvoyerFicheRelais());
+    const depot = await act(() =>
+      result.current.mutateAsync({
+        nom: "Boutique Chez Thérèse",
+        type: "Boutique · alimentation",
+        ouvert: "7 h – 20 h · lun.–sam.",
+        position: { ville: "Bafoussam", quartier: "Tamdja" },
+        tailleMax: "Petits et moyens (≤ 10 kg)",
+        facadeRef: "photo-facade",
+      }),
+    );
+    expect(depot.dossier).toBe("R-BAF-0215");
+  });
 });
 
 describe("RelaisVerification · suivi de la demande du relais", () => {
@@ -714,6 +729,21 @@ describe("LivreurDevenir · inscription du livreur", () => {
         heures: p.particularites.heures.valeur,
         chargeMax: p.particularites.charge.valeur,
         momo: { telephone: "+237675000009", operateur: "mtn" },
+        pieces: {},
+        reglesAcceptees: true,
+      }),
+    );
+    expect(depot.dossier).toBe("L-BAF-0087");
+  });
+
+  it("useDeposerDemandeLivreur accepte une demande sans MoMo : le serveur prend celui du compte", async () => {
+    const { result } = rendreHooks(bancDe("LivreurDevenir"), () => useDeposerDemandeLivreur());
+    const depot = await act(() =>
+      result.current.mutateAsync({
+        deplacement: "velo",
+        zone: "Bafoussam · Tamdja, Djeleng, centre",
+        heures: "Soirs 17 h – 21 h",
+        chargeMax: "10 kg · colis courants",
         pieces: {},
         reglesAcceptees: true,
       }),
@@ -898,6 +928,8 @@ describe("Vendeur · /(vendeur)/accueil", () => {
         habitude: "chaque vendredi",
         telephoneMasque: "6 70 …",
         proposition: "vendredi 08:30",
+        // Le départ de la proposition : celui de 08:30 de la carte de vente.
+        departId: "dep-alp-dlayde-270106-0830",
         dernierVoyage: null,
       },
       {

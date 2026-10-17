@@ -38,7 +38,7 @@ import {
   operateurProbable,
 } from "./regles";
 import { debutDeSemaine, enMs, versIsoDouala } from "./temps";
-import type { ActivationRelais } from "./validation";
+import type { ActivationRelais, FicheRelaisRecue } from "./validation";
 
 const MAX_TENTATIVES = 10;
 
@@ -115,10 +115,7 @@ export class InscriptionRelaisService {
   async formulaire(utilisateur: Utilisateur) {
     const contact = await this.annuaire.contact(utilisateur.id);
     const brouillon = (await this.brouillons.lire(utilisateur.id))?.fiche ?? {};
-    const momo = brouillon.momo ?? {
-      telephone: contact.telephone,
-      operateur: operateurProbable(contact.telephone) ?? "mtn",
-    };
+    const momo = brouillon.momo ?? this.momoDuCompte(contact.telephone);
     const position = brouillon.position;
     const libelles = FORMULAIRE_RELAIS.libelles;
     return {
@@ -165,6 +162,11 @@ export class InscriptionRelaisService {
     };
   }
 
+  /** Le MoMo du compte : son numéro, et l'opérateur que son préfixe laisse deviner (MTN à défaut). */
+  private momoDuCompte(telephone: string): FicheRelais["momo"] {
+    return { telephone, operateur: operateurProbable(telephone) ?? "mtn" };
+  }
+
   /** `SchemaBrouillonEnregistre` : la fiche à moitié remplie est gardée, champ par champ. */
   async enregistrerBrouillon(utilisateur: Utilisateur, fiche: Partial<FicheRelais>) {
     const enregistreA = this.maintenant();
@@ -178,7 +180,7 @@ export class InscriptionRelaisService {
     return { enregistreLe: enregistreA };
   }
 
-  private verifierFiche(fiche: FicheRelais): void {
+  private verifierFiche(fiche: FicheRelaisRecue): void {
     const erreurs: { chemin: string; message: string }[] = [];
     if (!(TYPES_BOUTIQUE as readonly string[]).includes(fiche.type)) {
       erreurs.push({ chemin: "type", message: "Type de boutique inconnu" });
@@ -201,12 +203,20 @@ export class InscriptionRelaisService {
   }
 
   /** `SchemaDemandeDeposee` : la fiche est envoyée, le dossier est ouvert. */
-  async deposer(utilisateur: Utilisateur, fiche: FicheRelais) {
-    this.verifierFiche(fiche);
+  async deposer(utilisateur: Utilisateur, recue: FicheRelaisRecue) {
+    this.verifierFiche(recue);
     if (await this.relais.parPersonne(utilisateur.id)) {
       throw new ErreurColis(409, "deja_relais", "Vous êtes déjà point relais");
     }
     const contact = await this.annuaire.contact(utilisateur.id);
+    // Sans MoMo dans la fiche : celui du brouillon (déjà proposé au formulaire), sinon celui du compte.
+    const fiche: FicheRelais = {
+      ...recue,
+      momo:
+        recue.momo ??
+        (await this.brouillons.lire(utilisateur.id))?.fiche.momo ??
+        this.momoDuCompte(contact.telephone),
+    };
     const deposeeA = this.maintenant();
     const prefixe = `R-${codeVille(fiche.position.ville)}`;
 

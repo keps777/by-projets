@@ -114,6 +114,45 @@ describe("devenir point relais : demande, vérification par un agent, activation
       expect(autre.body.dossier).toBe("R-BAF-0002");
     });
 
+    it("sans MoMo dans la fiche, le relais est payé sur le MoMo du compte (le numéro proposé par le formulaire)", async () => {
+      const { momo: _momo, ...sansMomo } = FICHE;
+      const rep = await deposer(e.inconnu.jeton, sansMomo);
+      expect(rep.status, JSON.stringify(rep.body)).toBe(201);
+      contrats.SchemaDemandeDeposee.parse(rep.body);
+      const [demande] = [...t.demandes.lignes.values()];
+      expect(demande?.fiche.momo).toEqual({ telephone: "+237677000111", operateur: "mtn" });
+    });
+
+    it("sans MoMo dans la fiche mais avec un MoMo dans le brouillon, c'est celui du brouillon", async () => {
+      const { momo: _momo, ...sansMomo } = FICHE;
+      await t
+        .http()
+        .put("/partenaires/relais/brouillon")
+        .set(entete(e.inconnu.jeton))
+        .send({ fiche: { momo: { telephone: "+237699888777", operateur: "orange" } } });
+      const rep = await deposer(e.inconnu.jeton, sansMomo);
+      expect(rep.status, JSON.stringify(rep.body)).toBe(201);
+      const [demande] = [...t.demandes.lignes.values()];
+      expect(demande?.fiche.momo).toEqual({ telephone: "+237699888777", operateur: "orange" });
+    });
+
+    it("un MoMo donné dans la fiche passe avant celui du compte", async () => {
+      const rep = await deposer(e.inconnu.jeton);
+      expect(rep.status).toBe(201);
+      const [demande] = [...t.demandes.lignes.values()];
+      expect(demande?.fiche.momo).toEqual({ telephone: "+237670000111", operateur: "mtn" });
+    });
+
+    it("un MoMo présent mais mal formé reste refusé (jamais remplacé en silence par celui du compte)", async () => {
+      for (const momo of [null, "670000111", { telephone: "+237670000111" }, {}]) {
+        expect(
+          (await deposer(e.inconnu.jeton, { ...FICHE, momo })).status,
+          JSON.stringify(momo),
+        ).toBe(400);
+      }
+      expect(t.demandes.lignes.size).toBe(0);
+    });
+
     it("refuse une seconde demande tant que la première est ouverte, même envoyée deux fois en même temps", async () => {
       const [a, b] = await Promise.all([deposer(e.inconnu.jeton), deposer(e.inconnu.jeton)]);
       expect([a.status, b.status].sort()).toEqual([201, 409]);

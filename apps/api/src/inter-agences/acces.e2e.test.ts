@@ -41,6 +41,7 @@ describe("inter-agences : qui a le droit de quoi, et étanchéité entre compagn
       `/inter-agences/colis/${colisId}`,
       "/inter-agences/billets",
       "/patron/inter-agences",
+      `/patron/inter-agences/conventions/${conventionId}`,
     ]) {
       expect((await get(chemin)).status, chemin).toBe(401);
     }
@@ -57,6 +58,7 @@ describe("inter-agences : qui a le droit de quoi, et étanchéité entre compagn
       `/inter-agences/colis/${colisId}`,
       "/inter-agences/billets",
       "/patron/inter-agences",
+      `/patron/inter-agences/conventions/${conventionId}`,
     ]) {
       expect((await get(chemin, jeton)).status, chemin).toBe(403);
     }
@@ -69,6 +71,7 @@ describe("inter-agences : qui a le droit de quoi, et étanchéité entre compagn
       "/inter-agences/reglement",
       `/inter-agences/conventions/${conventionId}`,
       "/patron/inter-agences",
+      `/patron/inter-agences/conventions/${conventionId}`,
     ]) {
       expect((await get(chemin, comptable.jeton)).status, `comptable ${chemin}`).toBe(200);
       expect(

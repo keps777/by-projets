@@ -48,6 +48,10 @@ const vueAction = (a: ActionProposee): ActionVue => ({
   id: a.id,
   libelle: a.libelle,
   type: a.type,
+  // L'écran ouvre directement la ligne (analyse ou réglage) au lieu de la deviner dans le texte.
+  ...(a.parametres.type === "voir_ligne" || a.parametres.type === "ajouter_depart"
+    ? { ligneId: a.parametres.ligneId }
+    : {}),
 });
 
 function vueFuite(c: Constat): FuiteVue {
@@ -234,6 +238,14 @@ export class AssistantService {
         brouillon.simulation && brouillon.simulation.length > 0
           ? { options: brouillon.simulation.map((o) => ({ ...o })) }
           : null,
+      ...(brouillon.graphique
+        ? {
+            graphique: {
+              valeurs: [...brouillon.graphique.valeurs],
+              joursEnEcart: [...brouillon.graphique.joursEnEcart],
+            },
+          }
+        : {}),
     };
 
     // Les actions montrées doivent pouvoir être appliquées : si on ne peut pas les noter, on ne répond pas.

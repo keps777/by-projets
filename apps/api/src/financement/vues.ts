@@ -64,6 +64,8 @@ export interface OffreVue {
     montantPropose: number;
     conditions: DossierVue["conditions"];
     versementSousHeures: number;
+    /** Dossier de la demande ouverte (statut `en_cours`). */
+    dossierId?: string;
   };
   creditMateriel: {
     description: string;

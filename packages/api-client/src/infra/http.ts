@@ -11,7 +11,7 @@ import {
 } from "./erreurs";
 import { horlogeSysteme } from "./horloge";
 import type { Horloge } from "./horloge";
-import { validerAvec } from "./operations";
+import { nomDansContentDisposition, validerAvec } from "./operations";
 import type { Canal, Operation } from "./operations";
 
 /** Le strict nécessaire d'une WebSocket, pour pouvoir la remplacer dans les tests. */
@@ -110,7 +110,8 @@ export function creerClientHttp(options: OptionsHttp): ClientHttp {
       joindre(options.urlBase, operation.chemin(params)) +
       chaineRequete(operation.requete?.(params));
     const corps = operation.corps?.(params);
-    const entetes: Record<string, string> = { Accept: "application/json" };
+    const binaire = operation.lecture === "binaire";
+    const entetes: Record<string, string> = { Accept: binaire ? "*/*" : "application/json" };
     if (corps !== undefined) entetes["Content-Type"] = "application/json";
     const jeton = await options.obtenirJeton?.();
     if (jeton) entetes["Authorization"] = `Bearer ${jeton}`;
@@ -141,6 +142,21 @@ export function creerClientHttp(options: OptionsHttp): ClientHttp {
         throw new ErreurReseau(undefined, e);
       }
 
+      if (binaire && reponse.ok) {
+        // Un fichier : on garde les octets tels quels, avec ce que les en-têtes en disent.
+        const octets = await reponse
+          .arrayBuffer()
+          .then((b) => new Uint8Array(b))
+          .catch(() => {
+            throw new ErreurReseau(undefined, undefined);
+          });
+        return {
+          nom: nomDansContentDisposition(reponse.headers.get("Content-Disposition")) ?? "export",
+          typeMime: reponse.headers.get("Content-Type") || "application/octet-stream",
+          empreinte: reponse.headers.get("X-Empreinte-AfriMove"),
+          octets,
+        };
+      }
       const texte = await reponse.text().catch(() => "");
       if (!reponse.ok) {
         let code: string | undefined;

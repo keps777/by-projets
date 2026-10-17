@@ -9,8 +9,9 @@ export function heureDouala(iso: string): string {
 }
 
 /**
- * Identifiant d'un arrêt d'après son nom (« Boumnyebel » -> `boumnyebel`, « Édéa gare » -> `edea-gare`) : l'étape du
- * trajet ne porte que le nom, et l'écran « Monter en route » lit l'arrêt par cet identifiant (`?arretId=`).
+ * Identifiant d'un arrêt d'après son nom (« Boumnyebel » -> `boumnyebel`, « Édéa gare » -> `edea-gare`). Repli
+ * seulement : l'étape du trajet porte `arretId`, que l'écran « Monter en route » lit (`?arretId=`) ; ce calcul ne sert
+ * qu'à une réponse qui ne l'envoie pas.
  */
 export function idArret(nom: string): string {
   return nom

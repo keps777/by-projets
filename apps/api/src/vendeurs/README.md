@@ -125,7 +125,8 @@ Erreurs (corps `{ code, message, details? }`, celui du module colis) :
   plus récents d'abord (20 au plus), numéro masqué (`6 70 …`). Un client voyage « chaque vendredi » à partir de
   3 voyages dont les deux tiers le même jour ; la proposition « vendredi 08:30 » n'apparaît que s'il existe un
   départ à ce jour et à cette heure dans la semaine à venir, sur le même trajet, avec des places. Sinon, la date
-  de son dernier voyage. Un client est « régulier » à partir de 3 billets.
+  de son dernier voyage. Quand il y a une proposition, la réponse porte aussi `departId` : le départ à ouvrir pour la
+  revente (absent sans proposition, et pas forcément dans la carte « départs » de demain). Un client est « régulier » à partir de 3 billets.
 
 ## Tables PostgreSQL
 
