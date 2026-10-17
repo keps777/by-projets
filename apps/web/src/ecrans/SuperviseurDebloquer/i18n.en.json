@@ -1,0 +1,91 @@
+{
+  "titre": {
+    "bloque": "",
+    "en_ligne": "",
+    "debloque_temporairement": ""
+  },
+  "retour": "",
+  "sousTitre": "",
+  "badge": {
+    "debloque": ""
+  },
+  "regle": {
+    "libelle": "",
+    "detail": ""
+  },
+  "quand": {
+    "aujourdhui": "",
+    "hier": "",
+    "date": ""
+  },
+  "nombre": {
+    "ventes_one": "",
+    "ventes_other": "",
+    "colis_one": "",
+    "colis_other": ""
+  },
+  "attente": {
+    "libelle": "",
+    "detail_one": "",
+    "detail_other": "",
+    "cash": {
+      "libelle": "",
+      "detail": ""
+    },
+    "plage": {
+      "libelle": "",
+      "ok": "",
+      "sansTrou": "",
+      "trous_one": "",
+      "trous_other": ""
+    }
+  },
+  "pourquoi": {
+    "titre": ""
+  },
+  "queFaire": {
+    "titre": "",
+    "recommande": "",
+    "options": {
+      "synchroniser": {
+        "titre": "",
+        "detail_one": "",
+        "detail_other": ""
+      },
+      "debloquer_4h": {
+        "titre": "",
+        "detail": ""
+      },
+      "telephone_secours": {
+        "titre": "",
+        "detail": ""
+      }
+    }
+  },
+  "rappel": "",
+  "actions": {
+    "plusTard": "",
+    "synchroniser": {
+      "libelle": "",
+      "detail": ""
+    }
+  },
+  "pin": {
+    "titre": "",
+    "titreCourt": "",
+    "aide": "",
+    "fermer": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
