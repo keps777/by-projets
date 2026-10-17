@@ -1,0 +1,1 @@
+export { EcranComptable } from "./EcranComptable";
