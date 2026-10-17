@@ -1,5 +1,5 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { EcranColisCode } from "@/ecrans/ColisCode";
 
 export default function Page() {
-  return <EcranVide planche="ColisCode" />;
+  return <EcranColisCode />;
 }
