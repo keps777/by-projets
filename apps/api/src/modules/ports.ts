@@ -4,10 +4,10 @@ import type { ExceptionModule, PorteeException, ReglageModule } from "./portee";
  * Ports de persistance du moteur des modules.
  *
  * La logique ne parle qu'à ces classes abstraites. `memoire.ts` en fournit des versions en mémoire
- * (tests, développement). Les versions PostgreSQL ne sont pas écrites : elles demandent une table
- * (`module_exception`) qui n'existe pas dans `apps/api/prisma/**`, hors du périmètre d'AM-126 ; le
- * README du module liste les tables. Tant qu'un port est en mémoire, `ModulesModule` refuse de
- * démarrer en production.
+ * (tests, développement). Les versions PostgreSQL sont dans `postgres.ts` (tables `module_compagnie` et
+ * `module_exception`) ; mémoire et PostgreSQL passent le même contrat
+ * (`postgres.integration.test.ts`). `ModulesModule` choisit l'adaptateur selon `API_STOCKAGE` et
+ * refuse de démarrer en production tant qu'un port est en mémoire.
  */
 
 /** Réglages des modules d'une agence. Un module sans ligne est à son état par défaut. */

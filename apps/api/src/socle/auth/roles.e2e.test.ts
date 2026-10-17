@@ -148,6 +148,8 @@ describe("rôles stricts (HTTP)", () => {
           "POST /auth/guichet/connexion",
           "POST /auth/direction/connexion",
           "POST /auth/direction/verification",
+          // Billetterie : la clé publique qui vérifie les QR hors ligne (JWK, rien de secret).
+          "GET /billetterie/cle-publique",
         ].sort(),
       );
     });

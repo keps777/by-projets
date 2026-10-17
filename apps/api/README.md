@@ -34,14 +34,14 @@ node --env-file=apps/api/.env apps/api/dist/main.js
 
 ## Scripts
 
-| Script              | Rôle                                                                          |
-| ------------------- | ----------------------------------------------------------------------------- |
-| `build`             | `prisma generate` puis `nest build` → `dist/main.js`                          |
-| `typecheck`         | `tsc --noEmit` (sources et tests)                                             |
-| `lint`              | Prettier + ESLint                                                             |
-| `test`              | Vitest : unitaires, rôles, HTTP (sans base de données)                        |
-| `start:dev`         | `nest start --watch`                                                          |
-| `db:migrate:dev`    | `prisma migrate dev` : crée une migration après une modif de `schema.prisma`  |
+| Script           | Rôle                                                                         |
+| ---------------- | ---------------------------------------------------------------------------- |
+| `build`          | `prisma generate` puis `nest build` → `dist/main.js`                         |
+| `typecheck`      | `tsc --noEmit` (sources et tests)                                            |
+| `lint`           | Prettier + ESLint                                                            |
+| `test`           | Vitest : unitaires, rôles, HTTP (sans base de données)                       |
+| `start:dev`      | `nest start --watch`                                                         |
+| `db:migrate:dev` | `prisma migrate dev` : crée une migration après une modif de `schema.prisma` |
 
 Le client Prisma est généré dans `src/socle/db/generated` (ignoré par git) : les scripts
 `build`, `typecheck` et `test` le régénèrent. Il est compilé avec l'API, donc l'image Docker n'a pas
@@ -54,8 +54,12 @@ chaîne d'audit sous concurrence, connexions de bout en bout) est ignoré sans b
 
 ```
 createdb afrimove_test      # la base doit être JETABLE : son nom finit par _test, son schéma est vidé
-TEST_DATABASE_URL=postgresql://user@localhost:5432/afrimove_test pnpm --filter @afrimove/api run test
+DATABASE_URL_TEST=postgresql://user@localhost:5432/afrimove_test pnpm --filter @afrimove/api run test
 ```
+
+(`TEST_DATABASE_URL`, l'ancien nom, est encore lu.) Les autres fichiers `*.integration.test.ts`
+(numérotation, modules, reprise des données par les migrations) s'y exécutent aussi ; ils se
+partagent la base l'un après l'autre. Voir `INTEGRATION.md` pour l'état de chaque module.
 
 ## Configuration
 
@@ -63,27 +67,27 @@ Tout vient de l'environnement ; `.env.example` liste chaque variable avec son r�
 `chargerConfig` valide l'ensemble et signale **toutes** les erreurs d'un coup (sans afficher de valeur).
 En production, une valeur d'exemple (`dev-seulement`) ou `SMS_MOCK_LOG_CODES=true` empêche le démarrage.
 
-| Variable                                                       | Rôle                                                               |
-| -------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `DATABASE_URL`                                                 | PostgreSQL 16                                                      |
-| `JWT_SECRET`, `JWT_TTL_SECONDS`                                | jetons d'accès HS256 (1 h par défaut)                              |
-| `AUTH_PEPPER`                                                  | poivre des PIN, mots de passe et codes SMS                         |
-| `ENCRYPTION_KEY`, `ENCRYPTION_KEY_ID`, `ENCRYPTION_PREVIOUS_KEYS` | chiffrement AES-256-GCM et rotation                             |
-| `BLIND_INDEX_KEY`                                              | index aveugle des téléphones (ne jamais changer sans réindexer)    |
-| `AUDIT_HMAC_KEY`                                               | chaîne d'empreintes du journal d'audit (ne jamais changer)         |
-| `OTP_TTL_SECONDS`, `OTP_MAX_ESSAIS`, `OTP_MAX_DEMANDES_15MIN`  | codes SMS                                                          |
-| `SMS_DRIVER`, `SMS_MOCK_LOG_CODES`                             | fournisseur SMS (simulateur seul pour l'instant)                   |
-| `CORS_ORIGINS`, `TRUST_PROXY`, `OPENAPI_ENABLED`, `RATE_LIMIT_ENABLED`, `PORT`, `HOST` | réseau et exposition                           |
+| Variable                                                                               | Rôle                                                            |
+| -------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `DATABASE_URL`                                                                         | PostgreSQL 16                                                   |
+| `JWT_SECRET`, `JWT_TTL_SECONDS`                                                        | jetons d'accès HS256 (1 h par défaut)                           |
+| `AUTH_PEPPER`                                                                          | poivre des PIN, mots de passe et codes SMS                      |
+| `ENCRYPTION_KEY`, `ENCRYPTION_KEY_ID`, `ENCRYPTION_PREVIOUS_KEYS`                      | chiffrement AES-256-GCM et rotation                             |
+| `BLIND_INDEX_KEY`                                                                      | index aveugle des téléphones (ne jamais changer sans réindexer) |
+| `AUDIT_HMAC_KEY`                                                                       | chaîne d'empreintes du journal d'audit (ne jamais changer)      |
+| `OTP_TTL_SECONDS`, `OTP_MAX_ESSAIS`, `OTP_MAX_DEMANDES_15MIN`                          | codes SMS                                                       |
+| `SMS_DRIVER`, `SMS_MOCK_LOG_CODES`                                                     | fournisseur SMS (simulateur seul pour l'instant)                |
+| `CORS_ORIGINS`, `TRUST_PROXY`, `OPENAPI_ENABLED`, `RATE_LIMIT_ENABLED`, `PORT`, `HOST` | réseau et exposition                                            |
 
 Générer de vraies valeurs : `openssl rand -base64 48` (secrets texte), `openssl rand -base64 32` (clés).
 
 ## Authentification par rôle
 
-| Rôle(s)                                                              | Méthode                                   | Routes                                                                            |
-| -------------------------------------------------------------------- | ----------------------------------------- | --------------------------------------------------------------------------------- |
-| `voyageur`                                                           | numéro + code SMS (compte créé à la 1re connexion) | `POST /auth/voyageur/code` → `POST /auth/voyageur/verification`          |
-| `guichetier`, `convoyeur`, `chauffeur`, `vendeur`, `controleur`, `relais`, `livreur` | numéro + PIN à 6 chiffres | `POST /auth/guichet/connexion`                                                    |
-| `superviseur`, `patron`, `comptable`, `afrimove`                     | mot de passe, puis code SMS               | `POST /auth/direction/connexion` → `POST /auth/direction/verification`            |
+| Rôle(s)                                                                              | Méthode                                            | Routes                                                                 |
+| ------------------------------------------------------------------------------------ | -------------------------------------------------- | ---------------------------------------------------------------------- |
+| `voyageur`                                                                           | numéro + code SMS (compte créé à la 1re connexion) | `POST /auth/voyageur/code` → `POST /auth/voyageur/verification`        |
+| `guichetier`, `convoyeur`, `chauffeur`, `vendeur`, `controleur`, `relais`, `livreur` | numéro + PIN à 6 chiffres                          | `POST /auth/guichet/connexion`                                         |
+| `superviseur`, `patron`, `comptable`, `afrimove`                                     | mot de passe, puis code SMS                        | `POST /auth/direction/connexion` → `POST /auth/direction/verification` |
 
 - Le jeton ne porte qu'**un rôle actif** (celui de la connexion). À chaque requête, le compte et son
   rôle sont relus en base : désactiver un compte ou retirer un rôle coupe l'accès immédiatement.

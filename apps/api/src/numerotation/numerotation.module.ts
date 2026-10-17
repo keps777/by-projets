@@ -1,5 +1,7 @@
 import { Inject, Injectable, Module, type OnModuleInit } from "@nestjs/common";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { AttributionPlages, ControleNumeros } from "../sync/ports";
 import { AttributionPlagesServeur, ControleNumerosServeur } from "./adaptateurs";
@@ -11,6 +13,11 @@ import {
 } from "./memoire";
 import { NumerotationController } from "./numerotation.controller";
 import { NumerotationService } from "./numerotation.service";
+import {
+  AlertesNumerotationPrisma,
+  PlagesAttribueesPrisma,
+  RegistreNumerosPrisma,
+} from "./postgres";
 import { PlagesService } from "./plages.service";
 import {
   AlertesNumerotation,
@@ -59,17 +66,40 @@ export class VerificationStockageNumerotation implements OnModuleInit {
  * `AttributionPlages` (`sync/ports.ts`) : `SyncModule` les utilise en important ce module à la
  * place de ses versions en mémoire (voir le README, « Brancher sur la synchronisation »).
  *
- * À importer dans `AppModule` (périmètre du socle) pour les routes `/numerotation/**`. Les ports de
- * stockage sont remplaçables : les adaptateurs PostgreSQL remplacent les versions en mémoire.
+ * Importé par `SyncModule` (donc par `AppModule`) : ses routes `/numerotation/**` sont montées une
+ * fois. Stockage : adaptateurs PostgreSQL (`postgres.ts`) en production, versions en mémoire pour les
+ * tests et le développement (voir `socle/db/stockage.ts`).
  */
 @Module({
   controllers: [NumerotationController],
   providers: [
     VerificationStockageNumerotation,
     { provide: Horloge, useClass: HorlogeSysteme },
-    { provide: PlagesAttribuees, useClass: PlagesAttribueesMemoire },
-    { provide: RegistreNumeros, useClass: RegistreNumerosMemoire },
-    { provide: AlertesNumerotation, useClass: AlertesNumerotationMemoire },
+    // PostgreSQL en production (ou avec API_STOCKAGE=postgres), mémoire ailleurs : voir socle/db/stockage.ts.
+    {
+      provide: PlagesAttribuees,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config)
+          ? new PlagesAttribueesPrisma(prisma)
+          : new PlagesAttribueesMemoire(),
+    },
+    {
+      provide: RegistreNumeros,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config)
+          ? new RegistreNumerosPrisma(prisma)
+          : new RegistreNumerosMemoire(),
+    },
+    {
+      provide: AlertesNumerotation,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config)
+          ? new AlertesNumerotationPrisma(prisma)
+          : new AlertesNumerotationMemoire(),
+    },
     PlagesService,
     NumerotationService,
     ControleJourneeService,

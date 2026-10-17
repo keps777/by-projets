@@ -12,6 +12,17 @@
 //
 // Les migrations sont additives (voir infra/README.md, section E) : on n'efface ni ne renomme en
 // une seule étape.
+//
+// Intégration des modules métier (sync, numérotation, billetterie, colis, caisse, supervision,
+// modules) : migration « modules_metier ». Ce qu'elle ajoute et pourquoi est décrit dans
+// apps/api/INTEGRATION.md. Prisma ne sait pas exprimer tout ce qui porte les garanties métier
+// (index uniques partiels, contrainte d'exclusion des plages, CHECK, déclencheurs « ajout seul ») :
+// ces garde-fous sont écrits en SQL dans la migration et signalés ici par « SQL : ».
+//
+// Identifiants : les tables alimentées par les appareils (journal de synchronisation, scans, registre
+// des numéros…) gardent les identifiants reçus des appareils en texte, sans clé étrangère : une vente
+// déjà imprimée ou un scan déjà fait ne se refuse jamais pour un motif de référence. Les tables
+// alimentées par la logique du serveur utilisent des UUID et des clés étrangères.
 
 generator client {
   provider     = "prisma-client"
@@ -177,6 +188,14 @@ model Compagnie {
   modules   ModuleCompagnie[]
   billets   Billet[]
 
+  colis              Colis[]
+  reclamationsColis  ReclamationColis[]
+  sessionsCaisse     SessionCaisse[]
+  appareilsSync      AppareilSync[]
+  plagesAttribuees   PlageAttribuee[]
+  modulesExceptions  ModuleException[]
+  demandesAnnulation DemandeAnnulation[]
+
   @@map("compagnie")
 }
 
@@ -198,6 +217,12 @@ model Gare {
   colisDepart   Colis[]    @relation("ColisOrigine")
   colisArrivee  Colis[]    @relation("ColisDestination")
 
+  sessionsCaisse     SessionCaisse[]
+  appareilsSync      AppareilSync[]
+  plagesAttribuees   PlageAttribuee[]
+  modulesExceptions  ModuleException[]
+  demandesAnnulation DemandeAnnulation[]
+
   @@unique([compagnieId, code])
   @@map("gare")
 }
@@ -212,6 +237,8 @@ model Guichet {
   appareils Appareil[]
   sessions  SessionCaisse[]
   billets   Billet[]
+  /// Personnes affectées à ce guichet (équipe de la gare).
+  equipe    Personne[]
 
   @@unique([gareId, rang])
   @@map("guichet")
@@ -227,6 +254,8 @@ model Ligne {
   tarifClassique    Int
   tarifVip          Int
   tarifBagage       Int
+  /// Durée du trajet en minutes (0 = non renseignée). Ajoutée avec la billetterie.
+  dureeMinutes      Int    @default(0)
 
   compagnie   Compagnie @relation(fields: [compagnieId], references: [id])
   origine     Gare      @relation("LigneOrigine", fields: [origineGareId], references: [id])
@@ -258,6 +287,8 @@ model Bus {
   compagnieId     String       @db.Uuid
   immatriculation String
   capacite        Int
+  /// Places de soute (0 = non renseignées). Ajoutée avec la billetterie.
+  capaciteSoute   Int          @default(0)
   classe          ClasseBillet
 
   compagnie Compagnie @relation(fields: [compagnieId], references: [id])
@@ -297,21 +328,40 @@ model Personne {
   actif            Boolean @default(true)
 
   /// PIN à 6 chiffres (guichetier et rôles terrain) : argon2id avec poivre.
-  pinHache           String?
+  pinHache            String?
   /// Mot de passe (superviseur, patron, comptable, AfriMove) : argon2id avec poivre.
-  motDePasseHache    String?
-  echecsConnexion    Int       @default(0)
-  bloqueJusqua       DateTime? @db.Timestamptz(3)
-  derniereConnexionA DateTime? @db.Timestamptz(3)
-  creeA              DateTime  @default(now()) @db.Timestamptz(3)
+  motDePasseHache     String?
+  echecsConnexion     Int       @default(0)
+  bloqueJusqua        DateTime? @db.Timestamptz(3)
+  derniereConnexionA  DateTime? @db.Timestamptz(3)
+  creeA               DateTime  @default(now()) @db.Timestamptz(3)
+  /// Le PIN est provisoire (donné par un superviseur) jusqu'à cet instant : il doit être remplacé à la connexion.
+  pinProvisoireJusqua DateTime? @db.Timestamptz(3)
+  /// Guichet d'affectation dans la gare (équipe), s'il y en a un.
+  guichetId           String?   @db.Uuid
 
   compagnie        Compagnie?      @relation(fields: [compagnieId], references: [id])
   gare             Gare?           @relation(fields: [gareId], references: [id])
+  guichet          Guichet?        @relation(fields: [guichetId], references: [id])
   sessionsCaisse   SessionCaisse[] @relation("SessionAgent")
   sessionsValidees SessionCaisse[] @relation("SessionSuperviseur")
   defis            DefiOtp[]
 
+  departsChauffeur    Depart[]            @relation("DepartChauffeur")
+  departsConvoyeur    Depart[]            @relation("DepartConvoyeur")
+  billetsAchetes      Billet[]            @relation("BilletAcheteur")
+  billetsEmis         Billet[]            @relation("BilletAuteur")
+  commandes           Commande[]
+  compagniesPreferees CompagniePreferee[]
+  filtresVoyageur     FiltresVoyageur[]
+  colisEnvoyes        Colis[]             @relation("ColisExpediteur")
+  reclamationsColis   ReclamationColis[]
+  demandesAnnulation  DemandeAnnulation[] @relation("DemandeurAnnulation")
+  decisionsAnnulation DemandeAnnulation[] @relation("DecideurAnnulation")
+  modulesModifies     ModuleException[]
+
   @@index([compagnieId])
+  @@index([gareId])
   @@map("personne")
 }
 
@@ -345,15 +395,26 @@ model Depart {
   etat           EtatDepart
   historique     Json         @default("[]")
   fusionneDansId String?      @db.Uuid
+  /// Numéro du quai.
+  quai           Int?
+  chauffeurId    String?      @db.Uuid
+  convoyeurId    String?      @db.Uuid
+  /// Compteur du plan de sièges : monte à chaque changement, dans la même transaction que le siège.
+  versionPlan    Int          @default(0)
 
-  ligne        Ligne    @relation(fields: [ligneId], references: [id])
-  bus          Bus?     @relation(fields: [busId], references: [id])
-  fusionneDans Depart?  @relation("Fusion", fields: [fusionneDansId], references: [id])
-  fusionnes    Depart[] @relation("Fusion")
+  ligne        Ligne         @relation(fields: [ligneId], references: [id])
+  bus          Bus?          @relation(fields: [busId], references: [id])
+  fusionneDans Depart?       @relation("Fusion", fields: [fusionneDansId], references: [id])
+  fusionnes    Depart[]      @relation("Fusion")
+  chauffeur    Personne?     @relation("DepartChauffeur", fields: [chauffeurId], references: [id])
+  convoyeur    Personne?     @relation("DepartConvoyeur", fields: [convoyeurId], references: [id])
   billets      Billet[]
   colis        Colis[]
+  sieges       SiegeDepart[]
+  commandes    Commande[]
 
   @@index([ligneId, heureDepart])
+  @@index([etat, heureDepart])
   @@map("depart")
 }
 
@@ -375,12 +436,37 @@ model SessionCaisse {
   etat         EtatSession
   historique   Json        @default("[]")
 
-  guichet   Guichet   @relation(fields: [guichetId], references: [id])
-  agent     Personne  @relation("SessionAgent", fields: [agentId], references: [id])
-  validePar Personne? @relation("SessionSuperviseur", fields: [valideeParId], references: [id])
-  billets   Billet[]
+  /// Rang du guichet à l'ouverture (copie de `guichet.rang`, tel qu'écrit dans le numéro K-…).
+  guichetRang          Int
+  gareId               String    @db.Uuid
+  compagnieId          String    @db.Uuid
+  /// Tolérance d'écart (FCFA) de l'agence à l'ouverture.
+  tolerance            Int       @default(1000)
+  /// Dernière réouverture après « Refuser · recompter ».
+  reouverteA           DateTime? @db.Timestamptz(3)
+  /// {coupures, pieces, total}
+  comptage             Json?
+  /// {at, auto, cashCompte, cashAttendu, ecart, divergenceAppareil, comptageAbsent, decompte, evenementId}.
+  /// Les colonnes `clotureeA`, `cashCompte`, `cashAttendu`, `ecart` et `clotureeAuto` en gardent une copie interrogeable.
+  cloture              Json?
+  /// {at, superviseurId, superviseurNom, ecart, commentaire, evenementId}
+  validation           Json?
+  /// Clôtures refusées avant la clôture actuelle.
+  refus                Json      @default("[]")
+  evenementOuvertureId String?   @unique @db.Uuid
 
+  guichet     Guichet            @relation(fields: [guichetId], references: [id])
+  agent       Personne           @relation("SessionAgent", fields: [agentId], references: [id])
+  validePar   Personne?          @relation("SessionSuperviseur", fields: [valideeParId], references: [id])
+  gare        Gare               @relation(fields: [gareId], references: [id])
+  compagnie   Compagnie          @relation(fields: [compagnieId], references: [id])
+  billets     Billet[]
+  annulations AnnulationCaisse[]
+
+  // SQL : un seul `etat = 'ouverte'` par agent et par guichet (index uniques partiels).
   @@index([guichetId, ouverteA])
+  @@index([gareId, ouverteA])
+  @@index([agentId, ouverteA])
   @@map("session_caisse")
 }
 
@@ -409,14 +495,46 @@ model Billet {
   etat                   EtatBillet
   historique             Json         @default("[]")
 
-  compagnie Compagnie      @relation(fields: [compagnieId], references: [id])
-  gare      Gare           @relation(fields: [gareId], references: [id])
-  depart    Depart         @relation(fields: [departId], references: [id])
-  guichet   Guichet?       @relation(fields: [guichetId], references: [id])
-  session   SessionCaisse? @relation(fields: [sessionId], references: [id])
+  /// Supplément bagage payé avec le billet (FCFA).
+  bagage           Int       @default(0)
+  /// Le voyageur connecté qui a acheté le billet en ligne.
+  acheteurId       String?   @db.Uuid
+  commandeId       String?   @db.Uuid
+  /// Contenu du QR signé (AM1:numéro:code:départ:signature), posé à l'émission.
+  qr               String?
+  /// Événement du guichet qui a créé le billet (idempotence).
+  evenementId      String?   @unique @db.Uuid
+  appareilId       String?
+  auteurId         String?   @db.Uuid
+  /// {mode: cash|momo|orange_money, reference}
+  paiement         Json?
+  /// Billet de cadence : le nom et la pièce se complètent au quai.
+  aCompleterAuQuai Boolean   @default(false)
+  smsEnvoye        Boolean   @default(false)
+  retardPrevenu    Boolean   @default(false)
+  embarqueA        DateTime? @db.Timestamptz(3)
+  /// Billet d'origine quand celui-ci est issu d'un report.
+  reporteDeId      String?   @db.Uuid
 
+  compagnie          Compagnie           @relation(fields: [compagnieId], references: [id])
+  gare               Gare                @relation(fields: [gareId], references: [id])
+  depart             Depart              @relation(fields: [departId], references: [id])
+  guichet            Guichet?            @relation(fields: [guichetId], references: [id])
+  session            SessionCaisse?      @relation(fields: [sessionId], references: [id])
+  acheteur           Personne?           @relation("BilletAcheteur", fields: [acheteurId], references: [id])
+  auteur             Personne?           @relation("BilletAuteur", fields: [auteurId], references: [id])
+  commande           Commande?           @relation(fields: [commandeId], references: [id])
+  reporteDe          Billet?             @relation("Report", fields: [reporteDeId], references: [id])
+  reportes           Billet[]            @relation("Report")
+  demandesAnnulation DemandeAnnulation[]
+
+  // SQL : unique (departId, codeBillet) pour les billets non annulés ; unique (departId, siege)
+  // pour les billets vivants (reserve, paye, embarque, voyage).
   @@index([departId, siege])
   @@index([passagerTelephoneIndex])
+  @@index([acheteurId])
+  @@index([guichetId, creeA])
+  @@index([commandeId])
   @@map("billet")
 }
 
@@ -448,12 +566,64 @@ model Colis {
   etat                       EtatColis
   historique                 Json       @default("[]")
 
-  origine     Gare    @relation("ColisOrigine", fields: [gareOrigineId], references: [id])
-  destination Gare    @relation("ColisDestination", fields: [gareDestinationId], references: [id])
-  depart      Depart? @relation(fields: [departId], references: [id])
+  /// Concurrence optimiste : +1 à chaque écriture, `UPDATE … WHERE version = $lue`.
+  version            Int       @default(1)
+  /// AAMMJJ de la création (Douala).
+  jour               String    @db.Char(6)
+  compagnieId        String?   @db.Uuid
+  heureDepart        DateTime? @db.Timestamptz(3)
+  arriveePrevue      DateTime? @db.Timestamptz(3)
+  /// Le voyageur qui a créé le colis dans l'app ; null pour un colis du guichet.
+  expediteurId       String?   @db.Uuid
+  destinataireSurnom String?
+  valeurAssuree      Int       @default(0)
+  policeAssurance    String?
+  assuranceEnAttente Boolean   @default(false)
+  relaisId           String?   @db.Uuid
+  adresseLivraison   String?
+  /// Port du transport en gare : sert à l'indemnisation (10 × le port).
+  port               Int       @default(0)
+  /// Lignes du devis {code, libelle, montant}.
+  devis              Json      @default("[]")
+  complementPoids    Int       @default(0)
+  paiementReference  String?
+  paiementMoyen      String?
+  /// paye | en_attente
+  paiementEtat       String?
+  paiementMontant    Int?
+  paiementNumero     String?
+  /// Copie AES-256-GCM du code de retrait (à côté du haché) : sert à le montrer et à le renvoyer.
+  codeRetraitChiffre String?
+  codeEssais         Int       @default(0)
+  codeBloque         Boolean   @default(false)
+  codeEnvoyeA        DateTime? @db.Timestamptz(3)
+  /// envoye | au_retour_du_reseau
+  codeSms            String    @default("envoye")
+  deposeA            DateTime? @db.Timestamptz(3)
+  deposePoidsKg      Float?
+  deposePhotoRef     String?
+  deposePar          String?
+  remiseA            DateTime? @db.Timestamptz(3)
+  remisePar          String?
+  remisePhotoRef     String?
+  /// Événements du guichet déjà appliqués (idempotence par UUID).
+  evenementIds       String[]  @default([]) @db.Uuid
 
+  origine      Gare               @relation("ColisOrigine", fields: [gareOrigineId], references: [id])
+  destination  Gare               @relation("ColisDestination", fields: [gareDestinationId], references: [id])
+  depart       Depart?            @relation(fields: [departId], references: [id])
+  compagnie    Compagnie?         @relation(fields: [compagnieId], references: [id])
+  expediteur   Personne?          @relation("ColisExpediteur", fields: [expediteurId], references: [id])
+  photos       PhotoColis[]
+  reclamations ReclamationColis[]
+
+  // SQL : index partiels sur assuranceEnAttente et sur codeSms = 'au_retour_du_reseau'.
   @@index([expediteurTelephoneIndex])
   @@index([destinataireTelephoneIndex])
+  @@index([departId, etat])
+  @@index([etat, disponibleDepuis])
+  @@index([expediteurId])
+  @@index([gareOrigineId, jour])
   @@map("colis")
 }
 
@@ -531,4 +701,481 @@ model DefiOtp {
 
   @@index([telephoneIndex, creeA])
   @@map("defi_otp")
+}
+
+/**
+ * ------------------------------------------------------------------ synchronisation (AM-160)
+ */
+
+/// Fiche d'un appareil d'agence vu par la synchronisation (clé publique, plage, état de la file).
+/// L'identifiant est celui que l'appareil envoie (texte). Distinct de `appareil`, qui décrit le parc
+/// côté administration : les deux seront rapprochés quand l'enrôlement (AM-093) les alimentera.
+model AppareilSync {
+  id            String    @id
+  /// Clé publique ECDSA P-256 (JWK) enregistrée à l'installation.
+  clePublique   Json?
+  /// SQL : guichet | convoyeur | autre
+  genre         String
+  rang          Int?
+  nbConvoyeurs  Int?
+  plageDebut    Int?
+  plageFin      Int?
+  gareId        String?   @db.Uuid
+  compagnieId   String?   @db.Uuid
+  derniereSyncA DateTime? @db.Timestamptz(3)
+  /// Plus grand rang de file reçu de cet appareil.
+  dernierOrdre  Int       @default(0)
+  /// Déblocage accordé par un superviseur, en attente de lecture par l'appareil.
+  octroi        Json?
+  /// Remplacé par un téléphone de secours.
+  retire        Boolean   @default(false)
+  creeA         DateTime  @default(now()) @db.Timestamptz(3)
+
+  gare      Gare?      @relation(fields: [gareId], references: [id])
+  compagnie Compagnie? @relation(fields: [compagnieId], references: [id])
+
+  @@index([gareId])
+  @@index([compagnieId])
+  @@map("appareil_sync")
+}
+
+/// Journal des événements reçus des appareils (et de ceux que le serveur produit). EN AJOUT SEUL
+/// (SQL : déclencheurs). L'index unique sur `id` rend la réception idempotente : deux requêtes du
+/// même lot qui se croisent n'écrivent qu'une ligne. Distinct de `evenement` (socle) : ici le type
+/// et la cible sont ouverts et les identifiants de cible restent en texte.
+model JournalEvenement {
+  seq           BigInt   @id @default(autoincrement())
+  id            String   @unique @db.Uuid
+  type          String
+  at            DateTime @db.Timestamptz(3)
+  appareilId    String?
+  auteurId      String?
+  cibleType     String
+  cibleId       String
+  numeroPlage   Int?
+  donnees       Json     @default("{}")
+  recuA         DateTime @default(now()) @db.Timestamptz(3)
+  /// Rang dans la file de l'appareil ; null pour un événement produit par le serveur.
+  ordreAppareil Int?
+  /// SQL : appareil | serveur
+  origine       String
+
+  @@index([appareilId, ordreAppareil])
+  @@index([type, seq])
+  @@index([cibleType, cibleId])
+  @@map("journal_evenement")
+}
+
+/// Les gestes sur un siège (siège pris, siège libéré), rejoués par heure du geste : le premier
+/// horodatage gagne. EN AJOUT SEUL.
+model SiegeOperation {
+  departId    String
+  siege       Int
+  evenementId String   @db.Uuid
+  billetId    String
+  /// SQL : prend | libere
+  kind        String
+  at          DateTime @db.Timestamptz(3)
+  appareilId  String
+  auteurId    String
+
+  @@id([departId, siege, evenementId])
+  @@index([billetId])
+  @@map("siege_operation")
+}
+
+/// Où se trouve chaque billet vendu par un appareil.
+model SiegeBillet {
+  billetId String @id
+  departId String
+  siege    Int
+
+  @@index([departId, siege])
+  @@map("siege_billet")
+}
+
+/// Un billet vendu sur un siège déjà pris : il reste au journal avec son numéro, « à replacer ».
+model SiegeConflit {
+  evenementId     String   @id @db.Uuid
+  billetId        String
+  departId        String
+  siege           Int
+  gagnantBilletId String
+  appareilId      String
+  auteurId        String
+  detecteA        DateTime @db.Timestamptz(3)
+
+  @@index([departId, siege])
+  @@index([appareilId, detecteA])
+  @@map("siege_conflit")
+}
+
+/// Alertes nominatives (conflit de siège, numéro en double, trou dans une plage, horloge…).
+/// Aussi utilisée par la numérotation (type trou_dans_la_plage).
+model AlerteSync {
+  id          String    @id
+  type        String
+  /// SQL : alerte | info
+  gravite     String
+  creeA       DateTime  @db.Timestamptz(3)
+  appareilId  String?
+  auteurId    String?
+  evenementId String?   @db.Uuid
+  gareId      String?   @db.Uuid
+  compagnieId String?   @db.Uuid
+  details     Json      @default("{}")
+  resolueA    DateTime? @db.Timestamptz(3)
+
+  @@index([gareId, resolueA])
+  @@index([compagnieId, resolueA])
+  @@index([appareilId])
+  @@index([type, creeA])
+  @@map("alerte_sync")
+}
+
+/**
+ * ------------------------------------------------------------------ numérotation (AM-161)
+ */
+
+/// Plage de numéros confiée à un appareil. Un appareil remplacé garde sa ligne (`libereeA`).
+/// SQL : une seule attribution en cours par appareil ; contrainte d'EXCLUSION : deux plages en cours
+/// d'une même portée (gare) ne se recouvrent jamais ; la fin ne dépasse pas 4000 (la suite est
+/// réservée au serveur).
+model PlageAttribuee {
+  id           BigInt    @id @default(autoincrement())
+  appareilId   String
+  /// SQL : guichet | convoyeur
+  genre        String
+  rang         Int?
+  nbConvoyeurs Int?
+  plageDebut   Int
+  plageFin     Int
+  compagnieId  String?   @db.Uuid
+  gareId       String?   @db.Uuid
+  /// `gare:<compagnie>:<gare>` ou `appareil:<id>` : le périmètre où les numéros sont uniques.
+  portee       String
+  /// La personne qui porte l'appareil (texte libre : identifiant donné par l'administration).
+  titulaireId  String?
+  titulaireNom String?
+  attribueeA   DateTime  @db.Timestamptz(3)
+  attribueePar String?   @db.Uuid
+  libereeA     DateTime? @db.Timestamptz(3)
+
+  gare      Gare?      @relation(fields: [gareId], references: [id])
+  compagnie Compagnie? @relation(fields: [compagnieId], references: [id])
+
+  @@index([gareId])
+  @@index([compagnieId])
+  @@map("plage_attribuee")
+}
+
+/// Registre des numéros reçus ou pris par le serveur. La clé primaire est la garantie « un numéro
+/// n'est jamais attribué deux fois » (par portée, jour, genre et numéro). EN AJOUT SEUL : un numéro
+/// déjà pris le reste, même si le billet est annulé.
+model NumeroVu {
+  portee      String
+  /// AAMMJJ, heure de Douala.
+  jour        String   @db.Char(6)
+  /// SQL : billet | colis
+  genre       String
+  numero      Int
+  /// `serveur-en-ligne` pour les ventes en ligne.
+  appareilId  String
+  /// L'événement reçu, ou la référence (identifiant du billet ou du colis) pour le serveur.
+  evenementId String
+  gareId      String?  @db.Uuid
+  compagnieId String?  @db.Uuid
+  recuA       DateTime @db.Timestamptz(3)
+
+  // SQL : numéro de 1 à 9999 ; unique (portee, jour, genre, evenementId) pour les numéros du serveur.
+  @@id([portee, jour, genre, numero])
+  @@index([jour])
+  @@map("numero_vu")
+}
+
+/**
+ * ------------------------------------------------------------------ billetterie (AM-162)
+ */
+
+/// Inventaire des sièges d'un départ. Une ligne n'existe que si le siège est occupé ou retenu. La clé
+/// primaire (départ, siège) est la garantie « un siège ne se vend pas deux fois ». Le billet est
+/// écrit après l'occupation du siège (même ordre que le service) : pas de clé étrangère sur `billetId`.
+model SiegeDepart {
+  departId     String    @db.Uuid
+  siege        Int
+  /// Le billet qui occupe le siège ; null si le siège est seulement retenu.
+  billetId     String?   @db.Uuid
+  /// Le voyageur qui retient le siège (15 minutes).
+  bloquePar    String?
+  commandeId   String?   @db.Uuid
+  bloqueJusqua DateTime? @db.Timestamptz(3)
+
+  depart Depart @relation(fields: [departId], references: [id], onDelete: Cascade)
+
+  // SQL : siège > 0 ; occupé XOR retenu ; retenue = (bloquePar, bloqueJusqua) ensemble.
+  @@id([departId, siege])
+  @@index([billetId])
+  @@index([bloqueJusqua])
+  @@map("siege_depart")
+}
+
+/// Commande en ligne : sièges retenus 15 minutes, puis payée ou expirée.
+model Commande {
+  id               String   @id @db.Uuid
+  voyageurId       String   @db.Uuid
+  departId         String   @db.Uuid
+  /// SQL : billet | groupe | proche | covoiturage
+  type             String
+  libelle          String
+  lignes           Json     @default("[]")
+  total            Int
+  conversion       Json?
+  /// SQL : en_attente_paiement | payee | expiree | annulee
+  statut           String
+  creeA            DateTime @db.Timestamptz(3)
+  expireA          DateTime @db.Timestamptz(3)
+  sieges           Int[]    @default([])
+  /// Un passager par siège, JSON chiffré (AES-256-GCM).
+  passagersChiffre String
+  billetIds        String[] @default([]) @db.Uuid
+  codePromo        String?
+  moyenPaiement    String?
+
+  voyageur Personne @relation(fields: [voyageurId], references: [id])
+  depart   Depart   @relation(fields: [departId], references: [id])
+  billets  Billet[]
+
+  @@index([departId, statut])
+  @@index([statut, expireA])
+  @@index([voyageurId, creeA])
+  @@map("commande")
+}
+
+/// Un scan au quai : une ligne par événement. EN AJOUT SEUL.
+model ScanQuai {
+  evenementId  String        @id @db.Uuid
+  departId     String
+  billetId     String?
+  numero       String?
+  /// SQL : monte | deja_scanne | introuvable | autre_depart | annule | sans_nom
+  resultat     String
+  at           DateTime      @db.Timestamptz(3)
+  siege        Int?
+  classe       ClasseBillet?
+  bagagesSoute Int           @default(0)
+  /// Premier scan du billet, pour « déjà scanné à 08:12 ».
+  premierScanA DateTime?     @db.Timestamptz(3)
+  appareilId   String
+  auteurId     String
+
+  @@index([departId, at])
+  @@index([billetId])
+  @@map("scan_quai")
+}
+
+/// Événements de la billetterie déjà traités, avec leur réponse chiffrée (rejouée telle quelle).
+/// EN AJOUT SEUL. La caisse et la supervision ont leur propre table (`evenement_agence_traite`).
+model EvenementTraite {
+  id              String   @id @db.Uuid
+  type            String
+  recuA           DateTime @db.Timestamptz(3)
+  reponseChiffree String
+
+  @@map("evenement_traite")
+}
+
+model CompagniePreferee {
+  voyageurId  String @db.Uuid
+  compagnieId String @db.Uuid
+
+  voyageur Personne @relation(fields: [voyageurId], references: [id], onDelete: Cascade)
+
+  @@id([voyageurId, compagnieId])
+  @@map("compagnie_preferee")
+}
+
+model FiltresVoyageur {
+  voyageurId String @db.Uuid
+  depart     String
+  arrivee    String
+  filtres    Json
+
+  voyageur Personne @relation(fields: [voyageurId], references: [id], onDelete: Cascade)
+
+  @@id([voyageurId, depart, arrivee])
+  @@map("filtres_voyageur")
+}
+
+/**
+ * ------------------------------------------------------------------ colis (AM-163)
+ */
+
+/// Photo d'un colis (envoi, dépôt, remise), supprimée 90 jours après la prise de vue.
+model PhotoColis {
+  ref        String    @id
+  /// Null jusqu'à la création du colis ; une référence n'appartient qu'à un colis.
+  colisId    String?   @db.Uuid
+  /// SQL : envoi | depot | remise
+  genre      String
+  priseA     DateTime  @db.Timestamptz(3)
+  expireA    DateTime  @db.Timestamptz(3)
+  supprimeeA DateTime? @db.Timestamptz(3)
+
+  colis Colis? @relation(fields: [colisId], references: [id])
+
+  // SQL : index partiel sur expireA pour les photos non supprimées.
+  @@index([colisId])
+  @@map("photo_colis")
+}
+
+model ReclamationColis {
+  /// R-AAMMJJ-XXXXXX
+  reference    String   @id
+  colisId      String   @db.Uuid
+  colisNumero  String
+  compagnieId  String?  @db.Uuid
+  auteurId     String   @db.Uuid
+  motif        String
+  message      String?
+  ouverteA     DateTime @db.Timestamptz(3)
+  reponseAvant DateTime @db.Timestamptz(3)
+  /// SQL : ouverte | acceptee | refusee
+  statut       String
+  /// {a, par, motif, indemnisation: {type, montant, dossierAssureur}}
+  decision     Json?
+
+  colis     Colis      @relation(fields: [colisId], references: [id])
+  compagnie Compagnie? @relation(fields: [compagnieId], references: [id])
+  auteur    Personne   @relation(fields: [auteurId], references: [id])
+
+  @@index([colisId])
+  @@index([compagnieId, statut])
+  @@map("reclamation_colis")
+}
+
+/**
+ * ------------------------------------------------------------------ caisse et supervision (AM-164)
+ */
+
+/// Annulation remboursée en cash, retranchée du cash attendu d'une session. Idempotente par demande.
+/// EN AJOUT SEUL.
+model AnnulationCaisse {
+  demandeId String   @id @db.Uuid
+  sessionId String   @db.Uuid
+  montant   Int
+  at        DateTime @db.Timestamptz(3)
+
+  session SessionCaisse @relation(fields: [sessionId], references: [id])
+
+  @@index([sessionId])
+  @@map("annulation_caisse")
+}
+
+/// Journal signé de l'agence : une chaîne d'empreintes par compagnie (HMAC-SHA-256). EN AJOUT SEUL.
+/// SQL : unique (chaine, precedente) avec NULL non distincts : la chaîne ne peut pas se ramifier.
+model JournalAgence {
+  seq         BigInt   @id @default(autoincrement())
+  /// Identifiant de la chaîne (la compagnie).
+  chaine      String
+  evenementId String   @unique @db.Uuid
+  gareId      String?  @db.Uuid
+  compagnieId String?  @db.Uuid
+  type        String
+  at          DateTime @db.Timestamptz(3)
+  auteurId    String
+  auteurNom   String
+  appareilId  String?
+  cibleType   String
+  cibleId     String
+  numeroPlage Int?
+  resume      String
+  /// {superviseurId, methode, signature}
+  validePar   Json?
+  empreinte   String
+  precedente  String?
+
+  // SQL : l'index est recréé NULLS NOT DISTINCT dans la migration « modules_metier_garanties ».
+  @@unique([chaine, precedente], map: "journal_agence_chaine_precedente_key")
+  @@index([chaine, seq])
+  @@index([gareId, at])
+  @@index([compagnieId, at])
+  @@index([cibleType, cibleId])
+  @@map("journal_agence")
+}
+
+/// Idempotence des écritures de la caisse et de la supervision : `commencer` est un INSERT … ON
+/// CONFLICT DO NOTHING sur la clé primaire.
+model EvenementAgenceTraite {
+  evenementId String    @id @db.Uuid
+  /// SQL : en_cours | termine
+  etat        String
+  resultat    Json?
+  recuA       DateTime? @db.Timestamptz(3)
+
+  @@map("evenement_agence_traite")
+}
+
+/// Demande d'annulation d'un billet par un guichetier, décidée par le superviseur (PIN).
+/// SQL : une seule demande `en_attente` par billet.
+model DemandeAnnulation {
+  demandeId           String    @id @db.Uuid
+  billetId            String    @db.Uuid
+  gareId              String    @db.Uuid
+  compagnieId         String?   @db.Uuid
+  demandeurId         String    @db.Uuid
+  guichetRang         Int
+  motif               String
+  demandeA            DateTime  @db.Timestamptz(3)
+  /// SQL : en_attente | decidee
+  statut              String
+  /// SQL : rembourser | reporter | avoir | refuser
+  decision            String?
+  montant             Int?
+  decideeA            DateTime? @db.Timestamptz(3)
+  decideeParId        String?   @db.Uuid
+  evenementDemandeId  String    @db.Uuid
+  evenementDecisionId String?   @db.Uuid
+
+  billet     Billet     @relation(fields: [billetId], references: [id])
+  gare       Gare       @relation(fields: [gareId], references: [id])
+  compagnie  Compagnie? @relation(fields: [compagnieId], references: [id])
+  demandeur  Personne   @relation("DemandeurAnnulation", fields: [demandeurId], references: [id])
+  decideePar Personne?  @relation("DecideurAnnulation", fields: [decideeParId], references: [id])
+
+  @@index([gareId, statut])
+  @@index([billetId])
+  @@map("demande_annulation")
+}
+
+/**
+ * ------------------------------------------------------------------ modules (AM-126)
+ */
+
+/// Exception à la règle générale d'un module (`module_compagnie`) pour une gare ou une ville.
+/// Priorité : gare, puis ville, puis agence. SQL : (porteeType = 'gare') = (gareId non nul) ; code
+/// parmi les 12 modules.
+model ModuleException {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  compagnieId String   @db.Uuid
+  code        String
+  /// SQL : gare | ville
+  porteeType  String
+  gareId      String?  @db.Uuid
+  /// Clé de comparaison de la ville (sans accents ni casse) ; null pour une gare.
+  villeCle    String?
+  /// Écriture officielle de la ville.
+  villeNom    String?
+  actif       Boolean
+  creeA       DateTime @default(now()) @db.Timestamptz(3)
+  creePar     String?  @db.Uuid
+
+  compagnie Compagnie @relation(fields: [compagnieId], references: [id])
+  gare      Gare?     @relation(fields: [gareId], references: [id])
+  auteur    Personne? @relation(fields: [creePar], references: [id])
+
+  // Une exception par module et par gare, une par module et par ville (NULL non distincts : les
+  // deux index ne se gênent pas).
+  @@unique([compagnieId, code, gareId])
+  @@unique([compagnieId, code, villeCle])
+  @@map("module_exception")
 }

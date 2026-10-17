@@ -1,10 +1,13 @@
 import { Inject, Injectable, Module, type OnModuleInit } from "@nestjs/common";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { GardeModule } from "./garde-module";
 import { AnnuaireMemoire, DetailsAucun, ReglagesMemoire, type StockageModules } from "./memoire";
 import { ModulesController } from "./modules.controller";
 import { ModulesService } from "./modules.service";
+import { AnnuaireAgencesPrisma, ReglagesModulesPrisma } from "./postgres";
 import { AnnuaireAgences, DetailsModules, ReglagesModules } from "./ports";
 import { VerificateurSignature } from "./signature";
 
@@ -42,8 +45,8 @@ export class VerificationStockageModules implements OnModuleInit {
 /**
  * Moteur des modules (AM-126) : activation par agence, gare et ville, tracée au journal d'audit.
  *
- * À importer dans `AppModule` (périmètre du socle). Les ports sont remplaçables : les adaptateurs
- * PostgreSQL remplacent les versions en mémoire. Les autres modules de l'API importent
+ * Importé par `AppModule`. Stockage : adaptateurs PostgreSQL (`postgres.ts`) en production, versions
+ * en mémoire pour les tests et le développement (voir `socle/db/stockage.ts`). Les autres modules de l'API importent
  * `ModulesModule` pour protéger leurs routes avec `@ModuleRequis("colis")`.
  */
 @Module({
@@ -54,8 +57,19 @@ export class VerificationStockageModules implements OnModuleInit {
     GardeModule,
     VerificationStockageModules,
     { provide: Horloge, useClass: HorlogeSysteme },
-    { provide: ReglagesModules, useClass: ReglagesMemoire },
-    { provide: AnnuaireAgences, useClass: AnnuaireMemoire },
+    // PostgreSQL en production (ou avec API_STOCKAGE=postgres), mémoire ailleurs : voir socle/db/stockage.ts.
+    {
+      provide: ReglagesModules,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new ReglagesModulesPrisma(prisma) : new ReglagesMemoire(),
+    },
+    {
+      provide: AnnuaireAgences,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new AnnuaireAgencesPrisma(prisma) : new AnnuaireMemoire(),
+    },
     { provide: DetailsModules, useClass: DetailsAucun },
   ],
   exports: [ModulesService, GardeModule, ReglagesModules, AnnuaireAgences, DetailsModules],

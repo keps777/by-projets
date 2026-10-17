@@ -4,8 +4,8 @@ Backend de la caisse du guichet : ouverture, comptage, clôture, clôture automa
 **journal signé** de l'agence (lu par le superviseur et le patron). Le module `SupervisionModule`
 (`../supervision`) s'appuie sur celui-ci.
 
-Module Nest autonome : `CaisseModule` (importe `JournalAgenceModule`). Il n'est **pas** branché dans
-`AppModule` (hors périmètre) : voir « À brancher par le coordinateur ».
+Module Nest autonome : `CaisseModule` (importe `JournalAgenceModule`). Il est branché dans
+`AppModule` ; il reste les adaptateurs PostgreSQL (`apps/api/INTEGRATION.md`).
 
 ## Routes et contrat
 
@@ -104,7 +104,7 @@ id=? AND etat=?`.
 
 ## À brancher par le coordinateur
 
-1. `AppModule` : importer `CaisseModule` (et `SupervisionModule`).
+1. Fait : `CaisseModule` et `SupervisionModule` sont dans `AppModule`.
 2. Fournir les adaptateurs PostgreSQL des ports ci-dessus (`{ provide: SessionsCaisse, useClass: … }`),
    `durable = true`.
 3. Les ventes et colis cash doivent alimenter `MouvementsCaisse.decompte`.

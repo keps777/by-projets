@@ -74,8 +74,9 @@ l'agence, et le service qui les sert appelle `ModulesService.estActif(agenceId, 
 ## Ports (ce que la base remplace)
 
 Tout passe par des classes abstraites (`ports.ts`) ; `memoire.ts` en donne des versions en mémoire pour les
-tests. `ModulesModule` **refuse de démarrer en production** tant que `ReglagesModules` ou `AnnuaireAgences`
-est en mémoire.
+tests, `postgres.ts` des versions PostgreSQL (Prisma). `ModulesModule` choisit les adaptateurs PostgreSQL
+quand `API_STOCKAGE=postgres` (ou `NODE_ENV=production`) et **refuse de démarrer en production** tant que
+`ReglagesModules` ou `AnnuaireAgences` est en mémoire.
 
 | Port              | À fournir                                                                                                                                                                                                                              |
 | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -83,28 +84,28 @@ est en mémoire.
 | `AnnuaireAgences` | `agenceExiste(id)`, `gares(agence)` → `{ id, nom, ville }` : lecture des tables `compagnie` et `gare` du socle.                                                                                                                        |
 | `DetailsModules`  | Facultatif. La phrase d'état de la planche (« Douala 12 · Bafoussam 6 ») que seul le module concerné sait écrire ; par défaut (`DetailsAucun`), une phrase générique.                                                                  |
 
-## Tables PostgreSQL attendues (hors périmètre : `apps/api/prisma/**`)
+## Tables PostgreSQL
 
-- `module_compagnie` (**existe déjà** dans la migration initiale : `compagnieId`, `code`, `nom`, `actif`,
-  clé `(compagnieId, code)`) : la règle générale de l'agence. Une ligne n'existe que si l'agence a réglé le
-  module ; `nom` reçoit le nom du catalogue. Ajouter si on le souhaite une contrainte `CHECK` sur les 12 codes.
-- `module_exception` (**à créer**) : `compagnie_id` (uuid, FK `compagnie`), `code` (texte), `portee_type`
-  (`gare` | `ville`), `gare_id` (uuid, FK `gare`, nul pour une ville), `ville_cle` (clé de comparaison
-  `cleVille` : sans accents, minuscule), `ville_nom` (écriture officielle), `actif` (booléen), `cree_a`,
-  `cree_par` (uuid, FK `personne`). Unicité `(compagnie_id, code, portee_type, coalesce(gare_id::text, ville_cle))` ;
-  `CHECK ((portee_type = 'gare') = (gare_id IS NOT NULL))`.
-- Historique : le journal d'audit existant (`journal_audit`, action `module.changer`, `cible_type = 'module'`,
-  `cible_id` = code) ; le patron le relit par `GET /patron/journal-audit`. Aucune table de plus.
+- `module_compagnie` (`compagnieId`, `code`, `nom`, `actif`, clé `(compagnieId, code)`) : la règle
+  générale de l'agence. Une ligne n'existe que si l'agence a réglé le module ; `nom` reçoit le nom du
+  catalogue. Un `CHECK` limite `code` aux 12 modules (migration `modules_metier_garanties`).
+- `module_exception` : `compagnieId`, `code`, `porteeType` (`gare` | `ville`), `gareId` (FK `gare`, nul
+  pour une ville), `villeCle` (clé de comparaison `cleVille` : sans accents, minuscule), `villeNom`
+  (écriture officielle), `actif`, `creeA`, `creePar` (toujours nul pour l'instant : le port ne porte pas
+  l'auteur, la trace est le journal d'audit). Uniques `(compagnieId, code, gareId)` et
+  `(compagnieId, code, villeCle)` ; `CHECK` de cohérence de la portée (une gare nomme une gare, une
+  ville nomme une ville) et des codes.
+- Historique : le journal d'audit existant (`journal_audit`, action `module.changer`, `cibleType = 'module'`,
+  `cibleId` = code) ; le patron le relit par `GET /patron/journal-audit`. Aucune table de plus.
 
-Adaptateur `ReglagesModules` : `lire` = deux `SELECT` (agence + exceptions) ; `definirAgence` = `UPSERT
-module_compagnie` + `DELETE module_exception WHERE (compagnie_id, code)` dans une transaction ;
-`poserException` = `INSERT … ON CONFLICT DO UPDATE` ; `retirerException` = `DELETE`.
+Adaptateurs (`postgres.ts`) : `lire` = deux `SELECT` (agence + exceptions, un module qui n'a que des
+exceptions rend `actif: null`) ; `definirAgence` = upsert `module_compagnie` + `DELETE module_exception`
+du module dans une transaction ; `poserException` = `INSERT … ON CONFLICT DO UPDATE` (deux réglages
+simultanés de la même gare finissent sur une ligne) ; `retirerException` = `DELETE`. Un identifiant qui
+n'est pas un UUID n'est celui d'aucune agence ni gare (pas d'erreur serveur).
 
-## À faire pour brancher le module (hors périmètre)
+## Ce qui reste à faire
 
-- importer `ModulesModule` dans `AppModule` (`apps/api/src/socle/app.module.ts`) et y remplacer
-  `ReglagesModules` et `AnnuaireAgences` par les adaptateurs PostgreSQL ;
-- créer la migration de `module_exception` ;
 - donner un PIN aux comptes patron (voir « Signature PIN ») ;
 - exporter `ModulesActifsSchema` dans `packages/contrats` (il vit pour l'instant dans
   `packages/api-client/src/modules/contrat.ts`) ;
@@ -123,7 +124,9 @@ module_compagnie` + `DELETE module_exception WHERE (compagnie_id, code)` dans un
 - `parite.test.ts` : catalogue et règles identiques à celles du client, routes et corps du client
   (`OP_MODULES`, `OP_CHANGER_MODULE`, `OP_MODULES_ACTIFS`) servis par l'API et validés par les schémas zod,
   heure de Douala identique au domaine ;
-- `modules.module.test.ts` : refus de démarrer en production avec des ports en mémoire.
+- `modules.module.test.ts` : refus de démarrer en production avec des ports en mémoire ;
+- `postgres.integration.test.ts` : le même contrat sur la mémoire (toujours) et sur PostgreSQL (si
+  `DATABASE_URL_TEST` est définie), contraintes de la base, API de bout en bout avec redémarrage.
 
 Le montage de test est `testing/app-modules-test.ts` (il importe `ModulesModule` à côté d'`AppModule`, sans
 toucher au socle de test).

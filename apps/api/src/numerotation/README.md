@@ -25,7 +25,7 @@ aux sources** (`@afrimove/domain`, `@afrimove/contrats`).
 | `NumerotationService`                                                | `enregistrer` (doublon / hors plage), `trous`, `compteur`, `resume`, `resumeGare`, `prendreEnLigne` (numéros du serveur).                                                  |
 | `ControleJourneeService`                                             | `controler(jour, périmètre)` : alertes `trou_dans_la_plage` nominatives, rejouables ; `lister`.                                                                            |
 | `ControleNumerosServeur`, `AttributionPlagesServeur`                 | Remplacent `ControleNumerosMemoire` et `AttributionPlagesParRang` de la synchronisation (mêmes classes abstraites, `sync/ports.ts`).                                       |
-| Ports : `PlagesAttribuees`, `RegistreNumeros`, `AlertesNumerotation` | Persistance. Versions en mémoire dans `memoire.ts` ; **versions PostgreSQL non écrites** (voir plus bas).                                                                  |
+| Ports : `PlagesAttribuees`, `RegistreNumeros`, `AlertesNumerotation` | Persistance. Versions en mémoire dans `memoire.ts`, versions PostgreSQL dans `postgres.ts` (même contrat de tests).                                                        |
 | `NumerotationModule`                                                 | Assemble le tout, exporte `ControleNumeros` et `AttributionPlages` sous les jetons de la synchronisation. Refuse de démarrer en production tant qu'un port est en mémoire. |
 
 ## Routes
@@ -50,36 +50,14 @@ morceaux de numérotation qu'elles affichent sont prêts et suivent les schémas
 `{ debut, fin, trous }` (SuperviseurDebloquer) = `ResumeAppareil.plage` + `billets.trous`
 (testé contre `SchemaSuperviseurAppareil`) ; le rapport du soir lit `GET /numerotation/alertes`.
 
-## Brancher sur la synchronisation (hors périmètre : `apps/api/src/sync/**`)
+## Branchement sur la synchronisation
 
-`RejeuService` (AM-160) reçoit `ControleNumeros` et `AttributionPlages` par injection : il n'a pas à
-changer. Dans `sync/sync.module.ts`, importer `NumerotationModule` et retirer les deux fournisseurs en
-mémoire :
-
-```ts
-import { NumerotationModule } from "../numerotation/numerotation.module";
-
-@Module({
-  imports: [NumerotationModule],
-  controllers: [SyncController],
-  providers: [
-    // … inchangés …
-    // retirer : { provide: ControleNumeros, useClass: ControleNumerosMemoire },
-    // retirer : { provide: AttributionPlages, useClass: AttributionPlagesParRang },
-  ],
-  exports: [
-    // … inchangés, sauf ControleNumeros et AttributionPlages, remplacés par :
-    NumerotationModule, // Nest ne réexporte pas un jeton importé : on réexporte le module
-  ],
-})
-export class SyncModule {}
-```
-
-`NumerotationModule` n'a pas besoin d'être importé dans `AppModule` : `SyncModule` l'importe, ses
-routes `/numerotation/**` sont montées une fois. `testing/app-numerotation-test.ts` contient
-`SyncAvecNumerotation`, le `SyncModule` ainsi modifié, et `sync.numerotation.test.ts` fait passer de
-vrais lots signés par `POST /sync/evenements` : plage de l'attribution (pas celle de la fiche),
-doublon entre deux guichets de la gare, hors plage, rejeu, trou puis alerte refermée.
+C'est fait : `SyncModule` importe `NumerotationModule` et le réexporte (Nest ne réexporte pas un
+jeton importé, on réexporte le module). `RejeuService` reçoit `ControleNumeros` et `AttributionPlages`
+par injection, sans changer. `NumerotationModule` est aussi dans `AppModule`, donc ses routes
+`/numerotation/**` sont montées une fois. `sync.numerotation.test.ts` fait passer de vrais lots signés
+par `POST /sync/evenements` : plage de l'attribution (pas celle de la fiche), doublon entre deux
+guichets de la gare, hors plage, rejeu, trou puis alerte refermée.
 
 Le garde-fou de la synchronisation (`VerificationStockageSync`) lit `ControleNumerosServeur.durable`,
 vrai seulement quand le registre et les plages sont durables.
@@ -112,66 +90,33 @@ appareil libéré aussi. Seuls les numéros **avant** le plus grand numéro reç
 manquant en fin de plage ne se voit pas côté serveur (c'est le rôle du blocage de l'appareil, AM-160).
 Aucun planificateur n'est fourni ici.
 
-## Tables PostgreSQL à créer (hors périmètre : `apps/api/prisma/**`)
+## Tables PostgreSQL
 
-Les adaptateurs PostgreSQL ne sont pas écrits (la migration d'AM-017 n'a pas ces tables). Ils doivent
-garder les mêmes garanties que la mémoire :
+Schéma Prisma : `plage_attribuee`, `numero_vu`, `alerte_sync` (la même table que la synchronisation,
+type `trou_dans_la_plage`). Les garanties sont dans la migration
+`20261017000300_modules_metier_garanties` ; elles valent aussi pour un `INSERT` écrit à la main :
 
-```sql
-CREATE EXTENSION IF NOT EXISTS btree_gist;
+- `plage_attribuee` : extension `btree_gist` et contrainte d'exclusion
+  `EXCLUDE USING gist (portee WITH =, int4range(plageDebut, plageFin, '[]') WITH &&) WHERE (libereeA IS NULL)`
+  (deux plages en cours d'une même portée ne se recouvrent jamais) ; un seul appareil en cours par
+  `appareilId` (index unique partiel) ; un appareil remplacé garde sa ligne (`libereeA`) ; bornes en
+  `CHECK` (début 1–9999, fin entre début et 4000).
+- `numero_vu` : la clé primaire `(portee, jour, genre, numero)` est la garantie « un numéro n'est
+  jamais attribué deux fois » ; index unique `(portee, jour, genre, evenementId)` pour les numéros pris
+  par le serveur (référence rejouée = même numéro) ; la table est en ajout seul (déclencheur).
 
--- Plages confiées aux appareils. Un appareil remplacé garde sa ligne (liberee_a renseigné).
-CREATE TABLE plage_attribuee (
-  id             bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  appareil_id    text        NOT NULL,
-  genre          text        NOT NULL CHECK (genre IN ('guichet', 'convoyeur')),
-  rang           integer,
-  nb_convoyeurs  integer,
-  plage_debut    integer     NOT NULL CHECK (plage_debut BETWEEN 1 AND 9999),
-  plage_fin      integer     NOT NULL CHECK (plage_fin BETWEEN plage_debut AND 4000),
-  compagnie_id   uuid,
-  gare_id        uuid,
-  portee         text        NOT NULL,            -- 'gare:<compagnie>:<gare>' ou 'appareil:<id>'
-  titulaire_id   uuid,
-  titulaire_nom  text,
-  attribuee_a    timestamptz NOT NULL,
-  attribuee_par  uuid,
-  liberee_a      timestamptz
-);
-CREATE UNIQUE INDEX plage_attribuee_appareil ON plage_attribuee (appareil_id) WHERE liberee_a IS NULL;
--- « Un numéro ne peut jamais être attribué deux fois » : deux plages en cours d'une même portée ne se recouvrent pas.
-ALTER TABLE plage_attribuee ADD CONSTRAINT plage_attribuee_sans_chevauchement
-  EXCLUDE USING gist (portee WITH =, int4range(plage_debut, plage_fin, '[]') WITH &&)
-  WHERE (liberee_a IS NULL);
+Adaptateurs (`postgres.ts`) :
 
--- Registre des numéros reçus (déjà annoncé par le README de la synchronisation sous le nom numero_vu).
-CREATE TABLE numero_vu (
-  portee       text        NOT NULL,
-  jour         char(6)     NOT NULL,              -- AAMMJJ, Douala
-  genre        text        NOT NULL CHECK (genre IN ('billet', 'colis')),
-  numero       integer     NOT NULL CHECK (numero BETWEEN 1 AND 9999),
-  appareil_id  text        NOT NULL,              -- 'serveur-en-ligne' pour les ventes en ligne
-  evenement_id text        NOT NULL,
-  gare_id      uuid,
-  compagnie_id uuid,
-  recu_a       timestamptz NOT NULL,
-  PRIMARY KEY (portee, jour, genre, numero)       -- l'index unique est la garantie
-);
-CREATE INDEX numero_vu_jour ON numero_vu (jour);
-CREATE UNIQUE INDEX numero_vu_reference_serveur ON numero_vu (portee, jour, genre, evenement_id)
-  WHERE appareil_id = 'serveur-en-ligne';
-```
-
-- `RegistreNumeros.reserver` : `INSERT … ON CONFLICT (portee, jour, genre, numero) DO NOTHING`, puis,
-  si rien n'a été inséré, lire `evenement_id` de la ligne en place (même id = `rejeu`, sinon `doublon`).
-- `RegistreNumeros.prendreSuivant` : dans une transaction, `pg_advisory_xact_lock(hashtext(portee || jour || genre))`,
-  chercher la référence (`numero_vu_reference_serveur`), sinon insérer `COALESCE(MAX(numero) + 1, debut)`
-  (refus au-delà de `fin`). Le verrou et le billet sont dans la même transaction pour ne pas laisser de trou.
-- `PlagesAttribuees.attribuer` : dans une transaction, libérer la ligne en cours de l'appareil puis
-  insérer la nouvelle ; la violation de la contrainte d'exclusion devient `{ ok: false, enConflitAvec }`
-  (relire la ligne en conflit).
-- `AlertesNumerotation` : la table `alerte_sync` d'AM-160 convient (mêmes colonnes, `id` unique pour
-  l'upsert, type `trou_dans_la_plage`) ; filtrer le jour sur `details->>'jour'`.
+- `RegistreNumerosPrisma.reserver` : `INSERT … ON CONFLICT DO NOTHING`, puis lecture de la ligne en
+  place (même `evenementId` = `rejeu`, sinon `doublon`).
+- `RegistreNumerosPrisma.prendreSuivant` : transaction avec `pg_advisory_xact_lock` (espace 7_017_161)
+  par portée, jour et genre ; référence d'abord, sinon plus petit numéro libre de la plage, refus au
+  delà de la fin.
+- `PlagesAttribueesPrisma.attribuer` : transaction avec verrou par portée, libération de la ligne en
+  cours de l'appareil, insertion ; un chevauchement rend `{ ok: false, enConflitAvec }` (la contrainte
+  d'exclusion est le filet), une gare inconnue ou un identifiant mal formé sont `PlageInvalide`.
+- `AlertesNumerotationPrisma` : upsert sur `alerte_sync` (identifiant déterministe), filtre du jour sur
+  `details->>'jour'`.
 
 ## Limites et décisions à confirmer
 
@@ -192,5 +137,9 @@ simultanéité, trous, compteur, numéros en ligne : ordre, idempotence, 100 ven
 épuisement), `plages.service.test.ts` (plan du domaine, jamais de chevauchement pour 1 à 12
 convoyeurs, secours, plage du serveur interdite), `controle-journee.test.ts` (alerte nominative,
 rejeu, trou comblé, périmètre, secours), `numerotation.e2e.test.ts` (HTTP : rôles, périmètre, 400/403/404/409,
-audit), `sync.numerotation.test.ts` (vrais lots signés avec `SyncAvecNumerotation`), `parite.test.ts`
+audit), `sync.numerotation.test.ts` (vrais lots signés avec l'`AppModule`), `parite.test.ts`
 (règles recopiées = domaine, plages = contrats).
+
+`postgres.integration.test.ts` : la suite de contrat des ports (`testing/contrat-ports.ts`) passe sur la
+mémoire (toujours) et sur PostgreSQL (si `DATABASE_URL_TEST` est définie, ignorée sinon), puis les
+garanties que seule la base apporte, les services complets et l'API avec `API_STOCKAGE=postgres`.

@@ -5,11 +5,11 @@ import type { GenreNumero, Plage } from "./regles";
  * Ports de persistance de la numérotation (AM-161).
  *
  * Toute la logique (attribution, contrôle, trous, alertes) ne parle qu'à ces classes abstraites.
- * `memoire.ts` en fournit des versions en mémoire (tests, développement). **Les versions PostgreSQL
- * ne sont pas écrites** : elles demandent des tables que la migration d'AM-017 n'a pas
- * (`apps/api/prisma/**`, hors du périmètre d'AM-161) ; le README du dossier donne leur schéma et les
- * contraintes qui garantissent l'unicité. `NumerotationModule` refuse de démarrer en production
- * tant qu'un de ces ports est en mémoire.
+ * `memoire.ts` en fournit des versions en mémoire (tests, développement) ; `postgres.ts` les
+ * versions PostgreSQL (tables `plage_attribuee`, `numero_vu`, `alerte_sync`, contraintes dans la
+ * migration `modules_metier_garanties`). Les deux passent la même suite de contrat
+ * (`testing/contrat-ports.ts`). `NumerotationModule` choisit l'adaptateur selon `API_STOCKAGE` et
+ * refuse de démarrer en production tant qu'un de ces ports est en mémoire.
  */
 
 export interface StockageNumerotation {

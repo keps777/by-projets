@@ -55,11 +55,15 @@ les tests. `SyncModule` **refuse de démarrer en production** tant qu'un port es
 | `ControleNumeros` (**AM-161**)                              | `enregistrer(entree)` : doublon / hors plage ; `trous(appareilId, jour, genre, plage)`                   |
 | `AttributionPlages` (**AM-161**)                            | `plageDe(appareil)` : la plage attribuée (par défaut : celle du rang, `plageGuichet` / `plageConvoyeur`) |
 
-AM-161 branche sa numérotation en remplaçant `ControleNumeros` et `AttributionPlages` dans le module :
-`RejeuService` n'a pas à changer. `ControleNumeros.trous` est prêt pour l'alerte « numéro manquant » en
-fin de journée.
+`SyncModule` importe `NumerotationModule` (AM-161), qui fournit `ControleNumeros` et `AttributionPlages`
+(adaptateurs PostgreSQL disponibles) : `RejeuService` n'a pas changé. `ControleNumeros.trous` sert à
+l'alerte « numéro manquant » de fin de journée.
 
-## Tables PostgreSQL à créer (hors périmètre : `apps/api/prisma/**`)
+## Tables PostgreSQL
+
+Elles existent dans `apps/api/prisma/schema.prisma` (migration `20261017000200_modules_metier`) sous les
+noms ci-dessous en snake_case/camelCase du schéma ; les adaptateurs ne sont pas encore écrits (voir
+`apps/api/INTEGRATION.md`). Descriptif de ce qu'elles doivent garder :
 
 - `appareil_sync` : `id`, `cle_publique` (jsonb), `genre`, `rang`, `nb_convoyeurs`, `plage_debut`,
   `plage_fin`, `gare_id`, `compagnie_id`, `derniere_sync_a`, `dernier_ordre`, `octroi` (jsonb), `retire`.
@@ -72,15 +76,15 @@ fin de journée.
   `appareil_id`, `auteur_id`, `detecte_a`.
 - `alerte_sync` : `id`, `type`, `gravite`, `cree_a`, `appareil_id`, `auteur_id`, `evenement_id`,
   `gare_id`, `compagnie_id`, `details` (jsonb), `resolue_a`.
-- `numero_vu` (AM-161) : `(appareil_id, jour, genre, numero_plage)` unique → `evenement_id`.
+- `numero_vu` (AM-161) : fait par la numérotation (clé `(portee, jour, genre, numero)`), pas par la synchronisation.
 
 L'index unique sur `journal_evenement.id` est ce qui rend la réception idempotente quand deux requêtes
 du même lot se croisent : `ajouter` doit répondre `null` sur conflit, comme la version en mémoire.
 
 ## À faire pour brancher le module (hors périmètre)
 
-- importer `SyncModule` dans `AppModule` (`apps/api/src/socle/app.module.ts`) ;
-- écrire les adaptateurs PostgreSQL et la migration ;
+- écrire les adaptateurs PostgreSQL (`AppareilsSync`, `JournalSync`, `SiegesSync`, `AlertesSync`,
+  `ProvisionnementSync`) ; `SyncModule` est déjà dans `AppModule` ;
 - créer l'administration des appareils (`AppareilsSync.declarer` : AM-093, AM-120) ;
 - si les lots grossissent : le corps JSON est plafonné par Express (100 ko par défaut) ; le moteur
   réduit son lot de moitié sur un 413, mais `configurerApp` peut relever la limite pour cette route.
