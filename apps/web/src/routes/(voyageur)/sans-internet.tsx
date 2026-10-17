@@ -1,5 +1,5 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { EcranUSSD } from "@/ecrans/USSD";
 
 export default function Page() {
-  return <EcranVide planche="USSD" />;
+  return <EcranUSSD />;
 }

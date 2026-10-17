@@ -1,0 +1,28 @@
+{
+  "titre": "",
+  "sousTitre": "",
+  "retour": "",
+  "ussd": {
+    "titre": ""
+  },
+  "whatsapp": {
+    "titre": "",
+    "conversation": ""
+  },
+  "actions": {
+    "billet": "",
+    "proche": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}
