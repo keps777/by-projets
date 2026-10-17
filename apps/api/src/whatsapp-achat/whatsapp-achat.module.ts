@@ -11,6 +11,8 @@ import {
 import { BilletterieModule } from "../billetterie/billetterie.module";
 import { PaiementsModule } from "../paiements/paiements.module";
 import { CONFIG, type AppConfig } from "../socle/config/config";
+import { PrismaService } from "../socle/db/prisma.service";
+import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
 import { AchatWhatsAppService } from "./achat.service";
 import { ComptesAchatComptes, MessagerieAchatPasserelle } from "./adaptateurs";
@@ -29,6 +31,7 @@ import {
   JournalAchatMemoire,
   TranscriptionAucune,
 } from "./memoire";
+import { AchatsWhatsAppPrisma, ConversationsAchatPrisma, JournalAchatPrisma } from "./postgres";
 import {
   AchatsWhatsApp,
   ComptesAchat,
@@ -99,6 +102,33 @@ export class VerificationAchatWhatsApp implements OnApplicationBootstrap {
   }
 }
 
+/**
+ * Les trois ports de stockage de l'achat, choisis selon `API_STOCKAGE` : PostgreSQL (`postgres.ts`)
+ * ou mémoire. Exportés pour que les tests vérifient le choix sans monter la billetterie et les paiements.
+ */
+export const FOURNISSEURS_STOCKAGE_ACHAT_WHATSAPP: Provider[] = [
+  {
+    provide: ConversationsAchat,
+    inject: [CONFIG, PrismaService],
+    useFactory: (config: AppConfig, prisma: PrismaService): ConversationsAchat =>
+      stockageSurPostgres(config)
+        ? new ConversationsAchatPrisma(prisma)
+        : new ConversationsMemoire(),
+  },
+  {
+    provide: JournalAchatWhatsApp,
+    inject: [CONFIG, PrismaService],
+    useFactory: (config: AppConfig, prisma: PrismaService): JournalAchatWhatsApp =>
+      stockageSurPostgres(config) ? new JournalAchatPrisma(prisma) : new JournalAchatMemoire(),
+  },
+  {
+    provide: AchatsWhatsApp,
+    inject: [CONFIG, PrismaService],
+    useFactory: (config: AppConfig, prisma: PrismaService): AchatsWhatsApp =>
+      stockageSurPostgres(config) ? new AchatsWhatsAppPrisma(prisma) : new AchatsMemoire(),
+  },
+];
+
 /** Adaptateurs de production à brancher à la place de ceux par défaut (voir `WhatsAppAchatModule.avec`). */
 export interface AdaptateursAchatWhatsApp {
   /** Modules qui fournissent ce dont les adaptateurs ont besoin (Redis, Prisma, annuaire…). */
@@ -120,9 +150,10 @@ export interface AdaptateursAchatWhatsApp {
  * sur la passerelle WhatsApp (AM-167) par deux points d'entrée seulement : il fournit le
  * `GestionnaireEntrants` que la passerelle appelle pour chaque message reçu
  * (`GestionnaireEntrantsAchat`), et il envoie ses réponses par `PasserelleWhatsAppService`
- * (retrouvée à l'envoi : le module n'importe pas `WhatsAppModule`). Ses ports (conversations,
- * journal, achats, transcription vocale, équipe) ont des versions en mémoire ; le coordinateur
- * branche les vraies avec `WhatsAppAchatModule.avec({ … })` (README).
+ * (retrouvée à l'envoi : le module n'importe pas `WhatsAppModule`). Les conversations, le journal et
+ * les achats suivent `API_STOCKAGE` (PostgreSQL en production, mémoire ailleurs) ; la transcription
+ * vocale et l'équipe ont des versions en mémoire que le coordinateur remplace avec
+ * `WhatsAppAchatModule.avec({ … })` (README).
  */
 @Module({
   imports: [BilletterieModule, PaiementsModule],
@@ -134,9 +165,7 @@ export interface AdaptateursAchatWhatsApp {
         chargerConfigAchatWhatsApp(process.env, config.env === "production"),
     },
     { provide: Horloge, useClass: HorlogeSysteme },
-    { provide: ConversationsAchat, useClass: ConversationsMemoire },
-    { provide: JournalAchatWhatsApp, useClass: JournalAchatMemoire },
-    { provide: AchatsWhatsApp, useClass: AchatsMemoire },
+    ...FOURNISSEURS_STOCKAGE_ACHAT_WHATSAPP,
     { provide: ComptesAchat, useClass: ComptesAchatComptes },
     { provide: MessagerieAchat, useClass: MessagerieAchatPasserelle },
     { provide: TranscriptionVocale, useClass: TranscriptionAucune },

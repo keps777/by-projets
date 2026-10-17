@@ -110,6 +110,13 @@ describe.skipIf(!URL_BASE)("PostgreSQL réel", () => {
         "20261017000500_sms_garanties",
         "20261017000600_colis_caisse_supervision_garanties",
         "20261017000700_sms_code_connexion",
+        "20261017000710_gps_suivi",
+        "20261017000720_paiements",
+        "20261017000730_rapport_soir",
+        "20261017000740_connexion_voyageur",
+        "20261017000750_ussd",
+        "20261017000760_whatsapp",
+        "20261017000770_whatsapp_achat",
       ]);
       expect(rows.every((r) => r.finished_at !== null)).toBe(true);
     });

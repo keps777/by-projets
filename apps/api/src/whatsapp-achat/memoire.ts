@@ -65,9 +65,17 @@ export class JournalAchatMemoire extends JournalAchatWhatsApp {
   static readonly PLAFOND = 10_000;
   readonly entrees: EntreeJournalAchat[] = [];
 
+  private readonly ids = new Set<string>();
+
   async enregistrer(entree: EntreeJournalAchat) {
+    // Comme `INSERT … ON CONFLICT DO NOTHING` : la même entrée rejouée ne s'écrit pas deux fois.
+    if (this.ids.has(entree.id)) return;
+    this.ids.add(entree.id);
     this.entrees.push({ ...entree });
-    if (this.entrees.length > JournalAchatMemoire.PLAFOND) this.entrees.shift();
+    if (this.entrees.length > JournalAchatMemoire.PLAFOND) {
+      const ancienne = this.entrees.shift();
+      if (ancienne) this.ids.delete(ancienne.id);
+    }
   }
 
   de(evenement: EntreeJournalAchat["evenement"]): EntreeJournalAchat[] {
@@ -81,7 +89,9 @@ export class AchatsMemoire extends AchatsWhatsApp {
   private readonly achats = new Map<string, AchatWhatsApp>();
 
   async ajouter(achat: AchatWhatsApp) {
-    this.achats.set(achat.commandeId, { ...achat });
+    // Comme `INSERT … ON CONFLICT DO NOTHING` : un achat déjà connu n'est jamais réécrit (il ne
+    // repasse pas de « terminé » à « réservé »).
+    if (!this.achats.has(achat.commandeId)) this.achats.set(achat.commandeId, { ...achat });
   }
 
   async trouver(commandeId: string) {

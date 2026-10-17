@@ -62,7 +62,9 @@ const rapport = RapportModule.avecModulesExistants();
 /**
  * Achat par WhatsApp (AM-168). Le même objet de module est donné à `WhatsAppModule` : une seule instance,
  * donc une seule file et un seul état de conversations. Les numéros de l'équipe (patron, superviseurs) sont
- * lus dans les comptes : leurs messages vont à l'assistant du rapport, pas à l'achat.
+ * lus dans les comptes : leurs messages vont à l'assistant du rapport, pas à l'achat. Les conversations, le
+ * journal et les achats suivent `API_STOCKAGE` (adaptateurs PostgreSQL du lot A, choisis dans
+ * `WhatsAppAchatModule`).
  */
 const achatWhatsApp = WhatsAppAchatModule.avec({
   providers: [{ provide: ReconnaissanceEquipe, useClass: EquipeAnnuaire }],
