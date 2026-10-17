@@ -1,5 +1,7 @@
-import { EcranVide } from "@/coquille/ecran-vide";
+import { useParams } from "react-router";
+import { EcranInterAgencesConvention } from "@/ecrans/InterAgencesConvention";
 
 export default function Page() {
-  return <EcranVide planche="InterAgencesConvention" />;
+  const { conventionId } = useParams();
+  return <EcranInterAgencesConvention conventionId={conventionId} />;
 }

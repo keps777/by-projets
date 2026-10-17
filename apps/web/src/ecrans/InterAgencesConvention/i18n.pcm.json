@@ -1,0 +1,40 @@
+{
+  "entete": {
+    "titreAttente": "",
+    "sousTitre": "",
+    "retour": ""
+  },
+  "statuts": {
+    "active": "",
+    "suspendue": "",
+    "resiliee": ""
+  },
+  "signatures": {
+    "signePour": "",
+    "valeur": "",
+    "moi": ""
+  },
+  "trimestre": {
+    "etiquette": "",
+    "echanges_one": "",
+    "echanges_other": "",
+    "litiges": "",
+    "litigesRegle_one": "",
+    "litigesRegle_other": "",
+    "litigesOuvert": "",
+    "litigesAucun": "",
+    "netRecu": "",
+    "lundis_one": "",
+    "lundis_other": ""
+  },
+  "boutons": {
+    "historique": "",
+    "retour": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": "",
+    "erreur": "",
+    "reessayer": ""
+  }
+}
