@@ -82,7 +82,7 @@
       "route": "/guichet/cadence"
     },
     "CadenceBillet": {
-      "route": "/guichet/cadence/vendu"
+      "route": "/guichet/cadence/vendu?billet=billet-alp-dla-270105-0232"
     },
     "CadenceQuai": {
       "route": "/completer"
