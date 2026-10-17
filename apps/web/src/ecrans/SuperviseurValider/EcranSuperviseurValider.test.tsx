@@ -352,7 +352,10 @@ describe("SuperviseurValider · PIN refusé par le serveur : 3 essais, puis bloc
     // Le PIN saisi reste valable : on peut réessayer sans le retaper.
     await userEvent.click(lienValider());
     // Ce deuxième envoi est un refus de PIN : il reste bien 2 essais (la panne n'en a pas pris un).
-    expect(await screen.findByRole("alert")).toHaveTextContent("PIN incorrect. 2 essais restants.");
+    // L'alerte de la panne est encore à l'écran tant que la réponse n'est pas revenue : on attend le nouveau texte.
+    await waitFor(() =>
+      expect(screen.getByRole("alert")).toHaveTextContent("PIN incorrect. 2 essais restants."),
+    );
   });
 
   it("signale une clôture déjà décidée (409)", async () => {
