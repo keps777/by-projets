@@ -1,0 +1,65 @@
+{
+  "titre": "",
+  "retour": "",
+  "sousTitre": "",
+  "photo": {
+    "prise": "",
+    "reprendre": "",
+    "aPrendre": ""
+  },
+  "champs": {
+    "expediteur": "",
+    "destinataire": "",
+    "contenu": "",
+    "poids": "",
+    "valeur": ""
+  },
+  "departs": {
+    "soute": "",
+    "taux": "",
+    "autreVille": {
+      "titre": "",
+      "detail": ""
+    }
+  },
+  "etiquette": {
+    "mention": "",
+    "mentionSansCompagnie": "",
+    "imprimante": {
+      "ok": "",
+      "papier_vide": "",
+      "hors_service": "",
+      "absente": ""
+    }
+  },
+  "paiement": {
+    "cash": "",
+    "cashMontant": "",
+    "momo": "",
+    "momoMontant": "",
+    "assurance": "",
+    "sansAssurance": ""
+  },
+  "encaisser": {
+    "libelle": "",
+    "detail": "",
+    "reimprimer": ""
+  },
+  "alertes": {
+    "saisie": "",
+    "echec": "",
+    "echecImpression": ""
+  },
+  "etats": {
+    "chargement": "",
+    "vide": {
+      "titre": "",
+      "detail": ""
+    },
+    "erreur": {
+      "titre": "",
+      "detail": "",
+      "reessayer": ""
+    }
+  }
+}

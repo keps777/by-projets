@@ -1,0 +1,65 @@
+{
+  "titre": "Enregistrer un colis",
+  "retour": "Retour au guichet",
+  "sousTitre": "{{numero}} · guichet {{guichet}}",
+  "photo": {
+    "prise": "Photo prise ✓",
+    "reprendre": "reprendre",
+    "aPrendre": "Prendre la photo"
+  },
+  "champs": {
+    "expediteur": "Expéditeur · tél.",
+    "destinataire": "Destinataire · tél.",
+    "contenu": "Contenu déclaré",
+    "poids": "Poids",
+    "valeur": "Valeur"
+  },
+  "departs": {
+    "soute": "{{destination}} · soute {{pct}} %",
+    "taux": "{{destination}} · {{pct}} %",
+    "autreVille": {
+      "titre": "Autre ville",
+      "detail": "via une autre compagnie"
+    }
+  },
+  "etiquette": {
+    "mention": "{{compagnie}} · afrimove.cm · pas de code ici",
+    "mentionSansCompagnie": "afrimove.cm · pas de code ici",
+    "imprimante": {
+      "ok": "imprimante OK",
+      "papier_vide": "plus de papier",
+      "hors_service": "imprimante hors service",
+      "absente": "pas d'imprimante"
+    }
+  },
+  "paiement": {
+    "cash": "Cash",
+    "cashMontant": "Cash · {{montant}}",
+    "momo": "MoMo",
+    "momoMontant": "MoMo · {{montant}}",
+    "assurance": "Assurance ✓ {{montant}}",
+    "sansAssurance": "Assurance {{montant}}"
+  },
+  "encaisser": {
+    "libelle": "Encaisser · imprimer l'étiquette",
+    "detail": "code de retrait envoyé au destinataire seul",
+    "reimprimer": "Colis enregistré · imprimer l'étiquette"
+  },
+  "alertes": {
+    "saisie": "Complétez la photo et les champs en rouge.",
+    "echec": "Le colis n'a pas été enregistré. Réessayez.",
+    "echecImpression": "Colis enregistré, mais l'étiquette n'est pas sortie. Réessayez l'impression."
+  },
+  "etats": {
+    "chargement": "Chargement du colis",
+    "vide": {
+      "titre": "Aucun départ à charger",
+      "detail": "Il n'y a plus de départ pour ce colis aujourd'hui."
+    },
+    "erreur": {
+      "titre": "Impossible de charger le colis",
+      "detail": "Vérifiez la connexion, puis réessayez.",
+      "reessayer": "Réessayer"
+    }
+  }
+}
