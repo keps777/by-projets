@@ -191,6 +191,11 @@ export interface AdaptateursRapport {
     PlanificateurRapport,
     ReferentielRapport,
     RapportsSoir,
+    // Lot Da : l'espace patron lit les chiffres du jour avec les mêmes définitions que le rapport du soir.
+    VentesBillets,
+    ActiviteColis,
+    CaissesDuJour,
+    DepartsDuJour,
   ],
 })
 export class RapportModule {

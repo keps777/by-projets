@@ -3092,3 +3092,119 @@ model CompteMomoCompagnie {
 
   @@map("compte_momo_compagnie")
 }
+
+/**
+ * ==================================================================================================
+ * LOT Da · réglages du patron (lignes, équipe, règles de l'agence, comptes mobile money) et salle de
+ * contrôle. Migrations 20261018001000 et 20261018001010. Bloc contigu en fin de fichier pour faciliter
+ * la fusion avec les autres lots. Pas de relation Prisma vers les tables des lots précédents : les clés
+ * étrangères sont posées en SQL (« SQL : ») et les adaptateurs écrivent des identifiants.
+ * ==================================================================================================
+ */
+
+/// Réglages d'une ligne qui n'ont pas de colonne dans `ligne` : plan de sièges, interrupteurs, et la
+/// modification datée qui attend son jour d'effet. Une ligne sans cette ligne a les valeurs par défaut
+/// (2+2, vente en ligne, pas de fusion). SQL : clé étrangère vers `ligne` (suppression en cascade),
+/// disposition de la forme « 2+2 », capacité et rangées positives, brouillon et jour d'effet ensemble.
+model LigneReglage {
+  ligneId      String    @id @db.Uuid
+  disposition  String
+  rangees      Int
+  capacite     Int
+  venteEnLigne Boolean   @default(true)
+  fusionAuto   Boolean   @default(false)
+  /// La commande « modifier la ligne » (sans signature) qui prendra effet à `effetDu`.
+  brouillon    Json?
+  effetDu      DateTime? @db.Date
+  modifieA     DateTime  @db.Timestamptz(3)
+  modifiePar   String?   @db.Uuid
+
+  @@map("ligne_reglage")
+}
+
+/// Un départ récurrent d'une ligne (« 06:00 classique, tous les jours »). Ce n'est pas un départ daté
+/// (`depart`) : c'est le modèle d'après lequel le planning créera les départs. SQL : clé étrangère vers
+/// `ligne` (cascade), heure `HH:MM`, prix positif, jours parmi lun…dim.
+model LigneHoraire {
+  id      String       @id @default(uuid(7)) @db.Uuid
+  ligneId String       @db.Uuid
+  heure   String
+  classe  ClasseBillet
+  prix    Int
+  actif   Boolean      @default(true)
+  note    String?
+  /// Vide = tous les jours.
+  jours   String[]     @default([])
+  creeA   DateTime     @default(now()) @db.Timestamptz(3)
+
+  @@index([ligneId, heure])
+  @@map("ligne_horaire")
+}
+
+/// Ce que le patron règle sur une personne de l'équipe et que `personne` ne porte pas : opérateur du
+/// numéro, salaire, jour de paie, droits. SQL : clé étrangère vers `personne` (cascade), opérateur
+/// MTN | Orange, jour de paie de 1 à 31, salaire positif.
+model PersonneReglage {
+  personneId String   @id @db.Uuid
+  operateur  String
+  salaire    Int      @default(0)
+  jourDePaie Int      @default(30)
+  /// {vendreBilletsEtColis, annulerSansPinSuperviseur, modeCadence, voirCaissesDesAutres}
+  droits     Json
+  modifieA   DateTime @db.Timestamptz(3)
+
+  @@map("personne_reglage")
+}
+
+/// Les règles de l'agence (écran « Règles »). La tolérance d'écart de caisse n'est pas ici : elle reste
+/// dans `compagnie.toleranceEcartCaisse`, que la caisse lit déjà. Une compagnie sans cette ligne a les
+/// règles par défaut du domaine. SQL : clé étrangère vers `compagnie`, valeurs parmi celles des contrats.
+model ReglesCompagnie {
+  compagnieId              String   @id @db.Uuid
+  /// 1h_avant | 2h_avant | veille_20h | jamais
+  gratuiteJusqua           String
+  /// selon_classe | dix_pct | cinquante_pct | aucun_remboursement
+  retenue                  String
+  retenueClassiquePct      Int
+  retenueVipPct            Int
+  /// pin_superviseur_et_patron | pin_superviseur | bloque_guichet
+  auDela                   String
+  numeroObligatoire        Boolean
+  fraisServiceMontant      Int
+  fraisServicePrisEnCharge Boolean
+  modifieA                 DateTime @db.Timestamptz(3)
+  modifiePar               String?  @db.Uuid
+
+  @@map("regles_compagnie")
+}
+
+/// Les comptes marchands de l'agence : un par opérateur. Le numéro n'y est que chiffré. L'ancien compte
+/// reste valable jusqu'à `ancienJusqua` (minuit) pour les ventes en cours. SQL : clé étrangère vers
+/// `compagnie`, opérateur mtn | orange.
+model CompteMomoAgence {
+  compagnieId      String    @db.Uuid
+  operateur        String
+  telephoneChiffre String
+  ancienChiffre    String?
+  ancienJusqua     DateTime? @db.Timestamptz(3)
+  modifieA         DateTime  @db.Timestamptz(3)
+  modifiePar       String    @db.Uuid
+
+  @@id([compagnieId, operateur])
+  @@map("compte_momo_agence")
+}
+
+/// La confirmation par SMS d'un changement de compte : jamais le code, son empreinte HMAC liée à la
+/// compagnie, à l'opérateur et au nouveau numéro. Une demande par compagnie et opérateur (la dernière
+/// remplace la précédente). SQL : clé étrangère vers `compagnie`, essais de 0 à 3.
+model ConfirmationCompteMomo {
+  compagnieId String   @db.Uuid
+  operateur   String
+  empreinte   String
+  creeA       DateTime @db.Timestamptz(3)
+  expireA     DateTime @db.Timestamptz(3)
+  essais      Int      @default(0)
+
+  @@id([compagnieId, operateur])
+  @@map("confirmation_compte_momo")
+}

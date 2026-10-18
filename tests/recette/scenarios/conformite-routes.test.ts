@@ -60,28 +60,6 @@ const ROUTES_ABSENTES: Record<string, string[]> = {
     "GET /agence/superviseur/appareils/{}",
     "POST /agence/superviseur/appareils/deblocage",
   ],
-  "patron : tableau, gares, équipe, réglages, salle de contrôle": [
-    "GET /patron/aujourdhui",
-    "GET /patron/alertes",
-    "GET /patron/gares",
-    "GET /patron/gares/{}",
-    "GET /patron/equipe",
-    "GET /patron/personnes/{}",
-    "GET /patron/reglages",
-    "GET /patron/reglages/lignes/{}",
-    "PUT /patron/reglages/lignes/{}",
-    "POST /patron/reglages/lignes",
-    "GET /patron/reglages/personnes/{}",
-    "PUT /patron/reglages/personnes/{}",
-    "POST /patron/reglages/personnes",
-    "POST /patron/reglages/personnes/{}/desactivation",
-    "POST /patron/reglages/personnes/{}/pin-provisoire",
-    "GET /patron/reglages/regles",
-    "PUT /patron/reglages/regles",
-    "POST /patron/reglages/comptes-momo/confirmation",
-    "PUT /patron/reglages/comptes-momo",
-    "GET /patron/controle",
-  ],
 };
 
 const proxy = new Proxy({}, { get: (_c, k) => `{${String(k)}}` });
@@ -165,6 +143,8 @@ describe("conformité des routes du client HTTP avec l'API réelle", () => {
       "/agence/superviseur/validations",
       "/agence/superviseur/pin",
       "/patron/rapports/soir",
+      "/patron/aujourdhui",
+      "/patron/reglages/regles",
       "/sync/evenements",
     ];
     for (const route of necessaires) expect(routesApi.has(route), route).toBe(true);

@@ -502,3 +502,30 @@ et par PostgreSQL, garanties de la base, API de bout en bout) et `comptable/verr
 Pour la production : `ComptableModule` et `AssistantModule` refusent encore de démarrer tant que
 `MessagerieCabinet`, `rembourser` / `reclamer` et `AppliquerActions` sont simulés ; `releve_operateur_ligne` et
 `facture_payee` sont lues mais rien ne les alimente encore.
+
+## Lot Da : espace du patron (écart A1 de la recette)
+
+`PatronModule` (`src/patron`, voir son `README.md`) sert les 20 routes `/patron/*` du client HTTP qui répondaient
+404 : tableau du jour, alertes, gares, équipe, fiche d'une personne, salle de contrôle et les 13 routes de
+réglages. Il est monté dans `AppModule` par `PatronModule.avec({ imports: [rapport] })`, après
+`InterAgencesModule` ; `RapportModule` exporte désormais aussi `VentesBillets`, `ActiviteColis`, `CaissesDuJour`
+et `DepartsDuJour`, que les lectures du patron réutilisent (aucune nouvelle source de chiffres).
+
+Migrations (préfixe `20261018001000`–`019`) : `20261018001000_lot_da_reglages_patron` (six tables :
+`ligne_reglage`, `ligne_horaire`, `personne_reglage`, `regles_compagnie`, `compte_momo_agence`,
+`confirmation_compte_momo`) et `20261018001010_lot_da_garanties` (clés étrangères, CHECK). Additives : aucune table
+existante n'est modifiée. Les modèles sont en bloc à la fin de `prisma/schema.prisma` (en-tête « lot Da »).
+
+Six ports (`ReferentielPatron`, `ExploitationPatron`, `AlertesEcrites`, `EquipePatron`, `LignesPatron`,
+`ReglesPatron`), chacun avec son adaptateur en mémoire et son adaptateur PostgreSQL (`*Prisma`), choisis par
+`API_STOCKAGE`. `VerificationPatron` refuse de démarrer en production tant qu'un de ces ports est en mémoire.
+
+Variable : `PATRON_BALAYAGE_MS` (300000, 0 pour couper) pour la mise en vigueur des modifications de ligne datées.
+
+À savoir : seule la tolérance d'écart de caisse est lue par un autre module (la caisse) ; les règles d'annulation,
+de frais et de cadence sont enregistrées mais pas encore lues par la billetterie ; aucune route ne permet au
+patron de poser son PIN de signature (409 `PIN_NON_DEFINI` sur une base neuve) ; `GET /patron/direct` n'est pas
+servi. Les règles métier provisoires et les textes inventés sont listés dans `src/patron/README.md`.
+
+Tests : `patron.e2e.test.ts` (mémoire), `postgres.integration.test.ts` (API entière sur PostgreSQL, garde-fous
+SQL), `patron.module.test.ts`, `calculs.test.ts`, `validation.test.ts`.

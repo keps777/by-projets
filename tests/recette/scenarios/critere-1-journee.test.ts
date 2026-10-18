@@ -456,22 +456,110 @@ describe("critère 1 : une journée de gare, de l'ouverture des caisses au rappo
     },
   );
 
-  it.fails(
-    "ANOMALIE A1 : le patron voit sa journée en direct (GET /patron/aujourdhui)",
-    async () => {
-      const r = await appeler("GET", "/patron/aujourdhui", { jeton: patronSession.jeton });
-      expect(r.statut).toBe(200);
-    },
-  );
+  /* ---------------------------------------------------------------- l'espace du patron (A1, corrigée) */
+
+  it("le patron lit ses écrans de la journée : tableau, alertes, gares, équipe, fiche, salle de contrôle (A1)", async () => {
+    const c = clientHttp(patronSession);
+    const ref = referentiel();
+    const tableau = await c.executer(patron.OP_TABLEAU_DU_JOUR, undefined);
+    const compter = (sql: string): number => lire<{ n: number }>(sql)[0]!.n;
+    const garesEnBase = compter(
+      `select count(*)::int as n from gare where "compagnieId" = '${ref.compagnieId}'`,
+    );
+    const busEnBase = compter(
+      `select count(*)::int as n from bus where "compagnieId" = '${ref.compagnieId}'`,
+    );
+    const equipeEnBase = compter(
+      `select count(*)::int as n from personne where "compagnieId" = '${ref.compagnieId}' and actif
+       and roles && array['guichetier','convoyeur','chauffeur','superviseur','comptable','relais']::role[]`,
+    );
+    expect(tableau.nbGares).toBe(garesEnBase);
+    expect(tableau.nbBus).toBe(busEnBase);
+    expect(tableau.nbPersonnes).toBe(equipeEnBase);
+    expect(tableau.jour.recette).toBeGreaterThanOrEqual(0);
+
+    const alertes = await c.executer(patron.OP_ALERTES, undefined);
+    expect(alertes.alertes.length).toBe(tableau.nbAlertes);
+
+    const gares = await c.executer(patron.OP_GARES, undefined);
+    expect(gares.gares.map((g) => g.id).sort()).toEqual([ref.gareDlaId, ref.gareYdeId].sort());
+    const dla = await c.executer(patron.OP_GARE, { gareId: ref.gareDlaId });
+    expect(dla.gare.nom).toMatch(/Douala/);
+
+    const equipe = await c.executer(patron.OP_EQUIPE, {});
+    expect(equipe.total).toBe(equipeEnBase);
+    const guichetier = equipe.personnes.find((p) => p.id === sessions[1].id);
+    expect(guichetier?.role).toBe("guichetier");
+    const fiche = await c.executer(patron.OP_FICHE_PERSONNE, { personneId: sessions[1].id });
+    expect(fiche.personne.id).toBe(sessions[1].id);
+    expect(fiche.personne.telephoneMasque).toContain("••");
+    expect(JSON.stringify(fiche)).not.toContain("655000002");
+
+    const salle = await c.executer(patron.OP_SALLE_DE_CONTROLE, undefined);
+    expect(salle).toBeDefined();
+
+    // Les écrans du patron ne sont pas ceux d'un guichetier.
+    for (const chemin of ["/patron/aujourdhui", "/patron/equipe", "/patron/reglages"]) {
+      expect((await appeler("GET", chemin, { jeton: sessions[1].jeton })).statut, chemin).toBe(403);
+      expect((await appeler("GET", chemin)).statut, chemin).toBe(401);
+    }
+  });
+
+  it("le patron lit ses réglages : lignes, équipe, règles ; une écriture exige son PIN (A1)", async () => {
+    const c = clientHttp(patronSession);
+    const ref = referentiel();
+    const accueil = await c.executer(patron.OP_REGLAGES, undefined);
+    expect(accueil.lignes.map((l) => l.id)).toContain(ref.ligneId);
+    const ligne = await c.executer(patron.OP_LIGNE_EDITABLE, { ligneId: ref.ligneId });
+    expect(ligne.tarifs).toMatchObject({ classique: TARIF.classique });
+    expect(ligne.arrets.map((a) => a.nom)).toContain("Édéa");
+    const personne = await c.executer(patron.OP_PERSONNE_EDITABLE, { personneId: sessions[2].id });
+    expect(personne.role).toBe("guichetier");
+    expect(personne.guichet).toBe("2");
+    const regles = await c.executer(patron.OP_REGLES, undefined);
+    expect(regles.caisse.toleranceEcart).toBeGreaterThanOrEqual(0);
+    const { comptesMomo: _comptes, ...modifiables } = regles;
+
+    // Sans signature : la route existe et demande le PIN (ce n'est plus un 404).
+    const sansPin = await appeler("PUT", "/patron/reglages/regles", {
+      jeton: patronSession.jeton,
+      corps: { regles: modifiables },
+    });
+    expect(sansPin.statut).toBe(401);
+    expect((sansPin.corps as { code: string }).code).toBe("PIN_REQUIS");
+    // Le compte patron du seed n'a pas de PIN de signature : l'API le dit nettement (constat dans le PV).
+    const signeA = new Date(Date.now() + H).toISOString().replace("Z", "+01:00");
+    const sansPinDefini = await appeler("PUT", "/patron/reglages/regles", {
+      jeton: patronSession.jeton,
+      corps: { regles: modifiables, signature: { pin: "482915", methode: "pin", signeA } },
+    });
+    expect(sansPinDefini.statut).toBe(409);
+    expect((sansPinDefini.corps as { code: string }).code).toBe("PIN_NON_DEFINI");
+  });
+
+  it("la création d'une ligne passe par l'API et exige le PIN du patron (A8, en partie corrigée)", async () => {
+    const sansPin = await appeler("POST", "/patron/reglages/lignes", {
+      jeton: patronSession.jeton,
+      corps: {},
+    });
+    expect(sansPin.statut).toBe(401);
+    expect((sansPin.corps as { code: string }).code).toBe("PIN_REQUIS");
+  });
+
+  /* ---------------------------------------------------------------- ce qui reste en suspens */
 
   it.fails(
-    "ANOMALIE A8 : un départ se programme par l'API, sans toucher à la base (aucune route de création de départ)",
+    "ANOMALIE A8 : un départ ou un bus se programme par l'API, sans toucher à la base (aucune route de création)",
     async () => {
-      const r = await appeler("POST", "/patron/reglages/lignes", {
-        jeton: patronSession.jeton,
-        corps: {},
-      });
-      expect(r.statut).not.toBe(404);
+      const r = await appeler<{ paths: Record<string, Record<string, unknown>> }>(
+        "GET",
+        "/openapi.json",
+      );
+      const creations = Object.entries(r.corps.paths).filter(
+        ([chemin, methodes]) =>
+          "post" in methodes && /\/(departs|bus|appareils)$/.test(chemin.replace(/\/$/, "")),
+      );
+      expect(creations.length).toBeGreaterThan(0);
       void poserColis;
     },
   );
