@@ -1,5 +1,6 @@
 import {
   GenerateurNumeros,
+  aammjjDouala,
   numeroBillet,
   numeroColis,
   plageGuichet,
@@ -36,6 +37,9 @@ export interface OptionsAppareilAgence {
   genererUuid?: () => string;
 }
 
+/** Les deux compteurs de la plage d'un appareil : billets et colis. */
+export type GenreNumero = "billet" | "colis";
+
 export interface AppareilAgence {
   readonly appareilId: string;
   readonly auteurId: string;
@@ -56,6 +60,20 @@ export interface AppareilAgence {
   ): c.EvenementDe<E>;
   /** Numéro de document (AGENCE-GARE-AAMMJJ-NNNN, C-GARE-AAMMJJ-NNNN) d'un événement numéroté. */
   numeroDe(evenement: { type: string; at: string; numeroPlage: number | null }): string | null;
+  /**
+   * Le numéro que prendra le prochain document de ce genre : le plus avancé du compteur local et de
+   * `annonce`, le « prochain numéro » que le serveur affiche (`prochainNumero` du contexte de vente ou du
+   * formulaire de colis). Ne consomme rien. `null` si la plage est épuisée.
+   */
+  prochainNumero(genre: GenreNumero, annonce?: number): { sequence: number; numero: string } | null;
+  /**
+   * Avance le compteur local jusqu'au « prochain numéro » annoncé par le serveur, quand celui-ci est plus
+   * loin : un téléphone neuf (ou au stockage vidé) sur un guichet qui a déjà vendu repart ainsi de la suite
+   * de la plage, pas de son début (recette AM-181, anomalie A9). Ne recule jamais (les numéros pris hors
+   * ligne, pas encore envoyés, restent à l'appareil : AM-160) et ignore un numéro hors de la plage de
+   * l'appareil. À appeler juste avant `creerEvenement`.
+   */
+  aligner(genre: GenreNumero, annonce: number): void;
   /** État du générateur, à garder dans la base locale pour survivre à un redémarrage. */
   exporterEtat(): EtatGenerateur;
   /** Numéros de billet qui restent aujourd'hui dans la plage. */
@@ -78,12 +96,23 @@ const TYPES_COLIS: ReadonlySet<string> = new Set(["colis.enregistre"]);
 
 export function creerAppareilAgence(options: OptionsAppareilAgence): AppareilAgence {
   const uuid = options.genererUuid ?? uuidParDefaut;
-  const generateur = new GenerateurNumeros({
-    agence: options.agence,
-    gare: options.gare,
-    plage: options.plage,
-    ...(options.etat ? { etat: options.etat } : {}),
-  });
+  const creerGenerateur = (etat?: EtatGenerateur) =>
+    new GenerateurNumeros({
+      agence: options.agence,
+      gare: options.gare,
+      plage: options.plage,
+      ...(etat ? { etat } : {}),
+    });
+  let generateur = creerGenerateur(options.etat);
+
+  /** Prochain numéro du compteur local pour le jour de `at` (début de plage tant que rien n'est pris ce jour-là). */
+  const compteurLocal = (genre: GenreNumero, at: number): number => {
+    const etat = generateur.exporter();
+    const compteurs = genre === "colis" ? etat.colis : etat.billets;
+    return compteurs[aammjjDouala(at)] ?? options.plage.debut;
+  };
+  const dansLaPlage = (sequence: number): boolean =>
+    Number.isInteger(sequence) && sequence >= options.plage.debut && sequence <= options.plage.fin;
 
   return {
     appareilId: options.appareilId,
@@ -119,6 +148,29 @@ export function creerAppareilAgence(options: OptionsAppareilAgence): AppareilAge
       return TYPES_COLIS.has(evenement.type)
         ? numeroColis(base)
         : numeroBillet({ ...base, agence: options.agence });
+    },
+
+    prochainNumero(genre, annonce) {
+      const at = options.horloge.maintenant();
+      const local = compteurLocal(genre, at);
+      const sequence =
+        annonce !== undefined && dansLaPlage(annonce) ? Math.max(local, annonce) : local;
+      if (sequence > options.plage.fin) return null;
+      const base = { gare: options.gare, at, sequence };
+      return {
+        sequence,
+        numero:
+          genre === "colis" ? numeroColis(base) : numeroBillet({ ...base, agence: options.agence }),
+      };
+    },
+
+    aligner(genre, annonce) {
+      const at = options.horloge.maintenant();
+      if (!dansLaPlage(annonce) || annonce <= compteurLocal(genre, at)) return;
+      const etat = generateur.exporter();
+      const compteurs = genre === "colis" ? etat.colis : etat.billets;
+      compteurs[aammjjDouala(at)] = annonce;
+      generateur = creerGenerateur(etat);
     },
 
     exporterEtat: () => generateur.exporter(),
@@ -268,22 +320,31 @@ export function appareilDepuisStockage(
     horloge,
     ...(prov.etat ? { etat: prov.etat } : {}),
   });
+  const garder = () => {
+    try {
+      stockage?.setItem(
+        CLE_APPAREIL,
+        JSON.stringify({
+          ...prov,
+          etat: interne.exporterEtat(),
+        } satisfies ProvisionnementAppareil),
+      );
+    } catch {
+      // Stockage plein ou bloqué : la vente continue, le compteur repartira de la dernière valeur écrite.
+    }
+  };
   return {
     ...interne,
     creerEvenement(definition, donnees) {
       const evenement = interne.creerEvenement(definition, donnees);
-      try {
-        stockage?.setItem(
-          CLE_APPAREIL,
-          JSON.stringify({
-            ...prov,
-            etat: interne.exporterEtat(),
-          } satisfies ProvisionnementAppareil),
-        );
-      } catch {
-        // Stockage plein ou bloqué : la vente continue, le compteur repartira de la dernière valeur écrite.
-      }
+      garder();
       return evenement;
+    },
+    aligner(genre, annonce) {
+      const avant = JSON.stringify(interne.exporterEtat());
+      interne.aligner(genre, annonce);
+      // Seul un compteur qui a vraiment avancé est réécrit.
+      if (JSON.stringify(interne.exporterEtat()) !== avant) garder();
     },
   };
 }

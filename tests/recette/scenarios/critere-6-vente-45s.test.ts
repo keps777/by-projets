@@ -29,9 +29,6 @@ const BAREME = {
 
 const LIMITE_S = 45;
 
-/** Les routes que l'application appelle pendant une vente et que l'API n'a pas (voir conformite-routes.test.ts). */
-const ROUTES_ABSENTES_CONNUES = ["GET /agence/guichet/accueil", "POST /agence/impressions"];
-
 let navigateur: Browser;
 let guichetier: Session;
 let depart: DepartCree;
@@ -237,70 +234,63 @@ describe("critère 6 : vendre un billet en moins de 45 s", () => {
     expect(billetsDuTelephone()).toHaveLength(avant + 1);
   });
 
-  it("constat : pendant une vente l'application appelle des routes que l'API n'a pas (accueil du guichet, impressions)", async () => {
+  // Anomalie A2 corrigée (lot Db) : l'accueil du guichet et les impressions ont leurs routes.
+  it("pendant une vente, aucun appel de l'application n'échoue (accueil du guichet, impressions)", async () => {
     await p.remettreAZero();
     p.appels.length = 0;
     await p.page.goto(`${pile().urlWeb}/guichet/accueil`, { waitUntil: "networkidle" });
     await vendre("billet de contrôle", { passager: "Contrôle Appels" });
     const echecs = p.appels.filter(([, , statut]) => statut >= 400).map(([m, c]) => `${m} ${c}`);
-    expect([...new Set(echecs)].sort()).toEqual([...ROUTES_ABSENTES_CONNUES].sort());
-    // La vente, elle, n'en souffre pas : le billet est vendu et l'écran revient.
+    expect([...new Set(echecs)]).toEqual([]);
+    // Le billet est vendu et l'écran revient.
     expect(p.chemin()).toBe("/guichet/accueil");
   });
 
-  it.fails(
-    "ANOMALIE A2 : l'accueil du guichet se charge (SYNC, billets, colis, en caisse) sans erreur",
-    async () => {
-      await p.page.goto(`${pile().urlWeb}/guichet/accueil`, { waitUntil: "networkidle" });
-      await p.attendreEcran("Guichet");
-      const texte = await p.page.locator("body").innerText();
-      expect(texte).not.toContain("ne s'est pas chargé");
-    },
-  );
+  it("l'accueil du guichet se charge (SYNC, billets, colis, en caisse) sans erreur", async () => {
+    await p.page.goto(`${pile().urlWeb}/guichet/accueil`, { waitUntil: "networkidle" });
+    await p.attendreEcran("Guichet");
+    const texte = await p.page.locator("body").innerText();
+    expect(texte).not.toContain("ne s'est pas chargé");
+  });
 
-  // Anomalie A9 (procès-verbal) : l'application numérote avec le compteur de l'appareil (stockage local), pas avec
-  // le « prochain numéro » que le serveur affiche sur l'écran de vente. Un téléphone neuf (ou au stockage vidé) sur un
-  // guichet qui a déjà vendu aujourd'hui repart du début de la plage : l'écran annonce un numéro, le billet part avec
-  // un autre, déjà pris, et le serveur refuse (409 NUMERO_EN_DOUBLE). Quand l'installation de l'appareil donnera la
-  // suite de la plage, ce test passera au rouge : retirer `.fails`.
-  it.fails(
-    "ANOMALIE A9 : un téléphone neuf sur un guichet qui a déjà vendu aujourd'hui vend sans heurter un numéro déjà pris",
-    async () => {
-      const { urlWeb, urlApi } = pile();
-      const stockage = stockageDeTelephone(guichetier, "guichet", {
-        id: "recette-tel-neuf",
-        rang: 1,
-      });
-      const installe = JSON.parse(stockage["afrimove.appareil"]!) as Record<string, unknown>;
-      delete installe["etat"]; // l'appareil ne sait rien des numéros déjà pris
-      stockage["afrimove.appareil"] = JSON.stringify(installe);
-      const neuf = await Parcours.ouvrir(navigateur, {
-        urlWeb: urlWeb!,
-        urlApi,
-        route: "/guichet/vendre",
-        stockage,
-      });
-      try {
-        await neuf.voir(
-          neuf.page.getByLabel("Nom du voyageur"),
-          "le formulaire de vente doit se charger",
-        );
-        await neuf.remplir(
-          neuf.page.getByLabel("Nom du voyageur"),
-          "Téléphone Neuf",
-          "nom du voyageur",
-        );
-        await neuf.toucher(
-          neuf.page.getByRole("link", { name: /^Encaisser et imprimer/ }),
-          "encaisser et imprimer",
-        );
-        await neuf.attendreEcran("Guichet");
-        expect(
-          neuf.appels.filter(([m, c, st]) => m === "POST" && c === "/agence/billets" && st === 409),
-        ).toEqual([]);
-      } finally {
-        await neuf.fermer();
-      }
-    },
-  );
+  // Anomalie A9 corrigée (lot Db) : l'application numérote avec le « prochain numéro » que le serveur annonce. Un
+  // téléphone neuf (ou au stockage vidé) sur un guichet qui a déjà vendu aujourd'hui repart de la suite de la plage,
+  // pas de son début : plus de 409 NUMERO_EN_DOUBLE.
+  it("un téléphone neuf sur un guichet qui a déjà vendu aujourd'hui vend sans heurter un numéro déjà pris", async () => {
+    const { urlWeb, urlApi } = pile();
+    const stockage = stockageDeTelephone(guichetier, "guichet", {
+      id: "recette-tel-neuf",
+      rang: 1,
+    });
+    const installe = JSON.parse(stockage["afrimove.appareil"]!) as Record<string, unknown>;
+    delete installe["etat"]; // l'appareil ne sait rien des numéros déjà pris
+    stockage["afrimove.appareil"] = JSON.stringify(installe);
+    const neuf = await Parcours.ouvrir(navigateur, {
+      urlWeb: urlWeb!,
+      urlApi,
+      route: "/guichet/vendre",
+      stockage,
+    });
+    try {
+      await neuf.voir(
+        neuf.page.getByLabel("Nom du voyageur"),
+        "le formulaire de vente doit se charger",
+      );
+      await neuf.remplir(
+        neuf.page.getByLabel("Nom du voyageur"),
+        "Téléphone Neuf",
+        "nom du voyageur",
+      );
+      await neuf.toucher(
+        neuf.page.getByRole("link", { name: /^Encaisser et imprimer/ }),
+        "encaisser et imprimer",
+      );
+      await neuf.attendreEcran("Guichet");
+      expect(
+        neuf.appels.filter(([m, c, st]) => m === "POST" && c === "/agence/billets" && st === 409),
+      ).toEqual([]);
+    } finally {
+      await neuf.fermer();
+    }
+  });
 });

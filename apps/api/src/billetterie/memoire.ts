@@ -455,6 +455,15 @@ export class EvenementsTraitesMemoire extends EvenementsTraites implements Stock
     this.lignes.set(entree.id, { ...entree });
     return true;
   }
+
+  async typesDe(ids: readonly string[]) {
+    const types = new Map<string, string>();
+    for (const id of ids) {
+      const e = this.lignes.get(id);
+      if (e) types.set(id, e.type);
+    }
+    return types;
+  }
 }
 
 /* ------------------------------------------------------------------ préférences */

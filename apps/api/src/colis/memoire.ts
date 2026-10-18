@@ -109,6 +109,15 @@ export class ColisMemoire extends ColisRepository implements Volatil {
           (c.paiement?.etat === "paye" && c.code.smsDestinataire !== "envoye") ===
             filtre.codeNonEnvoye,
       )
+      .filter(
+        (c) => filtre.gareOrigineId === undefined || c.gareOrigine.id === filtre.gareOrigineId,
+      )
+      .filter((c) => filtre.deposePar === undefined || c.depose?.par === filtre.deposePar)
+      .filter(
+        (c) =>
+          filtre.deposeApres === undefined ||
+          (c.depose !== null && enMs(c.depose.a) >= enMs(filtre.deposeApres)),
+      )
       .sort((a, b) => enMs(a.creeA) - enMs(b.creeA) || a.numero.localeCompare(b.numero))
       .map(copie);
   }

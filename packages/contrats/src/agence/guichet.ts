@@ -23,7 +23,8 @@ export const SchemaGuichetAccueil = z.object({
     id: SchemaId,
     rang: z.number().int().min(1),
     agent: SchemaPersonneRef,
-    caisseOuverteA: SchemaIsoDouala,
+    /** Null tant que l'agent n'a pas ouvert sa caisse (lot Db : la caisse peut être fermée). */
+    caisseOuverteA: SchemaIsoDouala.nullable(),
   }),
   synchro: SchemaSynchro,
   compteurs: z.object({
@@ -33,16 +34,19 @@ export const SchemaGuichetAccueil = z.object({
     enCaisse: SchemaFcfaPositif,
     ecart: SchemaFcfa,
   }),
-  /** Le quai du prochain départ : scannés sur capacité. */
-  quai: z.object({
-    departId: SchemaId,
-    heureDepart: SchemaIsoDouala,
-    destination: z.string().min(1),
-    scannes: z.number().int().min(0),
-    capacite: z.number().int().min(1),
-  }),
+  /** Le quai du prochain départ : scannés sur capacité. Null quand aucun départ n'est à embarquer. */
+  quai: z
+    .object({
+      departId: SchemaId,
+      heureDepart: SchemaIsoDouala,
+      destination: z.string().min(1),
+      scannes: z.number().int().min(0),
+      capacite: z.number().int().min(1),
+    })
+    .nullable(),
   cadence: z.object({ fileAttente: z.number().int().min(0) }),
-  prochainDepart: SchemaDepartResume.extend({ dansMinutes: z.number().int().min(0) }),
+  /** Null quand la gare n'a plus de départ à venir. */
+  prochainDepart: SchemaDepartResume.extend({ dansMinutes: z.number().int().min(0) }).nullable(),
   /** Le départ suivant, qui ouvre à la vente. */
   prochaineOuverture: SchemaDepartResume.pick({
     departId: true,

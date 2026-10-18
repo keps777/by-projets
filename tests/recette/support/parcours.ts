@@ -36,10 +36,9 @@ export function stockageDeTelephone(
       agence: "DEM",
       gare: "DLA",
       plage: plageGuichet(appareil.rang),
-      // Constat de la recette (anomalie A9) : l'application web ne reprend pas le « prochain numéro » que le serveur
-      // lui donne ; elle numérote avec le compteur de l'appareil. Un appareil neuf, sur un guichet qui a déjà vendu
-      // aujourd'hui, repartirait de 1 et se heurterait au numéro déjà pris. L'installation réelle (AM-160) devra
-      // donner à l'appareil la suite de la plage ; ici le banc le fait, comme elle le fera.
+      // Un appareil neuf, sur un guichet qui a déjà vendu aujourd'hui, repartirait de 1 : le banc lui donne la suite
+      // de la plage, comme l'installation réelle (AM-160) le fera. Depuis la correction de l'anomalie A9, l'écran de
+      // vente reprend de toute façon le numéro annoncé par le serveur (« téléphone neuf » du critère 6).
       etat: etatDepuisLaBase(appareil.rang, Date.now()),
     });
   }

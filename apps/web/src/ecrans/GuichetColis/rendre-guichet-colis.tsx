@@ -21,6 +21,7 @@ export type Panne = "enregistrement" | "impression" | "erreur";
 export interface EvenementEnvoye {
   type: string;
   donnees: Record<string, unknown>;
+  numeroPlage: number | null;
 }
 
 export interface OptionsRenduColis {
@@ -32,6 +33,8 @@ export interface OptionsRenduColis {
   sansBrouillon?: boolean;
   /** Imprimante du formulaire (état « ok » par défaut). */
   imprimante?: "ok" | "papier_vide" | "hors_service" | "absente";
+  /** « Prochain numéro » de colis que le serveur annonce (un guichet qui a déjà enregistré des colis aujourd'hui). */
+  sequenceServeur?: number;
   pilote?: PiloteEtiquette;
   conception?: boolean;
   latenceMs?: number;
@@ -70,6 +73,14 @@ function sourceModifiee(options: OptionsRenduColis, envoyes: EvenementEnvoye[]):
                   departs: options.sansDepart ? [] : formulaire.departs,
                   brouillon: options.sansBrouillon ? null : formulaire.brouillon,
                   imprimante: { ...formulaire.imprimante, etat: options.imprimante ?? "ok" },
+                  ...(options.sequenceServeur !== undefined
+                    ? {
+                        prochainNumero: {
+                          sequence: options.sequenceServeur,
+                          numero: `C-DLA-270105-${String(options.sequenceServeur).padStart(4, "0")}`,
+                        },
+                      }
+                    : {}),
                 };
               },
             };
@@ -87,8 +98,13 @@ function sourceModifiee(options: OptionsRenduColis, envoyes: EvenementEnvoye[]):
               const evenement = params as unknown as {
                 type: string;
                 donnees: Record<string, unknown>;
+                numeroPlage: number | null;
               };
-              envoyes.push({ type: evenement.type, donnees: evenement.donnees });
+              envoyes.push({
+                type: evenement.type,
+                donnees: evenement.donnees,
+                numeroPlage: evenement.numeroPlage,
+              });
               if (options.panne === ecriture) throw new ErreurHttp(500, "Panne simulée", "PANNE");
               return implementation.repondre(params, ctx);
             },

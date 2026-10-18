@@ -139,10 +139,9 @@ export function appareilDeGuichet(
 }
 
 /**
- * Un colis déposé au guichet, posé directement en base. L'enregistrement par l'API (`POST /agence/colis`) ne
- * marche pas encore sur la pile PostgreSQL : le référentiel colis du module est en mémoire (constat de la
- * recette, voir docs/recette/proces-verbal.md, anomalie A5). Les colis sont donc posés en SQL, tels que le
- * module colis les écrirait, pour que la caisse et le rapport du soir les comptent.
+ * Un colis déposé au guichet, posé directement en base. Depuis la correction de l'anomalie A5, `POST /agence/colis`
+ * marche sur la pile PostgreSQL (scénario dédié du critère 1) ; les journées de recette posent toujours leurs colis
+ * en SQL, tels que le module colis les écrit, pour maîtriser les dates et les numéros de la journée simulée.
  */
 export function poserColis(o: {
   numeroSequence: number;

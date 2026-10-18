@@ -924,6 +924,16 @@ export class EvenementsTraitesPrisma extends EvenementsTraites implements Stocka
     });
     return count === 1;
   }
+
+  async typesDe(ids: readonly string[]): Promise<Map<string, string>> {
+    const valides = [...new Set(ids.filter(estUuid))];
+    if (valides.length === 0) return new Map();
+    const lignes = await this.prisma.evenementTraite.findMany({
+      where: { id: { in: valides } },
+      select: { id: true, type: true },
+    });
+    return new Map(lignes.map((l) => [l.id, l.type]));
+  }
 }
 
 /* ------------------------------------------------------------------ préférences */

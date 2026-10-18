@@ -924,6 +924,30 @@ export function contratPortsBilletterie(
         expect(await banc.traites.trouver("pas-un-uuid")).toBeNull();
       });
 
+      it("rend le type des événements connus, sans les inconnus ni les identifiants invalides", async () => {
+        const vente = { id: randomUUID(), type: "billet.vendu", recuA: T0, reponseChiffree: "a" };
+        const cadence = {
+          id: randomUUID(),
+          type: "billet.vendu_cadence",
+          recuA: T0,
+          reponseChiffree: "b",
+        };
+        await banc.traites.memoriser(vente);
+        await banc.traites.memoriser(cadence);
+        const types = await banc.traites.typesDe([
+          vente.id,
+          cadence.id,
+          randomUUID(),
+          "pas-un-uuid",
+          vente.id,
+        ]);
+        expect(Object.fromEntries(types)).toEqual({
+          [vente.id]: "billet.vendu",
+          [cadence.id]: "billet.vendu_cadence",
+        });
+        expect((await banc.traites.typesDe([])).size).toBe(0);
+      });
+
       it("rejouer ne remplace rien ; vingt requêtes simultanées : une seule mémorise", async () => {
         const id = randomUUID();
         const e = { id, type: "billet.vendu", recuA: T0, reponseChiffree: "premiere" };

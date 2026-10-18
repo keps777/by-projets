@@ -129,12 +129,14 @@ function ProchainDepart({ accueil }: { accueil: GuichetAccueil }) {
   const d = accueil.prochainDepart;
   const o = accueil.prochaineOuverture;
   const phrases = [
-    t("prochain.depart", {
-      minutes: d.dansMinutes,
-      heure: heureDouala(d.heureDepart),
-      destination: d.destination,
-      count: d.placesLibres,
-    }),
+    d
+      ? t("prochain.depart", {
+          minutes: d.dansMinutes,
+          heure: heureDouala(d.heureDepart),
+          destination: d.destination,
+          count: d.placesLibres,
+        })
+      : t("prochain.aucun"),
     o
       ? t("prochain.ouverture", { heure: heureDouala(o.heureDepart), destination: o.destination })
       : "",
@@ -184,11 +186,16 @@ export function AccueilVue({ etat, accueil, pastille, onReessayer }: PropsAccuei
                   })}
                 </span>
                 <span className={styles.sousTitre}>
-                  {t("agence.sousTitre", {
-                    rang: donnees.guichet.rang,
-                    agent: donnees.guichet.agent.nom,
-                    heure: heureDouala(donnees.guichet.caisseOuverteA),
-                  })}
+                  {donnees.guichet.caisseOuverteA === null
+                    ? t("agence.sousTitreCaisseFermee", {
+                        rang: donnees.guichet.rang,
+                        agent: donnees.guichet.agent.nom,
+                      })
+                    : t("agence.sousTitre", {
+                        rang: donnees.guichet.rang,
+                        agent: donnees.guichet.agent.nom,
+                        heure: heureDouala(donnees.guichet.caisseOuverteA),
+                      })}
                 </span>
               </>
             ) : etat === "chargement" ? (

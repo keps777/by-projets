@@ -3092,3 +3092,39 @@ model CompteMomoCompagnie {
 
   @@map("compte_momo_compagnie")
 }
+
+/**
+ * ==================================================================================================
+ * LOT Db · accueil du guichet, cadence et impressions (recette AM-181, anomalie A2). Migration
+ * 20261018001001. Bloc contigu en fin de fichier pour faciliter la fusion avec les autres lots.
+ * Aucune relation Prisma vers les tables des lots précédents : les clés étrangères sont posées en SQL.
+ * ==================================================================================================
+ */
+
+/// Une impression demandée par l'appareil (`impression.demandee`) : un billet, une étiquette de colis ou un
+/// ticket de caisse, en une ou plusieurs copies, première impression ou réimpression. L'identifiant de
+/// l'événement (UUID créé sur l'appareil) est la clé : rejouer l'événement n'ajoute rien. EN AJOUT SEUL : le
+/// journal sait combien de copies d'un document existent.
+model ImpressionAgence {
+  evenementId  String   @id @db.Uuid
+  /// SQL : billet | etiquette_colis | ticket_caisse
+  document     String
+  /// Identifiant du billet, du colis ou de la session de caisse imprimé.
+  documentId   String
+  /// SQL : de 1 à 5
+  copies       Int
+  reimpression Boolean
+  /// SQL : clé étrangère vers `personne`.
+  auteurId     String   @db.Uuid
+  appareilId   String
+  /// SQL : clé étrangère vers `compagnie`.
+  compagnieId  String?  @db.Uuid
+  /// L'heure de l'événement, sur l'appareil.
+  imprimeeA    DateTime @db.Timestamptz(3)
+  /// L'heure à laquelle le serveur l'a reçu.
+  recuA        DateTime @db.Timestamptz(3)
+
+  @@index([document, documentId])
+  @@index([auteurId, imprimeeA])
+  @@map("impression_agence")
+}
