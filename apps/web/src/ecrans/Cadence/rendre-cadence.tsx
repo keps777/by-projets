@@ -107,8 +107,9 @@ export function rendreCadence(options: OptionsRenduCadence = {}): {
       async charger(nom) {
         const brut = await base.charger(nom);
         let operations: ImplementationMock[] = [...brut.operations];
-        operations = remplacer(operations, patron.OP_REGLES, (origine) => (params, ctx) => {
-          const regles = origine.repondre(params, ctx) as {
+        operations = remplacer(operations, patron.OP_REGLES, (origine) => async (params, ctx) => {
+          // `repondre` rend une promesse : la source de scénarios replie les implémentations sur 404.
+          const regles = (await origine.repondre(params, ctx)) as {
             cadence: { numeroObligatoire: boolean };
           };
           reglesRepondues();

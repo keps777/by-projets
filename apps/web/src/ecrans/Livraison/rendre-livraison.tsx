@@ -1,7 +1,9 @@
 import {
+  ErreurHttp,
   colis,
   creerClientMock,
   horlogeGelee,
+  implementer,
   type ClientMock,
   type FluxMock,
   type ImplementationMock,
@@ -41,7 +43,6 @@ export interface OptionsRenduLivraison {
 
 function sourceModifiee(options: OptionsRenduLivraison): SourceScenarios {
   const base = sourceScenariosFixtures();
-  if (!options.operations && !options.flux && !options.avecColis) return base;
   return {
     ...base,
     async charger(nom) {
@@ -58,11 +59,16 @@ function sourceModifiee(options: OptionsRenduLivraison): SourceScenarios {
       const lectureColis = colisCode.operations.filter(
         (o) => o.operation.nom === colis.OP_COLIS.nom,
       );
+      // Sans `avecColis`, le colis ne se lit pas : la source de scénarios fait répondre toutes les planches, dont
+      // ColisCode (qui connaît le colis de Maman), donc l'absence de lecture se dit explicitement par un 404.
+      const colisIntrouvable = implementer(colis.OP_COLIS, () => {
+        throw new ErreurHttp(404, "colis introuvable", "colis_introuvable");
+      });
       return {
         ...scenario,
         operations: [
           ...(options.operations?.(originale) ?? []),
-          ...(options.avecColis ? lectureColis : []),
+          ...(options.avecColis ? lectureColis : [colisIntrouvable]),
           ...scenario.operations,
         ],
         flux: [...(options.flux?.() ?? []), ...(scenario.flux ?? [])],

@@ -43,13 +43,23 @@ function remplacer(nom: string, fabrique: (originale: Implementation) => Impleme
     operations.map((impl) => (impl.operation.nom === nom ? fabrique(impl) : impl));
 }
 
-/** La fiche de la planche, modifiée par `changer`. */
+/**
+ * La fiche de la planche, modifiée par `changer`. La réponse d'origine est attendue : la source de scénarios replie
+ * les implémentations d'une même opération sur 404 (`replierSur404`), si bien que `repondre` rend une promesse.
+ */
 function ficheModifiee(
   changer: (fiche: contrats.FichePersonne) => contrats.FichePersonne,
 ): Modifier {
   return remplacer(patron.OP_FICHE_PERSONNE.nom, (impl) =>
-    implementer(impl.operation, (params, ctx) =>
-      changer((impl.repondre as (p: unknown, c: unknown) => contrats.FichePersonne)(params, ctx)),
+    implementer(impl.operation, async (params, ctx) =>
+      changer(
+        await (
+          impl.repondre as (
+            p: unknown,
+            c: unknown,
+          ) => Promise<contrats.FichePersonne> | contrats.FichePersonne
+        )(params, ctx),
+      ),
     ),
   );
 }

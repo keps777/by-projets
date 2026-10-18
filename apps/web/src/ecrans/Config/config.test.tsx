@@ -74,19 +74,22 @@ function clientAvec(
   return creerClientMock({ source, scenario: "Config", latenceMs: 0 });
 }
 
-/** Remplace la réponse d'une opération du scénario, en gardant celle du mock pour les autres appels. */
+/**
+ * Remplace la réponse d'une opération du scénario, en gardant celle du mock pour les autres appels. `suite()` rend une
+ * promesse : la source de scénarios replie les implémentations d'une même opération sur 404 (`replierSur404`).
+ */
 function avecOperation(
   scenario: Scenario,
   nom: string,
-  remplacement: (suite: () => unknown, params: unknown) => unknown,
+  remplacement: (suite: () => Promise<unknown>, params: unknown) => unknown,
 ): Scenario {
   return {
     ...scenario,
     operations: scenario.operations.map((impl) =>
       impl.operation.nom === nom
-        ? implementer(impl.operation, (params, ctx) =>
+        ? implementer(impl.operation, async (params, ctx) =>
             remplacement(
-              () => (impl.repondre as (p: unknown, c: unknown) => unknown)(params, ctx),
+              async () => (impl.repondre as (p: unknown, c: unknown) => unknown)(params, ctx),
               params,
             ),
           )
@@ -300,8 +303,8 @@ describe("Config · filtres de l'équipe, sur place", () => {
 
   it("un rôle sans personne le dit, sans casser la carte (pas de « glisser »)", async () => {
     const client = clientAvec((scenario) =>
-      avecOperation(scenario, patron.OP_EQUIPE.nom, (suite, params) => {
-        const reponse = suite() as { personnes: unknown[] };
+      avecOperation(scenario, patron.OP_EQUIPE.nom, async (suite, params) => {
+        const reponse = (await suite()) as { personnes: unknown[] };
         const role = (params as { role?: string }).role;
         return role === "convoyeur" ? { ...reponse, personnes: [] } : reponse;
       }),
@@ -470,8 +473,8 @@ describe("Config · états chargement, vide et erreur", () => {
 
   it("aucune ligne : le dit, garde « + ligne » et le reste de l'écran", async () => {
     const client = clientAvec((scenario) =>
-      avecOperation(scenario, patron.OP_REGLAGES.nom, (suite) => ({
-        ...(suite() as object),
+      avecOperation(scenario, patron.OP_REGLAGES.nom, async (suite) => ({
+        ...((await suite()) as object),
         lignes: [],
       })),
     );
