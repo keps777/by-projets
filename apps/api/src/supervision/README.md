@@ -27,10 +27,33 @@ les gares » : un autre `gareId` donne 403 `GARE_AUTRE`), sauf la demande d'annu
 | `agence.equipe.affectation_changee` | `POST /agence/superviseur/equipe/affectation`                      | superviseur                    |
 | `agence.equipe.compte_desactive`    | `POST /agence/superviseur/equipe/desactivation`                    | superviseur                    |
 | `agence.equipe.personne_debloquee`  | `POST /agence/superviseur/equipe/deblocage`                        | superviseur                    |
+| `agence.superviseur.appareil`       | `GET  /agence/superviseur/appareils/:appareilId`                   | superviseur                    |
+| `agence.appareil.debloque`          | `POST /agence/superviseur/appareils/deblocage`                     | superviseur                    |
 | **en plus du contrat**              | `POST /agence/superviseur/pin`                                     | superviseur                    |
 
 Les écritures sont des événements (enveloppe, idempotence par UUID et erreurs : voir
 `../caisse/README.md`).
+
+## Appareils bloqués (lot Dc, écart A3)
+
+`AppareilsService` (importe `SyncModule` pour `AppareilsSync`, l'octroi, les plages et les trous, et
+`BilletterieModule` pour le code de la gare). `GET …/appareils/:appareilId` rend la planche
+« SuperviseurDebloquer » : état `bloque` (hors ligne depuis 12 h ou plus), `en_ligne` ou
+`debloque_temporairement` (octroi `debloquer_4h` encore valable), durée hors ligne, plage du jour avec ses trous,
+diagnostics (durée hors ligne, alertes de synchronisation ouvertes du téléphone) et les trois options dans
+l'ordre (seulement quand l'appareil est bloqué). `POST …/appareils/deblocage` (`appareil.debloque`, preuve du PIN)
+pose l'octroi sur la fiche de l'appareil (le même que celui posé par `/sync`), écrit l'audit
+`sync.deblocage_accorde` et le journal signé ; `telephone_secours` retire l'appareil. Un appareil d'une autre gare
+ou d'une autre compagnie est inconnu (404) ; un appareil jamais synchronisé donne 409
+`APPAREIL_JAMAIS_SYNCHRONISE` ; un appareil non bloqué 409 `APPAREIL_NON_BLOQUE`.
+
+Provisoire : le serveur ne voit pas la file locale du téléphone, donc `enAttente.ventes`, `colis` et `cash` valent
+0 et `ventesSynchronisees` aussi ; `rappelSupport` vaut `false` (aucun agent support n'est joignable depuis le
+serveur) ; le patron n'est pas prévenu d'un déblocage de 4 h (il n'existe pas de type d'alerte pour cela) : la trace
+est au journal signé et à l'audit. Textes de diagnostic inventés : « Hors ligne depuis 12 h 42, au-delà de la limite
+de 12 h », « En ligne : dernière synchronisation à 08:15 », « Débloqué pour 4 h, hors ligne depuis … » et les six
+constats d'alerte de synchronisation (`file_avec_trou`, `file_reinitialisee`, `trou_dans_la_plage`,
+`numero_en_double`, `numero_hors_plage`, `horloge_en_avance`).
 
 ## Le PIN du superviseur (décision à confirmer)
 
@@ -141,7 +164,8 @@ Description d'origine des colonnes, gardée comme référence de leur sens (noms
    le changement à la première connexion : ce code est dans le socle, pas dans ce ticket.
 3. `ComptesService.creer` ne range pas de PIN pour un superviseur (il se connecte par mot de passe +
    SMS) : prévoir de définir son PIN de supervision (`pin_hache`) à la création ou via le patron.
-4. Appareils (liste, déblocage, WebSocket de la gare) : hors de ce ticket.
+4. Liste des appareils et WebSocket de la gare : hors de ce ticket (la fiche d'un appareil et son déblocage sont
+   faits : voir « Appareils bloqués »).
 
 ## Limites connues
 
@@ -152,7 +176,7 @@ Description d'origine des colonnes, gardée comme référence de leur sens (noms
 
 ## Tests
 
-`pin.e2e.test.ts`, `annulations.e2e.test.ts`, `clotures.e2e.test.ts`, `equipe.e2e.test.ts` (API
+`pin.e2e.test.ts`, `annulations.e2e.test.ts`, `clotures.e2e.test.ts`, `equipe.e2e.test.ts`, `appareils.e2e.test.ts` (API
 complète en mémoire, réponses relues avec les schémas du contrat), `parite.test.ts` (lecteurs
 d'événements comparés au contrat), `unitaires.test.ts` (preuve du PIN, PIN provisoire). Harnais :
 `testing/app-supervision-test.ts`.

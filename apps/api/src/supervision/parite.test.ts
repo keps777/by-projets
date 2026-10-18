@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest";
 import { ISO_ESSAIS, SIGNATURE_ESSAIS, UUID_ESSAIS, variantes } from "../caisse/testing/mutations";
 import {
   DECISIONS,
+  OPTIONS_DEBLOCAGE,
+  lireAppareilDebloque,
   TYPES_AVEC_VALIDATION,
   lireAffectation,
   lireCompteDesactive,
@@ -118,6 +120,16 @@ const cas = [
     valide: enveloppe("equipe.compte_desactive", { personneId: "p1", validePar }, personne),
   },
   {
+    nom: "appareil.debloque",
+    schema: c.EVENEMENT_APPAREIL_DEBLOQUE.schema,
+    lire: lireAppareilDebloque,
+    valide: enveloppe(
+      "appareil.debloque",
+      { appareilId: "appareil-guichet-3", option: "debloquer_4h", validePar },
+      { type: "appareil", id: "appareil-guichet-3" },
+    ),
+  },
+  {
     nom: "equipe.personne_debloquee",
     schema: c.EVENEMENT_EQUIPE_PERSONNE_DEBLOQUEE.schema,
     lire: lirePersonneDebloquee,
@@ -129,6 +141,7 @@ describe("listes de la supervision : mêmes valeurs que le contrat", () => {
   it("décisions d'annulation et rôles de l'équipe", () => {
     expect([...DECISIONS]).toEqual(c.SchemaDecisionAnnulation.options);
     expect([...ROLES_EQUIPE]).toEqual(c.SchemaRoleEquipe.options);
+    expect([...OPTIONS_DEBLOCAGE]).toEqual(c.SchemaOptionDeblocage.options);
   });
 
   it("les événements qui exigent le PIN d'un superviseur sont ceux dont le contrat porte validePar", () => {
@@ -136,17 +149,16 @@ describe("listes de la supervision : mêmes valeurs que le contrat", () => {
       .filter((e) => "validePar" in e.donnees.shape)
       .map((e) => e.type)
       .sort();
-    // « appareil.debloque » exige aussi le PIN mais relève des appareils, hors de ce ticket.
-    expect(duContrat.filter((t) => !t.startsWith("appareil."))).toEqual(
-      [...TYPES_AVEC_VALIDATION].sort(),
-    );
+    expect(duContrat).toEqual([...TYPES_AVEC_VALIDATION].sort());
   });
 
   it("tous les événements de la supervision du contrat ont un lecteur", () => {
     const types = cas.map((x) => x.nom).sort();
     const duContrat = definitionsDuContrat()
       .map((e) => e.type)
-      .filter((t) => /^(annulation|equipe)\.|^caisse\.(validee|refusee)$/.test(t))
+      .filter((t) =>
+        /^(annulation|equipe)\.|^caisse\.(validee|refusee)$|^appareil\.debloque$/.test(t),
+      )
       .sort();
     expect(types).toEqual(duContrat);
   });

@@ -2002,6 +2002,14 @@ model DepartIncident {
   description  String
   dureeMinutes Int?
   signaleA     DateTime @db.Timestamptz(3)
+  /// LOT Dc : ce que le chauffeur a signalé (panne | accident | route_coupee | autre) ; `nature` n'en garde que panne | autre.
+  categorie    String?
+  /// LOT Dc : le chauffeur ou le convoyeur qui a signalé l'incident, sa position GPS et sa note.
+  auteurId     String?  @db.Uuid
+  latitude     Float?
+  longitude    Float?
+  precisionM   Float?
+  note         String?
 
   @@index([departId, signaleA])
   @@map("depart_incident")
@@ -2009,12 +2017,17 @@ model DepartIncident {
 
 /// Dépense d'un départ, en FCFA entiers. SQL : nature `carburant` | `panne` | `autre`, montant >= 0.
 model DepartDepense {
-  id       String   @id @db.Uuid
-  departId String   @db.Uuid
-  nature   String
-  montant  Int
-  libelle  String?
-  saisieA  DateTime @default(now()) @db.Timestamptz(3)
+  id              String   @id @db.Uuid
+  departId        String   @db.Uuid
+  nature          String
+  montant         Int
+  libelle         String?
+  saisieA         DateTime @default(now()) @db.Timestamptz(3)
+  /// LOT Dc : catégorie saisie par le chauffeur (carburant | peage | autre) ; `nature` range le péage dans « autre ».
+  categorie       String?
+  /// LOT Dc : référence de la photo du justificatif, et qui a saisi la dépense.
+  justificatifRef String?
+  auteurId        String?  @db.Uuid
 
   @@index([departId])
   @@map("depart_depense")
@@ -3091,4 +3104,114 @@ model CompteMomoCompagnie {
   operateur        String
 
   @@map("compte_momo_compagnie")
+}
+
+/**
+ * ================================================================== LOT Dc : bord (convoyeur, chauffeur, contrôle inopiné)
+ * Écarts A3 de la recette (AM-181) : `GET /agence/bus/{convoyeur,chauffeur}`, `POST /agence/bus/{ventes,scans,
+ * depenses,incidents,retards,arrivees}`, `/agence/controle/*`. Les dépenses, incidents et retards du chauffeur
+ * s'écrivent dans `depart_depense`, `depart_incident` et `depart_observation` (lot C, que lisent les analyses) ;
+ * `depart_incident` et `depart_depense` reçoivent ici quelques colonnes en plus (voir leurs modèles).
+ * Migrations : `202610180010c00_bord` et `202610180010c10_bord_garanties`.
+ */
+
+/// Le détail d'un billet vendu en route par le convoyeur : où il est monté, où il descend, où était le bus (GPS).
+/// Une ligne par billet ; le billet lui-même est dans `billet` (canal `convoyeur`).
+model VenteEnRoute {
+  billetId      String   @id @db.Uuid
+  departId      String   @db.Uuid
+  convoyeurId   String   @db.Uuid
+  arretMontee   String
+  arretDescente String
+  latitude      Float?
+  longitude     Float?
+  precisionM    Float?
+  venduA        DateTime @db.Timestamptz(3)
+
+  @@index([departId, venduA])
+  @@map("vente_en_route")
+}
+
+/// Ce que l'équipage fait à un arrêt : un scan (voyageur qui monte) ou l'arrivée du bus. En ajout seul. La clé est
+/// l'identifiant de l'événement de l'appareil.
+model PassageRoute {
+  id         String   @id @db.Uuid
+  /// SQL : scan | arrivee
+  genre      String
+  departId   String   @db.Uuid
+  auteurId   String   @db.Uuid
+  arret      String
+  /// Le billet scanné (genre `scan`).
+  billetId   String?  @db.Uuid
+  /// SQL : monte | deja_a_bord (genre `scan`, sinon NULL). Un scan refusé n'est pas gardé : il répond 4xx.
+  resultat   String?
+  latitude   Float?
+  longitude  Float?
+  precisionM Float?
+  at         DateTime @db.Timestamptz(3)
+
+  @@index([departId, genre, at])
+  @@map("passage_route")
+}
+
+/// Un contrôle inopiné à bord. SQL : un seul contrôle ouvert par contrôleur (index unique partiel sur `controleurId`
+/// quand `clotureA` est nul).
+model ControleInopine {
+  id             String    @id @db.Uuid
+  departId       String    @db.Uuid
+  controleurId   String    @db.Uuid
+  /// Où le contrôle a lieu (dernier arrêt atteint, sinon la gare de départ).
+  lieu           String
+  ouvertA        DateTime  @db.Timestamptz(3)
+  clotureA       DateTime? @db.Timestamptz(3)
+  /// Comptes figés à la clôture.
+  liste          Int?
+  tetes          Int?
+  ecart          Int?
+  /// Le constat est parti au patron.
+  envoyeAuPatron Boolean   @default(false)
+
+  @@index([departId])
+  @@index([controleurId, ouvertA])
+  @@map("controle_inopine")
+}
+
+/// Le constat d'un siège (une ligne par siège touché). SQL : constat `scanne` | `sans_billet` | `libre`.
+model ControleSiege {
+  controleId String   @db.Uuid
+  siege      Int
+  constat    String
+  at         DateTime @db.Timestamptz(3)
+
+  @@id([controleId, siege])
+  @@map("controle_siege")
+}
+
+/// Un convoyeur signalé : une vente en route que le voyageur dit avoir payée et qu'il n'a pas enregistrée.
+model ControleSignalement {
+  evenementId    String   @id @db.Uuid
+  controleId     String   @db.Uuid
+  departId       String   @db.Uuid
+  convoyeurId    String   @db.Uuid
+  siege          Int
+  montantDeclare Int
+  note           String?
+  at             DateTime @db.Timestamptz(3)
+  patronPrevenu  Boolean  @default(false)
+
+  @@index([controleId])
+  @@index([convoyeurId, at])
+  @@map("controle_signalement")
+}
+
+/// Un voyageur sans billet régularisé par le contrôleur : le billet vendu sur place (canal `convoyeur`).
+model ControleRegularisation {
+  billetId   String   @id @db.Uuid
+  controleId String   @db.Uuid
+  siege      Int
+  prix       Int
+  at         DateTime @db.Timestamptz(3)
+
+  @@index([controleId])
+  @@map("controle_regularisation")
 }

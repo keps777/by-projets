@@ -82,6 +82,12 @@ Autres constats, sans scénario d'échec : il n'y a **pas d'écran de connexion 
 session et l'identité de l'appareil sont déposés dans le stockage local par le banc) ; les appareils doivent être déclarés
 côté serveur (`appareil_sync`) par SQL (AM-093, AM-120) ; l'application web n'utilise pas le moteur de synchronisation.
 
+**A3 corrigé (lot Dc).** Les 15 opérations ont leur route (module `apps/api/src/bord` et routes `appareils` de la
+supervision) ; les deux scénarios `it.fails` « ANOMALIE A3 » du critère 1 sont devenus de vrais scénarios (feuilles du
+convoyeur et du chauffeur, vente en route, scan, dépense, incident, retard, arrivée, contrôle inopiné complet, lecture
+d'un appareil), `conformite-routes` ne liste plus ces routes, et un compte contrôleur a été ajouté au seed de recette.
+Les règles provisoires du lot sont dans `apps/api/src/bord/README.md`.
+
 ## 4. Points douteux et décisions métier à trancher
 
 1. **Remboursement partiel** : le rapport du soir écarte tout le billet annulé de ses chiffres (cash compris), alors que
@@ -151,4 +157,4 @@ JOUÉE : … »), les titres et messages des scénarios, et les données de dém
 
 Non signé. Décision de mise en service : _à porter par Luther_.
 
-Nom : ********\_\_\_\_******** Date : ********\_\_\_\_******** Signature : ********\_\_\_\_********
+Nom : **\*\*\*\***\_\_\_\_**\*\*\*\*** Date : **\*\*\*\***\_\_\_\_**\*\*\*\*** Signature : **\*\*\*\***\_\_\_\_**\*\*\*\***

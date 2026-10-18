@@ -502,3 +502,24 @@ et par PostgreSQL, garanties de la base, API de bout en bout) et `comptable/verr
 Pour la production : `ComptableModule` et `AssistantModule` refusent encore de démarrer tant que
 `MessagerieCabinet`, `rembourser` / `reclamer` et `AppliquerActions` sont simulés ; `releve_operateur_ligne` et
 `facture_payee` sont lues mais rien ne les alimente encore.
+
+## Lot Dc : le bord (convoyeur, chauffeur, contrôleur) et les appareils bloqués (écart A3 de la recette)
+
+- **Module** `src/bord` (`BordModule`, dans `AppModule`, bloc « LOT Dc ») : 11 routes `GET/POST /agence/bus/*` et
+  `/agence/controle/*`. Six ports (`VentesEnRoute`, `PassagesRoute`, `DepensesBord`, `IncidentsBord`,
+  `RetardsDepart`, `ControlesBord`) avec adaptateurs PostgreSQL et mémoire choisis par `API_STOCKAGE` ;
+  `VerificationPortsBord` refuse de démarrer en production avec un port en mémoire. Détail : `src/bord/README.md`.
+- **Supervision** : `AppareilsService` (`GET /agence/superviseur/appareils/:appareilId` et
+  `POST /agence/superviseur/appareils/deblocage`) ; `SupervisionModule` importe maintenant `BilletterieModule` et
+  `SyncModule`. L'événement `appareil.debloque` entre dans `TYPES_AVEC_VALIDATION` (preuve du PIN). Détail :
+  `src/supervision/README.md`.
+- **Migrations `0010c`** (additives) : `202610180010c00_bord` (colonnes de `depart_incident` et `depart_depense`,
+  six tables `vente_en_route`, `passage_route`, `controle_inopine`, `controle_siege`, `controle_signalement`,
+  `controle_regularisation`) et `202610180010c10_bord_garanties` (clés étrangères, `CHECK`, ajout seul, un seul
+  contrôle ouvert par contrôleur, contrôle clos figé). Aucun verrou consultatif nouveau.
+- **Contrats** : inchangés. `?departId=` des deux feuilles est déjà dans `ParamsDepartBord` ; seul `GET /agence/controle/inopine` accepte en plus `?departId=` (hors contrat, rétrocompatible).
+- **Tests** : `bord/*.test.ts` et `supervision/appareils.e2e.test.ts` ; PostgreSQL : `bord/postgres.integration.test.ts`
+  (conditionné par `DATABASE_URL_TEST`).
+- **Reste** : les événements du bord rejoués par `/sync` ne créent ni billet, ni dépense, ni incident, ni contrôle ;
+  les règles provisoires (limite de vitesse, retard par défaut, jour de paie, montant déclaré, file locale des
+  téléphones) sont listées dans les deux README.

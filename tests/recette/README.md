@@ -16,7 +16,7 @@ RECETTE_SANS_WEB=1 ...                       # ne construit ni ne sert l'applica
 
 1. recrée la base `afrimove_recette` (`drop database … with (force)`, puis `create`) ;
 2. construit l'API, applique les migrations (`apps/api/src/migrate.ts`) et le seed (`seed.ts`), puis ajoute les
-   données de recette (`support/semer-recette.cjs` : guichets 2 et 3, convoyeur, chauffeur, ligne Douala – Yaoundé,
+   données de recette (`support/semer-recette.cjs` : guichets 2 et 3, convoyeur, chauffeur, contrôleur, ligne Douala – Yaoundé,
    trois bus) ;
 3. lance l'API puis `vite preview` sur des ports libres entre 5200 et 5999 ;
 4. joue les fichiers de `scenarios/` l'un après l'autre (une seule base, un seul Chromium) ;
@@ -41,7 +41,7 @@ critère 5 échoue en le disant ; `rclone` n'est pas requis (le faux `rclone` du
 | `critere-4-rapport-soir.test.ts` | 4       | Rapport du patron comparé, au franc près, à un décompte indépendant                                     |
 | `critere-5-sauvegarde.test.ts`   | 5       | `sauvegarder.sh` puis `restaurer.sh` dans une base vide, tables comparées, API sur la base restaurée    |
 | `critere-6-vente-45s.test.ts`    | 6       | Touches et temps d'une vente sur l'écran Vendre                                                         |
-| `conformite-routes.test.ts`      | tous    | Chaque opération du client HTTP a-t-elle sa route dans l'API ? (liste figée des 58 écarts)              |
+| `conformite-routes.test.ts`      | tous    | Chaque opération du client HTTP a-t-elle sa route dans l'API ? (liste figée des écarts connus)          |
 
 ## Règles du banc
 

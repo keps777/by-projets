@@ -39,27 +39,6 @@ const ROUTES_ABSENTES: Record<string, string[]> = {
     "POST /agence/impressions",
   ],
   quai: ["GET /agence/quai/cadence"],
-  "bus : convoyeur et chauffeur": [
-    "GET /agence/bus/convoyeur",
-    "GET /agence/bus/chauffeur",
-    "POST /agence/bus/ventes",
-    "POST /agence/bus/scans",
-    "POST /agence/bus/depenses",
-    "POST /agence/bus/incidents",
-    "POST /agence/bus/retards",
-    "POST /agence/bus/arrivees",
-  ],
-  "contrôle inopiné": [
-    "GET /agence/controle/inopine",
-    "POST /agence/controle/sieges",
-    "POST /agence/controle/regularisations",
-    "POST /agence/controle/signalements",
-    "POST /agence/controle/clotures",
-  ],
-  "superviseur : appareils": [
-    "GET /agence/superviseur/appareils/{}",
-    "POST /agence/superviseur/appareils/deblocage",
-  ],
   "patron : tableau, gares, équipe, réglages, salle de contrôle": [
     "GET /patron/aujourdhui",
     "GET /patron/alertes",

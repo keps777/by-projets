@@ -1,10 +1,13 @@
-import { agence, patron } from "@afrimove/api-client";
+import { agence, creerHorlogeManuelle, patron, type HorlogeManuelle } from "@afrimove/api-client";
+import { agence as contrats } from "@afrimove/contrats";
 import { randomUUID } from "node:crypto";
 import { beforeAll, describe, expect, it } from "vitest";
 import { appeler, connecter, fenetreSansBalayage, lire, type Session } from "../support/api";
 import {
+  appareilDeBord,
   clientHttp,
   creerDepart,
+  declarerAppareil,
   poserColis,
   referentiel,
   type DepartCree,
@@ -399,6 +402,288 @@ describe("critère 1 : une journée de gare, de l'ouverture des caisses au rappo
     });
   });
 
+  /* ---------------------------------------------------------------- en route : convoyeur, chauffeur, contrôleur */
+
+  describe("le bus de 8 h en route (écart A3 corrigé)", () => {
+    // Le bus de 8 h (17 voyageurs à bord) roule. Les équipiers ont chacun leur téléphone, leur compte et leur PIN.
+    let convoyeur: Session;
+    let chauffeur: Session;
+    let controleur: Session;
+    let horloge: HorlogeManuelle;
+    const dep = (): DepartCree => departs[0]!;
+
+    beforeAll(async () => {
+      convoyeur = await connecter("convoyeur");
+      chauffeur = await connecter("chauffeur");
+      controleur = await connecter("controleur");
+      // L'heure des téléphones : 9 h 30 le jour de la journée jouée, le bus roule depuis 8 h.
+      horloge = creerHorlogeManuelle(minuit + hm(9, 30));
+    });
+
+    it("le convoyeur et le chauffeur lisent leur feuille de route, avec le client de l'application", async () => {
+      const a = await clientHttp(convoyeur).executer(agence.OP_CONVOYEUR_ETAT, {
+        departId: dep().id,
+      });
+      expect(a.departId).toBe(dep().id);
+      expect(a.convoyeur.id).toBe(convoyeur.id);
+      expect(a.trajet).toMatchObject({ origine: "Douala", destination: "Yaoundé" });
+      expect(a.compteurs.scannesABord).toBe(17);
+      expect(a.vente).toMatchObject({ arretMontee: "Douala", destination: "Yaoundé", prix: 8000 });
+      const b = await clientHttp(chauffeur).executer(agence.OP_CHAUFFEUR_FEUILLE, {
+        departId: dep().id,
+      });
+      expect(b.chauffeur.id).toBe(chauffeur.id);
+      expect(b.trajet).toMatchObject({ departId: dep().id, aBord: 17 });
+      // Sans `departId`, la feuille est celle du bus en route de l'équipier ; un autre rôle n'y a pas accès.
+      const sans = await appeler("GET", "/agence/bus/chauffeur", { jeton: convoyeur.jeton });
+      expect(sans.statut).toBe(403);
+    });
+
+    it("le convoyeur vend une place en route (plage 3001–3999) et scanne un voyageur à Édéa", async () => {
+      const appareil = appareilDeBord(convoyeur, 1, horloge);
+      const client = clientHttp(convoyeur);
+      const evenementVente = appareil.creerEvenement(agence.ECRITURES.routeBilletVendu.evenement, {
+        billetId: appareil.nouvelId(),
+        departId: dep().id,
+        arretMontee: "Douala",
+        arretDescente: "Yaoundé",
+        siege: 40,
+        prix: 8000,
+        passager: { nom: "Mballa Jean", telephone: null },
+        paiement: { mode: "cash", recu: 10_000, rendu: 2000, reference: null },
+        codeBillet: "7301",
+        gps: { latitude: 4.05, longitude: 9.7, precisionM: 15 },
+      });
+      const vente = await client.executer(
+        agence.ECRITURES.routeBilletVendu.operation,
+        evenementVente,
+      );
+      expect(vente.accuse.statut).toBe("accepte");
+      // Le même événement rejoué (réseau coupé au retour de la réponse) ne vend pas deux fois.
+      const rejouee = await client.executer(
+        agence.ECRITURES.routeBilletVendu.operation,
+        evenementVente,
+      );
+      expect(rejouee.accuse.statut).toBe("deja_recu");
+      expect(rejouee.billet.billetId).toBe(vente.billet.billetId);
+      expect(vente.billet).toMatchObject({ siege: 40, prix: 8000 });
+      expect(vente.ventesEnRoute).toEqual({ nombre: 1, montant: 8000 });
+      const [ligne] = lire<{ sequence: number; etat: string; canal: string }>(
+        `select sequence, etat, canal from billet where id = '${vente.billet.billetId}'`,
+      );
+      expect(ligne?.sequence).toBeGreaterThanOrEqual(3001);
+      expect(ligne?.sequence).toBeLessThanOrEqual(3999);
+      expect(ligne).toMatchObject({ etat: "embarque", canal: "convoyeur" });
+
+      // Une autre vente du même siège est refusée : le siège est pris (409).
+      const doublon = await client
+        .executer(
+          agence.ECRITURES.routeBilletVendu.operation,
+          appareil.creerEvenement(agence.ECRITURES.routeBilletVendu.evenement, {
+            billetId: appareil.nouvelId(),
+            departId: dep().id,
+            arretMontee: "Douala",
+            arretDescente: "Yaoundé",
+            siege: 40,
+            prix: 8000,
+            passager: { nom: "Autre", telephone: null },
+            paiement: { mode: "cash", recu: 8000, rendu: 0, reference: null },
+            codeBillet: "7302",
+            gps: null,
+          }),
+        )
+        .catch((e: { statut?: number }) => e);
+      expect(doublon).toMatchObject({ statut: 409 });
+
+      const scan = await client.executer(
+        agence.ECRITURES.routeScanne.operation,
+        appareil.creerEvenement(agence.ECRITURES.routeScanne.evenement, {
+          departId: dep().id,
+          arret: "Édéa",
+          qr: ventesDe(0)[1]!.billet!.qr,
+        }),
+      );
+      expect(scan.accuse.statut).toBe("accepte");
+      expect(scan.scannesABord).toBe(18);
+
+      const feuille = await client.executer(agence.OP_CONVOYEUR_ETAT, { departId: dep().id });
+      expect(feuille.compteurs.ventesEnRoute).toEqual({ nombre: 1, montant: 8000 });
+      expect(feuille.compteurs.scannesABord).toBe(18);
+    });
+
+    it("le chauffeur déclare une dépense, un incident, un retard, puis l'arrivée à Édéa", async () => {
+      const appareil = appareilDeBord(chauffeur, 1, horloge);
+      const client = clientHttp(chauffeur);
+      const depense = await client.executer(
+        agence.ECRITURES.chauffeurDepense.operation,
+        appareil.creerEvenement(agence.ECRITURES.chauffeurDepense.evenement, {
+          depenseId: appareil.nouvelId(),
+          departId: dep().id,
+          categorie: "carburant",
+          libelle: "Gasoil, station d'Édéa",
+          montant: 25_000,
+          justificatifRef: "photo-gasoil-1",
+        }),
+      );
+      expect(depense.totalDepenses).toBe(25_000);
+      expect(depense.depense).toMatchObject({ categorie: "carburant", montant: 25_000 });
+
+      const incident = await client.executer(
+        agence.ECRITURES.chauffeurIncident.operation,
+        appareil.creerEvenement(agence.ECRITURES.chauffeurIncident.evenement, {
+          incidentId: appareil.nouvelId(),
+          departId: dep().id,
+          nature: "panne",
+          gps: { latitude: 3.95, longitude: 10.0, precisionM: 20 },
+          note: "Crevaison, roue de secours montée",
+        }),
+      );
+      expect(incident.accuse.statut).toBe("accepte");
+      expect(incident.garePrevenue).toBe(true);
+
+      const retard = await client.executer(
+        agence.ECRITURES.chauffeurRetard.operation,
+        appareil.creerEvenement(agence.ECRITURES.chauffeurRetard.evenement, {
+          departId: dep().id,
+          minutes: 20,
+        }),
+      );
+      expect(retard.accuse.statut).toBe("accepte");
+      expect(retard.garePrevenue).toBe(true);
+
+      const arrivee = await client.executer(
+        agence.ECRITURES.chauffeurArriveeArret.operation,
+        appareil.creerEvenement(agence.ECRITURES.chauffeurArriveeArret.evenement, {
+          departId: dep().id,
+          arret: "Édéa",
+          gps: null,
+        }),
+      );
+      expect(arrivee.accuse.statut).toBe("accepte");
+
+      const feuille = await client.executer(agence.OP_CHAUFFEUR_FEUILLE, { departId: dep().id });
+      expect(feuille.depenses.total).toBe(25_000);
+      expect(feuille.depenses.lignes).toHaveLength(1);
+      // La dépense et l'incident sont dans les tables du départ, avec leur auteur.
+      const [d] = lire<{ n: number }>(
+        `select count(*)::int as n from depart_depense where "departId" = '${dep().id}' and "auteurId" = '${chauffeur.id}'`,
+      );
+      expect(d?.n).toBe(1);
+      const [i] = lire<{ n: number }>(
+        `select count(*)::int as n from depart_incident where "departId" = '${dep().id}' and "auteurId" = '${chauffeur.id}'`,
+      );
+      expect(i?.n).toBe(1);
+    });
+
+    it("le contrôleur ouvre un contrôle, constate un siège sans billet, signale le convoyeur, régularise et clôt : le constat part au patron", async () => {
+      const appareil = appareilDeBord(controleur, 2, horloge);
+      const client = clientHttp(controleur);
+      // L'écran ouvre le contrôle sur « le bus en route le plus récent » ; la recette choisit le bus par `?departId=`
+      // (seule extension hors contrat du lot : les autres scénarios laissent aussi des bus « en route » en base).
+      const lecture = await appeler("GET", "/agence/controle/inopine", {
+        jeton: controleur.jeton,
+        requete: { departId: dep().id },
+      });
+      expect(lecture.statut, JSON.stringify(lecture.corps)).toBe(200);
+      const ouvert = contrats.SchemaControleInopine.parse(lecture.corps);
+      expect(ouvert.departId).toBe(dep().id);
+      expect(ouvert.controleur.id).toBe(controleur.id);
+      // 17 embarqués au quai + 1 vente en route = 18 billets valides, 18 têtes : rien ne manque.
+      expect(ouvert.comptes).toEqual({ liste: 18, tetes: 18, ecart: 0 });
+      const controleId = ouvert.controleId;
+
+      const constat = await client.executer(
+        agence.ECRITURES.controleSiegeVerifie.operation,
+        appareil.creerEvenement(agence.ECRITURES.controleSiegeVerifie.evenement, {
+          controleId,
+          departId: dep().id,
+          siege: 41,
+          constat: "sans_billet",
+        }),
+      );
+      expect(constat.controle.comptes).toEqual({ liste: 18, tetes: 19, ecart: 1 });
+
+      const signale = await client.executer(
+        agence.ECRITURES.controleConvoyeurSignale.operation,
+        appareil.creerEvenement(agence.ECRITURES.controleConvoyeurSignale.evenement, {
+          controleId,
+          departId: dep().id,
+          convoyeurId: referentiel().convoyeurId,
+          siege: 41,
+          montantDeclare: 8000,
+          note: "Dit avoir payé en monnaie à Édéa",
+        }),
+      );
+      expect(signale.accuse.statut).toBe("accepte");
+
+      const regularise = await client.executer(
+        agence.ECRITURES.controleRegularise.operation,
+        appareil.creerEvenement(agence.ECRITURES.controleRegularise.evenement, {
+          controleId,
+          billetId: appareil.nouvelId(),
+          departId: dep().id,
+          siege: 41,
+          prix: 8000,
+          paiement: { mode: "cash", recu: 8000, rendu: 0, reference: null },
+          codeBillet: "7401",
+          passager: { nom: "Njoya Marie", pieceQuatreDerniers: "1234" },
+        }),
+      );
+      expect(regularise.accuse.statut).toBe("accepte");
+      const [billet] = lire<{ sequence: number; etat: string }>(
+        `select sequence, etat from billet where "departId" = '${dep().id}' and siege = 41`,
+      );
+      // Deuxième moitié de la plage commune des convoyeurs (la première est celle du convoyeur).
+      expect(billet?.sequence).toBeGreaterThanOrEqual(3500);
+      expect(billet?.sequence).toBeLessThanOrEqual(3999);
+      expect(billet?.etat).toBe("embarque");
+
+      const apres = await client.executer(agence.OP_CONTROLE_INOPINE, { controleId });
+      expect(apres.comptes).toEqual({ liste: 19, tetes: 19, ecart: 0 });
+
+      const cloture = await client.executer(
+        agence.ECRITURES.controleCloture.operation,
+        appareil.creerEvenement(agence.ECRITURES.controleCloture.evenement, {
+          controleId,
+          departId: dep().id,
+          ...apres.comptes,
+        }),
+      );
+      expect(cloture.controle).toMatchObject({ controleId, clos: true, envoyeAuPatron: true });
+      const [fige] = lire<{ liste: number; tetes: number; ecart: number; envoye: boolean }>(
+        `select liste, tetes, ecart, "envoyeAuPatron" as envoye from controle_inopine where id = '${controleId}'`,
+      );
+      expect(fige).toEqual({ liste: 19, tetes: 19, ecart: 0, envoye: true });
+      // Un contrôle clos ne bouge plus.
+      const tardif = await client
+        .executer(
+          agence.ECRITURES.controleSiegeVerifie.operation,
+          appareil.creerEvenement(agence.ECRITURES.controleSiegeVerifie.evenement, {
+            controleId,
+            departId: dep().id,
+            siege: 42,
+            constat: "sans_billet",
+          }),
+        )
+        .catch((e: { statut?: number }) => e);
+      expect(tardif).toMatchObject({ statut: 409 });
+    });
+
+    it("le superviseur lit l'état d'un appareil de la gare : un appareil jamais synchronisé n'a rien à montrer (409)", async () => {
+      const appareilId = `recette-appareil-jamais-synchro-${randomUUID().slice(0, 8)}`;
+      declarerAppareil(appareilId, 2);
+      const r = await appeler("GET", `/agence/superviseur/appareils/${appareilId}`, {
+        jeton: superviseur.jeton,
+      });
+      expect(r.statut).toBe(409);
+      expect(r.corps.code).toBe("APPAREIL_JAMAIS_SYNCHRONISE");
+      const inconnu = await appeler("GET", `/agence/superviseur/appareils/${randomUUID()}`, {
+        jeton: superviseur.jeton,
+      });
+      expect(inconnu.statut).toBe(404);
+    });
+  });
+
   /* ---------------------------------------------------------------- ce que la pile ne permet pas encore */
 
   it.fails("ANOMALIE A5 : un colis se déclare au guichet (POST /agence/colis)", async () => {
@@ -421,40 +706,6 @@ describe("critère 1 : une journée de gare, de l'ouverture des caisses au rappo
     });
     expect(r.statut).toBe(200);
   });
-
-  it.fails(
-    "ANOMALIE A3 : le convoyeur et le chauffeur lisent leur feuille de route (GET /agence/bus/convoyeur, /chauffeur)",
-    async () => {
-      const convoyeur = await connecter("convoyeur");
-      const chauffeur = await connecter("chauffeur");
-      const a = await appeler("GET", "/agence/bus/convoyeur", {
-        jeton: convoyeur.jeton,
-        requete: { departId: departs[0]!.id },
-      });
-      const b = await appeler("GET", "/agence/bus/chauffeur", {
-        jeton: chauffeur.jeton,
-        requete: { departId: departs[0]!.id },
-      });
-      expect([a.statut, b.statut]).toEqual([200, 200]);
-    },
-  );
-
-  it.fails(
-    "ANOMALIE A3 : le chauffeur signale un retard ou une dépense en route (POST /agence/bus/retards, /depenses)",
-    async () => {
-      const chauffeur = await connecter("chauffeur");
-      const poste = new Poste(chauffeur, 1);
-      const r = await appeler("POST", "/agence/bus/retards", {
-        jeton: chauffeur.jeton,
-        corps: poste.appareil.creerEvenement(agence.ECRITURES.chauffeurRetard.evenement, {
-          departId: departs[0]!.id,
-          minutes: 20,
-          motif: "controle",
-        } as never),
-      });
-      expect(r.statut).toBe(200);
-    },
-  );
 
   it.fails(
     "ANOMALIE A1 : le patron voit sa journée en direct (GET /patron/aujourdhui)",

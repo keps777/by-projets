@@ -5,7 +5,7 @@ import {
   creerHorlogeManuelle,
   type ClientHttp,
 } from "@afrimove/api-client";
-import { aammjjDouala, plageGuichet, type EtatGenerateur } from "@afrimove/domain";
+import { aammjjDouala, plageConvoyeur, plageGuichet, type EtatGenerateur } from "@afrimove/domain";
 import { ecrire, lire, pile, type Session } from "./api";
 
 /** Ce que le seed de recette a posé (identifiants lus dans la base, une fois par fichier de tests). */
@@ -135,6 +135,25 @@ export function appareilDeGuichet(
     plage: plageGuichet(rang),
     horloge,
     etat: etatDepuisLaBase(rang, horloge.maintenant()),
+  });
+}
+
+/**
+ * L'appareil d'un équipier du bus (convoyeur, chauffeur, contrôleur) : les numéros de billet vendus en route sont
+ * dans la plage commune des convoyeurs 3001–3999, partagée en deux (`rang` 1 pour le convoyeur, 2 pour le contrôleur).
+ */
+export function appareilDeBord(
+  session: Session,
+  rang: 1 | 2,
+  horloge = creerHorlogeManuelle(Date.now()),
+) {
+  return agence.creerAppareilAgence({
+    appareilId: `recette-bord-${session.nom}-${session.id.slice(-6)}`,
+    auteurId: session.id,
+    agence: "DEM",
+    gare: "DLA",
+    plage: plageConvoyeur(rang, 2),
+    horloge,
   });
 }
 

@@ -143,6 +143,26 @@ export const DEF_EQUIPE_AFFECTATION_CHANGEE: DefinitionLecture<DonneesAffectatio
   cible: (d) => ({ type: "personne", id: d.personneId }),
 };
 
+export const OPTIONS_DEBLOCAGE = ["synchroniser", "debloquer_4h", "telephone_secours"] as const;
+export type OptionDeblocage = (typeof OPTIONS_DEBLOCAGE)[number];
+
+export interface DonneesAppareilDebloque {
+  appareilId: string;
+  option: OptionDeblocage;
+  validePar: ValidationSuperviseurLue;
+}
+
+export const DEF_APPAREIL_DEBLOQUE: DefinitionLecture<DonneesAppareilDebloque> = {
+  type: "appareil.debloque",
+  donnees: (l: Lecteur, d) =>
+    complet<DonneesAppareilDebloque>({
+      appareilId: l.texte(d["appareilId"], "donnees.appareilId", 128),
+      option: l.choix(d["option"], "donnees.option", OPTIONS_DEBLOCAGE),
+      validePar: l.validationSuperviseur(d["validePar"], "donnees.validePar"),
+    }),
+  cible: (d) => ({ type: "appareil", id: d.appareilId }),
+};
+
 export const lireDemandeAnnulation = (b: unknown): EvenementLu<DonneesDemandeAnnulation> =>
   lireEvenement(b, DEF_ANNULATION_DEMANDEE);
 export const lireDecisionAnnulation = (b: unknown): EvenementLu<DonneesDecisionAnnulation> =>
@@ -160,6 +180,9 @@ export const lirePersonneDebloquee = (b: unknown): EvenementLu<DonneesPersonne> 
 export const lireAffectation = (b: unknown): EvenementLu<DonneesAffectation> =>
   lireEvenement(b, DEF_EQUIPE_AFFECTATION_CHANGEE);
 
+export const lireAppareilDebloque = (b: unknown): EvenementLu<DonneesAppareilDebloque> =>
+  lireEvenement(b, DEF_APPAREIL_DEBLOQUE);
+
 /** Tous les types d'événements qui exigent la validation d'un superviseur par son PIN. */
 export const TYPES_AVEC_VALIDATION = [
   "annulation.decidee",
@@ -169,4 +192,5 @@ export const TYPES_AVEC_VALIDATION = [
   "equipe.affectation_changee",
   "equipe.compte_desactive",
   "equipe.personne_debloquee",
+  "appareil.debloque",
 ] as const;
