@@ -55,7 +55,7 @@ Le choix est fait par `socle/db/stockage.ts` (`stockageSurPostgres`) dans les fa
 | --------------------------- | -------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | Numérotation (AM-161)       | `src/numerotation`   | oui         | `PlagesAttribuees`, `RegistreNumeros`, `AlertesNumerotation`                                                                                                                                                                                                                                          | **PostgreSQL** (`postgres.ts`) ou mémoire, selon `API_STOCKAGE`                                                 |
 | Modules (AM-126)            | `src/modules`        | oui         | `ReglagesModules`, `AnnuaireAgences` (`DetailsModules` reste le défaut sans détail)                                                                                                                                                                                                                   | **PostgreSQL** (`postgres.ts`) ou mémoire, selon `API_STOCKAGE`                                                 |
-| Synchronisation (AM-160)    | `src/sync`           | oui         | `AppareilsSync`, `JournalSync`, `SiegesSync`, `AlertesSync`, `ProvisionnementSync`                                                                                                                                                                                                                    | **PostgreSQL** (`postgres.ts`) ou mémoire, selon `API_STOCKAGE` (`ProvisionnementSync` : `ProvisionnementVide`) |
+| Synchronisation (AM-160)    | `src/sync`           | oui         | `AppareilsSync`, `JournalSync`, `SiegesSync`, `AlertesSync`, `ProvisionnementSync`                                                                                                                                                                                                                    | **PostgreSQL** (`postgres.ts`) ou mémoire, selon `API_STOCKAGE` (`ProvisionnementSync` : `ProvisionnementPrisma`, lot Dd) |
 | Billetterie (AM-162)        | `src/billetterie`    | oui         | `Catalogue`, `Billets`, `Inventaire`, `Commandes`, `Scans`, `EvenementsTraites`, `PreferencesVoyageur`, `NumerotationEnLigne`, `Promotions`, `ProchesVoyageur`, `ColisDuDepart`, `AvisBillets` (lot B, `postgres-annexes.ts`) ; hors base : `ConversionDevises`, `DiffusionTempsReel`, `SignataireQr` | **PostgreSQL** (`postgres.ts`) ou mémoire, selon `API_STOCKAGE`                                                 |
 | SMS (AM-166)                | `src/sms`            | oui         | `JournalSms` (PostgreSQL) ; `FileEnvoiSms` (BullMQ + Redis, à écrire)                                                                                                                                                                                                                                 | Journal **PostgreSQL** (`postgres.ts`) ou mémoire ; file en mémoire                                             |
 | Colis (AM-163)              | `src/colis`          | oui         | `ColisRepository`, `PhotosColis`, `ReclamationsRepository`, `FichiersPhotos`, `ReferentielColis`, …                                                                                                                                                                                                   | **PostgreSQL** (`postgres.ts`) ou mémoire, selon `API_STOCKAGE`                                                 |
@@ -239,9 +239,9 @@ se comporte comme la base. Les suites sont dans `numerotation/testing/contrat-po
 
 1. **Fait : synchronisation** (`src/sync/postgres.ts`) et **billetterie** (`src/billetterie/postgres.ts`,
    `postgres-annexes.ts` au lot B : promotions, proches, colis du départ, avis). Reste : poser
-   `BILLETTERIE_QR_CLE_PRIVEE` (secret). `ProvisionnementSync` est branché sur `ProvisionnementVide`
-   (aucune part de sièges hors ligne, aucun vérificateur de PIN) : il faudra le rebrancher sur la
-   billetterie et les comptes quand l'appareil devra valider un déblocage sur place.
+   `BILLETTERIE_QR_CLE_PRIVEE` (secret). Les parts de sièges hors ligne sont fournies (lot Dd,
+   `part_hors_ligne`) ; les vérificateurs de PIN des superviseurs restent vides : il faudra les brancher sur
+   les comptes quand l'appareil devra valider un déblocage sur place.
 2. **Fait : journal des SMS** (`src/sms/postgres.ts`). Reste la **file d'envoi** (`FileEnvoiSms` sur
    BullMQ + Redis, voir `src/sms/README.md`) : sans elle `SmsModule` refuse de démarrer en production.
 3. **Colis, caisse, supervision** : faits à l'étape 2b (AM-163, AM-164). Reste à brancher, quand la
@@ -549,3 +549,21 @@ SQL), `patron.module.test.ts`, `calculs.test.ts`, `validation.test.ts`.
 - **Reste** : les événements du bord rejoués par `/sync` ne créent ni billet, ni dépense, ni incident, ni contrôle ;
   les règles provisoires (limite de vitesse, retard par défaut, jour de paie, montant déclaré, file locale des
   téléphones) sont listées dans les deux README.
+<!-- LOT Dd : début -->
+
+## Lot Dd : ventes hors ligne (A6, A7)
+
+- **A6** : `POST /sync/evenements` crée le billet d'une vente rejouée par la même création que
+  `POST /agence/billets` (`BilletsSynchronises`, adaptateur `BilletsSynchroniseesBilletterie`), idempotente par
+  identifiant d'événement (`evenement_traite`, partagée avec `/agence/*`). Numéro et siège de l'événement
+  respectés ; un siège déjà tenu par un billet vendu en ligne reste à ce billet, le billet hors ligne est créé
+  sans siège (« à replacer ») avec l'alerte `siege_en_conflit`. Les anomalies métier ne refusent jamais la vente :
+  alertes `vente_atypique` et `vente_non_enregistree` (voir `src/sync/README.md`).
+- **A7** : `ProvisionnementPrisma` (`src/sync/postgres.ts`) remplace `ProvisionnementVide` sur PostgreSQL. Table
+  `part_hors_ligne` (migration `20261018001030_parts_hors_ligne`), répartition figée par départ à la première
+  demande, réserve en ligne de 15 % (règle provisoire), part rattachée au rang du guichet.
+- Tests : `sync/billets-synchronises.e2e.test.ts`, `sync/provisionnement.integration.test.ts`,
+  `sync/postgres.integration.test.ts` (A6 + A7 de bout en bout), `tests/recette/scenarios/critere-2-hors-ligne.test.ts`
+  (pile réelle). Aucune route ajoutée ; aucun contrat modifié.
+
+<!-- LOT Dd : fin -->

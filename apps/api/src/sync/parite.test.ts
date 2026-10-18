@@ -41,6 +41,34 @@ describe("parité avec @afrimove/domain", () => {
     expect(() => regles.plageConvoyeur(1, 0)).toThrow(RangeError);
   });
 
+  it("répartition des sièges entre les guichets (parts hors ligne), pour toutes les capacités et nombres de guichets utiles", () => {
+    for (const capacite of [9, 20, 33, 40, 50, 70]) {
+      for (let guichets = 1; guichets <= 6; guichets++) {
+        const reserve = regles.reserveEnLigne(capacite);
+        expect(reserve).toBeLessThan(capacite);
+        const ids = Array.from({ length: guichets }, (_, i) => `g${i}`);
+        const attendu = domaine.repartirPartsHorsLigne(
+          domaine.creerPlanSieges(capacite),
+          ids,
+          reserve,
+        ).partsHorsLigne;
+        const obtenu = regles.repartirParts(capacite, guichets, reserve);
+        expect(obtenu, `${capacite} places, ${guichets} guichets`).toEqual(
+          ids.map((id) => attendu[id]),
+        );
+      }
+    }
+    expect(() => regles.repartirParts(40, 0, 0)).toThrow(RangeError);
+    expect(() => regles.repartirParts(40, 2, 40)).toThrow(RangeError);
+  });
+
+  it("la réserve en ligne : 15 % des places, arrondis en haut, jamais tout le bus", () => {
+    expect(regles.reserveEnLigne(40)).toBe(6);
+    expect(regles.reserveEnLigne(70)).toBe(11);
+    expect(regles.reserveEnLigne(1)).toBe(0);
+    expect(regles.reserveEnLigne(0)).toBe(0);
+  });
+
   it("heures de Douala (versIsoDouala, aammjjDouala), y compris autour de minuit", () => {
     const instants = [
       "2027-01-05T05:30:00+01:00",

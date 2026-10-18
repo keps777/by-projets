@@ -1,10 +1,11 @@
+import { randomBytes } from "node:crypto";
 import { Injectable } from "@nestjs/common";
 import type { Utilisateur } from "../socle/auth/decorateurs";
 import { Horloge } from "../socle/horloge";
 import { BilletsService, entreeHistorique } from "./billets.service";
 import { exigerSiegeExistant, exigerVendable } from "./controles";
 import { DepartsService } from "./departs.service";
-import { conflit, inconnu, interdit, invalide } from "./erreurs";
+import { Refus, conflit, inconnu, interdit, invalide } from "./erreurs";
 import type { Billet, DepartComplet, Passager, ResultatScan, ScanStocke } from "./modeles";
 import {
   Billets,
@@ -16,7 +17,13 @@ import {
   SignataireQr,
 } from "./ports";
 import { Passagers } from "./passagers";
-import { plageGuichet, numeroBillet, type ClasseBillet, type Plage } from "./regles";
+import {
+  genererCodeBilletUnique,
+  plageGuichet,
+  numeroBillet,
+  type ClasseBillet,
+  type Plage,
+} from "./regles";
 import type { EvenementRecu, PaiementRecu } from "./schemas";
 import type {
   lireBilletComplete,
@@ -197,6 +204,8 @@ export class AgenceService {
       codeBillet: string;
       aCompleterAuQuai: boolean;
     },
+    /** Faux pour une vente hors ligne rejouée : le numéro est déjà imprimé, la plage n'est qu'un signalement. */
+    controlerPlage = true,
   ): Promise<Billet> {
     if (!u.gareId) throw interdit("GARE_REQUISE", "Ce compte n'est rattaché à aucune gare");
     const gare = await this.catalogue.gare(u.gareId);
@@ -205,7 +214,7 @@ export class AgenceService {
     }
     const sequence = evt.numeroPlage as number;
     const { guichetId, plage } = await this.plageDe(u);
-    if (plage && (sequence < plage.debut || sequence > plage.fin)) {
+    if (controlerPlage && plage && (sequence < plage.debut || sequence > plage.fin)) {
       throw invalide("NUMERO_HORS_PLAGE", "Ce numéro n'est pas dans la plage de ton guichet", {
         plage,
         numero: sequence,
@@ -292,6 +301,178 @@ export class AgenceService {
         ),
       };
     });
+  }
+
+  /**
+   * Une vente faite hors ligne, rejouée par la synchronisation (`POST /sync/evenements`) : la **même** création
+   * de billet que `vendre` / `vendreCadence`, avec la même clé d'idempotence (`evenement_traite`) : si la vente est
+   * déjà passée par `/agence/billets`, ou si la synchronisation est rejouée, rien n'est refait.
+   *
+   * La vente est déjà faite : le billet est imprimé, l'argent encaissé. Elle n'est donc **jamais refusée pour un
+   * motif métier** (départ fermé depuis, prix ou paiement qui ne collent pas au tarif d'aujourd'hui, numéro hors
+   * plage) : l'anomalie est rendue dans `synchro.anomalies` et la synchronisation la signale. Seuls les cas où aucun
+   * billet ne peut exister lèvent un refus : départ inconnu ou d'une autre compagnie, numéro déjà porté par un
+   * autre billet.
+   *
+   * Conflits :
+   * - siège déjà pris (`SIEGE_PRIS`) ou perdu au jugement de la synchronisation (`siegePerdu`) : le billet est créé
+   *   **sans siège** (« à replacer »), `synchro.siege = "a_replacer"`, avec le billet qui tient le siège s'il est connu ;
+   * - code de billet déjà pris dans le départ (deux téléphones ont tiré le même) : un code libre est attribué et
+   *   l'anomalie `code_billet_change` est rendue (le papier porte l'ancien code : à réimprimer).
+   */
+  venteSynchronisee(
+    u: Utilisateur,
+    evt: EvenementVente | EvenementVenteCadence,
+    options: { siegePerdu: boolean },
+  ) {
+    return this.evenement(u, evt, async () => {
+      const d = evt.donnees;
+      const cadence = evt.type === "billet.vendu_cadence";
+      const dc = await this.departDeLAgence(u, d.departId);
+      const anomalies: string[] = [];
+      const tarifs = dc.ligne.tarifs;
+
+      try {
+        exigerVendable(dc);
+      } catch {
+        anomalies.push("depart_non_ouvert");
+      }
+      const bagage = "bagage" in d ? d.bagage : 0;
+      const classe: ClasseBillet = "classe" in d ? d.classe : dc.depart.classe;
+      if (d.prix !== tarifs[classe] || (bagage !== 0 && bagage !== tarifs.bagage)) {
+        anomalies.push("prix_hors_tarif");
+      }
+      try {
+        this.verifierPaiement(d.paiement, d.prix + bagage);
+      } catch {
+        anomalies.push("paiement_incoherent");
+      }
+      let siegeVoulu: number | null = d.siege;
+      if (siegeVoulu !== null) {
+        try {
+          exigerSiegeExistant(dc, siegeVoulu);
+        } catch {
+          anomalies.push("siege_inexistant");
+          siegeVoulu = null;
+        }
+      }
+      let siegeIssue: "garde" | "aucun" | "a_replacer" = siegeVoulu === null ? "aucun" : "garde";
+      if (siegeVoulu !== null && options.siegePerdu) siegeIssue = "a_replacer";
+
+      const passager: Passager =
+        "passager" in d
+          ? {
+              nom: d.passager.nom,
+              telephone: d.passager.telephone,
+              pieceQuatreDerniers: d.passager.pieceQuatreDerniers,
+            }
+          : { nom: null, telephone: d.telephone, pieceQuatreDerniers: null };
+      let billet = await this.creerBilletDeLAgence(
+        u,
+        evt,
+        {
+          dc,
+          billetId: d.billetId,
+          siege: siegeIssue === "a_replacer" ? null : siegeVoulu,
+          classe,
+          prix: d.prix,
+          bagage,
+          passager,
+          paiement: d.paiement,
+          codeBillet: d.codeBillet,
+          aCompleterAuQuai: cadence,
+        },
+        false,
+      );
+
+      let occupantBilletId: string | null = null;
+      let enregistre: Billet | null = null;
+      for (let essai = 0; essai < 4 && !enregistre; essai++) {
+        try {
+          enregistre = await this.billetsService.enregistrer(billet, null);
+        } catch (e) {
+          if (!(e instanceof Refus)) throw e;
+          if (e.code === "SIEGE_PRIS" && billet.siege !== null) {
+            occupantBilletId = await this.sieges.occupant(billet.departId, billet.siege);
+            siegeIssue = "a_replacer";
+            billet = { ...billet, siege: null };
+          } else if (e.code === "CODE_BILLET_PRIS") {
+            const pris = new Set(
+              (await this.billets.duDepart(billet.departId))
+                .filter((b) => b.etat !== "annule")
+                .map((b) => b.codeBillet),
+            );
+            anomalies.push("code_billet_change");
+            billet = {
+              ...billet,
+              codeBillet: genererCodeBilletUnique(
+                () => randomBytes(4).readUInt32BE() / 2 ** 32,
+                pris,
+              ),
+            };
+          } else if (e.code === "NUMERO_EN_DOUBLE" || e.code === "BILLET_EXISTANT") {
+            // Reprise après une coupure entre l'écriture du billet et celle de la réponse mémorisée.
+            const dejaFait = await this.billets.parEvenement(evt.id);
+            if (!dejaFait) throw e;
+            enregistre = dejaFait;
+          } else {
+            throw e;
+          }
+        }
+      }
+      if (!enregistre) {
+        throw conflit("BILLET_NON_ENREGISTRE", "Le billet n'a pas pu être enregistré");
+      }
+
+      const resultat = {
+        billet: billetImprimable(
+          enregistre,
+          this.passagers.dechiffrer(enregistre.passagerChiffre),
+          dc,
+        ),
+        synchro: { siege: siegeIssue, occupantBilletId, anomalies },
+      };
+      return cadence
+        ? { ...resultat, placesRestantes: await this.sieges.placesLibres(dc) }
+        : resultat;
+    });
+  }
+
+  /**
+   * Un billet vendu hors ligne perd son siège au jugement de la synchronisation (un autre billet l'avait avant
+   * lui, à l'heure du geste) : il passe « à replacer » (sans siège) et le siège revient au plan. Un voyageur déjà
+   * monté garde le sien (`false`).
+   */
+  async retirerSiegeSynchronise(
+    billetId: string,
+    departId: string,
+    siege: number,
+  ): Promise<boolean> {
+    const b = await this.billets.trouver(billetId);
+    if (!b || b.departId !== departId || b.siege !== siege) return false;
+    if (b.etat !== "paye" && b.etat !== "reserve") return false;
+    const maj = await this.billets.transitionner(b.id, ["paye", "reserve"], { siege: null });
+    if (!maj) return false;
+    await this.sieges.rendreALaVente(departId, siege, billetId);
+    return true;
+  }
+
+  /** Le conflit est levé (une libération datée d'avant est arrivée en retard) : le billet « à replacer » reprend son siège s'il est libre. */
+  async rendreSiegeSynchronise(
+    billetId: string,
+    departId: string,
+    siege: number,
+  ): Promise<boolean> {
+    const b = await this.billets.trouver(billetId);
+    if (!b || b.departId !== departId || b.siege !== null) return false;
+    if (b.etat !== "paye" && b.etat !== "reserve") return false;
+    if (!(await this.sieges.occuperPour(departId, siege, billetId))) return false;
+    const maj = await this.billets.transitionner(b.id, [b.etat], { siege });
+    if (!maj) {
+      await this.sieges.rendreALaVente(departId, siege, billetId);
+      return false;
+    }
+    return true;
   }
 
   /** `billet.vendu_cadence` : le billet part sans nom ni pièce, à compléter au quai. */

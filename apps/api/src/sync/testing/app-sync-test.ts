@@ -15,6 +15,16 @@ import { configurerApp } from "../../socle/configurer-app";
 import { PrismaService } from "../../socle/db/prisma.service";
 import { EvenementsRepository } from "../../socle/evenements/evenements.service";
 import { Horloge } from "../../socle/horloge";
+import { AgenceService } from "../../billetterie/agence.service";
+import { BilletsMemoire, CatalogueMemoire, InventaireMemoire } from "../../billetterie/memoire";
+import { Billets, Catalogue, Inventaire } from "../../billetterie/ports";
+import {
+  DEPART,
+  DEPART_2,
+  departType,
+  heure,
+  peuplerCatalogue,
+} from "../../billetterie/testing/app-billetterie-test";
 import { configTest } from "../../socle/testing/app-test";
 import {
   AuditMemoire,
@@ -49,6 +59,11 @@ export const COMPAGNIE = "00000000-0000-4000-8000-0000000000c1";
 export const AUTRE_COMPAGNIE = "00000000-0000-4000-8000-0000000000c2";
 export const GARE = "00000000-0000-4000-8000-0000000000a1";
 export const AUTRE_GARE = "00000000-0000-4000-8000-0000000000a2";
+
+/** Un troisième départ ordinaire (19:00, bus de 40 places) à côté de `DEPART` et `DEPART_2` de la billetterie. */
+export const DEPART_3 = "00000000-0000-4000-8000-00000000d0a3";
+/** Trois départs ordinaires de la gare de test : classique, 4 000 F, 40 places. */
+export const DEPARTS_TEST = [DEPART, DEPART_2, DEPART_3] as const;
 
 export interface OptionsAppSyncTest {
   config?: Record<string, string>;
@@ -87,6 +102,12 @@ export async function creerAppSyncTest(options: OptionsAppSyncTest = {}) {
   const app = module.createNestApplication<NestExpressApplication>();
   configurerApp(app, config);
   await app.init();
+
+  // Le réseau de transport de la billetterie (mêmes identifiants de compagnie et de gare que ci-dessus) : une vente
+  // rejouée devient un billet (A6), elle a donc besoin d'un départ qui existe.
+  const catalogue = app.get(Catalogue) as CatalogueMemoire;
+  peuplerCatalogue(catalogue);
+  catalogue.ajouterDepart(departType(DEPART_3, { heureDepart: heure("19:00"), quai: 6 }));
 
   const comptes = app.get(ComptesService);
   const tokens = app.get(TokensService);
@@ -127,6 +148,11 @@ export async function creerAppSyncTest(options: OptionsAppSyncTest = {}) {
     auditRepo,
     compte,
     appareils,
+    /** Le catalogue et les billets de la billetterie (en mémoire) : ce que les ventes rejouées créent. */
+    catalogue,
+    billets: app.get(Billets) as BilletsMemoire,
+    inventaire: app.get(Inventaire) as InventaireMemoire,
+    agence: app.get(AgenceService),
     journal: app.get(JournalSync) as JournalMemoire,
     sieges: app.get(SiegesSync) as SiegesMemoire,
     alertes: app.get(AlertesSync) as AlertesMemoire,

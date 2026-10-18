@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Prisma } from "../socle/db/generated/client";
 import { PrismaService } from "../socle/db/prisma.service";
+import { Horloge } from "../socle/horloge";
 import type { StockageSync } from "./memoire";
 import {
   AlertesSync,
@@ -16,6 +17,7 @@ import {
   type Octroi,
   type TypeAlerte,
 } from "./ports";
+import { repartirParts, reserveEnLigne } from "./regles";
 import type { CleJwk } from "./signature";
 import type { OperationSiege } from "./sieges";
 import { versIsoDouala } from "./temps";
@@ -444,24 +446,106 @@ export class AlertesSyncPrisma extends AlertesSync implements StockageSync {
 
 /* ------------------------------------------------------------------ provisionnement */
 
+/** Départs dont un téléphone reçoit la part : encore vendables, partis depuis moins d'une semaine ou dans les 48 h. */
+const ETATS_AVEC_PART = ["en_vente", "embarquement"];
+const PASSE_MAX_MS = 7 * 24 * 3_600_000;
+const FUTUR_MAX_MS = 48 * 3_600_000;
+const DEPARTS_MAX = 40;
+
 /**
- * Ce que l'appareil reçoit pour travailler hors ligne. **Aucune source de données n'existe encore**
- * pour ces deux listes, il n'y a donc rien à lire en base :
- * - les parts de sièges hors ligne dépendent d'une règle de répartition entre guichets qui n'est pas
- *   décidée ;
- * - les vérificateurs de PIN des superviseurs demandent un secret dérivé pour l'appareil (PBKDF2)
- *   que le serveur ne peut pas tirer de `personne.pinHache` (argon2id avec poivre, côté serveur
- *   seulement) : il faut le calculer quand le superviseur choisit son PIN.
- * Réponse honnête en attendant : des listes vides. L'appareil continue de vendre sur sa plage de
- * numéros ; il ne peut simplement pas valider un déblocage sur place.
+ * Ce que l'appareil reçoit pour travailler hors ligne (A7).
+ *
+ * **Parts de sièges.** Un téléphone de guichet ne vend sans réseau que dans sa part du plan du bus. La part suit le
+ * **rang du guichet** (1 à 3) et non le téléphone : un téléphone de secours reprend la part de celui qu'il remplace.
+ * Pour chaque départ vendable de la gare du téléphone (état `en_vente` ou `embarquement`, bus affecté, parti depuis
+ * moins de 7 jours ou dans les 48 h, 40 au plus) :
+ *
+ * 1. à la première demande, le bus est réparti entre **tous les guichets de la gare** (`guichet`, un bloc de sièges
+ *    contigus chacun, 15 % des derniers sièges gardés pour la vente connectée : `repartirParts`) et la répartition
+ *    est **figée** dans `part_hors_ligne` (`INSERT … ON CONFLICT DO NOTHING` : deux synchronisations simultanées
+ *    s'entendent). Un téléphone qui a déjà vendu ne voit donc jamais sa part changer sous lui ;
+ * 2. à chaque synchronisation, le téléphone reçoit sa part **moins les sièges devenus indisponibles** depuis :
+ *    occupés par un billet (vente en ligne, autre guichet, siège pris par un autre téléphone) ou retenus par une
+ *    commande en cours. C'est la « reprise » : un siège pris ailleurs sort de la part. À l'inverse un siège libéré
+ *    (absent au quai, billet annulé) y revient : c'est la « libération ». Ses propres ventes en attente n'y figurent
+ *    plus non plus, le téléphone les retranche de lui-même (`siegesPris`) ;
+ * 3. la réponse REMPLACE la part de chaque départ cité (une liste vide dit « plus rien à vendre sans réseau ») ; un
+ *    départ qui n'est plus cité (parti, annulé, fermé) n'est plus vendable.
+ *
+ * **Vérificateurs de PIN.** Toujours vides : ils demandent un secret dérivé pour l'appareil (PBKDF2) que le serveur ne
+ * peut pas tirer de `personne.pinHache` (argon2id avec poivre, côté serveur seulement). Il faut le calculer quand le
+ * superviseur choisit son PIN. L'appareil continue de vendre ; il ne peut simplement pas valider un déblocage sur
+ * place.
  */
 @Injectable()
-export class ProvisionnementVide extends ProvisionnementSync implements StockageSync {
-  /** Rien n'est conservé : il n'y a rien à perdre au redémarrage. */
+export class ProvisionnementPrisma extends ProvisionnementSync implements StockageSync {
   readonly durable = true;
 
-  async partsHorsLigne(): Promise<Record<string, number[]>> {
-    return {};
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly horloge: Horloge,
+  ) {
+    super();
+  }
+
+  async partsHorsLigne(appareil: AppareilSync): Promise<Record<string, number[]>> {
+    if (appareil.genre !== "guichet" || appareil.retire) return {};
+    const { rang, gareId } = appareil;
+    if (rang === null || !gareId || !UUID.test(gareId)) return {};
+
+    const maintenant = this.horloge.maintenant();
+    const departs = await this.prisma.$queryRaw<{ id: string; capacite: number }[]>`
+      SELECT d.id::text AS id, b.capacite
+      FROM depart d
+        JOIN ligne l ON l.id = d."ligneId"
+        JOIN bus b ON b.id = d."busId"
+      WHERE l."origineGareId" = ${gareId}::uuid
+        AND d.etat::text = ANY(${ETATS_AVEC_PART}::text[])
+        AND d."heureDepart" >= ${new Date(maintenant.getTime() - PASSE_MAX_MS)}
+        AND d."heureDepart" <= ${new Date(maintenant.getTime() + FUTUR_MAX_MS)}
+      ORDER BY d."heureDepart", d.id
+      LIMIT ${DEPARTS_MAX}`;
+    if (departs.length === 0) return {};
+    const ids = departs.map((d) => d.id);
+
+    let parts = await this.prisma.partHorsLigne.findMany({ where: { departId: { in: ids } } });
+    const sansPart = departs.filter((d) => !parts.some((p) => p.departId === d.id));
+    if (sansPart.length > 0) {
+      const guichets = await this.prisma.$queryRaw<{ rang: number }[]>`
+        SELECT rang FROM guichet WHERE "gareId" = ${gareId}::uuid ORDER BY rang`;
+      const rangs = guichets.map((g) => g.rang);
+      const lignes = sansPart.flatMap((d) => {
+        if (rangs.length === 0 || d.capacite < 2) return [];
+        const reparties = repartirParts(d.capacite, rangs.length, reserveEnLigne(d.capacite));
+        return rangs.map((r, i) => ({ departId: d.id, rang: r, sieges: reparties[i]! }));
+      });
+      if (lignes.length > 0) {
+        await this.prisma.partHorsLigne.createMany({ data: lignes, skipDuplicates: true });
+        // Relue : si une autre synchronisation a figé la répartition la première, c'est la sienne qui vaut.
+        parts = await this.prisma.partHorsLigne.findMany({ where: { departId: { in: ids } } });
+      }
+    }
+
+    const indisponibles = await this.prisma.$queryRaw<{ departId: string; siege: number }[]>`
+      SELECT "departId"::text AS "departId", siege
+      FROM siege_depart
+      WHERE "departId" = ANY(${ids}::uuid[])
+        AND ("billetId" IS NOT NULL OR "bloqueJusqua" > ${maintenant})`;
+    const pris = new Map<string, Set<number>>();
+    for (const l of indisponibles) {
+      const deja = pris.get(l.departId) ?? new Set<number>();
+      deja.add(l.siege);
+      pris.set(l.departId, deja);
+    }
+
+    const resultat: Record<string, number[]> = {};
+    for (const d of departs) {
+      const ma = parts.find((p) => p.departId === d.id && p.rang === rang);
+      if (!ma) continue;
+      const occupes = pris.get(d.id);
+      resultat[d.id] = ma.sieges.filter((s) => s <= d.capacite && !occupes?.has(s));
+    }
+    return resultat;
   }
 
   async verificateursPin(): Promise<

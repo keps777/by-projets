@@ -3331,3 +3331,24 @@ model ControleRegularisation {
   @@index([controleId])
   @@map("controle_regularisation")
 }
+
+/*
+ * LOT Dd · synchronisation : parts de sièges hors ligne (A7). Migration 20261018001030. Bloc contigu en
+ * fin de fichier ; pas de relation Prisma (la clé étrangère vers `depart` est posée en SQL).
+ * ==================================================================================================
+ */
+
+/// La part de sièges qu'un guichet (son rang dans la gare) peut vendre sans réseau, pour un départ. Figée à la
+/// première synchronisation qui la demande (un téléphone qui a déjà vendu ne voit plus sa part changer sous lui),
+/// elle suit le RANG du guichet et non le téléphone : un téléphone de secours reprend la part de celui qu'il remplace.
+/// Les sièges occupés depuis ne sont pas retirés ici : `ProvisionnementPrisma` les retranche à chaque réponse.
+/// SQL : clé étrangère vers `depart` (suppression en cascade), rang >= 1, sièges > 0 et sans doublon.
+model PartHorsLigne {
+  departId String   @db.Uuid
+  rang     Int
+  sieges   Int[]
+  creeA    DateTime @default(now()) @db.Timestamptz(3)
+
+  @@id([departId, rang])
+  @@map("part_hors_ligne")
+}

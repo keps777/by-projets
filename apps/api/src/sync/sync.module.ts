@@ -1,4 +1,5 @@
 import { Inject, Injectable, Module, type OnModuleInit } from "@nestjs/common";
+import { BilletterieModule } from "../billetterie/billetterie.module";
 import { VerrouillageMoisModule } from "../comptable/verrouillage.module";
 import { CONFIG, type AppConfig } from "../socle/config/config";
 import { PrismaService } from "../socle/db/prisma.service";
@@ -13,16 +14,18 @@ import {
   SiegesMemoire,
   type StockageSync,
 } from "./memoire";
+import { BilletsSynchroniseesBilletterie } from "./billets";
 import {
   AlertesSyncPrisma,
   AppareilsSyncPrisma,
   JournalSyncPrisma,
-  ProvisionnementVide,
+  ProvisionnementPrisma,
   SiegesSyncPrisma,
 } from "./postgres";
 import {
   AlertesSync,
   AppareilsSync,
+  BilletsSynchronises,
   ControleNumeros,
   JournalSync,
   ProvisionnementSync,
@@ -44,6 +47,7 @@ export class VerificationStockageSync implements OnModuleInit {
     private readonly sieges: SiegesSync,
     private readonly alertes: AlertesSync,
     private readonly numeros: ControleNumeros,
+    private readonly provisionnement: ProvisionnementSync,
   ) {}
 
   onModuleInit(): void {
@@ -54,6 +58,7 @@ export class VerificationStockageSync implements OnModuleInit {
       ["SiegesSync", this.sieges],
       ["AlertesSync", this.alertes],
       ["ControleNumeros", this.numeros],
+      ["ProvisionnementSync", this.provisionnement],
     ];
     const volatils = ports
       .filter(([, port]) => (port as Partial<StockageSync>).durable === false)
@@ -73,10 +78,11 @@ export class VerificationStockageSync implements OnModuleInit {
  *
  * Importé par `AppModule`. Les ports ci-dessous sont remplaçables : AM-161 fournit
  * `ControleNumeros` et `AttributionPlages` ; les adaptateurs PostgreSQL (`postgres.ts`) remplacent
- * les versions en mémoire en production ou avec `API_STOCKAGE=postgres`.
+ * les versions en mémoire en production ou avec `API_STOCKAGE=postgres`. Les billets des ventes rejouées
+ * (`BilletsSynchronises`, A6) sont créés par la billetterie, importée ici.
  */
 @Module({
-  imports: [NumerotationModule, VerrouillageMoisModule],
+  imports: [NumerotationModule, VerrouillageMoisModule, BilletterieModule],
   controllers: [SyncController],
   providers: [
     RejeuService,
@@ -109,10 +115,13 @@ export class VerificationStockageSync implements OnModuleInit {
     },
     {
       provide: ProvisionnementSync,
-      inject: [CONFIG],
-      useFactory: (config: AppConfig) =>
-        stockageSurPostgres(config) ? new ProvisionnementVide() : new ProvisionnementMemoire(),
+      inject: [CONFIG, PrismaService, Horloge],
+      useFactory: (config: AppConfig, prisma: PrismaService, horloge: Horloge) =>
+        stockageSurPostgres(config)
+          ? new ProvisionnementPrisma(prisma, horloge)
+          : new ProvisionnementMemoire(),
     },
+    { provide: BilletsSynchronises, useClass: BilletsSynchroniseesBilletterie },
   ],
   exports: [
     RejeuService,

@@ -490,6 +490,133 @@ describe.skipIf(!URL_BASE_TEST)("PostgreSQL réel · synchronisation", () => {
       );
     });
 
+    it("A6 et A7 : la part de sièges vient de la base, la vente rejouée y devient un billet, une seule fois, et le siège sort de la part", async () => {
+      const destination = await prisma.gare.create({
+        data: { compagnieId: gare.compagnieId, code: "YDE", nom: "Mvan", ville: "Yaoundé" },
+      });
+      const guichets = await Promise.all(
+        [1, 2].map((rang) => prisma.guichet.create({ data: { gareId: gare.gareId, rang } })),
+      );
+      const ligne = await prisma.ligne.create({
+        data: {
+          compagnieId: gare.compagnieId,
+          code: "DLAYDE",
+          origineGareId: gare.gareId,
+          destinationGareId: destination.id,
+          tarifClassique: 4000,
+          tarifVip: 6000,
+          tarifBagage: 500,
+        },
+      });
+      const bus = await prisma.bus.create({
+        data: {
+          compagnieId: gare.compagnieId,
+          immatriculation: `LT-${randomUUID().slice(0, 6)}`,
+          capacite: 40,
+          classe: "classique",
+        },
+      });
+      const depart = await prisma.depart.create({
+        data: {
+          numero: `T-${randomUUID().slice(0, 10)}`,
+          ligneId: ligne.id,
+          busId: bus.id,
+          classe: "classique",
+          heureDepart: new Date(maintenant() + 2 * 3_600_000),
+          etat: "en_vente",
+        },
+      });
+      const g = await guichet(1);
+      await prisma.personne.update({
+        where: { id: g.auteurId },
+        data: { guichetId: guichets[0]!.id },
+      });
+
+      // 1. La première synchronisation reçoit sa part, figée en base.
+      const accueil = await envoyer(g, await g.lot([]));
+      expect(accueil.status).toBe(200);
+      const part = accueil.body.appareil.partsHorsLigne[depart.id] as number[];
+      expect(part).toHaveLength(17);
+      expect(part[0]).toBe(1);
+      const figee = await sql.query(
+        `SELECT rang FROM part_hors_ligne WHERE "departId" = $1 ORDER BY rang`,
+        [depart.id],
+      );
+      expect(figee.rows.map((r) => r.rang)).toEqual([1, 2]);
+
+      // 2. Une vente dans la part, faite hors ligne, rejouée.
+      const siege = part[4]!;
+      const vente = g.vente({
+        at: maintenant() - 60_000,
+        numeroPlage: 5,
+        departId: depart.id,
+        siege,
+      });
+      const lot = await g.lot([vente]);
+      const premiere = await envoyer(g, lot);
+      expect(premiere.body.resultats[0]).toMatchObject({ statut: "accepte" });
+      const billets = await prisma.billet.findMany({ where: { evenementId: vente.id } });
+      expect(billets).toHaveLength(1);
+      expect(billets[0]).toMatchObject({
+        siege,
+        sequence: 5,
+        canal: "guichet",
+        etat: "paye",
+        guichetId: guichets[0]!.id,
+        auteurId: g.auteurId,
+        departId: depart.id,
+      });
+      const occupe = await sql.query(
+        `SELECT "billetId" FROM siege_depart WHERE "departId" = $1 AND siege = $2`,
+        [depart.id, siege],
+      );
+      expect(occupe.rows).toEqual([{ billetId: billets[0]!.id }]);
+
+      // 3. Rejouée, ou envoyée par la voie en ligne : aucun second billet.
+      expect((await envoyer(g, lot)).body.resultats[0]).toMatchObject({ statut: "deja_recu" });
+      const enLigne = await request(app!.getHttpServer())
+        .post("/agence/billets")
+        .set("Authorization", `Bearer ${g.jeton}`)
+        .send(vente);
+      expect(enLigne.status, JSON.stringify(enLigne.body)).toBe(200);
+      expect(enLigne.body.billet.billetId).toBe(billets[0]!.id);
+      expect(await prisma.billet.count({ where: { departId: depart.id } })).toBe(1);
+
+      // 4. Le siège vendu n'est plus dans la part, et rien n'a été signalé.
+      const suite = await envoyer(g, await g.lot([], { depuis: 2 }));
+      const apres = suite.body.appareil.partsHorsLigne[depart.id] as number[];
+      expect(apres).not.toContain(siege);
+      expect(apres).toHaveLength(16);
+      const alertes = await prisma.alerteSync.findMany({
+        where: { appareilId: g.id, type: { in: ["vente_non_enregistree", "vente_atypique"] } },
+      });
+      expect(alertes).toEqual([]);
+
+      // 5. La même vente envoyée en même temps par les deux voies : un seul billet.
+      const autre = g.vente({
+        at: maintenant() - 30_000,
+        numeroPlage: 6,
+        departId: depart.id,
+        siege: part[8]!,
+      });
+      const lotAutre = await g.lot([autre], { depuis: 2 });
+      const reponses = await Promise.all([
+        ...Array.from({ length: 4 }, () => envoyer(g, lotAutre)),
+        ...Array.from({ length: 4 }, () =>
+          request(app!.getHttpServer())
+            .post("/agence/billets")
+            .set("Authorization", `Bearer ${g.jeton}`)
+            .send(autre),
+        ),
+      ]);
+      expect(
+        reponses.every((r) => r.status === 200),
+        JSON.stringify(reponses.map((r) => r.status)),
+      ).toBe(true);
+      expect(await prisma.billet.count({ where: { evenementId: autre.id } })).toBe(1);
+      expect(await prisma.billet.count({ where: { departId: depart.id } })).toBe(2);
+    });
+
     it("la liste des alertes de la gare vient de la base", async () => {
       const g = await guichet(2);
       const sup = await compte("superviseur");

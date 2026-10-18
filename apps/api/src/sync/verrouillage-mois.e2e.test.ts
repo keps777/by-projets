@@ -50,6 +50,8 @@ describe("synchronisation et mois clôturés", () => {
     const rep = await envoyer([vente]);
     expect(rep.resultats[0]!.statut).toBe("accepte");
     expect(t.journal.lignes.some((l) => l.evenement.id === vente.id)).toBe(true);
+    // Le billet existe aussi (A6) : une vente déjà faite n'est pas perdue, elle garde la date de l'appareil.
+    expect([...t.billets.lignes.values()].map((b) => b.evenementId)).toEqual([vente.id]);
 
     expect(alertesMoisClos()).toHaveLength(1);
     expect(alertesMoisClos()[0]).toMatchObject({

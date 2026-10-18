@@ -16,9 +16,12 @@ import { clientHttp, creerDepart, declarerAppareil, type DepartCree } from "../s
  * (`POST /sync/evenements`, PostgreSQL). Un téléphone est tué et relancé à mi-parcours, un autre perd la réponse d'un
  * lot que le serveur a pourtant traité.
  *
- * Deux choses sont vérifiées, séparément, parce que la pile actuelle les sépare :
- *   1. le journal du serveur (la voie `/sync`) : tout est arrivé, une fois, dans l'ordre, sans trou de numéro ;
- *   2. les billets (la voie `/agence/billets`) : voir « anomalie A6 » plus bas.
+ * Trois choses sont vérifiées :
+ *   1. les parts de sièges : le serveur donne à chaque téléphone sa part du plan du bus (A7) ; un téléphone ne vend
+ *      hors ligne que dans sa part, donc jamais le siège d'un autre ;
+ *   2. le journal du serveur (la voie `/sync`) : tout est arrivé, une fois, dans l'ordre, sans trou de numéro ;
+ *   3. les billets (A6) : la voie `/sync` crée les mêmes billets que `/agence/billets`, avec les numéros et les sièges
+ *      imprimés sur les téléphones, une seule fois, et visibles au quai.
  */
 
 interface Guichet {
@@ -32,8 +35,8 @@ interface Guichet {
   pannes: { perdreReponse: number };
   evenements: string[];
   numeros: string[];
-  /** Ventes déjà faites par départ (pour donner à chaque vente un siège encore libre de la part du guichet). */
-  ventesParDepart: number[];
+  /** Ce que le téléphone a vendu : le billet, son départ et son siège (pris dans la part donnée par le serveur). */
+  ventes: { billetId: string; departId: string; siege: number }[];
 }
 
 const HEURE = 60 * MINUTE;
@@ -98,19 +101,26 @@ function ouvrirMoteur(
 
 async function vendreHorsLigne(g: Guichet, alea: () => number): Promise<void> {
   compteur += 1;
-  const indexDepart = Math.floor(alea() * departs.length);
-  const dejaVendus = g.ventesParDepart[indexDepart]!;
-  if (dejaVendus >= 22)
+  // Un départ au hasard où il reste un siège dans la part du guichet (la part, c'est le serveur qui l'a donnée) : le
+  // siège est toujours le premier de ceux que le moteur autorise encore, jamais celui d'un autre téléphone.
+  const premier = Math.floor(alea() * departs.length);
+  let depart: DepartCree | undefined;
+  let siege: number | undefined;
+  for (let i = 0; i < departs.length && siege === undefined; i++) {
+    depart = departs[(premier + i) % departs.length]!;
+    siege = (await g.moteur.siegesVendablesHorsLigne(depart.id))?.[0];
+  }
+  if (!depart || siege === undefined) {
     throw new Error("La part de sièges du guichet est épuisée : le scénario doit vendre moins");
-  g.ventesParDepart[indexDepart] = dejaVendus + 1;
+  }
   const mode = alea() < 0.7 ? "cash" : alea() < 0.5 ? "momo" : "orange_money";
   const bagage = alea() < 0.2 ? 500 : 0;
   const du = 8000 + bagage;
+  const billetId = randomUUID();
   const r = await g.moteur.enregistrer(agence.ECRITURES.billetVendu.evenement, {
-    billetId: randomUUID(),
-    departId: departs[indexDepart]!.id,
-    // Chaque guichet a son tiers de sièges : jamais deux appareils sur le même siège, même sans réseau.
-    siege: (g.rang - 1) * 22 + dejaVendus + 1,
+    billetId,
+    departId: depart.id,
+    siege,
     classe: "classique",
     prix: 8000,
     bagage,
@@ -125,6 +135,7 @@ async function vendreHorsLigne(g: Guichet, alea: () => number): Promise<void> {
     sms: false,
   } as never);
   g.evenements.push(r.evenement.id);
+  g.ventes.push({ billetId, departId: depart.id, siege });
   if (r.numero) g.numeros.push(r.numero);
 }
 
@@ -173,7 +184,7 @@ beforeAll(async () => {
       moteur,
       evenements: [],
       numeros: [],
-      ventesParDepart: departs.map(() => 0),
+      ventes: [],
     });
   }
 });
@@ -194,29 +205,52 @@ describe("critère 2 : 4 h de vente hors ligne, puis synchronisation", () => {
     expect(cles[0]?.n).toBe(3);
   });
 
-  // Anomalie A7 (procès-verbal) : sur PostgreSQL, `ProvisionnementSync` est `ProvisionnementVide` : le serveur ne donne à
-  // aucun téléphone sa part de sièges. Sans part, la vente d'un siège hors ligne est refusée par le moteur
-  // (`PartInconnue`). Quand le serveur fournira les parts, ce test passera au rouge : retirer `.fails`.
-  it.fails(
-    "ANOMALIE A7 : après sa première synchronisation, un téléphone connaît sa part de sièges hors ligne",
-    async () => {
+  // A7 : le serveur donne à chaque téléphone sa part du plan de sièges de chaque départ ouvert de sa gare. Le bus compte
+  // 70 places : 15 % (11) restent à la vente connectée, les 59 autres sont partagées entre les trois guichets en
+  // blocs contigus (20, 20 et 19), sans recouvrement.
+  it("A7 : après sa première synchronisation, chaque téléphone connaît sa part de sièges, et les trois parts ne se recouvrent pas", async () => {
+    for (const d of departs) {
+      const parts: number[][] = [];
       for (const g of guichets) {
-        const parts = await g.moteur.siegesVendablesHorsLigne(departs[0]!.id);
-        expect(parts, `part du guichet ${g.rang}`).not.toBeNull();
-        expect(parts!.length).toBeGreaterThan(0);
+        const part = await g.moteur.siegesVendablesHorsLigne(d.id);
+        expect(part, `part du guichet ${g.rang}, départ ${d.numero}`).not.toBeNull();
+        parts.push(part!);
       }
-    },
-  );
+      expect(parts.map((p) => p.length)).toEqual([20, 20, 19]);
+      const tous = parts.flat();
+      expect(new Set(tous).size).toBe(tous.length);
+      expect(Math.min(...tous)).toBe(1);
+      expect(Math.max(...tous)).toBe(59);
+      // Des blocs contigus, dans l'ordre des guichets.
+      for (const part of parts) expect(part).toEqual(part.map((_, i) => part[0]! + i));
+    }
+  });
+
+  it("un téléphone ne peut pas vendre hors ligne un siège qui n'est pas dans sa part", async () => {
+    const g = guichets[0]!;
+    g.reseau.definir(false);
+    const siegeDUnAutre = (await guichets[1]!.moteur.siegesVendablesHorsLigne(departs[0]!.id))![0]!;
+    const departId = departs[0]!.id;
+    await expect(
+      g.moteur.enregistrer(agence.ECRITURES.billetVendu.evenement, {
+        billetId: randomUUID(),
+        departId,
+        siege: siegeDUnAutre,
+        classe: "classique",
+        prix: 8000,
+        bagage: 0,
+        passager: { nom: "Voyageur refusé", telephone: null, pieceQuatreDerniers: null },
+        paiement: { mode: "cash", recu: 8000, rendu: 0, reference: null },
+        codeBillet: "9999",
+        sms: false,
+      } as never),
+    ).rejects.toMatchObject({ name: "SiegeHorsPart" });
+    g.reseau.definir(true);
+  });
 
   it("quatre heures sans réseau : les téléphones vendent, rien ne part, l'indicateur dit HORS LIGNE", async () => {
     const alea = aleatoire(181);
-    // Faute de parts fournies par le serveur (A7), l'application les poserait elle-même depuis le plan de sièges :
-    // ici, un tiers du bus (22 sièges) par guichet et par départ, jamais deux téléphones sur le même siège.
-    for (const g of guichets) {
-      const part = Array.from({ length: 22 }, (_, i) => (g.rang - 1) * 22 + i + 1);
-      await g.moteur.definirPartsHorsLigne(Object.fromEntries(departs.map((d) => [d.id, part])));
-      g.reseau.definir(false);
-    }
+    for (const g of guichets) g.reseau.definir(false);
     for (let pas = 0; pas < 48; pas++) {
       horloge.avancer(5 * MINUTE);
       for (const g of guichets) if (alea() < 0.7) await vendreHorsLigne(g, alea);
@@ -333,53 +367,88 @@ describe("critère 2 : 4 h de vente hors ligne, puis synchronisation", () => {
     expect(apres).toBe(avant);
   });
 
-  // Anomalie A6 (procès-verbal) : la voie `/sync` journalise l'événement, applique le numéro et le siège, mais ne crée
-  // pas le billet. Tant que ce n'est pas branché, ce test « doit échouer » ; le jour où la synchronisation crée les
-  // billets, il passera au rouge et il faudra retirer `.fails`.
-  it.fails(
-    "ANOMALIE A6 : chaque vente synchronisée existe comme billet sur le serveur (caisse, rapport, quai)",
-    () => {
-      const total = guichets.reduce((somme, g) => somme + g.evenements.length, 0);
-      const [n] = lire<{ n: number }>(
-        `select count(*)::int as n from billet where "appareilId" like 'recette-hors-ligne-%'`,
-      );
-      expect(n?.n).toBe(total);
-    },
-  );
+  // A6 : la voie `/sync` crée les billets, par la même création que `/agence/billets`.
+  it("A6 : chaque vente synchronisée existe comme billet sur le serveur, avec son numéro et son siège, et se voit au quai", async () => {
+    const total = guichets.reduce((somme, g) => somme + g.evenements.length, 0);
+    const [n] = lire<{ n: number }>(
+      `select count(*)::int as n from billet where "appareilId" like 'recette-hors-ligne-%'`,
+    );
+    expect(n?.n).toBe(total);
 
-  it("la voie des billets : la même file, rejouée sur /agence/billets, donne les mêmes numéros, sans doublon, et se rejoue sans effet", async () => {
-    // Anomalie A6 (voir le procès-verbal) : la voie `/sync` journalise mais ne crée pas les billets. Le seul chemin qui
-    // crée de vrais billets (caisse, rapport, quai) est `/agence/billets` : on y rejoue la file de chaque téléphone.
-    let total = 0;
+    for (const g of guichets) {
+      const billets = lire<{
+        id: string;
+        numero: string;
+        sequence: number;
+        siege: number | null;
+        departId: string;
+        canal: string;
+        etat: string;
+        prix: number;
+        rang: number | null;
+      }>(
+        `select b.id, b.numero, b.sequence, b.siege, b."departId", b.canal::text as canal, b.etat::text as etat,
+                b.prix, gu.rang
+         from billet b left join guichet gu on gu.id = b."guichetId"
+         where b."appareilId" = '${g.appareilId}' order by b.sequence`,
+      );
+      // Les numéros imprimés sur le téléphone, dans l'ordre, sans trou.
+      expect(billets.map((b) => b.numero)).toEqual(g.numeros);
+      const plage = plageGuichet(g.rang);
+      expect(billets.map((b) => b.sequence)).toEqual(billets.map((_, i) => plage.debut + i));
+      // Le siège imprimé, le départ, le canal, le guichet de la caisse, le tarif.
+      const attendus = new Map(g.ventes.map((v) => [v.billetId, v]));
+      expect(new Set(billets.map((b) => b.id))).toEqual(new Set(attendus.keys()));
+      for (const b of billets) {
+        const vente = attendus.get(b.id)!;
+        expect(b.siege, b.numero).toBe(vente.siege);
+        expect(b.departId, b.numero).toBe(vente.departId);
+        expect(b.canal).toBe("guichet");
+        expect(b.etat).toBe("paye");
+        expect(b.rang, `guichet du billet ${b.numero}`).toBe(g.rang);
+        expect(b.prix).toBe(8000);
+      }
+    }
+
+    // Les sièges sont tenus au plan des départs (un billet par siège), et le quai attend exactement les voyageurs vendus.
+    const [occupes] = lire<{ n: number }>(
+      `select count(*)::int as n from siege_depart s join billet b on b.id = s."billetId"
+       where b."appareilId" like 'recette-hors-ligne-%'`,
+    );
+    expect(occupes?.n).toBe(total);
+    const quai = clientHttp(guichets[0]!.session);
+    for (const d of departs) {
+      const vendus = guichets.flatMap((g) => g.ventes).filter((v) => v.departId === d.id).length;
+      const ecran = await quai.executer(agence.OP_QUAI_EMBARQUEMENT, { departId: d.id });
+      expect(ecran.embarquement.attendus, `voyageurs attendus au départ ${d.numero}`).toBe(vendus);
+    }
+  });
+
+  it("la voie en ligne : la même file, envoyée à /agence/billets, répond « déjà reçu » pour chaque vente et ne crée aucun billet de plus", async () => {
+    // Une vente rejouée par la synchronisation et la même vente envoyée par l'application connectée sont une seule
+    // vente : la clé d'idempotence est l'identifiant de l'événement.
+    const avant = lire<{ n: number }>(
+      `select count(*)::int as n from billet where "appareilId" like 'recette-hors-ligne-%'`,
+    )[0]!.n;
+    let rejoues = 0;
     for (const g of guichets) {
       const client = clientHttp(g.session);
       const file = await g.moteur.lireFile();
       for (const entree of file) {
-        const r = await client.executer(
-          agence.ECRITURES.billetVendu.operation,
-          entree.evenement as never,
-        );
-        expect(r.accuse.statut).toBe("accepte");
-        total += 1;
-      }
-      const billets = lire<{ numero: string; sequence: number }>(
-        `select numero, sequence from billet where "appareilId" = '${g.appareilId}' order by sequence`,
-      );
-      expect(billets.map((b) => b.numero)).toEqual(g.numeros);
-      const plage = plageGuichet(g.rang);
-      expect(billets.map((b) => b.sequence)).toEqual(billets.map((_, i) => plage.debut + i));
-      // Rejouer : « deja_recu », et pas un billet de plus.
-      for (const entree of file.slice(0, 5)) {
         const rejeu = await client.executer(
           agence.ECRITURES.billetVendu.operation,
           entree.evenement as never,
         );
         expect(rejeu.accuse.statut).toBe("deja_recu");
+        // Le billet rendu est celui de la synchronisation : même numéro, même siège.
+        expect(rejeu.billet.numero).toBe(g.numeros[file.indexOf(entree)]);
+        rejoues += 1;
       }
     }
-    const [n] = lire<{ n: number }>(
+    expect(rejoues).toBeGreaterThan(45);
+    const [apres] = lire<{ n: number }>(
       `select count(*)::int as n from billet where "appareilId" like 'recette-hors-ligne-%'`,
     );
-    expect(n?.n).toBe(total);
+    expect(apres?.n).toBe(avant);
   });
 });

@@ -768,6 +768,102 @@ describe("conflits « à replacer »", () => {
   });
 });
 
+describe("mettreEnFile : un événement déjà créé par l'application", () => {
+  /** L'événement tel que `AppareilAgence.creerEvenement` de l'application l'a fabriqué. */
+  function creeParLApplication(id: string, siege: number | null, numeroPlage: number) {
+    return {
+      id,
+      type: "billet.vendu",
+      at: versIsoDouala(DEBUT_TEST),
+      appareilId: "appareil-g2",
+      auteurId: "pers-joseph",
+      cible: { type: "billet", id: `b-${id}` },
+      numeroPlage,
+      donnees: donneesVente(`b-${id}`, "d1", siege),
+    } as never;
+  }
+  const UUID_A = "00000000-0000-4000-8000-00000000aaa1";
+  const UUID_B = "00000000-0000-4000-8000-00000000aaa2";
+
+  it("garde l'événement, son identifiant et son numéro tels quels, signe, et l'envoie à la synchronisation", async () => {
+    const moteur = await banc.ouvrir();
+    horsLigne();
+    const { evenement, numero } = await moteur.mettreEnFile(
+      VENTE,
+      creeParLApplication(UUID_A, 7, 1005),
+    );
+    expect(evenement).toMatchObject({ id: UUID_A, numeroPlage: 1005 });
+    expect(numero).toBe("ALP-DLA-270105-1005");
+    const [entree] = await moteur.lireFile();
+    expect(entree).toMatchObject({ id: UUID_A, statut: "en_attente" });
+    expect(entree!.signature).toMatch(/^[0-9a-f]{128}$/);
+    expect(await moteur.etat()).toMatchObject({ etat: "hors_ligne", evenementsEnAttente: 1 });
+
+    banc.reseau.definir(true);
+    expect(await moteur.synchroniser()).toMatchObject({ statut: "termine", acquittes: 1 });
+    expect(banc.serveur.journal.map((e) => e.id)).toEqual([UUID_A]);
+  });
+
+  it("est idempotent : le même événement mis deux fois en file n'est écrit qu'une fois", async () => {
+    const moteur = await banc.ouvrir();
+    horsLigne();
+    await moteur.mettreEnFile(VENTE, creeParLApplication(UUID_A, 7, 1005));
+    await moteur.mettreEnFile(VENTE, creeParLApplication(UUID_A, 7, 1005));
+    expect(await moteur.lireFile()).toHaveLength(1);
+  });
+
+  it("remonte le compteur du moteur au-dessus du numéro déjà imprimé : jamais de numéro repris", async () => {
+    let moteur = await banc.ouvrir();
+    horsLigne();
+    await moteur.mettreEnFile(VENTE, creeParLApplication(UUID_A, 7, 1010));
+    const suivant = await moteur.enregistrer(VENTE, donneesVente("b2", "d1", 8));
+    expect(suivant.evenement.numeroPlage).toBe(1011);
+    await moteur.arreter();
+    moteur = await banc.ouvrir();
+    const apres = await moteur.enregistrer(VENTE, donneesVente("b3", "d1", 9));
+    expect(apres.evenement.numeroPlage).toBe(1012);
+  });
+
+  it("hors ligne, refuse un siège hors de la part ou déjà vendu, sans rien écrire", async () => {
+    const moteur = await banc.ouvrir();
+    horsLigne();
+    await expect(
+      moteur.mettreEnFile(VENTE, creeParLApplication(UUID_A, 99, 1005)),
+    ).rejects.toBeInstanceOf(SiegeHorsPart);
+    await moteur.mettreEnFile(VENTE, creeParLApplication(UUID_A, 7, 1005));
+    await expect(
+      moteur.mettreEnFile(VENTE, creeParLApplication(UUID_B, 7, 1006)),
+    ).rejects.toBeInstanceOf(SiegeDejaVendu);
+    expect(await moteur.lireFile()).toHaveLength(1);
+  });
+
+  it("refuse un événement d'un autre appareil ou de données invalides", async () => {
+    const moteur = await banc.ouvrir();
+    horsLigne();
+    const autre = { ...(creeParLApplication(UUID_A, 7, 1005) as object), appareilId: "autre" };
+    await expect(moteur.mettreEnFile(VENTE, autre as never)).rejects.toBeInstanceOf(
+      DonneesInvalides,
+    );
+    const invalide = creeParLApplication(UUID_A, 7, 1005) as unknown as {
+      donnees: { prix: number };
+    };
+    invalide.donnees.prix = -1;
+    await expect(moteur.mettreEnFile(VENTE, invalide as never)).rejects.toBeInstanceOf(
+      DonneesInvalides,
+    );
+    expect(await moteur.lireFile()).toHaveLength(0);
+  });
+
+  it("appareil bloqué : refusé comme enregistrer", async () => {
+    const moteur = await banc.ouvrir();
+    horsLigne();
+    banc.horloge.avancer(13 * HEURE);
+    await expect(
+      moteur.mettreEnFile(VENTE, creeParLApplication(UUID_A, 7, 1005)),
+    ).rejects.toBeInstanceOf(AppareilBloque);
+  });
+});
+
 /* ------------------------------------------------------------------ utilitaires de test */
 
 async function vi_attendre(condition: () => Promise<boolean>, essais = 200): Promise<void> {

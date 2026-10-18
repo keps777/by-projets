@@ -205,6 +205,34 @@ export function departType(id: string, surcharge: Partial<Depart> = {}): Depart 
   };
 }
 
+/**
+ * Le réseau de transport de test dans un catalogue en mémoire : deux compagnies, la ligne Douala–Yaoundé de chacune,
+ * des départs, deux guichets à Douala. Partagé avec les tests de la synchronisation (vente hors ligne rejouée).
+ */
+export function peuplerCatalogue(catalogue: CatalogueMemoire): void {
+  for (const c of compagnies) catalogue.ajouterCompagnie(c);
+  for (const g of gares) catalogue.ajouterGare(g);
+  for (const g of guichets) catalogue.ajouterGuichet(g);
+  for (const l of lignes) catalogue.ajouterLigne(l);
+  for (const b of bus) catalogue.ajouterBus(b);
+  catalogue.ajouterDepart(departType(DEPART));
+  catalogue.ajouterDepart(
+    departType(DEPART_2, { heureDepart: heure("17:00"), busId: BUS_2, quai: 4 }),
+  );
+  catalogue.ajouterDepart(
+    departType(DEPART_VIP, { classe: "vip", heureDepart: heure("16:00"), quai: 5 }),
+  );
+  catalogue.ajouterDepart(
+    departType(DEPART_AUTRE, {
+      ligneId: AUTRE_LIGNE,
+      busId: AUTRE_BUS,
+      heureDepart: heure("16:30"),
+      numero: "ELT-DLAYDE-261102-1630",
+    }),
+  );
+  catalogue.ajouterDepart(departType(DEPART_NUIT, { heureDepart: heure("22:00"), busId: null }));
+}
+
 /* ------------------------------------------------------------------ l'application */
 
 export interface OptionsAppBilletterieTest {
@@ -250,27 +278,7 @@ export async function creerAppBilletterieTest(options: OptionsAppBilletterieTest
   app.getHttpServer().setMaxListeners(0);
 
   const catalogue = app.get(Catalogue) as CatalogueMemoire;
-  for (const c of compagnies) catalogue.ajouterCompagnie(c);
-  for (const g of gares) catalogue.ajouterGare(g);
-  for (const g of guichets) catalogue.ajouterGuichet(g);
-  for (const l of lignes) catalogue.ajouterLigne(l);
-  for (const b of bus) catalogue.ajouterBus(b);
-  catalogue.ajouterDepart(departType(DEPART));
-  catalogue.ajouterDepart(
-    departType(DEPART_2, { heureDepart: heure("17:00"), busId: BUS_2, quai: 4 }),
-  );
-  catalogue.ajouterDepart(
-    departType(DEPART_VIP, { classe: "vip", heureDepart: heure("16:00"), quai: 5 }),
-  );
-  catalogue.ajouterDepart(
-    departType(DEPART_AUTRE, {
-      ligneId: AUTRE_LIGNE,
-      busId: AUTRE_BUS,
-      heureDepart: heure("16:30"),
-      numero: "ELT-DLAYDE-261102-1630",
-    }),
-  );
-  catalogue.ajouterDepart(departType(DEPART_NUIT, { heureDepart: heure("22:00"), busId: null }));
+  peuplerCatalogue(catalogue);
 
   const comptes = app.get(ComptesService);
   const tokens = app.get(TokensService);

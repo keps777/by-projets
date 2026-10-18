@@ -21,7 +21,8 @@ import {
   indexedDbFactice,
 } from "@afrimove/sync/testing";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { creerAppSyncTest, type AppSyncTest } from "./testing/app-sync-test";
+import { DEPART } from "../billetterie/testing/app-billetterie-test";
+import { DEPARTS_TEST, creerAppSyncTest, type AppSyncTest } from "./testing/app-sync-test";
 
 /**
  * Intégration de bout en bout : de vrais moteurs d'appareil (IndexedDB factice, signature réelle)
@@ -29,7 +30,19 @@ import { creerAppSyncTest, type AppSyncTest } from "./testing/app-sync-test";
  * HTTP. Seule la base PostgreSQL est remplacée par la mémoire.
  */
 
-const DEPARTS = ["depart-A", "depart-B", "depart-C"] as const;
+const DEPARTS = DEPARTS_TEST;
+
+/** Le code à 4 chiffres d'un billet est unique dans un départ : chaque vente de ce test a le sien. */
+let codeSuivant = 1000;
+const prochainCode = (): string => String(codeSuivant++);
+const vente = (billetId: string, departId: string, siege: number | null) => ({
+  ...donneesVente(billetId, departId, siege),
+  codeBillet: prochainCode(),
+});
+const cadence = (billetId: string, departId: string, siege: number) => ({
+  ...donneesCadence(billetId, departId, siege),
+  codeBillet: prochainCode(),
+});
 
 interface Appareil {
   id: string;
@@ -143,10 +156,10 @@ async function nouveauGuichet(rang: number, parts: Record<string, number[]>): Pr
   return appareil;
 }
 
-/** Les 20 sièges du guichet `rang` sur chacun des trois départs. */
+/** Les 13 sièges du guichet `rang` (sur 40 places) sur chacun des trois départs. */
 const partsDuRang = (rang: number) =>
   Object.fromEntries(
-    DEPARTS.map((d) => [d, Array.from({ length: 20 }, (_, i) => (rang - 1) * 20 + i + 1)]),
+    DEPARTS.map((d) => [d, Array.from({ length: 13 }, (_, i) => (rang - 1) * 13 + i + 1)]),
   );
 
 /** Un résultat pseudo-aléatoire, mais toujours le même d'une exécution à l'autre. */
@@ -170,11 +183,11 @@ async function vendre(a: Appareil, alea: () => number): Promise<void> {
   const siege = libres[0];
   let resultat;
   if (tirage < 0.15 || siege === undefined) {
-    resultat = await a.moteur.enregistrer(VENTE, donneesVente(billetId, depart, null));
+    resultat = await a.moteur.enregistrer(VENTE, vente(billetId, depart, null));
   } else if (tirage < 0.3) {
-    resultat = await a.moteur.enregistrer(CADENCE, donneesCadence(billetId, depart, siege));
+    resultat = await a.moteur.enregistrer(CADENCE, cadence(billetId, depart, siege));
   } else {
-    resultat = await a.moteur.enregistrer(VENTE, donneesVente(billetId, depart, siege));
+    resultat = await a.moteur.enregistrer(VENTE, vente(billetId, depart, siege));
   }
   a.evenements.push(resultat.evenement.id);
   if (resultat.numero) a.numeros.push(resultat.numero);
@@ -200,7 +213,7 @@ describe("4 h hors ligne sur 3 appareils, puis synchronisation", () => {
       await nouveauGuichet(3, partsDuRang(3)),
     ];
     for (const g of guichets) {
-      expect(await g.moteur.siegesVendablesHorsLigne("depart-A")).toHaveLength(20);
+      expect(await g.moteur.siegesVendablesHorsLigne(DEPART)).toHaveLength(13);
     }
 
     // Plus de réseau pour personne.
@@ -280,6 +293,22 @@ describe("4 h hors ligne sur 3 appareils, puis synchronisation", () => {
     expect(dansLeJournal).toBe(total);
     expect(t.journal.lignes).toHaveLength(total);
 
+    // A6 : chaque vente du journal est un billet, avec le numéro que le téléphone a imprimé, son siège, son guichet.
+    for (const g of guichets) {
+      const billets = await Promise.all(g.evenements.map((id) => t.billets.parEvenement(id)));
+      expect(billets.every((b) => b !== null)).toBe(true);
+      expect(billets.map((b) => b!.numero)).toEqual(g.numeros);
+      expect(
+        billets.every(
+          (b) => b!.canal === "guichet" && b!.etat === "paye" && b!.appareilId === g.id,
+        ),
+      ).toBe(true);
+    }
+    for (const l of lignesDe(guichets[0]!.id)) {
+      const d = l.evenement.donnees as { billetId: string; siege: number | null };
+      expect((await t.billets.trouver(d.billetId))?.siege, d.billetId).toBe(d.siege);
+    }
+
     // Un siège n'est vendu qu'une fois : les parts ne se recoupent pas.
     const sieges = new Map<string, number>();
     for (const l of t.journal.lignes) {
@@ -327,21 +356,18 @@ describe("4 h hors ligne sur 3 appareils, puis synchronisation", () => {
 
   it("un siège vendu hors ligne par deux appareils : le premier horodatage gagne, l'autre billet est à replacer", async () => {
     // Part mal découpée : le siège 5 est dans la part des deux guichets.
-    const g1 = await nouveauGuichet(1, { "depart-A": [4, 5, 6] });
-    const g2 = await nouveauGuichet(2, { "depart-A": [5, 7, 8] });
+    const g1 = await nouveauGuichet(1, { [DEPART]: [4, 5, 6] });
+    const g2 = await nouveauGuichet(2, { [DEPART]: [5, 7, 8] });
     g1.reseau.definir(false);
     g2.reseau.definir(false);
 
     avancer(10 * MINUTE);
-    const tot = await g2.moteur.enregistrer(VENTE, donneesVente("billet-g2-siege5", "depart-A", 5));
+    const tot = await g2.moteur.enregistrer(VENTE, vente("billet-g2-siege5", DEPART, 5));
     avancer(20 * MINUTE);
-    const tard = await g1.moteur.enregistrer(
-      VENTE,
-      donneesVente("billet-g1-siege5", "depart-A", 5),
-    );
+    const tard = await g1.moteur.enregistrer(VENTE, vente("billet-g1-siege5", DEPART, 5));
     // chacun a vendu aussi un siège qui n'est qu'à lui
-    await g1.moteur.enregistrer(VENTE, donneesVente("billet-g1-siege4", "depart-A", 4));
-    await g2.moteur.enregistrer(VENTE, donneesVente("billet-g2-siege7", "depart-A", 7));
+    await g1.moteur.enregistrer(VENTE, vente("billet-g1-siege4", DEPART, 4));
+    await g2.moteur.enregistrer(VENTE, vente("billet-g2-siege7", DEPART, 7));
 
     // Le guichet 1 se synchronise le premier : sa vente tardive tient le siège, pour l'instant.
     g1.reseau.definir(true);
@@ -362,7 +388,7 @@ describe("4 h hors ligne sur 3 appareils, puis synchronisation", () => {
     expect(conflits[0]).toMatchObject({
       evenementId: tard.evenement.id,
       billetId: "billet-g1-siege5",
-      departId: "depart-A",
+      departId: DEPART,
       siege: 5,
       gagnantBilletId: "billet-g2-siege5",
       motif: "siege_deja_pris",
@@ -393,6 +419,15 @@ describe("4 h hors ligne sur 3 appareils, puis synchronisation", () => {
     expect(t.journal.lignes.filter((l) => l.evenement.type === "billet.a_replacer")).toHaveLength(
       1,
     );
+
+    // Les billets suivent le jugement de la synchronisation, même arrivés dans l'ordre inverse : le billet de g1 (arrivé
+    // le premier, mais plus tardif) a rendu le siège 5 ; il existe toujours, avec son numéro, « à replacer ».
+    const billetG1 = await t.billets.parEvenement(tard.evenement.id);
+    const billetG2 = await t.billets.parEvenement(tot.evenement.id);
+    expect(billetG1).toMatchObject({ id: "billet-g1-siege5", siege: null, etat: "paye" });
+    expect(billetG2).toMatchObject({ id: "billet-g2-siege5", siege: 5, etat: "paye" });
+    expect(billetG1!.numero).toBe(tard.numero);
+    expect((await t.inventaire.plan(DEPART)).occupes[5]).toBe("billet-g2-siege5");
   });
 
   it("au-delà de 12 h : ventes bloquées, synchronisation permise, déblocage par un superviseur", async () => {
