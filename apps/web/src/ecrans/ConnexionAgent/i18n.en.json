@@ -1,0 +1,67 @@
+{
+  "retour": "Back",
+  "titre": "Team sign-in",
+  "explication": "Ticket office, bus, inspection, station or management: pick your role, then sign in with your number.",
+  "role": {
+    "libelle": "Your role",
+    "guichetier": "Ticket clerk",
+    "convoyeur": "Bus attendant",
+    "chauffeur": "Driver",
+    "vendeur": "Street seller",
+    "controleur": "Inspector",
+    "relais": "Pickup point",
+    "livreur": "Motorbike courier",
+    "superviseur": "Station supervisor",
+    "patron": "Owner",
+    "comptable": "Accountant"
+  },
+  "telephone": {
+    "libelle": "Phone number"
+  },
+  "pin": {
+    "libelle": "6-digit PIN",
+    "aide": "This is your account PIN. Nobody from AfriMove will ever ask you for it."
+  },
+  "motDePasse": {
+    "libelle": "Password",
+    "aide": "A code then arrives by SMS to confirm it is really you."
+  },
+  "code": {
+    "libelle": "Code received by SMS",
+    "aide": "A 6-digit code has just been sent. It is valid for {{minutes}} minutes."
+  },
+  "enrolement": {
+    "titre": "Enroll this phone",
+    "explication": "Your owner or supervisor gives you an enrollment code. It works only once.",
+    "libelle": "Enrollment code",
+    "action": "Enroll the phone",
+    "lien": "Enroll this phone with a code",
+    "necessaire": "This role sells tickets: first enroll this phone with the code you received.",
+    "fait": "Phone enrolled: {{nom}}.",
+    "deja": "This phone is enrolled: {{nom}}."
+  },
+  "actions": {
+    "continuer": "Continue",
+    "connexion": "Sign in",
+    "verifier": "Confirm the code",
+    "voyageur": "I am a traveler",
+    "agent": "I am part of the AfriMove team"
+  },
+  "erreurs": {
+    "role": "Pick your role.",
+    "telephone": "Enter your 9-digit number, it starts with 6.",
+    "pin": "Enter the 6 digits of your PIN.",
+    "motDePasse": "Enter your password.",
+    "code": "Enter the 6 digits of the code you received.",
+    "codeEnrolement": "Enter the enrollment code you received.",
+    "identifiants": "Wrong number, PIN or password.",
+    "codeFaux": "That code is not right or has expired. Sign in again to get another one.",
+    "bloque": "Account locked after too many tries. Try again in {{delai}}.",
+    "tropDemandes": "Too many requests. Try again in {{delai}}.",
+    "reseau": "The server is not answering. Check your connection and try again.",
+    "enrolementInconnu": "This code does not exist or was already used. Ask for a new one.",
+    "enrolementExpire": "This code has expired. Ask for a new one.",
+    "sansEspace": "This account has no space in the app.",
+    "inattendue": "Cannot sign in right now. Try again."
+  }
+}

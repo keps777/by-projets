@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState, type ComponentType } from "react";
 import { I18nextProvider } from "react-i18next";
 import { RouterProvider, createBrowserRouter, type DataRouter } from "react-router";
+import { KiosqueHttp, SurveillantSessionAgent, modeHttp, urlBaseApi } from "@/agent";
 import { FournisseurApiApplication } from "@/api/fournisseur";
 import { BandeauMiseAJour } from "@/coquille/bandeau-mise-a-jour";
 import { construireRoutes, type SourcesRoutes } from "@/coquille/arbre-routes";
@@ -12,6 +13,7 @@ import { ModulesProvider } from "@/coquille/modules";
 import { ParametresProvider, lireParametresDemo, type ParametresDemo } from "@/coquille/parametres";
 import { SessionProvider, type Session } from "@/coquille/session";
 import { creerI18n, type Langue } from "@/i18n";
+import type { CanalCommandes } from "@/kiosque";
 
 type Module = { default: ComponentType };
 
@@ -37,6 +39,13 @@ export interface PropsApp {
   queryClient?: QueryClient;
   /** Client d'API imposé (tests). Sinon mock ou HTTP selon `VITE_API_MODE`. */
   clientApi?: ClientApi;
+  /**
+   * Vrai avec l'API réelle : l'effacement à distance du kiosque et la fin de session des agents sont alors actifs.
+   * Sinon `VITE_API_MODE` (en démonstration il n'y a ni serveur ni appareil à effacer).
+   */
+  http?: boolean;
+  /** Canal des ordres du serveur imposé (tests). Sinon HTTP, authentifié par le secret de l'appareil. */
+  canalKiosque?: CanalCommandes;
 }
 
 export function App(props: PropsApp) {
@@ -56,6 +65,9 @@ export function App(props: PropsApp) {
       createBrowserRouter(construireRoutes(sourcesRoutes, parametres.modulesMasques)),
   );
 
+  const [http] = useState(() => props.http ?? modeHttp());
+  const [urlBase] = useState(() => urlBaseApi());
+
   useEffect(() => {
     document.documentElement.lang = i18n.language;
   }, [i18n.language]);
@@ -64,20 +76,27 @@ export function App(props: PropsApp) {
     <ParametresProvider valeur={parametres}>
       <HorlogeProvider horloge={horloge}>
         <I18nextProvider i18n={i18n}>
-          <QueryClientProvider client={queryClient}>
-            <FournisseurApiApplication {...(props.clientApi ? { client: props.clientApi } : {})}>
-              <SessionProvider
-                {...(props.session !== undefined ? { initiale: props.session } : {})}
-              >
-                <ModulesProvider masques={parametres.modulesMasques}>
-                  <ConceptionProvider actif={parametres.conception}>
-                    <BandeauMiseAJour />
-                    <RouterProvider router={routeur} />
-                  </ConceptionProvider>
-                </ModulesProvider>
-              </SessionProvider>
-            </FournisseurApiApplication>
-          </QueryClientProvider>
+          <KiosqueHttp
+            actif={http}
+            urlBase={urlBase}
+            {...(props.canalKiosque ? { canal: props.canalKiosque } : {})}
+          >
+            <QueryClientProvider client={queryClient}>
+              <FournisseurApiApplication {...(props.clientApi ? { client: props.clientApi } : {})}>
+                <SessionProvider
+                  {...(props.session !== undefined ? { initiale: props.session } : {})}
+                >
+                  <SurveillantSessionAgent actif={http} />
+                  <ModulesProvider masques={parametres.modulesMasques}>
+                    <ConceptionProvider actif={parametres.conception}>
+                      <BandeauMiseAJour />
+                      <RouterProvider router={routeur} />
+                    </ConceptionProvider>
+                  </ModulesProvider>
+                </SessionProvider>
+              </FournisseurApiApplication>
+            </QueryClientProvider>
+          </KiosqueHttp>
         </I18nextProvider>
       </HorlogeProvider>
     </ParametresProvider>

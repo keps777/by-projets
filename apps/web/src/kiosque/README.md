@@ -34,7 +34,7 @@ Console Android Management ou API : `DELETE https://androidmanagement.googleapis
 
 ## Code de l'application (niveau 2)
 
-À placer **autour** de l'application, au-dessus du moteur de synchronisation (non fait ici : `app.tsx` et les layouts sont hors périmètre) :
+À placer **autour** de l'application, au-dessus du moteur de synchronisation (**branché depuis le lot De** : `app.tsx` monte `KiosqueHttp` de `src/agent/`, qui ne surveille que le mode http et un téléphone enrôlé, avec le secret de l'appareil en `Authorization: Bearer`). Exemple de ce qu'il fait :
 
 ```tsx
 import { FournisseurKiosque, creerCanalHttp } from "@/kiosque";
@@ -54,25 +54,25 @@ const canal = creerCanalHttp({ urlBase: "/api", entetes: () => entetesAppareil()
 - Il consulte le serveur toutes les 30 s (et tout de suite au démarrage), ne lève jamais d'erreur hors ligne.
 - Un ordre `effacer` : l'écran « Appareil effacé » remplace l'application (elle est démontée, donc la base hors ligne est fermée), les données sont effacées, **la langue et le drapeau kiosque sont conservés**, un repère `afrimove.kiosque.efface` reste, et l'accusé de réception part au serveur.
 - Le repère est écrit **avant** l'effacement : si l'application est tuée en route, l'effacement est terminé au démarrage suivant, avant que l'application ne s'ouvre. Un repère abîmé verrouille l'appareil au lieu de le rendre.
-- Un appareil effacé reste verrouillé tant que `leverVerrouEffacement()` n'est pas appelé : c'est le futur parcours de remise en service par un superviseur (à écrire).
+- Un appareil effacé reste verrouillé tant que `leverVerrouEffacement()` n'est pas appelé : c'est le futur parcours de remise en service par un superviseur (à écrire). L'identifiant de l'appareil (`afrimove.kiosque.appareil`, lot De) survit à l'effacement avec la langue et le drapeau kiosque, pour que l'accusé retardé puisse encore partir après un redémarrage ; le secret de l'appareil, lui, est effacé.
 - Un effacement incomplet (une étape a échoué) est dit au serveur (`complet: false`), repris une fois, et l'écran demande de ne plus utiliser l'appareil.
 - `avantEffacement` est une dernière chance facultative (par exemple lancer une synchronisation), bornée par `delaiAvantEffacementMs` (0 par défaut : rien). Sans elle, les ventes hors ligne non synchronisées sont **perdues** : voir « Décisions ».
 - `detecterModeKiosque()` : `?kiosque=1` (mémorisé), sinon mémorisé, sinon `display-mode: fullscreen`. En mode kiosque, `appliquerVerrouKiosque()` bloque le menu contextuel et redemande le plein écran au toucher ; ce n'est qu'un confort, la vraie contrainte est la politique.
 
-### Routes que le serveur devra offrir (n'existent pas, absentes de `@afrimove/contrats`)
+### Routes du serveur (lot De : `apps/api/src/administration`, absentes de `@afrimove/contrats`)
 
 | Route                                                    | Rôle                                                                                                                                                                                                                                               |
 | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `GET /appareils/:id/commande`                            | `200 { commande: { id, type: "effacer", emiseA, secretAcquittement } \| null }` ou `204`. Authentifiée par l'appareil (en-têtes fournis par `entetes`).                                                                                            |
 | `POST /appareils/:id/commandes/:commandeId/acquittement` | Corps : `{ effaceA, complet, etapes[] }`. Authentifiée par `Authorization: Bearer <secretAcquittement>` (secret à usage unique donné avec l'ordre : après l'effacement l'appareil n'a plus ni session ni clé). Idempotente (`409`/`410` acceptés). |
 
-Côté serveur il faut aussi : une action « effacer cet appareil » réservée à un administrateur, qui crée l'ordre, et une trace dans le journal d'audit ; `appareil` existe déjà dans le schéma Prisma (`apps/api/prisma/schema.prisma`) mais sans état « effacé » ni table d'ordres (par exemple `commande_appareil` : `id`, `appareil_id`, `type`, `emise_a`, `emise_par`, `secret_acquittement_haché`, `acquittee_a`, `rapport` jsonb). Hors périmètre de ce ticket (`apps/api` n'y figure pas) : à ouvrir en ticket.
+Côté serveur il faut aussi : une action « effacer cet appareil » réservée à un administrateur, qui crée l'ordre, et une trace dans le journal d'audit ; `appareil` existe déjà dans le schéma Prisma (`apps/api/prisma/schema.prisma`) mais sans état « effacé » ni table d'ordres (par exemple `commande_appareil` : `id`, `appareil_id`, `type`, `emise_a`, `emise_par`, `secret_acquittement_haché`, `acquittee_a`, `rapport` jsonb). Fait par le lot De : l'ordre s'émet par `POST /admin/appareils/:id/effacement` (patron, superviseur, signé par PIN, audité) ; la table est `commande_appareil`. Après l'accusé, le secret de l'appareil est révoqué. Voir `apps/api/src/administration/README.md`.
 
 ## Ce qui est vérifié, ce qui ne l'est pas
 
 Vérifié par les tests Vitest (`pnpm --filter @afrimove/web test`, 73 tests dans ce dossier) : toutes les étapes d'effacement et leurs échecs ; le déroulé complet d'un ordre (langue conservée, repère écrit avant l'effacement, accusé, reprise après redémarrage, effacement interrompu, incomplet, délai d'attente borné de la dernière chance) ; l'adaptateur HTTP (URL, en-têtes, secret, statuts) ; la validation des ordres ; l'écran de verrouillage (rien n'est monté sur un appareil effacé, pas d'alerte pendant l'effacement) ; la détection du mode et le verrou ; la cohérence du fichier de politique avec le code.
 
-**Non vérifié (demande un appareil et des comptes réels)** : tout le niveau 1 — la politique Android Enterprise n'a pas été appliquée à un téléphone et ses noms de champs n'ont pas été validés contre l'API (à faire à l'import) ; le comportement de Chrome en kiosque (plein écran, blocage des URL, `display-mode`) ; la durée de l'effacement à distance de l'appareil (critère « testé sur un appareil » du ticket : protocole ci-dessus) ; le comportement réel d'IndexedDB (jsdom n'en a pas : les tests utilisent un faux) ; l'effacement face à une base Dexie ouverte dans Chrome ; l'absence totale de serveur pour le niveau 2.
+**Non vérifié (demande un appareil et des comptes réels)** : tout le niveau 1 — la politique Android Enterprise n'a pas été appliquée à un téléphone et ses noms de champs n'ont pas été validés contre l'API (à faire à l'import) ; le comportement de Chrome en kiosque (plein écran, blocage des URL, `display-mode`) ; la durée de l'effacement à distance de l'appareil (critère « testé sur un appareil » du ticket : protocole ci-dessus) ; le comportement réel d'IndexedDB (jsdom n'en a pas : les tests utilisent un faux) ; l'effacement face à une base Dexie ouverte dans Chrome ; le niveau 2 contre un vrai téléphone (les tests de l'API et du web passent par des faux de l'autre côté ; seule la recette de bout en bout les relie).
 
 ## Décisions à confirmer
 

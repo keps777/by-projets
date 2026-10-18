@@ -9,6 +9,7 @@ import {
   referentiel,
   type DepartCree,
 } from "../support/journee";
+import { PIN_PATRON } from "../support/config";
 import { Poste, TARIF, type BilletVendu, type Evt, type ModePaiement } from "../support/postes";
 
 /**
@@ -464,15 +465,89 @@ describe("critère 1 : une journée de gare, de l'ouverture des caisses au rappo
     },
   );
 
-  it.fails(
-    "ANOMALIE A8 : un départ se programme par l'API, sans toucher à la base (aucune route de création de départ)",
-    async () => {
-      const r = await appeler("POST", "/patron/reglages/lignes", {
-        jeton: patronSession.jeton,
-        corps: {},
+  it("A8 corrigée : le patron programme les départs par l'API (horaire récurrent, génération, équipage), sans toucher à la base", async () => {
+    const ligneId = referentiel().ligneId;
+    const jeton = patronSession.jeton;
+    const signature = () => ({
+      pin: PIN_PATRON,
+      methode: "pin",
+      signeA: new Date(Date.now() + H).toISOString().replace("Z", "+01:00"),
+    });
+    // Un nouvel horaire de 5 h 40 sur la ligne, publié avec la signature PIN du patron.
+    const lue = await appeler<{ departs: Record<string, unknown>[] }>(
+      "GET",
+      `/patron/reglages/lignes/${ligneId}`,
+      { jeton },
+    );
+    expect(lue.statut).toBe(200);
+    if (!lue.corps.departs.some((d) => d["heure"] === "05:40")) {
+      const publie = await appeler("PUT", `/patron/reglages/lignes/${ligneId}`, {
+        jeton,
+        corps: {
+          ligneId,
+          departs: [
+            ...lue.corps.departs,
+            {
+              id: null,
+              heure: "05:40",
+              heureInitiale: null,
+              classe: "classique",
+              prix: 8000,
+              actif: true,
+              note: null,
+              jours: [],
+              nouveau: true,
+            },
+          ],
+          signature: signature(),
+        },
       });
-      expect(r.statut).not.toBe(404);
-      void poserColis;
-    },
-  );
+      expect(publie.statut, JSON.stringify(publie.corps)).toBe(200);
+    }
+    // Sans PIN, la même écriture est refusée.
+    const sansPin = await appeler("PUT", `/patron/reglages/lignes/${ligneId}`, {
+      jeton,
+      corps: { ligneId },
+    });
+    expect(sansPin.statut).toBe(401);
+
+    // Génération du jour J + 20 (loin des journées jouées plus haut) : un départ, rejouable sans doublon.
+    const cible = new Date(Date.now() + H + 20 * 24 * H).toISOString().slice(0, 10);
+    const aammjj = cible.slice(2, 4) + cible.slice(5, 7) + cible.slice(8, 10);
+    const generation = await appeler<{
+      crees: { id: string; numero: string }[];
+      dejaPresents: number;
+    }>("POST", "/admin/departs/generer", { jeton, corps: { ligneId, du: cible, au: cible } });
+    expect(generation.statut, JSON.stringify(generation.corps)).toBe(200);
+    const numero = `DEM-DLAYDE-${aammjj}-0540`;
+    const [ligne] = lire<{ id: string; numero: string }>(
+      `select id, numero from depart where numero = '${numero}'`,
+    );
+    expect(ligne?.numero).toBe(numero);
+    const rejeu = await appeler<{ crees: unknown[]; dejaPresents: number }>(
+      "POST",
+      "/admin/departs/generer",
+      { jeton, corps: { ligneId, du: cible, au: cible } },
+    );
+    expect(rejeu.corps.crees).toHaveLength(0);
+    expect(rejeu.corps.dejaPresents).toBeGreaterThanOrEqual(1);
+    expect(lire(`select 1 from depart where numero = '${numero}'`)).toHaveLength(1);
+
+    // Bus, chauffeur et quai affectés par l'API ; le même bus ne part pas deux fois en même temps.
+    const ref = referentiel();
+    const equipe = await appeler("PATCH", `/admin/departs/${ligne!.id}/equipage`, {
+      jeton,
+      corps: { busId: ref.busIds[0], chauffeurId: ref.chauffeurId, quai: 2 },
+    });
+    expect(equipe.statut, JSON.stringify(equipe.corps)).toBe(200);
+    const meme = await appeler("POST", "/admin/departs", {
+      jeton,
+      corps: {
+        ligneId,
+        heureDepart: `${cible}T07:00:00.000+01:00`,
+        busId: ref.busIds[0],
+      },
+    });
+    expect(meme.statut).toBe(409);
+  });
 });

@@ -6,8 +6,15 @@ export const CLE_EFFACE = "afrimove.kiosque.efface";
 /** Clé du drapeau « cet appareil est un kiosque ». */
 export const CLE_KIOSQUE = "afrimove.kiosque.actif";
 
-/** Valeurs qui survivent à l'effacement : la langue d'affichage et le fait d'être un kiosque. Rien de personnel. */
-export const CLES_CONSERVEES = [CLES.langue, CLE_KIOSQUE] as const;
+/**
+ * Clé de l'identifiant de l'appareil (lot De). Il survit à l'effacement pour que, après un redémarrage, l'accusé de
+ * réception de l'ordre puisse encore être renvoyé au bon appareil. Ce n'est pas un secret : le secret de l'appareil,
+ * lui, est effacé avec le reste.
+ */
+export const CLE_APPAREIL_ID = "afrimove.kiosque.appareil";
+
+/** Valeurs qui survivent à l'effacement : la langue, le fait d'être un kiosque, l'identifiant de l'appareil. Rien de personnel. */
+export const CLES_CONSERVEES = [CLES.langue, CLE_KIOSQUE, CLE_APPAREIL_ID] as const;
 
 /**
  * Repère laissé sur l'appareil.

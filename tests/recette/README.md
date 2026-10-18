@@ -41,7 +41,7 @@ critère 5 échoue en le disant ; `rclone` n'est pas requis (le faux `rclone` du
 | `critere-4-rapport-soir.test.ts` | 4       | Rapport du patron comparé, au franc près, à un décompte indépendant                                     |
 | `critere-5-sauvegarde.test.ts`   | 5       | `sauvegarder.sh` puis `restaurer.sh` dans une base vide, tables comparées, API sur la base restaurée    |
 | `critere-6-vente-45s.test.ts`    | 6       | Touches et temps d'une vente sur l'écran Vendre                                                         |
-| `conformite-routes.test.ts`      | tous    | Chaque opération du client HTTP a-t-elle sa route dans l'API ? (liste figée des 58 écarts)              |
+| `conformite-routes.test.ts`      | tous    | Chaque opération du client HTTP a-t-elle sa route dans l'API ? (liste figée des 55 écarts)              |
 
 ## Règles du banc
 

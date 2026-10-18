@@ -72,6 +72,16 @@ async function main() {
       }
     }
 
+    // Le patron se connecte par mot de passe mais signe ses écritures (lignes, appareils) avec un PIN : sans
+    // `pinHache`, ces écritures répondent 409 PIN_NON_DEFINI.
+    const patron = await comptes.trouverParTelephone("+237655000004");
+    if (patron && !patron.pinHache) {
+      await prisma.personne.update({
+        where: { id: patron.id },
+        data: { pinHache: await comptes.hacherPin(process.env.SEED_PIN_PATRON ?? "526184") },
+      });
+    }
+
     let ligne = await prisma.ligne.findFirst({
       where: { compagnieId: compagnie.id, code: "DLA-YDE" },
     });

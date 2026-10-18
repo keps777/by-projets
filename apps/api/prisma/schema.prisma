@@ -3092,3 +3092,90 @@ model CompteMomoCompagnie {
 
   @@map("compte_momo_compagnie")
 }
+
+/**
+ * ================================================================== LOT De · administration (AM-093, AM-120)
+ *
+ * Lignes (horaires et réglages), départs, bus, équipages et appareils. Les clés étrangères vers les tables
+ * existantes (`ligne`, `appareil_sync`, `personne`) et les garde-fous (CHECK, index uniques partiels) sont
+ * écrits en SQL dans la migration `20261018001000_lot_de_administration`, sans modifier les modèles
+ * existants. Détail : `src/administration/README.md`.
+ */
+
+/// Un horaire récurrent d'une ligne (« 06:30, classique, le mardi seulement »). C'est le modèle à partir
+/// duquel les départs d'un jour se génèrent. Le prix d'un départ n'est pas stocké : c'est le tarif de sa classe
+/// (`ligne`). SQL : `heure` au format HH:MM, jours dans lun…dim, un seul horaire actif par ligne et par heure.
+model HoraireLigne {
+  id      String       @id @default(uuid(7)) @db.Uuid
+  ligneId String       @db.Uuid
+  /// HH:MM, heure de Douala.
+  heure   String
+  classe  ClasseBillet
+  actif   Boolean      @default(true)
+  note    String?
+  /// Jours de circulation (lun, mar, mer, jeu, ven, sam, dim) ; vide = tous les jours.
+  jours   String[]
+  creeA   DateTime     @default(now()) @db.Timestamptz(3)
+
+  @@index([ligneId])
+  @@map("horaire_ligne")
+}
+
+/// Plan de sièges et options d'une ligne, et ses modifications programmées (« dès lundi »). Absent : valeurs par
+/// défaut déduites des bus de la compagnie.
+model ReglageLigne {
+  ligneId      String   @id @db.Uuid
+  capacite     Int
+  /// « 2+2 », « 2+1 »…
+  disposition  String
+  rangees      Int
+  venteEnLigne Boolean  @default(true)
+  fusionAuto   Boolean  @default(false)
+  /// Modifications enregistrées pour un jour futur (sections tarifs, arrets, departs, plan, options).
+  brouillon    Json?
+  /// Jour d'effet du brouillon, AAAA-MM-JJ (heure de Douala).
+  effetDu      String?
+  misAJourA    DateTime @default(now()) @db.Timestamptz(3)
+
+  @@map("reglage_ligne")
+}
+
+/// Enrôlement d'un appareil déclaré par l'administration : code à usage unique donné au téléphone, puis secret
+/// d'appareil (haché) qui l'authentifie auprès du serveur, hors session (ordres d'effacement). Une ligne par
+/// `appareil_sync`.
+model EnrolementAppareil {
+  appareilId  String    @id
+  compagnieId String    @db.Uuid
+  gareId      String?   @db.Uuid
+  /// Nom donné par l'administration (« Guichet 2 · Akwa »).
+  libelle     String?
+  /// SHA-256 du code d'enrôlement ; nul une fois utilisé ou remplacé.
+  codeHache   String?
+  codeExpireA DateTime? @db.Timestamptz(3)
+  /// SHA-256 du secret d'appareil ; nul tant que le téléphone n'est pas enrôlé et après son retrait.
+  secretHache String?
+  enroleA     DateTime? @db.Timestamptz(3)
+  creePar     String?   @db.Uuid
+  creeA       DateTime  @default(now()) @db.Timestamptz(3)
+
+  @@index([compagnieId, gareId])
+  @@map("enrolement_appareil")
+}
+
+/// Ordre envoyé à un appareil par le serveur (aujourd'hui : « effacer »). Le secret d'acquittement n'est pas
+/// stocké : il se recalcule (HMAC) à partir de l'ordre. SQL : type `effacer`, un seul ordre en attente par
+/// appareil (index unique partiel), l'accusé ne s'écrit qu'une fois.
+model CommandeAppareil {
+  id         String    @id @db.Uuid
+  appareilId String
+  type       String
+  emiseA     DateTime  @db.Timestamptz(3)
+  emisePar   String?   @db.Uuid
+  motif      String?
+  acquitteeA DateTime? @db.Timestamptz(3)
+  /// Rapport d'effacement reçu de l'appareil (étapes, complet).
+  rapport    Json?
+
+  @@index([appareilId, emiseA])
+  @@map("commande_appareil")
+}
