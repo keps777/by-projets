@@ -107,6 +107,11 @@ export class Parcours {
     await this.contexte.close();
   }
 
+  /** Coupe (ou rétablit) le réseau du téléphone : le navigateur se déclare hors ligne et les requêtes échouent. */
+  async coupureReseau(coupe: boolean): Promise<void> {
+    await this.contexte.setOffline(coupe);
+  }
+
   get touches(): number {
     return this.etapes.reduce((somme, e) => somme + e.touches, 0);
   }

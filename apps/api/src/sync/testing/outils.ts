@@ -1,9 +1,12 @@
 import { genererCleAppareil, signer, type CleAppareil } from "@afrimove/sync";
+import { DEPART, GUICHET_1, GUICHET_2 } from "../../billetterie/testing/app-billetterie-test";
 import type { AppareilSync } from "../ports";
 import { versIsoDouala } from "../temps";
 import type { AppSyncTest } from "./app-sync-test";
 
 let compteurId = 0;
+/** Codes de billet à 4 chiffres, tous différents dans un test (ils sont uniques dans un départ). */
+let compteurCode = 0;
 
 /** UUID v4 lisible, déterministe dans un test (le serveur n'exige que la forme). */
 export function uuid(): string {
@@ -41,22 +44,44 @@ export class AppareilTest {
     readonly cle: CleAppareil,
   ) {}
 
+  /**
+   * Une vente telle que le téléphone l'écrirait : des données complètes du contrat (`billet.vendu`,
+   * `billet.vendu_cadence`), sur un départ du réseau de test (`DEPART`, 40 places, 4 000 F), pour que la
+   * synchronisation en fasse un vrai billet. `route.billet_vendu` reste minimal (le serveur ne le rejoue pas en billet).
+   */
   vente(o: OptionsVente): EvenementBrut {
     const billetId = o.billetId ?? uuid();
+    const type = o.type ?? "billet.vendu";
+    const siege = o.siege === undefined ? 7 : o.siege;
+    const departId = o.departId ?? DEPART;
+    const code = String(1000 + (compteurCode++ % 9000));
+    const paiement = { mode: "cash", recu: 4000, rendu: 0, reference: null };
+    const donnees: Record<string, unknown> =
+      type === "billet.vendu"
+        ? {
+            billetId,
+            departId,
+            siege,
+            classe: "classique",
+            prix: 4000,
+            bagage: 0,
+            passager: { nom: "Voyageur de test", telephone: null, pieceQuatreDerniers: null },
+            paiement,
+            codeBillet: code,
+            sms: false,
+          }
+        : type === "billet.vendu_cadence"
+          ? { billetId, departId, siege, prix: 4000, paiement, codeBillet: code, telephone: null }
+          : { billetId, departId, siege, prix: 4000 };
     return {
       id: o.id ?? uuid(),
-      type: o.type ?? "billet.vendu",
+      type,
       at: versIsoDouala(o.at),
       appareilId: this.id,
       auteurId: this.auteurId,
       cible: { type: "billet", id: billetId },
       numeroPlage: o.numeroPlage,
-      donnees: {
-        billetId,
-        departId: o.departId ?? "depart-1",
-        siege: o.siege === undefined ? 7 : o.siege,
-        prix: 4000,
-      },
+      donnees,
     };
   }
 
@@ -118,6 +143,11 @@ export async function installerAppareil(
     ...(options.gareId !== undefined ? { gareId: options.gareId } : {}),
   });
   await t.declarer({ id, genre: "guichet", rang: 2, ...fiche });
+  // Un guichetier est affecté au guichet de son rang (les billets de ses ventes portent ce guichet).
+  const rang = fiche.rang ?? 2;
+  if (role === "guichetier" && (rang === 1 || rang === 2)) {
+    t.catalogue.affecterGuichet(compte.id, rang === 1 ? GUICHET_1 : GUICHET_2);
+  }
   const cle = await genererCleAppareil();
   const appareil = new AppareilTest(id, compte.id, compte.jeton, cle);
   if (!sansCle) {

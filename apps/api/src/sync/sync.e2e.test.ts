@@ -1,5 +1,6 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { genererCleAppareil } from "@afrimove/sync";
+import { DEPART } from "../billetterie/testing/app-billetterie-test";
 import type { Role } from "../socle/auth/roles";
 import type { AppConfig } from "../socle/config/config";
 import { VerificationStockageSync } from "./sync.module";
@@ -22,6 +23,10 @@ beforeAll(async () => {
   t = await creerAppSyncTest();
 });
 afterAll(() => t.fermer());
+// Les tests réutilisent les mêmes numéros de plage : un numéro de billet est unique, on repart donc sans billet.
+beforeEach(() => {
+  t.billets.lignes.clear();
+});
 
 const maintenant = () => t.horloge.maintenant().getTime();
 
@@ -224,7 +229,9 @@ describe("réception idempotente", () => {
     );
     const dedans = t.journal.lignes.filter((l) => l.evenement.appareilId === g.id);
     expect(dedans).toHaveLength(3);
-    const operations = (await t.sieges.operations("depart-1", 3)).length;
+    const operations = (await t.sieges.operations(DEPART, 3)).length;
+    expect(operations).toBe(1);
+    expect(t.billets.lignes.size).toBe(2);
 
     const second = await envoyer(g, evenements);
     expect(second.body.resultats.map((r: { statut: string }) => r.statut)).toEqual([
@@ -233,7 +240,8 @@ describe("réception idempotente", () => {
       "deja_recu",
     ]);
     expect(t.journal.lignes.filter((l) => l.evenement.appareilId === g.id)).toHaveLength(3);
-    expect(await t.sieges.operations("depart-1", 3)).toHaveLength(operations);
+    expect(await t.sieges.operations(DEPART, 3)).toHaveLength(operations);
+    expect(t.billets.lignes.size).toBe(2);
     expect(alertesDe(g.id)).toEqual([]);
   });
 
@@ -321,11 +329,11 @@ describe("réception idempotente", () => {
       at: maintenant() - MS_PAR_MINUTE,
       numeroPlage: 1301,
       billetId: "b-reprise",
-      siege: 41,
+      siege: 39,
     });
     // Le serveur est tombé après avoir posé le siège mais avant d'écrire au journal.
-    await t.sieges.definirBillet("b-reprise", "depart-1", 41);
-    await t.sieges.ajouterOperation("depart-1", 41, {
+    await t.sieges.definirBillet("b-reprise", DEPART, 39);
+    await t.sieges.ajouterOperation(DEPART, 39, {
       evenementId: e.id,
       billetId: "b-reprise",
       kind: "prend",
@@ -343,7 +351,9 @@ describe("réception idempotente", () => {
     });
     const rep = await envoyer(g, [e]);
     expect(rep.body.resultats[0].statut).toBe("accepte");
-    expect(await t.sieges.operations("depart-1", 41)).toHaveLength(1);
+    expect(await t.sieges.operations(DEPART, 39)).toHaveLength(1);
+    // Le billet, lui, n'avait pas encore été créé : la reprise le crée.
+    expect(t.billets.lignes.get("b-reprise")?.siege).toBe(39);
     expect(alertesDe(g.id)).toEqual([]);
     expect(t.journal.lignes.filter((l) => l.evenement.id === e.id)).toHaveLength(1);
   });
@@ -981,10 +991,27 @@ describe("stockage", () => {
         t.sieges,
         t.alertes,
         t.numeros,
+        t.provisionnement,
       );
     expect(() => garde("test").onModuleInit()).not.toThrow();
     expect(() => garde("development").onModuleInit()).not.toThrow();
     expect(() => garde("production").onModuleInit()).toThrow(/mémoire/);
+  });
+
+  it("le provisionnement des sièges en mémoire suffit à bloquer la production, tout le reste étant durable", () => {
+    const durable = { durable: true } as never;
+    const garde = (provisionnement: unknown) =>
+      new VerificationStockageSync(
+        { env: "production" } as unknown as AppConfig,
+        durable,
+        durable,
+        durable,
+        durable,
+        durable,
+        provisionnement as never,
+      );
+    expect(() => garde(t.provisionnement).onModuleInit()).toThrow(/mémoire/);
+    expect(() => garde(durable).onModuleInit()).not.toThrow();
   });
 });
 

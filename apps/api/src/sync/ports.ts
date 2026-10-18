@@ -1,4 +1,5 @@
-import type { EvenementJournal } from "./protocole";
+import type { Utilisateur } from "../socle/auth/decorateurs";
+import type { EvenementJournal, EvenementRecu } from "./protocole";
 import type { CleJwk } from "./signature";
 import type { GenreNumero, Plage } from "./regles";
 import type { OperationSiege } from "./sieges";
@@ -126,7 +127,11 @@ export type TypeAlerte =
   | "horloge_en_avance"
   | "deblocage_sur_place"
   | "evenement_rejete"
-  | "evenement_mois_clos";
+  | "evenement_mois_clos"
+  /** Une vente reçue n'a pas pu devenir un billet (départ inconnu, numéro déjà porté par un autre billet…). */
+  | "vente_non_enregistree"
+  /** Le billet existe mais la vente sort de l'ordinaire : prix hors tarif, départ fermé, code changé… */
+  | "vente_atypique";
 
 export interface AlerteSync {
   id: string;
@@ -160,6 +165,49 @@ export abstract class ProvisionnementSync {
   abstract verificateursPin(
     appareil: AppareilSync,
   ): Promise<{ superviseurId: string; sel: string; iterations: number; hache: string }[]>;
+}
+
+/* ------------------------------------------------------------------ billets (A6) */
+
+/** Ce que devient le siège d'une vente rejouée : gardé, aucun (vente sans siège) ou « à replacer ». */
+export type SiegeDeVente = "garde" | "aucun" | "a_replacer";
+
+export type ResultatVenteSync =
+  | {
+      cree: true;
+      billetId: string;
+      siege: SiegeDeVente;
+      /** Le billet qui tenait déjà le siège quand la vente est arrivée (siège pris ailleurs), si on le connaît. */
+      occupantBilletId: string | null;
+      /** Ce qui sort de l'ordinaire dans la vente (le billet existe quand même). */
+      anomalies: string[];
+    }
+  | { cree: false; code: string; message: string };
+
+/**
+ * Création des billets à partir des ventes rejouées (anomalie A6 de la recette). Le billet naît par **la même
+ * voie que `POST /agence/billets`** (`AgenceService`) : mêmes règles, même idempotence par identifiant
+ * d'événement. L'adaptateur est celui de la billetterie (`billets.ts`) ; il suit son stockage.
+ */
+export abstract class BilletsSynchronises {
+  /**
+   * `billet.vendu` et `billet.vendu_cadence`. `siegePerdu` : la synchronisation a jugé que le siège revient à
+   * un autre billet (premier horodatage) : le billet est créé sans siège.
+   */
+  abstract vendre(
+    evenement: EvenementRecu,
+    utilisateur: Utilisateur,
+    siegePerdu: boolean,
+  ): Promise<ResultatVenteSync>;
+  /** `billet.telephone_ajoute`. */
+  abstract ajouterTelephone(
+    evenement: EvenementRecu,
+    utilisateur: Utilisateur,
+  ): Promise<{ ok: true } | { ok: false; code: string; message: string }>;
+  /** Un billet déjà créé perd son siège (il passe « à replacer ») ; `false` s'il ne l'avait pas ou est monté à bord. */
+  abstract retirerSiege(billetId: string, departId: string, siege: number): Promise<boolean>;
+  /** Un conflit est levé : le billet reprend son siège s'il est libre. */
+  abstract rendreSiege(billetId: string, departId: string, siege: number): Promise<boolean>;
 }
 
 /* ------------------------------------------------------------------ numérotation (AM-161) */

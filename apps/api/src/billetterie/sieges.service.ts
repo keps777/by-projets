@@ -111,6 +111,35 @@ export class SiegesService {
     return { departId: dc.depart.id, siege, jusqua };
   }
 
+  /**
+   * Le billet qui occupe un siège, ou `null` (libre, ou seulement retenu par une commande en cours).
+   * Sert à la synchronisation des ventes hors ligne : savoir qui a pris le siège avant elles.
+   */
+  async occupant(departId: string, siege: number): Promise<string | null> {
+    const plan = await this.inventaire.plan(departId);
+    return plan.occupes[siege] ?? null;
+  }
+
+  /** Rend le siège à la vente (seulement s'il est encore occupé par ce billet) et le diffuse. */
+  async rendreALaVente(departId: string, siege: number, billetId: string): Promise<boolean> {
+    const levee = await this.inventaire.liberer(departId, siege, billetId);
+    if (levee) this.publier(departId, siege, "libre", null, undefined, levee.version);
+    return levee !== null;
+  }
+
+  /** Occupe un siège libre pour un billet déjà enregistré (synchronisation) et le diffuse. */
+  async occuperPour(departId: string, siege: number, billetId: string): Promise<boolean> {
+    const r = await this.inventaire.occuper({
+      departId,
+      siege,
+      billetId,
+      par: null,
+      maintenant: this.maintenant(),
+    });
+    if (r.ok) this.publier(departId, siege, "pris", null, undefined, r.version);
+    return r.ok;
+  }
+
   /** Diffuse l'état d'un siège aux spectateurs du départ. */
   publier(
     departId: string,

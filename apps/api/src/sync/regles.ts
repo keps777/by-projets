@@ -130,3 +130,35 @@ export const TYPES_SIEGE_OCCUPE: readonly string[] = [
   "route.billet_vendu",
   "controle.regularise",
 ];
+
+/* ------------------------------------------------------------------ parts de sièges hors ligne (A7) */
+
+/**
+ * Part du bus gardée pour la vente connectée (voyageurs en ligne, guichets avec réseau) : les derniers sièges
+ * ne sont donnés à aucun téléphone. **Règle provisoire** (15 %), à confirmer avec les compagnies.
+ */
+export const RESERVE_EN_LIGNE_POURCENT = 15;
+
+export const reserveEnLigne = (capacite: number): number =>
+  Math.max(0, Math.min(capacite - 1, Math.ceil((capacite * RESERVE_EN_LIGNE_POURCENT) / 100)));
+
+/**
+ * Répartit les sièges d'un bus entre les guichets : un bloc de sièges contigus par guichet, les derniers sièges
+ * (`reserve`) restant à la vente connectée. Copie de `repartirPartsHorsLigne` du domaine (`parite.test.ts`),
+ * qui travaille sur des identifiants de guichet ; ici, une liste par position (0 = premier guichet).
+ */
+export function repartirParts(capacite: number, nbGuichets: number, reserve: number): number[][] {
+  if (nbGuichets < 1) throw new RangeError("Au moins un guichet");
+  if (reserve < 0 || reserve >= capacite) throw new RangeError("Réserve invalide");
+  const disponibles = capacite - reserve;
+  const base = Math.floor(disponibles / nbGuichets);
+  const reste = disponibles % nbGuichets;
+  const parts: number[][] = [];
+  let prochain = 1;
+  for (let i = 0; i < nbGuichets; i++) {
+    const taille = base + (i < reste ? 1 : 0);
+    parts.push(Array.from({ length: taille }, (_, k) => prochain + k));
+    prochain += taille;
+  }
+  return parts;
+}

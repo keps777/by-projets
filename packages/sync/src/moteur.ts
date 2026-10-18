@@ -474,6 +474,94 @@ export class MoteurSync {
     return { evenement: evenement as unknown as c.EvenementDe<E>, numero };
   }
 
+  /**
+   * Met en file un événement **déjà créé** par l'application (UUID, heure et numéro de plage sont ceux de
+   * `AppareilAgence.creerEvenement` de `@afrimove/api-client`) : c'est le cas d'une écriture dont l'envoi direct n'a
+   * pas pu se faire (pas de réseau, serveur injoignable). Rien n'est recréé : le numéro déjà imprimé reste le même, et
+   * le compteur du moteur est simplement remonté au-dessus (jamais de numéro repris).
+   *
+   * Même contrôle qu'`enregistrer` : appareil bloqué (`AppareilBloque`), données invalides (`DonneesInvalides`) et,
+   * hors ligne, vente d'un siège hors de la part de l'appareil (`PartInconnue`, `SiegeHorsPart`, `SiegeDejaVendu`).
+   * Idempotent : mettre deux fois le même événement en file ne l'écrit qu'une fois. L'événement doit être celui de
+   * cet appareil (`appareilId`).
+   */
+  async mettreEnFile<E extends DefinitionEvenementQuelconque>(
+    definition: E,
+    evenement: c.EvenementDe<E>,
+    options: { ignorerBlocage?: boolean } = {},
+  ): Promise<EvenementEnregistre<E>> {
+    const maintenant = this.horloge.maintenant();
+    if (!options.ignorerBlocage) await this.verifierNonBloque(maintenant);
+    const brut = evenement as unknown as EvenementFile;
+    if (brut.type !== definition.type || brut.appareilId !== this.options.appareilId) {
+      throw new DonneesInvalides(definition.type, [
+        { message: "Événement d'un autre type ou d'un autre appareil" },
+      ]);
+    }
+    const lu = (
+      definition.donnees as {
+        safeParse(v: unknown): { success: boolean; data?: unknown; error?: { issues: unknown } };
+      }
+    ).safeParse(brut.donnees);
+    if (!lu.success) throw new DonneesInvalides(definition.type, lu.error?.issues);
+    const horsLigne = !this.enLigne();
+
+    const { ordre, nouveau } = await this.base.transaction(
+      "rw",
+      this.base.file,
+      this.base.meta,
+      async () => {
+        const existant = await this.base.file.where("id").equals(brut.id).first();
+        if (existant) return { ordre: existant.ordre, nouveau: false };
+
+        const siege = siegeOccupeParEvenement({ type: brut.type, donnees: lu.data as never });
+        if (siege && horsLigne) await this.verifierPart(siege);
+
+        if (brut.numeroPlage !== null && brut.numeroPlage !== undefined) {
+          const jour = aammjjDouala(brut.at);
+          const etat =
+            (await lireMeta<EtatGenerateur>(this.base, META.generateur)) ?? GENERATEUR_VIDE();
+          const compteurs = TYPES_COLIS.has(brut.type) ? etat.colis : etat.billets;
+          if ((compteurs[jour] ?? 0) < brut.numeroPlage + 1) {
+            compteurs[jour] = brut.numeroPlage + 1;
+            await ecrireMeta(this.base, META.generateur, etat);
+          }
+        }
+        const cle = await this.base.file.add({
+          id: brut.id,
+          evenement: { ...brut, donnees: lu.data },
+          signature: null,
+          statut: "en_attente",
+          tentatives: 0,
+          creeA: maintenant,
+          acquitteA: null,
+          resultat: null,
+          erreur: null,
+        } as unknown as EntreeFile);
+        return { ordre: cle, nouveau: true };
+      },
+    );
+
+    if (nouveau) {
+      try {
+        const entree = await this.base.file.get(ordre);
+        if (entree) {
+          await this.base.file.update(ordre, {
+            signature: await signer(this.cle.privee, entree.evenement),
+          });
+        }
+      } catch {
+        /* signée à l'envoi */
+      }
+      await this.rafraichirEtat();
+      if (this.synchroAuto && this.enLigne()) void this.synchroniser().catch(() => undefined);
+    }
+    return {
+      evenement: brut as unknown as c.EvenementDe<E>,
+      numero: this.numeroDe(brut),
+    };
+  }
+
   private async verifierPart(siege: {
     departId: string;
     billetId: string;

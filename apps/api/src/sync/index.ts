@@ -5,6 +5,7 @@ export {
   AlertesSync,
   AppareilsSync,
   AttributionPlages,
+  BilletsSynchronises,
   ControleNumeros,
   JournalSync,
   ProvisionnementSync,

@@ -156,6 +156,9 @@ importers:
       '@afrimove/impression':
         specifier: workspace:*
         version: link:../../packages/impression
+      '@afrimove/sync':
+        specifier: workspace:*
+        version: link:../../packages/sync
       '@afrimove/ui':
         specifier: workspace:*
         version: link:../../packages/ui

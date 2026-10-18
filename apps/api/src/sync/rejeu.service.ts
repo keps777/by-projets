@@ -20,6 +20,7 @@ import {
   AlertesSync,
   AppareilsSync,
   AttributionPlages,
+  BilletsSynchronises,
   ControleNumeros,
   JournalSync,
   ProvisionnementSync,
@@ -44,6 +45,7 @@ import {
   siegeLibere,
   siegeOccupe,
   type OperationSiege,
+  type Perdant,
 } from "./sieges";
 import { MS_PAR_HEURE, aammjjDouala, versIsoDouala } from "./temps";
 
@@ -126,6 +128,7 @@ export class RejeuService {
     private readonly horloge: Horloge,
     private readonly audit: AuditService,
     private readonly verrou: VerrouillageMois,
+    private readonly billets: BilletsSynchronises,
   ) {}
 
   /* -------------------------------------------------------------- réception */
@@ -362,6 +365,7 @@ export class RejeuService {
     }
 
     const prend = siegeOccupe(e);
+    let siegePerdu = false;
     if (prend) {
       await this.sieges.definirBillet(prend.billetId, prend.departId, prend.siege);
       await this.sieges.ajouterOperation(prend.departId, prend.siege, {
@@ -372,7 +376,22 @@ export class RejeuService {
         appareilId: e.appareilId,
         auteurId: e.auteurId,
       });
-      await this.recalculerSiege(prend.departId, prend.siege, ctx);
+      const perdants = await this.recalculerSiege(prend.departId, prend.siege, ctx);
+      siegePerdu = perdants.has(prend.billetId);
+    }
+    if (e.type === "billet.vendu" || e.type === "billet.vendu_cadence") {
+      await this.creerBillet(e, ctx, prend, siegePerdu);
+    }
+    if (e.type === "billet.telephone_ajoute") {
+      const r = await this.billets.ajouterTelephone(e, ctx.utilisateur);
+      if (!r.ok) {
+        await this.alerter(appareil, utilisateur, recuA, "vente_non_enregistree", "alerte", e.id, {
+          type: e.type,
+          billetId: e.cible.id,
+          code: r.code,
+          message: r.message,
+        });
+      }
     }
     const libere = siegeLibere(e);
     if (libere) {
@@ -437,97 +456,27 @@ export class RejeuService {
    * qui perdent passent « à replacer », ceux qui ne perdent plus (une libération arrivée en retard
    * mais datée d'avant) sont levés.
    */
-  private async recalculerSiege(departId: string, siege: number, ctx: ContexteLot): Promise<void> {
+  private async recalculerSiege(
+    departId: string,
+    siege: number,
+    ctx: ContexteLot,
+  ): Promise<Set<string>> {
     const operations = await this.sieges.operations(departId, siege);
     const { perdants } = resoudreSiege(operations);
     const connus = await this.sieges.conflitsDuSiege(departId, siege);
 
     for (const perdant of perdants) {
+      // Le billet perdant, s'il existe déjà, rend le siège (un voyageur déjà monté garde le sien). Sans effet
+      // pour le billet de l'événement en cours : il n'est pas encore créé, `creerBillet` le crée sans siège.
+      await this.billets.retirerSiege(perdant.billetId, departId, siege);
       if (connus.some((c) => c.evenementId === perdant.evenementId)) continue;
-      const conflit: ConflitStocke = {
-        evenementId: perdant.evenementId,
-        billetId: perdant.billetId,
-        departId,
-        siege,
-        gagnantBilletId: perdant.gagnantBilletId,
-        appareilId: perdant.appareilId,
-        auteurId: perdant.auteurId,
-        detecteA: ctx.recuA,
-      };
-      // Deux rejeux qui se croisent détectent le même conflit : seul le premier l'écrit et le signale.
-      if (!(await this.sieges.enregistrerConflit(conflit))) continue;
-      await this.journal.ajouter({
-        evenement: {
-          id: uuidDeterministe(`billet.a_replacer:${perdant.evenementId}`),
-          type: "billet.a_replacer",
-          at: ctx.recuA,
-          appareilId: null,
-          auteurId: null,
-          cible: { type: "billet", id: perdant.billetId },
-          numeroPlage: null,
-          donnees: {
-            billetId: perdant.billetId,
-            departId,
-            siege,
-            gagnantBilletId: perdant.gagnantBilletId,
-            evenementId: perdant.evenementId,
-            motif: "siege_deja_pris",
-          },
-        },
-        recuA: ctx.recuA,
-        ordreAppareil: null,
-        origine: "serveur",
-      });
-      const gagnant = operations.find(
-        (o) => o.kind === "prend" && o.billetId === perdant.gagnantBilletId,
-      );
-      const appareilPerdant = (await this.appareils.trouver(perdant.appareilId)) ?? ctx.appareil;
-      await this.alerter(
-        appareilPerdant,
-        { id: perdant.auteurId },
-        ctx.recuA,
-        "siege_en_conflit",
-        "alerte",
-        perdant.evenementId,
-        {
-          departId,
-          siege,
-          aReplacer: {
-            billetId: perdant.billetId,
-            auteurId: perdant.auteurId,
-            appareilId: perdant.appareilId,
-          },
-          gagnant: gagnant
-            ? {
-                billetId: gagnant.billetId,
-                auteurId: gagnant.auteurId,
-                appareilId: gagnant.appareilId,
-                at: versIsoDouala(gagnant.at),
-              }
-            : { billetId: perdant.gagnantBilletId },
-        },
-      );
-      await this.audit.enregistrer({
-        acteur: {
-          id: ctx.utilisateur.id,
-          role: ctx.utilisateur.role,
-          compagnieId: ctx.utilisateur.compagnieId,
-        },
-        action: "sync.siege_en_conflit",
-        resultat: "succes",
-        cible: { type: "billet", id: perdant.billetId },
-        details: {
-          departId,
-          siege,
-          gagnantBilletId: perdant.gagnantBilletId,
-          appareilId: perdant.appareilId,
-        },
-      });
+      await this.signalerPerdant(perdant, departId, siege, operations, ctx);
     }
 
     for (const ancien of connus) {
       if (perdants.some((p) => p.evenementId === ancien.evenementId)) continue;
       if (!(await this.sieges.leverConflit(ancien.evenementId))) continue;
+      await this.billets.rendreSiege(ancien.billetId, departId, siege);
       await this.alerter(
         ctx.appareil,
         ctx.utilisateur,
@@ -541,6 +490,163 @@ export class RejeuService {
           billetId: ancien.billetId,
         },
       );
+    }
+    return new Set(perdants.map((p) => p.billetId));
+  }
+
+  /** Un billet perd son siège : le conflit est écrit, le journal et l'appareil le reçoivent, une alerte nominative part. */
+  private async signalerPerdant(
+    perdant: Perdant,
+    departId: string,
+    siege: number,
+    operations: readonly OperationSiege[],
+    ctx: ContexteLot,
+  ): Promise<void> {
+    const conflit: ConflitStocke = {
+      evenementId: perdant.evenementId,
+      billetId: perdant.billetId,
+      departId,
+      siege,
+      gagnantBilletId: perdant.gagnantBilletId,
+      appareilId: perdant.appareilId,
+      auteurId: perdant.auteurId,
+      detecteA: ctx.recuA,
+    };
+    // Deux rejeux qui se croisent détectent le même conflit : seul le premier l'écrit et le signale.
+    if (!(await this.sieges.enregistrerConflit(conflit))) return;
+    await this.journal.ajouter({
+      evenement: {
+        id: uuidDeterministe(`billet.a_replacer:${perdant.evenementId}`),
+        type: "billet.a_replacer",
+        at: ctx.recuA,
+        appareilId: null,
+        auteurId: null,
+        cible: { type: "billet", id: perdant.billetId },
+        numeroPlage: null,
+        donnees: {
+          billetId: perdant.billetId,
+          departId,
+          siege,
+          gagnantBilletId: perdant.gagnantBilletId,
+          evenementId: perdant.evenementId,
+          motif: "siege_deja_pris",
+        },
+      },
+      recuA: ctx.recuA,
+      ordreAppareil: null,
+      origine: "serveur",
+    });
+    const gagnant = operations.find(
+      (o) => o.kind === "prend" && o.billetId === perdant.gagnantBilletId,
+    );
+    const appareilPerdant = (await this.appareils.trouver(perdant.appareilId)) ?? ctx.appareil;
+    await this.alerter(
+      appareilPerdant,
+      { id: perdant.auteurId },
+      ctx.recuA,
+      "siege_en_conflit",
+      "alerte",
+      perdant.evenementId,
+      {
+        departId,
+        siege,
+        aReplacer: {
+          billetId: perdant.billetId,
+          auteurId: perdant.auteurId,
+          appareilId: perdant.appareilId,
+        },
+        gagnant: gagnant
+          ? {
+              billetId: gagnant.billetId,
+              auteurId: gagnant.auteurId,
+              appareilId: gagnant.appareilId,
+              at: versIsoDouala(gagnant.at),
+            }
+          : { billetId: perdant.gagnantBilletId },
+      },
+    );
+    await this.audit.enregistrer({
+      acteur: {
+        id: ctx.utilisateur.id,
+        role: ctx.utilisateur.role,
+        compagnieId: ctx.utilisateur.compagnieId,
+      },
+      action: "sync.siege_en_conflit",
+      resultat: "succes",
+      cible: { type: "billet", id: perdant.billetId },
+      details: {
+        departId,
+        siege,
+        gagnantBilletId: perdant.gagnantBilletId,
+        appareilId: perdant.appareilId,
+      },
+    });
+  }
+
+  /**
+   * Le billet d'une vente rejouée (A6), par la même voie que `POST /agence/billets`. Une vente n'est jamais perdue :
+   * si aucun billet ne peut en naître (départ inconnu, numéro déjà porté par un autre billet), l'événement reste au
+   * journal avec toutes ses données et une alerte nominative l'annonce.
+   */
+  private async creerBillet(
+    e: EvenementRecu,
+    ctx: ContexteLot,
+    prend: { departId: string; billetId: string; siege: number } | null,
+    siegePerdu: boolean,
+  ): Promise<void> {
+    const { appareil, utilisateur, recuA } = ctx;
+    const r = await this.billets.vendre(e, utilisateur, siegePerdu);
+    if (!r.cree) {
+      await this.alerter(appareil, utilisateur, recuA, "vente_non_enregistree", "alerte", e.id, {
+        type: e.type,
+        billetId: (e.donnees as { billetId?: unknown }).billetId ?? null,
+        numeroPlage: e.numeroPlage,
+        code: r.code,
+        message: r.message,
+      });
+      return;
+    }
+    if (r.anomalies.length > 0) {
+      await this.alerter(appareil, utilisateur, recuA, "vente_atypique", "alerte", e.id, {
+        type: e.type,
+        billetId: r.billetId,
+        numeroPlage: e.numeroPlage,
+        anomalies: r.anomalies,
+      });
+    }
+    // Le siège était déjà tenu par un billet que la synchronisation ne connaît pas (vente en ligne, au guichet
+    // connecté…) : ce billet est le premier à l'avoir (il est déjà confirmé), la vente rejouée passe « à replacer »
+    // par le même chemin qu'un conflit entre deux téléphones.
+    if (prend && r.siege === "a_replacer" && !siegePerdu) {
+      if (r.occupantBilletId) {
+        if (!(await this.sieges.billet(r.occupantBilletId))) {
+          await this.sieges.ajouterOperation(prend.departId, prend.siege, {
+            evenementId: uuidDeterministe(`billet.serveur:${r.occupantBilletId}`),
+            billetId: r.occupantBilletId,
+            kind: "prend",
+            at: 0,
+            appareilId: "serveur",
+            auteurId: "serveur",
+          });
+        }
+        await this.recalculerSiege(prend.departId, prend.siege, ctx);
+      }
+      // Siège seulement retenu par une commande en cours (aucun billet encore) : le conflit est signalé sans gagnant.
+      else {
+        await this.signalerPerdant(
+          {
+            billetId: prend.billetId,
+            evenementId: e.id,
+            gagnantBilletId: "commande_en_cours",
+            appareilId: e.appareilId,
+            auteurId: e.auteurId,
+          },
+          prend.departId,
+          prend.siege,
+          [],
+          ctx,
+        );
+      }
     }
   }
 
