@@ -132,9 +132,10 @@ export interface OptionsAppColisTest {
    * Monte le module sur PostgreSQL (`API_STOCKAGE=postgres`, comptes, audit et colis en base) au
    * lieu de la mémoire. Les lignes que les constantes de ce fichier désignent (compagnies, gares) et
    * le départ `departId` doivent exister en base ; l'annuaire des départs reste en mémoire et ne
-   * connaît que ce départ.
+   * connaît que ce départ, sauf avec `referentielReel: true` : le module lit alors les départs, les gares
+   * et les guichets en base (`ReferentielColisPrisma`), et rien n'est ajouté à l'annuaire par ce harnais.
    */
-  postgres?: { url: string; departId: string };
+  postgres?: { url: string; departId: string; referentielReel?: boolean };
 }
 
 /**
@@ -159,6 +160,9 @@ export async function creerAppColisTest(options: OptionsAppColisTest = {}) {
     .useValue(config)
     .overrideProvider(Horloge)
     .useValue(horloge);
+  if (options.postgres && !options.postgres.referentielReel) {
+    montage = montage.overrideProvider(ReferentielColis).useClass(ReferentielMemoire);
+  }
   if (!options.postgres) {
     montage = montage
       .overrideProvider(PersonnesRepository)
@@ -217,21 +221,23 @@ export async function creerAppColisTest(options: OptionsAppColisTest = {}) {
   }
 
   const referentiel = app.get(ReferentielColis) as ReferentielMemoire;
-  // `InterAgencesModule` (dans `AppModule`) branche ce calcul sur les conventions en vigueur au démarrage ;
-  // les tests du colis pilotent le drapeau du référentiel en mémoire.
-  referentiel.interAgencesDisponible = async () => referentiel.interAgences;
-  referentiel.gares.set(GARE_DLA.id, GARE_DLA);
-  referentiel.gares.set(GARE_BAF.id, GARE_BAF);
-  referentiel.gares.set(AUTRE_GARE.id, AUTRE_GARE);
-  referentiel.departs.set(DEPART_BAF.id, { ...DEPART_BAF });
-  if (options.postgres) {
-    referentiel.departs.set(options.postgres.departId, {
-      ...DEPART_BAF,
-      id: options.postgres.departId,
-    });
+  if (!options.postgres?.referentielReel) {
+    // `InterAgencesModule` (dans `AppModule`) branche ce calcul sur les conventions en vigueur au démarrage ;
+    // les tests du colis pilotent le drapeau du référentiel en mémoire.
+    referentiel.interAgencesDisponible = async () => referentiel.interAgences;
+    referentiel.gares.set(GARE_DLA.id, GARE_DLA);
+    referentiel.gares.set(GARE_BAF.id, GARE_BAF);
+    referentiel.gares.set(AUTRE_GARE.id, AUTRE_GARE);
+    referentiel.departs.set(DEPART_BAF.id, { ...DEPART_BAF });
+    if (options.postgres) {
+      referentiel.departs.set(options.postgres.departId, {
+        ...DEPART_BAF,
+        id: options.postgres.departId,
+      });
+    }
+    referentiel.guichets.set(GUICHET_2.id, GUICHET_2);
+    referentiel.lesRelais.set(POINT_RELAIS.id, POINT_RELAIS);
   }
-  referentiel.guichets.set(GUICHET_2.id, GUICHET_2);
-  referentiel.lesRelais.set(POINT_RELAIS.id, POINT_RELAIS);
 
   const sms = app.get<SmsMock>(SmsGateway);
   return {

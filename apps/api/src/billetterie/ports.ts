@@ -175,6 +175,12 @@ export abstract class EvenementsTraites {
   abstract trouver(id: string): Promise<EvenementTraite | null>;
   /** `false` si l'identifiant y était déjà (deux requêtes identiques simultanées). */
   abstract memoriser(entree: EvenementTraite): Promise<boolean>;
+  /**
+   * Le type de chaque événement connu parmi `ids` (`billet.vendu`, `billet.vendu_cadence`…) : sert à savoir
+   * par quel geste un billet a été créé sans lire ni déchiffrer les réponses. Les identifiants inconnus, ou
+   * qui ne sont pas des UUID, n'y figurent pas.
+   */
+  abstract typesDe(ids: readonly string[]): Promise<Map<string, string>>;
 }
 
 /* ------------------------------------------------------------------ préférences du voyageur */

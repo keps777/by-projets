@@ -567,3 +567,26 @@ SQL), `patron.module.test.ts`, `calculs.test.ts`, `validation.test.ts`.
   (pile réelle). Aucune route ajoutée ; aucun contrat modifié.
 
 <!-- LOT Dd : fin -->
+<!-- LOT Db : début -->
+
+## Lot Db : guichet (accueil, cadence, impressions), colis sur les départs réels
+
+Recette AM-181, anomalies A2, A5 et A9. Détail dans `src/guichet/README.md` et `src/colis/README.md`.
+
+- **A2** : `GuichetModule` (dans `AppModule`) ajoute `GET /agence/guichet/accueil`, `GET /agence/cadence`,
+  `GET /agence/cadence/billets/:billetId`, `GET /agence/impression`, `POST /agence/impressions` et
+  `GET /agence/quai/cadence`. Une table, `impression_agence` (ajout seul), migration
+  `20261018001001_lot_db_impressions` (préfixe réservé `20261018001000`–`099`). Pas de verrou consultatif.
+  Les autres données sont lues dans la billetterie, la caisse et les colis. En production, le module refuse de
+  démarrer si son port d'impressions n'est pas durable.
+- **A5** : `ReferentielColisPrisma` lit les départs, lignes, bus, gares, guichets et relais dans la base quand
+  `API_STOCKAGE=postgres` ; la mémoire garde ses fixtures. `POST /agence/colis` marche donc sur la pile réelle.
+- **A9** : côté application (`packages/api-client`, `apps/web`) : la vente envoie le numéro annoncé par le serveur.
+- **Ports modifiés** : `EvenementsTraites.typesDe(ids)` (billetterie) et trois champs de `FiltreColis`
+  (`gareOrigineId`, `deposePar`, `deposeApres`).
+- **Contrat** : `SchemaGuichetAccueil` accepte `null` pour `guichet.caisseOuverteA`, `quai` et `prochainDepart`.
+- **Décisions à confirmer** : toutes les règles de l'accueil, de la cadence et des impressions (voir le README du
+  module) et le port de colis à 1 500 F.
+- **Textes inventés** (fr, en, pcm) : `agence.sousTitreCaisseFermee` et `prochain.aucun`, dans l'accueil du guichet.
+
+<!-- LOT Db : fin -->

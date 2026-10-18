@@ -686,11 +686,15 @@ describe("critère 1 : une journée de gare, de l'ouverture des caisses au rappo
 
   /* ---------------------------------------------------------------- ce que la pile ne permet pas encore */
 
-  it.fails("ANOMALIE A5 : un colis se déclare au guichet (POST /agence/colis)", async () => {
+  // Anomalie A5 corrigée (lot Db) : le référentiel du module colis lit les départs réels de la base. Les départs de
+  // la journée simulée sont partis depuis longtemps (« départ fermé » aux colis, c'est la règle) : le colis se
+  // déclare sur un départ à venir, posé en base comme les autres.
+  it("un colis se déclare au guichet sur un départ réel (POST /agence/colis)", async () => {
     const p = postes[1];
+    const aVenir = creerDepart({ heureDepart: new Date(Date.now() + 4 * 3_600_000), bus: 1 });
     const evenement = p.appareil.creerEvenement(agence.ECRITURES.colisEnregistre.evenement, {
       colisId: p.appareil.nouvelId(),
-      departId: departs[2]!.id,
+      departId: aVenir.id,
       expediteur: { nom: "Ngo Aïcha", telephone: "+237691221008" },
       destinataire: { nom: "Ngo Thérèse", telephone: "+237699401822" },
       contenu: "Médicaments",
@@ -704,7 +708,10 @@ describe("critère 1 : une journée de gare, de l'ouverture des caisses au rappo
       jeton: sessions[1].jeton,
       corps: evenement,
     });
-    expect(r.statut).toBe(200);
+    expect(r.statut, JSON.stringify(r.corps)).toBe(200);
+    expect(
+      lire<{ etat: string }>(`select etat from colis where "departId" = '${aVenir.id}'`)[0]?.etat,
+    ).toBe("enregistre");
   });
 
   /* ---------------------------------------------------------------- l'espace du patron (A1, corrigée) */

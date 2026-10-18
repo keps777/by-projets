@@ -1,7 +1,8 @@
 {
   "agence": {
     "titre": "{{compagnie}} · {{gare}}",
-    "sousTitre": "Guichet {{rang}} · {{agent}} · caisse ouverte {{heure}}"
+    "sousTitre": "Guichet {{rang}} · {{agent}} · caisse ouverte {{heure}}",
+    "sousTitreCaisseFermee": "Guichet {{rang}} · {{agent}} · caisse fermée"
   },
   "synchro": {
     "sync": "SYNC",
@@ -43,6 +44,7 @@
   "prochain": {
     "depart_one": "Prochain départ dans {{minutes}} min : {{heure}} {{destination}}, {{count}} place.",
     "depart_other": "Prochain départ dans {{minutes}} min : {{heure}} {{destination}}, {{count}} places.",
+    "aucun": "Aucun départ à venir pour le moment.",
     "ouverture": "Le {{heure}} {{destination}} ouvre à la vente."
   },
   "etats": {

@@ -404,7 +404,7 @@ describe("Guichet · valeurs affichées", () => {
     const client = clientGuichet({
       source: avecAccueil((a) => ({
         ...a,
-        prochainDepart: { ...a.prochainDepart, placesLibres: 1 },
+        prochainDepart: { ...a.prochainDepart!, placesLibres: 1 },
         prochaineOuverture: null,
       })),
     });
@@ -413,6 +413,23 @@ describe("Guichet · valeurs affichées", () => {
     expect(
       screen.getByText("Prochain départ dans 12 min : 08:30 Yaoundé, 1 place."),
     ).toBeInTheDocument();
+  });
+
+  it("caisse fermée et plus de départ à venir : l'accueil se charge quand même (lot Db, A2)", async () => {
+    const client = clientGuichet({
+      source: avecAccueil((a) => ({
+        ...a,
+        guichet: { ...a.guichet, caisseOuverteA: null },
+        quai: null,
+        prochainDepart: null,
+        prochaineOuverture: null,
+      })),
+    });
+    rendreAppGuichet({ client });
+    await attendreEcran();
+    expect(screen.getByText(/caisse fermée/)).toBeInTheDocument();
+    expect(screen.getByText("Aucun départ à venir pour le moment.")).toBeInTheDocument();
+    expect(screen.queryByText(/Prochain départ dans/)).not.toBeInTheDocument();
   });
 
   it("formats", () => {

@@ -162,6 +162,69 @@ describe("appareil : l'événement est créé sur l'appareil", () => {
     expect(reprise.creerEvenement(ECRITURES.billetVendu.evenement, VENTE).numeroPlage).toBe(1003);
   });
 
+  it("aligner : un appareil neuf reprend à la suite du numéro que le serveur annonce (recette A9)", () => {
+    const a = appareil();
+    // Le serveur a déjà vu 1001 à 1013 ce jour-là : il annonce 1014, l'appareil neuf partirait de 1001.
+    expect(a.prochainNumero("billet")?.sequence).toBe(1001);
+    expect(a.prochainNumero("billet", 1014)).toEqual({
+      sequence: 1014,
+      numero: "ALP-DLA-270105-1014",
+    });
+    a.aligner("billet", 1014);
+    expect(a.creerEvenement(ECRITURES.billetVendu.evenement, VENTE).numeroPlage).toBe(1014);
+    expect(a.creerEvenement(ECRITURES.billetVendu.evenement, VENTE).numeroPlage).toBe(1015);
+  });
+
+  it("aligner ne recule jamais : les numéros pris et pas encore envoyés restent à l'appareil", () => {
+    const a = appareil();
+    for (let i = 0; i < 3; i += 1) a.creerEvenement(ECRITURES.billetVendu.evenement, VENTE); // 1001–1003
+    a.aligner("billet", 1002); // le serveur n'a vu que 1001
+    expect(a.prochainNumero("billet", 1002)?.sequence).toBe(1004);
+    expect(a.creerEvenement(ECRITURES.billetVendu.evenement, VENTE).numeroPlage).toBe(1004);
+  });
+
+  it("aligner ignore un numéro hors de la plage de l'appareil, ou qui n'est pas un entier", () => {
+    const a = appareil();
+    for (const hors of [185, 2000, 0, -5, 1001.5, Number.NaN]) {
+      a.aligner("billet", hors);
+      expect(a.prochainNumero("billet", hors)?.sequence, String(hors)).toBe(1001);
+    }
+    expect(a.creerEvenement(ECRITURES.billetVendu.evenement, VENTE).numeroPlage).toBe(1001);
+  });
+
+  it("prochainNumero rend null quand la plage est épuisée, annonce du serveur ou non", () => {
+    const a = appareil({ plage: { debut: 1, fin: 2 } });
+    a.aligner("billet", 2); // le serveur a vu 1 : l'appareil prend 2
+    expect(a.prochainNumero("billet", 2)?.sequence).toBe(2);
+    a.creerEvenement(ECRITURES.billetVendu.evenement, VENTE);
+    expect(a.prochainNumero("billet", 2)).toBeNull();
+    expect(a.prochainNumero("billet")).toBeNull();
+  });
+
+  it("aligner : les billets et les colis ont chacun leur compteur", () => {
+    const a = appareil();
+    a.aligner("colis", 1020);
+    expect(a.prochainNumero("billet")?.sequence).toBe(1001);
+    expect(a.prochainNumero("colis")).toEqual({ sequence: 1020, numero: "C-DLA-270105-1020" });
+    expect(a.creerEvenement(ECRITURES.colisEnregistre.evenement, COLIS).numeroPlage).toBe(1020);
+    expect(a.creerEvenement(ECRITURES.billetVendu.evenement, VENTE).numeroPlage).toBe(1001);
+  });
+
+  it("aligner ne vaut que pour le jour courant : le lendemain, le compteur repart du début de la plage", () => {
+    const horloge = creerHorlogeManuelle(DEBUT);
+    const a = creerAppareilAgence({
+      appareilId: "appareil-gu2-dla",
+      auteurId: "pers-joseph",
+      agence: "ALP",
+      gare: "DLA",
+      plage: plageGuichet(2),
+      horloge,
+    });
+    a.aligner("billet", 1500);
+    void horloge.avancer(24 * 3600 * 1000);
+    expect(a.creerEvenement(ECRITURES.billetVendu.evenement, VENTE).numeroPlage).toBe(1001);
+  });
+
   it("le numéro repart de zéro le lendemain", () => {
     const horloge = creerHorlogeManuelle(DEBUT);
     const a = creerAppareilAgence({

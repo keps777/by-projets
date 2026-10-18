@@ -338,6 +338,66 @@ describe("Vente · encaisser", () => {
     expect(recus).toHaveLength(2);
   });
 
+  // Non-régression de l'anomalie A9 (recette AM-181) : l'écran annonçait « billet n° …-0014 » (le prochain numéro du
+  // serveur) mais le billet partait avec le compteur de l'appareil (1001 pour un téléphone neuf) → 409 NUMERO_EN_DOUBLE.
+  describe("numéro du billet : celui que le serveur annonce (téléphone neuf sur un guichet qui a déjà vendu)", () => {
+    it("annonce le numéro du serveur et envoie le billet avec ce numéro, pas avec le début de la plage", async () => {
+      const impression = impressionEspion();
+      const { routeur, recus } = rendreVente({ impression, sequencesServeur: [1014] });
+      await screen.findByText("Guichet 2 · billet n° ALP-DLA-270105-1014");
+
+      await userEvent.click(encaisser());
+      await waitFor(() => expect(routeur.state.location.pathname).toBe("/guichet/accueil"));
+
+      expect(recus).toHaveLength(1);
+      expect((recus[0] as VenteRecue).numeroPlage).toBe(1014);
+      const billet = impression.imprimerBillet.mock.calls[0]![0] as BilletAImprimer;
+      expect(billet.numero).toBe("ALP-DLA-270105-1014");
+    });
+
+    it("un second billet prend la suite, sans retourner au début de la plage", async () => {
+      const impression = impressionEspion();
+      const { routeur, recus } = rendreVente({ impression, sequencesServeur: [1014, 1015] });
+      await screen.findByText("Guichet 2 · billet n° ALP-DLA-270105-1014");
+      await userEvent.click(encaisser());
+      await waitFor(() => expect(routeur.state.location.pathname).toBe("/guichet/accueil"));
+
+      await routeur.navigate("/guichet/vendre");
+      await screen.findByText("Guichet 2 · billet n° ALP-DLA-270105-1015");
+      // Un siège libre du plan rechargé (le premier billet a pris le 24), et le voyageur suivant.
+      await userEvent.click(screen.getAllByRole("button", { name: /^Siège \d+ libre$/ })[0]!);
+      await userEvent.type(nom(), "Ngo Marie");
+      await userEvent.click(encaisser());
+      await waitFor(() => expect(routeur.state.location.pathname).toBe("/guichet/accueil"));
+      expect(recus.map((r) => (r as VenteRecue).numeroPlage)).toEqual([1014, 1015]);
+    });
+
+    it("si un autre téléphone du guichet a vendu entre-temps (409 NUMERO_EN_DOUBLE), relit le numéro et réessaie une fois", async () => {
+      const { routeur, recus } = rendreVente({
+        panne: "numero_en_double",
+        sequencesServeur: [1014, 1020],
+      });
+      await screen.findByText("Guichet 2 · billet n° ALP-DLA-270105-1014");
+
+      await userEvent.click(encaisser());
+      await waitFor(() => expect(routeur.state.location.pathname).toBe("/guichet/accueil"));
+
+      expect(recus.map((r) => (r as VenteRecue).numeroPlage)).toEqual([1014, 1020]);
+    });
+
+    it("un numéro déjà pris que le serveur ne sait pas lever (deuxième refus) se termine par l'alerte habituelle", async () => {
+      // Le serveur annonce toujours 1014 mais refuse deux fois : une seule relance, puis l'alerte.
+      const { routeur, recus } = rendreVente({ panne: "vente", sequencesServeur: [1014] });
+      await screen.findByText("Guichet 2 · billet n° ALP-DLA-270105-1014");
+      await userEvent.click(encaisser());
+      expect(await screen.findByRole("alert")).toHaveTextContent(
+        "La vente n'a pas été enregistrée.",
+      );
+      expect(routeur.state.location.pathname).toBe("/guichet/vendre");
+      expect(recus).toHaveLength(1);
+    });
+  });
+
   it("si l'impression échoue, le billet est déjà vendu : on réimprime sans le revendre", async () => {
     const imprimerBillet = vi
       .fn<ImpressionBillet["imprimerBillet"]>()

@@ -15,7 +15,9 @@ dans `AppModule` ; `API_STOCKAGE` choisit l'une ou l'autre (voir `apps/api/INTEG
    `NumerotationColisServeur` sont choisis par `ColisModule` quand `stockageSurPostgres(config)` est vrai.
    En production, `VerificationPortsColis` **refuse de démarrer** tant qu'un port est en mémoire ou simulé
    (`durable === false`) : restent en mémoire `FichiersPhotos`, les paiements, l'assureur, l'analyse de
-   photo, la diffusion du suivi et le référentiel (départs, gares, guichets).
+   photo et la diffusion du suivi. Le référentiel (départs, gares, guichets, relais) est lu dans la base par
+   `ReferentielColisPrisma` (`postgres-referentiel.ts`, lot Db, recette AM-181 anomalie A5) ; en mémoire il garde
+   ses fixtures.
 3. Fait : les tables sont dans `prisma/schema.prisma` et les migrations (voir la section suivante).
 4. Brancher la diffusion du suivi en direct sur le futur WebSocket (voir « Reste à faire »).
 
@@ -154,6 +156,23 @@ Autres ports sans table : `FichiersPhotos` (stockage objet), `AnalysePhotoColis`
 taille), `PaiementsColis` (opérateurs mobiles, clé d'idempotence), `AssureurPartenaire`, `ReferentielColis`
 (départs, gares, guichets, points relais, option inter-agences : lecture des modules billetterie et agences).
 
+## Référentiel sur PostgreSQL (lot Db, anomalie A5)
+
+`ReferentielColisPrisma` branche le module sur les vrais départs, lignes, bus, gares, guichets et relais ; il ne
+crée rien. Règles provisoires, à confirmer :
+
+- un départ accepte des colis en état « en vente », « embarquement » ou « retardé » (le bus n'est pas exigé) ;
+- port du colis : 1 500 F pour toutes les lignes (`PORT_COLIS_PAR_DEFAUT`), la table `ligne` n'ayant pas de tarif
+  de colis ;
+- soute occupée : colis enregistrés, chargés ou en route sur le départ, divisés par les places de soute du bus
+  (un colis = une place), en pourcentage entier plafonné à 100 ; 0 sans bus ;
+- arrivée prévue : heure de départ + durée de la ligne (0 si elle n'est pas renseignée) ;
+- guichet d'une personne : celui auquel elle est affectée, sinon le premier de sa gare ;
+- inter-agences : `false` tant que le module des inter-agences ne remplace pas ce calcul.
+
+`FiltreColis` (ports mémoire et PostgreSQL) accepte aussi `gareOrigineId`, `deposePar` et `deposeApres`, que
+l'accueil du guichet utilise (`src/guichet`).
+
 ## Décisions à confirmer
 
 - La copie chiffrée du code (en plus du haché) : nécessaire pour l'afficher à l'expéditeur et le renvoyer.
@@ -168,7 +187,7 @@ taille), `PaiementsColis` (opérateurs mobiles, clé d'idempotence), `AssureurPa
 
 ## Reste à faire
 
-- Stockage de fichiers, référentiel PostgreSQL (départs, gares, guichets), opérateurs de paiement, assureur, analyse de photo réels.
+- Stockage de fichiers, tarif de colis par ligne, opérateurs de paiement, assureur, analyse de photo réels.
 - Passerelle WebSocket du suivi en direct (`DiffusionSuivi` est prête ; `suivreEnDirect` contrôle l'accès).
 - Routes des points relais et des livreurs (AM-148) : elles appellent `ColisService.executer` avec leur rôle.
 - Inter-agences (`SchemaColisPartenaire` est déjà la vue partagée).

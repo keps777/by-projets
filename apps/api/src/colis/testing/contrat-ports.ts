@@ -361,6 +361,49 @@ export function contratPortsColis(nom: string, monter: () => Promise<BancColis>)
         expect(await ids({ destinataireTelephone: "+237600000000" })).toEqual([]);
       });
 
+      it("liste les colis d'une gare, déposés par une personne, depuis un moment donné (accueil du guichet)", async () => {
+        const ctx = await banc.nouveauContexte();
+        const autre = await banc.nouveauContexte();
+        const agent = randomUUID();
+        const depot = (par: string, a: string) => ({
+          a,
+          poidsReleveKg: 2,
+          photoRef: "photo-1",
+          par,
+        });
+        const tot = unColis(ctx, { depose: depot(agent, "2027-01-05T07:30:00.000+01:00") });
+        const tard = unColis(ctx, { depose: depot(agent, "2027-01-05T10:00:00.000+01:00") });
+        const collegue = unColis(ctx, {
+          depose: depot(randomUUID(), "2027-01-05T11:00:00.000+01:00"),
+        });
+        const sansDepot = unColis(ctx, { depose: null });
+        const ailleurs = unColis(autre, { depose: depot(agent, "2027-01-05T12:00:00.000+01:00") });
+        for (const x of [tot, tard, collegue, sansDepot, ailleurs]) await banc.colis.ajouter(x);
+
+        const ids = async (f: Parameters<ColisRepository["lister"]>[0]) =>
+          (await banc.colis.lister(f)).map((x) => x.id);
+        expect(await ids({ gareOrigineId: ctx.origine.id, deposePar: agent })).toEqual([
+          tot.id,
+          tard.id,
+        ]);
+        expect(
+          await ids({
+            gareOrigineId: ctx.origine.id,
+            deposePar: agent,
+            deposeApres: "2027-01-05T08:00:00.000+01:00",
+          }),
+        ).toEqual([tard.id]);
+        // Sans personne : tous les colis déposés depuis ce moment dans cette gare (pas celui qui n'est pas déposé).
+        expect(
+          await ids({
+            gareOrigineId: ctx.origine.id,
+            deposeApres: "2027-01-05T08:00:00.000+01:00",
+          }),
+        ).toEqual([tard.id, collegue.id]);
+        expect(await ids({ gareOrigineId: autre.origine.id })).toEqual([ailleurs.id]);
+        expect(await ids({ gareOrigineId: "pas-un-uuid" })).toEqual([]);
+      });
+
       it("liste les colis disponibles depuis un moment donné (garde de 7 jours)", async () => {
         const ctx = await banc.nouveauContexte();
         const ancien = unColis(ctx, {

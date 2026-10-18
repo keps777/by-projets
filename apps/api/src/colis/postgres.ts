@@ -274,8 +274,15 @@ export class ColisPrisma extends ColisRepository {
       };
       et.push(filtre.codeNonEnvoye ? nonEnvoye : { NOT: nonEnvoye });
     }
+    if (filtre.deposeApres !== undefined) {
+      et.push({ deposeA: { not: null, gte: new Date(filtre.deposeApres) } });
+    }
+    // Une gare qui n'est pas un UUID n'existe pas en base : aucun colis (comme `plusGrandeSequence`).
+    if (filtre.gareOrigineId !== undefined && !UUID.test(filtre.gareOrigineId)) return [];
     const lignes = await this.prisma.colis.findMany({
       where: {
+        ...(filtre.gareOrigineId !== undefined ? { gareOrigineId: filtre.gareOrigineId } : {}),
+        ...(filtre.deposePar !== undefined ? { deposePar: filtre.deposePar } : {}),
         ...(filtre.expediteurId !== undefined ? { expediteurId: filtre.expediteurId } : {}),
         ...(filtre.destinataireTelephone !== undefined
           ? { destinataireTelephoneIndex: this.indexTelephone(filtre.destinataireTelephone) }

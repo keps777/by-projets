@@ -56,6 +56,7 @@ function EnregistrerColis({
   const { t } = useTranslation("GuichetColis");
   const navigate = useNavigate();
   const pilote = usePiloteEtiquette();
+  const appareil = agence.useAppareilAgence();
   const enregistrer = agence.useEnregistrerColis();
   const imprimer = agence.useImprimer();
   const impression = agence.useImpressionEtat();
@@ -151,6 +152,8 @@ function EnregistrerColis({
       if (!colis) {
         colisId.current ??= crypto.randomUUID();
         const id = colisId.current;
+        // Comme la vente (anomalie A9 de la recette) : le colis part avec le numéro que le serveur annonce.
+        appareil.aligner("colis", formulaire.prochainNumero.sequence);
         const resultat = await enregistrer.mutateAsync({
           colisId: id,
           departId: depart.departId,

@@ -172,11 +172,11 @@ function Vendre({ contexte, impression, recharger }: PropsVendre) {
         return;
       }
 
-      const resultat = await vendre.mutateAsync({
+      const donneesVente = {
         billetId: appareil.nouvelId(),
         departId,
         siege: siegeChoisi,
-        classe: "classique",
+        classe: "classique" as const,
         prix: tarifs.classique,
         bagage: bagage ? tarifs.bagage : 0,
         passager: { nom: nom.trim(), telephone: lu.valeur, pieceQuatreDerniers: pieceLue.valeur },
@@ -188,7 +188,21 @@ function Vendre({ contexte, impression, recharger }: PropsVendre) {
         },
         codeBillet: genererCodeBillet(aleaCrypto()),
         sms,
-      });
+      };
+      // Anomalie A9 (recette) : le billet part avec le numéro que l'écran annonce, celui du serveur (ou la suite
+      // du compteur de l'appareil s'il est plus avancé), pas avec le début de la plage d'un téléphone neuf.
+      appareil.aligner("billet", contexte.prochainNumero.sequence);
+      let resultat;
+      try {
+        resultat = await vendre.mutateAsync(donneesVente);
+      } catch (erreur) {
+        // Un autre téléphone du même guichet a vendu entre-temps : on relit le numéro du serveur, une seule fois.
+        if (!(erreur instanceof ErreurHttp && erreur.code === "NUMERO_EN_DOUBLE")) throw erreur;
+        const frais = await recharger();
+        if (!frais) throw erreur;
+        appareil.aligner("billet", frais.prochainNumero.sequence);
+        resultat = await vendre.mutateAsync(donneesVente);
+      }
       vendu.current = resultat.billet;
       memoriserClient({
         nom,
@@ -212,6 +226,14 @@ function Vendre({ contexte, impression, recharger }: PropsVendre) {
   }
 
   const montantRecap = formaterMontant(total);
+  // Le numéro annoncé est celui du serveur ; si l'appareil a déjà pris des numéros plus loin (envois en attente), le
+  // billet partira avec le sien, et c'est lui qu'on annonce. Une annonce hors de la plage de l'appareil est affichée telle quelle.
+  const annonce = contexte.prochainNumero;
+  const dansLaPlage =
+    annonce.sequence >= appareil.plage.debut && annonce.sequence <= appareil.plage.fin;
+  const numeroAnnonce =
+    (dansLaPlage ? appareil.prochainNumero("billet", annonce.sequence)?.numero : undefined) ??
+    annonce.numero;
 
   return (
     <div className={styles.racine}>
@@ -219,7 +241,7 @@ function Vendre({ contexte, impression, recharger }: PropsVendre) {
         titre={t("titre")}
         sousTitre={t("sousTitre", {
           rang: contexte.guichet.rang,
-          numero: contexte.prochainNumero.numero,
+          numero: numeroAnnonce,
         })}
         retour={{ libelle: t("retour"), href: urlPlanche("Guichet") }}
         droite={<BadgeTouche n={2} />}

@@ -24,6 +24,7 @@ import {
   ReferentielMemoire,
 } from "./memoire";
 import { NotificationsColisSms } from "./notifications.sms";
+import { ReferentielColisPrisma } from "./postgres-referentiel";
 import {
   ColisPrisma,
   NumerotationColisServeur,
@@ -102,8 +103,9 @@ export class VerificationPortsColis implements OnModuleInit {
  * Dans `AppModule`. Les ports de persistance (colis, photos, réclamations, numéros) ont une version
  * PostgreSQL (`postgres.ts`) et une version en mémoire, choisies par `API_STOCKAGE` (voir
  * `socle/db/stockage.ts`). Restent en mémoire ou simulés, et font donc refuser la production :
- * le stockage des fichiers de photos, l'analyse de photo, les paiements, l'assureur, la diffusion
- * du suivi en direct et l'annuaire des départs (`ReferentielColis`, qui lira la billetterie).
+ * le stockage des fichiers de photos, l'analyse de photo, les paiements, l'assureur et la diffusion
+ * du suivi en direct. L'annuaire des départs, des gares, des guichets et des relais (`ReferentielColis`)
+ * lit les tables d'administration sur PostgreSQL (`postgres-referentiel.ts`).
  * Le SMS, lui, passe par `SmsGateway` du socle.
  */
 @Module({
@@ -155,7 +157,12 @@ export class VerificationPortsColis implements OnModuleInit {
     { provide: AssureurPartenaire, useClass: AssureurMemoire },
     { provide: NotificationsColis, useClass: NotificationsColisSms },
     { provide: DiffusionSuivi, useClass: DiffusionMemoire },
-    { provide: ReferentielColis, useClass: ReferentielMemoire },
+    {
+      provide: ReferentielColis,
+      inject: [CONFIG, PrismaService],
+      useFactory: (config: AppConfig, prisma: PrismaService) =>
+        stockageSurPostgres(config) ? new ReferentielColisPrisma(prisma) : new ReferentielMemoire(),
+    },
   ],
   exports: [
     ColisService,

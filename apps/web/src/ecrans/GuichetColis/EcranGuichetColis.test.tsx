@@ -270,6 +270,15 @@ describe("GuichetColis · navigation et encaissement", () => {
     expect(envoyes).toHaveLength(0);
   });
 
+  it("le colis part avec le numéro que le serveur annonce, pas avec le début de la plage (recette A9)", async () => {
+    const { routeur, envoyes } = rendreColis({ pilote: pilote(), sequenceServeur: 1007 });
+    await attendreFormulaire();
+    await userEvent.click(encaisser());
+    await waitFor(() => expect(routeur.state.location.pathname).toBe("/guichet/accueil"));
+    expect(envoyes[0]?.type).toBe("colis.enregistre");
+    expect(envoyes[0]?.numeroPlage).toBe(1007);
+  });
+
   it("reste sur l'écran avec une alerte si l'enregistrement échoue", async () => {
     const imprimante = pilote();
     const { routeur } = rendreColis({ panne: "enregistrement", pilote: imprimante });

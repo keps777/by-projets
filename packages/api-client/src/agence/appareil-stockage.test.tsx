@@ -81,6 +81,21 @@ describe("appareil installé sur le téléphone (adaptateur HTTP, recette AM-181
     expect(vendre(apres).numeroPlage).toBe(1003);
   });
 
+  it("un téléphone neuf aligné sur le numéro du serveur le garde après un rechargement (recette A9)", () => {
+    installer(); // aucun compteur : appareil neuf
+    const horloge = creerHorlogeManuelle(DEBUT);
+    const neuf = appareilDepuisStockage(horloge)!;
+    // Le guichet a déjà vendu 1001 à 1013 : l'écran de vente annonce 1014.
+    neuf.aligner("billet", 1014);
+    expect(Object.values(lireProvisionnement()?.etat?.billets ?? {})).toEqual([1014]);
+    expect(vendre(neuf).numeroPlage).toBe(1014);
+    const recharge = appareilDepuisStockage(horloge)!;
+    expect(vendre(recharge).numeroPlage).toBe(1015);
+    // Une annonce plus ancienne que le compteur ne le fait pas reculer, et n'écrit rien.
+    recharge.aligner("billet", 1003);
+    expect(vendre(recharge).numeroPlage).toBe(1016);
+  });
+
   it("garde l'identité de l'appareil et de la personne connectée dans chaque événement", () => {
     installer();
     const a = appareilDepuisStockage(creerHorlogeManuelle(DEBUT))!;

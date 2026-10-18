@@ -1,7 +1,8 @@
 {
   "agence": {
     "titre": "{{compagnie}} · {{gare}}",
-    "sousTitre": "Counter {{rang}} · {{agent}} · cash desk open {{heure}}"
+    "sousTitre": "Counter {{rang}} · {{agent}} · cash desk open {{heure}}",
+    "sousTitreCaisseFermee": "Counter {{rang}} · {{agent}} · cash desk closed"
   },
   "synchro": {
     "sync": "SYNC",
@@ -43,6 +44,7 @@
   "prochain": {
     "depart_one": "Next departure in {{minutes}} min: {{heure}} {{destination}}, {{count}} seat.",
     "depart_other": "Next departure in {{minutes}} min: {{heure}} {{destination}}, {{count}} seats.",
+    "aucun": "No upcoming departure for now.",
     "ouverture": "The {{heure}} {{destination}} opens for sale."
   },
   "etats": {

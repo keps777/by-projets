@@ -31,14 +31,6 @@ const ROUTES_ABSENTES: Record<string, string[]> = {
     "GET /voyageur/billets/{}/direct/chauffeur",
     "GET /voyageur/billets/{}/direct/colis",
   ],
-  "guichet : accueil, cadence, impression": [
-    "GET /agence/guichet/accueil",
-    "GET /agence/cadence",
-    "GET /agence/cadence/billets/{}",
-    "GET /agence/impression",
-    "POST /agence/impressions",
-  ],
-  quai: ["GET /agence/quai/cadence"],
 };
 
 const proxy = new Proxy({}, { get: (_c, k) => `{${String(k)}}` });

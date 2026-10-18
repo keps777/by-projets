@@ -15,6 +15,8 @@ import { ComptableModule } from "../comptable/comptable.module";
 import { CovoiturageModule } from "../covoiturage/covoiturage.module";
 import { FinancementModule } from "../financement/financement.module";
 import { GpsModule } from "../gps/gps.module";
+// LOT Db
+import { GuichetModule } from "../guichet/guichet.module";
 import { InterAgencesModule } from "../inter-agences/inter-agences.module";
 import { LivraisonModule } from "../livraison/livraison.module";
 import { ModulesModule } from "../modules/modules.module";
@@ -147,6 +149,8 @@ const whatsApp = WhatsAppModule.avec({
     PatronModule.avec({ imports: [rapport] }),
     // LOT Dc : le bord (convoyeur, chauffeur, contrôle inopiné), écart A3 de la recette.
     BordModule,
+    // LOT Db : accueil du guichet, mode cadence et impressions (recette AM-181, anomalie A2).
+    GuichetModule,
     ThrottlerModule.forRootAsync({
       inject: [CONFIG],
       useFactory: (config: AppConfig) => ({

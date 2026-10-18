@@ -39,6 +39,12 @@ export interface FiltreColis {
   assuranceEnAttente?: boolean;
   /** Colis payés dont le code n'est jamais parti vers le destinataire. */
   codeNonEnvoye?: boolean;
+  /** Colis partis de cette gare (lot Db : l'accueil du guichet compte ce que l'agent a déposé). */
+  gareOrigineId?: string;
+  /** Colis déposés par cette personne (au guichet : l'agent qui les a enregistrés). */
+  deposePar?: string;
+  /** Colis déposés à cet instant ou après (ISO). */
+  deposeApres?: string;
 }
 
 export type ResultatAjoutColis = "ajoute" | "id_existe" | "numero_pris";
