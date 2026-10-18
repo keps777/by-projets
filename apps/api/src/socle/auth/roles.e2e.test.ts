@@ -168,6 +168,11 @@ describe("rôles stricts (HTTP)", () => {
           "GET /suivi/:jeton",
           // Financement : le partenaire financier notifie (accusé, versement, refus), authentifié par son port.
           "POST /financement/partenaire/notifications",
+          // Lot De, appareils (kiosque) : aucun compte n'est connecté sur un téléphone effacé. L'enrôlement se prouve par un
+          // code à usage unique, la lecture des ordres par le secret de l'appareil, l'accusé par le secret de l'ordre.
+          "POST /appareils/enrolement",
+          "GET /appareils/:id/commande",
+          "POST /appareils/:id/commandes/:commandeId/acquittement",
         ].sort(),
       );
     });

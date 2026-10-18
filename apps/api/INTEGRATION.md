@@ -590,3 +590,35 @@ Recette AM-181, anomalies A2, A5 et A9. Détail dans `src/guichet/README.md` et 
 - **Textes inventés** (fr, en, pcm) : `agence.sousTitreCaisseFermee` et `prochain.aucun`, dans l'accueil du guichet.
 
 <!-- LOT Db : fin -->
+## Lot De : administration de l'agence (AM-093, AM-120) et effacement à distance
+
+<!-- LOT De : bloc ajouté ; les autres lots n'y touchent pas. -->
+
+`src/administration` (voir son `README.md`) : lignes (`/patron/reglages/lignes`, dictées par le client du patron),
+génération récurrente des départs, bus, équipages, déclaration et enrôlement des appareils (`/admin/*`,
+`/appareils/*`), effacement à distance du kiosque (`GET /appareils/:id/commande`,
+`POST /appareils/:id/commandes/:commandeId/acquittement`).
+
+| Module                      | Dossier              | Tables                                                                                                                                                | Reste en mémoire |
+| --------------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| Administration (AM-093/120) | `src/administration` | `horaire_ligne`, `reglage_ligne`, `enrolement_appareil`, `commande_appareil` (+ tables existantes `ligne`, `arret`, `bus`, `depart`, `appareil_sync`) | rien             |
+
+Migrations : `20261018001000_lot_de_administration`, `20261018001010_lot_de_garanties` (additives). Verrou
+consultatif : espace `7_017_093`. Garde-fou de production : `VerificationStockageAdministration`.
+
+Garanties tenues par la base : un seul horaire actif par ligne et par heure ; un brouillon de ligne va avec son jour
+d'effet ; un code d'enrôlement n'ouvre qu'un appareil ; un seul ordre en attente par appareil ; l'accusé d'un ordre
+s'écrit une fois (déclencheur) et un ordre ne se supprime ni ne se modifie autrement ; deux déclarations, deux
+enrôlements, deux accusés ou deux créations de départ qui se croisent n'en font passer qu'un.
+
+Branchements : `AdministrationModule` importe `SyncModule` (fiche `AppareilsSync` créée à la déclaration ; l'appareil
+effacé ou retiré passe `retire = true`, ce que la synchronisation refuse déjà). Le web monte `FournisseurKiosque` dans
+`apps/web/src/app.tsx` avec le canal HTTP de ce module (mode http seulement, `apps/web/src/agent/`). L'enrôlement
+(`POST /appareils/enrolement`) répond aussi les codes `agence` et `gare`, le `genre`, le `rang` et la `plage` de
+numéros : l'écran de connexion des agents (`apps/web/src/ecrans/ConnexionAgent`) en compose l'identité de vente
+(`afrimove.appareil`) avec la personne connectée (`GET /me`).
+
+Tests : `administration/*.test.ts` ; `postgres.integration.test.ts` est conditionné par `DATABASE_URL_TEST`.
+
+Décisions à confirmer : voir « Règles provisoires » dans `src/administration/README.md` (kilomètres et durée d'une ligne
+créée, validité 24 h du code d'enrôlement, appareil effacé = retiré du service, limites de génération).

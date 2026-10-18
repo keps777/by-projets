@@ -3,6 +3,8 @@ export const PIN = "482916";
 export const MOT_DE_PASSE = "Recette-Mdp-2026!";
 /** PIN de validation du superviseur (caisses, annulations). */
 export const PIN_SUPERVISEUR = "739152";
+/** PIN de signature du patron (réglages des lignes, appareils), posé par `semer-recette.cjs`. */
+export const PIN_PATRON = "526184";
 
 export const COMPTES = {
   guichetier: { role: "guichetier", telephone: "+237655000002", secret: PIN },

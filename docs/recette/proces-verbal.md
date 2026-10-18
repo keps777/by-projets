@@ -51,7 +51,7 @@ ne sont pas traitées ou assumées.
 - **Critère 6** (`critere-6-vente-45s.test.ts`) : touches (même règle que `tests/parcours`) et temps, dix ventes de suite,
   double appui sur « Encaisser et imprimer », réseau coupé pendant la vente.
 - **Conformité des routes** (`conformite-routes.test.ts`) : toutes les opérations du client HTTP (plus de 150) comparées à
-  `/openapi.json` de l'API réelle. La liste des 23 opérations sans route est figée dans le test : elle échoue si une
+  `/openapi.json` de l'API réelle. La liste des opérations encore sans route est figée dans le test : elle échoue si une
   nouvelle opération apparaît sans route, et si une route est ajoutée sans que la liste soit corrigée.
 
 ## 3. Bugs d'intégration trouvés
@@ -126,8 +126,9 @@ Les règles provisoires du lot sont dans `apps/api/src/bord/README.md`.
 - **Critère 2** : de vrais téléphones en mode avion pendant 4 h, avec leur vraie horloge (et une dérive d'horloge),
   puis la synchronisation sur le vrai serveur ; A6 et A7 sont corrigés et l'application web est branchée sur le moteur
   (lot Dd) : reste à jouer sur de vrais téléphones, y compris le QR d'un billet vendu hors ligne (non signé, voir le rapport du lot).
-- **Critère 1** : une vraie journée dans une gare pilote, tous les rôles connectés, après A3, A5, A8, la pose du PIN de signature du patron et l'écran de
-  connexion des agents ; y compris le passage de minuit, la clôture automatique, et le rapport du soir **envoyé** à 21 h
+- **Critère 1** : une vraie journée dans une gare pilote, tous les rôles connectés, après A1, A3 et A5 (A8 est corrigée ;
+  l'écran de connexion des agents existe depuis le lot De, mais la recette n'a pas encore été rejouée avec lui : elle
+  dépose toujours le jeton elle-même) ; y compris le passage de minuit, la clôture automatique, et le rapport du soir **envoyé** à 21 h
   (le planificateur et l'envoi WhatsApp ne sont pas joués ici).
 - **Critère 3** : la caméra réelle (lumière, QR imprimé ou à l'écran, prise en charge du détecteur de QR du navigateur),
   deux vrais téléphones de quai, un réseau lent.
@@ -136,7 +137,7 @@ Les règles provisoires du lot sont dans `apps/api/src/bord/README.md`.
 - **Environnement** : HTTPS et CORS réels, limite de débit activée, vrais SMS (le pilote est un simulateur ici), vrais
   secrets, charge.
 - **Non joué faute de temps** : un balayage des écrans des agents en mode HTTP (écran → fonctionne / dégradé / cassé).
-  La liste des 23 opérations sans route donne déjà la cartographie des écrans touchés.
+  La liste des opérations encore sans route donne déjà la cartographie des écrans touchés.
 
 ## 6. Contrôles du lot
 

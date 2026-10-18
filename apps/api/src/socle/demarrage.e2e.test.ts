@@ -2,6 +2,8 @@ import "reflect-metadata";
 import type { Type } from "@nestjs/common";
 import { Test, type TestingModule } from "@nestjs/testing";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { VerificationStockageAdministration } from "../administration/administration.module";
+import { OrdresAppareils, ParcBus, RegistreAppareils } from "../administration/ports";
 import { EnvoiCodeSmsPasserelle } from "../auth-voyageur/adaptateurs";
 import { VerificationAuthVoyageur } from "../auth-voyageur/auth-voyageur.module";
 import {
@@ -273,6 +275,8 @@ describe("production : l'application refuse de démarrer avec un port en mémoir
     ["rapport", VerificationRapport],
     ["auth-voyageur", VerificationAuthVoyageur],
     ["ussd", VerificationUssd],
+    // Lot De : lignes, départs, bus, appareils enrôlés et ordres d'effacement.
+    ["administration", VerificationStockageAdministration],
   ];
 
   it.each(gardesSurPostgres)(
@@ -299,6 +303,10 @@ describe("production : l'application refuse de démarrer avec un port en mémoir
       JournalAchatWhatsApp,
       AchatsWhatsApp,
       JournalWhatsApp,
+      // Lot De
+      ParcBus,
+      RegistreAppareils,
+      OrdresAppareils,
     ] as const;
     for (const port of ports) {
       const adaptateur = module.get(port, { strict: false }) as { durable: boolean };

@@ -4,6 +4,7 @@ import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
 import { EnvoiCodeSmsPasserelle } from "../auth-voyageur/adaptateurs";
 import { AuthVoyageurModule } from "../auth-voyageur/auth-voyageur.module";
 import { EnvoiCodeSms } from "../auth-voyageur/ports";
+import { AdministrationModule } from "../administration/administration.module";
 import { AnalysesModule } from "../analyses/analyses.module";
 import { AssistantRapportMoteur } from "../assistant/assistant-rapport";
 import { AssistantModule } from "../assistant/assistant.module";
@@ -151,6 +152,8 @@ const whatsApp = WhatsAppModule.avec({
     BordModule,
     // LOT Db : accueil du guichet, mode cadence et impressions (recette AM-181, anomalie A2).
     GuichetModule,
+    // LOT De : administration (lignes, départs récurrents, bus, appareils, effacement à distance), AM-093.
+    AdministrationModule,
     ThrottlerModule.forRootAsync({
       inject: [CONFIG],
       useFactory: (config: AppConfig) => ({
