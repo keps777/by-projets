@@ -10,7 +10,7 @@
  * vrais services (chiffrement du téléphone, hachage du PIN). Rejouable sans doublon.
  *
  * Sème : guichets 2 et 3 de la gare de Douala, deux guichetiers de plus (un PIN chacun), un convoyeur, un
- * chauffeur, une ligne Douala -> Yaoundé avec ses arrêts, trois bus. Les départs, eux, sont créés par chaque
+ * chauffeur, un contrôleur, une ligne Douala -> Yaoundé avec ses arrêts, trois bus. Les départs, eux, sont créés par chaque
  * scénario (ils dépendent de l'heure).
  */
 const path = require("node:path");
@@ -28,6 +28,7 @@ const COMPTES = [
   { cle: "guichetier3", role: "guichetier", nom: "Guichetier 3", tel: "+237655000013", rang: 3 },
   { cle: "convoyeur", role: "convoyeur", nom: "Convoyeur recette", tel: "+237655000021" },
   { cle: "chauffeur", role: "chauffeur", nom: "Chauffeur recette", tel: "+237655000022" },
+  { cle: "controleur", role: "controleur", nom: "Contrôleur recette", tel: "+237655000023" },
 ];
 
 async function main() {
@@ -110,7 +111,7 @@ async function main() {
     }
 
     console.log(
-      "Recette : guichets 1 à 3, 3 guichetiers, convoyeur, chauffeur, ligne DLA-YDE, 3 bus prêts.",
+      "Recette : guichets 1 à 3, 3 guichetiers, convoyeur, chauffeur, contrôleur, ligne DLA-YDE, 3 bus prêts.",
     );
   } finally {
     await app.close();

@@ -1,11 +1,14 @@
 import { Inject, Injectable, Module, type OnModuleInit } from "@nestjs/common";
+import { BilletterieModule } from "../billetterie/billetterie.module";
 import { CaisseModule } from "../caisse/caisse.module";
+import { SyncModule } from "../sync/sync.module";
 import { exigerStockageDurable } from "../caisse/stockage";
 import { ChiffrementService } from "../socle/chiffrement/chiffrement.service";
 import { CONFIG, type AppConfig } from "../socle/config/config";
 import { PrismaService } from "../socle/db/prisma.service";
 import { stockageSurPostgres } from "../socle/db/stockage";
 import { Horloge, HorlogeSysteme } from "../socle/horloge";
+import { AppareilsService } from "./appareils.service";
 import { EquipeService } from "./equipe.service";
 import {
   DemandesAnnulationMemoire,
@@ -57,10 +60,12 @@ export class VerificationStockageSupervision implements OnModuleInit {
  * version en mémoire, choisies par `API_STOCKAGE` (voir `socle/db/stockage.ts`).
  */
 @Module({
-  imports: [CaisseModule],
+  // BilletterieModule (code de la gare) et SyncModule (appareils, octroi, plages) : lot Dc, planche « SuperviseurDebloquer ».
+  imports: [CaisseModule, BilletterieModule, SyncModule],
   controllers: [SupervisionController],
   providers: [
     SupervisionService,
+    AppareilsService,
     EquipeService,
     PinSuperviseurService,
     PreuvesPinService,

@@ -8,6 +8,7 @@ import { AnalysesModule } from "../analyses/analyses.module";
 import { AssistantRapportMoteur } from "../assistant/assistant-rapport";
 import { AssistantModule } from "../assistant/assistant.module";
 import { BilletterieModule } from "../billetterie/billetterie.module";
+import { BordModule } from "../bord/bord.module";
 import { CaisseModule } from "../caisse/caisse.module";
 import { ColisModule } from "../colis/colis.module";
 import { ComptableModule } from "../comptable/comptable.module";
@@ -144,6 +145,8 @@ const whatsApp = WhatsAppModule.avec({
     // LOT Da : les routes /patron/* (tableau, alertes, gares, équipe, salle de contrôle, réglages). Il lit les
     // chiffres du jour par le module rapport du soir tel qu'il est monté plus haut (même instance, mêmes ports).
     PatronModule.avec({ imports: [rapport] }),
+    // LOT Dc : le bord (convoyeur, chauffeur, contrôle inopiné), écart A3 de la recette.
+    BordModule,
     ThrottlerModule.forRootAsync({
       inject: [CONFIG],
       useFactory: (config: AppConfig) => ({

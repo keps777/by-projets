@@ -24,6 +24,7 @@ const CIBLES: Record<string, (d: Record<string, unknown>) => { type: string; id:
   "equipe.affectation_changee": (d) => ({ type: "personne", id: String(d["personneId"]) }),
   "equipe.compte_desactive": (d) => ({ type: "personne", id: String(d["personneId"]) }),
   "equipe.personne_debloquee": (d) => ({ type: "personne", id: String(d["personneId"]) }),
+  "appareil.debloque": (d) => ({ type: "appareil", id: String(d["appareilId"]) }),
 };
 
 /** Un événement de l'agence, tel qu'un appareil l'enverrait. */

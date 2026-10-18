@@ -10,6 +10,7 @@ export const COMPTES = {
   guichetier3: { role: "guichetier", telephone: "+237655000013", secret: PIN },
   convoyeur: { role: "convoyeur", telephone: "+237655000021", secret: PIN },
   chauffeur: { role: "chauffeur", telephone: "+237655000022", secret: PIN },
+  controleur: { role: "controleur", telephone: "+237655000023", secret: PIN },
   superviseur: { role: "superviseur", telephone: "+237655000003", secret: MOT_DE_PASSE },
   patron: { role: "patron", telephone: "+237655000004", secret: MOT_DE_PASSE },
 } as const;

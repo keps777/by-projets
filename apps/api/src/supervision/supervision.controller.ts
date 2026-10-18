@@ -3,6 +3,7 @@ import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Roles, UtilisateurCourant, type Utilisateur } from "../socle/auth/decorateurs";
 import { invalide } from "../caisse/erreurs";
 import { Lecteur } from "../caisse/validation";
+import { AppareilsService } from "./appareils.service";
 import { texteDeRequete } from "./commun";
 import { EquipeService } from "./equipe.service";
 import { TYPES_AVEC_VALIDATION } from "./evenements";
@@ -62,6 +63,8 @@ function lireDemandePreuve(corps: unknown, u: Utilisateur) {
  * | `agence.equipe.affectation_changee`| `POST /agence/superviseur/equipe/affectation` |
  * | `agence.equipe.compte_desactive`   | `POST /agence/superviseur/equipe/desactivation` |
  * | `agence.equipe.personne_debloquee` | `POST /agence/superviseur/equipe/deblocage`   |
+ * | `agence.superviseur.appareil`      | `GET  /agence/superviseur/appareils/:appareilId` |
+ * | `agence.appareil.debloque`         | `POST /agence/superviseur/appareils/deblocage` |
  *
  * En plus du contrat : `POST /agence/superviseur/pin` (preuve du PIN) et le paramètre `personneId`
  * de la lecture de l'équipe (fiche ouverte).
@@ -74,6 +77,7 @@ export class SupervisionController {
     private readonly equipe: EquipeService,
     private readonly pin: PinSuperviseurService,
     private readonly preuves: PreuvesPinService,
+    private readonly appareils: AppareilsService,
   ) {}
 
   /* ------------------------------------------------------------------ lectures */
@@ -121,6 +125,38 @@ export class SupervisionController {
       },
       u,
     );
+  }
+
+  @Roles("superviseur")
+  @Get("superviseur/appareils/:appareilId")
+  @ApiOperation({
+    summary:
+      "Un téléphone de guichet hors ligne : règle des 12 h, diagnostic, façons de le débloquer",
+    description:
+      "Réservé aux appareils de la gare du superviseur (404 sinon). Provisoire : ventes, colis et cash en " +
+      "attente valent 0 (le serveur ne voit pas la file locale du téléphone).",
+  })
+  @ApiResponse({ status: 404, description: "APPAREIL_INCONNU" })
+  @ApiResponse({ status: 409, description: "APPAREIL_JAMAIS_SYNCHRONISE" })
+  appareil(@Param("appareilId") appareilId: string, @UtilisateurCourant() u: Utilisateur) {
+    return this.appareils.lire(appareilId, u);
+  }
+
+  @Roles("superviseur")
+  @Post("superviseur/appareils/deblocage")
+  @HttpCode(200)
+  @ApiOperation({
+    summary:
+      "Débloquer un appareil : synchroniser via mon téléphone, 4 h de plus, ou téléphone de secours",
+    description:
+      "Événement `appareil.debloque`, avec la preuve du PIN. L'octroi est lu par le téléphone à sa " +
+      "prochaine synchronisation ; il est tracé au journal signé.",
+  })
+  @ApiBody(CORPS_EVENEMENT)
+  @ApiResponse({ status: 404, description: "APPAREIL_INCONNU" })
+  @ApiResponse({ status: 409, description: "APPAREIL_NON_BLOQUE" })
+  debloquerAppareil(@Body() corps: unknown, @UtilisateurCourant() u: Utilisateur) {
+    return this.appareils.debloquer(corps, u);
   }
 
   /* ------------------------------------------------------------------ le PIN */
