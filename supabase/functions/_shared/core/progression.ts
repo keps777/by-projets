@@ -137,7 +137,8 @@ export function metriquesPilotes(metriques: Metrique[], ids: readonly string[] |
 
 /**
  * Progression d'un sous-projet piloté par une ou plusieurs métriques : la barre est la **moyenne** des progressions de ses pilotes
- * (celles qui ont un objectif) ; le reste (réalisé, cible, trait « où je devrais être », retard) vient de la pilote principale.
+ * (celles qui ont un objectif) ; le reste (réalisé, cible, trait « où je devrais être », retard) vient de la pilote principale —
+ * sauf quand toutes les pilotes sont des temps : le réalisé, l'objectif, l'attendu et le retard sont alors ceux de **tous** les temps ensemble.
  */
 export function progressionPilotes(pilotes: Metrique[], sp: SousProjetPeriode, valeurs: ValeurSaisie[], mois: Mois, aujourdhui: Jour): Progression {
   const toutes = pilotes.map((m) => progressionDuMois(m, sp, valeurs, mois, aujourdhui));
@@ -145,7 +146,22 @@ export function progressionPilotes(pilotes: Metrique[], sp: SousProjetPeriode, v
   const chiffrees = toutes.filter((p) => p.pct != null);
   if (chiffrees.length < 2) return principale.pct != null || !chiffrees[0] ? principale : { ...chiffrees[0] };
   const moyenne = (x: number[]) => x.reduce((s, v) => s + v, 0) / x.length;
-  return { ...(principale.pct != null ? principale : chiffrees[0]), pct: Math.round(moyenne(chiffrees.map((p) => p.pct!))), ratio: moyenne(chiffrees.map((p) => p.ratio ?? 0)) };
+  const base = { ...(principale.pct != null ? principale : chiffrees[0]), pct: Math.round(moyenne(chiffrees.map((p) => p.pct!))), ratio: moyenne(chiffrees.map((p) => p.ratio ?? 0)) };
+  // Que des temps : on montre le temps total de tous (réalisé, objectif, attendu, retard), pas celui de la seule pilote principale.
+  // La barre reste la moyenne des progressions : un temps déjà dépassé ne compense pas les autres.
+  const temps = pilotes.filter((_, i) => toutes[i].pct != null);
+  if (temps.every((m) => m.type === 'temps')) {
+    const somme = (f: (p: Progression) => number | null) => chiffrees.reduce((s, p) => s + (f(p) ?? 0), 0);
+    const cible = somme((p) => p.cible);
+    const attendu = somme((p) => p.attendu);
+    const parJours = chiffrees.map((p) => p.parJourPourRattraper).filter((x): x is number => x != null);
+    return {
+      ...base, cible, realise: somme((p) => p.realise), attendu, retard: somme((p) => p.retard),
+      traitPct: cible > 0 && chiffrees.every((p) => p.traitPct != null) ? Math.round((attendu / cible) * 100) : base.traitPct,
+      parJourPourRattraper: parJours.length ? parJours.reduce((s, x) => s + x, 0) : null
+    };
+  }
+  return base;
 }
 
 /** État d'un sous-projet à valider : la date de fin est passée, ou la cible « au total » est atteinte (spec §6). */

@@ -202,3 +202,29 @@ describe('objectif en pourcentage d’un montant', () => {
   it('arrondit au centime', () => { expect(cibleDePourcentage(12.5, 333)).toBe(42); });
   it('est vide tant que le montant manque', () => { expect(cibleDePourcentage(15, null)).toBeNull(); expect(cibleDePourcentage(null, 500000)).toBeNull(); });
 });
+
+describe('plusieurs temps pilotent ensemble : le total de tous', () => {
+  const t = (id: string, cle: string, cible: number, periode: Metrique['periode']): Metrique => ({ id, cle, type: 'temps', nom: id, unite: 'min', cible, periode, sens: 'plus', dansRapport: true });
+  const sp = { debut: '2026-10-01', fin: null };
+  const priere = t('priere', 'temps:priere', 3600, 'semaine'), travaux = t('travaux', 'temps:travaux', 1800, 'jour');
+  const v = (cle: string, jour: string, valeur: number): ValeurSaisie => ({ cle, jour, valeur });
+
+  it('réalisé, objectif, attendu et retard sont la somme des temps', () => {
+    const valeurs = [v('temps:travaux', '2026-10-19', 6180)];
+    const p = progressionPilotes([priere, travaux], sp, valeurs, '2026-10', '2026-10-20');
+    const a = progressionDuMois(priere, sp, valeurs, '2026-10', '2026-10-20'), b = progressionDuMois(travaux, sp, valeurs, '2026-10', '2026-10-20');
+    expect(p.realise).toBe(6180);
+    expect(p.cible).toBeCloseTo(a.cible! + b.cible!);
+    expect(p.attendu).toBeCloseTo(a.attendu! + b.attendu!);
+    expect(p.retard).toBeCloseTo(a.retard + b.retard);
+    // La barre reste la moyenne : le travail pratique dépassé (100 %) ne compense pas la prière (0 %).
+    expect(p.pct).toBe(Math.round((a.pct! + b.pct!) / 2));
+  });
+
+  it('un temps avec une autre mesure : le détail reste celui de la pilote principale', () => {
+    const pages: Metrique = { id: 'pages', cle: 'nombre:pages', type: 'nombre', nom: 'Pages', unite: 'pages', cible: 10, periode: 'jour', sens: 'plus', dansRapport: true };
+    const p = progressionPilotes([priere, pages], sp, [v('temps:priere', '2026-10-19', 1000)], '2026-10', '2026-10-20');
+    expect(p.realise).toBe(1000);
+    expect(p.cible).toBeCloseTo(progressionDuMois(priere, sp, [], '2026-10', '2026-10-20').cible!);
+  });
+});

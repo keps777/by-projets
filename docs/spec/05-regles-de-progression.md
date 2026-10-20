@@ -26,7 +26,7 @@
    - *Période « au total » sans date de fin* : interdit (la fin est obligatoire).
 
 **Agrégation**
-- **Sous-projet** : sa progression est celle de ses **métriques pilotes** (choisies à la création ou dans la Fiche ; par défaut la première métrique qui a un objectif). **Plusieurs métriques peuvent piloter ensemble la barre** : la barre est la **moyenne** de leurs progressions (celles qui ont un objectif) ; le trait « où je devrais être », le retard et le graphique suivent la pilote principale (la première désignée). L'onglet Suivi montre la part de chaque pilote. Au moins une métrique pilote reste.
+- **Sous-projet** : sa progression est celle de ses **métriques pilotes** (choisies à la création ou dans la Fiche ; par défaut la première métrique qui a un objectif). **Plusieurs métriques peuvent piloter ensemble la barre** : la barre est la **moyenne** de leurs progressions (celles qui ont un objectif) ; le trait « où je devrais être », le retard et le graphique suivent la pilote principale (la première désignée) — **sauf quand toutes les pilotes sont des temps** : l'en-tête du Suivi (réalisé / objectif du mois, attendu, retard, rattrapage), le graphique, l'objectif et le réalisé de chaque jour portent alors sur le **total de tous les temps** (la barre reste la moyenne des progressions : un temps dépassé ne compense pas les autres). L'onglet Suivi montre la part de chaque pilote. Au moins une métrique pilote reste.
 - **Projet** : moyenne simple des sous-projets qui ont une progression.
 - **Rubrique** : moyenne simple de ses projets.
 

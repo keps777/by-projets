@@ -33,8 +33,22 @@
   const finVue = $derived(f ? minJour(f.fin, jour) : null);
   const compte = $derived(!!pilote && ['nombre', 'fois', 'oui_non', 'choix'].includes(pilote.type));
   const somme = $derived(!!pilote && TYPES[pilote.type].agregation === 'somme');
-  const objJour = $derived(pilote ? attenduDuJour(pilote, sp, jour) : null);
-  const parJ = $derived(pilote && f ? parJour(valeurs, pilote, f.debut, f.fin) : new Map<Jour, number>());
+  /** Que des temps qui pilotent : tout le suivi (graphique, objectif et réalisé du jour) porte sur le total de tous les temps. */
+  const tempsTotaux = $derived(pilotes.length > 1 && pilotes.every((m) => m.type === 'temps'));
+  const objDuJour = (j: Jour): number | null => {
+    if (!pilote) return null;
+    if (!tempsTotaux) return attenduDuJour(pilote, sp, j);
+    const objs = pilotes.map((m) => attenduDuJour(m, sp, j)).filter((x): x is number => x != null);
+    return objs.length ? objs.reduce((s, x) => s + x, 0) : null;
+  };
+  const objJour = $derived(objDuJour(jour));
+  const parJ = $derived.by(() => {
+    if (!pilote || !f) return new Map<Jour, number>();
+    if (!tempsTotaux) return parJour(valeurs, pilote, f.debut, f.fin);
+    const total = new Map<Jour, number>();
+    for (const m of pilotes) for (const [j, x] of parJour(valeurs, m, f.debut, f.fin)) total.set(j, (total.get(j) ?? 0) + x);
+    return total;
+  });
   const atteint = (v: number | undefined) => !!pilote && jourAtteint(pilote, v, objJour);
   const barres = $derived(barresDuMois(mois, parJ, jour, sp.debut, sp.fin, (v) => atteint(v)));
 
@@ -98,7 +112,7 @@
     const autresParJour = nums.map((m) => ({ m, p: parJour(valeurs, m, f.debut, finVue) }));
     return joursDecroissants(f.debut, finVue).map((j) => {
       const v = parJ.get(j);
-      const obj = attenduDuJour(pilote, sp, j);
+      const obj = objDuJour(j);
       const ok = atteint(v);
       const delta = compte && obj != null && v != null ? Math.round(v - obj) : 0;
       const t = textes.map((x) => x.get(j)).filter(Boolean).join(' · ');
@@ -144,7 +158,7 @@
   <div class="carte bloc">
     <div class="haut">
       <div class="col">
-        <span class="etiquette">{nomMois(mois)}</span>
+        <span class="etiquette">{nomMois(mois)}{tempsTotaux ? ` · total des ${pilotes.length} temps` : ''}</span>
         <span class="titre grand">{pilote.type === 'heure' ? nombre(prog.realise ?? 0) : court(prog.realise)} <span class="sur">/ {pilote.type === 'heure' ? `${joursEcoules(f!, jour)} j` : valeurTexte(pilote, prog.cible, true)}</span></span>
       </div>
       <span class="titre pct">{prog.pct ?? 0} %</span>

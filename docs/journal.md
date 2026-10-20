@@ -2,6 +2,10 @@
 
 > Lire ce fichier en début de session (après `CLAUDE.md`). Ajouter une entrée en fin de session.
 
+## 21 oct. 2026 — En-tête du Suivi : total des temps pilotes
+
+- Quand tous les pilotes d'un sous-projet sont des temps, l'en-tête du Suivi montre le **total de tous** : réalisé et objectif du mois (ex. 1 h 43 / 6 h), attendu, retard et rattrapage, trait ; graphique et tableau des jours (objectif et réalisé du jour) sur le total. La barre et le pourcentage restent la moyenne des pilotes. `progressionPilotes` (noyau, testé) ; spec §5.
+
 ## 20 oct. 2026 (soir) — Corriger un jour depuis un sous-projet : correction locale
 
 - Demande : modifier le temps d'un jour dans l'onglet Suivi ne doit pas changer le temps des autres sous-projets, métriques ou projets qui lisent la même saisie.
