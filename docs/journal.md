@@ -2,6 +2,11 @@
 
 > Lire ce fichier en début de session (après `CLAUDE.md`). Ajouter une entrée en fin de session.
 
+## 20 oct. 2026 (soir) — Corriger un jour depuis un sous-projet : correction locale
+
+- Demande : modifier le temps d'un jour dans l'onglet Suivi ne doit pas changer le temps des autres sous-projets, métriques ou projets qui lisent la même saisie.
+- Fait : colonne `saisies.sous_projet_id` (migration `20261020000100_saisies_locales`, appliquée à la base réelle) ; la correction du tableau des jours s'écrit en saisie **locale** (différence avec la saisie partagée), lue seulement par ce sous-projet (`valeursDuProjet(projet, sp)`, `contenuDuJour/saisirJour` avec `spId`) et ignorée par le rapport (app + `generer-rapports`). Les corrections faites depuis un bloc ou les Rapports restent partagées. Spec §8, tests de données.
+
 ## 20 oct. 2026 — Plusieurs temps dans un sous-projet
 
 - Demande : « ça doit permettre tout » — trois métriques de temps (Prière, Post/Suivi/Évangélisation, Travaux pratiques) étaient refusées (même clé `temps`). Désormais : clés nommées `temps:<nom>` dès qu'il y a plusieurs temps (`cleTempsNomme`, `clesDesBrouillons`), toujours en plus du temps total `temps` que le rapport lit.

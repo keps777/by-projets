@@ -45,7 +45,7 @@
     if (!f) return [];
     const parCle = new Map(metriques.filter((m) => m.type === 'montant').map((m) => [m.cle, m]));
     const debut = sp.reprise_passe ? f.debut : f.debut > sp.created_at.slice(0, 10) ? f.debut : sp.created_at.slice(0, 10);
-    return saisiesDuProjet(sp.projet_id, debut, f.fin).flatMap((s) => s.valeurs.filter((v) => parCle.has(v.cle) && v.valeur_num).map((v) => {
+    return saisiesDuProjet(sp.projet_id, debut, f.fin, sp.id).flatMap((s) => s.valeurs.filter((v) => parCle.has(v.cle) && v.valeur_num).map((v) => {
       const m = parCle.get(v.cle)!;
       const d = lireDetail(v.detail);
       const signe = m === roles.sorties ? -1 : m === roles.entrees ? 1 : 0;
@@ -84,7 +84,7 @@
   const historique = $derived.by(() => {
     if (!ouvert) return [];
     const parCle = new Map(metriques.filter((m) => m.type === 'montant').map((m) => [m.cle, m]));
-    return saisiesDuProjet(sp.projet_id, '2000-01-01', jour).flatMap((s) => s.valeurs.filter((v) => parCle.has(v.cle) && v.valeur_num).map((v) => {
+    return saisiesDuProjet(sp.projet_id, '2000-01-01', jour, sp.id).flatMap((s) => s.valeurs.filter((v) => parCle.has(v.cle) && v.valeur_num).map((v) => {
       const m = parCle.get(v.cle)!;
       const d = lireDetail(v.detail);
       return { role: (m === roles.sorties ? 'sorties' : m === roles.entrees ? 'entrees' : 'epargne') as Role, libelle: d.libelle ?? s.saisie.note, categorie: d.categorie, montant: v.valeur_num!, jour: s.saisie.jour };

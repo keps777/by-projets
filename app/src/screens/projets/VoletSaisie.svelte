@@ -20,8 +20,10 @@
   import { contenuDuJour, idSaisieManuelle, saisirJour } from './donnees.ts';
   import { champTexte, jourCourt, lireChamp, pasDe, valeurTexte } from './vues.ts';
 
-  let { ouvert, onfermer, projetId, metriques, jour, aujourdhui, periode, pointLivres = null }: {
-    ouvert: boolean; onfermer: () => void; projetId: string; metriques: Metrique[]; jour: Jour; aujourdhui: Jour; periode: { debut: Jour; fin: Jour | null };
+  let { ouvert, onfermer, projetId, spId, metriques, jour, aujourdhui, periode, pointLivres = null }: {
+    ouvert: boolean; onfermer: () => void; projetId: string;
+    /** Sous-projet qui corrige : la correction lui reste locale (les autres sous-projets et le rapport ne la voient pas). */
+    spId?: string; metriques: Metrique[]; jour: Jour; aujourdhui: Jour; periode: { debut: Jour; fin: Jour | null };
     /** Point du rapport qui suit des livres (CL) : la fenêtre permet d'en ajouter ou d'en retirer. */
     pointLivres?: { id: string; livres: LivreSuivi[] } | null;
   } = $props();
@@ -40,7 +42,7 @@
   // Recharge le contenu de la journée choisie.
   $effect(() => {
     if (!ouvert || !j) return;
-    const c = contenuDuJour(projetId, j);
+    const c = contenuDuJour(projetId, j, spId);
     const n: Record<string, number | null> = {}, ch: Record<string, string> = {}, t: Record<string, string> = {}, at: Record<string, string> = {};
     for (const m of metriques) {
       const e = c.get(m.cle);
@@ -53,7 +55,7 @@
     }
     nums = n; champs = ch; textes = t; autresTextes = at;
     passagesPar = Object.fromEntries(Object.entries(t).map(([cle, txt]) => [cle, lirePassages(txt)]));
-    note = magasin.trouver('saisies', idSaisieManuelle(projetId, j))?.note ?? '';
+    note = magasin.trouver('saisies', idSaisieManuelle(projetId, j, spId))?.note ?? '';
   });
 
   // Les pages d'un livre comptent aussi dans les pages du point : le champ « Pages » ne porte que les lectures hors livres suivis.
@@ -97,7 +99,7 @@
 
   function enregistrer() {
     if (!j || j > aujourdhui) { dire('Choisis un jour passé ou aujourd’hui.'); return; }
-    saisirJour(projetId, j, metriques.map((m) => ({ cle: m.cle, type: m.type, num: nums[m.cle], txt: textes[m.cle], detail: m.type === 'reference' && passagesPar[m.cle] ? (passagesPar[m.cle] as unknown[]) : undefined })), aujourdhui, note);
+    saisirJour(projetId, j, metriques.map((m) => ({ cle: m.cle, type: m.type, num: nums[m.cle], txt: textes[m.cle], detail: m.type === 'reference' && passagesPar[m.cle] ? (passagesPar[m.cle] as unknown[]) : undefined })), aujourdhui, note, spId);
     dire(j === aujourdhui ? 'Saisie enregistrée' : `Saisie du ${jourCourt(j)} enregistrée`);
     onfermer();
   }

@@ -28,3 +28,12 @@ Partout où l'on note ce qui a été lu (Mode Focus, volet d'un bloc, « Saisir 
 ## Corriger le temps d'un minuteur en cours (9 oct. 2026)
 Dans le volet d'un bloc, le **temps passé se corrige à la main même quand le minuteur tourne ou est en pause** : toucher la valeur ouvre les champs **h · min · s** (OK pour finir), et − / + corrigent de 5 min. Le départ du minuteur est déplacé pour que le temps écoulé vaille la valeur choisie (`fixerEcoule`) : en pause il reste figé à cette valeur, en cours il repart de là ; les pauses déjà prises sont conservées.
 
+
+## Corriger un jour depuis un sous-projet : une correction locale (20 oct. 2026)
+
+La saisie reste **unique au niveau du projet** (blocs, chronos, rapport), mais **corriger un jour depuis l'onglet Suivi d'un sous-projet ne modifie rien ailleurs** : ni les autres sous-projets du projet qui lisent la même saisie (par ex. « temps »), ni les autres métriques, ni le rapport.
+
+- La correction est une saisie manuelle **locale** (`saisies.sous_projet_id` renseigné), une par sous-projet et par jour. Elle porte la **différence** avec ce que le projet a déjà enregistré ce jour-là (elle peut être négative), si bien que le total du jour, vu de ce sous-projet, devient exactement la valeur tapée.
+- Seul ce sous-projet la compte (barre, graphique, tableau des jours, Temps, Document). Les autres sous-projets, le calcul du rapport (application et fonction `generer-rapports`) l'ignorent.
+- La fenêtre rouverte montre le total corrigé ; corriger de nouveau remplace la correction (jamais de doublon). Si le sous-projet est supprimé, la correction n'est plus lue par personne.
+- Inchangé : corriger la valeur **d'un bloc** (volet du bloc) ou **depuis les Rapports** modifie la saisie partagée du projet, comme avant.

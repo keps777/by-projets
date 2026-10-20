@@ -186,7 +186,7 @@
   </div>
 {/if}
 
-<VoletSaisie ouvert={saisieJour != null} onfermer={() => (saisieJour = null)} projetId={sp.projet_id} {metriques} jour={saisieJour ?? jour} aujourdhui={jour} periode={sp} />
+<VoletSaisie ouvert={saisieJour != null} onfermer={() => (saisieJour = null)} projetId={sp.projet_id} spId={sp.id} {metriques} jour={saisieJour ?? jour} aujourdhui={jour} periode={sp} />
 <VoletValider ouvert={validation} onfermer={() => (validation = false)} {sp} {metriques} {valeurs} aujourdhui={jour} />
 
 <style>

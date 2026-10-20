@@ -116,6 +116,8 @@ export interface Saisie extends Base {
   source: SourceSaisie;
   note: string | null;
   approx: boolean;
+  /** Correction locale : saisie comptée par ce seul sous-projet (absente ou null : saisie partagée du projet). */
+  sous_projet_id?: string | null;
 }
 export interface SaisieValeur extends Base {
   saisie_id: string;

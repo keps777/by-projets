@@ -37,7 +37,7 @@
   const historique = $derived.by(() => {
     if (!f) return [];
     const fin = minJour(f.fin, jour);
-    const saisies = saisiesDuProjet(sp.projet_id, f.debut, fin);
+    const saisies = saisiesDuProjet(sp.projet_id, f.debut, fin, sp.id);
     const cles = new Set(metriques.map((m) => m.cle).concat('temps'));
     const parJourS = new Map<Jour, typeof saisies>();
     for (const s of saisies) if (s.valeurs.some((v) => cles.has(v.cle))) { const l = parJourS.get(s.saisie.jour); if (l) l.push(s); else parJourS.set(s.saisie.jour, [s]); }

@@ -27,9 +27,10 @@ let cacheDe: object | null = null;
 let cacheValeurs = new Map<string, ValeurSaisie[]>();
 
 /** Toutes les valeurs saisies pour un projet (une entrée par clé et par saisie). Mise en cache tant que les données ne changent pas. */
-export function valeursDuProjet(projetId: string): ValeurSaisie[] {
+export function valeursDuProjet(projetId: string, spId?: string): ValeurSaisie[] {
   if (cacheDe !== magasin.lignes) { cacheDe = magasin.lignes; cacheValeurs = new Map(); }
-  const deja = cacheValeurs.get(projetId);
+  const cle = `${projetId}|${spId ?? ''}`;
+  const deja = cacheValeurs.get(cle);
   if (deja) return deja;
   const { saisies, saisie_valeurs } = magasin.lignes;
   const parSaisie = new Map<string, typeof saisie_valeurs>();
@@ -37,17 +38,19 @@ export function valeursDuProjet(projetId: string): ValeurSaisie[] {
   const res: ValeurSaisie[] = [];
   for (const s of saisies) {
     if (s.projet_id !== projetId) continue;
+    // Une correction locale n'est lue que par son sous-projet.
+    if (s.sous_projet_id && s.sous_projet_id !== spId) continue;
     for (const v of parSaisie.get(s.id) ?? []) res.push({ cle: v.cle, jour: s.jour, valeur: v.valeur_num ?? 0, approx: s.approx || undefined, texte: v.valeur_txt ?? undefined });
   }
   // Les pages lues dans un livre comptent aussi comme pages du jour (sous-projets, progression, Document).
   const avecLivres = avecPagesDesLivres(res);
-  cacheValeurs.set(projetId, avecLivres);
+  cacheValeurs.set(cle, avecLivres);
   return avecLivres;
 }
 
 /** Valeurs lues par un sous-projet : celles de son projet, sans le passé s'il n'a pas demandé la reprise (spec §6). */
 export function valeursDuSousProjet(sp: SousProjetLigne): ValeurSaisie[] {
-  const v = valeursDuProjet(sp.projet_id);
+  const v = valeursDuProjet(sp.projet_id, sp.id);
   if (sp.reprise_passe) return v;
   // Jour de création dans le fuseau de l'utilisateur (created_at est en UTC).
   const creation = utcVersLocal(Date.parse(sp.created_at), fuseau()).jour;

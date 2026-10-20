@@ -44,12 +44,12 @@ export function prochainesOccurrences(spId: string, depuis: Jour, n = 5): { occ:
 export interface SaisieDetaillee { saisie: Saisie; valeurs: SaisieValeur[]; occ?: Occurrence; tache?: Tache }
 
 /** Saisies d'un projet entre deux jours, avec leurs valeurs, de la plus récente à la plus ancienne. */
-export function saisiesDuProjet(projetId: string, debut: Jour, fin: Jour): SaisieDetaillee[] {
+export function saisiesDuProjet(projetId: string, debut: Jour, fin: Jour, spId?: string): SaisieDetaillee[] {
   const { saisies, saisie_valeurs, occurrences, taches } = magasin.lignes;
   const parSaisie = new Map<string, SaisieValeur[]>();
   for (const v of saisie_valeurs) { const l = parSaisie.get(v.saisie_id); if (l) l.push(v); else parSaisie.set(v.saisie_id, [v]); }
   return saisies
-    .filter((s) => s.projet_id === projetId && s.jour >= debut && s.jour <= fin)
+    .filter((s) => s.projet_id === projetId && s.jour >= debut && s.jour <= fin && (!s.sous_projet_id || s.sous_projet_id === spId))
     .map((saisie) => {
       const occ = saisie.occurrence_id ? occurrences.find((o) => o.id === saisie.occurrence_id) : undefined;
       return { saisie, valeurs: parSaisie.get(saisie.id) ?? [], occ, tache: occ ? taches.find((t) => t.id === occ.tache_id) : undefined };
@@ -59,17 +59,21 @@ export function saisiesDuProjet(projetId: string, debut: Jour, fin: Jour): Saisi
 
 // ------------------------------------------------------------------ saisie manuelle d'un jour (spec §8 : « Saisir un autre jour »)
 
-/** Une seule saisie manuelle par projet et par jour : la corriger ne crée jamais de doublon. */
-export const idSaisieManuelle = (projetId: string, jour: Jour) => uuidDeterministe(`manuel:${projetId}:${jour}`);
+/**
+ * Une seule saisie manuelle par projet et par jour : la corriger ne crée jamais de doublon. Avec `spId`, c'est la correction locale
+ * de ce sous-projet (une par sous-projet et par jour), que les autres sous-projets et le rapport ne voient pas.
+ */
+export const idSaisieManuelle = (projetId: string, jour: Jour, spId?: string) => uuidDeterministe(`manuel:${projetId}:${jour}${spId ? `:${spId}` : ''}`);
 const idValeur = (saisieId: string, cle: string) => uuidDeterministe(`sv:${saisieId}:${cle}`);
 
 export interface ValeurJour { cle: string; type: TypeMetrique; num?: number | null; txt?: string | null; /** Détail structuré d’une référence (passages de la Bible). */ detail?: unknown[] }
 
 /** Ce que contient la journée pour une clé : total (selon l'agrégation du type) et texte. */
-export function contenuDuJour(projetId: string, jour: Jour): Map<string, { nums: number[]; textes: string[]; manuel: number | null; manuelTxt: string | null }> {
+export function contenuDuJour(projetId: string, jour: Jour, spId?: string): Map<string, { nums: number[]; textes: string[]; manuel: number | null; manuelTxt: string | null }> {
   const { saisies, saisie_valeurs } = magasin.lignes;
-  const ids = new Map(saisies.filter((s) => s.projet_id === projetId && s.jour === jour).map((s) => [s.id, s]));
-  const idManuel = idSaisieManuelle(projetId, jour);
+  // Vu d'un sous-projet : les saisies partagées du projet + ses propres corrections ; vu du projet : les saisies partagées seulement.
+  const ids = new Map(saisies.filter((s) => s.projet_id === projetId && s.jour === jour && (!s.sous_projet_id || s.sous_projet_id === spId)).map((s) => [s.id, s]));
+  const idManuel = idSaisieManuelle(projetId, jour, spId);
   const res = new Map<string, { nums: number[]; textes: string[]; manuel: number | null; manuelTxt: string | null }>();
   for (const v of saisie_valeurs) {
     if (!ids.has(v.saisie_id)) continue;
@@ -84,12 +88,13 @@ export function contenuDuJour(projetId: string, jour: Jour): Map<string, { nums:
 /**
  * Enregistre ce que l'utilisateur dit avoir fait ce jour-là. Pour les métriques qui s'additionnent, la saisie manuelle
  * porte la différence avec ce que les blocs ont déjà enregistré : le total du jour devient exactement la valeur tapée,
- * sans toucher aux saisies des blocs. Pour les autres (poids, note, heure…), elle porte la valeur elle-même.
+ * sans toucher aux saisies des blocs. Avec `spId`, la correction reste **locale** à ce sous-projet : les autres sous-projets du projet, les autres
+ * métriques qui lisent la même clé ailleurs et le rapport ne changent pas. Pour les autres (poids, note, heure…), elle porte la valeur elle-même.
  */
-export function saisirJour(projetId: string, jour: Jour, valeurs: ValeurJour[], aujourdhui: Jour, note?: string | null): void {
-  const sid = idSaisieManuelle(projetId, jour);
+export function saisirJour(projetId: string, jour: Jour, valeurs: ValeurJour[], aujourdhui: Jour, note?: string | null, spId?: string): void {
+  const sid = idSaisieManuelle(projetId, jour, spId);
   const existante = magasin.trouver('saisies', sid);
-  const contenu = contenuDuJour(projetId, jour);
+  const contenu = contenuDuJour(projetId, jour, spId);
   const ops: Parameters<typeof magasin.ecrireLot>[0] = [];
   // Un temps nommé saisi à la main compte aussi dans le temps générique (total du jour, lu par le rapport), sauf si on le saisit lui-même.
   let deltaTempsGenerique = 0;
@@ -115,7 +120,7 @@ export function saisirJour(projetId: string, jour: Jour, valeurs: ValeurJour[], 
   }
   const noteNette = note === undefined ? existante?.note ?? null : note?.trim() || null;
   if (!ops.length && (existante?.note ?? null) === noteNette) return;
-  ops.unshift(['saisies', { id: sid, projet_id: projetId, occurrence_id: null, jour, source: jour < aujourdhui ? 'rattrapage' : 'manuel', note: noteNette, approx: existante?.approx ?? false }]);
+  ops.unshift(['saisies', { id: sid, projet_id: projetId, occurrence_id: null, jour, source: jour < aujourdhui ? 'rattrapage' : 'manuel', note: noteNette, approx: existante?.approx ?? false, sous_projet_id: spId ?? null }]);
   magasin.ecrireLot(ops);
   // La note de la saisie entre aussi au Carnet (spec §18), avec le nom du projet et, pour un autre jour, ce jour.
   if (note !== undefined) {

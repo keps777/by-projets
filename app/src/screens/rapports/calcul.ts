@@ -59,6 +59,7 @@ export function valeursDuPoint(point: PointRapportLigne, d: DonneesRapport, parS
   const res: ValeurSaisie[] = [];
   for (const s of d.saisies) {
     if (point.projet_id && s.projet_id !== point.projet_id) continue;
+    if (s.sous_projet_id) continue; // correction locale d'un sous-projet : le rapport ne la voit pas
     for (const v of parSaisie.get(s.id) ?? []) res.push({ cle: v.cle, jour: s.jour, valeur: Number(v.valeur_num ?? 0), approx: s.approx || undefined, texte: v.valeur_txt ?? undefined });
   }
   return avecPagesDesLivres(res);
