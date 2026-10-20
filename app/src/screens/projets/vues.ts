@@ -1,7 +1,7 @@
 // Logique d'affichage des écrans Projets (fonctions pures, testées dans vues.test.ts).
 // Les calculs de fond (progression, agrégation, unités) viennent du noyau ; ici, on ne fait que les mettre en forme.
 import { ajouterJours, dernierDuMois, joursDuMois, lundiDe, premierDuMois } from '@core/dates.ts';
-import { TYPES, agreger, cleMetrique, valeursEntre } from '@core/metriques.ts';
+import { TYPES, agreger, cleMetrique, cleTempsNomme, valeursEntre } from '@core/metriques.ts';
 import { dureeLisible, formatDistance, formatHeure, formatMontantCourt, formatPoids, nombre, parseHeure } from '@core/units.ts';
 import type { Jour, Metrique, PeriodeCible, TypeMetrique, ValeurSaisie } from '@core/types.ts';
 
@@ -165,12 +165,22 @@ export interface Brouillon {
 
 export const cleDe = (m: Brouillon) => m.cle ?? cleMetrique(m.type, m.unite, m.nom);
 
+/**
+ * Clés d'une liste de métriques à créer. Quand plusieurs métriques de temps coexistent, chacune (sauf celle qui a déjà une clé fixée)
+ * reçoit sa clé nommée `temps:<nom>` : on peut suivre plusieurs temps dans un même sous-projet, chacun avec son total.
+ */
+export function clesDesBrouillons(ms: Brouillon[]): string[] {
+  const plusieursTemps = ms.filter((m) => m.type === 'temps').length > 1;
+  return ms.map((m) => (plusieursTemps && m.type === 'temps' && !m.cle ? cleTempsNomme(m.nom) : cleDe(m)));
+}
+
 /** Problèmes qui empêchent d'enregistrer : clés en double (la base les refuse), objectif « au total » sans date de fin. */
 export function problemesMetriques(ms: Brouillon[], fin: Jour | null): string[] {
   const res: string[] = [];
   const vues = new Map<string, string>();
-  for (const m of ms) {
-    const cle = cleDe(m);
+  const cles = clesDesBrouillons(ms);
+  for (const [i, m] of ms.entries()) {
+    const cle = cles[i];
     const deja = vues.get(cle);
     if (deja != null) res.push(`« ${deja} » et « ${m.nom} » liraient la même saisie : change le nom ou l’unité de l’une des deux.`);
     else vues.set(cle, m.nom);

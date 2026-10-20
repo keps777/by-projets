@@ -12,16 +12,18 @@ export function valeursARetenir(valeurs: ValeurSession[]): ValeurSession[] {
 
 /**
  * Écrit la session : temps passé (secondes, unité de base) + les autres mesures remplies. C'est une saisie à part
- * (source « minuteur ») : les sessions du jour s'additionnent, et la saisie manuelle du jour reste corrigeable.
+ * (source « minuteur ») : `clesNommees` ajoute le même temps aux temps nommés choisis (`temps:<nom>`). Les sessions du jour s'additionnent, et la saisie manuelle du jour reste corrigeable.
  * Rend l'identifiant de la saisie, ou null si rien n'est à enregistrer.
  */
-export function enregistrerSession(projetId: string, jour: Jour, secondes: number, autres: ValeurSession[] = [], cleTemps = 'temps'): string | null {
+export function enregistrerSession(projetId: string, jour: Jour, secondes: number, autres: ValeurSession[] = [], cleTemps = 'temps', clesNommees: string[] = []): string | null {
   const s = Math.max(0, Math.round(secondes));
   const reste = valeursARetenir(autres);
   if (!s && !reste.length) return null;
   const sid = nouvelId();
   const ops: Parameters<typeof magasin.ecrireLot>[0] = [['saisies', { id: sid, projet_id: projetId, occurrence_id: null, jour, source: 'minuteur', note: null, approx: false }]];
   if (s) ops.push(['saisie_valeurs', { id: idSaisieValeur(sid, cleTemps), saisie_id: sid, cle: cleTemps, valeur_num: s, valeur_txt: null, detail: null }]);
+  // Temps nommés (sous-projet qui en suit plusieurs) : la session compte aussi pour chacun de ceux qui sont choisis ; le temps générique reste le total.
+  if (s) for (const cle of new Set(clesNommees)) if (cle !== cleTemps) ops.push(['saisie_valeurs', { id: idSaisieValeur(sid, cle), saisie_id: sid, cle, valeur_num: s, valeur_txt: null, detail: null }]);
   for (const v of reste) {
     ops.push(['saisie_valeurs', { id: idSaisieValeur(sid, v.cle), saisie_id: sid, cle: v.cle, valeur_num: v.type === 'reference' ? null : v.num ?? null, valeur_txt: v.type === 'reference' ? v.txt!.trim() : null, detail: v.detail ?? null }]);
   }

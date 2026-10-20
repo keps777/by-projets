@@ -1142,3 +1142,37 @@ test.describe('Fil : vue Tableau (prêt, en cours, terminé)', () => {
     await expect(page.getByRole('region', { name: 'Tableau de la journée' })).toHaveCount(0);
   });
 });
+
+test('Sous-projet : plusieurs temps (prière, évangélisation…), chacun avec son total, et le total de tous', async ({ page }) => {
+  await page.goto('/projets/nouveau-sous-projet');
+  await page.getByRole('button', { name: 'Partir de zéro' }).click();
+  await page.getByRole('textbox', { name: 'Nom du sous-projet' }).fill('En vrai');
+  for (const nom of ['Prière', 'Évangélisation', 'Travaux pratiques']) {
+    await page.getByRole('button', { name: 'Temps', exact: true }).click();
+    await page.getByRole('textbox', { name: 'Nom de la métrique' }).last().fill(nom);
+    await page.getByRole('textbox', { name: 'Nom de la métrique' }).last().blur();
+  }
+  // Plus de refus « liraient la même saisie » : trois temps coexistent.
+  await expect(page.getByText(/liraient la même saisie/)).toHaveCount(0);
+  await page.getByRole('button', { name: 'Créer le sous-projet' }).click();
+  await expect(page).toHaveURL(/\/projets\/sous-projet\//);
+
+  const detail = page.getByRole('region', { name: 'Temps du mois' });
+  await expect(detail).toContainText('Prière');
+  await expect(detail).toContainText('Évangélisation');
+  await expect(detail).toContainText('Travaux pratiques');
+  await expect(detail).toContainText('Total de tous les temps');
+
+  // Un temps lancé d'ici se compte pour le(s) temps choisi(s).
+  await page.getByRole('group', { name: 'Temps du sous-projet' }).getByRole('button', { name: 'Lancer un temps' }).click();
+  await page.waitForTimeout(1200);
+  await page.getByRole('group', { name: 'Temps du sous-projet' }).getByRole('button', { name: 'Arrêter' }).click();
+  const volet = page.getByRole('dialog', { name: 'Fin de la session' });
+  await volet.getByLabel('Heures').fill('1');
+  await volet.getByLabel('Minutes').fill('30');
+  await volet.getByLabel('Minutes').blur();
+  await volet.getByRole('group', { name: 'Temps concernés' }).getByRole('button', { name: 'Évangélisation' }).click();
+  await volet.getByRole('button', { name: 'Valider la session' }).click();
+  await expect(page.getByText(/Session enregistrée/)).toBeVisible();
+  await expect(detail.getByText('Total de tous les temps').locator('..')).toContainText('1 h 30');
+});

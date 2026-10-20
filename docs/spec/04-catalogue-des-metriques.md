@@ -45,3 +45,14 @@ Chaque valeur est stockée dans une **unité de base** exacte et convertie seule
   - *Travail et études* : livrable à rendre, étude ou cours, entrepreneuriat.
   - *Vie personnelle* : budget du mois, sport, poids et santé, épargne maison, rangement du logement, réveil et sommeil, garde-robe.
   - Tout peut aussi partir de zéro.
+
+## Plusieurs temps dans un sous-projet (20 oct. 2026)
+
+Un sous-projet peut suivre **plusieurs métriques de temps** (prière, évangélisation, travaux pratiques…). Plus de refus « liraient la même saisie » : dès qu'il y a deux temps, chacun reçoit sa **clé nommée** `temps:<nom>` (nom sans accents ni espaces : `temps:priere`). Deux temps de même nom restent refusés. Ajouter un deuxième temps dans la Fiche lui donne aussi une clé nommée ; le temps générique `temps` existant garde son sens (total).
+
+**Le temps générique `temps` reste le total du temps passé** : blocs terminés, chronos et saisies l'alimentent toujours, et le rapport le lit. Les temps nommés se remplissent ainsi :
+- **Chrono lancé depuis le sous-projet** : la fenêtre de fin de session demande « Compter ce temps pour » (un seul temps par session, le premier par défaut). La session s'écrit sur `temps` et sur le temps choisi.
+- **Bloc de tâche** : si la tâche prévoit un temps nommé (mesure `temps:<nom>`), le bloc terminé lui donne le **temps réellement écoulé** (les autres mesures prennent la valeur prévue).
+- **Saisie à la main d'un jour** : un temps nommé tapé s'ajoute aussi au `temps` du jour (sauf si on saisit soi-même le temps générique).
+
+**Affichage** (onglet Suivi, au-dessus du reste) : « Temps · ce mois » liste chaque temps avec son total du mois (et son objectif s'il en a un), puis **Total de tous les temps** : la somme des temps nommés, ou, si le temps générique fait partie des métriques, sa valeur.

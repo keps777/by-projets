@@ -20,6 +20,7 @@
   import SuiviFinances from './SuiviFinances.svelte';
   import VoletRenommer from './VoletRenommer.svelte';
   import ChronoSousProjet from './ChronoSousProjet.svelte';
+  import TempsDetail from './TempsDetail.svelte';
   import { renommerProjet, renommerSousProjet } from '../../data/actions/projets.ts';
   import { codeDuProjet } from './donnees.ts';
   import { estFinances } from './vues.ts';
@@ -115,7 +116,7 @@
       {#key `${sp.id}:${onglet}`}
         <div class="page-onglet" class:document={onglet === 'document'} in:fly={{ y: 10, duration: 220 }}>
         {#if onglet === 'suivi'}
-          {#if finances}<SuiviFinances {sp} {metriques} {mois} {jour} />{:else}<OngletSuivi {sp} {metriques} {mois} {jour} {freres} />{/if}
+          {#if finances}<SuiviFinances {sp} {metriques} {mois} {jour} />{:else}<TempsDetail {sp} {metriques} {mois} /><OngletSuivi {sp} {metriques} {mois} {jour} {freres} />{/if}
         {:else if onglet === 'fiche'}
           <OngletFiche {sp} {metriques} {code} {jour} />
         {:else if onglet === 'document'}

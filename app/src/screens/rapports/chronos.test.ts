@@ -56,6 +56,16 @@ describe('enregistrer une session', () => {
     expect(v.filter((x) => x.cle === 'fois').reduce((s, x) => s + x.valeur, 0)).toBe(2);
   });
 
+  it('une session peut compter pour des temps nommés, en plus du temps total', () => {
+    const p = projet();
+    enregistrerSession(p, '2026-10-05', 1800, [], 'temps', ['temps:priere']);
+    enregistrerSession(p, '2026-10-05', 3600, [], 'temps', ['temps:evangelisation', 'temps:priere']);
+    const somme = (cle: string) => valeursDuProjet(p).filter((x) => x.jour === '2026-10-05' && x.cle === cle).reduce((s, x) => s + x.valeur, 0);
+    expect(somme('temps')).toBe(5400);
+    expect(somme('temps:priere')).toBe(5400);
+    expect(somme('temps:evangelisation')).toBe(3600);
+  });
+
   it('valider sans rien remplir n’enregistre que le temps ; les champs vides ou à zéro sont ignorés', () => {
     const p = projet();
     const sid = enregistrerSession(p, '2026-10-05', 300, [{ cle: 'nombre:chapitres', type: 'nombre', num: 0 }, { cle: 'reference:passages', type: 'reference', txt: '  ' }])!;

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Metrique, ValeurSaisie } from '@core/types.ts';
 import {
-  barresDuMois, calculsProposes, champTexte, estFinances, jourAtteint, jourCourt, lireChamp, objectifTexte, parJour, periodePour,
+  barresDuMois, calculsProposes, champTexte, clesDesBrouillons, estFinances, jourAtteint, jourCourt, lireChamp, objectifTexte, parJour, periodePour,
   periodeTexte, problemesMetriques, realiseSurCible, resumeReprise, rolesFinances, textesParJour, valeurTexte, type Brouillon
 } from './vues.ts';
 
@@ -44,8 +44,16 @@ describe('formats', () => {
 describe('métriques à créer', () => {
   const b = (p: Partial<Brouillon>): Brouillon => ({ type: 'temps', nom: 'Temps', unite: 'min', cible: 1800, periode_cible: 'jour', sens: 'plus', dans_rapport: true, ...p });
   it('signale deux métriques qui liraient la même clé', () => {
-    expect(problemesMetriques([b({}), b({ nom: 'Autre temps' })], null)).toHaveLength(1);
+    expect(problemesMetriques([b({ type: 'nombre', unite: 'pages', nom: 'Pages' }), b({ type: 'nombre', unite: 'pages', nom: 'Pages lues' })], null)).toHaveLength(1);
     expect(problemesMetriques([b({}), b({ type: 'nombre', unite: 'pages', nom: 'Pages' })], null)).toHaveLength(0);
+  });
+  it('permet plusieurs temps : chacun reçoit sa clé nommée', () => {
+    const ms = [b({ nom: 'Prière' }), b({ nom: 'Post/Suivi/Evangélisation' }), b({ nom: 'Travaux pratiques' })];
+    expect(problemesMetriques(ms, null)).toHaveLength(0);
+    expect(clesDesBrouillons(ms)).toEqual(['temps:priere', 'temps:postsuivievangelisation', 'temps:travauxpratiques']);
+    // Un seul temps garde la clé générique ; deux temps de même nom restent refusés.
+    expect(clesDesBrouillons([b({})])).toEqual(['temps']);
+    expect(problemesMetriques([b({ nom: 'Prière' }), b({ nom: 'Priere' })], null)).toHaveLength(1);
   });
   it('refuse un total sans date de fin (spec §5)', () => {
     expect(problemesMetriques([b({ periode_cible: 'total' })], null)).toHaveLength(1);

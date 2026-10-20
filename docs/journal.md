@@ -2,6 +2,12 @@
 
 > Lire ce fichier en début de session (après `CLAUDE.md`). Ajouter une entrée en fin de session.
 
+## 20 oct. 2026 — Plusieurs temps dans un sous-projet
+
+- Demande : « ça doit permettre tout » — trois métriques de temps (Prière, Post/Suivi/Évangélisation, Travaux pratiques) étaient refusées (même clé `temps`). Désormais : clés nommées `temps:<nom>` dès qu'il y a plusieurs temps (`cleTempsNomme`, `clesDesBrouillons`), toujours en plus du temps total `temps` que le rapport lit.
+- Alimentation : chrono du sous-projet (choix du temps concerné), blocs de tâche (temps réel sur le temps nommé), saisie manuelle du jour (aussi ajoutée au total). Affichage : carte « Temps · ce mois » avec un total par temps et le total de tous (`temps-total.ts`, `TempsDetail.svelte`).
+- Limites : la répartition « total par métrique » ne concerne que le temps (deux nombres de même unité partagent déjà la même saisie) ; une session compte pour un seul temps pour ne rien compter deux fois. Spec §4, tests unitaires, données et e2e.
+
 ## 12 oct. 2026 (nuit, suite) — Tableau en trois colonnes
 
 - Retour de l'utilisateur : le Tableau devient **trois colonnes côte à côte (Prêt, En cours, Terminé)** de cartes courtes (nom coupé, heure, chrono). Toucher une carte ouvre le détail du bloc (volet existant) ; le chrono ▶ la passe en cours ; ■ puis « Oui, c'est fait » la passe en terminé ; glisser avance/recule. « Prêtes » et « À faire » fusionnent (le retard se voit à l'heure en orange). `tableau.ts`, `Tableau.svelte`, tests et e2e refaits ; spec §12 mise à jour.

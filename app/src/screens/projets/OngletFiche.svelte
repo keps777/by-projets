@@ -1,7 +1,7 @@
 <script lang="ts">
   // Onglet Fiche (planche SousProjetFiche) : les 7 questions, les métriques (modifiables), les tâches qui alimentent
   // le sous-projet, la période et le statut avec pause, validation, reprise ou suppression (spec §6, US-16, US-20).
-  import { cleMetrique, TYPES } from '@core/metriques.ts';
+  import { cleMetrique, cleTempsNomme, TYPES } from '@core/metriques.ts';
   import { metriquesPilotes } from '@core/progression.ts';
   import { decrire } from '@core/recurrence.ts';
   import type { Jour, Metrique, TypeMetrique } from '@core/types.ts';
@@ -71,11 +71,13 @@
   function ajouter(type: TypeMetrique) {
     const base: Brouillon = { type, nom: TYPES[type].nom.replace(' ($)', ''), unite: TYPES[type].uniteAffichee, cible: cibleParDefaut(type), periode_cible: 'jour', sens: 'plus', dans_rapport: false };
     let n = 2;
-    while (lignes.some((x) => x.cle === cleDe(base))) base.nom = `${TYPES[type].nom.replace(' ($)', '')} ${n++}`;
-    if (lignes.some((x) => x.cle === cleDe(base))) { dire('Ce sous-projet suit déjà une métrique de ce type.'); return; }
-    ajouterMetrique(sp.id, { ...base, options: type === 'choix' ? [{ label: 'Complet', valeur: 1 }, { label: 'Partiel', valeur: 0.5 }, { label: 'Aucun', valeur: 0 }] : undefined });
+    // Un deuxième temps (prière, évangélisation…) prend sa propre clé nommée ; le temps générique reste le total des blocs et du rapport.
+    const cleDuNouveau = (b: Brouillon) => (type === 'temps' && lignes.some((x) => x.type === 'temps') ? cleTempsNomme(b.nom) : cleDe(b));
+    while (lignes.some((x) => x.cle === cleDuNouveau(base))) base.nom = `${TYPES[type].nom.replace(' ($)', '')} ${n++}`;
+    if (lignes.some((x) => x.cle === cleDuNouveau(base))) { dire('Ce sous-projet suit déjà une métrique de ce type.'); return; }
+    ajouterMetrique(sp.id, { ...base, cle: cleDuNouveau(base), options: type === 'choix' ? [{ label: 'Complet', valeur: 1 }, { label: 'Partiel', valeur: 0.5 }, { label: 'Aucun', valeur: 0 }] : undefined });
   }
-  const typesLibres = $derived(ORDRE_TYPES.filter((t) => !['temps', 'fois', 'distance', 'poids', 'heure', 'pourcentage', 'oui_non', 'note'].includes(t) || !lignes.some((x) => x.type === t)));
+  const typesLibres = $derived(ORDRE_TYPES.filter((t) => !['fois', 'distance', 'poids', 'heure', 'pourcentage', 'oui_non', 'note'].includes(t) || !lignes.some((x) => x.type === t)));
 
   function supprimer() {
     supprimerSousProjet(sp.id);

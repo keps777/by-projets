@@ -1,5 +1,6 @@
 // Vie d'un bloc : lancer, pause, terminer, saisie unique et correction (spec §8).
 import { idSaisie, idSaisieValeur } from '@core/ids.ts';
+import { estCleTempsNomme } from '@core/metriques.ts';
 import { ecouleS, fixerEcoule, initial, lancer, pause, reprendre, terminer, type Minuteur } from '@core/minuteur.ts';
 import type { Occurrence, Saisie, SaisieValeur, SourceSaisie } from '@core/lignes.ts';
 import { magasin } from '../magasin.svelte.ts';
@@ -76,7 +77,8 @@ export function terminerBloc(occId: string): void {
   const sec = m.demarreeA == null ? Math.max(0, Math.round((Date.parse(o.fin) - Date.parse(o.debut)) / 1000)) : ecouleS(fini, Date.now());
   const existantes = new Set(magasin.lignes.saisie_valeurs.filter((v) => v.saisie_id === idSaisie(occId)).map((v) => v.cle));
   const valeurs: ValeurEntree[] = [{ cle: 'temps', num: sec }];
-  for (const a of attendusDe(tache.id)) if (a.cle !== 'temps' && !existantes.has(a.cle)) valeurs.push({ cle: a.cle, num: a.valeur_prevue });
+  // Un temps nommé (`temps:<nom>`) prend le temps réellement écoulé ; les autres mesures, la valeur prévue.
+  for (const a of attendusDe(tache.id)) if (a.cle !== 'temps' && !existantes.has(a.cle)) valeurs.push({ cle: a.cle, num: estCleTempsNomme(a.cle) ? sec : a.valeur_prevue });
   saisirBloc(occId, valeurs, { source: m.demarreeA == null ? 'bloc' : 'minuteur' });
 }
 

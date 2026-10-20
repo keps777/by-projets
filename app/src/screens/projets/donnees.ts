@@ -1,7 +1,7 @@
 // Lectures et écritures propres aux écrans Projets, au-dessus du magasin (data/ n'a pas encore ces requêtes).
 import { utcVersLocal } from '@core/dates.ts';
 import { nouvelId, uuidDeterministe } from '@core/ids.ts';
-import { TYPES } from '@core/metriques.ts';
+import { TYPES, estCleTempsNomme } from '@core/metriques.ts';
 import { formatHeure } from '@core/units.ts';
 import { metriquesPilotes } from '@core/progression.ts';
 import type { Jour, Metrique, TypeMetrique } from '@core/types.ts';
@@ -91,6 +91,8 @@ export function saisirJour(projetId: string, jour: Jour, valeurs: ValeurJour[], 
   const existante = magasin.trouver('saisies', sid);
   const contenu = contenuDuJour(projetId, jour);
   const ops: Parameters<typeof magasin.ecrireLot>[0] = [];
+  // Un temps nommé saisi à la main compte aussi dans le temps générique (total du jour, lu par le rapport), sauf si on le saisit lui-même.
+  let deltaTempsGenerique = 0;
   for (const v of valeurs) {
     const c = contenu.get(v.cle);
     if (v.type === 'reference') {
@@ -104,7 +106,12 @@ export function saisirJour(projetId: string, jour: Jour, valeurs: ValeurJour[], 
     const somme = TYPES[v.type].agregation === 'somme';
     const manuel = somme ? v.num - autres.reduce((s, x) => s + x, 0) : v.num;
     if (c?.manuel === manuel || (c?.manuel == null && somme && manuel === 0)) continue;
+    if (estCleTempsNomme(v.cle)) deltaTempsGenerique += manuel - (c?.manuel ?? 0);
     ops.push(['saisie_valeurs', { id: idValeur(sid, v.cle), saisie_id: sid, cle: v.cle, valeur_num: manuel, valeur_txt: null, detail: null }]);
+  }
+  if (deltaTempsGenerique !== 0 && !valeurs.some((v) => v.cle === 'temps' && v.num != null)) {
+    const total = Math.max(0, (contenu.get('temps')?.manuel ?? 0) + deltaTempsGenerique);
+    ops.push(['saisie_valeurs', { id: idValeur(sid, 'temps'), saisie_id: sid, cle: 'temps', valeur_num: total, valeur_txt: null, detail: null }]);
   }
   const noteNette = note === undefined ? existante?.note ?? null : note?.trim() || null;
   if (!ops.length && (existante?.note ?? null) === noteNette) return;

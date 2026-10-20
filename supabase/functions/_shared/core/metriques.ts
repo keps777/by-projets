@@ -51,6 +51,15 @@ export function cleMetrique(type: TypeMetrique, unite: string, nom = ''): string
   }
 }
 
+/**
+ * Clé d'un temps « nommé » : un sous-projet qui suit plusieurs temps (prière, évangélisation, travaux pratiques…) donne à chacun sa clé
+ * `temps:<nom>`. Le temps générique `temps` reste le total enregistré par les blocs, les chronos et le rapport (spec §2).
+ */
+export function cleTempsNomme(nom: string): string {
+  return `temps:${enleverAccents(nom).toLowerCase().replace(/[^a-z0-9]+/g, '') || 'autre'}`;
+}
+export const estCleTempsNomme = (cle: string): boolean => cle.startsWith('temps:');
+
 export function agregation(m: Pick<Metrique, 'type'>): Aggregation { return TYPES[m.type].agregation; }
 
 /** Agrège des valeurs d'une même clé selon la règle du type. Retourne 0 s'il n'y a rien (sauf « dernier » : null). */

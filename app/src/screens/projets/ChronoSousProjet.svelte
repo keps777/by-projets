@@ -18,10 +18,10 @@
 
   function lancer() { chronos.demarrer(cle); }
   function arreter() { chronos.arreter(cle); ouvert = true; }
-  function valider(autres: ValeurSession[], total: number) {
+  function valider(autres: ValeurSession[], total: number, clesTemps: string[]) {
     const s = chronos.sessions[cle];
     if (!s) { ouvert = false; return; }
-    const sid = enregistrerSession(projetId, s.jour, total, autres);
+    const sid = enregistrerSession(projetId, s.jour, total, autres, 'temps', clesTemps);
     chronos.oublier(cle);
     ouvert = false;
     dire(sid ? `Session enregistrée · ${dureeMin(Math.round(total / 60))}` : 'Rien à enregistrer');

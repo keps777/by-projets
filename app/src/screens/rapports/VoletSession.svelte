@@ -2,6 +2,7 @@
   // Fin d'une session chronométrée : le temps est déjà noté ; on peut remplir les autres mesures du point, ou valider tel quel.
   import { compterChapitres, formaterPassages, type Passage } from '@core/bible.ts';
   import type { Metrique } from '@core/types.ts';
+  import { estCleTempsNomme } from '@core/metriques.ts';
   import Volet from '../../ui/Volet.svelte';
   import Bouton from '../../ui/Bouton.svelte';
   import Interrupteur from '../../ui/Interrupteur.svelte';
@@ -13,8 +14,15 @@
 
   let { ouvert, titre, secondes, metriques, onvalider, onannuler, onfermer }: {
     ouvert: boolean; titre: string; secondes: number; metriques: Metrique[];
-    onvalider: (autres: ValeurSession[], secondes: number) => void; onannuler: () => void; onfermer: () => void;
+    /** `clesTemps` : les temps nommés (`temps:<nom>`) auxquels la session est comptée (vide si le sous-projet n'en a pas). */
+    onvalider: (autres: ValeurSession[], secondes: number, clesTemps: string[]) => void; onannuler: () => void; onfermer: () => void;
   } = $props();
+
+  // Plusieurs temps dans le sous-projet (prière, évangélisation…) : on dit à quel(s) temps compter la session.
+  const temps = $derived(metriques.filter((m) => m.type === 'temps' && estCleTempsNomme(m.cle)));
+  let choisis = $state<string[]>([]);
+  // Une session compte pour un seul temps : le total de tous les temps reste le temps réellement passé (rien n'est compté deux fois).
+  const choisir = (cle: string) => { choisis = [cle]; };
 
   // Le temps est celui du chrono : il n'est pas redemandé.
   const autres = $derived(metriques.filter((m) => m.type !== 'temps'));
@@ -48,6 +56,7 @@
       c[m.cle] = m.type === 'fois' ? '1' : '';
     }
     nums = n; champs = c; textes = {}; passages = [];
+    choisis = temps.length ? [temps[0].cle] : [];
     poser(secondes);
   });
 
@@ -70,7 +79,7 @@
   function valider() {
     onvalider(autres.map((m): ValeurSession => m.cle === 'reference:passages'
       ? { cle: m.cle, type: m.type, txt: passages.length ? formaterPassages(passages) : '', detail: passages }
-      : { cle: m.cle, type: m.type, num: nums[m.cle], txt: textes[m.cle] }), total);
+      : { cle: m.cle, type: m.type, num: nums[m.cle], txt: textes[m.cle] }), total, choisis);
   }
   const unite = (m: Metrique) => (m.type === 'montant' ? '$' : m.type === 'distance' ? 'km' : m.type === 'poids' ? 'kg' : m.type === 'nombre' ? m.unite : '');
 </script>
@@ -97,6 +106,17 @@
       {:else}Touche un chiffre pour corriger le temps. Il s’ajoute au total du jour ; tu peux remplir le reste, ou valider tel quel.{/if}
     </span>
   </div>
+
+  {#if temps.length}
+    <div class="champ" role="group" aria-label="Temps concernés">
+      <span class="libelle">Compter ce temps pour</span>
+      <div class="puces-temps">
+        {#each temps as t (t.id)}
+          <button type="button" class="puce-temps" class:on={choisis.includes(t.cle)} aria-pressed={choisis.includes(t.cle)} onclick={() => choisir(t.cle)}>{t.nom}</button>
+        {/each}
+      </div>
+    </div>
+  {/if}
 
   {#each autres as m (m.id)}
     <div class="champ">
@@ -154,6 +174,9 @@
   .pas button { flex: none; width: 48px; height: 48px; border: 0; background: transparent; font-size: 22px; }
   .pas input { flex: 1; min-width: 0; height: 46px; border: 0; background: transparent; text-align: right; font-size: 17px; padding: 0 6px; }
   .unite { flex: 1; font-size: 13px; font-weight: 500; }
+  .puces-temps { display: flex; flex-wrap: wrap; gap: 6px; }
+  .puce-temps { min-height: 44px; padding: 0 14px; border-radius: 22px; border: 1px solid var(--ligne); background: transparent; color: var(--texte); font-size: 14px; font-weight: 600; }
+  .puce-temps.on { background: var(--c, var(--inverse)); border-color: var(--c, var(--inverse)); color: var(--c-sur, var(--inverse-texte)); }
   .bas { display: flex; justify-content: space-between; }
   .lien { min-height: 44px; border: 0; background: none; color: var(--muted); font-size: 14px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; padding: 0 4px; }
   .lien.danger { color: var(--mauvais); }

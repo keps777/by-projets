@@ -24,7 +24,7 @@
   import { routeur } from '../../routeur.svelte.ts';
   import EditeurMetrique from './EditeurMetrique.svelte';
   import {
-    calculsProposes, cibleParDefaut, cleDe, MOIS_LONGS, periodePour, periodeTexte, problemesMetriques, resumeReprise, type Brouillon, type ChoixPeriode
+    calculsProposes, cibleParDefaut, clesDesBrouillons, MOIS_LONGS, periodePour, periodeTexte, problemesMetriques, resumeReprise, type Brouillon, type ChoixPeriode
   } from './vues.ts';
 
   let { params: _ = {} }: { params?: Record<string, string> } = $props();
@@ -134,7 +134,8 @@
   ]);
   const passe = $derived.by(() => {
     if (!projetId || !debut || debut > jour) return null;
-    const ms = metriques.map((m, i) => ({ cle: cleDe(m), type: m.type, unite: m.unite, nom: m.nom, options: m.options ?? undefined, id: String(i) }));
+    const cles = clesDesBrouillons(metriques);
+    const ms = metriques.map((m, i) => ({ cle: cles[i], type: m.type, unite: m.unite, nom: m.nom, options: m.options ?? undefined, id: String(i) }));
     return resumeReprise(valeursDuProjet(projetId), ms, debut, finEffective ? minJour(finEffective, jour) : jour);
   });
   const texteReprise = $derived(!passe ? 'Aucune saisie antérieure sur cette période : le sous-projet commence à zéro.'
@@ -146,7 +147,7 @@
     if (problemes.length) { dire(problemes[0]); return; }
     const id = creerSousProjet({
       projetId, nom: nom.trim() || (modele != null ? nomDuModele(modeles[modele]) : 'Nouveau sous-projet'), debut, fin: finEffective, reprisePasse: reprise,
-      metriques: metriques.map(({ pilote: _p, ...m }) => ({ ...m, options: m.options ?? null })),
+      metriques: (() => { const cles = clesDesBrouillons(metriques); return metriques.map(({ pilote: _p, ...m }, i) => ({ ...m, cle: cles[i], options: m.options ?? null })); })(),
       pilotesIndex: metriques.flatMap((m, i) => (m.pilote ? [i] : [])),
       fiche: source?.fiche
     });

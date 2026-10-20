@@ -5,7 +5,9 @@ import { MODELES } from '@core/modeles.ts';
 import { magasin } from '../../data/magasin.svelte.ts';
 import { session } from '../../data/auth.svelte.ts';
 import { horloge } from '../../data/temps.svelte.ts';
-import { creerDepuisModele } from '../../data/actions/projets.ts';
+import { creerDepuisModele, creerSousProjet } from '../../data/actions/projets.ts';
+import { ajouterTache } from '../../data/actions/taches.ts';
+import { terminerBloc } from '../../data/actions/blocs.ts';
 import { assurerFinancesDuMois } from '../../data/actions/defauts.ts';
 import { progressionSousProjet, valeursDuProjet } from '../../data/requetes.ts';
 import { ajouterMouvement, contenuDuJour, lireDetail, saisiesDuProjet, saisirJour } from './donnees.ts';
@@ -49,6 +51,35 @@ describe('saisie manuelle d’un jour', () => {
     const r = progressionSousProjet(magasin.trouver('sous_projets', id)!, '2026-10', '2026-10-05');
     expect(r.progression?.realise).toBe(23);
     expect(r.progression?.pct).toBe(11);
+  });
+});
+
+describe('plusieurs temps dans un sous-projet', () => {
+  it('un bloc terminé donne son temps réel à chaque temps nommé de la tâche, en plus du temps total', () => {
+    const p = projet('Mon projet d’entrepreneuriat');
+    const sp = creerSousProjet({
+      projetId: p.id, nom: 'En vrai', debut: '2026-10-01', fin: null, reprisePasse: true,
+      metriques: [
+        { type: 'temps', nom: 'Prière', unite: 'min', cible: 3600, periode_cible: 'semaine', sens: 'plus', dans_rapport: true, cle: 'temps:priere' },
+        { type: 'temps', nom: 'Évangélisation', unite: 'min', cible: 7200, periode_cible: 'jour', sens: 'plus', dans_rapport: false, cle: 'temps:evangelisation' }
+      ]
+    });
+    const tache = ajouterTache({ titre: 'Sortie', projetId: p.id, regle: { frequence: 'une_fois', debut: '2026-10-05', fin: { type: 'aucune' } }, heureDebut: 330, dureeMin: 45, rappelMin: null, sousProjetIds: [sp], attendus: [{ cle: 'temps', valeur: 2700 }, { cle: 'temps:evangelisation', valeur: 2700 }] });
+    const occ = magasin.lignes.occurrences.find((o) => o.tache_id === tache && o.jour === '2026-10-05')!;
+    terminerBloc(occ.id);
+    const v = valeursDuProjet(p.id).filter((x) => x.jour === '2026-10-05');
+    expect(v.find((x) => x.cle === 'temps')!.valeur).toBe(2700);
+    expect(v.find((x) => x.cle === 'temps:evangelisation')!.valeur).toBe(2700);
+    expect(v.find((x) => x.cle === 'temps:priere')).toBeUndefined();
+  });
+
+  it('un temps nommé saisi à la main entre aussi dans le temps total du jour', () => {
+    const p = projet('Mon projet d’entrepreneuriat');
+    saisirJour(p.id, '2026-10-05', [{ cle: 'temps:priere', type: 'temps', num: 3600 }], '2026-10-05');
+    saisirJour(p.id, '2026-10-05', [{ cle: 'temps:priere', type: 'temps', num: 5400 }], '2026-10-05');
+    const v = valeursDuProjet(p.id).filter((x) => x.jour === '2026-10-05');
+    expect(v.filter((x) => x.cle === 'temps:priere').reduce((s, x) => s + x.valeur, 0)).toBe(5400);
+    expect(v.filter((x) => x.cle === 'temps').reduce((s, x) => s + x.valeur, 0)).toBe(5400);
   });
 });
 
