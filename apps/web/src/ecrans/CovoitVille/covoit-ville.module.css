@@ -6,12 +6,6 @@
  * devant la règle d'un seul sélecteur du composant du kit quel que soit l'ordre des feuilles.
  */
 
-/* Racine : prend la place de l'écran au-dessus de la barre d'onglets et sert d'ancre à la feuille « Changer de ville ». */
-:global([data-espace="voyageur"]):has(> .racine) {
-  height: 100dvh;
-  min-height: 0;
-}
-
 .racine {
   position: relative;
   display: flex;

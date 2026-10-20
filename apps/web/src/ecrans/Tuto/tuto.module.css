@@ -93,7 +93,9 @@
   width: 100%;
   min-width: 0;
   padding: var(--am-space-6) var(--am-space-20) 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
@@ -359,4 +361,8 @@
   .point {
     transition: width 0.2s ease-out;
   }
+}
+
+.diapo::-webkit-scrollbar {
+  display: none;
 }

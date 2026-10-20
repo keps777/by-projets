@@ -48,7 +48,9 @@
   gap: var(--am-space-14);
   min-height: 0;
   padding: var(--am-space-10) var(--am-space-20) 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 
 .intro {
@@ -350,4 +352,8 @@ a.alternative {
   .continuer[data-chargement="true"] {
     animation: none;
   }
+}
+
+.corps::-webkit-scrollbar {
+  display: none;
 }

@@ -1,6 +1,6 @@
 .barre {
   display: flex;
-  padding: var(--am-space-6) var(--am-space-8) 18px;
+  padding: var(--am-space-6) var(--am-space-8) calc(18px + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid var(--am-surface-2);
   background: var(--am-profond);
   font-family: var(--am-font-texte);

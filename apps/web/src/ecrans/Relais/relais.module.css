@@ -20,13 +20,16 @@
 .haut {
   position: relative;
   flex: none;
-  height: 340px;
+  /* 340 px sur la planche (844 px de haut), proportionnelle à la hauteur de l'écran en dessous. */
+  height: min(340px, max(220px, calc(var(--am-ecran-h, 844px) * 0.40284)));
   background: var(--am-carte-sombre);
   overflow: hidden;
 }
 
 .carte {
   display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .carteQuadrillage {

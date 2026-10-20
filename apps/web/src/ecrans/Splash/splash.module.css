@@ -117,9 +117,18 @@
   flex: 1;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* `safe` : centré quand il y a la place, collé en haut (et défilant) quand l'écran est trop court. */
+  justify-content: safe center;
   gap: var(--am-space-18);
+  min-height: 0;
   padding: 0 var(--am-space-24);
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.corps::-webkit-scrollbar {
+  display: none;
 }
 
 /* Titre de l'écran pour les lecteurs d'écran : masqué visuellement, hors du flux. */

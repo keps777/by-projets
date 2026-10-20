@@ -35,7 +35,8 @@
 .carte {
   position: relative;
   flex: none;
-  height: 380px;
+  /* 380 px sur la planche (844 px de haut), proportionnelle à la hauteur de l'écran en dessous. */
+  height: min(380px, max(220px, calc(var(--am-ecran-h, 844px) * 0.45024)));
   background: var(--am-carte-sombre);
   overflow: hidden;
 }
@@ -43,7 +44,7 @@
 .carteSvg {
   display: block;
   width: 100%;
-  height: 380px;
+  height: 100%;
 }
 
 .quadrillage {

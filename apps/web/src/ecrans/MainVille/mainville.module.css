@@ -1,14 +1,5 @@
 /* Accueil « dans la même ville » (MainVille.dc.html). Couleurs, tailles et espacements relevés dans la planche. */
 
-/*
- * Comme l'accueil Main : la planche est une toile de 844 px. Tant que cet écran contient l'accueil, on borne l'écran
- * du layout à la fenêtre, la barre d'onglets reste en bas et le contenu défile au lieu de rallonger la page.
- */
-:global([data-espace="voyageur"]):has(> .racine) {
-  height: 100dvh;
-  min-height: 0;
-}
-
 /* Racine : prend la place de l'écran au-dessus de la barre d'onglets et sert d'ancre à la feuille. */
 .racine {
   position: relative;

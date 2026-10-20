@@ -28,7 +28,25 @@
   z-index: 10;
 }
 
-/* Sur téléphone, il n'y a pas de place à côté de l'écran : /dev/roles prend le relais. */
+/* Dans le cadre d'iPhone, le sélecteur est une ligne au-dessus du boîtier, pas un flottant qui le recouvrirait. */
+:global([data-mode="cadre"]) .flottant {
+  position: static;
+}
+
+/*
+ * En écran plein (téléphone, fenêtre courte) il n'y a pas de place à côté de l'écran : le sélecteur flottant ne
+ * s'affiche que sur une fenêtre assez large pour le loger hors de la colonne, /dev/roles prend le relais sinon.
+ */
+:global([data-mode="plein"]) .flottant {
+  display: none;
+}
+
+@media (min-width: 1240px) and (min-height: 521px) {
+  :global([data-mode="plein"]) .flottant {
+    display: block;
+  }
+}
+
 @media (max-width: 600px) {
   .flottant {
     display: none;

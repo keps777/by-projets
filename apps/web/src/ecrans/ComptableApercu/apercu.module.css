@@ -15,9 +15,9 @@
 .ecran {
   position: relative;
   display: flex;
-  flex: none;
+  flex: 1;
   flex-direction: column;
-  height: 100dvh;
+  min-height: 0;
   overflow: hidden;
 }
 

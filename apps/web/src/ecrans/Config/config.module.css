@@ -18,9 +18,9 @@
  */
 .ecran {
   display: flex;
-  flex: none;
+  flex: 1;
   flex-direction: column;
-  height: 100dvh;
+  min-height: 0;
 }
 
 /* Corps : 8 px entre les blocs (le kit met 10 px). */

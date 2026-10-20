@@ -1,6 +1,6 @@
 .bandeau {
   position: fixed;
-  top: var(--am-space-10);
+  top: calc(var(--am-space-10) + env(safe-area-inset-top, 0px));
   left: 50%;
   z-index: 20;
   display: flex;

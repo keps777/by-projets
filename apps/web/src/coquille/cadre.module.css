@@ -1,20 +1,176 @@
+/*
+ * Cadre de l'application. `data-mode` (posé par cadre.tsx, seuils dans mode-affichage.ts) choisit l'habillage :
+ *
+ *   plein : téléphone, ou fenêtre trop courte pour un cadre. L'écran remplit la largeur et la hauteur dynamique
+ *           (100dvh), sans bande ni boîtier ; les trois enveloppes ci-dessous disparaissent (display: contents).
+ *   cadre : ordinateur et tablette. L'écran de 390 x 844 vit dans un boîtier d'iPhone mis à l'échelle (--echelle)
+ *           pour tenir dans la fenêtre : la page autour ne défile jamais.
+ *
+ * --am-ecran-h est la hauteur de l'écran vu par les pages : la fenêtre sur téléphone, 844 px dans le cadre.
+ */
+
 .cadre {
-  display: flex;
-  justify-content: center;
-  min-height: 100dvh;
+  --am-ecran-h: 100dvh;
+  --am-ecran-max: none;
+  --boitier-l: 418px;
+  --boitier-h: 872px;
+  --bord: 14px;
+}
+
+/* ------------------------------------------------------------------ écran plein */
+
+.cadre[data-mode="plein"] {
+  display: block;
+  height: 100dvh;
+  overflow: hidden;
   background: var(--am-profond);
 }
 
-/* Sur ordinateur l'écran est une colonne de 390 px, détachée par un trait. */
-@media (min-width: 481px) {
-  .cadre:not(.fluide) > :first-child {
-    box-shadow:
-      0 0 0 1px var(--am-trait),
-      0 24px 64px rgb(0 0 0 / 0.5);
+.cadre[data-mode="plein"] .boitier,
+.cadre[data-mode="plein"] .corps,
+.cadre[data-mode="plein"] .ecran {
+  display: contents;
+}
+
+.cadre[data-mode="plein"] .ilot,
+.cadre[data-mode="plein"] .barreAccueil {
+  display: none;
+}
+
+/* Petit ordinateur (large mais court) : une colonne centrée, lisible. Un téléphone en paysage remplit tout l'écran. */
+@media (min-width: 961px) {
+  .cadre[data-mode="plein"] {
+    --am-ecran-max: 760px;
   }
 }
 
-.fluide {
-  display: block;
+/* Salle de contrôle et pages de développement : toute la largeur, la page défile si besoin. */
+.cadre.fluide[data-mode="plein"] {
+  --am-ecran-max: 480px;
+  height: auto;
+  min-height: 100dvh;
+  overflow: visible;
   background: var(--am-nuit);
+}
+
+/* ------------------------------------------------------------------ cadre iPhone */
+
+.cadre[data-mode="cadre"] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100dvh;
+  overflow: hidden;
+  background: radial-gradient(120% 90% at 50% 0%, var(--am-nuit) 0%, var(--am-profond) 72%);
+}
+
+/* Place réservée au boîtier une fois mis à l'échelle : le transform ne change pas la mise en page. */
+.cadre[data-mode="cadre"] .boitier {
+  position: relative;
+  flex: none;
+  width: calc(var(--boitier-l) * var(--echelle, 1));
+  height: calc(var(--boitier-h) * var(--echelle, 1));
+}
+
+.cadre[data-mode="cadre"] .corps {
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  width: var(--boitier-l);
+  height: var(--boitier-h);
+  padding: var(--bord);
+  border-radius: 54px;
+  background: color-mix(in srgb, var(--am-profond) 35%, black);
+  /* Liseré sombre du châssis, puis l'ombre douce qui le détache du fond. */
+  box-shadow:
+    inset 0 0 0 2px var(--am-surface-2),
+    0 0 0 1px var(--am-trait),
+    0 8px 20px rgb(0 0 0 / 0.35),
+    0 36px 90px rgb(0 0 0 / 0.55);
+  transform: scale(var(--echelle, 1));
+  transform-origin: 0 0;
+}
+
+/* Boutons latéraux : volume et veille, décoratifs. */
+.cadre[data-mode="cadre"] .corps::before,
+.cadre[data-mode="cadre"] .corps::after {
+  content: "";
+  position: absolute;
+  background: var(--am-surface-2);
+  pointer-events: none;
+}
+
+.cadre[data-mode="cadre"] .corps::before {
+  top: 150px;
+  left: -3px;
+  width: 3px;
+  height: 66px;
+  border-radius: 2px 0 0 2px;
+}
+
+.cadre[data-mode="cadre"] .corps::after {
+  top: 190px;
+  right: -3px;
+  width: 3px;
+  height: 92px;
+  border-radius: 0 2px 2px 0;
+}
+
+/*
+ * L'écran est un contenant : `contain: paint` et le transform ancrent les éléments en `position: fixed` (feuilles
+ * modales, clavier PIN, toasts) sur l'écran du cadre et non sur la fenêtre, et rognent aux coins arrondis.
+ */
+.cadre[data-mode="cadre"] .ecran {
+  --am-ecran-h: 844px;
+  --am-ecran-max: 390px;
+  position: relative;
+  width: 390px;
+  height: 844px;
+  overflow: hidden;
+  border-radius: 40px;
+  background: var(--am-nuit);
+  contain: paint;
+  isolation: isolate;
+  transform: translateZ(0);
+}
+
+/* Îlot dynamique : discret, niché dans le haut du boîtier (il ne mord que de 7 px sur l'écran, sans toucher les en-têtes). */
+.cadre[data-mode="cadre"] .ilot {
+  position: absolute;
+  top: 3px;
+  left: 50%;
+  z-index: 2;
+  width: 76px;
+  height: 18px;
+  margin-left: -38px;
+  border-radius: 9px;
+  background: black;
+  pointer-events: none;
+}
+
+/* Barre d'accueil. */
+.cadre[data-mode="cadre"] .barreAccueil {
+  position: absolute;
+  bottom: calc(var(--bord) + 7px);
+  left: 50%;
+  z-index: 2;
+  width: 120px;
+  height: 4px;
+  margin-left: -60px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--am-craie) 65%, transparent);
+  pointer-events: none;
+}
+
+.ilot,
+.barreAccueil {
+  display: none;
+}
+
+/* Les habillages ne se voient qu'en mode cadre (la règle ci-dessus les cache, ces sélecteurs plus précis les rendent). */
+.cadre[data-mode="cadre"] .ilot,
+.cadre[data-mode="cadre"] .barreAccueil {
+  display: block;
 }

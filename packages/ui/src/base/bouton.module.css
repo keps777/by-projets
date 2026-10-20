@@ -63,6 +63,8 @@
 .prix {
   flex: none;
   margin-left: auto;
+  /* Un montant ne se coupe jamais : « 4 000 » et « F » restent sur une ligne, c'est le libellé qui passe à la ligne. */
+  white-space: nowrap;
   font-family: var(--am-font-titre);
   font-size: var(--am-fs-22);
   font-weight: 800;

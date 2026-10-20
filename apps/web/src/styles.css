@@ -8,6 +8,8 @@
 html {
   color-scheme: dark;
   -webkit-text-size-adjust: 100%;
+  /* Pas de rebond ni de « tirer pour recharger » qui déplacerait l'écran : le contenu défile dans l'écran. */
+  overscroll-behavior: none;
 }
 
 body {
@@ -17,6 +19,8 @@ body {
   color: var(--am-craie);
   font-family: var(--am-font-texte);
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 a {
@@ -35,5 +39,12 @@ a {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Très petits téléphones (320 à 359 px) : gouttière resserrée, plus de place pour le contenu. */
+@media (max-width: 359px) {
+  :root {
+    --am-gutter: 12px;
   }
 }

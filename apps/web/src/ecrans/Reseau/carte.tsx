@@ -89,7 +89,14 @@ export function CarteReseau({ villes }: { villes: readonly string[] | undefined 
       viewBox="0 0 356 250"
       role="img"
       aria-label={t("carte.aria", { villes: noms.join(", ") })}
-      style={{ display: "block", width: "100%", height: "auto" }}
+      // 250 px de haut sur la planche ; sur un écran bas (téléphone en paysage) la carte se réduit en gardant ses
+      // proportions, pour laisser de la place aux lignes.
+      style={{
+        display: "block",
+        width: "100%",
+        height: "auto",
+        maxHeight: "max(128px, calc(var(--am-ecran-h, 844px) * 0.3))",
+      }}
     >
       <path
         d="M0 50h356M0 125h356M0 200h356M89 0v250M178 0v250M267 0v250"

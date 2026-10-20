@@ -6,7 +6,6 @@ import { I18nextProvider } from "react-i18next";
 import { RouterProvider, createBrowserRouter, type DataRouter } from "react-router";
 import { KiosqueHttp, SurveillantSessionAgent, modeHttp, urlBaseApi } from "@/agent";
 import { FournisseurApiApplication } from "@/api/fournisseur";
-import { BandeauMiseAJour } from "@/coquille/bandeau-mise-a-jour";
 import { construireRoutes, type SourcesRoutes } from "@/coquille/arbre-routes";
 import { HorlogeProvider, creerHorloge, type Horloge } from "@/coquille/horloge";
 import { ModulesProvider } from "@/coquille/modules";
@@ -89,7 +88,6 @@ export function App(props: PropsApp) {
                   <SurveillantSessionAgent actif={http} />
                   <ModulesProvider masques={parametres.modulesMasques}>
                     <ConceptionProvider actif={parametres.conception}>
-                      <BandeauMiseAJour />
                       <RouterProvider router={routeur} />
                     </ConceptionProvider>
                   </ModulesProvider>
