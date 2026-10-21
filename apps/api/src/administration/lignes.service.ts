@@ -25,6 +25,8 @@ import type {
 } from "./modeles";
 import { AnnuaireAdmin, HoraireEnDouble, HoraireInconnu, Lignes, ParcBus } from "./ports";
 import {
+  HORIZON_PROGRAMMATION_JOURS,
+  ajouterJours,
   codeDeLigne,
   compterModifications,
   controlerEtat,
@@ -35,7 +37,7 @@ import {
   planParDefaut,
   prorataDe,
 } from "./regles";
-import { creerLigne, modifierLigne } from "./schemas";
+import { creerLigne, modifierLigne, type CreerLigneRecu, type ModifierLigneRecu } from "./schemas";
 
 /* ------------------------------------------------------------------ formes des réponses (contrats patron) */
 
@@ -88,6 +90,18 @@ export const ACTION_LIGNE_CREER = "ligne.creer";
 export const ACTION_LIGNE_PUBLIER = "ligne.publier";
 export const ACTION_LIGNE_PROGRAMMER = "ligne.programmer";
 export const ACTION_LIGNE_BROUILLON_APPLIQUE = "ligne.brouillon_applique";
+
+/** Une ligne telle que l'accueil des réglages du patron la résume. */
+export interface ResumeLigneReglage {
+  id: string;
+  /** « Douala → Yaoundé » */
+  nom: string;
+  /** Horaires récurrents actifs (l'état publié, brouillon à échéance appliqué). */
+  nbDeparts: number;
+  tarifs: { classique: number; vip: number; bagage: number };
+  /** Noms des arrêts en route, sans l'origine ni le terminus. */
+  arrets: string[];
+}
 
 /** Capacité supposée d'une ligne dont la compagnie n'a encore aucun bus de la classe. */
 export const CAPACITE_PAR_DEFAUT = 70;
@@ -162,6 +176,15 @@ export class LignesService {
     const signature = lireSignature(corps);
     const cmd = lireCommande(creerLigne, corps);
     await this.verifier(u, signature, ACTION_LIGNE_CREER, null);
+    return this.tracerRefus(
+      u,
+      ACTION_LIGNE_CREER,
+      `${cmd.origineGareId}>${cmd.destinationGareId}`,
+      () => this.creerSignee(u, cmd),
+    );
+  }
+
+  private async creerSignee(u: Utilisateur, cmd: CreerLigneRecu): Promise<LignePublieeReponse> {
     const compagnieId = compagnieDe(u);
 
     const origine = await this.gareDeLaCompagnie(compagnieId, cmd.origineGareId);
@@ -216,7 +239,33 @@ export class LignesService {
       throw invalide("COMMANDE_INVALIDE", "La ligne du corps diffère de celle de l'URL");
     }
     await this.verifier(u, signature, ACTION_LIGNE_PUBLIER, ligneIdUrl);
-    const ligne = await this.chargerLigne(u, ligneIdUrl);
+    return this.tracerRefus(u, ACTION_LIGNE_PUBLIER, ligneIdUrl, () => this.modifierSignee(u, cmd));
+  }
+
+  private async modifierSignee(
+    u: Utilisateur,
+    cmd: ModifierLigneRecu,
+  ): Promise<LignePublieeReponse> {
+    const ligne = await this.chargerLigne(u, cmd.ligneId);
+    if (
+      cmd.departs === undefined &&
+      cmd.tarifs === undefined &&
+      cmd.arrets === undefined &&
+      cmd.plan === undefined &&
+      cmd.options === undefined
+    ) {
+      throw invalide("COMMANDE_VIDE", "Aucune modification à publier");
+    }
+    const aujourdHui = jourDouala(this.horloge.maintenant());
+    if (
+      cmd.effetDu !== undefined &&
+      cmd.effetDu > ajouterJours(aujourdHui, HORIZON_PROGRAMMATION_JOURS)
+    ) {
+      throw invalide(
+        "EFFET_TROP_LOIN",
+        `Une modification se programme ${HORIZON_PROGRAMMATION_JOURS} jours à l'avance au plus`,
+      );
+    }
     await this.appliquerSiEchu(ligne);
 
     const courante = await this.relire(ligne);
@@ -239,7 +288,6 @@ export class LignesService {
     const erreur = controlerEtat(voulu);
     if (erreur) throw invalide(erreur.code, erreur.message);
 
-    const aujourdHui = jourDouala(this.horloge.maintenant());
     const modifications = compterModifications(courante.publie, voulu);
     const differentes = sectionsDifferentes(courante.publie, voulu);
     const effetDu = cmd.effetDu !== undefined && cmd.effetDu > aujourdHui ? cmd.effetDu : null;
@@ -278,6 +326,32 @@ export class LignesService {
   }
 
   /**
+   * Exécute une écriture déjà signée ; un refus métier (422, 404, 409…) entre au journal d'audit avec sa cause
+   * (comme un refus de signature), jamais avec le contenu de la commande.
+   */
+  private async tracerRefus<T>(
+    u: Utilisateur,
+    action: string,
+    cibleId: string,
+    travail: () => Promise<T>,
+  ): Promise<T> {
+    try {
+      return await travail();
+    } catch (e) {
+      if (e instanceof HttpException) {
+        await this.audit.enregistrer({
+          acteur: { id: u.id, role: u.role, compagnieId: u.compagnieId },
+          action,
+          resultat: "refus",
+          cible: { type: "ligne", id: cibleId },
+          details: { statut: e.getStatus(), cause: codeDe(e) },
+        });
+      }
+      throw e;
+    }
+  }
+
+  /**
    * Applique le brouillon d'une ligne dont le jour d'effet est arrivé. Appelée avant toute lecture ou génération :
    * aucun planificateur n'est nécessaire pour qu'un « dès lundi » prenne effet.
    */
@@ -286,15 +360,76 @@ export class LignesService {
     if (!reglage?.brouillon || !reglage.effetDu) return false;
     if (reglage.effetDu > jourDouala(this.horloge.maintenant())) return false;
     const { publie } = await this.relire(ligne);
-    await this.publier(ligne, fusionner(publie, reglage.brouillon));
+    const sections = Object.keys(reglage.brouillon);
+    try {
+      const voulu = fusionner(publie, reglage.brouillon);
+      const erreur = controlerEtat(voulu);
+      if (erreur) throw invalide(erreur.code, erreur.message);
+      await this.publier(ligne, voulu);
+    } catch (e) {
+      const impossible = this.traduire(e);
+      if (!(impossible instanceof HttpException)) throw e;
+      // Une modification devenue impossible (un départ retiré entre-temps) ne bloque pas la ligne : elle est
+      // abandonnée et tracée, l'état publié reste celui d'avant.
+      await this.lignes.abandonnerBrouillon(ligne.id);
+      await this.audit.enregistrer({
+        acteur: null,
+        action: ACTION_LIGNE_BROUILLON_APPLIQUE,
+        resultat: "refus",
+        cible: { type: "ligne", id: ligne.id },
+        details: { effetDu: reglage.effetDu, sections, cause: codeDe(impossible) },
+      });
+      return false;
+    }
     await this.audit.enregistrer({
       acteur: null,
       action: ACTION_LIGNE_BROUILLON_APPLIQUE,
       resultat: "succes",
       cible: { type: "ligne", id: ligne.id },
-      details: { effetDu: reglage.effetDu, sections: Object.keys(reglage.brouillon) },
+      details: { effetDu: reglage.effetDu, sections },
     });
     return true;
+  }
+
+  /**
+   * Met en vigueur toutes les modifications programmées dont le jour est arrivé, pour toutes les agences
+   * (balayage périodique de `PlanificateurLignes`). Rejouable : un brouillon appliqué n'existe plus.
+   * Répond le nombre de lignes mises à jour.
+   */
+  async balayerEchues(): Promise<number> {
+    const echues = await this.lignes.echues(jourDouala(this.horloge.maintenant()));
+    let n = 0;
+    for (const e of echues) {
+      const ligne = await this.lignes.trouver(e.ligneId);
+      if (ligne && (await this.appliquerSiEchu(ligne))) n += 1;
+    }
+    return n;
+  }
+
+  /**
+   * Les lignes d'une agence pour l'accueil des réglages du patron (`GET /patron/reglages`) : l'état publié, les
+   * modifications arrivées à échéance étant d'abord mises en vigueur. C'est la seule lecture des lignes que le
+   * module patron fait : il ne lit jamais `horaire_ligne` ni `reglage_ligne` lui-même.
+   */
+  async resumes(compagnieId: string): Promise<ResumeLigneReglage[]> {
+    const lignes = await this.lignes.lister(compagnieId);
+    return Promise.all(
+      lignes.map(async (l): Promise<ResumeLigneReglage> => {
+        await this.appliquerSiEchu(l);
+        const { ligne, publie } = await this.relire(l);
+        const [origine, destination] = await Promise.all([
+          this.annuaire.gare(ligne.origineGareId),
+          this.annuaire.gare(ligne.destinationGareId),
+        ]);
+        return {
+          id: ligne.id,
+          nom: origine && destination ? nomDeLigne(origine, destination) : ligne.code,
+          nbDeparts: publie.horaires.filter((h) => h.actif).length,
+          tarifs: { ...ligne.tarifs },
+          arrets: ligne.arrets.slice(1, -1).map((a) => a.nom),
+        };
+      }),
+    );
   }
 
   /* ------------------------------------------------------------------ états et vue */
@@ -466,6 +601,14 @@ export class LignesService {
       throw e;
     }
   }
+}
+
+/** Le `code` d'une erreur de l'API (`{ statusCode, code, message }`), « erreur » à défaut. */
+function codeDe(e: HttpException): string {
+  const reponse = e.getResponse();
+  return typeof reponse === "object" && reponse !== null && "code" in reponse
+    ? String((reponse as { code: unknown }).code)
+    : "erreur";
 }
 
 function versHoraire(d: {

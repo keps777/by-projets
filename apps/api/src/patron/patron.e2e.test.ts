@@ -321,6 +321,72 @@ describe("réglages · lecture", () => {
       (await t.http().get("/patron/reglages/regles").set(auth(jeton))).body,
     );
   });
+
+  it("l'accueil lit les lignes du module administration : mêmes horaires, même brouillon à échéance, proposition de l'assistant", async () => {
+    t.exploitation.definirDecalage(LIGNE_DLA_YDE, "10:00 → 09:15");
+    const avant = patron.ReglagesSchema.parse(
+      (await t.http().get("/patron/reglages").set(auth(jeton))).body,
+    );
+    expect(avant.lignes[0]).toMatchObject({
+      id: LIGNE_DLA_YDE,
+      nbDeparts: 2,
+      tarifs: { classique: 3500 },
+      propositionAssistant: "10:00 → 09:15",
+    });
+    // Le patron programme un nouveau tarif et un départ de plus « dès lundi » par la route des lignes…
+    const lundi = "2026-11-09";
+    const departs = (
+      await t.http().get(`/patron/reglages/lignes/${LIGNE_DLA_YDE}`).set(auth(jeton))
+    ).body.departs as Record<string, unknown>[];
+    const r = await t
+      .http()
+      .put(`/patron/reglages/lignes/${LIGNE_DLA_YDE}`)
+      .set(auth(jeton))
+      .send({
+        ligneId: LIGNE_DLA_YDE,
+        tarifs: { classique: 3000, vip: 4500, bagage: 500 },
+        departs: [
+          ...departs,
+          {
+            id: null,
+            heure: "14:00",
+            heureInitiale: null,
+            classe: "classique",
+            prix: 3000,
+            actif: true,
+            note: null,
+            jours: [],
+            nouveau: true,
+          },
+        ],
+        effetDu: lundi,
+        signature: t.signature(),
+      });
+    expect(r.status, JSON.stringify(r.body)).toBe(200);
+    // … l'accueil montre encore l'état publié…
+    const encore = patron.ReglagesSchema.parse(
+      (await t.http().get("/patron/reglages").set(auth(jeton))).body,
+    );
+    expect(encore.lignes[0]).toMatchObject({ nbDeparts: 2, tarifs: { classique: 3500 } });
+    // … puis, le jour venu, ce que l'administration a mis en vigueur, sans que le patron ait rouvert la ligne.
+    t.horloge.avancer(8 * 24 * 3_600_000);
+    try {
+      const apres = patron.ReglagesSchema.parse(
+        (await t.http().get("/patron/reglages").set(auth(jeton))).body,
+      );
+      expect(apres.lignes[0]).toMatchObject({ nbDeparts: 3, tarifs: { classique: 3000 } });
+    } finally {
+      t.horloge.avancer(-8 * 24 * 3_600_000);
+    }
+  });
+
+  it("une ligne d'une autre compagnie n'apparaît pas à l'accueil", async () => {
+    const autre = await t.compte("patron", { compagnieId: AUTRE_COMPAGNIE, gareId: null });
+    const accueil = patron.ReglagesSchema.parse(
+      (await t.http().get("/patron/reglages").set(auth(autre.jeton))).body,
+    );
+    expect(accueil.lignes).toEqual([]);
+  });
 });
 
 describe("signature PIN", () => {
@@ -443,155 +509,6 @@ describe("réglages · règles", () => {
       .send({ regles, signature: t.signature() });
     expect(r.status).toBe(422);
     expect(r.body.code).toBe("TOLERANCE_HORS_LIMITES");
-  });
-});
-
-describe("réglages · lignes", () => {
-  const url = `/patron/reglages/lignes/${LIGNE_DLA_YDE}`;
-  const depart = (id: string | null, heure: string, extra = {}) => ({
-    id,
-    heure,
-    heureInitiale: null,
-    classe: "classique" as const,
-    prix: 3500,
-    actif: true,
-    note: null,
-    jours: [] as string[],
-    nouveau: id === null,
-    ...extra,
-  });
-
-  it("publie tarifs, arrêts, départs, plan et options d'un coup", async () => {
-    const r = await t
-      .http()
-      .put(url)
-      .set(auth(jeton))
-      .send({
-        ligneId: LIGNE_DLA_YDE,
-        tarifs: { classique: 4000, vip: 5500, bagage: 600 },
-        arrets: [
-          { nom: "Édéa", montee: true },
-          { nom: "Makak", montee: false },
-        ],
-        departs: [
-          depart("00000000-0000-4000-8000-0000000000b0", "06:00", { prix: 4000 }),
-          depart("00000000-0000-4000-8000-0000000000b1", "09:15", {
-            prix: 4000,
-            note: "soute colis",
-          }),
-          depart(null, "17:00", { prix: 4000, jours: ["mar"], note: "marché" }),
-        ],
-        plan: { capacite: 40, disposition: "2+2", rangees: 11 },
-        options: { venteEnLigne: true, fusionAuto: true },
-        signature: t.signature(),
-      });
-    expect(r.status, JSON.stringify(r.body)).toBe(200);
-    const lu = patron.LignePublieeSchema.parse(r.body);
-    expect(lu.ligne.tarifs.classique).toBe(4000);
-    expect(lu.ligne.arrets.map((a) => a.nom)).toEqual(["Édéa", "Makak"]);
-    expect(lu.ligne.departs.map((d) => d.heure)).toEqual(["06:00", "09:15", "17:00"]);
-    expect(lu.ligne.options.fusionAuto).toBe(true);
-    expect(lu.ligne.brouillon.modifications).toBe(0);
-    // Ce que lit le client est ce qui a été publié.
-    const relu = patron.LigneEditableSchema.parse((await t.http().get(url).set(auth(jeton))).body);
-    expect(relu.departs).toHaveLength(3);
-    expect(journalEnTexte()).toContain("reglages.ligne_modifiee");
-  });
-
-  it("refuse un départ d'une autre ligne, deux départs identiques et une commande vide", async () => {
-    const inconnu = await t
-      .http()
-      .put(url)
-      .set(auth(jeton))
-      .send({
-        ligneId: LIGNE_DLA_YDE,
-        departs: [depart("00000000-0000-4000-8000-0000000000aa", "06:00")],
-        signature: t.signature(),
-      });
-    expect(inconnu.status).toBe(422);
-    expect(inconnu.body.code).toBe("DEPART_INCONNU");
-    const double = await t
-      .http()
-      .put(url)
-      .set(auth(jeton))
-      .send({
-        ligneId: LIGNE_DLA_YDE,
-        departs: [depart(null, "08:00"), depart(null, "08:00")],
-        signature: t.signature(),
-      });
-    expect(double.status).toBe(422);
-    expect(double.body.code).toBe("DEPART_EN_DOUBLE");
-    const vide = await t
-      .http()
-      .put(url)
-      .set(auth(jeton))
-      .send({ ligneId: LIGNE_DLA_YDE, signature: t.signature() });
-    expect(vide.body.code).toBe("COMMANDE_VIDE");
-    const autreLigne = await t
-      .http()
-      .put(url)
-      .set(auth(jeton))
-      .send({
-        ligneId: "x",
-        tarifs: { classique: 1, vip: 1, bagage: 1 },
-        signature: t.signature(),
-      });
-    expect(autreLigne.status).toBe(422);
-  });
-
-  it("une modification « dès lundi » attend son jour, puis entre en vigueur", async () => {
-    const lundi = "2026-11-09";
-    const r = await t
-      .http()
-      .put(url)
-      .set(auth(jeton))
-      .send({
-        ligneId: LIGNE_DLA_YDE,
-        tarifs: { classique: 3000, vip: 4500, bagage: 500 },
-        effetDu: lundi,
-        signature: t.signature(),
-      });
-    expect(r.status, JSON.stringify(r.body)).toBe(200);
-    const lu = patron.LignePublieeSchema.parse(r.body);
-    expect(lu.ligne.tarifs.classique).toBe(3500);
-    expect(lu.ligne.brouillon).toMatchObject({ modifications: 1 });
-    expect(lu.ligne.brouillon.publicationA).toMatch(/^2026-11-09T00:00:00/);
-
-    t.horloge.avancer(7 * 24 * 3_600_000);
-    const apres = patron.LigneEditableSchema.parse((await t.http().get(url).set(auth(jeton))).body);
-    expect(apres.tarifs.classique).toBe(3000);
-    expect(apres.brouillon.modifications).toBe(0);
-    t.horloge.avancer(-7 * 24 * 3_600_000);
-  });
-
-  it("crée une ligne entre deux gares, une seule fois", async () => {
-    // Le couple Mvan → Akwa n'existe pas encore.
-    const corps = {
-      origineGareId: GARE_MVAN,
-      destinationGareId: GARE_AKWA,
-      tarifs: { classique: 3500, vip: 5000, bagage: 500 },
-      arrets: ["Édéa"],
-      capacite: 40,
-      signature: t.signature(),
-    };
-    const r = await t.http().post("/patron/reglages/lignes").set(auth(jeton)).send(corps);
-    expect(r.status, JSON.stringify(r.body)).toBe(201);
-    const lu = patron.LignePublieeSchema.parse(r.body);
-    expect(lu.ligne.nom).toBe("Yaoundé → Douala");
-    expect(lu.ligne.arrets[0]?.nom).toBe("Édéa");
-    const doublon = await t
-      .http()
-      .post("/patron/reglages/lignes")
-      .set(auth(jeton))
-      .send({ ...corps, signature: t.signature() });
-    expect(doublon.status).toBe(409);
-    expect(doublon.body.code).toBe("LIGNE_EXISTANTE");
-    const gareAutre = await t
-      .http()
-      .post("/patron/reglages/lignes")
-      .set(auth(jeton))
-      .send({ ...corps, origineGareId: GARE_AUTRE, signature: t.signature() });
-    expect(gareAutre.status).toBe(404);
   });
 });
 

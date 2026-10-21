@@ -1,10 +1,10 @@
 import type { patron as c } from "@afrimove/contrats";
-import { FRAIS_VOYAGEUR_EN_LIGNE, prixProrata } from "../billetterie/regles";
+import { FRAIS_VOYAGEUR_EN_LIGNE } from "../billetterie/regles";
 import { francs } from "../caisse/format";
 import { BLOCAGE_PIN_MINUTES, ESSAIS_PIN_MAX, TOLERANCE_ECART_DEFAUT } from "../caisse/regles";
 import { arrondir1, pluriel } from "../rapport/regles";
 import { decalerJour, heureDouala, jourDouala, MS_PAR_MINUTE } from "../rapport/temps";
-import type { ArretLigne, EtatPersonne, MembrePatron, ReglesLues, RoleEquipe } from "./modele";
+import type { EtatPersonne, MembrePatron, ReglesLues, RoleEquipe } from "./modele";
 
 /**
  * Les calculs du module patron : fonctions pures, sans accès aux ports ni à l'horloge, donc testées
@@ -33,10 +33,6 @@ export function montantCourt(n: number): string {
   }
   return francs(n);
 }
-
-/** « Douala → Yaoundé ». */
-export const nomLigne = (origineVille: string, destinationVille: string): string =>
-  `${origineVille} → ${destinationVille}`;
 
 /** Minuscules sans accents, pour chercher « Éric » en tapant « eric ». */
 export const sansAccents = (texte: string): string =>
@@ -162,98 +158,6 @@ export function lectureEcarts(
     );
   }
   return phrases.join(" ");
-}
-
-/* ------------------------------------------------------------------ lignes */
-
-/** Le prix du tronçon depuis l'origine jusqu'à l'arrêt, au prorata des kilomètres (0 si les distances manquent). */
-export function prorataArret(
-  arrets: readonly ArretLigne[],
-  rang: number,
-  prixComplet: number,
-): number {
-  const points = arrets.map((a, i) => ({ id: String(i), kmDepuisOrigine: a.km }));
-  try {
-    return prixProrata({
-      arrets: points,
-      prixTrajetComplet: prixComplet,
-      depuisArretId: "0",
-      versArretId: String(rang),
-    });
-  } catch {
-    return 0;
-  }
-}
-
-/**
- * Les arrêts d'une ligne après modification : l'origine et le terminus restent, les arrêts en route
- * sont ceux de la liste. Un arrêt déjà connu (même nom) garde ses kilomètres ; un nouvel arrêt est placé
- * entre ses voisins, à égale distance. Si les kilomètres ne croissent plus (arrêts réordonnés), tous
- * les arrêts en route sont répartis à égale distance. Sans distance de ligne, 100 km par tronçon.
- */
-export function arretsApresModification(
-  actuels: readonly ArretLigne[],
-  enRoute: ReadonlyArray<{ nom: string; montee: boolean }>,
-): ArretLigne[] {
-  const origine = actuels[0] ?? { nom: "", km: 0, montee: true };
-  const terminus =
-    actuels.length > 1 ? actuels[actuels.length - 1]! : { nom: "", km: 100, montee: false };
-  const total = terminus.km > origine.km ? terminus.km : (enRoute.length + 1) * 100;
-  const connus = new Map(actuels.slice(1, -1).map((a) => [a.nom.toLowerCase(), a.km]));
-  const km: Array<number | null> = enRoute.map((a) => connus.get(a.nom.toLowerCase()) ?? null);
-
-  const croissant = (valeurs: Array<number | null>): boolean => {
-    let precedent = origine.km;
-    for (const v of valeurs) {
-      if (v === null) continue;
-      if (v <= precedent || v >= total) return false;
-      precedent = v;
-    }
-    return true;
-  };
-  let resolus: number[];
-  if (croissant(km)) {
-    resolus = km.map((v) => v ?? 0);
-    for (let i = 0; i < km.length; i++) {
-      if (km[i] !== null) continue;
-      let avant = i - 1;
-      while (avant >= 0 && km[avant] === null) avant--;
-      let apres = i + 1;
-      while (apres < km.length && km[apres] === null) apres++;
-      const kmAvant = avant >= 0 ? km[avant]! : origine.km;
-      const kmApres = apres < km.length ? km[apres]! : total;
-      const trous = apres - avant;
-      resolus[i] = Math.round(kmAvant + ((kmApres - kmAvant) * (i - avant)) / trous);
-    }
-  } else {
-    resolus = enRoute.map((_a, i) =>
-      Math.round(origine.km + ((total - origine.km) * (i + 1)) / (enRoute.length + 1)),
-    );
-  }
-  return [
-    origine,
-    ...enRoute.map((a, i) => ({ nom: a.nom, km: resolus[i]!, montee: a.montee })),
-    { ...terminus, km: total },
-  ];
-}
-
-/** Les kilomètres d'une ligne neuve : 100 km par tronçon (la distance réelle se renseignera plus tard). */
-export function arretsDeLigneNeuve(
-  origine: string,
-  enRoute: readonly string[],
-  terminus: string,
-): ArretLigne[] {
-  return [
-    { nom: origine, km: 0, montee: true },
-    ...enRoute.map((nom, i) => ({ nom, km: (i + 1) * 100, montee: true })),
-    { nom: terminus, km: (enRoute.length + 1) * 100, montee: false },
-  ];
-}
-
-/** Rangées d'un plan de sièges : `2+2` sur 40 places = 10 rangées. */
-export function rangeesDe(capacite: number, disposition: string): number {
-  const parRangee = disposition.split("+").reduce((a, b) => a + Number(b), 0);
-  return parRangee > 0 ? Math.ceil(capacite / parRangee) : 1;
 }
 
 /* ------------------------------------------------------------------ ventes par heure (salle de contrôle) */

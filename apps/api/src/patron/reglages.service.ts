@@ -13,13 +13,7 @@ import { minuitSuivantDoualaMs } from "../caisse/temps";
 import { PIN_PROVISOIRE_MINUTES } from "../caisse/regles";
 import { erreurApi, lireSignature, type SignaturePin } from "../modules/commande";
 import { VerificateurSignature } from "../modules/signature";
-import {
-  debutDeJour,
-  decalerJour,
-  jourDouala,
-  MS_PAR_MINUTE,
-  versIsoDouala,
-} from "../rapport/temps";
+import { jourDouala, MS_PAR_MINUTE, versIsoDouala } from "../rapport/temps";
 import { genererPinProvisoire } from "../supervision/pin.service";
 import { PinsEquipe } from "../supervision/ports";
 import { AuditService } from "../socle/audit/audit.service";
@@ -29,42 +23,23 @@ import { ChiffrementService } from "../socle/chiffrement/chiffrement.service";
 import { CONTEXTE_TELEPHONE, ComptesService } from "../socle/comptes/comptes.service";
 import { PersonnesRepository, TelephoneDejaUtilise } from "../socle/comptes/personnes.repository";
 import { normaliserTelephone } from "../socle/comptes/telephone";
+import { LignesService } from "../administration/lignes.service";
 import { Horloge } from "../socle/horloge";
 import { SmsGateway } from "../socle/sms/sms.gateway";
-import {
-  REGLES_PAR_DEFAUT,
-  arretsApresModification,
-  arretsDeLigneNeuve,
-  masquerNumero,
-  nomLigne,
-  prorataArret,
-  rangeesDe,
-} from "./calculs";
+import { REGLES_PAR_DEFAUT, masquerNumero } from "./calculs";
 import { LecturesPatronService } from "./lectures.service";
 import {
-  type ChangementLigne,
   type ChangementMembre,
-  type CommandeLigne,
-  type LigneFait,
   type MembrePatron,
   type OperateurMomo,
-  type PlanLigne,
   type ReglesLues,
 } from "./modele";
-import {
-  CodeLigneDejaUtilise,
-  EquipePatron,
-  LignesPatron,
-  ReferentielPatron,
-  ReglesPatron,
-} from "./ports";
+import { EquipePatron, ExploitationPatron, ReferentielPatron, ReglesPatron } from "./ports";
 import {
   lireChangerMomo,
   lireConfirmationMomo,
-  lireCreerLigne,
   lireCreerPersonne,
   lireEnregistrerRegles,
-  lireModifierLigne,
   lireModifierPersonne,
   lirePersonneVisee,
   type ChampsPersonne,
@@ -79,15 +54,14 @@ export const CODE_MOMO_MINUTES = 10;
 export const CODE_MOMO_ESSAIS = 3;
 /** Délai minimum entre deux demandes de code pour le même compte. */
 export const CODE_MOMO_DELAI_SECONDES = 60;
-/** On ne programme pas une modification de ligne plus loin que ce nombre de jours. */
-export const HORIZON_PROGRAMMATION_JOURS = 90;
 const APERCU_EQUIPE = 5;
-const DISPOSITION_DEFAUT = "2+2";
 
 const estHttp = (e: unknown): e is HttpException => e instanceof HttpException;
 
 /**
- * Les écritures du patron sur ses réglages : lignes, équipe, règles de l'agence, comptes mobile money.
+ * Les écritures du patron sur ses réglages : équipe, règles de l'agence, comptes mobile money. Les lignes
+ * (création, horaires, plan, programmation « dès lundi ») sont réglées par le module administration
+ * (`/patron/reglages/lignes`) ; ici on ne fait que les lire pour l'accueil des réglages.
  *
  * Chaque écriture suit le même chemin : le corps est lu strictement (422 `COMMANDE_INVALIDE`), la signature
  * PIN est vérifiée (comme pour les modules : 401 `PIN_REQUIS`, 403 `PIN_INCORRECT`, 423 `PIN_BLOQUE`…), la
@@ -100,7 +74,8 @@ export class ReglagesPatronService {
   private readonly journal = new Logger("PatronReglages");
 
   constructor(
-    private readonly lignes: LignesPatron,
+    private readonly lignes: LignesService,
+    private readonly exploitation: ExploitationPatron,
     private readonly equipe: EquipePatron,
     private readonly regles: ReglesPatron,
     private readonly referentiel: ReferentielPatron,
@@ -200,359 +175,34 @@ export class ReglagesPatronService {
 
   /* ------------------------------------------------------------------ accueil */
 
-  /** `GET /patron/reglages` : les lignes, un aperçu de l'équipe et les règles de l'agence. */
+  /**
+   * `GET /patron/reglages` : les lignes, un aperçu de l'équipe et les règles de l'agence. Les lignes viennent du
+   * module administration (`LignesService.resumes`), seul propriétaire de leurs horaires et de leurs réglages ;
+   * seule la proposition de l'assistant est lue ici.
+   */
   async accueil(u: Utilisateur): Promise<c.Reglages> {
     return this.protegerPiste(async () => {
       const compagnieId = this.compagnieDe(u);
-      await this.appliquerEchuesDe(compagnieId);
-      const [lignes, equipe, regles] = await Promise.all([
-        this.lignes.lister(compagnieId),
+      const maintenant = this.horloge.maintenant();
+      const [lignes, equipe, regles, decalages] = await Promise.all([
+        this.lignes.resumes(compagnieId),
         this.lectures.apercuEquipe(compagnieId, APERCU_EQUIPE),
         this.reglesAgence(compagnieId),
+        this.exploitation.decalagesProposes(compagnieId, maintenant),
       ]);
-      const maintenant = this.horloge.maintenant();
-      const propositions = await Promise.all(
-        lignes.map((l) => this.lignes.propositionAssistant(compagnieId, l.id, maintenant)),
-      );
       return {
-        lignes: lignes.map((l, i) => ({
+        lignes: lignes.map((l) => ({
           id: l.id,
-          nom: nomLigne(l.origine.ville, l.destination.ville),
-          nbDeparts: l.horaires.filter((h) => h.actif).length,
+          nom: l.nom,
+          nbDeparts: l.nbDeparts,
           tarifs: l.tarifs,
-          arrets: l.arrets.slice(1, -1).map((a) => a.nom),
-          propositionAssistant: propositions[i] ?? null,
+          arrets: l.arrets,
+          propositionAssistant: decalages[l.id] ?? null,
         })),
         equipe: { total: equipe.total, effectifs: equipe.effectifs, apercu: equipe.apercu },
         regles,
       };
     });
-  }
-
-  /* ------------------------------------------------------------------ lignes */
-
-  private planDe(l: LigneFait, capaciteDefaut: number): PlanLigne {
-    return (
-      l.plan ?? {
-        capacite: capaciteDefaut,
-        disposition: DISPOSITION_DEFAUT,
-        rangees: rangeesDe(capaciteDefaut, DISPOSITION_DEFAUT),
-      }
-    );
-  }
-
-  private vueLigne(l: LigneFait, capaciteDefaut: number): c.LigneEditable {
-    const enRoute = l.arrets.slice(1, -1);
-    return {
-      id: l.id,
-      nom: nomLigne(l.origine.ville, l.destination.ville),
-      departs: l.horaires.map((h) => ({
-        id: h.id,
-        heure: h.heure,
-        heureInitiale: null,
-        classe: h.classe,
-        prix: h.prix,
-        actif: h.actif,
-        note: h.note,
-        jours: h.jours as c.DepartEditable["jours"],
-        nouveau: false,
-      })),
-      tarifs: l.tarifs,
-      arrets: enRoute.map((a, i) => ({
-        nom: a.nom,
-        prorata: prorataArret(l.arrets, i + 1, l.tarifs.classique),
-        montee: a.montee,
-      })),
-      plan: this.planDe(l, capaciteDefaut),
-      options: l.options,
-      brouillon: {
-        modifications: l.brouillon ? compterModifications(l.brouillon.commande) : 0,
-        publicationA: l.brouillon
-          ? versIsoDouala(debutDeJour(l.brouillon.effetDu) ?? this.horloge.maintenant())
-          : null,
-      },
-    };
-  }
-
-  /** `GET /patron/reglages/lignes/:ligneId` */
-  async ligne(u: Utilisateur, ligneId: string): Promise<c.LigneEditable> {
-    return this.protegerPiste(async () => {
-      const compagnieId = this.compagnieDe(u);
-      await this.appliquerEchuesDe(compagnieId);
-      const l = await this.lignes.trouver(compagnieId, ligneId);
-      if (!l) throw introuvable("LIGNE_INCONNUE", "Ligne inconnue");
-      return this.vueLigne(l, await this.lignes.capaciteParDefaut(compagnieId));
-    });
-  }
-
-  /**
-   * Vérifie une modification de ligne contre l'état actuel de la ligne et la traduit en changement.
-   * Les arrêts en route sont repris dans l'ordre donné ; le départ cité doit être un départ de la ligne.
-   */
-  private preparer(ligne: LigneFait, cmd: CommandeLigne): ChangementLigne {
-    const changement: ChangementLigne = {};
-    if (
-      cmd.departs === undefined &&
-      cmd.tarifs === undefined &&
-      cmd.arrets === undefined &&
-      cmd.plan === undefined &&
-      cmd.options === undefined
-    ) {
-      throw invalide("COMMANDE_VIDE", "Aucune modification à publier");
-    }
-    if (cmd.departs !== undefined) {
-      const connus = new Set(ligne.horaires.map((h) => h.id));
-      for (const d of cmd.departs) {
-        if (d.id !== null && !connus.has(d.id)) {
-          throw invalide("DEPART_INCONNU", "Ce départ n'existe pas sur cette ligne");
-        }
-      }
-      const ids = cmd.departs.flatMap((d) => (d.id === null ? [] : [d.id]));
-      if (new Set(ids).size !== ids.length) {
-        throw invalide("DEPART_EN_DOUBLE", "Un départ n'est cité qu'une fois");
-      }
-      const actifs = cmd.departs.filter((d) => d.actif);
-      for (let i = 0; i < actifs.length; i++) {
-        for (let j = i + 1; j < actifs.length; j++) {
-          const a = actifs[i]!;
-          const b = actifs[j]!;
-          const jourCommun =
-            a.jours.length === 0 ||
-            b.jours.length === 0 ||
-            a.jours.some((x) => b.jours.includes(x));
-          if (a.heure === b.heure && a.classe === b.classe && jourCommun) {
-            throw invalide(
-              "DEPART_EN_DOUBLE",
-              `Deux départs ${a.classe} à ${a.heure} circulent le même jour`,
-            );
-          }
-        }
-      }
-      changement.departs = cmd.departs.map((d) => ({
-        id: d.id,
-        heure: d.heure,
-        classe: d.classe,
-        prix: d.prix,
-        actif: d.actif,
-        note: d.note,
-        jours: [...d.jours],
-      }));
-    }
-    if (cmd.tarifs !== undefined) changement.tarifs = cmd.tarifs;
-    if (cmd.arrets !== undefined) {
-      const noms = cmd.arrets.map((a) => a.nom.toLowerCase());
-      if (new Set(noms).size !== noms.length) {
-        throw invalide("ARRET_EN_DOUBLE", "Un arrêt n'est cité qu'une fois");
-      }
-      changement.arrets = arretsApresModification(ligne.arrets, cmd.arrets);
-    }
-    if (cmd.plan !== undefined) {
-      const parRangee = cmd.plan.disposition.split("+").reduce((a, b) => a + Number(b), 0);
-      if (Math.abs(cmd.plan.capacite - cmd.plan.rangees * parRangee) > parRangee) {
-        throw invalide(
-          "PLAN_INCOHERENT",
-          "Le nombre de places ne correspond pas aux rangées et à la disposition",
-        );
-      }
-      changement.plan = cmd.plan;
-    }
-    if (cmd.options !== undefined) changement.options = cmd.options;
-    return changement;
-  }
-
-  /** `PUT /patron/reglages/lignes/:ligneId` : publie la modification, tout de suite ou à la date d'effet. */
-  async modifierLigne(u: Utilisateur, ligneIdUrl: string, corps: unknown): Promise<c.LignePubliee> {
-    return this.ecrire(
-      u,
-      corps,
-      "reglages.ligne_modifiee",
-      (b) => {
-        const lu = lireModifierLigne(b);
-        if (lu.ligneId !== ligneIdUrl) {
-          throw invalide("COMMANDE_INVALIDE", "La ligne du corps diffère de celle de l'URL");
-        }
-        return lu.commande;
-      },
-      (cmd) => ({ type: "ligne", id: cmd.ligneId }),
-      async (cmd, compagnieId) => {
-        const ligne = await this.lignes.trouver(compagnieId, cmd.ligneId);
-        if (!ligne) throw introuvable("LIGNE_INCONNUE", "Ligne inconnue");
-        const changement = this.preparer(ligne, cmd);
-        const maintenant = this.horloge.maintenant();
-        const aujourdhui = jourDouala(maintenant);
-        const sections = sectionsDe(cmd);
-        const capacite = await this.lignes.capaciteParDefaut(compagnieId);
-
-        if (cmd.effetDu !== undefined && cmd.effetDu > aujourdhui) {
-          const horizon = decalerJour(aujourdhui, HORIZON_PROGRAMMATION_JOURS);
-          if (cmd.effetDu > horizon) {
-            throw invalide(
-              "EFFET_TROP_LOIN",
-              `Une modification se programme ${HORIZON_PROGRAMMATION_JOURS} jours à l'avance au plus`,
-            );
-          }
-          const ok = await this.lignes.programmer(
-            compagnieId,
-            cmd.ligneId,
-            cmd,
-            cmd.effetDu,
-            u.id,
-            maintenant,
-          );
-          if (!ok) throw introuvable("LIGNE_INCONNUE", "Ligne inconnue");
-          const apres = (await this.lignes.trouver(compagnieId, cmd.ligneId))!;
-          return {
-            details: { ligneId: cmd.ligneId, sections, programmee: true, effetDu: cmd.effetDu },
-            reponse: (accuse) => ({ ...accuse, ligne: this.vueLigne(apres, capacite) }),
-          };
-        }
-
-        const apres = await this.lignes.appliquer(
-          compagnieId,
-          cmd.ligneId,
-          changement,
-          u.id,
-          maintenant,
-        );
-        if (!apres) throw introuvable("LIGNE_INCONNUE", "Ligne inconnue");
-        // Une modification immédiate remplace celle qui attendait son jour : la plus récente fait foi.
-        if (ligne.brouillon) await this.lignes.retirerProgrammation(cmd.ligneId);
-        const finale = (await this.lignes.trouver(compagnieId, cmd.ligneId)) ?? apres;
-        return {
-          details: {
-            ligneId: cmd.ligneId,
-            sections,
-            programmee: false,
-            ...(cmd.tarifs ? { tarifsAvant: ligne.tarifs, tarifsApres: cmd.tarifs } : {}),
-          },
-          reponse: (accuse) => ({ ...accuse, ligne: this.vueLigne(finale, capacite) }),
-        };
-      },
-    );
-  }
-
-  /** `POST /patron/reglages/lignes` : une nouvelle ligne entre deux gares de la compagnie. */
-  async creerLigne(u: Utilisateur, corps: unknown): Promise<c.LignePubliee> {
-    return this.ecrire(
-      u,
-      corps,
-      "reglages.ligne_creee",
-      (b) => lireCreerLigne(b),
-      (cmd) => ({ type: "ligne", id: `${cmd.origineGareId}>${cmd.destinationGareId}` }),
-      async (cmd, compagnieId) => {
-        if (cmd.origineGareId === cmd.destinationGareId) {
-          throw invalide("GARES_IDENTIQUES", "L'origine et la destination sont la même gare");
-        }
-        const noms = cmd.arrets.map((a) => a.toLowerCase());
-        if (new Set(noms).size !== noms.length) {
-          throw invalide("ARRET_EN_DOUBLE", "Un arrêt n'est cité qu'une fois");
-        }
-        const maintenant = this.horloge.maintenant();
-        const gares = await this.referentiel.gares(compagnieId, maintenant);
-        const origine = gares.find((g) => g.id === cmd.origineGareId);
-        const destination = gares.find((g) => g.id === cmd.destinationGareId);
-        if (!origine || !destination) throw introuvable("GARE_INCONNUE", "Gare inconnue");
-        const plan: PlanLigne = {
-          capacite: cmd.capacite,
-          disposition: DISPOSITION_DEFAUT,
-          rangees: rangeesDe(cmd.capacite, DISPOSITION_DEFAUT),
-        };
-        let creee: LigneFait;
-        try {
-          creee = await this.lignes.creer(
-            compagnieId,
-            {
-              id: randomUUID(),
-              code: `${origine.code}${destination.code}`,
-              origineGareId: origine.id,
-              destinationGareId: destination.id,
-              tarifs: cmd.tarifs,
-              arrets: arretsDeLigneNeuve(origine.ville, cmd.arrets, destination.ville),
-              plan,
-            },
-            u.id,
-            maintenant,
-          );
-        } catch (e) {
-          if (e instanceof CodeLigneDejaUtilise) {
-            throw conflit("LIGNE_EXISTANTE", "Une ligne existe déjà entre ces deux gares");
-          }
-          throw e;
-        }
-        const capacite = await this.lignes.capaciteParDefaut(compagnieId);
-        return {
-          details: {
-            ligneId: creee.id,
-            ligneCode: creee.code,
-            arrets: cmd.arrets.length,
-            capacite: cmd.capacite,
-          },
-          reponse: (accuse) => ({ ...accuse, ligne: this.vueLigne(creee, capacite) }),
-        };
-      },
-    );
-  }
-
-  /* ------------------------------------------------------------------ modifications datées */
-
-  /**
-   * Applique les modifications de ligne arrivées à leur jour d'effet. Appelée à la lecture des réglages
-   * d'une compagnie et par le balayage périodique : une modification programmée « dès lundi » est donc
-   * en vigueur lundi, que le patron ouvre son écran ou non. Rejouer une application est sans danger
-   * (les départs et les arrêts sont remplacés par les mêmes listes).
-   */
-  private async appliquerEchuesDe(compagnieId: string): Promise<void> {
-    const jour = jourDouala(this.horloge.maintenant());
-    const echues = (await this.lignes.echues(jour)).filter((e) => e.compagnieId === compagnieId);
-    for (const e of echues) await this.appliquerEchue(e.compagnieId, e.ligneId);
-  }
-
-  /** Le balayage périodique : toutes les compagnies. Répond le nombre de lignes mises à jour. */
-  async balayerEchues(): Promise<number> {
-    const jour = jourDouala(this.horloge.maintenant());
-    const echues = await this.lignes.echues(jour);
-    let n = 0;
-    for (const e of echues) if (await this.appliquerEchue(e.compagnieId, e.ligneId)) n += 1;
-    return n;
-  }
-
-  private async appliquerEchue(compagnieId: string, ligneId: string): Promise<boolean> {
-    const ligne = await this.lignes.trouver(compagnieId, ligneId);
-    if (!ligne?.brouillon) return false;
-    const maintenant = this.horloge.maintenant();
-    try {
-      const changement = this.preparer(ligne, ligne.brouillon.commande);
-      await this.lignes.appliquer(compagnieId, ligneId, changement, "", maintenant);
-      await this.audit.enregistrer({
-        acteur: null,
-        action: "reglages.ligne_appliquee",
-        resultat: "succes",
-        cible: { type: "ligne", id: ligneId },
-        details: {
-          effetDu: ligne.brouillon.effetDu,
-          sections: sectionsDe(ligne.brouillon.commande),
-        },
-      });
-      await this.lignes.retirerProgrammation(ligneId);
-      return true;
-    } catch (e) {
-      // Une modification devenue impossible (un départ retiré entre-temps) ne bloque pas la ligne : elle est abandonnée et tracée.
-      this.journal.warn(
-        `Modification programmée de la ligne ${ligneId} abandonnée : ${e instanceof Error ? e.message : "erreur"}`,
-      );
-      await this.audit.enregistrer({
-        acteur: null,
-        action: "reglages.ligne_appliquee",
-        resultat: "refus",
-        cible: { type: "ligne", id: ligneId },
-        details: {
-          effetDu: ligne.brouillon.effetDu,
-          cause: estHttp(e) ? "commande_invalide" : "erreur",
-        },
-      });
-      await this.lignes.retirerProgrammation(ligneId);
-      return false;
-    }
   }
 
   /* ------------------------------------------------------------------ personnes */
@@ -1088,14 +738,3 @@ const sansComptes = (r: c.ReglesAgence): Omit<c.ReglesAgence, "comptesMomo"> => 
   const { comptesMomo: _c, ...reste } = r;
   return reste;
 };
-
-/** Les sections que la commande touche, pour le journal et le compteur du brouillon. */
-function sectionsDe(cmd: CommandeLigne): string[] {
-  return (["departs", "tarifs", "arrets", "plan", "options"] as const).filter(
-    (k) => cmd[k] !== undefined,
-  );
-}
-
-function compterModifications(cmd: CommandeLigne): number {
-  return sectionsDe(cmd).length;
-}

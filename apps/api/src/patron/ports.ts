@@ -2,19 +2,15 @@ import type {
   ActivitePersonne,
   AlerteEcrite,
   ArretBus,
-  ChangementLigne,
   ChangementMembre,
-  CommandeLigne,
   CompagniePatron,
   ConfirmationMomo,
   DepartExploitation,
   DossierEnAttente,
   EvenementJournal,
   GarePatron,
-  LigneFait,
   MembrePatron,
   NouveauMembre,
-  NouvelleLigne,
   OperateurMomo,
   PanneSignalee,
   PropositionEnAttente,
@@ -25,7 +21,8 @@ import type { patron as c } from "@afrimove/contrats";
 /**
  * Ports du module patron. Le module n'a pas de source de chiffres à lui : il **lit** ce que les autres
  * modules ont écrit (caisse, billetterie, colis, supervision, rapport du soir, GPS, assistant) et
- * n'écrit que ses réglages (lignes, équipe, règles, comptes mobile money). Ce qui existe déjà derrière
+ * n'écrit que ses réglages (équipe, règles, comptes mobile money). Les lignes, leurs horaires et leurs réglages
+ * appartiennent au module administration (`LignesService`, lu par l'accueil des réglages). Ce qui existe déjà derrière
  * un port d'un autre module est lu par ce port (`SessionsCaisse`, `VentesBillets`, `ActiviteColis`,
  * `CaissesDuJour`, `DepartsDuJour`, `ReglesAgence`) ; les ports ci-dessous couvrent le reste.
  *
@@ -68,6 +65,14 @@ export abstract class ExploitationPatron implements Durable {
     compagnieId: string,
     maintenant: Date,
   ): Promise<PropositionEnAttente[]>;
+  /**
+   * Par identifiant de ligne, le décalage de départ que l'assistant propose et que le patron n'a pas appliqué
+   * (« 10:00 → 09:15 »), pour l'accueil des réglages.
+   */
+  abstract decalagesProposes(
+    compagnieId: string,
+    maintenant: Date,
+  ): Promise<Record<string, string>>;
   /** Colis remis par une compagnie et pas encore reçus par la suivante, avec l'instant du plus ancien. */
   abstract colisEnCorrespondance(
     compagnieId: string,
@@ -106,58 +111,6 @@ export abstract class EquipePatron implements Durable {
   abstract creer(membre: NouveauMembre): Promise<void>;
   abstract modifier(personneId: string, changement: ChangementMembre): Promise<void>;
   abstract desactiver(personneId: string): Promise<void>;
-}
-
-/* ------------------------------------------------------------------ lignes */
-
-export class CodeLigneDejaUtilise extends Error {
-  constructor() {
-    super("Une ligne existe déjà entre ces deux gares");
-    this.name = "CodeLigneDejaUtilise";
-  }
-}
-
-/** Les lignes, leurs arrêts, leurs départs récurrents (`ligne_horaire`) et leurs réglages (`ligne_reglage`). */
-export abstract class LignesPatron implements Durable {
-  abstract readonly durable: boolean;
-  abstract lister(compagnieId: string): Promise<LigneFait[]>;
-  abstract trouver(compagnieId: string, ligneId: string): Promise<LigneFait | null>;
-  /** Capacité proposée pour une ligne sans plan réglé : celle du plus grand bus, 40 sans bus. */
-  abstract capaciteParDefaut(compagnieId: string): Promise<number>;
-  /** Crée la ligne, ses arrêts et son plan. Lève `CodeLigneDejaUtilise` si le couple de gares existe. */
-  abstract creer(
-    compagnieId: string,
-    ligne: NouvelleLigne,
-    par: string,
-    a: Date,
-  ): Promise<LigneFait>;
-  /** Applique les changements d'un seul tenant (tarifs, arrêts, départs, plan, options). */
-  abstract appliquer(
-    compagnieId: string,
-    ligneId: string,
-    changement: ChangementLigne,
-    par: string,
-    a: Date,
-  ): Promise<LigneFait | null>;
-  /** Garde la commande pour le jour d'effet (remplace celle déjà en attente). */
-  abstract programmer(
-    compagnieId: string,
-    ligneId: string,
-    commande: CommandeLigne,
-    effetDu: string,
-    par: string,
-    a: Date,
-  ): Promise<boolean>;
-  /** Les lignes dont la modification datée est arrivée à échéance (`effetDu` ≤ `jour`). */
-  abstract echues(jour: string): Promise<Array<{ compagnieId: string; ligneId: string }>>;
-  /** Retire la modification datée d'une ligne (elle vient d'être appliquée). */
-  abstract retirerProgrammation(ligneId: string): Promise<void>;
-  /** « 10:00 → 09:15 » : le décalage d'un départ que l'assistant propose et que le patron n'a pas appliqué. */
-  abstract propositionAssistant(
-    compagnieId: string,
-    ligneId: string,
-    maintenant: Date,
-  ): Promise<string | null>;
 }
 
 /* ------------------------------------------------------------------ règles et comptes mobile money */

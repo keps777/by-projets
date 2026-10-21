@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { Injectable } from "@nestjs/common";
 import type { patron as c } from "@afrimove/contrats";
 import { nomAbrege } from "../caisse/format";
@@ -15,10 +14,7 @@ import {
   type ActivitePersonne,
   type AlerteEcrite,
   type ArretBus,
-  type ArretLigne,
-  type ChangementLigne,
   type ChangementMembre,
-  type CommandeLigne,
   type CompagniePatron,
   type ConfirmationMomo,
   type DepartExploitation,
@@ -26,25 +22,19 @@ import {
   type DossierEnAttente,
   type EvenementJournal,
   type GarePatron,
-  type HoraireLigne,
-  type LigneFait,
   type MembrePatron,
   type NouveauMembre,
-  type NouvelleLigne,
   type OperateurMomo,
   type OperateurPersonne,
   type PanneSignalee,
-  type PlanLigne,
   type PropositionEnAttente,
   type ReglesLues,
   type RoleEquipe,
 } from "./modele";
 import {
   AlertesEcrites,
-  CodeLigneDejaUtilise,
   EquipePatron,
   ExploitationPatron,
-  LignesPatron,
   ReferentielPatron,
   ReglesPatron,
 } from "./ports";
@@ -52,18 +42,18 @@ import {
 /**
  * Adaptateurs PostgreSQL (Prisma) des ports du module patron.
  *
- * Tables lues : `compagnie`, `gare`, `guichet`, `appareil_sync`, `bus`, `ligne`, `arret`, `depart`, `billet`,
+ * Tables lues : `compagnie`, `gare`, `guichet`, `appareil_sync`, `bus`, `depart`, `billet`,
  * `colis`, `colis_inter_agences`, `reclamation_colis`, `demande_annulation`, `session_caisse`, `personne`,
  * `alerte_patron`, `alerte_arret`, `depart_incident`, `depart_observation`, `journal_agence`,
- * `assistant_proposition`, `dossier_financement`.
- * Tables écrites : `personne` (compte de l'équipe), `ligne`, `arret`, `compagnie.toleranceEcartCaisse`, et les
- * six tables de la migration `lot_da_reglages_patron` : `ligne_reglage`, `ligne_horaire`, `personne_reglage`,
- * `regles_compagnie`, `compte_momo_agence`, `confirmation_compte_momo`.
+ * `assistant_proposition`, `dossier_financement`. Les lignes (`ligne`, `arret`, `horaire_ligne`,
+ * `reglage_ligne`) ne sont pas lues d'ici : elles appartiennent au module administration.
+ * Tables écrites : `personne` (compte de l'équipe), `compagnie.toleranceEcartCaisse`, et les quatre tables de
+ * la migration `lot_da_reglages_patron` : `personne_reglage`, `regles_compagnie`, `compte_momo_agence`,
+ * `confirmation_compte_momo`.
  *
- * Ce que la base garantit, sans compter sur le code (migration `lot_da_garanties`) : un couple de gares n'a
- * qu'une ligne (`ligne_compagnie_code_key`) ; le plan, les heures, les jours, l'opérateur, le jour de paie,
- * les règles et les essais de confirmation sont bornés par des CHECK ; supprimer une ligne ou une personne
- * emporte ses réglages. Chaque écriture à plusieurs tables est une seule transaction.
+ * Ce que la base garantit, sans compter sur le code (migration `lot_da_garanties`) : l'opérateur, le jour de
+ * paie, les règles et les essais de confirmation sont bornés par des CHECK ; supprimer une personne emporte
+ * ses réglages. Chaque écriture à plusieurs tables est une seule transaction.
  */
 
 const ROLES_PG = ROLES_EQUIPE as unknown as Role[];
@@ -74,8 +64,6 @@ const VERROU_PATRON = 7_017_410;
 
 const roleDe = (roles: readonly string[]): RoleEquipe | null =>
   ROLES_EQUIPE.find((r) => roles.includes(r)) ?? null;
-
-const jourIso = (d: Date): string => d.toISOString().slice(0, 10);
 
 const enJson = (valeur: unknown): Prisma.InputJsonValue => valeur as Prisma.InputJsonValue;
 
@@ -263,6 +251,29 @@ export class ExploitationPatronPrisma extends ExploitationPatron {
       libelle: String((l.action as { libelle?: unknown }).libelle ?? l.actionId),
       proposeeLe: l.proposeeLe,
     }));
+  }
+
+  async decalagesProposes(compagnieId: string, maintenant: Date): Promise<Record<string, string>> {
+    if (!UUID.test(compagnieId)) return {};
+    const lignes = await this.prisma.assistantProposition.findMany({
+      where: { compagnieId, appliqueeA: null, expireLe: { gt: maintenant } },
+      orderBy: [{ proposeeLe: "desc" }, { actionId: "asc" }],
+    });
+    const decalages: Record<string, string> = {};
+    for (const l of lignes) {
+      const p = (l.action as { parametres?: Record<string, unknown> }).parametres;
+      if (
+        p?.["type"] === "decaler_depart" &&
+        typeof p["ligneId"] === "string" &&
+        typeof p["heure"] === "string" &&
+        typeof p["nouvelleHeure"] === "string" &&
+        !(p["ligneId"] in decalages)
+      ) {
+        // La plus récente fait foi (tri par proposition décroissante).
+        decalages[p["ligneId"]] = `${p["heure"]} → ${p["nouvelleHeure"]}`;
+      }
+    }
+    return decalages;
   }
 
   async colisEnCorrespondance(
@@ -596,346 +607,6 @@ export class EquipePatronPrisma extends EquipePatron {
   async desactiver(personneId: string): Promise<void> {
     if (!UUID.test(personneId)) return;
     await this.prisma.personne.updateMany({ where: { id: personneId }, data: { actif: false } });
-  }
-}
-
-/* ------------------------------------------------------------------ lignes */
-
-type LigneComplete = Prisma.LigneGetPayload<{
-  include: { origine: true; destination: true; arrets: true };
-}>;
-
-export const DISPOSITION_PAR_DEFAUT = "2+2";
-
-@Injectable()
-export class LignesPatronPrisma extends LignesPatron {
-  readonly durable = true;
-
-  constructor(private readonly prisma: PrismaService) {
-    super();
-  }
-
-  private async construire(lignes: LigneComplete[]): Promise<LigneFait[]> {
-    if (lignes.length === 0) return [];
-    const ids = lignes.map((l) => l.id);
-    const [reglages, horaires] = await Promise.all([
-      this.prisma.ligneReglage.findMany({ where: { ligneId: { in: ids } } }),
-      this.prisma.ligneHoraire.findMany({
-        where: { ligneId: { in: ids } },
-        orderBy: [{ heure: "asc" }, { creeA: "asc" }, { id: "asc" }],
-      }),
-    ]);
-    const reglageDe = new Map(reglages.map((r) => [r.ligneId, r]));
-    return lignes.map((l) => {
-      const r = reglageDe.get(l.id);
-      return {
-        id: l.id,
-        code: l.code,
-        origine: { id: l.origine.id, nom: l.origine.nom, ville: l.origine.ville },
-        destination: { id: l.destination.id, nom: l.destination.nom, ville: l.destination.ville },
-        tarifs: { classique: l.tarifClassique, vip: l.tarifVip, bagage: l.tarifBagage },
-        arrets: [...l.arrets]
-          .sort((a, b) => a.ordre - b.ordre)
-          .map((a) => ({ nom: a.nom, km: a.kmDepuisOrigine, montee: a.montee })),
-        plan: r ? { capacite: r.capacite, disposition: r.disposition, rangees: r.rangees } : null,
-        options: { venteEnLigne: r?.venteEnLigne ?? true, fusionAuto: r?.fusionAuto ?? false },
-        horaires: horaires
-          .filter((h) => h.ligneId === l.id)
-          .map<HoraireLigne>((h) => ({
-            id: h.id,
-            heure: h.heure,
-            classe: h.classe,
-            prix: h.prix,
-            actif: h.actif,
-            note: h.note,
-            jours: [...h.jours],
-          })),
-        brouillon:
-          r?.brouillon != null && r.effetDu !== null
-            ? { commande: r.brouillon as unknown as CommandeLigne, effetDu: jourIso(r.effetDu) }
-            : null,
-      };
-    });
-  }
-
-  async lister(compagnieId: string): Promise<LigneFait[]> {
-    if (!UUID.test(compagnieId)) return [];
-    const lignes = await this.prisma.ligne.findMany({
-      where: { compagnieId },
-      include: { origine: true, destination: true, arrets: true },
-      orderBy: [{ code: "asc" }, { id: "asc" }],
-    });
-    return this.construire(lignes);
-  }
-
-  async trouver(compagnieId: string, ligneId: string): Promise<LigneFait | null> {
-    if (!UUID.test(compagnieId) || !UUID.test(ligneId)) return null;
-    const l = await this.prisma.ligne.findFirst({
-      where: { id: ligneId, compagnieId },
-      include: { origine: true, destination: true, arrets: true },
-    });
-    return l ? ((await this.construire([l]))[0] ?? null) : null;
-  }
-
-  async capaciteParDefaut(compagnieId: string): Promise<number> {
-    if (!UUID.test(compagnieId)) return 40;
-    const r = await this.prisma.bus.aggregate({ where: { compagnieId }, _max: { capacite: true } });
-    return r._max.capacite ?? 40;
-  }
-
-  async creer(compagnieId: string, n: NouvelleLigne, par: string, a: Date): Promise<LigneFait> {
-    try {
-      await this.prisma.$transaction(async (tx) => {
-        await tx.ligne.create({
-          data: {
-            id: n.id,
-            compagnieId,
-            code: n.code,
-            origineGareId: n.origineGareId,
-            destinationGareId: n.destinationGareId,
-            tarifClassique: n.tarifs.classique,
-            tarifVip: n.tarifs.vip,
-            tarifBagage: n.tarifs.bagage,
-          },
-        });
-        await tx.arret.createMany({
-          data: n.arrets.map((x, i) => ({
-            ligneId: n.id,
-            ordre: i,
-            nom: x.nom,
-            kmDepuisOrigine: x.km,
-            montee: x.montee,
-          })),
-        });
-        await tx.ligneReglage.create({
-          data: {
-            ligneId: n.id,
-            disposition: n.plan.disposition,
-            rangees: n.plan.rangees,
-            capacite: n.plan.capacite,
-            modifieA: a,
-            modifiePar: UUID.test(par) ? par : null,
-          },
-        });
-      });
-    } catch (e) {
-      if ((e as { code?: string }).code === "P2002" || estErreurSql(e, "23505")) {
-        throw new CodeLigneDejaUtilise();
-      }
-      throw e;
-    }
-    const creee = await this.trouver(compagnieId, n.id);
-    if (!creee) throw new Error("Ligne créée introuvable");
-    return creee;
-  }
-
-  async appliquer(
-    compagnieId: string,
-    ligneId: string,
-    ch: ChangementLigne,
-    par: string,
-    a: Date,
-  ): Promise<LigneFait | null> {
-    if (!UUID.test(compagnieId) || !UUID.test(ligneId)) return null;
-    const defaut = await this.capaciteParDefaut(compagnieId);
-    const trouvee = await this.prisma.$transaction(async (tx) => {
-      // Verrou de la ligne : deux modifications de la même ligne se suivent, elles ne se mélangent pas.
-      const verrou = await tx.$queryRaw<{ id: string }[]>`
-        SELECT "id"::text AS id FROM "ligne"
-        WHERE "id" = ${ligneId}::uuid AND "compagnieId" = ${compagnieId}::uuid FOR UPDATE`;
-      if (verrou.length === 0) return false;
-      if (ch.tarifs) {
-        await tx.ligne.update({
-          where: { id: ligneId },
-          data: {
-            tarifClassique: ch.tarifs.classique,
-            tarifVip: ch.tarifs.vip,
-            tarifBagage: ch.tarifs.bagage,
-          },
-        });
-      }
-      if (ch.arrets) await this.remplacerArrets(tx, ligneId, ch.arrets);
-      if (ch.departs) await this.remplacerHoraires(tx, ligneId, ch.departs, a);
-      if (ch.plan || ch.options) {
-        await this.ecrireReglage(tx, ligneId, ch.plan ?? null, ch.options ?? null, defaut, a, par);
-      }
-      return true;
-    });
-    return trouvee ? this.trouver(compagnieId, ligneId) : null;
-  }
-
-  private async ecrireReglage(
-    tx: Prisma.TransactionClient,
-    ligneId: string,
-    plan: PlanLigne | null,
-    options: { venteEnLigne: boolean; fusionAuto: boolean } | null,
-    capaciteDefaut: number,
-    a: Date,
-    par: string,
-  ): Promise<void> {
-    const modifiePar = UUID.test(par) ? par : null;
-    await tx.ligneReglage.upsert({
-      where: { ligneId },
-      create: {
-        ligneId,
-        disposition: plan?.disposition ?? DISPOSITION_PAR_DEFAUT,
-        rangees: plan?.rangees ?? Math.ceil(capaciteDefaut / 4),
-        capacite: plan?.capacite ?? capaciteDefaut,
-        venteEnLigne: options?.venteEnLigne ?? true,
-        fusionAuto: options?.fusionAuto ?? false,
-        modifieA: a,
-        modifiePar,
-      },
-      update: {
-        ...(plan
-          ? { disposition: plan.disposition, rangees: plan.rangees, capacite: plan.capacite }
-          : {}),
-        ...(options ? { venteEnLigne: options.venteEnLigne, fusionAuto: options.fusionAuto } : {}),
-        modifieA: a,
-        modifiePar,
-      },
-    });
-  }
-
-  /** Les arrêts gardent leur identifiant quand leur nom reste (les trajets en cours les citent). */
-  private async remplacerArrets(
-    tx: Prisma.TransactionClient,
-    ligneId: string,
-    arrets: ArretLigne[],
-  ): Promise<void> {
-    const existants = await tx.arret.findMany({ where: { ligneId } });
-    const parNom = new Map(existants.map((e) => [e.nom.toLowerCase(), e]));
-    const gardes = new Set<string>();
-    const plan = arrets.map((x, i) => {
-      const e = parNom.get(x.nom.toLowerCase());
-      if (e && !gardes.has(e.id)) gardes.add(e.id);
-      return { x, i, id: e && gardes.has(e.id) ? e.id : null };
-    });
-    const supprimes = existants.filter((e) => !gardes.has(e.id)).map((e) => e.id);
-    if (supprimes.length > 0) await tx.arret.deleteMany({ where: { id: { in: supprimes } } });
-    // (ligneId, ordre) est unique : on pousse d'abord les rangs hors d'atteinte, puis on pose les définitifs.
-    await tx.arret.updateMany({ where: { ligneId }, data: { ordre: { increment: 1000 } } });
-    for (const { x, i, id } of plan) {
-      if (id !== null) {
-        await tx.arret.update({
-          where: { id },
-          data: { ordre: i, nom: x.nom, kmDepuisOrigine: x.km, montee: x.montee },
-        });
-      } else {
-        await tx.arret.create({
-          data: { ligneId, ordre: i, nom: x.nom, kmDepuisOrigine: x.km, montee: x.montee },
-        });
-      }
-    }
-  }
-
-  /** La liste donnée est la liste des départs récurrents : ce qui n'y est plus est retiré. */
-  private async remplacerHoraires(
-    tx: Prisma.TransactionClient,
-    ligneId: string,
-    departs: NonNullable<ChangementLigne["departs"]>,
-    a: Date,
-  ): Promise<void> {
-    const existants = await tx.ligneHoraire.findMany({ where: { ligneId }, select: { id: true } });
-    const connus = new Set(existants.map((e) => e.id));
-    const gardes = new Set(
-      departs.flatMap((d) => (d.id !== null && connus.has(d.id) ? [d.id] : [])),
-    );
-    const supprimes = existants.filter((e) => !gardes.has(e.id)).map((e) => e.id);
-    if (supprimes.length > 0)
-      await tx.ligneHoraire.deleteMany({ where: { id: { in: supprimes } } });
-    for (const d of departs) {
-      const donnees = {
-        heure: d.heure,
-        classe: d.classe,
-        prix: d.prix,
-        actif: d.actif,
-        note: d.note,
-        jours: d.jours,
-      };
-      if (d.id !== null && gardes.has(d.id)) {
-        await tx.ligneHoraire.update({ where: { id: d.id }, data: donnees });
-      } else {
-        await tx.ligneHoraire.create({ data: { id: randomUUID(), ligneId, creeA: a, ...donnees } });
-      }
-    }
-  }
-
-  async programmer(
-    compagnieId: string,
-    ligneId: string,
-    commande: CommandeLigne,
-    effetDu: string,
-    par: string,
-    a: Date,
-  ): Promise<boolean> {
-    if (!UUID.test(compagnieId) || !UUID.test(ligneId)) return false;
-    const defaut = await this.capaciteParDefaut(compagnieId);
-    return this.prisma.$transaction(async (tx) => {
-      const ligne = await tx.ligne.findFirst({
-        where: { id: ligneId, compagnieId },
-        select: { id: true },
-      });
-      if (!ligne) return false;
-      const brouillon = enJson(commande);
-      const date = new Date(`${effetDu}T00:00:00.000Z`);
-      await tx.ligneReglage.upsert({
-        where: { ligneId },
-        create: {
-          ligneId,
-          disposition: DISPOSITION_PAR_DEFAUT,
-          rangees: Math.ceil(defaut / 4),
-          capacite: defaut,
-          brouillon,
-          effetDu: date,
-          modifieA: a,
-          modifiePar: UUID.test(par) ? par : null,
-        },
-        update: { brouillon, effetDu: date, modifieA: a, modifiePar: UUID.test(par) ? par : null },
-      });
-      return true;
-    });
-  }
-
-  async echues(jour: string): Promise<Array<{ compagnieId: string; ligneId: string }>> {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(jour)) return [];
-    return this.prisma.$queryRaw<{ compagnieId: string; ligneId: string }[]>`
-      SELECT l."compagnieId"::text AS "compagnieId", r."ligneId"::text AS "ligneId"
-      FROM "ligne_reglage" r JOIN "ligne" l ON l."id" = r."ligneId"
-      WHERE r."brouillon" IS NOT NULL AND r."effetDu" <= ${jour}::date
-      ORDER BY r."effetDu", r."ligneId"`;
-  }
-
-  async retirerProgrammation(ligneId: string): Promise<void> {
-    if (!UUID.test(ligneId)) return;
-    await this.prisma.ligneReglage.updateMany({
-      where: { ligneId },
-      data: { brouillon: Prisma.DbNull, effetDu: null },
-    });
-  }
-
-  async propositionAssistant(
-    compagnieId: string,
-    ligneId: string,
-    maintenant: Date,
-  ): Promise<string | null> {
-    if (!UUID.test(compagnieId)) return null;
-    const lignes = await this.prisma.assistantProposition.findMany({
-      where: { compagnieId, appliqueeA: null, expireLe: { gt: maintenant } },
-      orderBy: [{ proposeeLe: "desc" }, { actionId: "asc" }],
-    });
-    for (const l of lignes) {
-      const p = (l.action as { parametres?: Record<string, unknown> }).parametres;
-      if (
-        p?.["type"] === "decaler_depart" &&
-        p["ligneId"] === ligneId &&
-        typeof p["heure"] === "string" &&
-        typeof p["nouvelleHeure"] === "string"
-      ) {
-        return `${p["heure"]} → ${p["nouvelleHeure"]}`;
-      }
-    }
-    return null;
   }
 }
 

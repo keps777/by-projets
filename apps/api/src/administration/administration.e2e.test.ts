@@ -1,6 +1,7 @@
 import { patron } from "@afrimove/contrats";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { ROLES } from "../socle/auth/roles";
+import { PlanificateurLignes } from "./planificateur";
 import { ParcBus } from "./ports";
 import {
   AGENCE,
@@ -380,6 +381,255 @@ describe("modifications programmées « dès le … »", () => {
     });
     expect(t.journalEnTexte()).toContain("ligne.brouillon_applique");
     t.horloge.avancer(-21 * 24 * 3_600_000);
+  });
+});
+
+/**
+ * Règles et bornes que le lot Da (réglages du patron) avait écrites pour les mêmes routes et que ce module a reprises
+ * quand il est devenu seul propriétaire des lignes : programmation à 90 jours au plus, commande vide, plan de sièges
+ * cohérent, départ cité deux fois, bornes des corps, refus métier tracés, balayage des modifications datées.
+ */
+describe("réglages de ligne : règles et bornes", () => {
+  let id: string;
+  let a: AppAdminTest;
+
+  beforeAll(async () => {
+    a = t;
+    const r = await creerLigne({ destinationGareId: BAFOUSSAM, arrets: ["Édéa"] });
+    expect(r.status, JSON.stringify(r.body)).toBe(201);
+    id = r.body.ligne.id;
+  });
+
+  const lireLigne = async () =>
+    patron.LigneEditableSchema.parse(
+      (await a.http().get(`/patron/reglages/lignes/${id}`).set(a.auth(patronJeton))).body,
+    );
+  const refus = () =>
+    a.auditRepo.lignes.filter(
+      (l) => l.resultat === "refus" && l.cibleId === id && l.action.startsWith("ligne."),
+    );
+
+  it("refuse une commande qui ne change rien d'une section (COMMANDE_VIDE) et trace le refus", async () => {
+    const avant = refus().length;
+    const r = await modifierLigne({}, patronJeton, id);
+    expect(r.status).toBe(422);
+    expect(r.body.code).toBe("COMMANDE_VIDE");
+    const trace = refus().slice(avant);
+    expect(trace).toHaveLength(1);
+    expect(trace[0]).toMatchObject({
+      action: "ligne.publier",
+      details: { statut: 422, cause: "COMMANDE_VIDE" },
+    });
+  });
+
+  it("programme une modification à 90 jours au plus (EFFET_TROP_LOIN au 91e), sans rien écrire", async () => {
+    // L'horloge de test est au lundi 2 novembre 2026 : 90 jours plus tard, le 31 janvier 2027.
+    const tarifs = { classique: 4100, vip: 6100, bagage: 500 };
+    const trop = await modifierLigne({ tarifs, effetDu: "2027-02-01" }, patronJeton, id);
+    expect(trop.status).toBe(422);
+    expect(trop.body.code).toBe("EFFET_TROP_LOIN");
+    expect((await lireLigne()).brouillon).toEqual({ modifications: 0, publicationA: null });
+
+    const limite = await modifierLigne({ tarifs, effetDu: "2027-01-31" }, patronJeton, id);
+    expect(limite.status, JSON.stringify(limite.body)).toBe(200);
+    expect(patron.LignePublieeSchema.parse(limite.body).ligne.brouillon).toEqual({
+      modifications: 2,
+      publicationA: "2027-01-31T00:00:00.000+01:00",
+    });
+    // On le retire : le brouillon est remplacé par la publication immédiate de l'état voulu.
+    const retour = await modifierLigne({ tarifs: TARIFS }, patronJeton, id);
+    expect(retour.status).toBe(200);
+  });
+
+  it("n'accepte qu'un plan de sièges cohérent avec ses rangées", async () => {
+    const plan = (capacite: number, disposition: string, rangees: number) =>
+      modifierLigne({ plan: { capacite, disposition, rangees } }, patronJeton, id);
+    // 40 places en 2+2 : 10 rangées, ou 11 (la dernière à moitié vide) ; 9 ne portent pas 40 places, 12 en font trop.
+    expect((await plan(40, "2+2", 10)).status).toBe(200);
+    expect((await plan(40, "2+2", 11)).status).toBe(200);
+    for (const [capacite, disposition, rangees] of [
+      [40, "2+2", 9],
+      [40, "2+2", 12],
+      [41, "2+2", 10],
+      [70, "2+1+2", 13],
+    ] as const) {
+      const r = await plan(capacite, disposition, rangees);
+      expect(r.status, `${capacite} places, ${rangees} × ${disposition}`).toBe(422);
+      expect(r.body.code).toBe("PLAN_INCOHERENT");
+    }
+    expect((await plan(70, "2+1+2", 14)).status).toBe(200);
+    expect((await lireLigne()).plan).toEqual({ capacite: 70, disposition: "2+1+2", rangees: 14 });
+    await plan(70, "2+2", 18);
+  });
+
+  it("borne les corps comme les réglages du patron : 200 places, 100 rangées, note de 120 caractères", async () => {
+    expect(
+      (
+        await modifierLigne(
+          { plan: { capacite: 201, disposition: "2+2", rangees: 51 } },
+          patronJeton,
+          id,
+        )
+      ).body.code,
+    ).toBe("COMMANDE_INVALIDE");
+    expect(
+      (
+        await modifierLigne(
+          { plan: { capacite: 200, disposition: "1+1", rangees: 101 } },
+          patronJeton,
+          id,
+        )
+      ).body.code,
+    ).toBe("COMMANDE_INVALIDE");
+    const note = await modifierLigne(
+      { departs: [departEditable({ heure: "04:00", note: "x".repeat(121) })] },
+      patronJeton,
+      id,
+    );
+    expect(note.status).toBe(422);
+    expect(note.body.code).toBe("COMMANDE_INVALIDE");
+    expect(
+      (
+        await creerLigne({
+          origineGareId: YAOUNDE_MVAN,
+          destinationGareId: BAFOUSSAM,
+          capacite: 201,
+        })
+      ).body.code,
+    ).toBe("COMMANDE_INVALIDE");
+  });
+
+  it("refuse un départ de la ligne cité deux fois, et rien n'est écrit", async () => {
+    const ok = await modifierLigne(
+      { departs: [departEditable({ heure: "06:15" })] },
+      patronJeton,
+      id,
+    );
+    expect(ok.status, JSON.stringify(ok.body)).toBe(200);
+    const [depart] = (await lireLigne()).departs;
+    const r = await modifierLigne(
+      {
+        departs: [
+          { ...depart, nouveau: false },
+          { ...depart, heure: "07:15", nouveau: false },
+        ],
+      },
+      patronJeton,
+      id,
+    );
+    expect(r.status).toBe(422);
+    expect(r.body.code).toBe("HORAIRE_CITE_DEUX_FOIS");
+    expect((await lireLigne()).departs.map((d) => d.heure)).toEqual(["06:15"]);
+  });
+
+  it("trace chaque refus métier au journal d'audit avec sa cause, sans PIN ni corps", async () => {
+    const avant = refus().length;
+    await modifierLigne(
+      { tarifs: { classique: 1, vip: 1, bagage: 1 }, effetDu: "2030-01-01" },
+      patronJeton,
+      id,
+    );
+    await modifierLigne(
+      { plan: { capacite: 40, disposition: "2+2", rangees: 3 } },
+      patronJeton,
+      id,
+    );
+    const causes = refus()
+      .slice(avant)
+      .map((l) => (l.details as { cause?: string }).cause);
+    expect(causes).toEqual(["EFFET_TROP_LOIN", "PLAN_INCOHERENT"]);
+    expect(a.journalEnTexte()).not.toContain("482915");
+  });
+
+  it("une ligne d'une autre agence : 404, tracé, et rien n'est écrit chez elle", async () => {
+    const r = await modifierLigne({ tarifs: TARIFS }, patronAutreAgence, id);
+    expect(r.status).toBe(404);
+    expect(r.body.code).toBe("LIGNE_INCONNUE");
+    expect((await lireLigne()).tarifs).toEqual(TARIFS);
+  });
+});
+
+describe("balayage des modifications programmées (PlanificateurLignes)", () => {
+  let id: string;
+  const planificateur = () => t.app.get(PlanificateurLignes);
+  const lire = async () =>
+    patron.LigneEditableSchema.parse(
+      (await t.http().get(`/patron/reglages/lignes/${id}`).set(t.auth(patronJeton))).body,
+    );
+
+  beforeAll(async () => {
+    const r = await creerLigne({ origineGareId: YAOUNDE_MVAN, destinationGareId: BAFOUSSAM });
+    expect(r.status, JSON.stringify(r.body)).toBe(201);
+    id = r.body.ligne.id;
+  });
+
+  it("met en vigueur la modification dont le jour est venu sans que la ligne soit lue, une seule fois", async () => {
+    const r = await modifierLigne(
+      { tarifs: { classique: 3100, vip: 4600, bagage: 500 }, effetDu: "2026-11-09" },
+      patronJeton,
+      id,
+    );
+    expect(r.status, JSON.stringify(r.body)).toBe(200);
+    // Avant le jour dit : rien à faire, et la ligne garde son état.
+    expect(await planificateur().tick()).toBe(0);
+    expect((await t.lignesMemoire.reglage(id))?.brouillon).not.toBeNull();
+
+    t.horloge.avancer(8 * 24 * 3_600_000);
+    try {
+      expect(await planificateur().tick()).toBe(1);
+      const reglage = await t.lignesMemoire.reglage(id);
+      expect(reglage?.brouillon).toBeNull();
+      expect(reglage?.effetDu).toBeNull();
+      expect((await t.lignesMemoire.trouver(id))?.tarifs.classique).toBe(3100);
+      expect(await planificateur().tick()).toBe(0);
+      expect((await lire()).brouillon).toEqual({ modifications: 0, publicationA: null });
+      expect(
+        t.auditRepo.lignes.filter(
+          (l) => l.action === "ligne.brouillon_applique" && l.cibleId === id,
+        ),
+      ).toHaveLength(1);
+    } finally {
+      t.horloge.avancer(-8 * 24 * 3_600_000);
+    }
+  });
+
+  it("abandonne, en le traçant, un brouillon devenu impossible : la ligne reste lisible, inchangée", async () => {
+    const avant = await lire();
+    // Un brouillon périmé : il cite un horaire qui n'existe plus sur la ligne.
+    await t.lignesMemoire.programmer(
+      id,
+      {
+        horaires: [
+          {
+            id: "00000000-0000-4000-8000-00000000dead",
+            heure: "10:00",
+            classe: "classique",
+            actif: true,
+            note: null,
+            jours: [],
+          },
+        ],
+      },
+      "2026-11-03",
+      avant.plan,
+      avant.options,
+    );
+    t.horloge.avancer(24 * 3_600_000);
+    try {
+      expect(await planificateur().tick()).toBe(0);
+      expect((await t.lignesMemoire.reglage(id))?.brouillon).toBeNull();
+      const apres = await lire();
+      expect(apres.departs).toEqual(avant.departs);
+      expect(apres.tarifs).toEqual(avant.tarifs);
+      const trace = t.auditRepo.lignes.filter(
+        (l) =>
+          l.action === "ligne.brouillon_applique" && l.cibleId === id && l.resultat === "refus",
+      );
+      expect(trace).toHaveLength(1);
+      expect(trace[0]).toMatchObject({ details: { cause: "HORAIRE_INCONNU" } });
+    } finally {
+      t.horloge.avancer(-24 * 3_600_000);
+    }
   });
 });
 

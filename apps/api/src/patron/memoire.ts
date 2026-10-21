@@ -7,19 +7,15 @@ import type {
   ActivitePersonne,
   AlerteEcrite,
   ArretBus,
-  ChangementLigne,
   ChangementMembre,
-  CommandeLigne,
   CompagniePatron,
   ConfirmationMomo,
   DepartExploitation,
   DossierEnAttente,
   EvenementJournal,
   GarePatron,
-  LigneFait,
   MembrePatron,
   NouveauMembre,
-  NouvelleLigne,
   OperateurMomo,
   PanneSignalee,
   PropositionEnAttente,
@@ -27,10 +23,8 @@ import type {
 } from "./modele";
 import {
   AlertesEcrites,
-  CodeLigneDejaUtilise,
   EquipePatron,
   ExploitationPatron,
-  LignesPatron,
   ReferentielPatron,
   ReglesPatron,
 } from "./ports";
@@ -118,6 +112,7 @@ export class ExploitationPatronMemoire extends ExploitationPatron {
   private readonly propositions: Array<
     PropositionEnAttente & { compagnieId: string; expireLe: Date }
   > = [];
+  private readonly decalages = new Map<string, string>();
   private readonly correspondances = new Map<string, { nombre: number; depuis: Date | null }>();
   private readonly relais = new Map<string, number>();
   private readonly journaux: Array<EvenementJournal & { gareId: string }> = [];
@@ -138,6 +133,12 @@ export class ExploitationPatronMemoire extends ExploitationPatron {
   }
   ajouterProposition(compagnieId: string, proposition: PropositionEnAttente, expireLe: Date): this {
     this.propositions.push({ ...clone(proposition), compagnieId, expireLe });
+    return this;
+  }
+  /** Test : l'assistant propose de décaler un départ de cette ligne (« 10:00 → 09:15 »). */
+  definirDecalage(ligneId: string, texte: string | null): this {
+    if (texte === null) this.decalages.delete(ligneId);
+    else this.decalages.set(ligneId, texte);
     return this;
   }
   definirCorrespondance(compagnieId: string, nombre: number, depuis: Date | null): this {
@@ -196,6 +197,13 @@ export class ExploitationPatronMemoire extends ExploitationPatron {
     return this.propositions
       .filter((p) => p.compagnieId === compagnieId && p.expireLe.getTime() > maintenant.getTime())
       .map(({ compagnieId: _c, expireLe: _e, ...p }) => clone(p));
+  }
+
+  async decalagesProposes(
+    _compagnieId: string,
+    _maintenant: Date,
+  ): Promise<Record<string, string>> {
+    return Object.fromEntries(this.decalages);
   }
 
   async colisEnCorrespondance(
@@ -429,157 +437,6 @@ export class EquipePatronMemoire extends EquipePatron {
     if (!m) return;
     this.membres.set(personneId, { ...m, actif: false });
     this.surDesactivation?.(personneId);
-  }
-}
-
-/* ------------------------------------------------------------------ lignes */
-
-interface LigneMemoire extends LigneFait {
-  compagnieId: string;
-}
-
-@Injectable()
-export class LignesPatronMemoire extends LignesPatron {
-  readonly durable = false;
-  readonly lignes = new Map<string, LigneMemoire>();
-  private readonly propositions = new Map<string, string>();
-  private capacite = 40;
-
-  ajouter(compagnieId: string, ligne: LigneFait): this {
-    this.lignes.set(ligne.id, { ...clone(ligne), compagnieId });
-    return this;
-  }
-  definirCapaciteParDefaut(capacite: number): this {
-    this.capacite = capacite;
-    return this;
-  }
-  definirProposition(ligneId: string, texte: string | null): this {
-    if (texte === null) this.propositions.delete(ligneId);
-    else this.propositions.set(ligneId, texte);
-    return this;
-  }
-
-  private vers(l: LigneMemoire): LigneFait {
-    const { compagnieId: _c, ...ligne } = clone(l);
-    return ligne;
-  }
-
-  async lister(compagnieId: string): Promise<LigneFait[]> {
-    return [...this.lignes.values()]
-      .filter((l) => l.compagnieId === compagnieId)
-      .sort((a, b) => a.code.localeCompare(b.code))
-      .map((l) => this.vers(l));
-  }
-
-  async trouver(compagnieId: string, ligneId: string): Promise<LigneFait | null> {
-    const l = this.lignes.get(ligneId);
-    return l && l.compagnieId === compagnieId ? this.vers(l) : null;
-  }
-
-  async capaciteParDefaut(_compagnieId: string): Promise<number> {
-    return this.capacite;
-  }
-
-  async creer(
-    compagnieId: string,
-    nouvelle: NouvelleLigne,
-    _par: string,
-    _a: Date,
-  ): Promise<LigneFait> {
-    const existe = [...this.lignes.values()].some(
-      (l) =>
-        l.compagnieId === compagnieId &&
-        (l.code === nouvelle.code ||
-          (l.origine.id === nouvelle.origineGareId &&
-            l.destination.id === nouvelle.destinationGareId)),
-    );
-    if (existe) throw new CodeLigneDejaUtilise();
-    const origine = this.gareConnue(nouvelle.origineGareId);
-    const destination = this.gareConnue(nouvelle.destinationGareId);
-    const ligne: LigneMemoire = {
-      id: nouvelle.id,
-      compagnieId,
-      code: nouvelle.code,
-      origine,
-      destination,
-      tarifs: clone(nouvelle.tarifs),
-      arrets: clone(nouvelle.arrets),
-      plan: clone(nouvelle.plan),
-      options: { venteEnLigne: true, fusionAuto: false },
-      horaires: [],
-      brouillon: null,
-    };
-    this.lignes.set(ligne.id, ligne);
-    return this.vers(ligne);
-  }
-
-  /** Les gares connues du jeu d'essai (nom et ville), pour les lignes créées. */
-  readonly gares = new Map<string, { id: string; nom: string; ville: string }>();
-  private gareConnue(id: string): { id: string; nom: string; ville: string } {
-    return clone(this.gares.get(id) ?? { id, nom: id, ville: id });
-  }
-
-  async appliquer(
-    compagnieId: string,
-    ligneId: string,
-    changement: ChangementLigne,
-    _par: string,
-    _a: Date,
-  ): Promise<LigneFait | null> {
-    const l = this.lignes.get(ligneId);
-    if (!l || l.compagnieId !== compagnieId) return null;
-    const suivante: LigneMemoire = { ...l };
-    if (changement.tarifs) suivante.tarifs = clone(changement.tarifs);
-    if (changement.arrets) suivante.arrets = clone(changement.arrets);
-    if (changement.plan) suivante.plan = clone(changement.plan);
-    if (changement.options) suivante.options = clone(changement.options);
-    if (changement.departs) {
-      const existants = new Map(l.horaires.map((h) => [h.id, h]));
-      suivante.horaires = changement.departs.map((d) => ({
-        id: d.id !== null && existants.has(d.id) ? d.id : randomUUID(),
-        heure: d.heure,
-        classe: d.classe,
-        prix: d.prix,
-        actif: d.actif,
-        note: d.note,
-        jours: [...d.jours],
-      }));
-    }
-    this.lignes.set(ligneId, suivante);
-    return this.vers(suivante);
-  }
-
-  async programmer(
-    compagnieId: string,
-    ligneId: string,
-    commande: CommandeLigne,
-    effetDu: string,
-    _par: string,
-    _a: Date,
-  ): Promise<boolean> {
-    const l = this.lignes.get(ligneId);
-    if (!l || l.compagnieId !== compagnieId) return false;
-    this.lignes.set(ligneId, { ...l, brouillon: { commande: clone(commande), effetDu } });
-    return true;
-  }
-
-  async echues(jour: string): Promise<Array<{ compagnieId: string; ligneId: string }>> {
-    return [...this.lignes.values()]
-      .filter((l) => l.brouillon !== null && l.brouillon.effetDu <= jour)
-      .map((l) => ({ compagnieId: l.compagnieId, ligneId: l.id }));
-  }
-
-  async retirerProgrammation(ligneId: string): Promise<void> {
-    const l = this.lignes.get(ligneId);
-    if (l) this.lignes.set(ligneId, { ...l, brouillon: null });
-  }
-
-  async propositionAssistant(
-    _compagnieId: string,
-    ligneId: string,
-    _maintenant: Date,
-  ): Promise<string | null> {
-    return this.propositions.get(ligneId) ?? null;
   }
 }
 

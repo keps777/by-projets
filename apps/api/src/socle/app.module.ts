@@ -147,12 +147,14 @@ const whatsApp = WhatsAppModule.avec({
     InterAgencesModule,
     // LOT Da : les routes /patron/* (tableau, alertes, gares, équipe, salle de contrôle, réglages). Il lit les
     // chiffres du jour par le module rapport du soir tel qu'il est monté plus haut (même instance, mêmes ports).
+    // Les lignes (/patron/reglages/lignes) ne sont pas à lui : elles viennent de l'administration, qu'il importe.
     PatronModule.avec({ imports: [rapport] }),
     // LOT Dc : le bord (convoyeur, chauffeur, contrôle inopiné), écart A3 de la recette.
     BordModule,
     // LOT Db : accueil du guichet, mode cadence et impressions (recette AM-181, anomalie A2).
     GuichetModule,
-    // LOT De : administration (lignes, départs récurrents, bus, appareils, effacement à distance), AM-093.
+    // LOT De : administration (lignes et leurs réglages, départs récurrents, bus, appareils, effacement à distance), AM-093.
+    // Seul propriétaire des lignes : le patron les lit par LignesService.resumes.
     AdministrationModule,
     ThrottlerModule.forRootAsync({
       inject: [CONFIG],

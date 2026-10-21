@@ -101,6 +101,16 @@ export abstract class Lignes {
     plan: PlanLigne,
     options: OptionsLigne,
   ): Promise<void>;
+  /** Les lignes dont le brouillon est arrivé à son jour d'effet (`effetDu` ≤ `jour`, AAAA-MM-JJ), de toutes les compagnies. */
+  abstract echues(jour: string): Promise<LigneEchue[]>;
+  /** Abandonne le brouillon d'une ligne (devenu impossible à appliquer) sans toucher à l'état publié. */
+  abstract abandonnerBrouillon(ligneId: string): Promise<void>;
+}
+
+/** Une ligne dont une modification programmée attend d'être mise en vigueur. */
+export interface LigneEchue {
+  compagnieId: string;
+  ligneId: string;
 }
 
 /* ------------------------------------------------------------------ bus */

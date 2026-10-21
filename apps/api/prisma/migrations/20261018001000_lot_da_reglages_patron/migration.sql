@@ -1,35 +1,4 @@
 -- CreateTable
-CREATE TABLE "ligne_reglage" (
-    "ligneId" UUID NOT NULL,
-    "disposition" TEXT NOT NULL,
-    "rangees" INTEGER NOT NULL,
-    "capacite" INTEGER NOT NULL,
-    "venteEnLigne" BOOLEAN NOT NULL DEFAULT true,
-    "fusionAuto" BOOLEAN NOT NULL DEFAULT false,
-    "brouillon" JSONB,
-    "effetDu" DATE,
-    "modifieA" TIMESTAMPTZ(3) NOT NULL,
-    "modifiePar" UUID,
-
-    CONSTRAINT "ligne_reglage_pkey" PRIMARY KEY ("ligneId")
-);
-
--- CreateTable
-CREATE TABLE "ligne_horaire" (
-    "id" UUID NOT NULL,
-    "ligneId" UUID NOT NULL,
-    "heure" TEXT NOT NULL,
-    "classe" "classe_billet" NOT NULL,
-    "prix" INTEGER NOT NULL,
-    "actif" BOOLEAN NOT NULL DEFAULT true,
-    "note" TEXT,
-    "jours" TEXT[] DEFAULT ARRAY[]::TEXT[],
-    "creeA" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "ligne_horaire_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "personne_reglage" (
     "personneId" UUID NOT NULL,
     "operateur" TEXT NOT NULL,
@@ -82,6 +51,3 @@ CREATE TABLE "confirmation_compte_momo" (
 
     CONSTRAINT "confirmation_compte_momo_pkey" PRIMARY KEY ("compagnieId","operateur")
 );
-
--- CreateIndex
-CREATE INDEX "ligne_horaire_ligneId_heure_idx" ON "ligne_horaire"("ligneId", "heure");

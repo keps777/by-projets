@@ -3,10 +3,8 @@ import { describe, expect, it } from "vitest";
 import {
   lireChangerMomo,
   lireConfirmationMomo,
-  lireCreerLigne,
   lireCreerPersonne,
   lireEnregistrerRegles,
-  lireModifierLigne,
   lireModifierPersonne,
   lirePersonneVisee,
 } from "./validation";
@@ -17,7 +15,6 @@ import {
  */
 
 const signature = { pin: "482915", methode: "pin", signeA: "2026-11-02T09:00:00.000+01:00" };
-const tarifs = { classique: 3500, vip: 5000, bagage: 500 };
 const droits = {
   vendreBilletsEtColis: true,
   annulerSansPinSuperviseur: false,
@@ -33,17 +30,6 @@ const champs = {
   guichet: "1",
   salaire: 85000,
   droits,
-};
-const depart = {
-  id: null,
-  heure: "06:00",
-  heureInitiale: null,
-  classe: "classique",
-  prix: 3500,
-  actif: true,
-  note: null,
-  jours: [],
-  nouveau: true,
 };
 const regles = {
   annulation: {
@@ -75,52 +61,6 @@ const avec = (extra: Record<string, unknown>) => (c: Record<string, unknown>) =>
 });
 
 const CAS: Cas[] = [
-  {
-    nom: "ModifierLigne",
-    schema: patron.ModifierLigneSchema,
-    lire: lireModifierLigne,
-    valide: {
-      ligneId: "l1",
-      departs: [depart],
-      tarifs,
-      arrets: [{ nom: "Édéa", montee: true }],
-      plan: { capacite: 40, disposition: "2+2", rangees: 10 },
-      options: { venteEnLigne: true, fusionAuto: false },
-      effetDu: "2026-11-09",
-      signature,
-    },
-    invalides: [
-      ["sans ligneId", sans("ligneId")],
-      ["champ inconnu", avec({ surprise: true })],
-      ["tarif négatif", avec({ tarifs: { ...tarifs, vip: -1 } })],
-      ["tarif décimal", avec({ tarifs: { ...tarifs, vip: 10.5 } })],
-      ["heure invalide", avec({ departs: [{ ...depart, heure: "25:00" }] })],
-      ["classe inconnue", avec({ departs: [{ ...depart, classe: "luxe" }] })],
-      ["jour inconnu", avec({ departs: [{ ...depart, jours: ["xxx"] }] })],
-      ["plan sans rangées", avec({ plan: { capacite: 40, disposition: "2+2" } })],
-      ["disposition invalide", avec({ plan: { capacite: 40, disposition: "deux", rangees: 10 } })],
-      ["jour d'effet invalide", avec({ effetDu: "lundi" })],
-    ],
-  },
-  {
-    nom: "CreerLigne",
-    schema: patron.CreerLigneSchema,
-    lire: lireCreerLigne,
-    valide: {
-      origineGareId: "g1",
-      destinationGareId: "g2",
-      tarifs,
-      arrets: ["Édéa"],
-      capacite: 40,
-      signature,
-    },
-    invalides: [
-      ["sans capacité", sans("capacite")],
-      ["capacité nulle", avec({ capacite: 0 })],
-      ["arrêt vide", avec({ arrets: [""] })],
-      ["champ inconnu", avec({ x: 1 })],
-    ],
-  },
   {
     nom: "CreerPersonne",
     schema: patron.CreerPersonneSchema,

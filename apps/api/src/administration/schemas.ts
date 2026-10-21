@@ -77,7 +77,7 @@ const departEditable = objetStrict({
   classe,
   prix: fcfa,
   actif: booleen,
-  note: nullable(texte({ min: 0, max: 200 })),
+  note: nullable(texte({ min: 0, max: 120 })),
   jours: tableau(nomJour, { max: 7 }),
   nouveau: booleen,
 });
@@ -85,14 +85,14 @@ const departEditable = objetStrict({
 const arretModifie = objetStrict({ nom: texte({ min: 1, max: 100 }), montee: booleen });
 
 const plan = objetStrict({
-  capacite: entier({ min: 1, max: 1000 }),
+  capacite: entier({ min: 1, max: 200 }),
   disposition: texte({
     min: 3,
     max: 20,
     motif: /^\d(\+\d)+$/,
     message: "disposition « 2+2 » attendue",
   }),
-  rangees: entier({ min: 1, max: 1000 }),
+  rangees: entier({ min: 1, max: 100 }),
 });
 
 const options = objetStrict({ venteEnLigne: booleen, fusionAuto: booleen });
@@ -101,8 +101,8 @@ export const creerLigne = objetStrict({
   origineGareId: idTexte,
   destinationGareId: idTexte,
   tarifs,
-  arrets: tableau(texte({ min: 1, max: 100 }), { max: 30 }),
-  capacite: entier({ min: 1, max: 1000 }),
+  arrets: tableau(texte({ min: 1, max: 100 }), { max: 40 }),
+  capacite: entier({ min: 1, max: 200 }),
   signature,
 });
 
@@ -110,7 +110,7 @@ export const modifierLigne = objetStrict({
   ligneId: idTexte,
   departs: optionnel(tableau(departEditable, { max: 100 })),
   tarifs: optionnel(tarifs),
-  arrets: optionnel(tableau(arretModifie, { max: 30 })),
+  arrets: optionnel(tableau(arretModifie, { max: 40 })),
   plan: optionnel(plan),
   options: optionnel(options),
   effetDu: optionnel(jour),

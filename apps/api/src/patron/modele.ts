@@ -210,68 +210,6 @@ export interface ChangementMembre {
   droits?: Droits;
 }
 
-/* ------------------------------------------------------------------ lignes */
-
-export interface ArretLigne {
-  nom: string;
-  km: number;
-  montee: boolean;
-}
-
-export interface HoraireLigne {
-  id: string;
-  heure: string;
-  classe: "classique" | "vip";
-  prix: number;
-  actif: boolean;
-  note: string | null;
-  jours: string[];
-}
-
-export interface PlanLigne {
-  capacite: number;
-  disposition: string;
-  rangees: number;
-}
-
-export interface LigneFait {
-  id: string;
-  code: string;
-  origine: { id: string; nom: string; ville: string };
-  destination: { id: string; nom: string; ville: string };
-  tarifs: c.Tarifs;
-  /** Tous les arrêts, origine et terminus compris, dans l'ordre. */
-  arrets: ArretLigne[];
-  /** Le plan réglé, ou `null` : la ligne n'a jamais été réglée (valeurs par défaut). */
-  plan: PlanLigne | null;
-  options: OptionsLigne;
-  horaires: HoraireLigne[];
-  /** Une modification datée en attente de son jour d'effet. */
-  brouillon: { commande: CommandeLigne; effetDu: string } | null;
-}
-
-/** Le corps de `PUT /patron/reglages/lignes/:ligneId`, sans la signature. */
-export type CommandeLigne = Omit<c.ModifierLigne, "signature">;
-
-export interface ChangementLigne {
-  departs?: Array<Omit<HoraireLigne, "id"> & { id: string | null }>;
-  tarifs?: c.Tarifs;
-  /** Tous les arrêts de la ligne, origine et terminus compris, avec leurs kilomètres. */
-  arrets?: ArretLigne[];
-  plan?: PlanLigne;
-  options?: OptionsLigne;
-}
-
-export interface NouvelleLigne {
-  id: string;
-  code: string;
-  origineGareId: string;
-  destinationGareId: string;
-  tarifs: c.Tarifs;
-  arrets: ArretLigne[];
-  plan: PlanLigne;
-}
-
 /* ------------------------------------------------------------------ règles et comptes mobile money */
 
 export type OperateurMomo = c.OperateurMomo;

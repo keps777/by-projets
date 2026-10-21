@@ -131,6 +131,10 @@ export class PatronController {
 /**
  * Les réglages du patron. Toute écriture porte la signature PIN du patron dans son corps (`commandeSignee`
  * des contrats) ; sans elle : 401 `PIN_REQUIS`. Chaque écriture, acceptée ou refusée, entre au journal d'audit.
+ *
+ * Les trois routes des lignes (`GET|PUT /patron/reglages/lignes/:ligneId`, `POST /patron/reglages/lignes`) ne sont
+ * pas d'ici : elles appartiennent au module administration (`LignesPatronController`), qui possède les lignes, leurs
+ * horaires et la génération des départs.
  */
 @ApiTags("Patron · réglages")
 @Controller("patron/reglages")
@@ -147,58 +151,6 @@ export class ReglagesPatronController {
   })
   accueil(@UtilisateurCourant() u: Utilisateur): Promise<c.Reglages> {
     return this.reglages.accueil(u);
-  }
-
-  @Roles("patron")
-  @Get("lignes/:ligneId")
-  @Header("Cache-Control", "no-store")
-  @ApiOperation({
-    operationId: "patron.reglages.ligne",
-    summary: "Une ligne à modifier : départs, tarifs, arrêts, plan de sièges, options",
-    description: "Réponse conforme au contrat `LigneEditable`.",
-  })
-  @ApiResponse({ status: 404, description: "Ligne inconnue (`LIGNE_INCONNUE`)" })
-  ligne(
-    @Param("ligneId") ligneId: string,
-    @UtilisateurCourant() u: Utilisateur,
-  ): Promise<c.LigneEditable> {
-    return this.reglages.ligne(u, ligneId);
-  }
-
-  @Roles("patron")
-  @Put("lignes/:ligneId")
-  @HttpCode(200)
-  @ApiOperation({
-    operationId: "patron.reglages.ligne.modifier",
-    summary: "Publier les modifications d'une ligne, tout de suite ou à la date d'effet",
-    description:
-      "Corps `ModifierLigne`, signé par le PIN. Avec `effetDu` dans le futur (90 jours au plus), la " +
-      "modification attend son jour et la ligne garde son état actuel d'ici là.",
-  })
-  @ApiResponse({ status: 200, description: "`LignePubliee`" })
-  modifierLigne(
-    @Param("ligneId") ligneId: string,
-    @Body() corps: unknown,
-    @UtilisateurCourant() u: Utilisateur,
-  ): Promise<c.LignePubliee> {
-    return this.reglages.modifierLigne(u, ligneId, corps);
-  }
-
-  @Roles("patron")
-  @Post("lignes")
-  @HttpCode(201)
-  @ApiOperation({
-    operationId: "patron.reglages.ligne.creer",
-    summary: "Ajouter une ligne entre deux gares de la compagnie",
-    description:
-      "Corps `CreerLigne`, signé par le PIN. 409 `LIGNE_EXISTANTE` si le couple de gares a déjà sa ligne.",
-  })
-  @ApiResponse({ status: 201, description: "`LignePubliee`" })
-  creerLigne(
-    @Body() corps: unknown,
-    @UtilisateurCourant() u: Utilisateur,
-  ): Promise<c.LignePubliee> {
-    return this.reglages.creerLigne(u, corps);
   }
 
   @Roles("patron")

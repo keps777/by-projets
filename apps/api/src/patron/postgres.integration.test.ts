@@ -272,83 +272,53 @@ describe.skipIf(!URL_BASE_TEST)("PostgreSQL réel · espace patron, l'API de bou
     });
   });
 
-  describe("lignes", () => {
+  describe("lignes (propriété du module administration)", () => {
     const url = () => `/patron/reglages/lignes/${ligneId}`;
 
-    it("publie tarifs, arrêts, départs, plan et options, puis les relit", async () => {
-      const r = await t
+    it("le lot Da n'a plus de tables de lignes : `ligne_reglage` et `ligne_horaire` n'existent pas", async () => {
+      const { rows } = await sql.query(
+        `SELECT to_regclass('ligne_reglage') AS reglage, to_regclass('ligne_horaire') AS horaire,
+                to_regclass('reglage_ligne') AS reglage_de, to_regclass('horaire_ligne') AS horaire_de`,
+      );
+      expect(rows[0]).toEqual({
+        reglage: null,
+        horaire: null,
+        reglage_de: "reglage_ligne",
+        horaire_de: "horaire_ligne",
+      });
+    });
+
+    it("l'accueil des réglages lit `horaire_ligne` et `reglage_ligne` par l'administration, brouillon échu compris", async () => {
+      const pub = await t
         .http()
         .put(url())
         .set(auth(jeton))
         .send({
           ligneId,
           tarifs: { classique: 8500, vip: 12_500, bagage: 600 },
-          arrets: [
-            { nom: "Édéa", montee: true },
-            { nom: "Makak", montee: false },
-          ],
-          departs: [
-            depart(null, "06:00", { prix: 8500 }),
-            depart(null, "09:15", { prix: 8500, note: "soute colis" }),
-          ],
-          plan: { capacite: 40, disposition: "2+2", rangees: 10 },
-          options: { venteEnLigne: true, fusionAuto: true },
+          arrets: [{ nom: "Édéa", montee: true }],
+          departs: [depart(null, "06:00", { prix: 8500 }), depart(null, "09:15", { prix: 8500 })],
           signature: signature(),
         });
-      expect(r.status, JSON.stringify(r.body)).toBe(200);
-      const lu = patron.LignePublieeSchema.parse(r.body);
-      expect(lu.ligne.tarifs.classique).toBe(8500);
-      expect(lu.ligne.departs.map((d) => d.heure)).toEqual(["06:00", "09:15"]);
+      expect(pub.status, JSON.stringify(pub.body)).toBe(200);
+      expect(await prisma.horaireLigne.count({ where: { ligneId, actif: true } })).toBe(2);
 
-      const base = await prisma.ligne.findUniqueOrThrow({ where: { id: ligneId } });
-      expect(base.tarifClassique).toBe(8500);
-      expect(await prisma.ligneHoraire.count({ where: { ligneId } })).toBe(2);
-      expect(await prisma.ligneReglage.findUniqueOrThrow({ where: { ligneId } })).toMatchObject({
-        disposition: "2+2",
-        rangees: 10,
-        fusionAuto: true,
-      });
-      const relu = patron.LigneEditableSchema.parse(
-        (await t.http().get(url()).set(auth(jeton))).body,
-      );
-      expect(relu.arrets.map((a) => a.nom)).toContain("Édéa");
-      expect(relu.departs).toHaveLength(2);
-    });
+      const accueil = async () =>
+        patron.ReglagesSchema.parse((await t.http().get("/patron/reglages").set(auth(jeton))).body)
+          .lignes;
+      expect(await accueil()).toEqual([
+        expect.objectContaining({
+          id: ligneId,
+          nom: "Douala → Yaoundé",
+          nbDeparts: 2,
+          tarifs: { classique: 8500, vip: 12_500, bagage: 600 },
+          arrets: ["Édéa"],
+        }),
+      ]);
 
-    it("refuse deux départs identiques, un départ d'une autre ligne et une ligne d'une autre compagnie", async () => {
-      const doublon = await t
-        .http()
-        .put(url())
-        .set(auth(jeton))
-        .send({
-          ligneId,
-          departs: [depart(null, "07:00"), depart(null, "07:00")],
-          signature: signature(),
-        });
-      expect(doublon.status).toBe(422);
-      expect(doublon.body.code).toBe("DEPART_EN_DOUBLE");
-      expect(await prisma.ligneHoraire.count({ where: { ligneId } })).toBe(2);
-
-      const autreLigne = await fx.ligne(
-        autreCompagnie.id,
-        autreCompagnie.gare.id,
-        (await fx.gare(autreCompagnie.id)).id,
-      );
-      const r = await t
-        .http()
-        .put(`/patron/reglages/lignes/${autreLigne.id}`)
-        .set(auth(jeton))
-        .send({
-          ligneId: autreLigne.id,
-          tarifs: { classique: 1, vip: 1, bagage: 1 },
-          signature: signature(),
-        });
-      expect(r.status).toBe(404);
-    });
-
-    it("une modification « dès lundi » reste en brouillon, puis entre en vigueur au jour dit", async () => {
+      // Une modification « dès lundi » : l'accueil montre l'état publié tant que le jour n'est pas venu…
       const lundi = "2027-01-11";
-      const r = await t
+      const prog = await t
         .http()
         .put(url())
         .set(auth(jeton))
@@ -358,77 +328,33 @@ describe.skipIf(!URL_BASE_TEST)("PostgreSQL réel · espace patron, l'API de bou
           effetDu: lundi,
           signature: signature(),
         });
-      expect(r.status, JSON.stringify(r.body)).toBe(200);
-      const lu = patron.LignePublieeSchema.parse(r.body);
-      expect(lu.ligne.tarifs.classique).toBe(8500);
-      expect(lu.ligne.brouillon.modifications).toBe(1);
-      const reglage = await prisma.ligneReglage.findUniqueOrThrow({ where: { ligneId } });
-      expect(reglage.brouillon).not.toBeNull();
-      expect(reglage.effetDu?.toISOString().slice(0, 10)).toBe(lundi);
-      expect(
-        await erreurSql(`UPDATE ligne_reglage SET "effetDu" = NULL WHERE "ligneId" = $1`, [
-          ligneId,
-        ]),
-      ).toMatch(/ligne_reglage_brouillon_et_effet/);
-
+      expect(prog.status, JSON.stringify(prog.body)).toBe(200);
+      expect((await accueil())[0]?.tarifs.classique).toBe(8500);
+      // … puis la met en vigueur sans que la ligne soit rouverte.
       t.horloge.avancer(7 * 24 * 3_600_000);
       try {
-        const apres = patron.LigneEditableSchema.parse(
-          (await t.http().get(url()).set(auth(jeton))).body,
-        );
-        expect(apres.tarifs.classique).toBe(7000);
-        expect(apres.brouillon.modifications).toBe(0);
-        const fin = await prisma.ligneReglage.findUniqueOrThrow({ where: { ligneId } });
-        expect(fin.brouillon).toBeNull();
-        expect(fin.effetDu).toBeNull();
-        expect(
-          (await prisma.ligne.findUniqueOrThrow({ where: { id: ligneId } })).tarifClassique,
-        ).toBe(7000);
+        expect((await accueil())[0]?.tarifs.classique).toBe(7000);
+        const reglage = await prisma.reglageLigne.findUniqueOrThrow({ where: { ligneId } });
+        expect(reglage.brouillon).toBeNull();
+        expect(reglage.effetDu).toBeNull();
       } finally {
         t.horloge.avancer(-7 * 24 * 3_600_000);
       }
     });
 
-    it("crée une ligne entre deux gares, une seule fois même à deux requêtes simultanées", async () => {
-      const corps = () => ({
-        origineGareId: mvan.id,
-        destinationGareId: akwa.id,
-        tarifs: { classique: 8000, vip: 12_000, bagage: 500 },
-        arrets: ["Édéa"],
-        capacite: 40,
-        signature: signature(),
-      });
-      const reponses = await Promise.all([
-        t.http().post("/patron/reglages/lignes").set(auth(jeton)).send(corps()),
-        t.http().post("/patron/reglages/lignes").set(auth(jeton)).send(corps()),
-      ]);
+    it("une ligne d'une autre compagnie reste invisible et intouchable", async () => {
+      const autreLigne = await fx.ligne(
+        autreCompagnie.id,
+        autreCompagnie.gare.id,
+        (await fx.gare(autreCompagnie.id)).id,
+      );
       expect(
-        reponses.map((r) => r.status).sort(),
-        JSON.stringify(reponses.map((r) => r.body)),
-      ).toEqual([201, 409]);
-      const cree = reponses.find((r) => r.status === 201)!;
-      const lu = patron.LignePublieeSchema.parse(cree.body);
-      expect(lu.ligne.nom).toBe("Yaoundé → Douala");
-      expect(
-        await prisma.ligne.count({
-          where: { compagnieId, origineGareId: mvan.id, destinationGareId: akwa.id },
-        }),
-      ).toBe(1);
-    });
-
-    it("la base refuse une heure, un jour ou une disposition mal formés", async () => {
-      const [h] = await prisma.ligneHoraire.findMany({ where: { ligneId }, take: 1 });
-      expect(
-        await erreurSql(`UPDATE ligne_horaire SET heure = '25:00' WHERE id = $1`, [h!.id]),
-      ).toMatch(/ligne_horaire_heure_forme/);
-      expect(
-        await erreurSql(`UPDATE ligne_horaire SET jours = ARRAY['xxx'] WHERE id = $1`, [h!.id]),
-      ).toMatch(/ligne_horaire_jours_connus/);
-      expect(
-        await erreurSql(`UPDATE ligne_reglage SET disposition = 'deux' WHERE "ligneId" = $1`, [
-          ligneId,
-        ]),
-      ).toMatch(/ligne_reglage_disposition_forme/);
+        (await t.http().get(`/patron/reglages/lignes/${autreLigne.id}`).set(auth(jeton))).status,
+      ).toBe(404);
+      const accueil = patron.ReglagesSchema.parse(
+        (await t.http().get("/patron/reglages").set(auth(jeton))).body,
+      );
+      expect(accueil.lignes.map((l) => l.id)).not.toContain(autreLigne.id);
     });
   });
 

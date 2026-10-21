@@ -2,23 +2,6 @@
 -- aucune table existante n'est modifiée. Les valeurs permises reprennent celles des contrats du patron
 -- (`packages/contrats/src/patron/reglages.ts`).
 
--- ------------------------------------------------------------------ lignes : plan de sièges et brouillon
-
-ALTER TABLE "ligne_reglage"
-  ADD CONSTRAINT "ligne_reglage_ligne_fkey" FOREIGN KEY ("ligneId") REFERENCES "ligne"("id") ON DELETE CASCADE,
-  ADD CONSTRAINT "ligne_reglage_disposition_forme" CHECK ("disposition" ~ '^[0-9](\+[0-9])+$'),
-  ADD CONSTRAINT "ligne_reglage_plan_positif" CHECK ("capacite" > 0 AND "rangees" > 0),
-  -- Un brouillon n'existe qu'avec son jour d'effet, et inversement.
-  ADD CONSTRAINT "ligne_reglage_brouillon_et_effet" CHECK (("brouillon" IS NULL) = ("effetDu" IS NULL));
-
--- ------------------------------------------------------------------ lignes : départs récurrents
-
-ALTER TABLE "ligne_horaire"
-  ADD CONSTRAINT "ligne_horaire_ligne_fkey" FOREIGN KEY ("ligneId") REFERENCES "ligne"("id") ON DELETE CASCADE,
-  ADD CONSTRAINT "ligne_horaire_heure_forme" CHECK ("heure" ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$'),
-  ADD CONSTRAINT "ligne_horaire_prix_positif" CHECK ("prix" >= 0),
-  ADD CONSTRAINT "ligne_horaire_jours_connus" CHECK ("jours" <@ ARRAY['lun', 'mar', 'mer', 'jeu', 'ven', 'sam', 'dim']::TEXT[]);
-
 -- ------------------------------------------------------------------ équipe
 
 ALTER TABLE "personne_reglage"

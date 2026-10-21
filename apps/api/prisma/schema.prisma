@@ -3108,51 +3108,18 @@ model CompteMomoCompagnie {
 
 /**
  * ==================================================================================================
- * LOT Da · réglages du patron (lignes, équipe, règles de l'agence, comptes mobile money) et salle de
- * contrôle. Migrations 20261018001000 et 20261018001010. Bloc contigu en fin de fichier pour faciliter
- * la fusion avec les autres lots. Pas de relation Prisma vers les tables des lots précédents : les clés
- * étrangères sont posées en SQL (« SQL : ») et les adaptateurs écrivent des identifiants.
+ * LOT Da · réglages du patron (équipe, règles de l'agence, comptes mobile money) et salle de contrôle.
+ * Migrations 20261018001000 et 20261018001010. Bloc contigu en fin de fichier pour faciliter la fusion avec
+ * les autres lots. Pas de relation Prisma vers les tables des lots précédents : les clés étrangères sont
+ * posées en SQL (« SQL : ») et les adaptateurs écrivent des identifiants.
+ *
+ * Les lignes (horaires récurrents, plan de sièges, options, modifications programmées) ne sont PAS dans ce
+ * bloc : elles appartiennent au lot De (`horaire_ligne`, `reglage_ligne`, bloc « LOT De · administration »
+ * plus bas). Le lot Da avait d'abord ses propres tables `ligne_reglage` et `ligne_horaire` ; elles ont été
+ * retirées avant toute mise en production (réconciliation du lot Df), le module patron lit les lignes par
+ * `AdministrationModule`.
  * ==================================================================================================
  */
-
-/// Réglages d'une ligne qui n'ont pas de colonne dans `ligne` : plan de sièges, interrupteurs, et la
-/// modification datée qui attend son jour d'effet. Une ligne sans cette ligne a les valeurs par défaut
-/// (2+2, vente en ligne, pas de fusion). SQL : clé étrangère vers `ligne` (suppression en cascade),
-/// disposition de la forme « 2+2 », capacité et rangées positives, brouillon et jour d'effet ensemble.
-model LigneReglage {
-  ligneId      String    @id @db.Uuid
-  disposition  String
-  rangees      Int
-  capacite     Int
-  venteEnLigne Boolean   @default(true)
-  fusionAuto   Boolean   @default(false)
-  /// La commande « modifier la ligne » (sans signature) qui prendra effet à `effetDu`.
-  brouillon    Json?
-  effetDu      DateTime? @db.Date
-  modifieA     DateTime  @db.Timestamptz(3)
-  modifiePar   String?   @db.Uuid
-
-  @@map("ligne_reglage")
-}
-
-/// Un départ récurrent d'une ligne (« 06:00 classique, tous les jours »). Ce n'est pas un départ daté
-/// (`depart`) : c'est le modèle d'après lequel le planning créera les départs. SQL : clé étrangère vers
-/// `ligne` (cascade), heure `HH:MM`, prix positif, jours parmi lun…dim.
-model LigneHoraire {
-  id      String       @id @default(uuid(7)) @db.Uuid
-  ligneId String       @db.Uuid
-  heure   String
-  classe  ClasseBillet
-  prix    Int
-  actif   Boolean      @default(true)
-  note    String?
-  /// Vide = tous les jours.
-  jours   String[]     @default([])
-  creeA   DateTime     @default(now()) @db.Timestamptz(3)
-
-  @@index([ligneId, heure])
-  @@map("ligne_horaire")
-}
 
 /// Ce que le patron règle sur une personne de l'équipe et que `personne` ne porte pas : opérateur du
 /// numéro, salaire, jour de paie, droits. SQL : clé étrangère vers `personne` (cascade), opérateur
@@ -3395,6 +3362,9 @@ model ImpressionAgence {
  * existantes (`ligne`, `appareil_sync`, `personne`) et les garde-fous (CHECK, index uniques partiels) sont
  * écrits en SQL dans la migration `20261018001000_lot_de_administration`, sans modifier les modèles
  * existants. Détail : `src/administration/README.md`.
+ *
+ * Ce lot est le seul propriétaire des horaires et des réglages d'une ligne (`horaire_ligne`, `reglage_ligne`) :
+ * le module patron les lit par `LignesService.resumes`, il n'a plus de tables de lignes (voir le bloc LOT Da).
  */
 
 /// Un horaire récurrent d'une ligne (« 06:30, classique, le mardi seulement »). C'est le modèle à partir

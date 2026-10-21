@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { configTest } from "../socle/testing/app-test";
 import { VerificationStockageAdministration } from "./administration.module";
+import { chargerConfigAdministration } from "./config";
 import type {
   AnnuaireAdmin,
   Lignes,
@@ -77,6 +78,29 @@ const garde = (
     p.registre,
     p.ordres,
   );
+
+describe("configuration du balayage des modifications de ligne", () => {
+  it("lit ADMIN_BALAYAGE_MS, éteint par défaut en test, toutes les cinq minutes sinon", () => {
+    expect(chargerConfigAdministration({ NODE_ENV: "test" }).balayageMs).toBe(0);
+    expect(chargerConfigAdministration({}).balayageMs).toBe(300_000);
+    expect(chargerConfigAdministration({ ADMIN_BALAYAGE_MS: "60000" }).balayageMs).toBe(60_000);
+    expect(
+      chargerConfigAdministration({ NODE_ENV: "test", ADMIN_BALAYAGE_MS: "0" }).balayageMs,
+    ).toBe(0);
+  });
+
+  it("refuse une valeur inexploitable en nommant la variable", () => {
+    expect(() => chargerConfigAdministration({ ADMIN_BALAYAGE_MS: "souvent" })).toThrow(
+      /ADMIN_BALAYAGE_MS/,
+    );
+    expect(() => chargerConfigAdministration({ ADMIN_BALAYAGE_MS: "-5" })).toThrow(
+      /ADMIN_BALAYAGE_MS/,
+    );
+    expect(() => chargerConfigAdministration({ ADMIN_BALAYAGE_MS: "1.5" })).toThrow(
+      /ADMIN_BALAYAGE_MS/,
+    );
+  });
+});
 
 describe("VerificationStockageAdministration", () => {
   it("refuse la production tant qu'un port est en mémoire, et nomme chacun", () => {

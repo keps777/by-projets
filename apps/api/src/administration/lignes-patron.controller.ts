@@ -21,6 +21,7 @@ export class LignesPatronController {
   @Get(":ligneId")
   @Header("Cache-Control", "no-store")
   @ApiOperation({
+    operationId: "patron.reglages.ligne",
     summary: "Patron : une ligne éditable (départs récurrents, tarifs, arrêts, plan, options)",
     description:
       "`LigneEditable` des contrats patron. Un brouillon programmé « dès le … » s'applique à la première lecture de ce jour-là.",
@@ -35,10 +36,12 @@ export class LignesPatronController {
 
   @Put(":ligneId")
   @ApiOperation({
+    operationId: "patron.reglages.ligne.modifier",
     summary: "Patron : publier les modifications d'une ligne, tout de suite ou dès un jour futur",
     description:
-      "Corps `ModifierLigne` signé par le PIN. `effetDu` futur : les sections modifiées restent en brouillon et " +
-      "s'appliquent ce jour-là. Le prix d'un départ vient du tarif de sa classe (le `prix` reçu est ignoré).",
+      "Corps `ModifierLigne` signé par le PIN. `effetDu` futur (90 jours au plus, sinon 422 `EFFET_TROP_LOIN`) : les " +
+      "sections modifiées restent en brouillon et s'appliquent ce jour-là. Le prix d'un départ vient du tarif de sa " +
+      "classe (le `prix` reçu est ignoré). Une commande sans aucune section : 422 `COMMANDE_VIDE`.",
   })
   @ApiResponse({
     status: 200,
@@ -62,6 +65,7 @@ export class LignesPatronController {
 
   @Post()
   @ApiOperation({
+    operationId: "patron.reglages.ligne.creer",
     summary: "Patron : créer une ligne entre deux gares",
     description:
       "Corps `CreerLigne` signé par le PIN. Le code de la ligne est celui des deux gares (DLAYDE).",

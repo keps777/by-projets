@@ -2,6 +2,8 @@ import "reflect-metadata";
 import { Test } from "@nestjs/testing";
 import type { NestExpressApplication } from "@nestjs/platform-express";
 import request from "supertest";
+import { AnnuaireAdminMemoire, LignesMemoire, ParcBusMemoire } from "../../administration/memoire";
+import { AnnuaireAdmin, Lignes, ParcBus } from "../../administration/ports";
 import { SessionsMemoire } from "../../caisse/memoire";
 import { ReglesMemoire } from "../../caisse/memoire";
 import { SessionsCaisse, ReglesAgence, type SessionStockee } from "../../caisse/ports";
@@ -38,7 +40,6 @@ import {
   AlertesEcritesMemoire,
   EquipePatronMemoire,
   ExploitationPatronMemoire,
-  LignesPatronMemoire,
   ReferentielPatronMemoire,
   ReglesPatronMemoire,
 } from "../memoire";
@@ -46,11 +47,10 @@ import {
   AlertesEcrites,
   EquipePatron,
   ExploitationPatron,
-  LignesPatron,
   ReferentielPatron,
   ReglesPatron,
 } from "../ports";
-import type { MembrePatron, LigneFait } from "../modele";
+import type { MembrePatron } from "../modele";
 import { droitsParDefaut } from "../modele";
 
 /** Identifiants fixes du jeu d'essai. */
@@ -105,7 +105,10 @@ export async function creerAppPatronTest() {
   const exploitation = app.get(ExploitationPatron) as ExploitationPatronMemoire;
   const alertes = app.get(AlertesEcrites) as AlertesEcritesMemoire;
   const equipe = app.get(EquipePatron) as EquipePatronMemoire;
-  const lignes = app.get(LignesPatron) as LignesPatronMemoire;
+  // Les lignes sont celles du module administration (seul propriétaire de `ligne`, `horaire_ligne`, `reglage_ligne`).
+  const lignes = app.get(Lignes) as LignesMemoire;
+  const annuaireAdmin = app.get(AnnuaireAdmin) as AnnuaireAdminMemoire;
+  const parcBus = app.get(ParcBus) as ParcBusMemoire;
   const regles = app.get(ReglesPatron) as ReglesPatronMemoire;
   const ventes = app.get(VentesBillets) as VentesBilletsMemoire;
   const colis = app.get(ActiviteColis) as ActiviteColisMemoire;
@@ -269,44 +272,68 @@ export async function creerAppPatronTest() {
         gareNom: "Bafoussam",
       }),
     );
-    const ligne: LigneFait = {
-      id: LIGNE_DLA_YDE,
-      code: "DLAYDE",
-      origine: { id: GARE_AKWA, nom: "Akwa", ville: "Douala" },
-      destination: { id: GARE_MVAN, nom: "Mvan", ville: "Yaoundé" },
-      tarifs: { classique: 3500, vip: 5000, bagage: 500 },
-      arrets: [
-        { nom: "Douala", km: 0, montee: true },
-        { nom: "Édéa", km: 60, montee: true },
-        { nom: "Yaoundé", km: 240, montee: false },
-      ],
-      plan: null,
-      options: { venteEnLigne: true, fusionAuto: false },
-      horaires: [
+    // Annuaire de l'administration : la compagnie et ses deux gares (les lignes s'y réfèrent).
+    annuaireAdmin.declarerCompagnie({ id: COMPAGNIE, code: "ALP", nom: "Alpha Voyages" });
+    annuaireAdmin.declarerGare({
+      id: GARE_AKWA,
+      compagnieId: COMPAGNIE,
+      code: "DLA",
+      nom: "Akwa",
+      ville: "Douala",
+    });
+    annuaireAdmin.declarerGare({
+      id: GARE_MVAN,
+      compagnieId: COMPAGNIE,
+      code: "YDE",
+      nom: "Mvan",
+      ville: "Yaoundé",
+    });
+    // Le plus grand bus de la compagnie fixe le plan de sièges d'une ligne jamais réglée : 40 places, 2+2.
+    void parcBus.creer({
+      compagnieId: COMPAGNIE,
+      immatriculation: "LT 412 AB",
+      capacite: 40,
+      capaciteSoute: 0,
+      classe: "classique",
+      modele: "Coaster",
+      annee: 2020,
+    });
+    lignes.declarer(
+      {
+        id: LIGNE_DLA_YDE,
+        compagnieId: COMPAGNIE,
+        code: "DLAYDE",
+        origineGareId: GARE_AKWA,
+        destinationGareId: GARE_MVAN,
+        tarifs: { classique: 3500, vip: 5000, bagage: 500 },
+        dureeMinutes: 240,
+        arrets: [
+          { nom: "Douala", kmDepuisOrigine: 0, montee: true },
+          { nom: "Édéa", kmDepuisOrigine: 60, montee: true },
+          { nom: "Yaoundé", kmDepuisOrigine: 240, montee: false },
+        ],
+      },
+      [
         {
           id: "00000000-0000-4000-8000-0000000000b0",
+          ligneId: LIGNE_DLA_YDE,
           heure: "06:00",
           classe: "classique",
-          prix: 3500,
           actif: true,
           note: null,
           jours: [],
         },
         {
           id: "00000000-0000-4000-8000-0000000000b1",
+          ligneId: LIGNE_DLA_YDE,
           heure: "10:00",
           classe: "classique",
-          prix: 3500,
           actif: true,
           note: "soute colis",
           jours: [],
         },
       ],
-      brouillon: null,
-    };
-    lignes.ajouter(COMPAGNIE, ligne);
-    lignes.gares.set(GARE_AKWA, { id: GARE_AKWA, nom: "Akwa", ville: "Douala" });
-    lignes.gares.set(GARE_MVAN, { id: GARE_MVAN, nom: "Mvan", ville: "Yaoundé" });
+    );
   }
 
   const http = () => request(app.getHttpServer());

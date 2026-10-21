@@ -20,6 +20,8 @@ export const DUREE_PAR_DEFAUT_MINUTES = 240;
 export const KM_PAR_TRONCON_INCONNU = 100;
 /** Au plus soixante-deux jours de départs générés en une fois. */
 export const JOURS_GENERES_MAX = 62;
+/** On ne programme pas une modification de ligne (« dès le … ») plus loin que ce nombre de jours. */
+export const HORIZON_PROGRAMMATION_JOURS = 90;
 
 /* ------------------------------------------------------------------ calendrier */
 
@@ -228,8 +230,27 @@ export function compterModifications(base: EtatLigne, cible: EtatLigne): number 
 }
 
 export interface ErreurEtat {
-  code: "ARRET_EN_DOUBLE" | "HORAIRE_EN_DOUBLE" | "PLAN_INCOHERENT";
+  code: "ARRET_EN_DOUBLE" | "HORAIRE_EN_DOUBLE" | "HORAIRE_CITE_DEUX_FOIS" | "PLAN_INCOHERENT";
   message: string;
+}
+
+/**
+ * Un plan de sièges est cohérent si les rangées portent la capacité (pas plus de places que de sièges tracés) sans
+ * qu'une rangée entière reste de trop : `(rangées − 1) × sièges par rangée ≤ capacité ≤ rangées × sièges par rangée`.
+ */
+export function controlerPlan(plan: PlanLigne): ErreurEtat | null {
+  const parRangee = plan.disposition.split("+").reduce((somme, n) => somme + Number(n), 0);
+  if (
+    parRangee <= 0 ||
+    plan.capacite > parRangee * plan.rangees ||
+    plan.capacite < parRangee * (plan.rangees - 1)
+  ) {
+    return {
+      code: "PLAN_INCOHERENT",
+      message: `${plan.rangees} rangées de ${plan.disposition} ne correspondent pas à ${plan.capacite} places`,
+    };
+  }
+  return null;
 }
 
 /** Cohérence d'un état voulu ; `null` s'il est valable. */
@@ -242,6 +263,17 @@ export function controlerEtat(etat: EtatLigne): ErreurEtat | null {
     }
     noms.add(cle);
   }
+  const cites = new Set<string>();
+  for (const h of etat.horaires) {
+    if (h.id === null) continue;
+    if (cites.has(h.id)) {
+      return {
+        code: "HORAIRE_CITE_DEUX_FOIS",
+        message: "Un départ de la ligne n'est cité qu'une fois dans la liste",
+      };
+    }
+    cites.add(h.id);
+  }
   const heures = new Set<string>();
   for (const h of etat.horaires) {
     if (!h.actif) continue;
@@ -253,14 +285,7 @@ export function controlerEtat(etat: EtatLigne): ErreurEtat | null {
     }
     heures.add(h.heure);
   }
-  const parRangee = etat.plan.disposition.split("+").reduce((somme, n) => somme + Number(n), 0);
-  if (parRangee * etat.plan.rangees < etat.plan.capacite) {
-    return {
-      code: "PLAN_INCOHERENT",
-      message: `${etat.plan.rangees} rangées de ${etat.plan.disposition} ne portent pas ${etat.plan.capacite} places`,
-    };
-  }
-  return null;
+  return controlerPlan(etat.plan);
 }
 
 /** Jours dans l'ordre de la semaine, sans doublon. */

@@ -9,6 +9,7 @@ import { AdministrationController } from "./administration.controller";
 import { AppareilsController } from "./appareils.controller";
 import { AppareilsService } from "./appareils.service";
 import { BusService } from "./bus.service";
+import { CONFIG_ADMINISTRATION, chargerConfigAdministration } from "./config";
 import { DepartsService } from "./departs.service";
 import { KiosqueService } from "./kiosque.service";
 import { LignesPatronController } from "./lignes-patron.controller";
@@ -29,6 +30,7 @@ import {
   ProgrammePrisma,
   RegistreAppareilsPrisma,
 } from "./postgres";
+import { PlanificateurLignes } from "./planificateur";
 import {
   AnnuaireAdmin,
   Lignes,
@@ -97,6 +99,9 @@ function port<T>(
  * génération récurrente des départs, bus, équipages, déclaration et enrôlement des appareils, effacement à distance
  * du kiosque (`/admin/*` et `/appareils/*`). Voir `README.md`.
  *
+ * **Propriétaire des lignes** : leurs horaires (`horaire_ligne`), leurs réglages (`reglage_ligne`) et les départs qu'on
+ * en génère. Le module patron lit les lignes par `LignesService.resumes` (accueil des réglages), jamais par SQL.
+ *
  * Importé par `AppModule`. Les ports suivent `API_STOCKAGE` (voir `socle/db/stockage.ts`).
  */
 @Module({
@@ -110,6 +115,13 @@ function port<T>(
     KiosqueService,
     VerificateurSignature,
     VerificationStockageAdministration,
+    PlanificateurLignes,
+    {
+      provide: CONFIG_ADMINISTRATION,
+      inject: [CONFIG],
+      useFactory: (config: AppConfig) =>
+        chargerConfigAdministration({ ...process.env, NODE_ENV: config.env }),
+    },
     { provide: Horloge, useClass: HorlogeSysteme },
     port(AnnuaireAdmin, AnnuaireAdminPrisma, AnnuaireAdminMemoire),
     port(Lignes, LignesPrisma, LignesMemoire),
@@ -124,6 +136,8 @@ function port<T>(
     port(OrdresAppareils, OrdresAppareilsPrisma, OrdresAppareilsMemoire),
   ],
   exports: [
+    CONFIG_ADMINISTRATION,
+    PlanificateurLignes,
     LignesService,
     DepartsService,
     BusService,

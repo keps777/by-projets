@@ -272,6 +272,61 @@ export function contratPortsAdministration(
         });
       });
 
+      it("liste les lignes dont le brouillon est échu (toutes agences), et l'abandon le retire sans toucher à la ligne", async () => {
+        const a = await banc.nouvelleAgence();
+        const b = await banc.nouvelleAgence();
+        const la = await ligne(a);
+        const lb = await ligne(b);
+        await banc.lignes.programmer(
+          la.id,
+          { tarifs: { ...TARIFS, classique: 5000 } },
+          "2027-03-09",
+          PLAN,
+          OPTIONS,
+        );
+        await banc.lignes.programmer(
+          lb.id,
+          { tarifs: { ...TARIFS, classique: 5500 } },
+          "2027-03-20",
+          PLAN,
+          OPTIONS,
+        );
+        const echues = async (jour: string) =>
+          (await banc.lignes.echues(jour)).filter((e) => [la.id, lb.id].includes(e.ligneId));
+
+        expect(await echues("2027-03-08")).toEqual([]);
+        expect(await echues("2027-03-09")).toEqual([
+          { compagnieId: a.compagnie.id, ligneId: la.id },
+        ]);
+        expect(await echues("2027-03-31")).toEqual([
+          { compagnieId: a.compagnie.id, ligneId: la.id },
+          { compagnieId: b.compagnie.id, ligneId: lb.id },
+        ]);
+        expect(await banc.lignes.echues("pas un jour")).toEqual([]);
+
+        await banc.lignes.abandonnerBrouillon(la.id);
+        expect(await banc.lignes.reglage(la.id)).toMatchObject({
+          plan: PLAN,
+          brouillon: null,
+          effetDu: null,
+        });
+        expect((await banc.lignes.trouver(la.id))!.tarifs).toEqual(TARIFS);
+        expect(await echues("2027-03-31")).toEqual([
+          { compagnieId: b.compagnie.id, ligneId: lb.id },
+        ]);
+        // Publier une ligne efface aussi son brouillon : elle n'est plus échue.
+        await banc.lignes.publier(lb.id, {
+          tarifs: TARIFS,
+          arrets: lb.arrets,
+          plan: PLAN,
+          options: OPTIONS,
+          horaires: [],
+        });
+        expect(await echues("2027-03-31")).toEqual([]);
+        // Une ligne sans réglage, ou inconnue : rien à abandonner, pas d'erreur.
+        await banc.lignes.abandonnerBrouillon(randomUUID());
+      });
+
       it("republier l'état par défaut d'une ligne sans réglage crée son réglage", async () => {
         const a = await banc.nouvelleAgence();
         const l = await ligne(a);

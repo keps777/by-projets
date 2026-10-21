@@ -31,6 +31,7 @@ import {
   Programme,
   RegistreAppareils,
   type DeclarationAppareil,
+  type LigneEchue,
   type NouvelleLigne,
   type PublicationLigne,
   type ResultatAcquittement,
@@ -127,10 +128,15 @@ export class LignesMemoire extends Lignes implements StockageAdministration {
     return copie(creee);
   }
 
-  /** Déclare une ligne telle que le seed de développement ou la recette la pose (sans réglage). */
-  declarer(ligne: LigneAdmin, horaires: HoraireLigne[] = []): void {
+  /**
+   * Déclare une ligne telle que le seed de développement ou la recette la pose (sans réglage, sauf si `reglage`
+   * est donné) ; redéclarer une ligne repart de cet état, brouillon compris.
+   */
+  declarer(ligne: LigneAdmin, horaires: HoraireLigne[] = [], reglage?: ReglageLigne): void {
     this.lignes.set(ligne.id, copie(ligne));
     this.lesHoraires.set(ligne.id, copie(horaires));
+    if (reglage) this.reglages.set(ligne.id, copie(reglage));
+    else this.reglages.delete(ligne.id);
   }
 
   async horaires(ligneId: string): Promise<HoraireLigne[]> {
@@ -194,6 +200,23 @@ export class LignesMemoire extends Lignes implements StockageAdministration {
       brouillon: copie(sections),
       effetDu,
     });
+  }
+
+  async echues(jour: string): Promise<LigneEchue[]> {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(jour)) return [];
+    return [...this.reglages.values()]
+      .filter((r) => r.brouillon !== null && r.effetDu !== null && r.effetDu <= jour)
+      .flatMap((r) => {
+        const ligne = this.lignes.get(r.ligneId);
+        return ligne ? [{ ligne, effetDu: r.effetDu! }] : [];
+      })
+      .sort((a, b) => a.effetDu.localeCompare(b.effetDu) || a.ligne.id.localeCompare(b.ligne.id))
+      .map(({ ligne }) => ({ compagnieId: ligne.compagnieId, ligneId: ligne.id }));
+  }
+
+  async abandonnerBrouillon(ligneId: string): Promise<void> {
+    const actuel = this.reglages.get(ligneId);
+    if (actuel) this.reglages.set(ligneId, { ...actuel, brouillon: null, effetDu: null });
   }
 }
 

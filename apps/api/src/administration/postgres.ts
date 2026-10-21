@@ -34,6 +34,7 @@ import {
   Programme,
   RegistreAppareils,
   type DeclarationAppareil,
+  type LigneEchue,
   type NouvelleLigne,
   type PublicationLigne,
   type ResultatAcquittement,
@@ -370,6 +371,24 @@ export class LignesPrisma extends Lignes implements StockageAdministration {
         effetDu,
       },
       update: { brouillon: json(sections), effetDu, misAJourA: new Date() },
+    });
+  }
+
+  async echues(jour: string): Promise<LigneEchue[]> {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(jour)) return [];
+    // `effetDu` est un texte AAAA-MM-JJ (garanti par la base) : la comparaison de textes est celle des dates.
+    return this.prisma.$queryRaw<LigneEchue[]>`
+      SELECT l."compagnieId"::text AS "compagnieId", r."ligneId"::text AS "ligneId"
+      FROM "reglage_ligne" r JOIN "ligne" l ON l."id" = r."ligneId"
+      WHERE r."brouillon" IS NOT NULL AND r."effetDu" <= ${jour}
+      ORDER BY r."effetDu", r."ligneId"`;
+  }
+
+  async abandonnerBrouillon(ligneId: string): Promise<void> {
+    if (!estUuid(ligneId)) return;
+    await this.prisma.reglageLigne.updateMany({
+      where: { ligneId },
+      data: { brouillon: Prisma.DbNull, effetDu: null, misAJourA: new Date() },
     });
   }
 }

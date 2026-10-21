@@ -36,6 +36,7 @@ import {
   ProgrammePrisma,
   RegistreAppareilsPrisma,
 } from "./postgres";
+import { PlanificateurLignes } from "./planificateur";
 import {
   contratPortsAdministration,
   type AgenceDeTest,
@@ -52,8 +53,9 @@ let compteurAgences = 0;
 const code3 = (): string => {
   compteurAgences += 1;
   const n = compteurAgences;
-  return [n % 26, Math.floor(n / 26) % 26, Math.floor(n / 676) % 26]
-    .map((x) => String.fromCharCode(66 + (x % 25)))
+  // Trois lettres de B à Z en base 25 : deux appels ne donnent jamais le même code (15 625 agences au plus).
+  return [n % 25, Math.floor(n / 25) % 25, Math.floor(n / 625) % 25]
+    .map((x) => String.fromCharCode(66 + x))
     .join("");
 };
 
@@ -580,6 +582,239 @@ describe.skipIf(!URL_BASE_TEST)("PostgreSQL réel · administration", () => {
       } finally {
         await nouveau.fermer();
       }
+    });
+  });
+
+  /**
+   * Les réglages de ligne sur PostgreSQL : ce que le lot Da avait vérifié sur ses propres tables (`ligne_reglage`,
+   * `ligne_horaire`, retirées) est vérifié ici sur `horaire_ligne` et `reglage_ligne`, qui sont maintenant les seules.
+   */
+  describe("réglages de ligne sur PostgreSQL", () => {
+    let app: AppPg;
+    let jeton: string;
+    let ids: { compagnieId: string; origine: string; destination: string };
+    let ligneId: string;
+
+    beforeAll(async () => {
+      const a = await nouvelleAgence();
+      ids = { compagnieId: a.compagnie.id, origine: a.origine.id, destination: a.destination.id };
+      app = await creerAppPg({ url: base.url });
+      jeton = (
+        await app.compte("patron", { compagnieId: ids.compagnieId, telephone: "+237655188888" })
+      ).jeton;
+    }, 120_000);
+
+    afterAll(async () => {
+      await app?.fermer();
+    });
+
+    const auth = () => ({ Authorization: `Bearer ${jeton}` });
+    const signature = () => ({
+      pin: "482915",
+      methode: "pin",
+      signeA: new Date(app.horloge.maintenant().getTime() + 3_600_000)
+        .toISOString()
+        .replace("Z", "+01:00"),
+    });
+    const depart = (heure: string, extra: Record<string, unknown> = {}) => ({
+      id: null,
+      heure,
+      heureInitiale: null,
+      classe: "classique",
+      prix: 4000,
+      actif: true,
+      note: null,
+      jours: [] as string[],
+      nouveau: true,
+      ...extra,
+    });
+    const creation = () => ({
+      origineGareId: ids.origine,
+      destinationGareId: ids.destination,
+      tarifs: { classique: 4000, vip: 6000, bagage: 500 },
+      arrets: ["Édéa"],
+      capacite: 40,
+      signature: signature(),
+    });
+    const url = () => `/patron/reglages/lignes/${ligneId}`;
+
+    it("crée une ligne une seule fois, même à deux requêtes simultanées (201 puis 409 LIGNE_EXISTANTE)", async () => {
+      const reponses = await Promise.all([
+        app.http().post("/patron/reglages/lignes").set(auth()).send(creation()),
+        app.http().post("/patron/reglages/lignes").set(auth()).send(creation()),
+      ]);
+      expect(
+        reponses.map((r) => r.status).sort(),
+        JSON.stringify(reponses.map((r) => r.body)),
+      ).toEqual([201, 409]);
+      expect(reponses.find((r) => r.status === 409)!.body.code).toBe("LIGNE_EXISTANTE");
+      const cree = reponses.find((r) => r.status === 201)!;
+      ligneId = cree.body.ligne.id;
+      expect(cree.body.ligne.nom).toBe("Douala → Yaoundé");
+      expect(
+        await prisma.ligne.count({
+          where: {
+            compagnieId: ids.compagnieId,
+            origineGareId: ids.origine,
+            destinationGareId: ids.destination,
+          },
+        }),
+      ).toBe(1);
+      expect((await prisma.reglageLigne.findUniqueOrThrow({ where: { ligneId } })).capacite).toBe(
+        40,
+      );
+    });
+
+    it("publie tarifs, arrêts, départs, plan et options d'un coup, puis les relit", async () => {
+      const r = await app
+        .http()
+        .put(url())
+        .set(auth())
+        .send({
+          ligneId,
+          tarifs: { classique: 8500, vip: 12_500, bagage: 600 },
+          arrets: [
+            { nom: "Édéa", montee: true },
+            { nom: "Makak", montee: false },
+          ],
+          departs: [depart("06:00"), depart("09:15", { note: "soute colis" })],
+          plan: { capacite: 40, disposition: "2+2", rangees: 10 },
+          options: { venteEnLigne: true, fusionAuto: true },
+          signature: signature(),
+        });
+      expect(r.status, JSON.stringify(r.body)).toBe(200);
+      expect(r.body.ligne.departs.map((d: { heure: string }) => d.heure)).toEqual([
+        "06:00",
+        "09:15",
+      ]);
+      expect(
+        (await prisma.ligne.findUniqueOrThrow({ where: { id: ligneId } })).tarifClassique,
+      ).toBe(8500);
+      expect(await prisma.horaireLigne.count({ where: { ligneId } })).toBe(2);
+      expect(await prisma.reglageLigne.findUniqueOrThrow({ where: { ligneId } })).toMatchObject({
+        disposition: "2+2",
+        rangees: 10,
+        fusionAuto: true,
+      });
+      const relu = await app.http().get(url()).set(auth());
+      expect(relu.body.arrets.map((a: { nom: string }) => a.nom)).toEqual(["Édéa", "Makak"]);
+      expect(relu.body.departs).toHaveLength(2);
+    });
+
+    it("refuse deux départs à la même heure, une commande vide, un plan incohérent et une programmation trop lointaine", async () => {
+      const envoyer = (corps: Record<string, unknown>) =>
+        app
+          .http()
+          .put(url())
+          .set(auth())
+          .send({ ligneId, signature: signature(), ...corps });
+      const double = await envoyer({ departs: [depart("07:00"), depart("07:00")] });
+      expect([double.status, double.body.code]).toEqual([422, "HORAIRE_EN_DOUBLE"]);
+      expect(await prisma.horaireLigne.count({ where: { ligneId } })).toBe(2);
+      const vide = await envoyer({});
+      expect([vide.status, vide.body.code]).toEqual([422, "COMMANDE_VIDE"]);
+      const plan = await envoyer({ plan: { capacite: 40, disposition: "2+2", rangees: 5 } });
+      expect([plan.status, plan.body.code]).toEqual([422, "PLAN_INCOHERENT"]);
+      const loin = await envoyer({
+        tarifs: { classique: 1, vip: 1, bagage: 1 },
+        effetDu: "2027-06-01",
+      });
+      expect([loin.status, loin.body.code]).toEqual([422, "EFFET_TROP_LOIN"]);
+      const trace = await prisma.journalAudit.findMany({
+        where: { compagnieId: ids.compagnieId, action: "ligne.publier", resultat: "refus" },
+        orderBy: { at: "asc" },
+      });
+      expect(trace.map((l) => (l.details as { cause?: string }).cause)).toEqual([
+        "HORAIRE_EN_DOUBLE",
+        "COMMANDE_VIDE",
+        "PLAN_INCOHERENT",
+        "EFFET_TROP_LOIN",
+      ]);
+    });
+
+    it("une modification « dès lundi » reste en brouillon, puis entre en vigueur au jour dit (lecture, puis balayage)", async () => {
+      // L'horloge de test est au lundi 4 janvier 2027.
+      const lundi = "2027-01-11";
+      const r = await app
+        .http()
+        .put(url())
+        .set(auth())
+        .send({
+          ligneId,
+          tarifs: { classique: 7000, vip: 11_000, bagage: 500 },
+          effetDu: lundi,
+          signature: signature(),
+        });
+      expect(r.status, JSON.stringify(r.body)).toBe(200);
+      // L'écran du patron montre son brouillon (l'état de travail) ; la billetterie garde l'état publié.
+      expect(r.body.ligne.tarifs.classique).toBe(7000);
+      expect(r.body.ligne.brouillon.modifications).toBe(3);
+      expect(
+        (await prisma.ligne.findUniqueOrThrow({ where: { id: ligneId } })).tarifClassique,
+      ).toBe(8500);
+      const reglage = await prisma.reglageLigne.findUniqueOrThrow({ where: { ligneId } });
+      expect(reglage.brouillon).not.toBeNull();
+      expect(reglage.effetDu).toBe(lundi);
+      const planificateur = app.resoudre(PlanificateurLignes);
+      expect(await planificateur.tick()).toBe(0);
+
+      app.horloge.avancer(7 * 24 * 3_600_000);
+      try {
+        // Le balayage met la modification en vigueur sans que personne n'ouvre la ligne…
+        expect(await planificateur.tick()).toBe(1);
+        const fin = await prisma.reglageLigne.findUniqueOrThrow({ where: { ligneId } });
+        expect(fin.brouillon).toBeNull();
+        expect(fin.effetDu).toBeNull();
+        expect(
+          (await prisma.ligne.findUniqueOrThrow({ where: { id: ligneId } })).tarifClassique,
+        ).toBe(7000);
+        expect(await planificateur.tick()).toBe(0);
+        const apres = await app.http().get(url()).set(auth());
+        expect(apres.body.tarifs.classique).toBe(7000);
+        expect(apres.body.brouillon.modifications).toBe(0);
+      } finally {
+        app.horloge.avancer(-7 * 24 * 3_600_000);
+      }
+    });
+
+    it("abandonne, en le traçant, un brouillon devenu impossible : la ligne reste lisible", async () => {
+      const ligne = await app.http().get(url()).set(auth());
+      await new LignesPrisma(prisma).programmer(
+        ligneId,
+        {
+          horaires: [
+            {
+              id: randomUUID(),
+              heure: "10:00",
+              classe: "classique",
+              actif: true,
+              note: null,
+              jours: [],
+            },
+          ],
+        },
+        "2027-01-05",
+        ligne.body.plan,
+        ligne.body.options,
+      );
+      const planificateur = app.resoudre(PlanificateurLignes);
+      app.horloge.avancer(24 * 3_600_000);
+      try {
+        expect(await planificateur.tick()).toBe(0);
+      } finally {
+        app.horloge.avancer(-24 * 3_600_000);
+      }
+      const reglage = await prisma.reglageLigne.findUniqueOrThrow({ where: { ligneId } });
+      expect(reglage.brouillon).toBeNull();
+      expect(reglage.effetDu).toBeNull();
+      const apres = await app.http().get(url()).set(auth());
+      expect(apres.status).toBe(200);
+      expect(apres.body.departs).toEqual(ligne.body.departs);
+      const trace = await prisma.journalAudit.findMany({
+        where: { cibleId: ligneId, action: "ligne.brouillon_applique", resultat: "refus" },
+      });
+      expect(trace).toHaveLength(1);
+      expect((trace[0]!.details as { cause?: string }).cause).toBe("HORAIRE_INCONNU");
     });
   });
 });

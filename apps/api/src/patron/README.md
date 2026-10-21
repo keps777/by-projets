@@ -1,13 +1,21 @@
 # Espace du patron : tableau du jour, gares, équipe, réglages, salle de contrôle (écart A1 de la recette)
 
-Module Nest `PatronModule` : les 20 routes `/patron/*` que l'application du patron appelait et que l'API ne
+Module Nest `PatronModule` : les routes `/patron/*` que l'application du patron appelait et que l'API ne
 servait pas (404 au procès-verbal de la recette, écart A1). Les noms d'opérations sont ceux de
 `packages/api-client/src/patron/operations.ts`, les formes celles de `@afrimove/contrats` (`patron.*`, aucun
 changement de contrat).
 
+**Les lignes ne sont pas ici.** Les trois routes `GET`/`PUT /patron/reglages/lignes/{id}` et
+`POST /patron/reglages/lignes`, le service des lignes, le planificateur et les tables `ligne_reglage` et
+`ligne_horaire` appartiennent au module **administration** (`apps/api/src/administration`, tables
+`horaire_ligne` et `reglage_ligne`), qui possède aussi la génération des départs. Le patron ne fait que les
+lire : l'accueil des réglages demande le résumé des lignes à `LignesService.resumes` (exporté par
+`AdministrationModule`), sans SQL croisé. Un test (`src/socle/routes-uniques.test.ts`) vérifie qu'aucune route
+n'est servie deux fois par l'application complète.
+
 Principe : **rien de nouveau comme source de chiffres**. Les lectures agrègent par leurs ports les modules qui
-existent déjà ; seules les données qui n'avaient aucune table (réglages d'une ligne, d'une personne, règles de
-l'agence, comptes mobile money par opérateur) en ont une, créée par les migrations du lot Da.
+existent déjà ; seules les données qui n'avaient aucune table (réglages d'une personne, règles de l'agence,
+comptes mobile money par opérateur) en ont une, créée par les migrations du lot Da.
 
 ## Routes
 
@@ -23,10 +31,7 @@ sortent jamais de la compagnie du jeton (un identifiant d'une autre compagnie do
 | `GET /patron/equipe`                                  | `patron.equipe.lister`                   | L'équipe active, filtres `role`, `recherche`, `gareId`                                            |
 | `GET /patron/personnes/{id}`                          | `patron.personnes.fiche`                 | Fiche d'une personne : activité sur 90 jours, écarts de caisse                                    |
 | `GET /patron/controle`                                | `patron.controle.salle`                  | Salle de contrôle : bus en route, arrêts, pannes, propositions de l'assistant, colis en transit   |
-| `GET /patron/reglages`                                | `patron.reglages.accueil`                | Lignes, effectifs, règles en résumé                                                               |
-| `GET /patron/reglages/lignes/{id}`                    | `patron.reglages.ligne`                  | Une ligne éditable (tarifs, arrêts, départs, plan, options, brouillon)                            |
-| `PUT /patron/reglages/lignes/{id}`                    | `patron.reglages.ligne.modifier`         | `ligne`, `arret`, `ligne_horaire`, `ligne_reglage` (signé par PIN)                                |
-| `POST /patron/reglages/lignes`                        | `patron.reglages.ligne.creer`            | Nouvelle ligne entre deux gares (201, signé)                                                      |
+| `GET /patron/reglages`                                | `patron.reglages.accueil`                | Lignes (résumé demandé à l'administration), effectifs, règles en résumé                           |
 | `GET /patron/reglages/personnes/{id}`                 | `patron.reglages.personne`               | Une personne éditable                                                                             |
 | `PUT /patron/reglages/personnes/{id}`                 | `patron.reglages.personne.modifier`      | `personne`, `personne_reglage` (signé)                                                            |
 | `POST /patron/reglages/personnes`                     | `patron.reglages.personne.creer`         | Compte, réglages, PIN provisoire par SMS (201, signé)                                             |
@@ -54,7 +59,6 @@ plus (numéros masqués `6 77 •• •• 02`).
 | `ExploitationPatron` | `ExploitationPatronMemoire` | `ExploitationPatronPrisma` | `depart`, positions et pannes, `assistant_proposition`, colis en correspondance, journal               |
 | `AlertesEcrites`     | `AlertesEcritesMemoire`     | `AlertesEcritesPrisma`     | `alerte_patron` (écrite par la caisse et la supervision)                                               |
 | `EquipePatron`       | `EquipePatronMemoire`       | `EquipePatronPrisma`       | `personne`, `personne_reglage`, billets et colis par auteur, sessions de caisse                        |
-| `LignesPatron`       | `LignesPatronMemoire`       | `LignesPatronPrisma`       | `ligne`, `arret`, `ligne_horaire`, `ligne_reglage` (verrou de ligne `FOR UPDATE`)                      |
 | `ReglesPatron`       | `ReglesPatronMemoire`       | `ReglesPatronPrisma`       | `regles_compagnie`, `compagnie.toleranceEcartCaisse`, `compte_momo_agence`, `confirmation_compte_momo` |
 
 Les chiffres du jour (`jour.service.ts`, `FaitsDuJourService`) viennent des ports du rapport du soir
@@ -64,38 +68,31 @@ de l'assistant (`AssistantService.insights`). Un tableau du jour est donc égal,
 Une source en panne donne un 503 net, jamais un chiffre inventé.
 
 `PatronModule.avec({ imports: [rapport] })` est monté par `AppModule` (comme les autres modules qui lisent le
-rapport). `VerificationPatron` **refuse de démarrer en production** tant qu'un des six ports est en mémoire.
+rapport) et importe `AdministrationModule` pour le résumé des lignes. `VerificationPatron` **refuse de démarrer
+en production** tant qu'un des cinq ports est en mémoire.
 
 ## Tables (migrations `20261018001000_lot_da_reglages_patron` et `20261018001010_lot_da_garanties`)
 
-`ligne_reglage` (plan de sièges, options, brouillon daté), `ligne_horaire` (départs récurrents),
 `personne_reglage` (opérateur, salaire, jour de paie, droits), `regles_compagnie`, `compte_momo_agence` (un
 compte par opérateur, ancien numéro gardé jusqu'à minuit), `confirmation_compte_momo` (code haché, 3 essais).
-Additives : aucune table existante n'est modifiée. Les garde-fous SQL (clés étrangères en cascade, formats
-d'heure et de disposition, valeurs permises, bornes) reprennent ceux des contrats.
+Additives : aucune table existante n'est modifiée. Les garde-fous SQL (clés étrangères en cascade, valeurs
+permises, bornes) reprennent ceux des contrats. Les tables de lignes (`ligne_reglage`, `ligne_horaire`) ne
+sont plus créées : ce sont `reglage_ligne` et `horaire_ligne` de l'administration.
 
 ## Variable d'environnement
 
-`PATRON_BALAYAGE_MS` (300000 par défaut, 0 en test ou pour désactiver) : fréquence à laquelle
-`PlanificateurLignes` met en vigueur les modifications de ligne « dès lundi » dont le jour est venu. Sans lui,
-la modification est aussi appliquée à la prochaine lecture de la ligne (balayage paresseux).
+Aucune. `PATRON_BALAYAGE_MS` et `PlanificateurLignes` ont disparu avec les lignes : la mise en vigueur des
+modifications « dès lundi » est faite par l'administration (`ADMIN_BALAYAGE_MS`, voir son README).
 
 ## Règles provisoires à confirmer (métier)
 
-Valeurs choisies faute de spécification ; elles sont toutes dans `calculs.ts` et `reglages.service.ts`.
+Valeurs choisies faute de spécification ; elles sont toutes dans `calculs.ts` et `reglages.service.ts`. Celles
+des lignes (bornes, « dès lundi », plan de sièges, ligne neuve) sont dans le README de l'administration.
 
 - Règles par défaut d'une agence sans règle enregistrée : annulation gratuite jusqu'à 1 h avant, retenue selon
   la classe (25 % classique, 50 % VIP), tolérance de caisse 1 000 F (celle de la caisse), au-delà : PIN du
   superviseur et du patron, numéro de téléphone non obligatoire, frais de service 250 F non pris en charge.
-- Bornes : tolérance d'écart au plus 50 000 F, frais de service au plus 5 000 F, programmation d'une
-  modification de ligne au plus 90 jours à l'avance.
-- Une modification « dès lundi » reste en brouillon (`brouillon.modifications` = nombre de sections changées).
-- La liste des départs d'une ligne **remplace** son horaire récurrent (`ligne_horaire`). Deux départs de même
-  heure et de même classe sur des jours qui se recouvrent : 422 `DEPART_EN_DOUBLE`. Ce ne sont pas des départs
-  datés (`depart`) : leur création reste hors de ce lot.
-- Plan de sièges cohérent si |capacité − rangées × sièges par rangée| ≤ sièges par rangée.
-- Ligne neuve : 100 km par tronçon, plan 2+2, code = codes des deux gares concaténés (`DLAYDE`), 409
-  `LIGNE_EXISTANTE` si le couple de gares a déjà une ligne.
+- Bornes : tolérance d'écart au plus 50 000 F, frais de service au plus 5 000 F.
 - Nouvelle personne : PIN provisoire valable 1 h envoyé par SMS ; si le SMS échoue, le compte reste créé et la
   réponse dit `pinProvisoireEnvoye: false` ; superviseur et comptable n'ont pas de mot de passe initial
   (parcours de première connexion non spécifié) ; guichet « 1 » à « 9 » seulement (pas de « nuit »), gare
@@ -126,14 +123,16 @@ phrases de lecture des écarts de caisse et des ventes par heure.
 - Aucune route ne permet au patron de définir **son propre PIN de signature** : sur une base neuve, ses écritures
   répondent 409 `PIN_NON_DEFINI` tant qu'un PIN n'est pas posé (le seed de développement n'en pose pas au patron).
 - `GET /patron/direct` (canal temps réel du client) n'est pas servi.
-- La création des départs datés, des bus et des appareils n'est pas dans ce lot.
+- La création des départs datés, des bus et des appareils n'est pas dans ce lot (les départs sont générés par
+  l'administration).
 
 ## Tests
 
 - `calculs.test.ts`, `validation.test.ts` (les lecteurs stricts s'accordent avec les schémas des contrats),
-  `patron.module.test.ts` (configuration, garde de production, balayage) : toujours.
+  `patron.module.test.ts` (configuration, garde de production) : toujours.
 - `patron.e2e.test.ts` : l'API entière en mémoire, accès par rôle, formes (schémas des contrats), chiffres,
   cloisonnement, signature PIN, chaque écriture et son audit.
 - `postgres.integration.test.ts` : l'API entière sur PostgreSQL (`DATABASE_URL_TEST`, base finissant par `_test`),
-  tables du lot, garde-fous SQL, la caisse lit la nouvelle tolérance, compte désactivé, courses simultanées.
+  tables du lot (et absence des tables de lignes), garde-fous SQL, la caisse lit la nouvelle tolérance, compte
+  désactivé, courses simultanées.
 - Recette : `tests/recette/scenarios/critere-1-journee.test.ts` (écrans du patron sur la vraie pile).

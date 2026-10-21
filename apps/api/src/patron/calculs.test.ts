@@ -1,15 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
-  arretsApresModification,
-  arretsDeLigneNeuve,
   ecartsParJour,
   etatDe,
   lectureEcarts,
   lectureVentes,
   masquerNumero,
   montantCourt,
-  prorataArret,
-  rangeesDe,
   resumerAppareils,
   sansAccents,
   ventesParHeure,
@@ -88,53 +84,6 @@ describe("écarts de caisse", () => {
     expect(l).toContain("Toujours un multiple de 500.");
     expect(l).toContain("dépassent la tolérance");
     expect(lectureEcarts([0, 0], 10, 1000)).toContain("Aucun écart");
-  });
-});
-
-describe("lignes", () => {
-  const arrets = [
-    { nom: "Douala", km: 0, montee: true },
-    { nom: "Édéa", km: 60, montee: true },
-    { nom: "Yaoundé", km: 240, montee: false },
-  ];
-  it("prorata au kilomètre, arrondi comme la billetterie", () => {
-    expect(prorataArret(arrets, 1, 3500)).toBe(900);
-    expect(prorataArret(arrets, 2, 3500)).toBe(3500);
-  });
-  it("un arrêt connu garde ses kilomètres, un nouveau est placé entre ses voisins", () => {
-    const r = arretsApresModification(arrets, [
-      { nom: "Édéa", montee: true },
-      { nom: "Makak", montee: false },
-    ]);
-    expect(r.map((a) => a.nom)).toEqual(["Douala", "Édéa", "Makak", "Yaoundé"]);
-    expect(r[1]!.km).toBe(60);
-    expect(r[2]!.km).toBeGreaterThan(60);
-    expect(r[2]!.km).toBeLessThan(240);
-    expect(r[3]!.km).toBe(240);
-  });
-  it("des arrêts réordonnés sont répartis à égale distance", () => {
-    const deux = arretsApresModification(
-      [
-        ...arrets.slice(0, 1),
-        { nom: "A", km: 100, montee: true },
-        { nom: "B", km: 200, montee: true },
-        { nom: "Fin", km: 300, montee: false },
-      ],
-      [
-        { nom: "B", montee: true },
-        { nom: "A", montee: true },
-      ],
-    );
-    expect(deux.map((a) => a.km)).toEqual([0, 100, 200, 300]);
-  });
-  it("une ligne neuve compte 100 km par tronçon", () => {
-    expect(arretsDeLigneNeuve("Douala", ["Édéa"], "Yaoundé").map((a) => a.km)).toEqual([
-      0, 100, 200,
-    ]);
-  });
-  it("40 places en 2+2 font 10 rangées", () => {
-    expect(rangeesDe(40, "2+2")).toBe(10);
-    expect(rangeesDe(41, "2+2")).toBe(11);
   });
 });
 

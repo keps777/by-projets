@@ -7,6 +7,7 @@ import {
   type OnModuleInit,
   type Provider,
 } from "@nestjs/common";
+import { AdministrationModule } from "../administration/administration.module";
 import { AssistantModule } from "../assistant/assistant.module";
 import { CaisseModule } from "../caisse/caisse.module";
 import { AlertesPatron, ReglesAgence } from "../caisse/ports";
@@ -24,17 +25,14 @@ import {
   AlertesEcritesMemoire,
   EquipePatronMemoire,
   ExploitationPatronMemoire,
-  LignesPatronMemoire,
   ReferentielPatronMemoire,
   ReglesPatronMemoire,
 } from "./memoire";
 import { PatronController, ReglagesPatronController } from "./patron.controller";
-import { PlanificateurLignes } from "./planificateur";
 import {
   AlertesEcritesPrisma,
   EquipePatronPrisma,
   ExploitationPatronPrisma,
-  LignesPatronPrisma,
   ReferentielPatronPrisma,
   ReglesPatronPrisma,
 } from "./postgres";
@@ -42,7 +40,6 @@ import {
   AlertesEcrites,
   EquipePatron,
   ExploitationPatron,
-  LignesPatron,
   ReferentielPatron,
   ReglesPatron,
   type Durable,
@@ -61,7 +58,6 @@ export class VerificationPatron implements OnModuleInit {
     private readonly exploitation: ExploitationPatron,
     private readonly alertes: AlertesEcrites,
     private readonly equipe: EquipePatron,
-    private readonly lignes: LignesPatron,
     private readonly regles: ReglesPatron,
   ) {}
 
@@ -72,7 +68,6 @@ export class VerificationPatron implements OnModuleInit {
       ["ExploitationPatron", this.exploitation],
       ["AlertesEcrites", this.alertes],
       ["EquipePatron", this.equipe],
-      ["LignesPatron", this.lignes],
       ["ReglesPatron", this.regles],
     ];
     const volatils = ports.filter(([, port]) => !port.durable).map(([nom]) => nom);
@@ -98,7 +93,9 @@ export interface AdaptateursPatron {
 
 /**
  * Les routes `/patron/*` de l'espace patron : tableau du jour, alertes, gares, équipe, fiche d'une
- * personne, salle de contrôle, et les réglages (lignes, équipe, règles, comptes mobile money).
+ * personne, salle de contrôle, et les réglages (équipe, règles, comptes mobile money). Les lignes (leurs
+ * horaires, leurs réglages, la génération des départs) sont celles du module administration, que ce module
+ * importe pour l'accueil des réglages : il n'a ni table ni route de lignes à lui.
  *
  * Il n'a pas de source de chiffres à lui : les chiffres du jour viennent des ports du rapport du soir, la
  * caisse de `CaisseService`, les demandes d'annulation et l'état des gares de la supervision, les
@@ -109,14 +106,14 @@ export interface AdaptateursPatron {
  * l'application : un deuxième module rapport aurait ses propres ports, donc ses propres données.
  */
 @Module({
-  imports: [CaisseModule, SupervisionModule, AssistantModule],
+  imports: [CaisseModule, SupervisionModule, AssistantModule, AdministrationModule],
   controllers: [PatronController, ReglagesPatronController],
   providers: [
     {
       provide: CONFIG_PATRON,
       inject: [CONFIG],
       useFactory: (config: AppConfig): ConfigPatron =>
-        chargerConfigPatron({ ...process.env, NODE_ENV: config.env }, config.env === "production"),
+        chargerConfigPatron(config.env === "production"),
     },
     { provide: Horloge, useClass: HorlogeSysteme },
     {
@@ -163,12 +160,6 @@ export interface AdaptateursPatron {
         stockageSurPostgres(config) ? new EquipePatronPrisma(prisma) : new EquipePatronMemoire(),
     },
     {
-      provide: LignesPatron,
-      inject: [CONFIG, PrismaService],
-      useFactory: (config: AppConfig, prisma: PrismaService) =>
-        stockageSurPostgres(config) ? new LignesPatronPrisma(prisma) : new LignesPatronMemoire(),
-    },
-    {
       provide: ReglesPatron,
       inject: [CONFIG, PrismaService, ReglesAgence],
       useFactory: (config: AppConfig, prisma: PrismaService, caisse: ReglesAgence) => {
@@ -186,7 +177,6 @@ export interface AdaptateursPatron {
     FaitsDuJourService,
     LecturesPatronService,
     ReglagesPatronService,
-    PlanificateurLignes,
     VerificationPatron,
   ],
   exports: [
@@ -197,7 +187,6 @@ export interface AdaptateursPatron {
     ExploitationPatron,
     AlertesEcrites,
     EquipePatron,
-    LignesPatron,
     ReglesPatron,
   ],
 })

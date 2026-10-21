@@ -786,14 +786,14 @@ describe("critère 1 : une journée de gare, de l'ouverture des caisses au rappo
     });
     expect(sansPin.statut).toBe(401);
     expect((sansPin.corps as { code: string }).code).toBe("PIN_REQUIS");
-    // Le compte patron du seed n'a pas de PIN de signature : l'API le dit nettement (constat dans le PV).
+    // Le compte patron a son PIN de signature (posé par `semer-recette.cjs`, lot De) : un PIN faux est refusé (403).
     const signeA = new Date(Date.now() + H).toISOString().replace("Z", "+01:00");
-    const sansPinDefini = await appeler("PUT", "/patron/reglages/regles", {
+    const pinFaux = await appeler("PUT", "/patron/reglages/regles", {
       jeton: patronSession.jeton,
       corps: { regles: modifiables, signature: { pin: "482915", methode: "pin", signeA } },
     });
-    expect(sansPinDefini.statut).toBe(409);
-    expect((sansPinDefini.corps as { code: string }).code).toBe("PIN_NON_DEFINI");
+    expect(pinFaux.statut, JSON.stringify(pinFaux.corps)).toBe(403);
+    expect((pinFaux.corps as { code: string }).code).toBe("PIN_INCORRECT");
   });
 
   it("la création d'une ligne passe par l'API et exige le PIN du patron (A8, en partie corrigée)", async () => {
@@ -846,6 +846,19 @@ describe("critère 1 : une journée de gare, de l'ouverture des caisses au rappo
       });
       expect(publie.statut, JSON.stringify(publie.corps)).toBe(200);
     }
+    // Une seule source de vérité : l'accueil des réglages du patron compte les horaires actifs de l'administration
+    // (`horaire_ligne`), le départ de 5 h 40 qu'on vient de publier compris.
+    const accueil = await appeler<{ lignes: { id: string; nbDeparts: number }[] }>(
+      "GET",
+      "/patron/reglages",
+      { jeton },
+    );
+    expect(accueil.statut).toBe(200);
+    expect(accueil.corps.lignes.find((l) => l.id === ligneId)?.nbDeparts).toBe(
+      lire<{ n: number }>(
+        `select count(*)::int as n from horaire_ligne where "ligneId" = '${ligneId}' and actif`,
+      )[0]!.n,
+    );
     // Sans PIN, la même écriture est refusée.
     const sansPin = await appeler("PUT", `/patron/reglages/lignes/${ligneId}`, {
       jeton,
