@@ -1,0 +1,38 @@
+.barre {
+  display: flex;
+  padding: var(--am-space-6) var(--am-space-8) calc(18px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--am-surface-2);
+  background: var(--am-profond);
+  font-family: var(--am-font-texte);
+}
+
+.onglet {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--am-space-3);
+  box-sizing: border-box;
+  min-height: 52px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--am-craie-2);
+  font-family: inherit;
+  font-size: var(--am-fs-11);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.onglet:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: -2px;
+}
+
+.courant {
+  color: var(--am-orange);
+  font-weight: 700;
+}

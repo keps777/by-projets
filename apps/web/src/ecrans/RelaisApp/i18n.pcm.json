@@ -1,0 +1,77 @@
+{
+  "boutique": {
+    "note": "{{note}} ★",
+    "inscrire": "+ register shop"
+  },
+  "resume": {
+    "enGarde": "Dem dey keep am",
+    "capacite": "/{{capacite}}",
+    "arrivent": "Dem dey come",
+    "arriventVers": "around {{heure}}",
+    "semaine": "Week",
+    "semaineDetail": "{{remis}} don give out · {{jour}} {{moyen}}"
+  },
+  "actions": {
+    "remettre": {
+      "titre": "Give out",
+      "detail": "code + ID · touch 1"
+    },
+    "recevoir": {
+      "titre": "Receive",
+      "detail": "scan di label"
+    }
+  },
+  "remise": {
+    "titre": "Dem dey give am out",
+    "pour": "{{numero}} · for {{nom}}",
+    "code": "Code to collect wey di customer give",
+    "pieceVerifiee": "Dem don check ID: ID card for name of {{nom}}. {{consigne}}",
+    "pieceAVerifier": "ID to check: ID card for name of {{nom}}. {{consigne}}",
+    "consigne": "No snap di ID. Snap di parcel wey you give out for di end.",
+    "pieceCase": "Dem don check di ID",
+    "vide": "No handover dey go on. Touch one parcel for di \"Dem dey keep am\" list to give am out."
+  },
+  "garde": {
+    "titre": "Dem dey keep am · {{nombre}}",
+    "reprise": "dem go carry am go back for D+{{jours}}",
+    "depuis": "for {{jours}} d",
+    "depuisRappel": "for {{jours}} d · dem don send reminder",
+    "vide": "No parcel dey kept for now."
+  },
+  "pied": {
+    "remis": "Parcel don give out · photo · + {{montant}} F"
+  },
+  "reception": {
+    "titre": "Receive parcel",
+    "champ": "Number wey you read for di label",
+    "valider": "Record say you receive am",
+    "reussie": "You don receive parcel {{numero}} to keep am.",
+    "vide": "Put di number of di label.",
+    "introuvable": "No parcel get dis number.",
+    "refuse": "You no fit receive dis parcel now.",
+    "echec": "Dem no record di receipt. Try again."
+  },
+  "messages": {
+    "reussie": "Parcel {{numero}} don give out · + {{montant}} F",
+    "codeIncomplet": "Put di 6 digits of di customer code.",
+    "pieceNonVerifiee": "Check di ID before you give out di parcel.",
+    "aucuneRemise": "First choose parcel wey you wan give out.",
+    "codeInvalide_one": "Di code no correct. You get {{count}} try remain.",
+    "codeInvalide_other": "Di code no correct. You get {{count}} try dem remain.",
+    "codeBloque": "Too many try: dem don block dis parcel.",
+    "etatIncompatible": "Dis parcel no dey wit you again.",
+    "echec": "Dem no record di handover. Try again."
+  },
+  "etats": {
+    "chargement": "Your relay point dey load",
+    "vide": {
+      "titre": "No relay point",
+      "detail": "Dem never register your shop as relay point."
+    },
+    "erreur": {
+      "titre": "We no fit load your relay point",
+      "detail": "Check di network, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

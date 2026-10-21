@@ -1,0 +1,1 @@
+export { EcranRelais } from "./EcranRelais";

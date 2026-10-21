@@ -1,0 +1,1 @@
+export { EcranControle } from "./EcranControle";

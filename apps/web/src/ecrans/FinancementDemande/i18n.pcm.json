@@ -1,0 +1,63 @@
+{
+  "entete": {
+    "retour": "Go back",
+    "titre": "File don go",
+    "avance": "Advance {{montant}}",
+    "partenaireAbsent": "[partner financial institution]",
+    "numero": "no. {{id}}"
+  },
+  "statut": {
+    "enCours": "E DEY GO ON",
+    "verse": "DEM DON PAY",
+    "refuse": "DEM REFUSE",
+    "retire": "DEM DON TAKE AM BACK"
+  },
+  "demande": {
+    "devise": "FCFA · answer within {{heures}} h",
+    "rembourse": "dem go pay am back by",
+    "remboursePart": "{{pct}} % of MoMo sales",
+    "duree": "how long e go take",
+    "dureeValeur_one": "≈ {{count}} week",
+    "dureeValeur_other": "≈ {{count}} weeks",
+    "cout": "total cost",
+    "coutPartenaire": "{{pct}} % · partner",
+    "coutAbsent": "[x %] · partner"
+  },
+  "pieces": {
+    "titre": "Papers wey dem attach · by itself",
+    "aide": "nothing to scan"
+  },
+  "suivi": {
+    "titre": "Tracking"
+  },
+  "mention": {
+    "base": "AfriMove no dey lend and e no dey touch di money: e dey present your file and e dey do di debit wey una agree.",
+    "retrait": "You fit take di request back until dem pay am."
+  },
+  "actions": {
+    "retirer": "Take di request back",
+    "retour": "Go back to di dashboard",
+    "retourDetail": "I go tell you as soon as answer come"
+  },
+  "signature": {
+    "sousTitre": "Your PIN go sign say you take di request back",
+    "fermer": "Close",
+    "clavier": "PIN keypad to sign di withdrawal"
+  },
+  "retrait": {
+    "impossible": "You no fit take di file back again: di partner don already answer.",
+    "echec": "Dem no send di withdrawal. Try again."
+  },
+  "etats": {
+    "chargement": "Di file dey load",
+    "vide": {
+      "titre": "We no see di file",
+      "detail": "Dis financing file no dey or e no dey available again."
+    },
+    "erreur": {
+      "titre": "We no fit load di file",
+      "detail": "Check your network, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

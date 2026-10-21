@@ -1,0 +1,93 @@
+{
+  "titre": "Carpooling",
+  "mode": {
+    "aria": "Trip type",
+    "entreVilles": "Between cities",
+    "enVille": "In town · {{ville}}",
+    "glisse": "swipe to change"
+  },
+  "role": {
+    "aria": "My role",
+    "passager": "I'm a passenger",
+    "conducteur": "I'm driving"
+  },
+  "pastille": {
+    "verifie": "verified",
+    "aVerifier": "to verify"
+  },
+  "resume": {
+    "semaine": "Week",
+    "semaineDetail": "received by MoMo",
+    "trajets": "Trips",
+    "annulations_one": "{{count}} cancellation",
+    "annulations_other": "{{count}} cancellations",
+    "pieces": "Documents",
+    "piecesOk": "OK",
+    "piecesAFaire": "To do",
+    "piecesDetail": "licence · vehicle registration"
+  },
+  "jours": {
+    "dim": "Sun",
+    "lun": "Mon",
+    "mar": "Tue",
+    "mer": "Wed",
+    "jeu": "Thu",
+    "ven": "Fri",
+    "sam": "Sat"
+  },
+  "publies": {
+    "titre": "My published trips",
+    "gerer": "Manage",
+    "trajet": "{{depart}} → {{arrivee}}",
+    "places_one": "{{count}} seat",
+    "places_other": "{{count}} seats",
+    "reservees_one": "{{count}} booked",
+    "reservees_other": "{{count}} booked",
+    "libres_one": "{{count}} free",
+    "libres_other": "{{count}} free",
+    "payee": "paid {{montant}}",
+    "visible_one": "visible to {{count}} traveller",
+    "visible_other": "visible to {{count}} travellers",
+    "vide": "You haven't published any trip yet.",
+    "gestion": {
+      "prix": "Price of a seat: {{montant}} F",
+      "passager": "{{passager}} · {{places}} · paid {{montant}}",
+      "aucune": "No booking yet."
+    }
+  },
+  "demandes": {
+    "titre": "Passengers looking for a car",
+    "sens": "on your trips",
+    "places_one": "{{count}} seat",
+    "places_other": "{{count}} seats",
+    "proposer": "Offer {{heure}}",
+    "vide": "No passenger is looking for a car on your trips right now."
+  },
+  "paiement": "You are paid by MoMo on arrival, when the passenger confirms or 2 h after the scheduled time. AfriMove keeps {{frais}} F per seat. Cost sharing, no profit.",
+  "action": {
+    "libelle": "Offer my trip",
+    "detail": "trip, seats, price · published in 10 s",
+    "touche": "tap 1 · "
+  },
+  "verification": {
+    "aria": "Driver verification",
+    "titre": "Check your documents before publishing",
+    "detail": "AfriMove checks these documents before your first trip. You can publish as soon as they are approved.",
+    "identite": "ID document",
+    "permis": "Driving licence",
+    "carteGrise": "Vehicle registration",
+    "voiture": "Car"
+  },
+  "messages": {
+    "envoyee": "Offer sent to {{passager}}.",
+    "echec": "The offer did not go through. Try again."
+  },
+  "etats": {
+    "chargement": "Loading your trips",
+    "erreur": {
+      "titre": "Unable to load your trips",
+      "detail": "Check your connection, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

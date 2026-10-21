@@ -1,0 +1,53 @@
+{
+  "retour": "Retour",
+  "carte": {
+    "libelle_one": "Carte de {{ville}} avec {{nombre}} point relais autour du {{marche}}",
+    "libelle_other": "Carte de {{ville}} avec {{nombre}} points relais autour du {{marche}}",
+    "libelleSansMarche_one": "Carte de {{ville}} avec {{nombre}} point relais",
+    "libelleSansMarche_other": "Carte de {{ville}} avec {{nombre}} points relais",
+    "vide": "Carte de la ville",
+    "etiquette": "Points relais · {{ville}}",
+    "sousTitre_one": "{{count}} commerçant près de chez elle",
+    "sousTitre_other": "{{count}} commerçants près de chez elle"
+  },
+  "liste": {
+    "libelle": "Points relais près du destinataire"
+  },
+  "etat": {
+    "ouvert": "· ouvert",
+    "fermeBientot": "· ferme à {{heure}}",
+    "ferme": "· fermé"
+  },
+  "detail": {
+    "deChez": "{{distance}} de chez {{surnom}}",
+    "colisRemis_one": "{{count}} colis remis",
+    "colisRemis_other": "{{count}} colis remis"
+  },
+  "supplement": "+{{montant}}",
+  "choisir": {
+    "libelle": "Choisir {{nom}} · prévenir {{surnom}}",
+    "prix": "{{montant}} F"
+  },
+  "messages": {
+    "complet": "Ce point relais est complet. Choisis-en un autre.",
+    "tropLourd": "Ce colis est trop lourd pour ce point relais. Choisis-en un autre.",
+    "echec": "Le point relais n'a pas pu être enregistré. Réessaie."
+  },
+  "etats": {
+    "chargement": "Chargement des points relais",
+    "aucun": {
+      "titre": "Aucun point relais près d'ici",
+      "detail": "Aucun commerçant n'est disponible près du destinataire pour le moment."
+    },
+    "introuvable": {
+      "titre": "Colis introuvable",
+      "detail": "Ce colis n'existe pas, ou il n'est pas à toi."
+    },
+    "erreur": {
+      "titre": "Impossible de charger les points relais",
+      "detail": "Vérifie ta connexion, puis réessaie.",
+      "reessayer": "Réessayer"
+    },
+    "retourColis": "Retour au colis"
+  }
+}

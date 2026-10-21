@@ -1,0 +1,424 @@
+/*
+ * Comptable du patron (Comptable.dc.html). Couleurs, polices, tailles et espacements relevés dans la planche ; les
+ * couleurs, polices et espacements sont les variables --am-* de @afrimove/design.
+ *
+ * Dans la planche, seul le conteneur racine pose `box-sizing: border-box` : les lignes d'export, la carte de
+ * rapprochement et les blocs intérieurs sont en `content-box`. Leurs hauteurs minimales (50, 40, 30 px) s'y ajoutent
+ * donc au remplissage et au bord ; on reprend ce que la planche dessine réellement.
+ */
+
+/*
+ * Colonne de la hauteur de la fenêtre : la planche est une colonne de 844 px dont le corps prend la place restante, le
+ * pied reste en bas. Le kit laisse l'écran grandir avec son contenu (`min-height`) ; ici le corps défile dans l'écran.
+ */
+.ecran {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Corps : 6 px au-dessus du premier bloc (le kit met 4 px), 10 px entre les blocs. */
+.corps.corps {
+  gap: var(--am-space-10);
+  padding-top: var(--am-space-6);
+  overflow-y: auto;
+}
+
+/* Pied : 8 px au-dessus du bouton (le kit met 10 px). */
+.pied.pied {
+  padding-top: var(--am-space-8);
+}
+
+/* Le bouton de clôture est centré, 54 px (le kit dessine le bouton principal à gauche, 56 px). */
+.cloture.cloture {
+  justify-content: center;
+  min-height: 54px;
+  padding: 0;
+}
+
+/* ---------------------------------------------------------------- en-tête */
+
+/*
+ * Sélecteur de mois : la planche le dessine à 40 px de haut ; la zone tactile d'un sélecteur ne peut pas déborder de
+ * son cadre, il fait donc 44 px.
+ */
+.mois {
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 0 var(--am-space-12);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-pill);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-family: inherit;
+  font-size: var(--am-fs-12);
+  font-weight: 600;
+}
+
+.mois:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------- rapprochement MoMo */
+
+.rapprochement {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--am-space-8);
+  padding: var(--am-space-14);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-18);
+  background: var(--am-surface);
+}
+
+.rapprochementTete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.etiquette {
+  margin: 0;
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  font-weight: 400;
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+  color: var(--am-ambre);
+}
+
+.part {
+  font-size: var(--am-fs-11);
+  font-weight: 700;
+  color: var(--am-vert);
+}
+
+.chiffres {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--am-space-4) var(--am-space-10);
+  font-size: var(--am-fs-13);
+  color: var(--am-craie-2);
+}
+
+.montant {
+  font-family: var(--am-font-mono);
+  color: var(--am-craie);
+  text-align: right;
+}
+
+.ecart,
+.montant.ecart {
+  color: var(--am-ambre);
+}
+
+.voir {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: content-box;
+  min-height: 40px;
+  border: 1px solid var(--am-ambre);
+  border-radius: var(--am-radius-10);
+  background: var(--am-surface-2);
+  color: var(--am-ambre);
+  font-size: var(--am-fs-12);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* La planche dessine 42 px ; la zone tactile monte à 46 px sans bouger un pixel. */
+.voir::after {
+  content: "";
+  position: absolute;
+  inset: -2px 0;
+}
+
+.voir:hover {
+  color: var(--am-ambre);
+}
+
+.voir:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------- exports */
+
+.exports {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-16);
+}
+
+.exportsTete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--am-space-8) var(--am-space-14);
+  background: var(--am-profond);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+  color: var(--am-ambre);
+}
+
+.exportsTitre {
+  margin: 0;
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+.exportsAide {
+  color: var(--am-craie-2);
+}
+
+.export,
+.exportSquelette {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: var(--am-space-8);
+  align-items: center;
+  box-sizing: content-box;
+  min-height: 50px;
+  padding: var(--am-space-10) var(--am-space-14);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  text-decoration: none;
+}
+
+.export + .export,
+.exportSquelette + .exportSquelette {
+  border-top: 1px solid var(--am-surface-2);
+}
+
+.export:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: -2px;
+}
+
+.exportTextes {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.exportNom {
+  font-size: var(--am-fs-13);
+  font-weight: 700;
+}
+
+.exportDetail {
+  font-size: var(--am-fs-11);
+  color: var(--am-craie-2);
+}
+
+.apercu {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  box-sizing: content-box;
+  min-height: 30px;
+  padding: 0 var(--am-space-10);
+  border: 1px solid var(--am-trait);
+  border-radius: var(--am-radius-pill);
+  background: var(--am-surface-2);
+  font-size: var(--am-fs-11);
+  font-weight: 700;
+  color: var(--am-craie);
+}
+
+.fin {
+  font-size: var(--am-fs-12);
+  font-weight: 700;
+}
+
+.telecharger {
+  color: var(--am-bleu);
+}
+
+.aJour {
+  color: var(--am-vert);
+}
+
+.aucunExport {
+  margin: 0;
+  padding: var(--am-space-12) var(--am-space-14);
+  background: var(--am-surface);
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+  line-height: var(--am-lh-normale);
+}
+
+/* ---------------------------------------------------------------- envoi au cabinet */
+
+.cabinet {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--am-space-12);
+  padding: var(--am-space-12) var(--am-space-14);
+  border: 1px solid var(--am-surface-2);
+  border-radius: var(--am-radius-14);
+  background: var(--am-carte-sombre);
+}
+
+.cabinetTextes {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  /* 1,2 comme la planche : le kit n'a pas de hauteur de ligne à cette valeur. */
+  line-height: 1.2;
+}
+
+.cabinetTitre {
+  font-size: var(--am-fs-13);
+  font-weight: 700;
+}
+
+.cabinetDetail {
+  font-size: var(--am-fs-11);
+  color: var(--am-craie-2);
+}
+
+/* Interrupteur de la planche : piste 44 x 26, pastille 20 x 20. */
+.bascule {
+  position: relative;
+  flex: none;
+  width: 44px;
+  height: 26px;
+  border-radius: 13px;
+  background: var(--am-trait);
+}
+
+.bascule[aria-checked="true"] {
+  background: var(--am-vert);
+}
+
+.boule {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background: var(--am-gris);
+}
+
+.bascule[aria-checked="true"] .boule {
+  left: 21px;
+  background: var(--am-nuit);
+}
+
+/* ---------------------------------------------------------------- états chargement, vide, erreur */
+
+.etat {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--am-space-10);
+}
+
+.bandeau {
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-10);
+  padding: var(--am-space-10) var(--am-space-12);
+  border: 1px solid var(--am-surface-2);
+  border-radius: var(--am-radius-12);
+  background: var(--am-carte-sombre);
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+}
+
+.bandeau p {
+  margin: 0;
+}
+
+.point {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--am-ambre);
+}
+
+.squelette {
+  display: block;
+  border-radius: var(--am-radius-6);
+  background: var(--am-surface-2);
+}
+
+.squeletteSousTitre {
+  width: 150px;
+  height: 12px;
+}
+
+.squeletteEtiquette {
+  width: 170px;
+  height: 10px;
+}
+
+.squelettePart {
+  width: 80px;
+  height: 11px;
+}
+
+.ligneChiffres {
+  display: contents;
+}
+
+.squeletteLibelle {
+  width: 190px;
+  height: 13px;
+}
+
+.squeletteMontant {
+  width: 70px;
+  height: 13px;
+  justify-self: end;
+}
+
+.squeletteLien {
+  height: 42px;
+  border-radius: var(--am-radius-10);
+}
+
+.squeletteNom {
+  width: 140px;
+  height: 13px;
+  margin-bottom: var(--am-space-4);
+}
+
+.squeletteDetail {
+  width: 220px;
+  height: 11px;
+}
+
+.squeletteApercu {
+  width: 70px;
+  height: 32px;
+  border-radius: var(--am-radius-pill);
+}
+
+.squeletteBascule {
+  flex: none;
+  width: 44px;
+  height: 26px;
+  border-radius: 13px;
+}
+
+.squeletteCloture {
+  width: 100%;
+  height: 54px;
+  border-radius: var(--am-radius-16);
+}

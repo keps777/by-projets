@@ -1,0 +1,50 @@
+{
+  "fond": {
+    "titre": "Configuration",
+    "sousTitre_one": "Team · {{count}} person",
+    "sousTitre_other": "Team · {{count}} people",
+    "retour": "Back"
+  },
+  "popup": {
+    "titre_one": "My team · {{count}} person",
+    "titre_other": "My team · {{count}} people",
+    "titreSansEffectif": "My team",
+    "aide": "tap a role to filter · tap a name to edit",
+    "fermer": "Close"
+  },
+  "roles": {
+    "guichetier_one": "counter agent",
+    "guichetier_other": "counter agents",
+    "superviseur_one": "supervisor",
+    "superviseur_other": "supervisors",
+    "convoyeur_one": "conductor",
+    "convoyeur_other": "conductors",
+    "chauffeur_one": "driver",
+    "chauffeur_other": "drivers",
+    "relais_one": "relay agent",
+    "relais_other": "relay agents",
+    "comptable_one": "accountant",
+    "comptable_other": "accountants"
+  },
+  "filtres": "Filter the team by role",
+  "recherche": "Search a name, a counter, a station…",
+  "liste": "Team members (scrolling list)",
+  "modifier": "edit",
+  "resume": {
+    "enService": "{{count}} on duty",
+    "bloquees_one": "{{count}} locked",
+    "bloquees_other": "{{count}} locked"
+  },
+  "signature": "Every change is signed with your PIN",
+  "actions": {
+    "fermer": "Close",
+    "ajouter": "Add a person"
+  },
+  "etats": {
+    "chargement": "Loading the team",
+    "vide": "Nobody on the team for now.",
+    "aucun": "Nobody matches.",
+    "erreur": "The list could not be loaded.",
+    "reessayer": "Try again"
+  }
+}

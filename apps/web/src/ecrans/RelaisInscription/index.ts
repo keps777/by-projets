@@ -1,0 +1,1 @@
+export { EcranRelaisInscription } from "./EcranRelaisInscription";

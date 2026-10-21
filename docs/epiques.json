@@ -1,0 +1,87 @@
+[
+ {
+  "id": "E00",
+  "titre": "Fondations",
+  "description": "Monorepo, design system v3, kit UI, navigation par rôle, domaine, contrats d'API, banc de fidélité visuelle. Tout le reste en dépend."
+ },
+ {
+  "id": "E01",
+  "titre": "Première ouverture et compte",
+  "description": "Splash avec jingle, connexion par numéro + code SMS, tutoriel."
+ },
+ {
+  "id": "E02",
+  "titre": "Voyageur · acheter un billet",
+  "description": "Accueil départs en direct, filtres, mode même ville, siège + paiement, billet, réseau."
+ },
+ {
+  "id": "E03",
+  "titre": "Voyageur · en route et services",
+  "description": "Bus en direct, monter en route, moto vers la gare, groupe, proche, sans internet, Moi."
+ },
+ {
+  "id": "E04",
+  "titre": "Covoiturage",
+  "description": "Passager entre villes et en ville, conducteur, publication de trajet, backend covoit."
+ },
+ {
+  "id": "E05",
+  "titre": "Colis côté voyageur",
+  "description": "Envoyer un colis, suivi avec code, points relais, livraison moto."
+ },
+ {
+  "id": "E06",
+  "titre": "Guichet",
+  "description": "Accueil guichet, vente en un écran, mode cadence, colis au guichet, dépôt prépayé, impression 58 mm, caisse."
+ },
+ {
+  "id": "E07",
+  "titre": "Quai et bus",
+  "description": "Scan au quai, billets de cadence complétés, convoyeur, chauffeur, contrôleur inopiné."
+ },
+ {
+  "id": "E08",
+  "titre": "Supervision et rapport du soir",
+  "description": "Superviseur de gare, validations par PIN, équipe, déblocage, rapport WhatsApp 21 h."
+ },
+ {
+  "id": "E09",
+  "titre": "Patron",
+  "description": "Accueil patron, gares et gens, assistant, analyses."
+ },
+ {
+  "id": "E10",
+  "titre": "Comptable",
+  "description": "Exports, rapprochement MoMo, aperçu, clôture du mois."
+ },
+ {
+  "id": "E11",
+  "titre": "Réglages et modules",
+  "description": "Lignes, équipe, règles, 12 modules activables par gare ou ville."
+ },
+ {
+  "id": "E12",
+  "titre": "Financement et inter-agences",
+  "description": "Avance sur recettes, crédit, paie, colis et billets entre compagnies."
+ },
+ {
+  "id": "E13",
+  "titre": "Partenaires",
+  "description": "Apps point relais, livreur, vendeur ambulant, et les parcours « devenir relais / livreur »."
+ },
+ {
+  "id": "E14",
+  "titre": "Salle de contrôle web",
+  "description": "Page web 1280 px fluide pour le patron."
+ },
+ {
+  "id": "E15",
+  "titre": "Socle technique : hors ligne, paiements, messages",
+  "description": "Synchronisation hors ligne, numérotation sans trou, billetterie, colis, caisse, paiements, SMS, WhatsApp, USSD, GPS, sécurité."
+ },
+ {
+  "id": "E16",
+  "titre": "Qualité et lancement",
+  "description": "Parcours en 3 touches, recette des critères du 20 décembre, revue de fidélité."
+ }
+]

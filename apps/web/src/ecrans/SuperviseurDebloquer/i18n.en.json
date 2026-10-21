@@ -1,0 +1,91 @@
+{
+  "titre": {
+    "bloque": "Device locked",
+    "en_ligne": "Device online",
+    "debloque_temporairement": "Device unlocked"
+  },
+  "retour": "Back",
+  "sousTitre": "Counter {{rang}} · phone {{code}} · offline for {{duree}}",
+  "badge": {
+    "debloque": "UNLOCKED"
+  },
+  "regle": {
+    "libelle": "The rule: offline for more than {{limite}} h, the counter stops selling without your PIN.",
+    "detail": "Last sync {{quand}}. Since then, {{ventes}} and {{colis}} are saved on the phone only. Nothing is lost, but the server, the owner and online seats do not see them yet."
+  },
+  "quand": {
+    "aujourdhui": "today {{heure}}",
+    "hier": "yesterday {{heure}}",
+    "date": "on {{date}} at {{heure}}"
+  },
+  "nombre": {
+    "ventes_one": "{{count}} sale",
+    "ventes_other": "{{count}} sales",
+    "colis_one": "{{count}} parcel",
+    "colis_other": "{{count}} parcels"
+  },
+  "attente": {
+    "libelle": "Waiting",
+    "detail_one": "sale · {{colis}} parcels",
+    "detail_other": "sales · {{colis}} parcels",
+    "cash": {
+      "libelle": "Cash on it",
+      "detail": "not reconciled"
+    },
+    "plage": {
+      "libelle": "Range",
+      "ok": "OK",
+      "sansTrou": "{{debut}}–{{fin}} no gap",
+      "trous_one": "{{debut}}–{{fin}} · {{count}} missing",
+      "trous_other": "{{debut}}–{{fin}} · {{count}} missing"
+    }
+  },
+  "pourquoi": {
+    "titre": "Why · checked by the app"
+  },
+  "queFaire": {
+    "titre": "What to do · in order",
+    "recommande": "recommended",
+    "options": {
+      "synchroniser": {
+        "titre": "Sync through my phone",
+        "detail_one": "connection sharing · {{count}} sale sent in 20 s",
+        "detail_other": "connection sharing · {{count}} sales sent in 20 s"
+      },
+      "debloquer_4h": {
+        "titre": "Unlock 4 more hours with my PIN",
+        "detail": "if the network does not come back · logged, owner notified"
+      },
+      "telephone_secours": {
+        "titre": "Switch to the backup phone",
+        "detail": "in the drawer · Pauline signs in with her PIN"
+      }
+    }
+  },
+  "rappel": "Recharge {{guichet}}'s SIM and turn the router back on: reminder sent to the support agent.",
+  "actions": {
+    "plusTard": "Later",
+    "synchroniser": {
+      "libelle": "Sync · my PIN",
+      "detail": "then counter {{rang}} sells again"
+    }
+  },
+  "pin": {
+    "titre": "My PIN · {{nom}}",
+    "titreCourt": "My PIN",
+    "aide": "{{longueur}} digits · never shared",
+    "fermer": "Close"
+  },
+  "etats": {
+    "chargement": "Loading the device",
+    "vide": {
+      "titre": "Device not found",
+      "detail": "This device does not exist or is no longer tracked."
+    },
+    "erreur": {
+      "titre": "Unable to load the device",
+      "detail": "Check the connection, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "retour": "Go back to rush mode",
+  "vendu": {
+    "aria": "Rush sale",
+    "libelle": "Sold · {{duree}} s",
+    "detail": "ticket {{numero}} · seat {{siege}} · {{mode}} {{montant}}",
+    "rendu": " · change {{rendu}}",
+    "restent_one": "remain",
+    "restent_other": "remain"
+  },
+  "modes": {
+    "cash": "cash",
+    "momo": "MoMo",
+    "orange_money": "Orange Money"
+  },
+  "billet": {
+    "aria": "Ticket {{numero}}",
+    "siege": "SEAT",
+    "classique": "STANDARD",
+    "vip": "VIP",
+    "nom": "NAME:",
+    "aCompleter": "dem go complete am for di bus park",
+    "piece": "ID: ____ (4 digits)",
+    "pieceFaite": "ID: …{{piece}}",
+    "qr": "QR code of di ticket",
+    "pied": "For di bus park 20 min before · afrimove.cm"
+  },
+  "fait": {
+    "titre": "For 2 seconds, di app do",
+    "numerote": {
+      "titre": "Number don put",
+      "detail": "{{numero}}, no gap for my range",
+      "detailTrou": "{{numero}}, gap dey for my range"
+    },
+    "siege": {
+      "titre": "Seat {{siege}}",
+      "detail": "don block for di bus plan"
+    },
+    "imprime": {
+      "titre": "Don print",
+      "detail": "· QR + code {{code}}"
+    },
+    "impression": {
+      "titre": "Print",
+      "detail": "e dey wait for printer"
+    },
+    "caisse": {
+      "titre": "Cash desk",
+      "detail": "+{{montant}} cash",
+      "detailRendu": "+{{montant}} cash, change {{rendu}}"
+    },
+    "momo": {
+      "titre": "MoMo",
+      "detail": "{{montant}}, nothing for cash desk"
+    },
+    "sms": {
+      "titre": "SMS",
+      "sansNumero": ": no number ·",
+      "action": "+ number",
+      "suite": "to send am",
+      "envoye": ": don go",
+      "envoyeAu": ": don go to {{numero}}"
+    },
+    "synchro": {
+      "titre": "Sync",
+      "auRetour": "as network come back · no network fine",
+      "faite": "don finish"
+    }
+  },
+  "manque": {
+    "titre": "Wetin still remain",
+    "aide": "dem go complete am for di bus park, as people dey enter bus",
+    "debut": "Di name and di 4 digits of di ID. Di conductor go scan di QR or e go type",
+    "fin": ", di customer go show im ID, di ticket go get name. Until dem do am, di ticket go show as \"rush, no name\" for di bus list and for di evening report."
+  },
+  "actions": {
+    "numero": "+ number · send di SMS",
+    "annuler": "Cancel · supervisor PIN"
+  },
+  "annulation": {
+    "motif": "Dem ask for cancel for counter, rush sale"
+  },
+  "pied": {
+    "suite": "See wetin go happen next for di bus park",
+    "suivant": {
+      "libelle": "Next ticket",
+      "detail": "seat {{siege}} · {{prix}}"
+    }
+  },
+  "erreurs": {
+    "sms": "Dem no save di number. Try again.",
+    "annulation": "Di cancel request no go. Try again."
+  },
+  "etats": {
+    "chargement": "Di ticket dey load",
+    "vide": {
+      "titre": "No ticket to show",
+      "detail": "Dem no sell any rush ticket for dis device."
+    },
+    "erreur": {
+      "titre": "We no fit load di ticket",
+      "detail": "Check di network, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

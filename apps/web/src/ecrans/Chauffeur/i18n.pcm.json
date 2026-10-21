@@ -1,0 +1,93 @@
+{
+  "titre": "Driver · {{nom}}",
+  "sousTitre": "{{bus}} · road sheet of {{jour}} {{mois}}",
+  "retour": "Go back",
+  "mois": {
+    "1": "Jan.",
+    "2": "Feb.",
+    "3": "Mar.",
+    "4": "Apr.",
+    "5": "May",
+    "6": "Jun.",
+    "7": "Jul.",
+    "8": "Aug.",
+    "9": "Sep.",
+    "10": "Oct.",
+    "11": "Nov.",
+    "12": "Dec."
+  },
+  "gps": "GPS",
+  "trajet": {
+    "etiquette": "Trip wey dey go on",
+    "route": "{{origine}} → {{destination}}",
+    "detail": "e comot {{depart}} · {{abord}} for inside bus · {{colis}} parcel · next stop {{arret}} {{heure}}",
+    "vitesse": "km/h · limit {{limite}}"
+  },
+  "depenses": {
+    "titre": "Expenses of di trip · photo of receipt",
+    "rappel": "dem go refund am for di report",
+    "photo": "photo ✓",
+    "sansPhoto": "no photo",
+    "autre": "Other (parking, repair…)",
+    "ajouter": "+ add",
+    "aucun": "—"
+  },
+  "incident": {
+    "titre": "Incident · bus spoil",
+    "detail": "1 touch · station + passengers go hear",
+    "envoye": "Dem don report di incident: di station and {{nombre}} passengers don hear.",
+    "echec": "Di incident no go. Try again."
+  },
+  "retard": {
+    "titre": "Delay · {{minutes}} min",
+    "detail": "SMS by itself to di {{nombre}}",
+    "envoye": "Dem don announce {{minutes}} min delay: SMS don go to {{nombre}} passengers.",
+    "echec": "Di delay no go. Try again."
+  },
+  "semaine": {
+    "titre": "My week",
+    "paie": "dem go pay {{jour}} by MoMo",
+    "trajets": "trip dem",
+    "km": "km",
+    "excesVitesse": "over speed",
+    "aRecevoir": "to receive"
+  },
+  "arrivee": {
+    "libelle": "Reach {{arret}} · open di door dem",
+    "echec": "Dem no record di arrival. Try again."
+  },
+  "formulaire": {
+    "titre": "Add expense",
+    "sousTitre": "photo of receipt must dey",
+    "fermer": "Close",
+    "categorie": "Category",
+    "categories": {
+      "carburant": "Fuel",
+      "peage": "Toll",
+      "autre": "Other"
+    },
+    "libelle": "Description",
+    "libelleAide": "parking, repair…",
+    "montant": "Amount (FCFA)",
+    "prendrePhoto": "Snap di photo",
+    "reprendrePhoto": "Snap di photo again",
+    "photoJointe": "photo don attach · {{nom}}",
+    "erreurMontant": "Put di amount for FCFA.",
+    "erreurPhoto": "Add di receipt photo: if no photo, dem no go refund di expense.",
+    "echec": "Di expense no go. Try again.",
+    "annuler": "Cancel",
+    "valider": "Add di expense"
+  },
+  "etats": {
+    "chargement": "Di road sheet dey load",
+    "vide": {
+      "titre": "No road sheet",
+      "detail": "Dem never give your bus any trip for now."
+    },
+    "erreur": {
+      "titre": "Di road sheet no load",
+      "detail": "Check di network, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

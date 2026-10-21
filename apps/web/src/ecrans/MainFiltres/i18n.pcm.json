@@ -1,0 +1,50 @@
+{
+  "marque": "AfriMove",
+  "salutation": "Hello {{prenom}}",
+  "salutationSansNom": "Hello",
+  "direct": "LIVE",
+  "mode": {
+    "aria": "Type of trip",
+    "entreVilles": "Between town dem",
+    "memeVille": "Inside di same town"
+  },
+  "trajet": {
+    "aujourdhui": "Today"
+  },
+  "filtre": {
+    "titre": "Filter di departure dem"
+  },
+  "classe": {
+    "titre": "Class"
+  },
+  "compagnies": {
+    "titre": "Company dem · one, plenty or all",
+    "legende": "★ = favourite",
+    "toutesAria": "All di company dem",
+    "toutes_one": "All · {{count}} company",
+    "toutes_other": "All · {{count}} company dem",
+    "departs_one": "{{count}} bus",
+    "departs_other": "{{count}} bus dem",
+    "retirerPreferee": "Comot am from favourite dem",
+    "ajouterPreferee": "Add am to favourite dem",
+    "aucune": "No company dey go dis road today.",
+    "echecPreferee": "We no fit save di favourite company."
+  },
+  "aussi": {
+    "titre": "Also",
+    "actif": "{{libelle}} ✓"
+  },
+  "actions": {
+    "effacer": "Clear",
+    "voir_one": "See di bus",
+    "voir_other": "See di {{count}} bus dem",
+    "voirSansNombre": "See di departure dem",
+    "voirAucun": "No bus wit dis filter"
+  },
+  "note": "Your favourite dem go always show first. Di filter go stay for dis road.",
+  "etats": {
+    "chargement": "Di filter dem dey load",
+    "erreur": "Di filter dem no load.",
+    "reessayer": "Try again"
+  }
+}

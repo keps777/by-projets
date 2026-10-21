@@ -1,0 +1,47 @@
+{
+  "entete": {
+    "titre": "Analytics",
+    "sousTitre": "{{periode}} · {{gares}}",
+    "gares_one": "{{count}} station",
+    "gares_other": "{{count}} stations",
+    "retour": "Back",
+    "periode": "Period"
+  },
+  "periodes": {
+    "semaine": "Week",
+    "mois": "Month",
+    "trimestre": "Quarter",
+    "annee": "Year"
+  },
+  "recette": {
+    "titre": {
+      "semaine": "Revenue per day",
+      "mois": "Revenue per week",
+      "trimestre": "Revenue per week",
+      "annee": "Revenue per month"
+    }
+  },
+  "lignes": {
+    "titre": "By route · fill rate",
+    "mention_one": "{{count}} route · swipe",
+    "mention_other": "{{count}} routes · swipe",
+    "colis": "Parcels · all routes",
+    "aucune": "No route in this period."
+  },
+  "bus": {
+    "titre": "By bus · net",
+    "mention": "{{count}} buses · swipe",
+    "trajets_one": "{{count}} trip",
+    "trajets_other": "{{count}} trips",
+    "aucun": "No bus in this period."
+  },
+  "pied": {
+    "exporter": "Export to Excel",
+    "assistant": "Ask the assistant"
+  },
+  "etats": {
+    "vide": "No information for this period.",
+    "erreur": "The analytics could not be loaded.",
+    "reessayer": "Try again"
+  }
+}

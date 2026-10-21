@@ -1,0 +1,73 @@
+.ecran {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: var(--am-nuit);
+  color: var(--am-craie);
+  font-family: var(--am-font-texte);
+}
+
+/*
+ * Écran fluide : remplit toute la largeur et toute la hauteur dynamique de son contenant. L'application pose
+ * `--am-ecran-h` (la fenêtre sur téléphone, 844 px dans le cadre iPhone de l'ordinateur) et `--am-ecran-max`
+ * (largeur maximale des fenêtres courtes) ; à défaut, le kit seul remplit la fenêtre. Les zones sûres (encoche,
+ * barre d'accueil iOS) sont réservées ici en haut et sur les côtés, et dans le pied et la barre d'onglets en bas.
+ */
+.fluide {
+  width: 100%;
+  max-width: var(--am-ecran-max, none);
+  height: var(--am-ecran-h, 100dvh);
+  min-height: 0;
+  margin-inline: auto;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+.planche {
+  width: 390px;
+  height: 844px;
+}
+
+.profond {
+  background: var(--am-profond);
+}
+
+.corps {
+  /* Ancre les éléments absolus du corps (champs fichier masqués...) : ils ne rallongent pas la page. */
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--am-space-10);
+  min-height: 0;
+  padding: var(--am-space-4) var(--am-gutter) 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.corps::-webkit-scrollbar {
+  display: none;
+}
+
+/*
+ * Les planches sont dessinées pour 844 px de haut : certaines cartes se serrent pour y tenir. Sur un écran plus
+ * court l'application pose `--am-retrecit: 0` : le corps défile et ses blocs gardent leur hauteur au lieu de
+ * s'écraser jusqu'à cacher leurs lignes. Spécificité nulle : un bloc qui déclare `flex` ou `flex-shrink` (une liste
+ * qui absorbe la place restante) garde son comportement.
+ */
+:where(.corps > *) {
+  flex-shrink: var(--am-retrecit, 1);
+}
+
+.pied {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-8);
+  padding: var(--am-space-10) var(--am-gutter) calc(18px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--am-surface-2);
+  background: var(--am-profond);
+}

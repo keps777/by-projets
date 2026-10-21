@@ -1,0 +1,86 @@
+{
+  "retour": "Back",
+  "depuis": "since {{date}}",
+  "roles": {
+    "guichetier": "Counter agent",
+    "superviseur": "Supervisor",
+    "convoyeur": "Conductor",
+    "chauffeur": "Driver",
+    "relais": "Relay agent",
+    "comptable": "Accountant"
+  },
+  "badge": {
+    "ecarts_one": "{{count}} DISCREPANCY",
+    "ecarts_other": "{{count}} DISCREPANCIES"
+  },
+  "fiche": {
+    "operateur": "{{numero}} · {{operateur}}",
+    "salaire": "Salary {{montant}} · paid on {{jour}} by MoMo",
+    "superviseur": "Supervisor: {{nom}}",
+    "superviseure": "Supervisor: {{nom}}",
+    "depuisHeure": "since {{heure}}",
+    "etats": {
+      "en_service": "on duty",
+      "a_bord": "on board",
+      "en_route": "on the road",
+      "repos": "off duty",
+      "indisponible": "unavailable",
+      "bloquee": "account locked"
+    }
+  },
+  "chiffres": {
+    "billets": "Tickets",
+    "colis": "Parcels",
+    "annulations": "Canc.",
+    "ecarts": "Discrepancies",
+    "jours_one": "{{count}} day",
+    "jours_other": "{{count}} days",
+    "litiges_one": "{{count}} dispute",
+    "litiges_other": "{{count}} disputes",
+    "annulationsNormales": "{{taux}} · normal",
+    "annulationsElevees": "{{taux}} · keep an eye on it",
+    "ecartsDetail": "{{jours}} · {{total}}"
+  },
+  "ecarts": {
+    "titre_one": "Cash desk discrepancy · last day",
+    "titre_other": "Cash desk discrepancy · last {{count}} days",
+    "tolerance": "tolerance ± {{montant}}",
+    "aria": "Cash desk discrepancy per day: {{liste}}",
+    "ariaJour": "on {{jour}}: {{ecart}}",
+    "ariaAucun": "Cash desk discrepancy per day: no discrepancy"
+  },
+  "journal": {
+    "titre_one": "Log · last discrepancy",
+    "titre_other": "Log · last {{count}} discrepancies",
+    "valides_one": "approved {{par}}",
+    "valides_other": "approved {{par}}",
+    "ligne": "· counted {{compte}} · expected {{attendu}}",
+    "aucun": "No recent cash desk discrepancy."
+  },
+  "actions": {
+    "gare": {
+      "titre": "Change counter / station",
+      "detail": "from tomorrow · supervisor notified"
+    },
+    "pin": {
+      "titre": "Request a new PIN",
+      "detail": "the supervisor sends it by SMS"
+    }
+  },
+  "pied": {
+    "desactiver": {
+      "libelle": "Deactivate the account",
+      "detail": "immediate · logged"
+    },
+    "assistant": {
+      "libelle": "Talk to the assistant about it",
+      "detail": "what to do about {{prenom}}?"
+    }
+  },
+  "etats": {
+    "chargement": "Loading the record",
+    "vide": "This person does not exist or is no longer on the team.",
+    "erreur": "The record could not be loaded.",
+    "reessayer": "Try again"
+  }
+}

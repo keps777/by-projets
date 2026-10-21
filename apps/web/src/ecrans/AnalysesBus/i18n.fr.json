@@ -1,0 +1,58 @@
+{
+  "entete": {
+    "retour": "Retour",
+    "places": "{{modele}} {{capacite}} places",
+    "trajets_one": "{{count}} trajet cette semaine",
+    "trajets_other": "{{count}} trajets cette semaine",
+    "aSurveiller": "À SURVEILLER"
+  },
+  "chiffres": {
+    "recette": "Recette",
+    "depenses": "Dépenses",
+    "net": "Net",
+    "recetteDetail": "{{trajets}} · {{taux}} %",
+    "trajets_one": "{{count}} trajet",
+    "trajets_other": "{{count}} trajets",
+    "depensesDetail": "carburant {{carburant}} · pannes {{pannes}}",
+    "netDetail": "flotte : {{net}} en moyenne"
+  },
+  "semaines": {
+    "titre": "Net par semaine · {{count}} semaines",
+    "tendance": "{{variation}} depuis la {{depuis}}"
+  },
+  "trajets": {
+    "titre": "Cette semaine · trajet par trajet",
+    "mentionPannes_one": "{{trajets}} · {{count}} panne",
+    "mentionPannes_other": "{{trajets}} · {{count}} pannes",
+    "aucun": "Aucun trajet cette semaine.",
+    "quand": "{{jour}} {{heure}} · {{origine}} → {{destination}}",
+    "aLHeure": "à l’heure",
+    "retard": "retard {{duree}}",
+    "replaces": "{{count}} replacés",
+    "gardes": "{{count}} gardés"
+  },
+  "jours": {
+    "lun": "Lun",
+    "mar": "Mar",
+    "mer": "Mer",
+    "jeu": "Jeu",
+    "ven": "Ven",
+    "sam": "Sam",
+    "dim": "Dim"
+  },
+  "assistant": {
+    "titre": "L'assistant"
+  },
+  "pied": {
+    "flotte": "Toute la flotte",
+    "assistant": "Demander à l'assistant",
+    "assistantDetail": "révision lundi · qui remplace ?"
+  },
+  "etats": {
+    "vide": "Ce bus n’a pas roulé cette semaine.",
+    "introuvable": "Ce bus est introuvable.",
+    "erreur": "L’analyse du bus ne s’est pas chargée.",
+    "reessayer": "Réessayer",
+    "chargement": "Chargement de l’analyse du bus"
+  }
+}

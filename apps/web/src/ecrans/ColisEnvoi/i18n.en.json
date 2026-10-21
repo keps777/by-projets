@@ -1,0 +1,67 @@
+{
+  "titre": "Send a parcel",
+  "sousTitre": "Photo, recipient, payment: one screen",
+  "retour": "Back",
+  "photo": {
+    "aPrendre": "Tap to take a photo of the parcel",
+    "lecture": "Reading the photo…",
+    "prise": "Photo taken · estimated size: {{taille}} · {{poids}} kg"
+  },
+  "champs": {
+    "pour": "For whom",
+    "ou": "Where to",
+    "contenu": "Declared contents",
+    "valeur": "Value (F)"
+  },
+  "depart": {
+    "titre": "How it travels",
+    "sousTitre": "next departure",
+    "gare": "<fort>{{compagnie}}</fort> · pick-up at the {{retrait}} · arrival {{heure}}",
+    "aucun": "No departure for this destination."
+  },
+  "modes": {
+    "relais": "relay",
+    "moto": "moto"
+  },
+  "assurance": {
+    "libelle": "Insure for {{valeur}} F",
+    "detail": "· {{prime}} F · {{assureur}}",
+    "sansValeur": "Insure the parcel",
+    "regle": "· {{taux}} % of the value, min. {{minimum}} F · {{assureur}}"
+  },
+  "payer": {
+    "libelle": "Pay and get the code",
+    "detail": "you drop it off at the ticket office, the label is ready",
+    "calcul": "…"
+  },
+  "prix": {
+    "mots": {
+      "port": "postage",
+      "frais": "fees",
+      "assurance": "insurance",
+      "relais": "relay",
+      "livraison": "delivery"
+    },
+    "interdits": "prohibited: {{liste}}"
+  },
+  "messages": {
+    "saisie": "Take a photo of the parcel and fill in all the fields before paying.",
+    "photoEchec": "The photo could not be read. Take it again.",
+    "aucunDepart": "No departure can carry this parcel. Change the destination.",
+    "departFerme": "This departure no longer accepts parcels. Try again a little later.",
+    "devis": "The price has not been calculated yet. Try again in a moment.",
+    "echec": "The payment did not go through. Try again."
+  },
+  "etats": {
+    "chargement": "Loading the parcel shipment",
+    "vide": {
+      "titre": "No departure for a parcel",
+      "detail": "Go back to home, a departure will be offered soon."
+    },
+    "erreur": {
+      "titre": "Unable to load the shipment",
+      "detail": "Check your connection, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

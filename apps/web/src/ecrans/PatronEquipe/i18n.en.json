@@ -1,0 +1,103 @@
+{
+  "titre": "My stations, my people",
+  "retour": "Back",
+  "sousTitre": "{{gares}} · {{personnes}} · {{bus}} · {{heure}}",
+  "nbGares_one": "{{count}} station",
+  "nbGares_other": "{{count}} stations",
+  "nbPersonnes_one": "{{count}} person",
+  "nbPersonnes_other": "{{count}} people",
+  "nbBus_one": "{{count}} bus",
+  "nbBus_other": "{{count}} buses",
+  "badge": "{{count}} ON DUTY",
+  "gares": {
+    "titre": "My stations · today",
+    "aide": "tap a station",
+    "ligne": "{{nom}} · {{responsable}}",
+    "ligneVille": "{{nom}} · {{ville}} · {{responsable}}",
+    "ligneSansResponsable": "{{nom}}",
+    "composition": "{{guichets}} · {{quais}}",
+    "guichets_one": "{{count}} counter",
+    "guichets_other": "{{count}} counters",
+    "quais_one": "{{count}} platform",
+    "quais_other": "{{count}} platforms",
+    "etat": "{{synchronises}} / {{total}} synced · discrepancy {{ecart}}",
+    "etatSansEcart": "{{synchronises}} / {{total}} synced",
+    "horsLigne": "offline {{minutes}} min"
+  },
+  "effectifs": {
+    "guichetier": {
+      "libelle": "Counters",
+      "detail": "{{count}} on duty"
+    },
+    "superviseur": {
+      "libelle": "Superv.",
+      "detail": "{{count}} on duty"
+    },
+    "convoyeur": {
+      "libelle": "Conduct.",
+      "detail": "{{count}} on board"
+    },
+    "chauffeur": {
+      "libelle": "Drivers",
+      "detail": "{{count}} on the road"
+    },
+    "relais": {
+      "libelle": "Relay",
+      "detail": "{{count}} on duty"
+    },
+    "comptable": {
+      "libelle": "Acct.",
+      "detail": "{{count}} on duty"
+    }
+  },
+  "gens": {
+    "titre": "My people · {{count}}",
+    "titreSansEffectif": "My people",
+    "aide": "tap a name · swipe",
+    "liste": "{{titre}} (scrolling list)",
+    "lieu": "{{role}} · {{lieu}}",
+    "lieuSansPrecision": "{{role}}"
+  },
+  "roles": {
+    "guichetier": "counter agent",
+    "guichetier_f": "counter agent",
+    "superviseur": "supervisor",
+    "superviseur_f": "supervisor",
+    "convoyeur": "conductor",
+    "convoyeur_f": "conductor",
+    "chauffeur": "driver",
+    "chauffeur_f": "driver",
+    "relais": "relay agent",
+    "relais_f": "relay agent",
+    "comptable": "accountant",
+    "comptable_f": "accountant"
+  },
+  "etats": {
+    "en_service": "on duty",
+    "a_bord": "on board",
+    "en_route": "on the road",
+    "repos": "off duty",
+    "bloquee": "locked",
+    "bloquee_f": "locked",
+    "indisponible": "unavailable",
+    "hors_service": "out of service"
+  },
+  "paie": {
+    "payer_one": "Pay the salary",
+    "payer_other": "Pay the {{count}} salaries",
+    "detail": "on {{jour}} · by MoMo · 1 tap"
+  },
+  "actions": {
+    "ajouter": "+ person · + station"
+  },
+  "chargement": {
+    "libelle": "Loading the team"
+  },
+  "vide": {
+    "texte": "No station or person for now."
+  },
+  "erreur": {
+    "texte": "The team could not be loaded. Shortcuts still work.",
+    "reessayer": "Try again"
+  }
+}

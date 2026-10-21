@@ -1,0 +1,10 @@
+# AM-172 · Toutes les 5 minutes : perte maximale visée de 10 minutes de données (voir README).
+[Unit]
+Description=AfriMove · expédition du journal PostgreSQL toutes les 5 minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+
+[Install]
+WantedBy=timers.target

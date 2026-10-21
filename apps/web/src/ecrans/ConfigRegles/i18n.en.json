@@ -1,0 +1,91 @@
+{
+  "entete": {
+    "titre": "Agency rules",
+    "sousTitre": "Apply to all stations · signed with your PIN",
+    "retour": "Back",
+    "gares_one": "{{count}} STATION",
+    "gares_other": "{{count}} STATIONS"
+  },
+  "annulation": {
+    "titre": "Cancellation by the traveller",
+    "gratuite": {
+      "libelle": "Free until",
+      "choix": {
+        "1h_avant": "1 h before departure",
+        "2h_avant": "2 h before",
+        "veille_20h": "the evening before 8 pm",
+        "jamais": "never"
+      }
+    },
+    "retenue": {
+      "libelle": "After that · withholding",
+      "choix": {
+        "selon_classe": "depending on class (VIP {{vip}} %, standard {{classique}} %)",
+        "dix_pct": "10 % everywhere",
+        "cinquante_pct": "50 % everywhere",
+        "aucun_remboursement": "no refund"
+      }
+    },
+    "note": "The refund goes back to the same MoMo, the seat is freed immediately. At the counter, after the deadline, only the supervisor can cancel with their PIN."
+  },
+  "caisse": {
+    "titre": "Cash desk",
+    "tolerance": "Discrepancy tolerance",
+    "erreurTolerance": "Enter an amount in francs.",
+    "auDela": {
+      "libelle": "Beyond",
+      "choix": {
+        "pin_superviseur_et_patron": "supervisor PIN + owner notified",
+        "pin_superviseur": "supervisor PIN only",
+        "bloque_guichet": "blocks the counter"
+      }
+    }
+  },
+  "momo": {
+    "titre": "Agency MoMo accounts",
+    "mtn": "MTN MoMo · merchant",
+    "orange": "Orange Money · merchant",
+    "erreurNumero": "Enter a 9-digit number.",
+    "note": "Changing an account requires your PIN and a confirmation SMS to the old number. Sales in progress stay on the old account until midnight.",
+    "operateur": {
+      "mtn": "MTN MoMo",
+      "orange": "Orange Money"
+    }
+  },
+  "historique": "Every rule keeps its history: who, when, old and new value.",
+  "nbChangements_one": "{{count}} change",
+  "nbChangements_other": "{{count}} changes",
+  "actions": {
+    "annuler": "Cancel",
+    "enregistrer": "Save · my PIN",
+    "detail": "applied right away",
+    "detailGares_one": "applied right away · {{count}} station",
+    "detailGares_other": "applied right away · {{count}} stations"
+  },
+  "pin": {
+    "titre": "Sign the save",
+    "sousTitre": "{{changements}} · logged in the journal",
+    "fermer": "Close",
+    "echec": "The rules were not saved. Nothing has changed for the stations."
+  },
+  "compte": {
+    "fermer": "Close",
+    "code": {
+      "titre": "Confirm the {{operateur}} account",
+      "sousTitre": "6-digit code sent by SMS to the old number, {{numero}}",
+      "libelle": "Code received by SMS",
+      "faux": "The code is not right. Check the SMS and try again."
+    },
+    "pin": {
+      "titre": "Sign the account change",
+      "sousTitre": "{{operateur}} · logged in the journal",
+      "echec": "The account was not changed. Sales in progress stay on the old account."
+    }
+  },
+  "etats": {
+    "chargement": "Loading the rules",
+    "vide": "The agency rules are not available.",
+    "erreur": "The rules could not be loaded.",
+    "reessayer": "Try again"
+  }
+}

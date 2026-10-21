@@ -1,0 +1,523 @@
+/*
+ * Planche « CadenceQuai » (docs/maquettes-v3/CadenceQuai.dc.html). Les valeurs viennent de la maquette ; les couleurs,
+ * polices et espacements sont les variables --am-* de @afrimove/design.
+ *
+ * Toute la planche est sur fond Profond (#050810), pas Nuit : l'en-tête, le corps et le pied le posent eux-mêmes (le
+ * layout de l'espace pose un écran Nuit). Le sélecteur est doublé (`.x.x`) quand il doit passer devant une règle d'un
+ * seul sélecteur du kit, quel que soit l'ordre des feuilles.
+ */
+
+.entete.entete {
+  background: var(--am-profond);
+}
+
+/*
+ * Corps : 2 px au-dessus, 8 px entre les blocs (le kit : 4 px et 10 px). Sa base est de 0 px (et non 0 %) pour qu'il
+ * remplisse l'écran sans l'agrandir : la liste des billets sans nom se raccourcit comme sur la planche, puis le corps
+ * défile quand il y a trop à montrer.
+ */
+.corps.corps {
+  flex: 1 1 0px;
+  gap: var(--am-space-8);
+  padding-top: var(--am-space-2);
+  background: var(--am-profond);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.corps::-webkit-scrollbar {
+  display: none;
+}
+
+/* Pied : « Vue du quai » (1) et « Embarquer » (1,6) côte à côte, 8 px au-dessus, 18 px sous. */
+.pied.pied {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: var(--am-space-8);
+  padding: var(--am-space-8) var(--am-gutter) 18px;
+}
+
+/* Une fois le billet embarqué, il ne reste que « Vue du quai ». */
+.pied[data-seul] {
+  grid-template-columns: 1fr;
+}
+
+/* Caméra : lue par le détecteur, jamais montrée (la planche n'a pas de viseur). */
+.camera {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------ billet scanné */
+
+.scan {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--am-space-8);
+  padding: var(--am-space-12) var(--am-space-14);
+  border-radius: var(--am-radius-16);
+  border: 1px solid var(--am-ambre);
+  background: var(--am-ambre-fond);
+}
+
+/* Billet rendu nominatif, ou autre billet accepté au scan. */
+.scanFait {
+  border-color: var(--am-vert-bord);
+  background: var(--am-vert-fond);
+}
+
+.scanRefus {
+  border-color: var(--am-rouge);
+  background: var(--am-rouge-fond);
+}
+
+.scanLigne {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.scanLigneBase {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.scanTitre {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--am-space-8);
+  font-size: var(--am-fs-13);
+  font-weight: 700;
+  color: var(--am-ambre);
+}
+
+.scanFait .scanTitre {
+  color: var(--am-vert);
+}
+
+.scanRefus .scanTitre {
+  color: var(--am-rouge);
+}
+
+.scanRond {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 13px;
+  background: var(--am-vert);
+  color: var(--am-nuit);
+}
+
+.scanRefus .scanRond {
+  background: var(--am-rouge);
+}
+
+.scanHeure {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-11);
+  color: var(--am-craie-2);
+}
+
+.scanNumero {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-15);
+  font-weight: 700;
+}
+
+.scanSiege {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-24);
+  font-weight: 700;
+  color: var(--am-ambre);
+}
+
+.scanDetail {
+  font-size: var(--am-fs-12);
+  color: var(--am-craie-2);
+}
+
+/* ------------------------------------------------------------------ compléter */
+
+.completer {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--am-space-6);
+  padding: var(--am-space-12);
+  border-radius: var(--am-radius-16);
+  border: 1px solid var(--am-trait);
+  background: var(--am-nuit);
+}
+
+.etiquette {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+  color: var(--am-ambre);
+}
+
+.champ {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-3);
+  min-width: 0;
+}
+
+.champLibelle {
+  font-size: var(--am-fs-11);
+  font-weight: 600;
+  color: var(--am-craie-2);
+}
+
+/* 46 px de haut : plus que les 44 px de cible tactile. */
+.saisie {
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 46px;
+  margin: 0;
+  padding: 0 var(--am-space-12);
+  border-radius: var(--am-radius-10);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  outline: none;
+}
+
+.saisie:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+/* Le nom est le champ obligatoire : bord ambre. La planche ne fixe pas sa police : il garde celle du navigateur. */
+.saisieNom {
+  border-color: var(--am-ambre);
+  font-size: var(--am-fs-14);
+  font-weight: 600;
+}
+
+.saisiePiece {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-16);
+  font-weight: 700;
+}
+
+.saisieTelephone {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-14);
+  font-weight: 700;
+}
+
+.saisie[aria-invalid="true"] {
+  border-color: var(--am-rouge);
+}
+
+.paire {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: var(--am-space-6);
+}
+
+.aide {
+  margin: 0;
+  font-size: var(--am-fs-11);
+  color: var(--am-gris);
+}
+
+/* La règle non respectée prend la place de l'aide, dans sa couleur d'alerte : la carte ne change pas de hauteur. */
+.aideErreur {
+  color: var(--am-rouge);
+}
+
+/* ------------------------------------------------------------------ embarqués */
+
+.embarques {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--am-space-12);
+  padding: var(--am-space-10) var(--am-space-14);
+  border-radius: var(--am-radius-16);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+}
+
+.embarquesChiffre {
+  display: flex;
+  flex-direction: column;
+  line-height: var(--am-lh-plein);
+}
+
+.grand {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-34);
+  font-weight: 800;
+  letter-spacing: var(--am-ls-titre);
+}
+
+.grandSur {
+  font-size: var(--am-fs-16);
+  color: var(--am-gris);
+}
+
+.embarquesLibelle {
+  margin-top: var(--am-space-3);
+  font-size: var(--am-fs-11);
+  color: var(--am-craie-2);
+}
+
+.barreBloc {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.barre {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--am-trait);
+  overflow: hidden;
+}
+
+.segmentVert,
+.segmentAmbre {
+  display: block;
+  height: 8px;
+}
+
+.segmentVert {
+  background: var(--am-vert);
+}
+
+.segmentAmbre {
+  background: var(--am-ambre);
+}
+
+.barreLegende {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--am-fs-11);
+  color: var(--am-craie-2);
+}
+
+.nombreVert,
+.nombreAmbre {
+  font-weight: 700;
+}
+
+.nombreVert {
+  color: var(--am-vert);
+}
+
+.nombreAmbre {
+  color: var(--am-ambre);
+}
+
+.depart {
+  font-family: var(--am-font-mono);
+  color: var(--am-ambre);
+}
+
+/* ------------------------------------------------------------------ billets de cadence encore sans nom */
+
+/* La liste est la seule carte qui se raccourcit quand l'écran manque de place : ses lignes défilent dans la carte. */
+.liste {
+  display: flex;
+  flex: 0 1 auto;
+  flex-direction: column;
+  min-height: 112px;
+  border-radius: var(--am-radius-16);
+  border: 1px solid var(--am-trait);
+  overflow: hidden;
+}
+
+.lignes {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.lignes::-webkit-scrollbar {
+  display: none;
+}
+
+.listeEntete {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--am-space-8) var(--am-space-14);
+  background: var(--am-nuit);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+  color: var(--am-ambre);
+}
+
+.listeTotal {
+  color: var(--am-craie-2);
+}
+
+/* La planche ne pose pas `box-sizing: border-box` : son « min-height: 40px » s'ajoute aux 2 × 8 px de marge. */
+.ligne,
+.ligneVide {
+  display: grid;
+  flex: none;
+  grid-template-columns: 1fr auto;
+  gap: var(--am-space-8);
+  align-items: center;
+  box-sizing: content-box;
+  min-height: 40px;
+  margin: 0;
+  padding: var(--am-space-8) var(--am-space-14);
+  background: var(--am-surface);
+  font-size: var(--am-fs-12);
+}
+
+.ligne + .ligne {
+  border-top: 1px solid var(--am-surface-2);
+}
+
+.ligneVide {
+  display: flex;
+  color: var(--am-craie-2);
+}
+
+.ligneNumero {
+  font-family: var(--am-font-mono);
+}
+
+.ligneSms {
+  color: var(--am-vert);
+}
+
+.ligneAction {
+  color: var(--am-craie-2);
+}
+
+/* ------------------------------------------------------------------ rapport du soir */
+
+.note {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--am-space-10);
+  margin: 0;
+  padding: var(--am-space-8) var(--am-space-12);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-surface-2);
+  background: var(--am-carte-sombre);
+  font-size: var(--am-fs-11);
+  color: var(--am-craie-2);
+}
+
+.noteIcone {
+  display: flex;
+  flex: none;
+  color: var(--am-ambre);
+}
+
+/* ------------------------------------------------------------------ pied */
+
+/* La planche ne pose pas `box-sizing: border-box` : « min-height: 56px » + 1 px de bord de chaque côté = 58 px. */
+.vue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: content-box;
+  min-height: 56px;
+  border-radius: var(--am-radius-16);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.vue:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+/* Le bouton vert du kit a 18 px de marge et 12 px entre texte et coche, la planche 16 px et rien. */
+.embarquer.embarquer {
+  gap: 0;
+  padding: 0 var(--am-space-16);
+}
+
+.embarquer[aria-busy="true"] {
+  cursor: progress;
+}
+
+/* ------------------------------------------------------------------ chargement, vide, erreur */
+
+.etat {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--am-space-8);
+  text-align: center;
+}
+
+.etatTitre {
+  margin: 0;
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-18);
+  font-weight: 800;
+  letter-spacing: var(--am-ls-sous-titre);
+}
+
+.etatDetail {
+  margin: 0;
+  font-size: var(--am-fs-13);
+  color: var(--am-craie-2);
+}
+
+.squelette {
+  min-height: 72px;
+  border-radius: var(--am-radius-16);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  animation: pulse var(--am-pulse-duration) infinite;
+}
+
+.squeletteGrand {
+  min-height: 110px;
+}
+
+.reessayer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  margin-top: var(--am-space-8);
+  padding: 0 var(--am-space-14);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie-2);
+  font-family: inherit;
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  cursor: pointer;
+}

@@ -1,0 +1,28 @@
+{
+  "titre": "Without internet",
+  "sousTitre": "Di same service for phone wey get button",
+  "retour": "Go back",
+  "ussd": {
+    "titre": "USSD · dial {{code}}"
+  },
+  "whatsapp": {
+    "titre": "WhatsApp · write \"{{motCle}}\"",
+    "conversation": "WhatsApp conversation: how to buy ticket"
+  },
+  "actions": {
+    "billet": "See di ticket wey you receive",
+    "proche": "Buy for person"
+  },
+  "etats": {
+    "chargement": "Di preview without internet dey load",
+    "vide": {
+      "titre": "Nothing to show yet",
+      "detail": "Di USSD and WhatsApp preview no dey available."
+    },
+    "erreur": {
+      "titre": "Di preview no load",
+      "detail": "Check your network, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

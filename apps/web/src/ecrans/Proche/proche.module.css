@@ -1,0 +1,483 @@
+/*
+ * Planche « Proche » (docs/maquettes-v3/Proche.dc.html). Les valeurs viennent de la maquette ; les couleurs, polices
+ * et espacements sont les variables --am-* de @afrimove/design.
+ *
+ * Surcharges du kit (variantes locales, le kit n'est pas modifié) : le sélecteur est doublé (`.x.x`) pour passer
+ * devant la règle d'un seul sélecteur du composant du kit quel que soit l'ordre des feuilles.
+ */
+
+/* Corps : le contenu tient dans les 844 px de la planche ; si un message s'ajoute, il défile sans barre visible. */
+.corps.corps {
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.corps.corps::-webkit-scrollbar {
+  display: none;
+}
+
+/* Pied : 6 px entre le bouton et la phrase (le kit : 8 px). */
+.pied.pied {
+  gap: var(--am-space-6);
+}
+
+/* ------------------------------------------------------------------ choix du proche */
+
+.proches {
+  display: flex;
+  flex: none;
+  gap: var(--am-space-8);
+  /* La planche coupe ce qui dépasse ; avec plus de trois proches on fait défiler, sans barre. */
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.proches::-webkit-scrollbar {
+  display: none;
+}
+
+.proche {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--am-space-8);
+  min-height: 48px;
+  padding: 0 var(--am-space-12) 0 var(--am-space-6);
+  border-radius: var(--am-radius-pill);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie-2);
+  font-family: inherit;
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.proche[aria-pressed="true"] {
+  border-color: var(--am-ambre);
+  background: var(--am-surface-2);
+  color: var(--am-craie);
+  font-weight: 700;
+}
+
+.proche:focus-visible,
+.depart:focus-visible,
+.interrupteur:focus-visible,
+.payer:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: -3px;
+}
+
+.initiales {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--am-radius-pill);
+  background: var(--am-surface-2);
+  color: var(--am-bleu);
+  font-size: var(--am-fs-12);
+  font-weight: 800;
+}
+
+.proche[aria-pressed="true"] .initiales {
+  background: var(--am-ambre);
+  color: var(--am-nuit);
+}
+
+.nouveau {
+  padding: 0 var(--am-space-14);
+  border: 1px dashed var(--am-trait-fort);
+  background: transparent;
+}
+
+.nouveau[aria-pressed="true"] {
+  border-style: solid;
+  border-color: var(--am-ambre);
+  background: var(--am-surface-2);
+}
+
+/* ------------------------------------------------------------------ destinataire et trajet */
+
+.carte {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--am-space-8);
+  padding: var(--am-space-12) var(--am-space-14);
+  border-radius: var(--am-radius-16);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+}
+
+.destinataire {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.destinataireNom {
+  font-size: var(--am-fs-14);
+  font-weight: 700;
+}
+
+.telephone {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-12);
+  color: var(--am-craie-2);
+}
+
+.trajet {
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-8);
+  padding: var(--am-space-8) var(--am-space-8) var(--am-space-8) var(--am-space-14);
+  border-radius: var(--am-radius-pill);
+  border: 1px solid var(--am-trait);
+  background: var(--am-profond);
+}
+
+.trajetVilles {
+  flex: 1;
+  font-size: var(--am-fs-15);
+  font-weight: 700;
+}
+
+.fleche {
+  color: var(--am-gris);
+  font-weight: 500;
+}
+
+.trajetJour {
+  font-size: var(--am-fs-12);
+  color: var(--am-craie-2);
+}
+
+/* Saisie d'un nouveau numéro : remplace le nom et le numéro du proche choisi. */
+.saisie {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-8);
+}
+
+/* ------------------------------------------------------------------ départs */
+
+.departs {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  border-radius: var(--am-radius-16);
+  border: 1px solid var(--am-trait);
+  overflow: hidden;
+}
+
+.departsTete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px var(--am-space-14);
+  background: var(--am-profond);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+  color: var(--am-ambre);
+}
+
+.depart {
+  display: grid;
+  grid-template-columns: 58px 1fr auto;
+  gap: var(--am-space-10);
+  align-items: center;
+  min-height: 60px;
+  margin: 0;
+  padding: var(--am-space-12) var(--am-space-14);
+  border: 0;
+  border-top: 1px solid var(--am-surface-2);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.depart[aria-pressed="true"] {
+  background: var(--am-surface-2);
+}
+
+.heure {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-18);
+  font-weight: 700;
+  color: var(--am-ambre);
+}
+
+.departTextes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-2);
+  min-width: 0;
+}
+
+.compagnie {
+  font-size: var(--am-fs-14);
+  font-weight: 700;
+}
+
+.classe {
+  font-size: var(--am-fs-11);
+  font-weight: 500;
+  color: var(--am-craie-2);
+}
+
+.classe[data-classe="vip"] {
+  font-weight: 600;
+  color: var(--am-bleu);
+}
+
+/* Une seule ligne, comme la planche : un détail trop long est coupé plutôt que de pousser la liste. */
+.departDetail {
+  overflow: hidden;
+  font-size: var(--am-fs-12);
+  color: var(--am-craie-2);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.prix {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-17);
+  font-weight: 800;
+}
+
+/* Aucun départ ce jour-là : une ligne de la liste, pas une page vide. */
+.departsVide {
+  margin: 0;
+  padding: var(--am-space-14);
+  background: var(--am-surface);
+  border-top: 1px solid var(--am-surface-2);
+  font-size: var(--am-fs-13);
+  color: var(--am-craie-2);
+}
+
+/* ------------------------------------------------------------------ paiement */
+
+.paiement {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--am-space-6);
+  padding: var(--am-space-12) var(--am-space-14);
+  border-radius: var(--am-radius-16);
+  border: 1px solid var(--am-trait);
+  background: var(--am-profond);
+}
+
+.paiementLigne {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.paiementTitre {
+  font-size: var(--am-fs-13);
+  font-weight: 700;
+}
+
+.paiementCarte {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-12);
+  color: var(--am-craie-2);
+}
+
+.paiementDetail {
+  font-size: var(--am-fs-12);
+  color: var(--am-craie-2);
+}
+
+.conversion {
+  font-family: var(--am-font-mono);
+}
+
+.prevenir {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-8);
+  font-size: var(--am-fs-12);
+  color: var(--am-craie-2);
+  cursor: pointer;
+}
+
+/* Interrupteur de la planche : piste 36 x 22, pastille 16 x 16 (le kit : 40 x 24 et 18 x 18). */
+.interrupteur {
+  position: relative;
+  flex: none;
+  width: 36px;
+  height: 22px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--am-radius-pill);
+  background: var(--am-trait);
+  cursor: pointer;
+}
+
+.interrupteur[aria-checked="true"] {
+  background: var(--am-vert);
+}
+
+/* Zone tactile de 44 px : toute la ligne, sans changer sa hauteur dessinée. */
+.interrupteur::after {
+  content: "";
+  position: absolute;
+  inset: -11px calc(-1 * var(--am-space-14)) -11px calc(-1 * var(--am-space-14));
+}
+
+.pastille {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--am-radius-pill);
+  background: var(--am-gris);
+}
+
+.interrupteur[aria-checked="true"] .pastille {
+  left: 17px;
+  background: var(--am-nuit);
+}
+
+/* ------------------------------------------------------------------ pied */
+
+/* Bouton principal : la planche le dessine à 58 px, libellé 16 px (le bouton du kit : 56 px et 15 px). */
+.payer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 58px;
+  margin: 0;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--am-radius-16);
+  background: var(--am-orange);
+  color: var(--am-nuit);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.payer[aria-busy="true"] {
+  cursor: progress;
+}
+
+.payerTextes {
+  display: flex;
+  flex-direction: column;
+  line-height: var(--am-lh-compacte);
+}
+
+.payerLibelle {
+  font-size: var(--am-fs-16);
+  font-weight: 700;
+}
+
+.payerDetail {
+  font-size: var(--am-fs-11);
+  font-weight: 600;
+}
+
+.payerPrix {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-22);
+  font-weight: 800;
+}
+
+.aide {
+  font-size: var(--am-fs-11);
+  color: var(--am-gris);
+  text-align: center;
+}
+
+/* ------------------------------------------------------------------ messages */
+
+.alerte,
+.attente {
+  flex: none;
+  margin: 0;
+  padding: var(--am-space-10) var(--am-space-14);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-rouge);
+  background: var(--am-rouge-fond);
+  color: var(--am-craie);
+  font-size: var(--am-fs-13);
+  line-height: var(--am-lh-normale);
+}
+
+.attente {
+  border-color: var(--am-ambre);
+  background: var(--am-ambre-fond);
+}
+
+/* ------------------------------------------------------------------ états chargement, vide et erreur */
+
+.etat {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--am-space-8);
+  text-align: center;
+}
+
+.etatTitre {
+  margin: 0;
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-18);
+  font-weight: 800;
+  letter-spacing: var(--am-ls-sous-titre);
+}
+
+.etatDetail {
+  margin: 0;
+  font-size: var(--am-fs-13);
+  color: var(--am-craie-2);
+}
+
+.squelette {
+  flex: none;
+  min-height: 120px;
+  border-radius: var(--am-radius-16);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  animation: pulse var(--am-pulse-duration) infinite;
+}
+
+.squeletteBande {
+  min-height: 48px;
+  border-radius: var(--am-radius-pill);
+}
+
+.reessayer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  margin-top: var(--am-space-8);
+  padding: 0 var(--am-space-14);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie-2);
+  font-family: inherit;
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  cursor: pointer;
+}

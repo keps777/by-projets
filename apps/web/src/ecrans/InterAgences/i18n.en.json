@@ -1,0 +1,50 @@
+{
+  "titre": "Between companies",
+  "retour": "Back",
+  "sousTitre": "A parcel changes bus on the way. Each company is paid for its leg.",
+  "colis": {
+    "titre": "{{origine}} → {{destination}} · parcel {{numero}}",
+    "poids": "{{kg}} kg",
+    "troncon": "Leg {{rang}} · {{compagnie}}",
+    "trajet": "{{origine}} → {{destination}}",
+    "horaire": "{{depart}} · {{bus}} · arrival {{arrivee}}",
+    "part": "{{montant}} · for {{compagnie}}",
+    "aucun": "No connecting parcel for now.",
+    "aucunTitre": "Parcel in transfer"
+  },
+  "reglement": {
+    "titre": "Settlement between companies · week",
+    "nousDoit_one": "{{compagnie}} owes you · {{count}} parcel carried for them",
+    "nousDoit_other": "{{compagnie}} owes you · {{count}} parcels carried for them",
+    "nousLeDevons_one": "You owe {{compagnie}} · {{count}} connecting parcel",
+    "nousLeDevons_other": "You owe {{compagnie}} · {{count}} connecting parcels",
+    "solde": "Net balance · settled by MoMo {{jour}} {{heure}}"
+  },
+  "jours": {
+    "0": "Sunday",
+    "1": "Monday",
+    "2": "Tuesday",
+    "3": "Wednesday",
+    "4": "Thursday",
+    "5": "Friday",
+    "6": "Saturday"
+  },
+  "voyageurs": {
+    "titre": "Also for travellers",
+    "texte": "{{depart}} → {{arrivee}} on a single ticket: {{premiere}} to {{correspondance}}, {{seconde}} after that, with a guaranteed {{garantie}} min connection. If the first bus is late, the second waits {{attente}} min or the traveller is rebooked for free."
+  },
+  "actions": {
+    "convention": "{{avec}} agreement · view",
+    "ajouter": "Add a company"
+  },
+  "chargement": {
+    "libelle": "Loading exchanges between companies"
+  },
+  "vide": {
+    "texte": "No exchange between companies for now."
+  },
+  "erreur": {
+    "texte": "The exchanges between companies could not be loaded. Shortcuts still work.",
+    "reessayer": "Try again"
+  }
+}

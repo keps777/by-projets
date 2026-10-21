@@ -1,0 +1,65 @@
+{
+  "titre": "AfriMove seller",
+  "numero": "no. {{numero}}",
+  "identite": "{{nom}} · {{quartier}} neighbourhood · approved by {{compagnies}}",
+  "vente": {
+    "titre": "Sell to a neighbour · 3 taps",
+    "jour": {
+      "aujourdhui": "today",
+      "demain": "tomorrow"
+    },
+    "places_one": "{{compagnie}} · {{count}} seat",
+    "places_other": "{{compagnie}} · {{count}} seats",
+    "commission": "commission {{montant}} F"
+  },
+  "bilan": {
+    "mois": {
+      "etiquette": "This month",
+      "detail": "tickets sold"
+    },
+    "gain": {
+      "etiquette": "Earned",
+      "detail": "paid on {{jour}}"
+    },
+    "clients": {
+      "etiquette": "Customers",
+      "detail_one": "including {{count}} regular",
+      "detail_other": "including {{count}} regulars"
+    }
+  },
+  "clients": {
+    "proposition": "{{proposition}}?",
+    "dernier": "last: {{date}}"
+  },
+  "action": "Sell a ticket to a neighbour",
+  "etats": {
+    "chargement": "Loading your seller space",
+    "reessayer": "Try again",
+    "espace": {
+      "erreur": {
+        "titre": "Unable to load your figures",
+        "detail": "Check your connection, then try again."
+      }
+    },
+    "departs": {
+      "vide": {
+        "titre": "No departure to sell",
+        "detail": "There is no departure open for sale on this route."
+      },
+      "erreur": {
+        "titre": "Unable to load the departures",
+        "detail": "Check your connection, then try again."
+      }
+    },
+    "clients": {
+      "vide": {
+        "titre": "No customer yet",
+        "detail": "Your neighbours appear here after your first sale."
+      },
+      "erreur": {
+        "titre": "Unable to load your customers",
+        "detail": "Check your connection, then try again."
+      }
+    }
+  }
+}

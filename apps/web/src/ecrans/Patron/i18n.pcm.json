@@ -1,0 +1,73 @@
+{
+  "entete": {
+    "sousTitre": "{{patron}} · {{gares}} · {{bus}}",
+    "gares_one": "{{count}} station",
+    "gares_other": "{{count}} station dem",
+    "bus_one": "{{count}} bus",
+    "bus_other": "{{count}} bus"
+  },
+  "jour": {
+    "etiquette": "Today · live",
+    "comparaison": "vs {{jour}}",
+    "billets": "ticket dem",
+    "colis": "parcel dem",
+    "remplissage": "how full",
+    "ecart": "total difference"
+  },
+  "assistant": {
+    "titre_one": "Di assistant get {{count}} tin to tell you",
+    "titre_other": "Di assistant get {{count}} tins to tell you"
+  },
+  "tuiles": {
+    "analyses": {
+      "titre": "Analytics",
+      "detail": "week · line dem · bus dem"
+    },
+    "gares": {
+      "titre": "My station dem, my people",
+      "detail": "cash desk dem · bus park dem · {{count}} people",
+      "detailSansEffectif": "cash desk dem · bus park dem"
+    },
+    "rapports": {
+      "titre": "Report dem",
+      "detail": "every evening · 9 pm"
+    },
+    "comptable": {
+      "titre": "Accountant",
+      "detail": "export dem · reconciliation"
+    },
+    "financement": {
+      "titre": "Financing",
+      "detail": "advance · credit · salary"
+    },
+    "interAgences": {
+      "titre": "Between company dem",
+      "detail": "parcel wey dey connect · Oméga"
+    },
+    "reglages": {
+      "titre": "Settings",
+      "detail": "line dem · price dem · team · rule dem"
+    },
+    "modules": {
+      "titre": "Modules",
+      "detail": "put on · hide · di {{count}}"
+    },
+    "controle": {
+      "titre": "Control room",
+      "detail": "for computer · everything live"
+    }
+  },
+  "alertes": {
+    "titre": "Alert dem · {{count}}",
+    "mention": "1 touch · slide",
+    "hier": "yesterday",
+    "aucune": "No alert for now."
+  },
+  "etats": {
+    "chargement": "Di home dey load",
+    "vide": "No information for now.",
+    "erreur": "Di home no load. Di shortcut dem still dey work.",
+    "erreurAlertes": "Di alert dem no load.",
+    "reessayer": "Try again"
+  }
+}

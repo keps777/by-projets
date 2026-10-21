@@ -1,0 +1,62 @@
+{
+  "disponible": "Dey available",
+  "indisponible": "No dey available",
+  "inviter": "+ invite delivery man",
+  "identite": "delivery man no. {{numero}} · {{ville}} · {{note}} ★",
+  "echecDisponibilite": "We no fit change your status. Try again.",
+  "mission": {
+    "titre": "New mission · {{secondes}} s to accept",
+    "trajet": "{{depart}} → {{arrivee}}, go {{destinataire}}",
+    "detail": "parcel {{poids}} kg · {{distance}} km · {{duree}} min · you go give am when dem give you di code",
+    "gain": "for you",
+    "passer": "Skip",
+    "accepter": "Accept · touch 1",
+    "expiree": "If no answer for {{secondes}} s, di mission don go di next delivery man.",
+    "dejaPrise": "Dis mission don go di next delivery man.",
+    "echecAccepter": "We no fit accept di mission. Try again.",
+    "echecPasser": "We no fit skip di mission. Try again.",
+    "aucune": {
+      "titre": "No mission for now",
+      "detail": "Stay available: di next mission go show here."
+    },
+    "horsLigne": {
+      "titre": "You no dey available",
+      "detail": "Change to Available to receive mission dem."
+    }
+  },
+  "bilan": {
+    "aujourdhui": "Today",
+    "gagne": "Wetin you earn",
+    "semaine": "Week",
+    "livraisons_one": "delivery",
+    "livraisons_other": "deliveries",
+    "total_one": "{{count}} delivery",
+    "total_other": "{{count}} deliveries"
+  },
+  "pieces": {
+    "titre": "My paper dem",
+    "aJour": "e don up to date",
+    "aVerifier": "to check"
+  },
+  "retrait": {
+    "libelle": "Collect my money now (from {{seuil}} F)",
+    "action": "Collect",
+    "seuil": "You fit collect money from {{seuil}} F. You still need {{manque}} F.",
+    "seuilServeur": "You fit collect money from {{seuil}} F.",
+    "fait": "Dem don ask to collect {{montant}} F go {{moyen}}.",
+    "echec": "We no fit do di withdrawal. Try again."
+  },
+  "etats": {
+    "chargement": "Di delivery man app dey load",
+    "vide": {
+      "titre": "No space for delivery man",
+      "detail": "Dis account no be delivery man yet. Submit your application to receive mission dem.",
+      "devenir": "Become delivery man"
+    },
+    "erreur": {
+      "titre": "We no fit load di delivery man app",
+      "detail": "Check your network, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

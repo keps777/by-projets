@@ -1,0 +1,14 @@
+.qr {
+  display: block;
+  flex: none;
+  border-radius: var(--am-radius-8);
+  background: #ffffff;
+}
+
+.fond {
+  fill: #ffffff;
+}
+
+.modules {
+  fill: var(--am-nuit);
+}

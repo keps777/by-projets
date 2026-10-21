@@ -1,0 +1,53 @@
+{
+  "titre": "Offer my trip",
+  "retour": "Back",
+  "conducteur": {
+    "verifie": "verified"
+  },
+  "trajet": {
+    "villeDepart": "Departure city",
+    "villeArrivee": "Arrival city"
+  },
+  "champs": {
+    "depart": "Departure point",
+    "arrivee": "Arrival"
+  },
+  "places": "Seats",
+  "prix": {
+    "libelle": "Price / seat",
+    "aria": "Price per seat",
+    "conseil": "Recommended price {{min}} to {{max}} (shared fuel). No profit: cost sharing."
+  },
+  "options": "Options",
+  "reputation": {
+    "titre_one": "Your trip · {{note}} ★",
+    "titre_other": "Your {{count}} trips · {{note}} ★",
+    "premier": "Your first trip",
+    "pieces_one": "{{pieces}} verified",
+    "pieces_other": "{{pieces}} verified",
+    "paiement": "You receive the payment on arrival, by MoMo, when the passenger confirms or 2 h after the scheduled time. AfriMove keeps {{frais}} F per seat."
+  },
+  "publier": {
+    "libelle": "Publish the trip",
+    "detail": "visible in the traveller app in 10 s"
+  },
+  "messages": {
+    "nonVerifie": "Your file is not verified yet: ID, licence, vehicle registration and car must be approved by AfriMove before publishing.",
+    "prix": "The price must stay between {{min}} and {{max}} F per seat: cost sharing, no profit.",
+    "champs": "Enter the departure city and point, then the arrival ones.",
+    "chevauche": "You already have a published trip at that time.",
+    "echec": "The trip could not be published. Try again."
+  },
+  "etats": {
+    "chargement": "Loading the form",
+    "vide": {
+      "titre": "No car declared",
+      "detail": "Declare your car and have your documents checked to offer a trip."
+    },
+    "erreur": {
+      "titre": "Unable to load the form",
+      "detail": "Check your connection, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

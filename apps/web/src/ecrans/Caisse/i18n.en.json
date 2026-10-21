@@ -1,0 +1,42 @@
+{
+  "titre": "Close my cash desk",
+  "retour": "Back to the ticket office",
+  "sousTitre": "{{numero}} · {{agent}} · opened {{heure}} with {{fond}}",
+  "appCompte": {
+    "titre": "What the app counted",
+    "periode": "{{debut}} → {{fin}}",
+    "billetsCash": "Cash tickets · {{nombre}}",
+    "colisCash": "Cash parcels · {{nombre}}",
+    "fond": "Opening float",
+    "annulations": "Approved cancellations (sup. PIN) · {{nombre}}",
+    "momo": "MoMo · {{nombre}} sales (not in the cash desk)",
+    "cashAttendu": "Expected cash"
+  },
+  "jeCompte": {
+    "titre": "What I count · tap the notes",
+    "aide": "or type the total"
+  },
+  "ecart": {
+    "libelle": "Discrepancy",
+    "tolerance": "Agency tolerance: {{montant}}.",
+    "historique": "Yesterday: {{hier}} · this week: {{semaine}}"
+  },
+  "cloture": {
+    "libelle": "Close · have the supervisor approve",
+    "detail": "they enter their PIN, the discrepancy is recorded, the report goes out at 9 pm",
+    "echec": "The closing was not sent. Try again."
+  },
+  "minuit": "Your cash desk had not been closed: it closed itself at midnight.",
+  "etats": {
+    "chargement": "Loading your cash desk",
+    "vide": {
+      "titre": "No cash desk open",
+      "detail": "There is no cash session to close."
+    },
+    "erreur": {
+      "titre": "Unable to load your cash desk",
+      "detail": "Check the connection, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "retour": "Go back",
+  "depuis": "since {{date}}",
+  "roles": {
+    "guichetier": "Counter agent",
+    "superviseur": "Supervisor",
+    "convoyeur": "Conductor",
+    "chauffeur": "Driver",
+    "relais": "Relay agent",
+    "comptable": "Accountant"
+  },
+  "badge": {
+    "ecarts_one": "{{count}} DIFFERENCE",
+    "ecarts_other": "{{count}} DIFFERENCE DEM"
+  },
+  "fiche": {
+    "operateur": "{{numero}} · {{operateur}}",
+    "salaire": "Salary {{montant}} · dem go pay am {{jour}} by MoMo",
+    "superviseur": "Supervisor: {{nom}}",
+    "superviseure": "Supervisor: {{nom}}",
+    "depuisHeure": "since {{heure}}",
+    "etats": {
+      "en_service": "dey work",
+      "a_bord": "for inside bus",
+      "en_route": "dey road",
+      "repos": "dey rest",
+      "indisponible": "no dey available",
+      "bloquee": "dem lock di account"
+    }
+  },
+  "chiffres": {
+    "billets": "Ticket dem",
+    "colis": "Parcel dem",
+    "annulations": "Canc.",
+    "ecarts": "Difference dem",
+    "jours_one": "{{count}} day",
+    "jours_other": "{{count}} days",
+    "litiges_one": "{{count}} dispute",
+    "litiges_other": "{{count}} dispute dem",
+    "annulationsNormales": "{{taux}} · normal",
+    "annulationsElevees": "{{taux}} · watch am",
+    "ecartsDetail": "{{jours}} · {{total}}"
+  },
+  "ecarts": {
+    "titre_one": "Difference for cash desk · last day",
+    "titre_other": "Difference for cash desk · last {{count}} days",
+    "tolerance": "tolerance ± {{montant}}",
+    "aria": "Difference for cash desk for each day: {{liste}}",
+    "ariaJour": "{{jour}}: {{ecart}}",
+    "ariaAucun": "Difference for cash desk for each day: no difference"
+  },
+  "journal": {
+    "titre_one": "Log · last difference",
+    "titre_other": "Log · last {{count}} differences",
+    "valides_one": "{{par}} don approve am",
+    "valides_other": "{{par}} don approve dem",
+    "ligne": "· wey dem count {{compte}} · wey dem expect {{attendu}}",
+    "aucun": "No difference for cash desk recently."
+  },
+  "actions": {
+    "gare": {
+      "titre": "Change counter / station",
+      "detail": "from tomorrow · dem go tell di supervisor"
+    },
+    "pin": {
+      "titre": "Ask for new PIN",
+      "detail": "di supervisor go send am by SMS"
+    }
+  },
+  "pied": {
+    "desactiver": {
+      "libelle": "Put di account off",
+      "detail": "at once · dem record am"
+    },
+    "assistant": {
+      "libelle": "Talk am wit di assistant",
+      "detail": "wetin to do about {{prenom}}?"
+    }
+  },
+  "etats": {
+    "chargement": "Di record dey load",
+    "vide": "Dis person no dey or e no dey for di team again.",
+    "erreur": "Di record no load.",
+    "reessayer": "Try again"
+  }
+}

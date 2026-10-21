@@ -1,0 +1,47 @@
+{
+  "entete": {
+    "titre": "Analytics",
+    "sousTitre": "{{periode}} · {{gares}}",
+    "gares_one": "{{count}} station",
+    "gares_other": "{{count}} station dem",
+    "retour": "Go back",
+    "periode": "Period"
+  },
+  "periodes": {
+    "semaine": "Week",
+    "mois": "Month",
+    "trimestre": "Quarter",
+    "annee": "Year"
+  },
+  "recette": {
+    "titre": {
+      "semaine": "Money wey enter for each day",
+      "mois": "Money wey enter for each week",
+      "trimestre": "Money wey enter for each week",
+      "annee": "Money wey enter for each month"
+    }
+  },
+  "lignes": {
+    "titre": "By line · how full",
+    "mention_one": "{{count}} line · slide",
+    "mention_other": "{{count}} line dem · slide",
+    "colis": "Parcel dem · all line dem",
+    "aucune": "No line for dis period."
+  },
+  "bus": {
+    "titre": "By bus · net",
+    "mention": "{{count}} bus · slide",
+    "trajets_one": "{{count}} trip",
+    "trajets_other": "{{count}} trip dem",
+    "aucun": "No bus for dis period."
+  },
+  "pied": {
+    "exporter": "Export go Excel",
+    "assistant": "Ask di assistant"
+  },
+  "etats": {
+    "vide": "No information for dis period.",
+    "erreur": "Di analytics no load.",
+    "reessayer": "Try again"
+  }
+}

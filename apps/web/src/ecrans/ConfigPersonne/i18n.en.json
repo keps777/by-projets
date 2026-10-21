@@ -1,0 +1,87 @@
+{
+  "retour": "Back",
+  "depuis": "since {{date}}",
+  "aucun": "—",
+  "nouvelle": {
+    "titre": "New person",
+    "sousTitre": "Added to the team · temporary PIN by SMS",
+    "badge": "NEW"
+  },
+  "roles": {
+    "guichetier": "Counter agent",
+    "superviseur": "Supervisor",
+    "convoyeur": "Conductor",
+    "chauffeur": "Driver",
+    "relais": "Relay agent",
+    "comptable": "Accountant"
+  },
+  "guichets": {
+    "1": "Counter 1",
+    "2": "Counter 2",
+    "3": "Counter 3",
+    "nuit": "Night"
+  },
+  "champs": {
+    "nom": "Name",
+    "telephone": "Phone · receives the PIN",
+    "operateur": "Operator",
+    "role": "Role",
+    "gare": "Station",
+    "guichet": "Counter",
+    "salaire": "Salary · paid on {{jour}}"
+  },
+  "erreurs": {
+    "nom": "Enter the name.",
+    "telephone": "Enter a 9-digit number.",
+    "gare": "Choose the station.",
+    "guichet": "Choose the counter.",
+    "salaire": "Enter the salary."
+  },
+  "droits": {
+    "titre": "What they can do",
+    "defaut": "role default",
+    "exceptions_one": "{{count}} exception · logged",
+    "exceptions_other": "{{count}} exceptions · logged",
+    "liste": {
+      "vendreBilletsEtColis": "Sell tickets and parcels · cash and MoMo",
+      "annulerSansPinSuperviseur": "Cancel a ticket without the supervisor's PIN",
+      "modeCadence": "Rush mode (sales with no name)",
+      "voirCaissesDesAutres": "See the other counters' cash desk"
+    }
+  },
+  "liens": {
+    "pin": {
+      "titre": "New temporary PIN",
+      "detail": "SMS · valid for 1 h"
+    },
+    "fiche": {
+      "titre": "View their record · 90 days",
+      "detail": "tickets, discrepancies, log"
+    }
+  },
+  "note": "For a new person: same screen, empty fields. They receive their temporary PIN and the app link by SMS; their account opens at first sign-in.",
+  "actions": {
+    "desactiver": {
+      "libelle": "Deactivate the account",
+      "detail": "immediate · logged"
+    },
+    "enregistrer": {
+      "libelle": "Save · my PIN",
+      "detail": "dated, signed, visible in the evening report"
+    }
+  },
+  "pin": {
+    "enregistrer": "Sign the save",
+    "provisoire": "Sign the sending of the temporary PIN",
+    "desactiver": "Sign the deactivation",
+    "sousTitre": "{{nom}} · logged in the journal",
+    "fermer": "Close",
+    "echec": "The action was not saved. Nothing has changed."
+  },
+  "etats": {
+    "chargement": "Loading the record",
+    "vide": "This person does not exist or is no longer on the team.",
+    "erreur": "The record could not be loaded.",
+    "reessayer": "Try again"
+  }
+}

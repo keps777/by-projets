@@ -1,0 +1,84 @@
+{
+  "titre": "Rush mode",
+  "quitter": "Leave rush mode",
+  "touche": "tap {{n}} · ",
+  "depart": {
+    "libelle": "Current departure",
+    "places_one": "seat left",
+    "places_other": "seats left"
+  },
+  "dernier": {
+    "libelle": "Last ticket · {{ecoule}}",
+    "detail": "{{numero}} · seat {{siege}} · {{nom}}",
+    "sansNom": "rush, no name",
+    "aucun": "No ticket sold"
+  },
+  "duree": {
+    "secondes": "{{n}} s",
+    "minutes": "{{n}} min",
+    "heures": "{{h}} h {{m}}"
+  },
+  "prochain": "Next",
+  "siegeSuivant": "Next seat:",
+  "noteQuai": "· name and ID entered at the platform by the conductor",
+  "paiements": {
+    "cash": {
+      "libelle": "CASH",
+      "ligne1": "prints",
+      "ligne2": "+ SMS if number"
+    },
+    "momo": {
+      "libelle": "MOMO",
+      "ligne1": "push",
+      "pushEnvoye": "push sent",
+      "ligne2": "confirmed"
+    }
+  },
+  "options": {
+    "deuxPlaces": "× 2 seats",
+    "numero": "+ number",
+    "autreDepart": "Other departure"
+  },
+  "pied": {
+    "vendus": "Sold in rush:",
+    "annulations_one": "· {{count}} cancellation",
+    "annulations_other": "· {{count}} cancellations",
+    "synchro": {
+      "horsLigne": "offline OK · sync {{heure}}",
+      "sync": "online · sync {{heure}}",
+      "enAttente": "{{n}} to send · sync {{heure}}"
+    }
+  },
+  "numero": {
+    "titre": "Customer's number",
+    "aide": "The ticket is sent by SMS to this number.",
+    "obligatoire": "Number required in rush mode.",
+    "label": "Phone number",
+    "valider": "Confirm",
+    "fermer": "Close",
+    "erreur": "Enter the 9 digits of the number."
+  },
+  "autreDepart": {
+    "titre": "Other departure",
+    "ligne_one": "{{heure}} {{destination}} · {{count}} free seat",
+    "ligne_other": "{{heure}} {{destination}} · {{count}} free seats",
+    "chargement": "Loading departures",
+    "erreur": "Unable to load the departures."
+  },
+  "erreurs": {
+    "vente": "The sale was not recorded. Try again.",
+    "imprimante": "Printer unavailable: tickets print as soon as it is back."
+  },
+  "etats": {
+    "chargement": "Loading rush mode",
+    "vide": {
+      "titre": "No departure in rush mode",
+      "detail": "There is no departure open for sale for now."
+    },
+    "erreur": {
+      "titre": "Unable to load rush mode",
+      "detail": "Check the connection, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

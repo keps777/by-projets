@@ -1,0 +1,93 @@
+{
+  "titre": "Cancellation request",
+  "retour": "Back",
+  "sousTitre": "Counter {{rang}} · {{agent}} · requested at {{heure}}, {{duree}} ago",
+  "duree": {
+    "minutes": "{{count}} min",
+    "heures": "{{heures}} h {{minutes}}",
+    "jours_one": "{{count}} day",
+    "jours_other": "{{count}} days"
+  },
+  "badge": "PIN",
+  "billet": {
+    "depart": "Departure",
+    "siege": "seat {{siege}}",
+    "voyageur": "Passenger",
+    "piece": "ID card ···· {{quatreDerniers}}",
+    "vendu": "Sold",
+    "venteDetail": "{{heure}} · counter {{rang}} · {{mode}} · {{agent}}",
+    "mode": {
+      "cash": "cash",
+      "momo": "MoMo",
+      "orange_money": "Orange Money"
+    },
+    "motif": "Reason entered",
+    "motifValeur": "\"{{motif}}\""
+  },
+  "verifications": {
+    "titre": "What the app checked",
+    "scanne": {
+      "non": "Ticket <b>not scanned yet</b>",
+      "oui": "Ticket <b>already scanned</b>"
+    },
+    "siege": {
+      "libre": "seat {{siege}} can be released",
+      "bloque": "seat {{siege}} cannot be released"
+    },
+    "delai": {
+      "integral": "More than 1 h before departure · <b>full refund</b> under the agency's rules",
+      "retenue": "Less than 1 h before departure · <b>{{retenue}} withheld</b> under the agency's rules"
+    },
+    "frequence": "<b>{{rang}}<sup>{{suffixe}}</sup> cancellation</b> by {{agent}} today · {{dixJours}} in the last 10 days (counters' average: {{moyenne}})",
+    "client": {
+      "present": "The customer is at the counter",
+      "absent": "The customer is not at the counter",
+      "pieceVue": "ID seen",
+      "pieceNonVue": "ID not seen",
+      "aRendre": "{{montant}} F to give back in cash"
+    }
+  },
+  "choix": {
+    "rembourser": "Refund",
+    "reporter": "Postpone to tomorrow",
+    "avoir": "Credit {{montant}}"
+  },
+  "pin": {
+    "titre": "My PIN · {{nom}}",
+    "aide": "{{agent}} cannot cancel alone",
+    "regle": {
+      "annulation": "The cancellation keeps number {{sequence}}, moves to \"cancelled\", is not billed by AfriMove and appears by name in the evening report.",
+      "report": "The ticket keeps number {{sequence}}, is postponed to tomorrow, and the postponement appears by name in the evening report."
+    }
+  },
+  "actions": {
+    "refuser": "Reject",
+    "annuler": {
+      "rembourser": "Cancel · refund {{montant}}",
+      "avoir": "Cancel · credit {{montant}}",
+      "reporter": "Postpone to tomorrow",
+      "detail": "seat {{siege}} released · signed {{nom}}"
+    }
+  },
+  "message": {
+    "pinRequis": "Enter your PIN to decide.",
+    "pinSaisi": "PIN entered. You can decide.",
+    "pinIncorrect_one": "Wrong PIN. {{count}} try left.",
+    "pinIncorrect_other": "Wrong PIN. {{count}} tries left.",
+    "pinBloque": "Keypad locked: wait for it to reopen.",
+    "echec": "The decision was not sent. Try again.",
+    "dejaTraitee": "This request has already received a decision."
+  },
+  "etats": {
+    "chargement": "Loading the cancellation request",
+    "vide": {
+      "titre": "Request not found",
+      "detail": "This cancellation request does not exist or is no longer waiting for a decision."
+    },
+    "erreur": {
+      "titre": "Unable to load the request",
+      "detail": "Check the connection, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

@@ -1,0 +1,5 @@
+docs/maquettes-v3
+docs/tickets.*
+docs/epiques.json
+pnpm-lock.yaml
+dist

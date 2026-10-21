@@ -1,0 +1,56 @@
+{
+  "retour": "Retour au quai",
+  "titre": "Convoyeur · {{nom}}",
+  "sousTitre": "Bus {{bus}} · {{origine}} → {{destination}} · parti {{heure}}",
+  "reseau": {
+    "horsLigne": "HORS LIGNE",
+    "sync": "SYNC"
+  },
+  "tuiles": {
+    "aBord": "À bord",
+    "aBordDetail": "scannés",
+    "libres": "Libres",
+    "libresDetail": "{{n}} réservées {{arret}}",
+    "enRoute": "En route",
+    "enRouteDetail": "vendus · {{montant}}"
+  },
+  "vente": {
+    "titre": "Vente en route",
+    "titreTouche": "Vente en route · touche {{n}}",
+    "trajet": "{{montee}} → {{destination}}",
+    "moins": "Une place de moins",
+    "plus": "Une place de plus",
+    "place_one": "place",
+    "place_other": "places",
+    "siege_one": "siège {{siege}} · prix prorata fixé par l'agence",
+    "siege_other": "sièges {{siege}} à {{dernier}} · prix prorata fixé par l'agence",
+    "voyageur": "Nom · téléphone (facultatif, pour le SMS)",
+    "cash": "CASH {{montant}}",
+    "cashDetail": "billet par SMS",
+    "cashDetailTouche": "touche {{n}} · billet par SMS",
+    "momo": "MOMO",
+    "momoDetail": "push · confirmé à bord",
+    "note": "Numéroté hors ligne dans ma plage ({{plage}}). Le patron voit chaque vente en route ce soir, avec l'heure et le lieu GPS.",
+    "confirmation_one": "Billet {{numeros}} enregistré.",
+    "confirmation_other": "Billets {{numeros}} enregistrés.",
+    "erreur": "La vente n'a pas été enregistrée. Vérifiez les places libres et recommencez."
+  },
+  "actions": {
+    "scanner": "Scanner à {{arret}}",
+    "scannerSansArret": "Scanner",
+    "colis": "Colis à décharger · {{n}}",
+    "colisSansNombre": "Colis à décharger",
+    "incident": "Incident · panne"
+  },
+  "pied": {
+    "liste": "Liste nominative : {{n}} à bord · 1 contrôle possible à tout moment",
+    "listeSansNombre": "Liste nominative · 1 contrôle possible à tout moment",
+    "montrer": "montrer"
+  },
+  "etats": {
+    "chargement": "Chargement de l'état du bus",
+    "vide": "Aucun départ en cours pour ce convoyeur.",
+    "erreur": "L'état du bus ne s'est pas chargé.",
+    "reessayer": "Réessayer"
+  }
+}

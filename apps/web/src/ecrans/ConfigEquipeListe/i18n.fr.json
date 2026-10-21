@@ -1,0 +1,50 @@
+{
+  "fond": {
+    "titre": "Configuration",
+    "sousTitre_one": "Équipe · {{count}} personne",
+    "sousTitre_other": "Équipe · {{count}} personnes",
+    "retour": "Retour"
+  },
+  "popup": {
+    "titre_one": "Mon équipe · {{count}} personne",
+    "titre_other": "Mon équipe · {{count}} personnes",
+    "titreSansEffectif": "Mon équipe",
+    "aide": "touche un rôle pour filtrer · touche un nom pour modifier",
+    "fermer": "Fermer"
+  },
+  "roles": {
+    "guichetier_one": "guichetier",
+    "guichetier_other": "guichetiers",
+    "superviseur_one": "superviseur",
+    "superviseur_other": "superviseurs",
+    "convoyeur_one": "convoyeur",
+    "convoyeur_other": "convoyeurs",
+    "chauffeur_one": "chauffeur",
+    "chauffeur_other": "chauffeurs",
+    "relais_one": "agent relais",
+    "relais_other": "agents relais",
+    "comptable_one": "comptable",
+    "comptable_other": "comptables"
+  },
+  "filtres": "Filtrer l’équipe par rôle",
+  "recherche": "Chercher un nom, un guichet, une gare…",
+  "liste": "Personnes de l’équipe (liste qui défile)",
+  "modifier": "modifier",
+  "resume": {
+    "enService": "{{count}} en service",
+    "bloquees_one": "{{count}} bloquée",
+    "bloquees_other": "{{count}} bloquées"
+  },
+  "signature": "Chaque modification est signée par ton PIN",
+  "actions": {
+    "fermer": "Fermer",
+    "ajouter": "Ajouter une personne"
+  },
+  "etats": {
+    "chargement": "Chargement de l’équipe",
+    "vide": "Personne dans l’équipe pour le moment.",
+    "aucun": "Aucune personne ne correspond.",
+    "erreur": "La liste ne s’est pas chargée.",
+    "reessayer": "Réessayer"
+  }
+}

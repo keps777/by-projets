@@ -1,0 +1,93 @@
+{
+  "titre": "Covoiturage",
+  "mode": {
+    "aria": "Type de trajet",
+    "entreVilles": "Entre villes",
+    "enVille": "En ville · {{ville}}",
+    "glisse": "glisse pour changer"
+  },
+  "role": {
+    "aria": "Mon rôle",
+    "passager": "Je suis passager",
+    "conducteur": "Je conduis"
+  },
+  "pastille": {
+    "verifie": "vérifié",
+    "aVerifier": "à vérifier"
+  },
+  "resume": {
+    "semaine": "Semaine",
+    "semaineDetail": "reçus par MoMo",
+    "trajets": "Trajets",
+    "annulations_one": "{{count}} annulation",
+    "annulations_other": "{{count}} annulations",
+    "pieces": "Pièces",
+    "piecesOk": "OK",
+    "piecesAFaire": "À faire",
+    "piecesDetail": "permis · carte grise"
+  },
+  "jours": {
+    "dim": "dim.",
+    "lun": "lun.",
+    "mar": "mar.",
+    "mer": "mer.",
+    "jeu": "jeu.",
+    "ven": "ven.",
+    "sam": "sam."
+  },
+  "publies": {
+    "titre": "Mes trajets publiés",
+    "gerer": "Gérer",
+    "trajet": "{{depart}} → {{arrivee}}",
+    "places_one": "{{count}} place",
+    "places_other": "{{count}} places",
+    "reservees_one": "{{count}} réservée",
+    "reservees_other": "{{count}} réservées",
+    "libres_one": "{{count}} libre",
+    "libres_other": "{{count}} libres",
+    "payee": "payée {{montant}}",
+    "visible_one": "visible par {{count}} voyageur",
+    "visible_other": "visible par {{count}} voyageurs",
+    "vide": "Tu n'as publié aucun trajet pour le moment.",
+    "gestion": {
+      "prix": "Prix d'une place : {{montant}} F",
+      "passager": "{{passager}} · {{places}} · payée {{montant}}",
+      "aucune": "Aucune réservation pour le moment."
+    }
+  },
+  "demandes": {
+    "titre": "Passagers qui cherchent une voiture",
+    "sens": "sur tes trajets",
+    "places_one": "{{count}} place",
+    "places_other": "{{count}} places",
+    "proposer": "Proposer {{heure}}",
+    "vide": "Aucun passager ne cherche de voiture sur tes trajets pour le moment."
+  },
+  "paiement": "Tu es payé par MoMo à l'arrivée, quand le passager confirme ou 2 h après l'heure prévue. AfriMove garde {{frais}} F par place. Partage de frais, pas de bénéfice.",
+  "action": {
+    "libelle": "Proposer mon trajet",
+    "detail": "trajet, places, prix · publié en 10 s",
+    "touche": "touche 1 · "
+  },
+  "verification": {
+    "aria": "Vérification du conducteur",
+    "titre": "Vérifie tes pièces avant de publier",
+    "detail": "AfriMove contrôle ces pièces avant ton premier trajet. Tu pourras publier dès qu'elles sont validées.",
+    "identite": "Pièce d'identité",
+    "permis": "Permis de conduire",
+    "carteGrise": "Carte grise",
+    "voiture": "Voiture"
+  },
+  "messages": {
+    "envoyee": "Proposition envoyée à {{passager}}.",
+    "echec": "La proposition n'a pas abouti. Réessaie."
+  },
+  "etats": {
+    "chargement": "Chargement de tes trajets",
+    "erreur": {
+      "titre": "Impossible de charger tes trajets",
+      "detail": "Vérifie ta connexion, puis réessaie.",
+      "reessayer": "Réessayer"
+    }
+  }
+}

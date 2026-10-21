@@ -1,0 +1,98 @@
+{
+  "retour": "Go back to settings",
+  "sousTitre": "Line · {{departs}} · {{arrets}} · price, seat dem, rule dem",
+  "nbDeparts_one": "{{count}} bus",
+  "nbDeparts_other": "{{count}} bus dem",
+  "nbArrets_one": "{{count}} stop",
+  "nbArrets_other": "{{count}} stop dem",
+  "nbChangements_one": "{{count}} change",
+  "nbChangements_other": "{{count}} change dem",
+  "departs": {
+    "titre": "Bus dem",
+    "ajouter": "+ bus",
+    "heure": "Time wey bus go comot from {{heure}}",
+    "heureModifiee": "Time wey bus go comot, dem don change am",
+    "heureNouveau": "New bus",
+    "heureNouveauJour": "New bus for {{jour}}",
+    "actif": "Bus of {{heure}} dey active",
+    "actifNouveau": "New bus dey active",
+    "classe": {
+      "classique": "standard",
+      "vip": "VIP"
+    },
+    "etait": "e bin dey {{heure}}",
+    "nouveau": "new",
+    "seulement": "{{jours}} only",
+    "places": "{{count}} seat dem"
+  },
+  "jours": {
+    "lun": "Monday",
+    "mar": "Tuesday",
+    "mer": "Wednesday",
+    "jeu": "Thursday",
+    "ven": "Friday",
+    "sam": "Saturday",
+    "dim": "Sunday"
+  },
+  "tarifs": {
+    "titre": "Price dem",
+    "classique": "Standard",
+    "vip": "VIP",
+    "bagage": "Extra luggage",
+    "champ": {
+      "classique": "Standard price",
+      "vip": "VIP price",
+      "bagage": "Luggage price"
+    }
+  },
+  "arrets": {
+    "titre": "Stop dem for road",
+    "prorata": "pro rata {{montant}}",
+    "prorataAPublier": "pro rata when dem publish",
+    "monteeOui": "people fit enter",
+    "monteeNon": "people no fit enter",
+    "ajouter": "+ stop"
+  },
+  "plan": {
+    "libelle": "Seat plan ·",
+    "resume_one": "{{count}} seat",
+    "resume_other": "{{count}} seat dem",
+    "detail": ", {{disposition}}, {{rangees}}",
+    "rangees_one": "{{count}} row",
+    "rangees_other": "{{count}} row dem",
+    "modifier": "Change"
+  },
+  "options": {
+    "venteEnLigne": "Online sell · seat dem go show for di passenger app",
+    "fusionAuto": "Automatic join if two bus dey under 40 %"
+  },
+  "actions": {
+    "annuler": "Cancel",
+    "publier": "Publish am from Monday",
+    "publierDetail": "{{changements}} · counter dem and app go update · dem record am",
+    "aCorriger": "Correct di place dem wey dem mark before you publish: time like 09:15, price for each fare."
+  },
+  "arret": {
+    "titre": "Add stop",
+    "sousTitre": "Dem go calculate di pro rata price when dem publish.",
+    "nom": "Name of di stop",
+    "montee": "People fit enter",
+    "ajouter": "Add di stop",
+    "annuler": "Cancel",
+    "fermer": "Close",
+    "erreurNom": "Put di name of di stop.",
+    "erreurExiste": "Dis stop dey for di line already."
+  },
+  "pin": {
+    "titre": "Sign di publication",
+    "sousTitre": "{{changements}} · dem record am for di journal",
+    "fermer": "Close",
+    "echec": "Dem no save di publication. Nothing change for di counter dem or di app."
+  },
+  "etats": {
+    "chargement": "Di line dey load",
+    "vide": "Dis line no dey or e no open again.",
+    "erreur": "Di line no load.",
+    "reessayer": "Try again"
+  }
+}

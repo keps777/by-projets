@@ -1,0 +1,66 @@
+{
+  "titre": "Prepaid drop-off",
+  "sousTitre": "The customer paid in the app · scan their code",
+  "retour": "Back to the ticket office",
+  "code": {
+    "ou": "or the code",
+    "libelle": "Prepaid parcel code"
+  },
+  "trouve": "Found · paid {{montant}} F in the app",
+  "fiche": {
+    "de": "From",
+    "pour": "To",
+    "declare": "Declared",
+    "depart": "Departure",
+    "declareTexte": "{{contenu}} · {{poids}} kg · {{valeur}} F · {{assurance}}",
+    "assure": "insured",
+    "nonAssure": "not insured",
+    "departTexte": "{{heure}} Alpha {{destination}} · hold {{pct}} %"
+  },
+  "poids": {
+    "titre": "Check the weight",
+    "conforme": "{{poids}} kg · matches",
+    "complement": "{{poids}} kg · extra {{montant}} F",
+    "arelever": "to be weighed",
+    "feuille": {
+      "titre": "Weight on the scale",
+      "sousTitre": "Declared: {{declare}} kg",
+      "champ": "Weight read (kg)",
+      "fermer": "Close",
+      "valider": "Confirm the weight",
+      "invalide": "Type the weight in kilos, for example 2,1.",
+      "conforme": "Matches: {{poids}} kg, difference {{ecart}} kg.",
+      "complement": "More than {{seuil}} kg above the declared weight: the customer pays an extra {{montant}} F by MoMo."
+    }
+  },
+  "photo": {
+    "titre": "Photo at drop-off",
+    "aprendre": "to take",
+    "prise": "taken ✓",
+    "manque": "Take the photo of the parcel before accepting."
+  },
+  "note": "Nothing to collect. If the weight is more than {{seuil}} kg over, the app offers the customer an extra amount to pay by MoMo.",
+  "accepter": {
+    "libelle": "Accept · print the label",
+    "echec": "The drop-off was not recorded. Try again.",
+    "complement": "Extra {{montant}} F requested from the customer by MoMo.",
+    "attente": "The label will come out as soon as the printer is ready.",
+    "continuer": "Continue to the platform"
+  },
+  "etats": {
+    "chargement": "Looking for the parcel",
+    "vide": {
+      "titre": "No code read",
+      "detail": "Scan the customer's code or type it in the field."
+    },
+    "inconnu": {
+      "titre": "No prepaid parcel for this code",
+      "detail": "Check the code shown on the customer's phone."
+    },
+    "erreur": {
+      "titre": "Unable to load the parcel",
+      "detail": "Check the connection, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

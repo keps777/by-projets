@@ -1,0 +1,103 @@
+{
+  "titre": "My station dem, my people",
+  "retour": "Go back",
+  "sousTitre": "{{gares}} · {{personnes}} · {{bus}} · {{heure}}",
+  "nbGares_one": "{{count}} station",
+  "nbGares_other": "{{count}} station dem",
+  "nbPersonnes_one": "{{count}} person",
+  "nbPersonnes_other": "{{count}} people",
+  "nbBus_one": "{{count}} bus",
+  "nbBus_other": "{{count}} bus",
+  "badge": "{{count}} DEY WORK",
+  "gares": {
+    "titre": "My station dem · today",
+    "aide": "touch one station",
+    "ligne": "{{nom}} · {{responsable}}",
+    "ligneVille": "{{nom}} · {{ville}} · {{responsable}}",
+    "ligneSansResponsable": "{{nom}}",
+    "composition": "{{guichets}} · {{quais}}",
+    "guichets_one": "{{count}} counter",
+    "guichets_other": "{{count}} counter dem",
+    "quais_one": "{{count}} bus park",
+    "quais_other": "{{count}} bus park dem",
+    "etat": "{{synchronises}} / {{total}} don sync · difference {{ecart}}",
+    "etatSansEcart": "{{synchronises}} / {{total}} don sync",
+    "horsLigne": "no network {{minutes}} min"
+  },
+  "effectifs": {
+    "guichetier": {
+      "libelle": "Counter dem",
+      "detail": "{{count}} dey work"
+    },
+    "superviseur": {
+      "libelle": "Superv.",
+      "detail": "{{count}} dey work"
+    },
+    "convoyeur": {
+      "libelle": "Conduct.",
+      "detail": "{{count}} for inside bus"
+    },
+    "chauffeur": {
+      "libelle": "Driver dem",
+      "detail": "{{count}} dey road"
+    },
+    "relais": {
+      "libelle": "Relay",
+      "detail": "{{count}} dey work"
+    },
+    "comptable": {
+      "libelle": "Acct.",
+      "detail": "{{count}} dey work"
+    }
+  },
+  "gens": {
+    "titre": "My people · {{count}}",
+    "titreSansEffectif": "My people",
+    "aide": "touch one name · slide",
+    "liste": "{{titre}} (list wey dey scroll)",
+    "lieu": "{{role}} · {{lieu}}",
+    "lieuSansPrecision": "{{role}}"
+  },
+  "roles": {
+    "guichetier": "counter agent",
+    "guichetier_f": "counter agent",
+    "superviseur": "supervisor",
+    "superviseur_f": "supervisor",
+    "convoyeur": "conductor",
+    "convoyeur_f": "conductor",
+    "chauffeur": "driver",
+    "chauffeur_f": "driver",
+    "relais": "relay agent",
+    "relais_f": "relay agent",
+    "comptable": "accountant",
+    "comptable_f": "accountant"
+  },
+  "etats": {
+    "en_service": "dey work",
+    "a_bord": "for inside bus",
+    "en_route": "dey road",
+    "repos": "dey rest",
+    "bloquee": "dem lock am",
+    "bloquee_f": "dem lock am",
+    "indisponible": "no dey available",
+    "hors_service": "e no dey work"
+  },
+  "paie": {
+    "payer_one": "Pay di salary",
+    "payer_other": "Pay di {{count}} salaries",
+    "detail": "{{jour}} · by MoMo · 1 touch"
+  },
+  "actions": {
+    "ajouter": "+ person · + station"
+  },
+  "chargement": {
+    "libelle": "Di team dey load"
+  },
+  "vide": {
+    "texte": "No station or person for now."
+  },
+  "erreur": {
+    "texte": "Di team no load. Di shortcut dem still dey work.",
+    "reessayer": "Try again"
+  }
+}

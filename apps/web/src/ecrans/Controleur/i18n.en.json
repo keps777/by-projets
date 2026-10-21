@@ -1,0 +1,62 @@
+{
+  "titre": "On-board check",
+  "sousTitre": "{{nom}} · {{fonction}} Alpha · bus {{bus}} at {{lieu}}",
+  "fonction": {
+    "feminin": "inspector",
+    "masculin": "inspector"
+  },
+  "retour": "Back",
+  "badge": "SPOT CHECK",
+  "compteurs": {
+    "liste": {
+      "libelle": "List",
+      "detail": "valid tickets"
+    },
+    "comptes": {
+      "libelle": "Counted",
+      "detail": "heads on board"
+    },
+    "ecart": {
+      "libelle": "Discrepancy",
+      "sansBillet": "without ticket",
+      "aucun": "no discrepancy",
+      "sansVoyageur": "tickets without passenger"
+    }
+  },
+  "sieges": {
+    "titre": "Seat by seat · tap a seat to check",
+    "total": "{{nombre}} seats"
+  },
+  "fiche": {
+    "titre": "Seat {{numero}} · passenger without ticket",
+    "lieuHeure": "{{lieu}} · {{heure}}",
+    "declare": "They say they paid {{montant}} F to the conductor at {{ville}}.",
+    "aucuneVente": "No sale on the road is recorded for this seat.",
+    "venteTrouvee": "A sale on the road is recorded for this seat.",
+    "regulariser": "Regularise · ticket {{montant}}",
+    "signaler": "Report the conductor",
+    "regularise": "Ticket {{numero}} sold: seat {{siege}} is in order.",
+    "signale": "Conductor reported: the owner will receive the report for seat {{siege}}.",
+    "echecRegularisation": "The ticket was not sold. Try again.",
+    "echecSignalement": "The conductor was not reported. Try again."
+  },
+  "siege": {
+    "echec": "Seat {{numero}} was not recorded. Try again."
+  },
+  "cloture": {
+    "libelle": "Close the check · send to the owner",
+    "echec": "The check was not sent to the owner. Try again."
+  },
+  "etats": {
+    "chargement": "Loading the check",
+    "vide": {
+      "titre": "No check in progress",
+      "detail": "The on-board check appears here as soon as a bus needs checking."
+    },
+    "erreur": {
+      "titre": "The check will not open",
+      "detail": "Check the network, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

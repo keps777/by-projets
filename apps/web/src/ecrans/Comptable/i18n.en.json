@@ -1,0 +1,39 @@
+{
+  "entete": {
+    "titre": "Accountant",
+    "sousTitre": "{{periode}} · closes on day {{jour}} of the month",
+    "retour": "Back",
+    "mois": "Month"
+  },
+  "rapprochement": {
+    "titre": "MoMo reconciliation · {{mois}}",
+    "rapproche": "{{part}} reconciled",
+    "ventes": "MoMo sales recorded · {{nombre}}",
+    "recu": "Received in the merchant account",
+    "sansCorrespondance_one": "{{count}} transaction with no match",
+    "sansCorrespondance_other": "{{count}} transactions with no match",
+    "voir_one": "See the line · operator reference",
+    "voir_other": "See the {{count}} lines · operator references"
+  },
+  "exports": {
+    "titre": "Exports · fixed columns",
+    "aide": "preview · download",
+    "apercu": "Preview",
+    "telecharger": "⤓",
+    "aJour": "up to date",
+    "aucun": "No export for this month."
+  },
+  "cabinet": {
+    "titre": "Automatic sending to the firm",
+    "detail_one": "{{destinataire}} · on day {{jour}} of each month · {{count}} last sending received",
+    "detail_other": "{{destinataire}} · on day {{jour}} of each month · {{count}} last sendings received",
+    "desactive": "{{destinataire}} · automatic sending turned off"
+  },
+  "cloture": "Close {{mois}} · send everything",
+  "etats": {
+    "chargement": "Loading the accountant",
+    "vide": "No information for now.",
+    "erreur": "The accountant could not be loaded.",
+    "reessayer": "Try again"
+  }
+}

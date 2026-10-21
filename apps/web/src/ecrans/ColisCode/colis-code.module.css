@@ -1,0 +1,332 @@
+/*
+ * Planche « ColisCode » (docs/maquettes-v3/ColisCode.dc.html). Les valeurs viennent de la maquette ; les couleurs,
+ * polices et espacements sont les variables --am-* de @afrimove/design.
+ */
+
+/*
+ * Corps : le contenu tient juste dans les 844 px de la planche. Si un message s'ajoute, il défile au lieu d'être
+ * coupé, sans barre visible.
+ */
+.corps.corps {
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.corps.corps::-webkit-scrollbar {
+  display: none;
+}
+
+/*
+ * En-tête de la planche : retour, « Colis pour Maman » et son résumé en police mono, partager. Le titre de l'écran
+ * (clé commune de la coquille) est un h1 masqué : la planche dessine le sien en simple texte.
+ */
+.entete {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-10);
+  padding: var(--am-space-16) var(--am-gutter) var(--am-space-8);
+}
+
+.titreEcran {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.enteteTextes {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.titre {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-18);
+  font-weight: 800;
+  letter-spacing: var(--am-ls-sous-titre);
+  line-height: var(--am-lh-compacte);
+}
+
+.resume {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-11);
+  color: var(--am-craie-2);
+}
+
+/* ------------------------------------------------------------------ code de retrait */
+
+/* Bloc ambre : le code en très grand à gauche, la photo du dépôt et « Envoyer le code » à droite. */
+.retrait {
+  display: grid;
+  flex: none;
+  grid-template-columns: 1fr 120px;
+  gap: var(--am-space-12);
+  padding: var(--am-space-14);
+  border-radius: var(--am-radius-18);
+  background: var(--am-ambre);
+  color: var(--am-nuit);
+}
+
+.retraitTextes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-4);
+  min-width: 0;
+  container-type: inline-size;
+}
+
+/* Le code (40 px sur la planche) rétrécit avec la colonne sur un écran étroit au lieu d'être rogné. */
+.retraitTextes [role="img"] {
+  font-size: min(40px, 22cqw) !important;
+}
+
+.retraitLibelle {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+}
+
+.consigne {
+  font-size: var(--am-fs-12);
+  font-weight: 600;
+}
+
+.retraitActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-6);
+}
+
+/* Photo prise au dépôt : la référence ne porte que son libellé et son heure. */
+.photo {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 78px;
+  padding: var(--am-space-6);
+  border-radius: var(--am-radius-10);
+  background: var(--am-nuit);
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-10);
+  text-align: center;
+}
+
+/* La planche dessine 34 px ; la zone tactile monte à 44 px par un pseudo-élément invisible. */
+.envoyer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--am-space-6);
+  min-height: 34px;
+  margin: 0;
+  padding: 1px var(--am-space-6);
+  border: 0;
+  border-radius: var(--am-radius-8);
+  background: var(--am-nuit);
+  color: var(--am-ambre);
+  font-family: inherit;
+  font-size: var(--am-fs-12);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.envoyer::after {
+  content: "";
+  position: absolute;
+  inset: -5px 0;
+}
+
+.envoyer[aria-busy="true"],
+.reclamation[aria-busy="true"] {
+  cursor: progress;
+}
+
+/* ------------------------------------------------------------------ frise */
+
+.frise {
+  flex: none;
+}
+
+/* ------------------------------------------------------------------ livrer ou déposer en relais */
+
+.options {
+  display: grid;
+  flex: none;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--am-space-8);
+}
+
+/* Les 58 px de la planche sont ceux du contenu (84 px bordure et marges comprises). */
+.option {
+  box-sizing: content-box;
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-10);
+  min-height: 58px;
+  padding: var(--am-space-12);
+  border-radius: var(--am-radius-14);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  text-decoration: none;
+}
+
+.option:hover {
+  color: var(--am-craie);
+}
+
+.option[data-mode="moto"] {
+  border-color: var(--am-bleu);
+}
+
+.option svg {
+  flex: none;
+}
+
+.optionTextes {
+  display: flex;
+  flex-direction: column;
+  line-height: var(--am-lh-serree);
+}
+
+.optionTitre {
+  font-size: var(--am-fs-13);
+  font-weight: 700;
+}
+
+.optionDetail {
+  font-size: var(--am-fs-11);
+  color: var(--am-craie-2);
+}
+
+/* ------------------------------------------------------------------ réclamation */
+
+/* Toute la bande est le bouton : une touche ouvre la réclamation (3 lignes de texte, soit plus de 44 px). */
+.reclamation {
+  box-sizing: border-box;
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--am-space-10);
+  width: 100%;
+  margin: 0;
+  padding: var(--am-space-10) var(--am-space-12);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-surface-2);
+  background: var(--am-carte-sombre);
+  color: var(--am-craie-2);
+  font-family: inherit;
+  font-size: var(--am-fs-12);
+  text-align: left;
+  cursor: pointer;
+}
+
+.reclamation svg {
+  flex: none;
+}
+
+.envoyer:focus-visible,
+.option:focus-visible,
+.reclamation:focus-visible,
+.reessayer:focus-visible {
+  outline: 2px solid var(--am-orange);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------ messages */
+
+.message {
+  flex: none;
+  margin: 0;
+  padding: var(--am-space-10) var(--am-space-14);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-vert-bord);
+  background: var(--am-vert-fond);
+  color: var(--am-craie);
+  font-size: var(--am-fs-13);
+  line-height: var(--am-lh-normale);
+}
+
+.message[role="alert"] {
+  border-color: var(--am-rouge);
+  background: var(--am-rouge-fond);
+}
+
+/* ------------------------------------------------------------------ états chargement, vide et erreur */
+
+.etat {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--am-space-8);
+  text-align: center;
+}
+
+.etatTitre {
+  margin: 0;
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-18);
+  font-weight: 800;
+  letter-spacing: var(--am-ls-sous-titre);
+}
+
+.etatDetail {
+  margin: 0;
+  font-size: var(--am-fs-13);
+  color: var(--am-craie-2);
+}
+
+.squelette {
+  flex: none;
+  min-height: 64px;
+  border-radius: var(--am-radius-16);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  animation: pulse var(--am-pulse-duration) infinite;
+}
+
+.squeletteCode {
+  min-height: 124px;
+  border: 0;
+  border-radius: var(--am-radius-18);
+}
+
+.squeletteFrise {
+  min-height: 250px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .squelette {
+    animation: none;
+  }
+}
+
+.reessayer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  margin-top: var(--am-space-8);
+  padding: 0 var(--am-space-14);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie-2);
+  font-family: inherit;
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  cursor: pointer;
+}

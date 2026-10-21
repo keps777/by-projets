@@ -1,0 +1,67 @@
+{
+  "titre": "Covoiturage",
+  "mode": {
+    "aria": "Type de trajet",
+    "entreVilles": "Entre villes",
+    "enVille": "En ville · {{ville}}",
+    "glisse": "glisse pour changer"
+  },
+  "role": {
+    "aria": "Mon rôle",
+    "passager": "Je suis passager",
+    "conducteur": "Je conduis"
+  },
+  "trajet": {
+    "inverser": "Inverser"
+  },
+  "quand": {
+    "matin": "Ce matin",
+    "apresMidi": "Cet après-midi",
+    "soir": "Ce soir"
+  },
+  "filtres": {
+    "aria": "Filtres",
+    "tous": "Tous",
+    "clim": "Clim",
+    "femmes": "Femmes",
+    "grandBagage": "Grand bagage",
+    "prixMax": "≤ {{prix}}"
+  },
+  "conducteur": {
+    "verifie": "vérifié",
+    "verifiee": "vérifiée",
+    "trajets_one": "{{count}} trajet",
+    "trajets_other": "{{count}} trajets"
+  },
+  "offre": {
+    "places_one": "{{count}} place",
+    "places_other": "{{count}} places",
+    "clim": "clim",
+    "femmes": "femmes bienvenues",
+    "grandBagage": "grand bagage OK",
+    "depart": "Départ",
+    "arrivee": "Arrivée",
+    "arriveeLieu": "Arrivée {{lieu}}",
+    "arriveeHeure": "vers {{heure}}",
+    "arrets_one": "{{count}} arrêt possible",
+    "arrets_other": "{{count}} arrêts possibles",
+    "reserver": "Réserver",
+    "touche": " · touche 2"
+  },
+  "messages": {
+    "indisponible": "Cette offre n'est plus disponible. Choisis un autre conducteur.",
+    "echec": "La réservation n'a pas abouti. Réessaie."
+  },
+  "etats": {
+    "chargement": "Chargement des covoiturages",
+    "vide": {
+      "titre": "Aucun conducteur pour ce trajet",
+      "detail": "Change de filtre ou reviens un peu plus tard."
+    },
+    "erreur": {
+      "titre": "Impossible de charger les covoiturages",
+      "detail": "Vérifie ta connexion, puis réessaie.",
+      "reessayer": "Réessayer"
+    }
+  }
+}

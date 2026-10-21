@@ -1,0 +1,39 @@
+{
+  "entete": {
+    "titre": "Accountant",
+    "sousTitre": "{{periode}} · closing on day {{jour}} of di month",
+    "retour": "Go back",
+    "mois": "Month"
+  },
+  "rapprochement": {
+    "titre": "MoMo reconciliation · {{mois}}",
+    "rapproche": "{{part}} don reconcile",
+    "ventes": "MoMo sale dem wey dem record · {{nombre}}",
+    "recu": "Wetin enter di merchant account",
+    "sansCorrespondance_one": "{{count}} transaction wey no get match",
+    "sansCorrespondance_other": "{{count}} transaction dem wey no get match",
+    "voir_one": "See di line · operator reference",
+    "voir_other": "See di {{count}} line dem · operator reference dem"
+  },
+  "exports": {
+    "titre": "Export dem · fixed column dem",
+    "aide": "preview · download",
+    "apercu": "Preview",
+    "telecharger": "⤓",
+    "aJour": "e don up to date",
+    "aucun": "No export for dis month."
+  },
+  "cabinet": {
+    "titre": "Automatic sending go di firm",
+    "detail_one": "{{destinataire}} · for day {{jour}} of each month · {{count}} last sending don reach",
+    "detail_other": "{{destinataire}} · for day {{jour}} of each month · {{count}} last sendings don reach",
+    "desactive": "{{destinataire}} · automatic sending don off"
+  },
+  "cloture": "Close {{mois}} · send everything",
+  "etats": {
+    "chargement": "Accountant dey load",
+    "vide": "No information for now.",
+    "erreur": "Accountant no load.",
+    "reessayer": "Try again"
+  }
+}

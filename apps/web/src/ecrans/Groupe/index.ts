@@ -1,0 +1,1 @@
+export { EcranGroupe } from "./EcranGroupe";

@@ -1,0 +1,67 @@
+{
+  "titre": "Carpooling",
+  "mode": {
+    "aria": "Trip type",
+    "entreVilles": "Between cities",
+    "enVille": "In town · {{ville}}",
+    "glisse": "swipe to change"
+  },
+  "role": {
+    "aria": "My role",
+    "passager": "I'm a passenger",
+    "conducteur": "I'm driving"
+  },
+  "trajet": {
+    "inverser": "Swap"
+  },
+  "quand": {
+    "matin": "This morning",
+    "apresMidi": "This afternoon",
+    "soir": "This evening"
+  },
+  "filtres": {
+    "aria": "Filters",
+    "tous": "All",
+    "clim": "A/C",
+    "femmes": "Women",
+    "grandBagage": "Large luggage",
+    "prixMax": "≤ {{prix}}"
+  },
+  "conducteur": {
+    "verifie": "verified",
+    "verifiee": "verified",
+    "trajets_one": "{{count}} trip",
+    "trajets_other": "{{count}} trips"
+  },
+  "offre": {
+    "places_one": "{{count}} seat",
+    "places_other": "{{count}} seats",
+    "clim": "A/C",
+    "femmes": "women welcome",
+    "grandBagage": "large luggage OK",
+    "depart": "Departure",
+    "arrivee": "Arrival",
+    "arriveeLieu": "Arrival {{lieu}}",
+    "arriveeHeure": "around {{heure}}",
+    "arrets_one": "{{count}} possible stop",
+    "arrets_other": "{{count}} possible stops",
+    "reserver": "Book",
+    "touche": " · tap 2"
+  },
+  "messages": {
+    "indisponible": "This offer is no longer available. Choose another driver.",
+    "echec": "The booking did not go through. Try again."
+  },
+  "etats": {
+    "chargement": "Loading carpools",
+    "vide": {
+      "titre": "No driver for this trip",
+      "detail": "Change the filter or come back a little later."
+    },
+    "erreur": {
+      "titre": "Unable to load carpools",
+      "detail": "Check your connection, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

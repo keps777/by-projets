@@ -1,0 +1,26 @@
+{
+  "titre": "Di network live",
+  "retour": "Go back for home",
+  "resume": {
+    "compagnies_one": "{{count}} company",
+    "compagnies_other": "{{count}} company dem",
+    "busEnRoute": "{{count}} bus dey road",
+    "departsAVenir_one": "{{count}} bus wey go soon go",
+    "departsAVenir_other": "{{count}} bus dem wey go soon go"
+  },
+  "carte": {
+    "aria": "Network map: {{villes}}",
+    "legende": "● Bêta  ● Alpha  ● Oméga"
+  },
+  "lignes": {
+    "titre": "Road dem · next bus",
+    "aide": "touch one road",
+    "des": "from {{prix}}",
+    "via": "pass {{ville}}",
+    "covoiturage": "carpool",
+    "chargement": "Di road dem dey load",
+    "vide": "No road for dis filter.",
+    "erreur": "Di network no load.",
+    "reessayer": "Try again"
+  }
+}

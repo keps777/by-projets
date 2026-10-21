@@ -1,0 +1,74 @@
+{
+  "titre": "Vendre",
+  "retour": "Retour au guichet",
+  "sousTitre": "Guichet {{rang}} · billet n° {{numero}}",
+  "departs": {
+    "places": "{{destination}} · {{nombre}}",
+    "placesCourt": "{{destination}} · {{nombre}} pl.",
+    "autres": "+ {{nombre}}"
+  },
+  "plan": {
+    "siege": "Siège",
+    "attribue": "attribué automatiquement · touche un siège pour changer",
+    "choisi": "choisi · touche un siège pour changer",
+    "libres": "{{nombre}} libres",
+    "siegeLibre": "Siège {{numero}} libre",
+    "siegePris": "Siège {{numero}} pris",
+    "indisponible": "Le plan de ce départ n'est pas encore chargé.",
+    "siegeChoisi": "Siège {{numero}} choisi"
+  },
+  "voyageur": {
+    "nom": "Nom du voyageur",
+    "telephone": "Téléphone",
+    "piece": "Pièce (4 derniers)",
+    "clientConnu": "Client connu ↓",
+    "bagage": "+ bagage {{montant}}"
+  },
+  "paiement": {
+    "cash": "Cash",
+    "rendu": "rendu : {{montant}}",
+    "momo": "MoMo",
+    "push": "push au client",
+    "orange": "Orange Money",
+    "reference": "référence"
+  },
+  "recap": {
+    "recu": "Reçu :",
+    "aEncaisser": "À encaisser :",
+    "referenceLibelle": "Référence :",
+    "billet": "billet {{montant}}",
+    "bagage": "bagage {{montant}}",
+    "sms": "SMS au voyageur :",
+    "oui": "oui",
+    "non": "non"
+  },
+  "encaisser": {
+    "libelle": "Encaisser et imprimer",
+    "detail": "billet + SMS en 2 s",
+    "detailSansSms": "billet en 2 s"
+  },
+  "annuler": "Annuler avec le PIN du superviseur",
+  "erreurs": {
+    "nom": "Indiquez le nom du voyageur.",
+    "telephone": "Numéro invalide : 9 chiffres, en 6.",
+    "piece": "Quatre chiffres.",
+    "recu": "Le montant reçu est inférieur au prix.",
+    "reference": "Saisissez la référence Orange Money.",
+    "departAutre": "Le plan et le tarif de ce départ ne sont pas encore chargés.",
+    "siegePris": "Ce siège vient d'être pris. Choisissez-en un autre.",
+    "vente": "La vente n'a pas été enregistrée. Réessayez.",
+    "impression": "Le billet {{numero}} est vendu, mais l'impression a échoué. Touchez « Encaisser et imprimer » pour réessayer."
+  },
+  "etats": {
+    "chargement": "Chargement de la vente",
+    "vide": {
+      "titre": "Aucun départ ouvert à la vente",
+      "detail": "Il n'y a pas de départ à vendre pour le moment."
+    },
+    "erreur": {
+      "titre": "Impossible de charger la vente",
+      "detail": "Vérifiez la connexion, puis réessayez.",
+      "reessayer": "Réessayer"
+    }
+  }
+}

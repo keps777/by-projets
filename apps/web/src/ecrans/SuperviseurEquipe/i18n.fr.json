@@ -1,0 +1,128 @@
+{
+  "titre": "Équipe de la gare",
+  "retour": "Retour",
+  "sousTitre_one": "{{gare}} · {{count}} personne · un compte et un PIN chacun",
+  "sousTitre_other": "{{gare}} · {{count}} personnes · un compte et un PIN chacun",
+  "ajouter": "+ personne",
+  "liste": {
+    "titre": "En service aujourd'hui",
+    "aide": "touche un nom",
+    "ligne": "{{nom}} · {{role}} · {{affectation}}",
+    "ligneSansAffectation": "{{nom}} · {{role}}",
+    "autres_one": "+ {{count}} autre",
+    "autres_other": "+ {{count}} autres",
+    "autresDetail_one": "+ {{count}} autre ({{detail}})",
+    "autresDetail_other": "+ {{count}} autres ({{detail}})"
+  },
+  "roles": {
+    "guichetier": "guichetier",
+    "guichetier_f": "guichetière",
+    "convoyeur": "convoyeur",
+    "convoyeur_f": "convoyeuse",
+    "chauffeur": "chauffeur",
+    "chauffeur_f": "chauffeuse",
+    "controleur": "contrôleur",
+    "controleur_f": "contrôleuse",
+    "superviseur": "superviseur",
+    "superviseur_f": "superviseure"
+  },
+  "statut": {
+    "en_service": "en service",
+    "a_bord": "à bord",
+    "bloquee": "bloqué",
+    "bloquee_f": "bloquée"
+  },
+  "pin": {
+    "ok": "PIN OK",
+    "aRenouveler": "PIN à renouveler",
+    "bloque": "bloqué · {{faux}} PIN faux à {{heure}}",
+    "bloque_f": "bloquée · {{faux}} PIN faux à {{heure}}"
+  },
+  "fiche": {
+    "detail_one": "{{role}} {{depuis}} · {{billets}} billet",
+    "detail_other": "{{role}} {{depuis}} · {{billets}} billets",
+    "detailSimple": "{{role}} · {{affectation}}",
+    "detailRole": "{{role}}",
+    "actions": {
+      "renouveler_pin": {
+        "titre": "Renouveler le PIN",
+        "detail": "PIN provisoire par SMS, à changer"
+      },
+      "changer_affectation": {
+        "titre": "Changer de guichet",
+        "detail": "ou de rôle"
+      },
+      "voir_journal": {
+        "titre": "Voir son journal",
+        "detail": "ventes, annulations, écarts"
+      },
+      "desactiver": {
+        "titre": "Désactiver le compte",
+        "detail": "immédiat · patron prévenu"
+      }
+    },
+    "debloquer": "Débloquer {{nom}}",
+    "monPin": "Mon propre PIN · changer",
+    "regle": "Un PIN n'est jamais affiché, même au superviseur. Le renouvellement envoie un PIN provisoire par SMS, valable {{duree}}, que la personne remplace à sa première connexion. Chaque action ici est signée par ton PIN et visible par le patron.",
+    "dureeHeures": "{{count}} h",
+    "dureeMinutes": "{{count}} min"
+  },
+  "pied": {
+    "annuler": "Annuler",
+    "renouveler": {
+      "libelle": "Renouveler · mon PIN",
+      "detail": "SMS provisoire à {{prenom}} · tracé"
+    }
+  },
+  "feuille": {
+    "fermer": "Fermer",
+    "pin": {
+      "titre": "Mon PIN · {{nom}}",
+      "aide": "{{longueur}} chiffres · jamais partagé",
+      "regle": "{{essais}} essais, puis blocage {{minutes}} min et alerte au patron."
+    },
+    "affectation": {
+      "guichet": "Guichet",
+      "guichetN": "Guichet {{rang}}",
+      "role": "Rôle",
+      "aucunGuichet": "Aucun guichet dans l'équipe."
+    },
+    "monPin": {
+      "titre": "Mon propre PIN · changer",
+      "detail": "PIN provisoire par SMS, à changer"
+    },
+    "journal": {
+      "chargement": "Chargement du journal",
+      "vide": "Aucune entrée au journal pour aujourd'hui.",
+      "erreur": "Impossible de charger le journal.",
+      "reessayer": "Réessayer",
+      "signe": "signé par PIN",
+      "chaineRompue": "Chaîne du journal rompue : préviens le patron."
+    },
+    "message": {
+      "choixManquant": "Choisis un guichet ou un rôle avant de saisir ton PIN.",
+      "echec": "La demande n'a pas été envoyée. Réessaie.",
+      "inconnue": "Cette personne n'est plus dans l'équipe.",
+      "refusee": "Ce compte n'a pas besoin de cette action."
+    }
+  },
+  "resultat": {
+    "pinRenouvele": "PIN provisoire envoyé par SMS à {{prenom}}.",
+    "debloque": "{{nom}} peut se reconnecter.",
+    "desactive": "Le compte de {{nom}} est désactivé. Le patron est prévenu.",
+    "affectation": "L'affectation de {{nom}} est changée.",
+    "monPin": "PIN provisoire envoyé par SMS à {{prenom}}."
+  },
+  "etats": {
+    "chargement": "Chargement de l'équipe",
+    "vide": {
+      "titre": "Personne en service",
+      "detail": "Aucune personne de la gare n'est en service aujourd'hui."
+    },
+    "erreur": {
+      "titre": "Impossible de charger l'équipe",
+      "detail": "Vérifie la connexion, puis réessaie.",
+      "reessayer": "Réessayer"
+    }
+  }
+}

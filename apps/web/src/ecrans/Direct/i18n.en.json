@@ -1,0 +1,85 @@
+{
+  "retour": "Back to the ticket",
+  "carte": {
+    "libelle": "Map of the {{depart}} – {{arrivee}} route, bus after {{apres}}",
+    "vitesse": "{{vitesse}} km/h"
+  },
+  "statut": {
+    "direct": "LIVE",
+    "sansSignal": "NO SIGNAL"
+  },
+  "arrivee": {
+    "etiquette": "Estimated arrival",
+    "detail": "scheduled {{prevue}} · {{retard}}",
+    "retard": "{{minutes}} min late",
+    "aLHeure": "on time"
+  },
+  "bus": {
+    "compagnieSiege": "{{compagnie}} · seat {{siege}}"
+  },
+  "prevenir": {
+    "titre": "Notify {{nom}} when I arrive",
+    "detail": "1 tap · they get an SMS {{minutes}} min before {{gare}}",
+    "interrupteur": "Arrival SMS for {{nom}}",
+    "annonce": {
+      "active": "{{nom}} will get an SMS {{minutes}} min before arrival",
+      "annule": "{{nom}} will no longer get an SMS"
+    },
+    "erreur": "The SMS could not be scheduled. Try again.",
+    "sansProche": {
+      "titre": "Notify a relative when I arrive",
+      "detail": "Add them in Me · they get an SMS before arrival"
+    }
+  },
+  "frise": {
+    "libelle": "Stops on the trip",
+    "prochain": "next stop"
+  },
+  "actions": {
+    "chauffeur": "Driver",
+    "signaler": "Report",
+    "colis": "My parcel"
+  },
+  "feuille": {
+    "fermer": "Close",
+    "terminer": "Done"
+  },
+  "signaler": {
+    "titre": "Report a problem",
+    "motifs": {
+      "retard": {
+        "titre": "Delay",
+        "detail": "The bus is later than planned"
+      },
+      "conduite": {
+        "titre": "Driving",
+        "detail": "Speeding or dangerous driving"
+      },
+      "incident": {
+        "titre": "Incident",
+        "detail": "Breakdown, accident or problem on board"
+      }
+    },
+    "transmis": "Report sent to the {{gare}} station",
+    "erreur": "The report did not go through. Try again."
+  },
+  "chauffeur": {
+    "titre": "Call the driver",
+    "chargement": "Looking for the driver",
+    "consigne": "{{nom}} is driving your bus. Only call if it is urgent.",
+    "appeler": "Call {{nom}}",
+    "erreur": "The driver's number could not be loaded."
+  },
+  "etats": {
+    "chargement": "Loading the bus tracking",
+    "vide": {
+      "titre": "Bus not found",
+      "detail": "This ticket no longer exists or is not in your name."
+    },
+    "erreur": {
+      "titre": "The tracking could not be loaded",
+      "detail": "Check your connection, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

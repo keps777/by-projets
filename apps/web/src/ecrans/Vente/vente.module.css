@@ -1,0 +1,426 @@
+/*
+ * Planche « Vente » (docs/maquettes-v3/Vente.dc.html). Les valeurs viennent de la maquette ; les couleurs, polices
+ * et espacements sont les variables --am-* de @afrimove/design.
+ *
+ * Les boutons et champs de la maquette n'ont pas de `font-family` : le navigateur leur met sa police par défaut, ce
+ * qui est un oubli de la planche (le kit les dessine en Instrument Sans, comme tout le texte). Ils sont ici en
+ * Instrument Sans.
+ *
+ * Surcharges du kit (variantes locales, le kit n'est pas modifié) : le sélecteur est doublé (`.x.x`) pour passer
+ * devant la règle d'un seul sélecteur du composant du kit quel que soit l'ordre des feuilles.
+ */
+
+/* Racine : prend la place de l'écran et sert d'ancre à la feuille « Client connu ». */
+.racine {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Corps : 8 px entre les blocs, 2 px en haut (le kit : 10 px et 4 px). */
+.corps.corps {
+  gap: var(--am-space-8);
+  padding-top: var(--am-space-2);
+}
+
+/* Pied : deux boutons côte à côte, 8 px au-dessus et 18 px sous. */
+.pied.pied {
+  flex-direction: row;
+  gap: var(--am-space-8);
+  padding-top: var(--am-space-8);
+}
+
+/* ------------------------------------------------------------------ départs */
+
+.departs {
+  display: flex;
+  gap: var(--am-space-6);
+}
+
+.depart {
+  font-family: var(--am-font-texte);
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  min-height: 52px;
+  padding: var(--am-space-6) var(--am-space-4);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  line-height: var(--am-lh-compacte);
+  cursor: pointer;
+}
+
+.depart[aria-pressed="true"] {
+  border-color: var(--am-ambre);
+  background: var(--am-surface-2);
+}
+
+.departHeure {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-15);
+  font-weight: 700;
+}
+
+.depart[aria-pressed="true"] .departHeure {
+  color: var(--am-ambre);
+}
+
+.departDestination {
+  font-size: var(--am-fs-10);
+  color: var(--am-craie-2);
+}
+
+.autres {
+  font-family: var(--am-font-texte);
+  flex: none;
+  width: 52px;
+  min-height: 52px;
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-11);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ------------------------------------------------------------------ plan du bus */
+
+.plan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-6);
+  padding: var(--am-space-10);
+  border-radius: var(--am-radius-14);
+  background: var(--am-profond);
+  border: 1px solid var(--am-trait);
+}
+
+.grille {
+  display: grid;
+  grid-template-columns: repeat(var(--colonnes), minmax(0, 1fr));
+  gap: var(--am-space-4);
+}
+
+.siege {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: 26px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--am-radius-6);
+  background: var(--am-trait);
+}
+
+.siegeLibre {
+  border: 1px solid var(--am-trait-fort);
+  background: var(--am-surface-2);
+  cursor: pointer;
+}
+
+.siegeChoisi {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--am-ambre);
+  color: var(--am-nuit);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* L'allée du bus : une rangée sans hauteur, qui ajoute deux fois l'espace entre cases. */
+.allee {
+  grid-column: 1 / -1;
+  height: 0;
+}
+
+.planPied {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--am-fs-11);
+  color: var(--am-craie-2);
+}
+
+.planPied strong {
+  color: var(--am-ambre);
+}
+
+/* ------------------------------------------------------------------ voyageur */
+
+.ligneNom {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: var(--am-space-6);
+}
+
+.ligneOptions {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--am-space-6);
+}
+
+/* Le champ du nom est actif à l'arrivée sur l'écran : la maquette le montre avec le bord ambre. */
+.champ input:focus-visible {
+  outline: none;
+}
+
+.option {
+  font-family: var(--am-font-texte);
+  align-self: flex-end;
+  min-height: 44px;
+  border-radius: var(--am-radius-10);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-size: var(--am-fs-12);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.option[aria-pressed="true"] {
+  border-color: var(--am-ambre);
+  background: var(--am-surface-2);
+}
+
+/* ------------------------------------------------------------------ paiement */
+
+.modes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--am-space-6);
+}
+
+.mode {
+  font-family: var(--am-font-texte);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  line-height: var(--am-lh-compacte);
+  cursor: pointer;
+}
+
+.mode[aria-pressed="true"] {
+  border-color: var(--am-vert);
+  background: var(--am-vert-fond);
+  font-weight: 700;
+}
+
+.modeDetail {
+  font-size: var(--am-fs-10);
+  color: var(--am-craie-2);
+}
+
+.mode[aria-pressed="true"] .modeDetail {
+  color: var(--am-vert);
+}
+
+.recap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--am-space-8) var(--am-space-12);
+  border-radius: var(--am-radius-10);
+  background: var(--am-carte-sombre);
+  border: 1px solid var(--am-surface-2);
+  font-size: var(--am-fs-12);
+  color: var(--am-craie-2);
+}
+
+.recap strong {
+  color: var(--am-craie);
+}
+
+.mono {
+  font-family: var(--am-font-mono);
+}
+
+.smsOui {
+  color: var(--am-vert);
+}
+
+.smsNon {
+  color: var(--am-craie-2);
+}
+
+/*
+ * Saisie dans la ligne de récapitulatif (montant reçu, référence Orange Money, SMS oui/non) : elle a l'allure du
+ * texte de la maquette. Le remplissage et la marge négative agrandissent la zone tactile sans bouger le texte.
+ */
+.saisie,
+.bascule {
+  margin: calc(-1 * var(--am-space-14)) calc(-1 * var(--am-space-6));
+  padding: var(--am-space-14) var(--am-space-6);
+  border: 0;
+  background: transparent;
+  color: var(--am-craie);
+  font-family: var(--am-font-texte);
+  font-size: inherit;
+  font-weight: 700;
+  line-height: inherit;
+}
+
+.saisie {
+  box-sizing: content-box;
+  font-family: var(--am-font-mono);
+  vertical-align: baseline;
+}
+
+.saisie:focus-visible {
+  outline: none;
+  color: var(--am-ambre);
+}
+
+.bascule {
+  cursor: pointer;
+}
+
+/* ------------------------------------------------------------------ pied */
+
+/* Bouton principal : la planche pose 58 px, 0 16 px, libellé 16 px, montant Bricolage 22/800. */
+.encaisser {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  min-height: 58px;
+  padding: 0 var(--am-space-16);
+  border-radius: var(--am-radius-16);
+  background: var(--am-orange);
+  color: var(--am-nuit);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.encaisser:focus-visible,
+.annuler:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+.encaisser[aria-busy="true"] {
+  cursor: progress;
+}
+
+.encaisserTextes {
+  display: flex;
+  flex-direction: column;
+  line-height: var(--am-lh-compacte);
+  text-align: left;
+}
+
+.encaisserLibelle {
+  font-size: var(--am-fs-16);
+  font-weight: 700;
+}
+
+.encaisserDetail {
+  font-size: var(--am-fs-11);
+  font-weight: 600;
+}
+
+.encaisserMontant {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-22);
+  font-weight: 800;
+}
+
+/* Annuler : 58 px de contenu + 1 px de bord de chaque côté (la maquette n'a pas de reset box-sizing). */
+.annuler {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  box-sizing: content-box;
+  width: 58px;
+  min-height: 58px;
+  border-radius: var(--am-radius-16);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-rouge);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* ------------------------------------------------------------------ alertes et états */
+
+.alerte {
+  margin: 0;
+  padding: var(--am-space-10) var(--am-space-14);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-rouge);
+  background: var(--am-rouge-fond);
+  color: var(--am-craie);
+  font-size: var(--am-fs-13);
+  line-height: var(--am-lh-normale);
+}
+
+.etat {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--am-space-8);
+  text-align: center;
+}
+
+.etatTitre {
+  margin: 0;
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-18);
+  font-weight: 800;
+  letter-spacing: var(--am-ls-sous-titre);
+}
+
+.etatDetail {
+  margin: 0;
+  font-size: var(--am-fs-13);
+  color: var(--am-craie-2);
+}
+
+.squelette {
+  min-height: 52px;
+  border-radius: var(--am-radius-14);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  animation: pulse var(--am-pulse-duration) infinite;
+}
+
+.squeletteGrand {
+  min-height: 150px;
+}
+
+.reessayer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  margin-top: var(--am-space-8);
+  padding: 0 var(--am-space-14);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie-2);
+  font-family: inherit;
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  cursor: pointer;
+}

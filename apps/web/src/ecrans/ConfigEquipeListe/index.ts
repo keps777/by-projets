@@ -1,0 +1,1 @@
+export { EcranConfigEquipeListe } from "./EcranConfigEquipeListe";

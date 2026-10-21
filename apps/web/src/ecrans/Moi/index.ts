@@ -1,0 +1,1 @@
+export { EcranMoi } from "./EcranMoi";

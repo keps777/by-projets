@@ -1,0 +1,73 @@
+{
+  "entete": {
+    "sousTitre": "{{patron}} · {{gares}} · {{bus}}",
+    "gares_one": "{{count}} station",
+    "gares_other": "{{count}} stations",
+    "bus_one": "{{count}} bus",
+    "bus_other": "{{count}} buses"
+  },
+  "jour": {
+    "etiquette": "Today · live",
+    "comparaison": "vs {{jour}}",
+    "billets": "tickets",
+    "colis": "parcels",
+    "remplissage": "fill rate",
+    "ecart": "total discrepancy"
+  },
+  "assistant": {
+    "titre_one": "The assistant has {{count}} thing to tell you",
+    "titre_other": "The assistant has {{count}} things to tell you"
+  },
+  "tuiles": {
+    "analyses": {
+      "titre": "Analytics",
+      "detail": "week · routes · buses"
+    },
+    "gares": {
+      "titre": "My stations, my people",
+      "detail": "cash desks · platforms · {{count}} people",
+      "detailSansEffectif": "cash desks · platforms"
+    },
+    "rapports": {
+      "titre": "Reports",
+      "detail": "every evening · 9 pm"
+    },
+    "comptable": {
+      "titre": "Accountant",
+      "detail": "exports · reconciliation"
+    },
+    "financement": {
+      "titre": "Financing",
+      "detail": "advance · credit · payroll"
+    },
+    "interAgences": {
+      "titre": "Between companies",
+      "detail": "connecting parcels · Oméga"
+    },
+    "reglages": {
+      "titre": "Settings",
+      "detail": "routes · fares · team · rules"
+    },
+    "modules": {
+      "titre": "Modules",
+      "detail": "enable · hide · the {{count}}"
+    },
+    "controle": {
+      "titre": "Control room",
+      "detail": "on computer · everything live"
+    }
+  },
+  "alertes": {
+    "titre": "Alerts · {{count}}",
+    "mention": "1 tap · swipe",
+    "hier": "yesterday",
+    "aucune": "No alert for now."
+  },
+  "etats": {
+    "chargement": "Loading the home",
+    "vide": "No information for now.",
+    "erreur": "The home could not be loaded. Shortcuts still work.",
+    "erreurAlertes": "The alerts could not be loaded.",
+    "reessayer": "Try again"
+  }
+}

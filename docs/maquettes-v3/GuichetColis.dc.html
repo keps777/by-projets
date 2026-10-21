@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Colis au guichet</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&amp;family=Instrument+Sans:wght@400;500;600;700&amp;family=Geist+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#FF6A1F}a:hover{color:#FFB547}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #0B1019; color: #F4F0E8; font-family: 'Instrument Sans', system-ui, sans-serif; overflow: hidden">
+
+  <header style="display: flex; align-items: center; gap: 10px; padding: 14px 16px 6px">
+    <a href="Guichet.dc.html" aria-label="Retour au guichet" style="width: 44px; height: 44px; border-radius: 22px; background: #141B28; border: 1px solid #273247; display: flex; align-items: center; justify-content: center; color: #F4F0E8; flex: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></a>
+    <div style="display: flex; flex-direction: column; flex: 1"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 18px; font-weight: 800; letter-spacing: -.01em; line-height: 1.1">Enregistrer un colis</span><span style="font-size: 12px; color: #B5BDCB">C-ALP-DLA-270105-0042 · guichet 2</span></div>
+    <span style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .12em; padding: 6px 9px; border-radius: 999px; background: #1B2435; color: #FFB547">TOUCHE 2</span>
+  </header>
+
+  <main style="flex: 1; display: flex; flex-direction: column; gap: 8px; padding: 2px 16px 0; overflow: hidden">
+    <div style="display: grid; grid-template-columns: 110px 1fr; gap: 8px">
+      <button type="button" style="height: 100px; border-radius: 14px; border: 1px dashed #FFB547; background: #0F1521; color: #FFB547; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; font-size: 11px; font-weight: 700"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>Photo prise ✓<br>reprendre</button>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <label for="exp" style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 11px; font-weight: 600; color: #B5BDCB">Expéditeur · tél.</span><input id="exp" type="text" value="Ngo Aïcha · 6 91 22 10 08" style="width: 100%; box-sizing: border-box; min-height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #273247; background: #141B28; color: #F4F0E8; font-size: 13px; font-weight: 600; outline: none; min-width: 0"></label>
+        <label for="dst" style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 11px; font-weight: 600; color: #B5BDCB">Destinataire · tél.</span><input id="dst" type="text" value="Ngo Thérèse · 6 99 40 18 22" style="width: 100%; box-sizing: border-box; min-height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #FFB547; background: #141B28; color: #F4F0E8; font-size: 13px; font-weight: 600; outline: none; min-width: 0"></label>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 6px">
+      <label for="cont" style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 11px; font-weight: 600; color: #B5BDCB">Contenu déclaré</span><input id="cont" type="text" value="Médicaments, vêtements" style="width: 100%; box-sizing: border-box; min-height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #273247; background: #141B28; color: #F4F0E8; font-size: 13px; font-weight: 600; outline: none; min-width: 0"></label>
+      <label for="kg" style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 11px; font-weight: 600; color: #B5BDCB">Poids</span><input id="kg" type="text" value="2 kg" style="width: 100%; box-sizing: border-box; min-height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #273247; background: #141B28; color: #F4F0E8; font-family: 'Geist Mono', monospace; font-size: 14px; font-weight: 700; outline: none; min-width: 0"></label>
+      <label for="val" style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 11px; font-weight: 600; color: #B5BDCB">Valeur</span><input id="val" type="text" value="25 000" style="width: 100%; box-sizing: border-box; min-height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #273247; background: #141B28; color: #F4F0E8; font-family: 'Geist Mono', monospace; font-size: 14px; font-weight: 700; outline: none; min-width: 0"></label>
+    </div>
+
+    <div style="display: flex; gap: 6px">
+      <button type="button" aria-pressed="true" style="flex: 1; display: flex; flex-direction: column; align-items: center; min-height: 50px; padding: 6px; border-radius: 12px; border: 1px solid #FFB547; background: #1B2435; color: #F4F0E8; line-height: 1.1"><span style="font-family: 'Geist Mono', monospace; font-size: 14px; font-weight: 700; color: #FFB547">08:15</span><span style="font-size: 10px; color: #B5BDCB">Bafoussam · soute 60 %</span></button>
+      <button type="button" style="flex: 1; display: flex; flex-direction: column; align-items: center; min-height: 50px; padding: 6px; border-radius: 12px; border: 1px solid #273247; background: #141B28; color: #F4F0E8; line-height: 1.1"><span style="font-family: 'Geist Mono', monospace; font-size: 14px; font-weight: 700">10:00</span><span style="font-size: 10px; color: #B5BDCB">Bafoussam · 20 %</span></button>
+      <a href="InterAgences.dc.html" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 50px; padding: 6px; border-radius: 12px; border: 1px dashed #3A4760; background: #0F1521; color: #6FA8FF; line-height: 1.1; text-decoration: none"><span style="font-size: 12px; font-weight: 700">Autre ville</span><span style="font-size: 10px; color: #B5BDCB">via une autre compagnie</span></a>
+    </div>
+
+    <div style="display: flex; flex-direction: column; border-radius: 16px; overflow: hidden; border: 1px solid #273247; background: #F4F0E8; color: #0B1019">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #0B1019; color: #FFB547; font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .14em; text-transform: uppercase"><span>Aperçu de l'étiquette · 58 × 40 mm</span><span style="color: #B5BDCB">imprimante OK</span></div>
+      <div style="display: grid; grid-template-columns: 1fr 96px; gap: 8px; padding: 10px 12px; align-items: center">
+        <span style="display: flex; flex-direction: column; gap: 2px; line-height: 1.1"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 800">DLA → BAF</span><span style="font-size: 12px; font-weight: 700">Ngo Thérèse · ···· 18 22</span><span style="font-family: 'Geist Mono', monospace; font-size: 10px">C-ALP-DLA-270105-0042 · 2 kg · 08:15</span><span style="font-size: 9px; color: #4A5468">Alpha Voyages · afrimove.cm · pas de code ici</span></span>
+        <svg width="96" height="40" viewBox="0 0 96 40" role="img" aria-label="Code-barres du colis"><path fill="#0B1019" d="M2 2h2v36H2zM6 2h1v36H6zM9 2h3v36H9zM14 2h1v36h-1zM17 2h2v36h-2zM21 2h1v36h-1zM24 2h3v36h-3zM29 2h1v36h-1zM32 2h2v36h-2zM36 2h1v36h-1zM39 2h3v36h-3zM44 2h2v36h-2zM48 2h1v36h-1zM51 2h2v36h-2zM55 2h3v36h-3zM60 2h1v36h-1zM63 2h2v36h-2zM67 2h1v36h-1zM70 2h3v36h-3zM75 2h1v36h-1zM78 2h2v36h-2zM82 2h1v36h-1zM85 2h3v36h-3zM90 2h1v36h-1zM93 2h2v36h-2z"></path></svg>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+      <button type="button" aria-pressed="true" style="min-height: 46px; border-radius: 12px; border: 1px solid #43E39B; background: #0E2A1E; color: #F4F0E8; font-size: 13px; font-weight: 700">Cash · 2 000</button>
+      <button type="button" style="min-height: 46px; border-radius: 12px; border: 1px solid #273247; background: #141B28; color: #F4F0E8; font-size: 13px; font-weight: 600">MoMo</button>
+      <button type="button" style="min-height: 46px; border-radius: 12px; border: 1px solid #273247; background: #141B28; color: #F4F0E8; font-size: 13px; font-weight: 600">Assurance ✓ 500</button>
+    </div>
+  </main>
+
+  <div style="padding: 8px 16px 18px; background: #050810; border-top: 1px solid #1B2435">
+    <a href="Guichet.dc.html" style="display: flex; align-items: center; justify-content: space-between; padding: 0 16px; min-height: 58px; border-radius: 16px; background: #FF6A1F; color: #0B1019; text-decoration: none"><span style="display: flex; flex-direction: column; line-height: 1.1"><span style="font-size: 16px; font-weight: 700">Encaisser · imprimer l'étiquette</span><span style="font-size: 11px; font-weight: 600">touche 3 · code de retrait envoyé au destinataire seul</span></span><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 800">2 000</span></a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

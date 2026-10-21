@@ -1,0 +1,71 @@
+{
+  "titre": "Financement",
+  "retour": "Retour",
+  "sousTitre": "Avec <partenaire>{{partenaire}}</partenaire> · tes 90 jours de ventes font ton dossier",
+  "partenaireAttendu": "[établissement financier partenaire]",
+  "avance": {
+    "titre": "Avance sur recettes",
+    "statut": {
+      "eligible": "éligible",
+      "non_eligible": "non éligible",
+      "en_cours": "en cours"
+    },
+    "plafond": "jusqu'à {{montant}}",
+    "equivalence_one": "= {{count}} jour de ventes",
+    "equivalence_other": "= {{count}} jours de ventes",
+    "montant": "Montant",
+    "rembourse": "remboursé par",
+    "rembourseValeur": "{{pct}} % des ventes MoMo",
+    "duree": "durée estimée",
+    "dureeValeur_one": "≈ {{count}} semaine",
+    "dureeValeur_other": "≈ {{count}} semaines",
+    "cout": "coût total",
+    "coutAttendu": "[x %]",
+    "coutValeur": "{{pct}} %",
+    "coutFixe": "· fixé par le partenaire",
+    "garantie": "Versé sur ton compte en {{heures}} h. Pas de garantie : ton historique de ventes AfriMove est la garantie. AfriMove ne prête pas, il présente ton dossier."
+  },
+  "credit": {
+    "titre": "Crédit matériel",
+    "detail": "{{montant}} · {{mensualites}} × {{mensualite}} · retenu sur les ventes"
+  },
+  "paie": {
+    "titre": "Paie des équipages",
+    "detail_one": "{{count}} salaire versé par MoMo le {{jour}}",
+    "detail_other": "{{count}} salaires versés par MoMo le {{jour}}",
+    "precision": "calculés sur les trajets et les primes · 1 touche"
+  },
+  "voyageurs": {
+    "titre": "Pour les voyageurs · payer en 2 fois",
+    "aide": "option par agence",
+    "exemple": "Billet VIP {{prix}} : {{reservation}} à la réservation, {{veille}} la veille. Le siège est bloqué, le billet part au 2<sup>e</sup> paiement."
+  },
+  "action": {
+    "demander": "Demander {{montant}} · dossier envoyé en 1 touche",
+    "masque": "Module masqué tant que la convention avec le partenaire n'est pas signée.",
+    "suivre": "Suivre ma demande"
+  },
+  "pin": {
+    "titre": "Confirme avec ton PIN",
+    "sousTitre": "Demander {{montant}} d'avance sur recettes",
+    "note": "Ton PIN signe le mandat de prélèvement.",
+    "fermer": "Fermer",
+    "echec": "La demande n'a pas pu être envoyée. Réessaie.",
+    "deuxFoisActiver": "Activer le paiement du billet en 2 fois",
+    "deuxFoisCouper": "Couper le paiement du billet en 2 fois",
+    "noteDeuxFois": "Ton PIN signe ce changement.",
+    "echecDeuxFois": "Le changement n'a pas pu être enregistré. Réessaie."
+  },
+  "etats": {
+    "chargement": "Chargement du financement",
+    "vide": {
+      "titre": "Aucune offre pour le moment",
+      "detail": "Ton offre apparaîtra ici dès que tes ventes la permettront."
+    },
+    "erreur": {
+      "titre": "Impossible de charger le financement",
+      "detail": "Vérifie la connexion, puis réessaie.",
+      "reessayer": "Réessayer"
+    }
+  }
+}

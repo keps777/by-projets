@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Réglages · modifier une règle</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&amp;family=Instrument+Sans:wght@400;500;600;700&amp;family=Geist+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#FF6A1F}a:hover{color:#FFB547}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #0B1019; color: #F4F0E8; font-family: 'Instrument Sans', system-ui, sans-serif; overflow: hidden">
+
+  <header style="display: flex; align-items: center; gap: 10px; padding: 14px 16px 6px">
+    <a href="Config.dc.html" aria-label="Retour" style="width: 44px; height: 44px; border-radius: 22px; background: #141B28; border: 1px solid #273247; display: flex; align-items: center; justify-content: center; color: #F4F0E8; flex: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></a>
+    <div style="display: flex; flex-direction: column; flex: 1"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 18px; font-weight: 800; letter-spacing: -.01em; line-height: 1.1">Règles de l’agence</span><span style="font-size: 12px; color: #B5BDCB">S’appliquent à toutes les gares · signées par ton PIN</span></div>
+    <span style="padding: 7px 11px; border-radius: 999px; background: #0F1A2E; border: 1px solid #6FA8FF; font-family: 'Geist Mono', monospace; font-size: 11px; color: #6FA8FF">3 GARES</span>
+  </header>
+
+  <main style="flex: 1; display: flex; flex-direction: column; gap: 8px; padding: 2px 16px 0; overflow: hidden">
+    <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border-radius: 16px; background: #141B28; border: 1px solid #FFB547">
+      <span style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #FFB547">Annulation par le voyageur</span>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+        <label style="display: flex; flex-direction: column; gap: 4px; grid-column: span 1"><span style="font-size: 10px; color: #7F8A9E; letter-spacing: .08em; text-transform: uppercase; font-family: 'Geist Mono', monospace">Gratuite jusqu’à</span><select style="width: 100%; box-sizing: border-box; min-height: 42px; padding: 0 12px; border-radius: 10px; border: 1px solid #273247; background: #0B1019; color: #F4F0E8; font-family: inherit; font-size: 13px"><option selected>1 h avant le départ</option><option>2 h avant</option><option>la veille 20:00</option><option>jamais</option></select></label>
+        <label style="display: flex; flex-direction: column; gap: 4px; grid-column: span 1"><span style="font-size: 10px; color: #7F8A9E; letter-spacing: .08em; text-transform: uppercase; font-family: 'Geist Mono', monospace">Ensuite · retenue</span><select style="width: 100%; box-sizing: border-box; min-height: 42px; padding: 0 12px; border-radius: 10px; border: 1px solid #273247; background: #0B1019; color: #F4F0E8; font-family: inherit; font-size: 13px"><option selected>selon la classe (VIP 20 %, classique 10 %)</option><option>10 % partout</option><option>50 % partout</option><option>pas de remboursement</option></select></label>
+      </div>
+      <span style="font-size: 11px; color: #B5BDCB; line-height: 1.35">Le remboursement part sur le même MoMo, le siège se libère tout de suite. Au guichet, après le délai, seul le superviseur peut annuler avec son PIN.</span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border-radius: 16px; background: #141B28; border: 1px solid #273247">
+      <span style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #FFB547">Caisse</span>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+        <label style="display: flex; flex-direction: column; gap: 4px; grid-column: span 1"><span style="font-size: 10px; color: #7F8A9E; letter-spacing: .08em; text-transform: uppercase; font-family: 'Geist Mono', monospace">Tolérance d’écart</span><input value="1 000" style="width: 100%; box-sizing: border-box; min-height: 42px; padding: 0 12px; border-radius: 10px; border: 1px solid #273247; background: #0B1019; color: #F4F0E8; font-family: inherit; font-size: 13px; font-family: 'Geist Mono', monospace"></label>
+        <label style="display: flex; flex-direction: column; gap: 4px; grid-column: span 1"><span style="font-size: 10px; color: #7F8A9E; letter-spacing: .08em; text-transform: uppercase; font-family: 'Geist Mono', monospace">Au-delà</span><select style="width: 100%; box-sizing: border-box; min-height: 42px; padding: 0 12px; border-radius: 10px; border: 1px solid #273247; background: #0B1019; color: #F4F0E8; font-family: inherit; font-size: 13px"><option selected>PIN superviseur + patron prévenu</option><option>PIN superviseur seulement</option><option>bloque le guichet</option></select></label>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border-radius: 16px; background: #141B28; border: 1px solid #273247">
+      <span style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #FFB547">Comptes MoMo de l’agence</span>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+        <label style="display: flex; flex-direction: column; gap: 4px; grid-column: span 1"><span style="font-size: 10px; color: #7F8A9E; letter-spacing: .08em; text-transform: uppercase; font-family: 'Geist Mono', monospace">MTN MoMo · marchand</span><input value="6 77 •• •• 02" style="width: 100%; box-sizing: border-box; min-height: 42px; padding: 0 12px; border-radius: 10px; border: 1px solid #273247; background: #0B1019; color: #F4F0E8; font-family: inherit; font-size: 13px; font-family: 'Geist Mono', monospace"></label>
+        <label style="display: flex; flex-direction: column; gap: 4px; grid-column: span 1"><span style="font-size: 10px; color: #7F8A9E; letter-spacing: .08em; text-transform: uppercase; font-family: 'Geist Mono', monospace">Orange Money · marchand</span><input value="6 99 •• •• 77" style="width: 100%; box-sizing: border-box; min-height: 42px; padding: 0 12px; border-radius: 10px; border: 1px solid #273247; background: #0B1019; color: #F4F0E8; font-family: inherit; font-size: 13px; font-family: 'Geist Mono', monospace"></label>
+      </div>
+      <span style="font-size: 11px; color: #B5BDCB; line-height: 1.35">Changer un compte exige ton PIN et un SMS de confirmation à l’ancien numéro. Les ventes en cours restent sur l’ancien compte jusqu’à minuit.</span>
+    </div>
+    <span style="font-size: 11px; color: #7F8A9E; text-align: center">Chaque règle garde son historique : qui, quand, ancienne et nouvelle valeur.</span>
+  </main>
+  <div style="padding: 8px 16px 18px; display: grid; grid-template-columns: 1fr 1.7fr; gap: 8px; background: #050810; border-top: 1px solid #1B2435">
+    <a href="Config.dc.html" style="display: flex; align-items: center; justify-content: center; min-height: 56px; border-radius: 16px; background: #141B28; border: 1px solid #273247; color: #F4F0E8; font-size: 13px; font-weight: 600; text-decoration: none; text-align: center; line-height: 1.2">Annuler</a>
+    <a href="Config.dc.html" style="display: flex; align-items: center; justify-content: space-between; padding: 0 16px; min-height: 56px; border-radius: 16px; background: #FFB547; color: #0B1019; text-decoration: none"><span style="display: flex; flex-direction: column; line-height: 1.1"><span style="font-size: 15px; font-weight: 700">Enregistrer · mon PIN</span><span style="font-size: 11px; font-weight: 600">appliqué dès maintenant · 3 gares</span></span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

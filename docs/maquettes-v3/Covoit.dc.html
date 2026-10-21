@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Covoiturage · entre villes · passager</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&amp;family=Instrument+Sans:wght@400;500;600;700&amp;family=Geist+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#FF6A1F}a:hover{color:#FFB547}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #0B1019; color: #F4F0E8; font-family: 'Instrument Sans', system-ui, sans-serif; overflow: hidden">
+
+  <header style="display: flex; flex-direction: column; gap: 8px; padding: 18px 16px 8px">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -.02em">Covoiturage</span>
+      <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; background: #141B28; border: 1px solid #273247; font-size: 11px; color: #B5BDCB"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#43E39B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="10" r="3"></circle><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"></path></svg>Douala</span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <div style="display: flex; padding: 4px; border-radius: 14px; background: #141B28; border: 1px solid #273247">
+        <button type="button" aria-pressed="true" style="flex: 1; min-height: 40px; border-radius: 10px; border: 0; background: #43E39B; color: #0B1019; font-size: 13px; font-weight: 700">Entre villes</button>
+        <a href="CovoitVille.dc.html" style="flex: 1; min-height: 40px; border-radius: 10px; background: transparent; color: #B5BDCB; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none">En ville · Douala</a>
+      </div>
+      <div style="display: flex; justify-content: center; align-items: center; gap: 6px; font-size: 10px; color: #7F8A9E"><span style="width: 16px; height: 5px; border-radius: 3px; background: #43E39B"></span><span style="width: 5px; height: 5px; border-radius: 3px; background: #273247"></span><span>glisse pour changer</span></div>
+    </div>
+    <div style="display: flex; padding: 4px; border-radius: 14px; background: #050810; border: 1px solid #273247">
+      <button type="button" aria-pressed="true" style="flex: 1; min-height: 40px; border-radius: 10px; border: 0; background: #1B2435; color: #F4F0E8; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFB547" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>Je suis passager</button>
+      <a href="CovoitConducteur.dc.html" style="flex: 1; min-height: 40px; border-radius: 10px; background: transparent; color: #B5BDCB; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="3"></circle><path d="M12 3v6M12 15v6M3 12h6M15 12h6"></path></svg>Je conduis</a>
+    </div>
+  </header>
+
+  <main style="flex: 1; display: flex; flex-direction: column; gap: 8px; padding: 2px 16px 0; overflow: hidden">
+    <div style="display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 14px; border-radius: 999px; background: #050810; border: 1px solid #273247">
+      <span style="flex: 1; font-size: 15px; font-weight: 700">Douala <span style="color: #7F8A9E; font-weight: 500">→</span> Kribi</span>
+      <span style="font-size: 12px; color: #B5BDCB">Ce matin</span>
+      <button type="button" aria-label="Inverser" style="width: 34px; height: 34px; border-radius: 17px; border: 0; background: #1B2435; color: #F4F0E8; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16M3 8l4-4 4 4M17 20V4M13 16l4 4 4-4"></path></svg></button>
+    </div>
+    <div style="display: flex; gap: 6px">
+      <button type="button" aria-pressed="true" style="min-height: 30px; padding: 0 10px; border-radius: 999px; border: 1px solid #FFB547; background: #1B2435; color: #F4F0E8; font-size: 11px; font-weight: 700">Tous</button>
+      <button type="button" style="min-height: 30px; padding: 0 10px; border-radius: 999px; border: 1px solid #273247; background: #141B28; color: #B5BDCB; font-size: 11px; font-weight: 600">Clim</button>
+      <button type="button" style="min-height: 30px; padding: 0 10px; border-radius: 999px; border: 1px solid #273247; background: #141B28; color: #B5BDCB; font-size: 11px; font-weight: 600">Femmes</button>
+      <button type="button" style="min-height: 30px; padding: 0 10px; border-radius: 999px; border: 1px solid #273247; background: #141B28; color: #B5BDCB; font-size: 11px; font-weight: 600">Grand bagage</button>
+      <button type="button" style="min-height: 30px; padding: 0 10px; border-radius: 999px; border: 1px solid #273247; background: #141B28; color: #B5BDCB; font-size: 11px; font-weight: 600">≤ 4 000</button>
+    </div>
+
+    <a href="Paiement.dc.html" style="display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border-radius: 18px; background: #141B28; border: 1px solid #43E39B; color: #F4F0E8; text-decoration: none">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <span style="width: 44px; height: 44px; border-radius: 22px; background: #1B2435; border: 2px solid #43E39B; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-size: 16px; font-weight: 800; color: #43E39B; flex: none">SA</span>
+        <span style="display: flex; flex-direction: column; flex: 1; min-width: 0"><span style="font-size: 15px; font-weight: 700">Samuel E. <span style="font-size: 11px; color: #43E39B; font-weight: 600">· vérifié · 4,9 ★ · 112 trajets</span></span><span style="font-size: 12px; color: #B5BDCB">Toyota Corolla grise · LT 882 CE · clim · 2 places</span></span>
+        <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 800">4 000</span>
+      </div>
+      <div style="display: grid; grid-template-columns: 56px 1fr; gap: 10px; align-items: center; padding: 8px 12px; border-radius: 12px; background: #050810">
+        <span style="font-family: 'Geist Mono', monospace; font-size: 16px; font-weight: 700; color: #43E39B">08:30</span>
+        <span style="display: flex; flex-direction: column; gap: 2px; font-size: 12px; color: #B5BDCB"><span><strong style="color: #F4F0E8">Départ Bonapriso</strong>, pharmacie du Rond-point · 2 h 30</span><span>Arrivée Kribi centre vers 11:00 · 2 arrêts possibles</span></span>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between"><span style="font-size: 12px; color: #B5BDCB">Payé dans l'app · remboursé si Samuel annule</span><span style="display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 0 12px; border-radius: 999px; background: #43E39B; color: #0B1019; font-size: 12px; font-weight: 700">Réserver · touche 2</span></div>
+    </a>
+
+    <a href="Paiement.dc.html" style="display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 16px; background: #141B28; border: 1px solid #273247; color: #F4F0E8; text-decoration: none; min-height: 60px">
+      <span style="width: 40px; height: 40px; border-radius: 20px; background: #1B2435; border: 2px solid #6FA8FF; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-size: 14px; font-weight: 800; color: #6FA8FF; flex: none">MN</span>
+      <span style="display: flex; flex-direction: column; flex: 1; min-width: 0"><span style="font-size: 14px; font-weight: 700">Marthe N. <span style="font-size: 11px; color: #6FA8FF; font-weight: 600">· vérifiée · 4,7 ★</span></span><span style="font-size: 12px; color: #B5BDCB">10:00 · Akwa · Hyundai · 3 places · femmes bienvenues</span></span>
+      <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 17px; font-weight: 800">3 500</span>
+    </a>
+    <a href="Paiement.dc.html" style="display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 16px; background: #141B28; border: 1px solid #273247; color: #F4F0E8; text-decoration: none; min-height: 60px">
+      <span style="width: 40px; height: 40px; border-radius: 20px; background: #1B2435; border: 2px solid #FFB547; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-size: 14px; font-weight: 800; color: #FFB547; flex: none">DK</span>
+      <span style="display: flex; flex-direction: column; flex: 1; min-width: 0"><span style="font-size: 14px; font-weight: 700">Didier K. <span style="font-size: 11px; color: #FFB547; font-weight: 600">· vérifié · 4,6 ★</span></span><span style="font-size: 12px; color: #B5BDCB">14:00 · Bonamoussadi · pick-up · 4 places · grand bagage OK</span></span>
+      <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 17px; font-weight: 800">3 000</span>
+    </a>
+
+    <div style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 12px; background: #0F1521; border: 1px solid #1B2435; font-size: 12px; color: #B5BDCB"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#43E39B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"></path><path d="M9 12l2 2 4-4"></path></svg>Conducteurs vérifiés (pièce, permis, voiture). Trajet partagé avec un proche en 1 touche. Argent libéré au conducteur à l'arrivée. Aucun bus avant 14 h sur Kribi : le covoit comble le trou.</div>
+  </main>
+
+  <nav aria-label="Navigation" style="display: flex; padding: 6px 8px 18px; background: #050810; border-top: 1px solid #1B2435">
+    <a href="Main.dc.html" style="flex: 1; min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 600; color: #B5BDCB; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="15" rx="3"></rect><path d="M4 11h16"></path><path d="M7 18v3M17 18v3"></path></svg>Voyager</a>
+    <a href="ColisEnvoi.dc.html" style="flex: 1; min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 600; color: #B5BDCB; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"></path><path d="M3 8v8l9 5 9-5V8"></path><path d="M12 13v8"></path></svg>Colis</a>
+    <a href="Covoit.dc.html" aria-current="page" style="flex: 1; min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 700; color: #FF6A1F; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17h14l-1.5-5h-11z"></path><path d="M7 12l1.5-4h7L17 12"></path><circle cx="7.5" cy="17" r="2"></circle><circle cx="16.5" cy="17" r="2"></circle></svg>Covoit</a>
+    <a href="Moi.dc.html" style="flex: 1; min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 600; color: #B5BDCB; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>Moi</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

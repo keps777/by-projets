@@ -1,0 +1,29 @@
+{
+  "retour": "Back",
+  "statut": {
+    "en_cours": "IN PROGRESS",
+    "active": "ACTIVE",
+    "refusee": "REJECTED"
+  },
+  "suivi": {
+    "titre": "Tracking · live"
+  },
+  "actions": {
+    "modifier": "Edit my form",
+    "retour": "Back to my space",
+    "retourDetail": "I will notify you as soon as it is activated"
+  },
+  "etats": {
+    "chargement": "Loading the tracking of your application",
+    "vide": {
+      "titre": "No application in progress",
+      "detail": "You haven't submitted an application to become a courier yet.",
+      "devenir": "Become a courier"
+    },
+    "erreur": {
+      "titre": "Unable to load the tracking",
+      "detail": "Check your connection, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

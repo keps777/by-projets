@@ -1,0 +1,65 @@
+{
+  "titre": "Vendeur AfriMove",
+  "numero": "n° {{numero}}",
+  "identite": "{{nom}} · quartier {{quartier}} · agréée par {{compagnies}}",
+  "vente": {
+    "titre": "Vendre à un voisin · 3 touches",
+    "jour": {
+      "aujourdhui": "aujourd'hui",
+      "demain": "demain"
+    },
+    "places_one": "{{compagnie}} · {{count}} place",
+    "places_other": "{{compagnie}} · {{count}} places",
+    "commission": "commission {{montant}} F"
+  },
+  "bilan": {
+    "mois": {
+      "etiquette": "Ce mois",
+      "detail": "billets vendus"
+    },
+    "gain": {
+      "etiquette": "Gagné",
+      "detail": "versé le {{jour}}"
+    },
+    "clients": {
+      "etiquette": "Clients",
+      "detail_one": "dont {{count}} régulier",
+      "detail_other": "dont {{count}} réguliers"
+    }
+  },
+  "clients": {
+    "proposition": "{{proposition}} ?",
+    "dernier": "dernier : {{date}}"
+  },
+  "action": "Vendre un billet à un voisin",
+  "etats": {
+    "chargement": "Chargement de ton espace vendeur",
+    "reessayer": "Réessayer",
+    "espace": {
+      "erreur": {
+        "titre": "Impossible de charger tes chiffres",
+        "detail": "Vérifie ta connexion, puis réessaie."
+      }
+    },
+    "departs": {
+      "vide": {
+        "titre": "Aucun départ à vendre",
+        "detail": "Il n'y a pas de départ ouvert à la vente pour ce trajet."
+      },
+      "erreur": {
+        "titre": "Impossible de charger les départs",
+        "detail": "Vérifie ta connexion, puis réessaie."
+      }
+    },
+    "clients": {
+      "vide": {
+        "titre": "Pas encore de client",
+        "detail": "Tes voisins apparaissent ici après ta première vente."
+      },
+      "erreur": {
+        "titre": "Impossible de charger tes clients",
+        "detail": "Vérifie ta connexion, puis réessaie."
+      }
+    }
+  }
+}

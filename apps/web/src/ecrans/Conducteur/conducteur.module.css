@@ -1,0 +1,423 @@
+/*
+ * Planche « Conducteur » (docs/maquettes-v3/Conducteur.dc.html). Les valeurs viennent de la maquette ; les couleurs,
+ * polices et espacements sont les variables --am-* de @afrimove/design.
+ *
+ * L'en-tête est celui du kit (retour rond de 46 px bord compris, titre 18/800, 14 px et 6 px de marge) : la planche
+ * ne le change pas. Surcharges du kit ci-dessous (le kit n'est pas modifié) : le sélecteur est doublé (`.x.x`) pour
+ * passer devant la règle d'un seul sélecteur du composant quel que soit l'ordre des feuilles.
+ */
+
+/* ------------------------------------------------------------------ corps */
+
+/*
+ * Corps : 6 px au-dessus, 10 px entre les blocs. Le contenu tient dans les 844 px de la planche ; avec une alerte il
+ * défile au lieu d'être coupé, sans barre visible.
+ */
+.corps.corps {
+  padding: 6px var(--am-gutter) 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.corps.corps::-webkit-scrollbar {
+  display: none;
+}
+
+.corps > * {
+  flex: none;
+}
+
+/* Carte du trajet : fond Profond, bord Trait. */
+.carte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-8);
+  padding: var(--am-space-14);
+  border-radius: var(--am-radius-18);
+  border: 1px solid var(--am-trait);
+  background: var(--am-profond);
+}
+
+/* « Douala → Kribi » et le moment du départ. */
+.trajet {
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-8);
+  padding: var(--am-space-8) var(--am-space-8) var(--am-space-8) var(--am-space-14);
+  border-radius: var(--am-radius-pill);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+}
+
+.route {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--am-fs-15);
+  font-weight: 700;
+}
+
+/* Les deux villes à saisir (premier trajet du conducteur) sont côte à côte autour de la flèche. */
+.routeSaisie {
+  display: flex;
+  align-items: center;
+  gap: var(--am-space-4);
+}
+
+.fleche {
+  color: var(--am-gris);
+  font-weight: 500;
+}
+
+.quand {
+  font-size: var(--am-fs-12);
+  color: var(--am-craie-2);
+}
+
+/* Ville à saisir (premier trajet du conducteur) : écrite comme le texte de la pastille. */
+.ville {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--am-craie);
+  font: inherit;
+  outline: none;
+}
+
+.ville:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+.points {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--am-space-8);
+}
+
+.champ {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-3);
+}
+
+.champLibelle {
+  font-size: var(--am-fs-11);
+  font-weight: 600;
+  color: var(--am-craie-2);
+}
+
+/*
+ * Champs, places et options : la planche ne leur donne pas de police, ils gardent celle des contrôles de formulaire du
+ * navigateur (c'est ce qui fait passer « Trajet régulier · chaque sam. » sur deux lignes) ; le prix et le bouton
+ * « Publier » ont leur police.
+ */
+.saisie {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 var(--am-space-12);
+  border-radius: var(--am-radius-10);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  outline: none;
+}
+
+.saisie:focus-visible,
+.prix:focus-visible {
+  outline: 2px solid var(--am-ambre);
+  outline-offset: 2px;
+}
+
+/* Places et prix sur une ligne qui passe à la ligne si elle manque de place. */
+.ligne {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--am-space-10);
+}
+
+.ligneLibelle {
+  font-size: var(--am-fs-12);
+  color: var(--am-craie-2);
+  white-space: nowrap;
+}
+
+.places {
+  display: flex;
+  flex: 1;
+  gap: var(--am-space-6);
+}
+
+/* 1 · 2 · 3 : le choix est plein vert, sans bord, les autres sont des cartes Surface. */
+.place {
+  box-sizing: border-box;
+  position: relative;
+  flex: 1;
+  min-height: 40px;
+  margin: 0;
+  border-radius: var(--am-radius-10);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-size: var(--am-fs-14);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.place[aria-pressed="true"] {
+  border: 0;
+  background: var(--am-vert);
+  color: var(--am-nuit);
+}
+
+/* Zone tactile : l'aspect reste celui de la planche, la cible atteint 44 px. */
+.place::after,
+.option::after {
+  content: "";
+  position: absolute;
+  inset: -2px 0;
+}
+
+/* Le prix est dans une étiquette qui ajoute 2 px de cible au-dessus et au-dessous (marges négatives : rien ne bouge). */
+.prixZone {
+  display: flex;
+  margin: -2px 0;
+  padding: 2px 0;
+}
+
+/* Prix : bord ambre, chiffres mono alignés à droite. */
+.prix {
+  box-sizing: border-box;
+  width: 90px;
+  min-height: 40px;
+  margin: 0;
+  padding: 0 var(--am-space-10);
+  border-radius: var(--am-radius-10);
+  border: 1px solid var(--am-ambre);
+  background: var(--am-surface);
+  color: var(--am-craie);
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-14);
+  font-weight: 700;
+  text-align: right;
+  outline: none;
+}
+
+.prix[aria-invalid="true"] {
+  border-color: var(--am-rouge);
+}
+
+.conseil {
+  font-size: var(--am-fs-11);
+  color: var(--am-gris);
+}
+
+/* ------------------------------------------------------------------ options */
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-6);
+}
+
+.grille {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--am-space-6);
+}
+
+.option {
+  position: relative;
+  min-height: 42px;
+  margin: 0;
+  border-radius: var(--am-radius-10);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie-2);
+  font-size: var(--am-fs-12);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.option[aria-pressed="true"] {
+  border-color: var(--am-vert);
+  background: var(--am-vert-fond);
+  color: var(--am-craie);
+}
+
+/* ------------------------------------------------------------------ réputation */
+
+.reputation {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-6);
+  padding: var(--am-space-12) var(--am-space-14);
+  border-radius: var(--am-radius-14);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+}
+
+.reputationTete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.reputationTitre {
+  font-size: var(--am-fs-13);
+  font-weight: 700;
+}
+
+.reputationPieces {
+  font-size: var(--am-fs-11);
+  font-weight: 700;
+  color: var(--am-vert);
+}
+
+.reputationPaiement {
+  font-size: var(--am-fs-12);
+  line-height: var(--am-lh-texte);
+  color: var(--am-craie-2);
+}
+
+/* ------------------------------------------------------------------ pied */
+
+/* Pied : 8 px au-dessus du bouton, 18 px dessous (le kit : 10 px). */
+.pied.pied {
+  padding-top: var(--am-space-8);
+}
+
+/* Bouton « Publier le trajet » : 58 px, 0 16 px, libellé 16 px, vert, avec le total à droite. */
+.publier {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 58px;
+  margin: 0;
+  padding: 0 var(--am-space-16);
+  border: 0;
+  border-radius: var(--am-radius-16);
+  background: var(--am-vert);
+  color: var(--am-nuit);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.publier[aria-busy="true"] {
+  cursor: progress;
+}
+
+.publierTextes {
+  display: flex;
+  flex-direction: column;
+  line-height: var(--am-lh-compacte);
+}
+
+.publierLibelle {
+  font-size: var(--am-fs-16);
+  font-weight: 700;
+}
+
+.publierDetail {
+  font-size: var(--am-fs-11);
+  font-weight: 600;
+}
+
+.publierTotal {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-20);
+  font-weight: 800;
+}
+
+/* ------------------------------------------------------------------ messages */
+
+.alerte,
+.rappel {
+  margin: 0;
+  padding: var(--am-space-10) var(--am-space-14);
+  border-radius: var(--am-radius-12);
+  color: var(--am-craie);
+  font-size: var(--am-fs-13);
+  line-height: var(--am-lh-normale);
+}
+
+.alerte {
+  border: 1px solid var(--am-rouge);
+  background: var(--am-rouge-fond);
+}
+
+/* Rappel de vérification : ambre, il n'empêche rien (le serveur décide). */
+.rappel {
+  border: 1px solid var(--am-ambre);
+  background: var(--am-ambre-fond);
+}
+
+/* ------------------------------------------------------------------ états chargement, vide et erreur */
+
+.etat {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--am-space-8);
+  text-align: center;
+}
+
+.etatTitre {
+  margin: 0;
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-18);
+  font-weight: 800;
+  letter-spacing: var(--am-ls-sous-titre);
+}
+
+.etatDetail {
+  margin: 0;
+  font-size: var(--am-fs-13);
+  color: var(--am-craie-2);
+}
+
+.squelette {
+  min-height: 90px;
+  border-radius: var(--am-radius-16);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+}
+
+.squeletteGrand {
+  min-height: 210px;
+}
+
+.squeletteMoyen {
+  min-height: 100px;
+}
+
+.reessayer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  margin-top: var(--am-space-8);
+  padding: 0 var(--am-space-14);
+  border-radius: var(--am-radius-12);
+  border: 1px solid var(--am-trait);
+  background: var(--am-surface);
+  color: var(--am-craie-2);
+  font-family: inherit;
+  font-size: var(--am-fs-13);
+  font-weight: 600;
+  cursor: pointer;
+}

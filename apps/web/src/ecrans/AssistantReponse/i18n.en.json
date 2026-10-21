@@ -1,0 +1,24 @@
+{
+  "entete": {
+    "retour": "Back",
+    "titre": "The assistant",
+    "sousTitre_one": "Answer in {{secondes}} s · based on your figures for the last day",
+    "sousTitre_other": "Answer in {{secondes}} s · based on your figures for the last {{count}} days"
+  },
+  "simulation": {
+    "ligne": "simulation: {{options}}",
+    "option": "{{gain}} / month at {{libelle}}"
+  },
+  "saisie": {
+    "placeholder": "Another question…",
+    "parler": "Speak"
+  },
+  "etats": {
+    "chargement": "Loading the assistant's answer",
+    "reponse": "The assistant is preparing its answer",
+    "vide": "Ask the assistant your question, it answers based on your figures.",
+    "erreur": "The assistant's answer could not be loaded.",
+    "reessayer": "Try again",
+    "envoi": "Your question was not sent. Try again."
+  }
+}

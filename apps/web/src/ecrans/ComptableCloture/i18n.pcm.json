@@ -1,0 +1,45 @@
+{
+  "entete": {
+    "titre": "{{mois}} don close",
+    "titreAvenir": "Close {{mois}}",
+    "titreAttente": "Closing of di month",
+    "sousTitre": "{{quand}} · dem sign am wit your PIN",
+    "retour": "Go back"
+  },
+  "encaisse": {
+    "libelle": "FCFA wey enter · {{mois}}",
+    "cash": "Cash",
+    "momo": "MoMo",
+    "ecart": "Difference"
+  },
+  "verrou": {
+    "traitees_one": "Dem don handle di transaction wey no get match.",
+    "traitees_other": "Dem don handle di {{count}} transaction dem wey no get match.",
+    "clos": "Di month don lock: no more change, na only {{suivant}} entries remain.",
+    "aVenir": "If you close am, di month go lock: no more change, na only {{suivant}} entries go remain."
+  },
+  "envoi": {
+    "titre": "Dem don send am go {{destinataire}}",
+    "titreAvenir": "To send go {{destinataire}}",
+    "recu": "e reach {{heure}}"
+  },
+  "apercu": {
+    "titre": "Preview · sales journal · first 3 row"
+  },
+  "boutons": {
+    "revoir": "Look di export dem again",
+    "tableauDeBord": "Go back to di dashboard",
+    "cloturer": "Close {{mois}} · my PIN"
+  },
+  "signature": {
+    "sousTitre": "Your PIN go sign di closing",
+    "fermer": "Close",
+    "clavier": "PIN keypad to sign di closing"
+  },
+  "etats": {
+    "chargement": "Di closing dey load",
+    "vide": "No month to close.",
+    "erreur": "Di closing no load.",
+    "reessayer": "Try again"
+  }
+}

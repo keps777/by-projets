@@ -1,0 +1,83 @@
+{
+  "retour": "Go back",
+  "enTete": {
+    "titre": "Bus park {{quai}} · {{heure}} {{destination}}",
+    "sousTitre": "Conductor {{convoyeur}} · scan + complete di rush ticket dem"
+  },
+  "scan": {
+    "libelle": "Don scan · rush ticket, no name",
+    "siege": "seat {{numero}}",
+    "vente": "Dem sell am {{heure}} for counter {{guichet}} · {{mode}} {{montant}} · {{validite}}",
+    "valide": "e valid for dis bus",
+    "nonValide": "e no valid for dis bus"
+  },
+  "modes": {
+    "cash": "cash",
+    "momo": "MoMo",
+    "orange_money": "Orange Money"
+  },
+  "completer": {
+    "titre": "Complete am · di customer go show im ID",
+    "nom": "Name",
+    "piece": "ID · last 4",
+    "telephone": "Phone (no must, SMS)",
+    "aide": "Dem go type di name once here, never for counter when rush dey. If no name, e no go enter bus.",
+    "erreurs": {
+      "nom": "If no name, e no go enter bus.",
+      "piece": "ID: type di last 4 digits.",
+      "telephone": "Phone: 9 digits, or leave di place empty.",
+      "deja": "Dis ticket get name already.",
+      "echec": "Dem no complete di ticket. Try again."
+    }
+  },
+  "embarquement": {
+    "libelle": "don enter bus",
+    "nominatifs": "get name ·",
+    "completes": "rush don complete",
+    "depart": "bus go comot {{heure}}"
+  },
+  "sansNom": {
+    "titre": "Rush ticket dem wey still no get name",
+    "detail": "· seat {{siege}} · {{heure}} · {{mode}}",
+    "sms": "SMS don go",
+    "action": "for scan",
+    "aucun": "No rush ticket wey no get name"
+  },
+  "rapport": "Rush ticket wey dem never scan or complete as bus dey comot go show for di evening report as \"sold, no enter bus, no name\". Na dis one di patron and di assistant dey watch.",
+  "pied": {
+    "vue": "See di bus park",
+    "embarquer": {
+      "libelle": "Enter bus · seat {{siege}}",
+      "detail": "di ticket go get name · next scan"
+    }
+  },
+  "suivant": {
+    "titre": "Don enter bus · {{nom}}",
+    "detail": "Di ticket don get name. Scan di next ticket."
+  },
+  "autreScan": {
+    "titre": {
+      "monte": "Last scan · OK · e fit enter",
+      "deja_scanne": "Dem refuse · dem don scan di ticket already",
+      "introuvable": "Dem refuse · dem no see di ticket",
+      "autre_depart": "Dem refuse · another bus",
+      "annule": "Dem refuse · ticket don cancel"
+    },
+    "echec": {
+      "titre": "Scan no go",
+      "detail": "Check di network, then scan again."
+    }
+  },
+  "etats": {
+    "chargement": "Di rush ticket dey load",
+    "vide": {
+      "titre": "No rush ticket to complete",
+      "detail": "Dem never scan any rush ticket for dis bus park yet."
+    },
+    "erreur": {
+      "titre": "We no fit load di ticket",
+      "detail": "Check di network, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

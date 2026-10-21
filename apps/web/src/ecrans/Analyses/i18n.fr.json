@@ -1,0 +1,47 @@
+{
+  "entete": {
+    "titre": "Analyses",
+    "sousTitre": "{{periode}} · {{gares}}",
+    "gares_one": "{{count}} gare",
+    "gares_other": "{{count}} gares",
+    "retour": "Retour",
+    "periode": "Période"
+  },
+  "periodes": {
+    "semaine": "Semaine",
+    "mois": "Mois",
+    "trimestre": "Trimestre",
+    "annee": "Année"
+  },
+  "recette": {
+    "titre": {
+      "semaine": "Recette par jour",
+      "mois": "Recette par semaine",
+      "trimestre": "Recette par semaine",
+      "annee": "Recette par mois"
+    }
+  },
+  "lignes": {
+    "titre": "Par ligne · remplissage",
+    "mention_one": "{{count}} ligne · glisser",
+    "mention_other": "{{count}} lignes · glisser",
+    "colis": "Colis · toutes lignes",
+    "aucune": "Aucune ligne sur cette période."
+  },
+  "bus": {
+    "titre": "Par bus · net",
+    "mention": "{{count}} bus · glisser",
+    "trajets_one": "{{count}} trajet",
+    "trajets_other": "{{count}} trajets",
+    "aucun": "Aucun bus sur cette période."
+  },
+  "pied": {
+    "exporter": "Exporter Excel",
+    "assistant": "Demander à l'assistant"
+  },
+  "etats": {
+    "vide": "Aucune information pour cette période.",
+    "erreur": "Les analyses ne se sont pas chargées.",
+    "reessayer": "Réessayer"
+  }
+}

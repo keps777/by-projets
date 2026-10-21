@@ -1,0 +1,63 @@
+{
+  "titre": "Pay for a relative",
+  "sousTitre": "From Montréal, Paris or Douala · they get the ticket by SMS",
+  "retour": "Back",
+  "proches": {
+    "groupe": "Choose the relative",
+    "nouveau": "+ New number",
+    "sansNom": "your relative"
+  },
+  "saisie": {
+    "nom": "Relative's first name",
+    "telephone": "Relative's number",
+    "telephoneInvalide": "Cameroonian number expected: 9 digits, starting with 6."
+  },
+  "departs": {
+    "titre": "Departures {{jour}}",
+    "aide": "your relative picks their seat at the platform, or you do it here",
+    "aide_f": "she picks her seat at the platform, or you do it here",
+    "places_one": "{{count}} seat",
+    "places_other": "{{count}} seats",
+    "siege": "seat {{numero}} {{emplacement}} chosen",
+    "siegeSansEmplacement": "seat {{numero}} chosen"
+  },
+  "classe": {
+    "vip": "VIP · A/C",
+    "classique": "standard"
+  },
+  "paiement": {
+    "libelle": "You pay by card · {{devise}}",
+    "frais": "{{billet}} F + {{frais}} F fees",
+    "sansFrais": "{{billet}} F",
+    "conversion": "≈ {{montant}}",
+    "prevenir": "Notify me when your relative boards and arrives",
+    "prevenir_f": "Notify me when she boards and arrives"
+  },
+  "payer": {
+    "libelle": "Pay · {{nom}} gets their ticket",
+    "detail": "SMS with QR and 4-digit code",
+    "aide": "Your relative needs neither a smartphone nor internet: the SMS is enough at the platform.",
+    "aide_f": "She needs neither a smartphone nor internet: the SMS is enough at the platform."
+  },
+  "messages": {
+    "saisirProche": "Enter your relative's first name and number before paying.",
+    "complet": "This departure is full. Choose another departure.",
+    "prix": "The price could not be calculated. Try again.",
+    "demarrage": "The payment could not start. Try again.",
+    "attente": "Payment sent. If your bank asks you to, confirm it with them.",
+    "echec": "The payment did not go through. Check your card, then try again.",
+    "delai": "The payment time has run out. Try again."
+  },
+  "etats": {
+    "chargement": "Loading departures",
+    "vide": {
+      "titre": "No departure that day",
+      "detail": "Go back to the departures to choose another route or another day."
+    },
+    "erreur": {
+      "titre": "Unable to load the departures",
+      "detail": "Check your connection, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

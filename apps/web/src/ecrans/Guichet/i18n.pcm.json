@@ -1,0 +1,56 @@
+{
+  "agence": {
+    "titre": "{{compagnie}} · {{gare}}",
+    "sousTitre": "Counter {{rang}} · {{agent}} · cash desk don open {{heure}}",
+    "sousTitreCaisseFermee": "Counter {{rang}} · {{agent}} · cash desk don close"
+  },
+  "synchro": {
+    "sync": "SYNC",
+    "horsLigne": "NO NETWORK"
+  },
+  "compteurs": {
+    "billets": "Ticket dem",
+    "billetsDetail": "dis morning",
+    "colis": "Parcel dem",
+    "colisDetail": "{{n}} to load",
+    "caisse": "For cash desk",
+    "caisseDetail": "difference {{valeur}}"
+  },
+  "actions": {
+    "vendre": {
+      "titre": "Sell ticket",
+      "detail": "bus · seat · name · collect money · print: 3 touch"
+    },
+    "colis": {
+      "titre": "Register parcel",
+      "detail": "photo, label, SMS"
+    },
+    "depot": {
+      "titre": "Parcel wey dem don pay",
+      "detail": "scan di customer code"
+    },
+    "quai": {
+      "titre": "Bus park · enter bus",
+      "detail": "{{heure}} {{destination}} · {{scannes}}/{{capacite}} don scan"
+    },
+    "caisse": {
+      "titre": "My cash desk",
+      "detail": "close, count, difference"
+    },
+    "cadence": "Rush mode · line of {{n}}",
+    "cadenceSansFile": "Rush mode",
+    "superviseur": "Call di supervisor"
+  },
+  "prochain": {
+    "depart_one": "Next bus go comot for {{minutes}} min: {{heure}} {{destination}}, {{count}} seat.",
+    "depart_other": "Next bus go comot for {{minutes}} min: {{heure}} {{destination}}, {{count}} seat dem.",
+    "aucun": "No bus dey come for now.",
+    "ouverture": "Di {{heure}} {{destination}} go open for sell."
+  },
+  "etats": {
+    "chargement": "Counter home dey load",
+    "vide": "No information for dis counter for now.",
+    "erreur": "Counter home no load. You fit continue to sell.",
+    "reessayer": "Try again"
+  }
+}

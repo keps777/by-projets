@@ -1,0 +1,56 @@
+{
+  "agence": {
+    "titre": "{{compagnie}} · {{gare}}",
+    "sousTitre": "Guichet {{rang}} · {{agent}} · caisse ouverte {{heure}}",
+    "sousTitreCaisseFermee": "Guichet {{rang}} · {{agent}} · caisse fermée"
+  },
+  "synchro": {
+    "sync": "SYNC",
+    "horsLigne": "HORS LIGNE"
+  },
+  "compteurs": {
+    "billets": "Billets",
+    "billetsDetail": "ce matin",
+    "colis": "Colis",
+    "colisDetail": "dont {{n}} à charger",
+    "caisse": "En caisse",
+    "caisseDetail": "écart {{valeur}}"
+  },
+  "actions": {
+    "vendre": {
+      "titre": "Vendre un billet",
+      "detail": "départ · siège · nom · encaisser · imprimer : 3 touches"
+    },
+    "colis": {
+      "titre": "Enregistrer un colis",
+      "detail": "photo, étiquette, SMS"
+    },
+    "depot": {
+      "titre": "Dépôt prépayé",
+      "detail": "scanner le code du client"
+    },
+    "quai": {
+      "titre": "Quai · embarquer",
+      "detail": "{{heure}} {{destination}} · {{scannes}}/{{capacite}} scannés"
+    },
+    "caisse": {
+      "titre": "Ma caisse",
+      "detail": "fermer, compter, écart"
+    },
+    "cadence": "Mode cadence · file de {{n}}",
+    "cadenceSansFile": "Mode cadence",
+    "superviseur": "Appeler le superviseur"
+  },
+  "prochain": {
+    "depart_one": "Prochain départ dans {{minutes}} min : {{heure}} {{destination}}, {{count}} place.",
+    "depart_other": "Prochain départ dans {{minutes}} min : {{heure}} {{destination}}, {{count}} places.",
+    "aucun": "Aucun départ à venir pour le moment.",
+    "ouverture": "Le {{heure}} {{destination}} ouvre à la vente."
+  },
+  "etats": {
+    "chargement": "Chargement de l'accueil du guichet",
+    "vide": "Aucune information pour ce guichet pour le moment.",
+    "erreur": "L'accueil du guichet ne s'est pas chargé. Vous pouvez continuer à vendre.",
+    "reessayer": "Réessayer"
+  }
+}

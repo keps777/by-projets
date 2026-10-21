@@ -1,0 +1,74 @@
+{
+  "titre": "Sell",
+  "retour": "Go back to counter",
+  "sousTitre": "Counter {{rang}} · ticket no. {{numero}}",
+  "departs": {
+    "places": "{{destination}} · {{nombre}}",
+    "placesCourt": "{{destination}} · {{nombre}} seat",
+    "autres": "+ {{nombre}}"
+  },
+  "plan": {
+    "siege": "Seat",
+    "attribue": "dem give am by itself · touch one seat to change am",
+    "choisi": "choose am · touch one seat to change am",
+    "libres": "{{nombre}} free",
+    "siegeLibre": "Seat {{numero}} free",
+    "siegePris": "Seat {{numero}} don take",
+    "indisponible": "Di plan for dis bus never load yet.",
+    "siegeChoisi": "Seat {{numero}} don choose"
+  },
+  "voyageur": {
+    "nom": "Name of di passenger",
+    "telephone": "Phone",
+    "piece": "ID (last 4)",
+    "clientConnu": "Customer wey we know ↓",
+    "bagage": "+ luggage {{montant}}"
+  },
+  "paiement": {
+    "cash": "Cash",
+    "rendu": "change: {{montant}}",
+    "momo": "MoMo",
+    "push": "push go di customer",
+    "orange": "Orange Money",
+    "reference": "reference"
+  },
+  "recap": {
+    "recu": "Wetin you receive:",
+    "aEncaisser": "To collect:",
+    "referenceLibelle": "Reference:",
+    "billet": "ticket {{montant}}",
+    "bagage": "luggage {{montant}}",
+    "sms": "SMS to di passenger:",
+    "oui": "yes",
+    "non": "no"
+  },
+  "encaisser": {
+    "libelle": "Collect money and print",
+    "detail": "ticket + SMS for 2 s",
+    "detailSansSms": "ticket for 2 s"
+  },
+  "annuler": "Cancel wit di supervisor PIN",
+  "erreurs": {
+    "nom": "Put di name of di passenger.",
+    "telephone": "Number no correct: 9 digits, wey start wit 6.",
+    "piece": "Four digits.",
+    "recu": "Di money wey you receive small pass di price.",
+    "reference": "Put di Orange Money reference.",
+    "departAutre": "Di plan and price for dis bus never load yet.",
+    "siegePris": "Dem don just take dis seat. Choose another one.",
+    "vente": "Dem no record di sale. Try again.",
+    "impression": "Ticket {{numero}} don sell, but di print fail. Touch \"Collect money and print\" to try again."
+  },
+  "etats": {
+    "chargement": "Di sale dey load",
+    "vide": {
+      "titre": "No bus open for sell",
+      "detail": "No bus dey to sell for now."
+    },
+    "erreur": {
+      "titre": "We no fit load di sale",
+      "detail": "Check di network, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

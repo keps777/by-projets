@@ -1,0 +1,48 @@
+{
+  "titre": "Carpooling",
+  "ville": {
+    "detectee": "{{ville}} · dem don see am ▾",
+    "choisie": "{{ville}} ▾"
+  },
+  "mode": {
+    "aria": "Type of trip",
+    "entreVilles": "Between town dem",
+    "enVille": "Inside town · {{ville}}",
+    "glisse": "slide to change"
+  },
+  "role": {
+    "aria": "My role",
+    "passager": "I be passenger",
+    "conducteur": "I dey drive"
+  },
+  "itineraire": {
+    "depart": "Where you dey go from",
+    "arrivee": "Where you dey go",
+    "maPosition": "where I dey",
+    "detail": "{{km}} km · now",
+    "maintenant": "now"
+  },
+  "maintenant": {
+    "titre": "Dem dey go now · {{count}}",
+    "titreSeul": "Dem dey go now",
+    "sens": "for your direction"
+  },
+  "offre": {
+    "dans": "for {{count}} min",
+    "minutes": "{{count}} min",
+    "motoTaxi": "moto-taxi",
+    "verifie": "dem don check am",
+    "verifiee": "dem don check am",
+    "regulier": "dem dey go all di time"
+  },
+  "matin": {
+    "erreur": "We no fit save di morning trip. Try again."
+  },
+  "securite": "Dem dey fix price before, dem no dey bargain am inside di car. Dem go share your location wit one person wey dey close to you as you dey travel.",
+  "etats": {
+    "chargement": "Di carpool dem inside town dey load",
+    "vide": "No car dey go now for your direction.",
+    "erreur": "Di offer dem no load.",
+    "reessayer": "Try again"
+  }
+}

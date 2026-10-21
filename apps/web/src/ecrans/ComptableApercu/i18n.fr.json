@@ -1,0 +1,56 @@
+{
+  "fond": {
+    "titre": "Comptable",
+    "periode": "{{periode}} · clôture le {{jour}} du mois",
+    "rapprochement": "Rapprochement MoMo · {{mois}}",
+    "exports": "Exports · colonnes fixes"
+  },
+  "export": {
+    "detail": "{{lignes}} · {{colonnes}} · {{taille}} · {{genere}}",
+    "lignes_one": "{{nombre}} ligne",
+    "lignes_other": "{{nombre}} lignes",
+    "colonnes_one": "{{nombre}} colonne",
+    "colonnes_other": "{{nombre}} colonnes",
+    "genere": {
+      "instant": "généré à l'instant",
+      "minutes": "généré il y a {{minutes}} min",
+      "heures": "généré il y a {{heures}} h",
+      "le": "généré le {{date}}"
+    },
+    "fermer": "Fermer",
+    "onglets": "Onglets de l'export"
+  },
+  "tableau": {
+    "aria": "{{nom}}, lignes {{premiere}} à {{derniere}}",
+    "pied": "Lignes {{premiere}} – {{derniere}} sur {{total}} · glisser pour les suivantes",
+    "piedComplet": "Lignes {{premiere}} – {{derniere}} sur {{total}}",
+    "total": "total {{montant}}"
+  },
+  "garanties": {
+    "colonnes": {
+      "titre": "Colonnes fixes",
+      "detail": "identiques chaque mois · le cabinet importe sans retoucher"
+    },
+    "onglets": {
+      "titre": "Un onglet par vue"
+    },
+    "signe": {
+      "titre": "Signé",
+      "detail": "empreinte AfriMove dans le fichier · infalsifiable"
+    }
+  },
+  "boutons": {
+    "fermer": "Fermer",
+    "telecharger": "Télécharger",
+    "envoyer": "Envoyer au cabinet"
+  },
+  "etats": {
+    "titre": "Aperçu d'un export",
+    "chargement": "Chargement de l'aperçu",
+    "vide": "Cet export ne contient aucune ligne.",
+    "introuvable": "Cet aperçu n'est pas disponible pour cet export.",
+    "erreur": "L'aperçu ne s'est pas chargé.",
+    "telechargement": "Le fichier n'a pas pu être téléchargé. Réessaie.",
+    "reessayer": "Réessayer"
+  }
+}

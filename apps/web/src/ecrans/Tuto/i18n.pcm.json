@@ -1,0 +1,39 @@
+{
+  "passer": "Skip",
+  "suivant": "Next",
+  "etape": "Tutorial · {{n}} / {{total}} · everything for 3 touch",
+  "rang": "{{n}} / {{total}}",
+  "carrousel": "Tutorial for 3 screen",
+  "diapo": "Screen {{n}} for {{total}}",
+  "exemple": {
+    "places": "{{n}} seat dem",
+    "choisis": "choose your seat",
+    "payer": "Pay · MoMo"
+  },
+  "diapos": {
+    "billet": {
+      "titre": "Your ticket,\nyour name, your seat.",
+      "texte": "One bus, one seat, one payment: your ticket go reach you by SMS wit QR code and 4-digit code. For di bus park, dem go scan you and you go enter bus.",
+      "detail": "one bus, one seat, one payment"
+    },
+    "colis": {
+      "titre": "Dem go follow your parcel reach di end",
+      "texte": "You go drop your parcel, we go snap am, then di person wey go receive am go get code to collect. You go follow every step till dem deliver am.",
+      "detail": "photo, code to collect, delivery",
+      "etapes": {
+        "photo": "Photo",
+        "code": "Code to collect",
+        "livraison": "Delivery"
+      }
+    },
+    "proches": {
+      "titre": "Your people go know when you reach",
+      "texte": "Your person fit follow your bus live for di map, and e go get SMS by itself when you reach.",
+      "detail": "bus live, SMS by itself",
+      "etapes": {
+        "direct": "Bus live",
+        "sms": "SMS by itself"
+      }
+    }
+  }
+}

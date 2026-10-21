@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Première ouverture</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&amp;family=Instrument+Sans:wght@400;500;600;700&amp;family=Geist+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#FF6A1F}a:hover{color:#FFB547}
+@keyframes flap{0%,70%{transform:rotateX(0)}80%{transform:rotateX(-88deg)}90%{transform:rotateX(0)}100%{transform:rotateX(0)}}
+@keyframes bar{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
+@keyframes rise{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #0B1019; color: #F4F0E8; font-family: 'Instrument Sans', system-ui, sans-serif; overflow: hidden">
+
+  <header style="display: flex; align-items: center; justify-content: space-between; padding: 18px 20px 0">
+    <span style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #7F8A9E">Douala · 07:38</span>
+    <div style="display: flex; gap: 4px; padding: 3px; border-radius: 999px; background: #141B28; border: 1px solid #273247">
+      <button type="button" aria-pressed="true" style="min-height: 32px; padding: 0 10px; border-radius: 999px; border: 0; background: #FFB547; color: #0B1019; font-size: 12px; font-weight: 700">FR</button>
+      <button type="button" style="min-height: 32px; padding: 0 10px; border-radius: 999px; border: 0; background: transparent; color: #B5BDCB; font-size: 12px; font-weight: 600">EN</button>
+      <button type="button" style="min-height: 32px; padding: 0 10px; border-radius: 999px; border: 0; background: transparent; color: #B5BDCB; font-size: 12px; font-weight: 600">Pidgin</button>
+    </div>
+  </header>
+
+  <main style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 0 24px">
+    <div style="position: relative; width: 168px; height: 168px; perspective: 600px">
+      <svg width="168" height="168" viewBox="0 0 72 72" role="img" aria-label="Logo AfriMove : panneau à volets, A ambre" style="display: block">
+        <rect width="72" height="72" rx="20" fill="#141B28"></rect>
+        <rect x="12" y="37" width="48" height="23" rx="6" fill="#1B2435"></rect>
+        <path d="M36 38 L42 56 L30 56 Z M22 56 L30 56 L30 56 Z" fill="#FFB547"></path>
+        <path d="M30 56 L36 38 L42 56 L50 56 L36 18 L22 56 Z" fill="#FFB547"></path>
+        <g style="transform-origin: 36px 35.5px; animation: flap 3.2s ease-in-out infinite"><rect x="12" y="12" width="48" height="23" rx="6" fill="#273247"></rect><path d="M36 18 L42.5 35 L29.5 35 Z" fill="#FFB547"></path></g>
+        <rect x="10" y="34" width="52" height="3" fill="#0B1019"></rect>
+      </svg>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; animation: rise .8s ease-out both">
+      <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 44px; font-weight: 800; letter-spacing: -.03em; line-height: 1">AfriMove</span>
+      <span style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: #FFB547">A · comme Avance</span>
+    </div>
+    <p style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 700; text-align: center; line-height: 1.2; letter-spacing: -.01em; color: #F4F0E8">Où que tu sois,<br><span style="color: #FF6A1F">on te trouve.</span></p>
+
+    <div style="width: 100%; display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 16px; background: #141B28; border: 1px solid #273247">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <span style="display: flex; align-items: flex-end; gap: 3px; height: 28px; flex: none" aria-hidden="true"><span style="width: 4px; height: 28px; border-radius: 2px; background: #FFB547; transform-origin: bottom; animation: bar 1.1s ease-in-out infinite"></span><span style="width: 4px; height: 28px; border-radius: 2px; background: #FFB547; transform-origin: bottom; animation: bar 1.1s ease-in-out .15s infinite"></span><span style="width: 4px; height: 28px; border-radius: 2px; background: #FF6A1F; transform-origin: bottom; animation: bar 1.1s ease-in-out .3s infinite"></span><span style="width: 4px; height: 28px; border-radius: 2px; background: #FFB547; transform-origin: bottom; animation: bar 1.1s ease-in-out .45s infinite"></span><span style="width: 4px; height: 28px; border-radius: 2px; background: #FFB547; transform-origin: bottom; animation: bar 1.1s ease-in-out .6s infinite"></span></span>
+        <span style="display: flex; flex-direction: column; flex: 1; min-width: 0"><span style="font-size: 13px; font-weight: 700">Jingle AfriMove · 10 s</span><span style="font-size: 11px; color: #B5BDCB">« Où que tu sois, on te trouve : Afri… Move ! »</span></span>
+      </div>
+      <audio controls preload="none" src="/_blob/528df3d1f035eaa80f534822cc608b28" style="width: 100%; height: 36px"></audio>
+    </div>
+  </main>
+
+  <div style="padding: 10px 20px 22px; display: flex; flex-direction: column; gap: 8px">
+    <a href="Connexion.dc.html" style="display: flex; align-items: center; justify-content: center; min-height: 58px; border-radius: 16px; background: #FF6A1F; color: #0B1019; font-size: 16px; font-weight: 700; text-decoration: none">Commencer · 30 secondes</a>
+    <a href="Connexion.dc.html" style="display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 14px; background: #141B28; border: 1px solid #273247; color: #F4F0E8; font-size: 14px; font-weight: 600; text-decoration: none">J'ai déjà un compte</a>
+    <span style="font-size: 11px; color: #7F8A9E; text-align: center">Billets, colis et covoiturage · 5 compagnies partenaires · marche aussi sans internet</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

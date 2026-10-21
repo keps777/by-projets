@@ -1,0 +1,51 @@
+{
+  "retour": "Back to home",
+  "partager": {
+    "libelle": "Share the ticket",
+    "message": "My {{compagnie}} ticket: {{depart}} → {{arrivee}}, on {{date}} at {{heure}}. {{lien}}"
+  },
+  "statut": {
+    "paye": "Paid · ticket sent by SMS",
+    "payeSansSms": "Paid",
+    "reserve": "Booked",
+    "embarque": "Boarded",
+    "voyage": "Travelling",
+    "annule": "Cancelled",
+    "reporte": "Postponed",
+    "nonPresente": "No-show"
+  },
+  "horsLigne": "Ticket saved on this phone, updated as soon as the network is back.",
+  "billet": {
+    "passager": "{{nom}} · ID card ··· {{piece}}",
+    "passagerSansPiece": "{{nom}}",
+    "consigne": "At the platform {{minutes}} min before, with your ID.",
+    "classe": {
+      "vip": "VIP",
+      "classique": "Standard"
+    }
+  },
+  "actions": {
+    "suivre": {
+      "titre": "Track my bus",
+      "detail": "and notify a relative"
+    },
+    "moto": {
+      "titre": "Moto to the station",
+      "detail": "leaves at {{heure}} · {{prix}}"
+    },
+    "annulation": "Postpone or cancel · free until {{heure}}",
+    "colis": "+ parcel"
+  },
+  "etats": {
+    "chargement": "Loading the ticket",
+    "vide": {
+      "titre": "Ticket not found",
+      "detail": "This ticket no longer exists or is not in your name."
+    },
+    "erreur": {
+      "titre": "The ticket could not be loaded",
+      "detail": "Check your connection, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

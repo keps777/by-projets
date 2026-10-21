@@ -1,0 +1,28 @@
+{
+  "titre": "Without internet",
+  "sousTitre": "The same service on a keypad phone",
+  "retour": "Back",
+  "ussd": {
+    "titre": "USSD · dial {{code}}"
+  },
+  "whatsapp": {
+    "titre": "WhatsApp · write \"{{motCle}}\"",
+    "conversation": "WhatsApp conversation: buying a ticket"
+  },
+  "actions": {
+    "billet": "See the ticket received",
+    "proche": "Buy for someone"
+  },
+  "etats": {
+    "chargement": "Loading the no-internet preview",
+    "vide": {
+      "titre": "Nothing to show yet",
+      "detail": "The USSD and WhatsApp preview is not available."
+    },
+    "erreur": {
+      "titre": "The preview could not be loaded",
+      "detail": "Check your connection, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

@@ -1,0 +1,40 @@
+.carte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-8);
+  box-sizing: border-box;
+  padding: var(--am-space-14);
+  border-radius: var(--am-radius-18);
+  background: var(--am-surface);
+  border: 1px solid var(--am-trait);
+  color: var(--am-craie);
+  font-family: var(--am-font-texte);
+}
+
+.carte[data-variante="large"] {
+  padding: var(--am-space-14) var(--am-space-16);
+}
+
+.entete {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--am-space-8);
+}
+
+.etiquette {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  letter-spacing: var(--am-ls-etiquette);
+  text-transform: uppercase;
+  color: var(--am-ambre);
+}
+
+.carte[data-variante="large"] .etiquette {
+  font-size: var(--am-fs-11);
+}
+
+.droite {
+  font-size: var(--am-fs-11);
+  color: var(--am-craie-2);
+}

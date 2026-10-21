@@ -1,0 +1,28 @@
+{
+  "titre": "Sans internet",
+  "sousTitre": "Le même service sur un téléphone à touches",
+  "retour": "Retour",
+  "ussd": {
+    "titre": "USSD · tape {{code}}"
+  },
+  "whatsapp": {
+    "titre": "WhatsApp · écris « {{motCle}} »",
+    "conversation": "Conversation WhatsApp : achat d'un billet"
+  },
+  "actions": {
+    "billet": "Voir le billet reçu",
+    "proche": "Acheter pour quelqu'un"
+  },
+  "etats": {
+    "chargement": "Chargement de l'aperçu sans internet",
+    "vide": {
+      "titre": "Rien à montrer pour l'instant",
+      "detail": "L'aperçu USSD et WhatsApp n'est pas disponible."
+    },
+    "erreur": {
+      "titre": "L'aperçu ne s'est pas chargé",
+      "detail": "Vérifie ta connexion, puis réessaie.",
+      "reessayer": "Réessayer"
+    }
+  }
+}

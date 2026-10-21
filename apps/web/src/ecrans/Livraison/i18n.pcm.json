@@ -1,0 +1,70 @@
+{
+  "retour": "Go back",
+  "fermer": "Close",
+  "statut": "DEY DELIVER",
+  "destinataire": "di person wey go receive",
+  "carte": {
+    "libelle_one": "Map: di delivery man dey {{count}} minute from {{nom}} house",
+    "libelle_other": "Map: di delivery man dey {{count}} minutes from {{nom}} house",
+    "depart": "{{lieu}} · dem carry am {{heure}}",
+    "livreur": "{{prenom}} · {{minutes}} min"
+  },
+  "arrivee": {
+    "colis": "parcel {{reference}}",
+    "poids": "{{poids}} kg · insured",
+    "poidsNonAssure": "{{poids}} kg · no insurance"
+  },
+  "livreur": {
+    "titre": "{{nom}} · moto delivery man",
+    "verifie": "dem don check am",
+    "reputation_one": "{{note}} ★ · {{count}} delivery",
+    "reputation_other": "{{note}} ★ · {{count}} delivery dem",
+    "engin": "{{moto}} · AfriMove vest no. {{gilet}}",
+    "appeler": "Call {{prenom}}",
+    "appelIndisponible": "Di number of {{prenom}} no dey available for now."
+  },
+  "remise": {
+    "libelle": "When dem give am",
+    "aLeCode": "{{nom}} get di code",
+    "pasLeCode": "{{nom}} never get di code",
+    "debut": "{{prenom}} go ask for di code ",
+    "fin": " and check di ID. E go snap di parcel wey e give. You go get di photo, {{nom}} go get am too. If she no dey, e go wait {{minutes}} min then drop am for {{relais}}."
+  },
+  "partager": {
+    "libelle": "Share di tracking wit {{nom}}",
+    "titre": "Share di tracking",
+    "champ": "Number of {{nom}}",
+    "envoyer": "Send di link",
+    "invalide": "Put 9-digit number.",
+    "envoye": "Dem don send tracking link go {{numero}}.",
+    "echec": "We no fit send di tracking. Try again."
+  },
+  "adresse": {
+    "libelle": "Change di address",
+    "champ": "New address",
+    "valider": "Confirm",
+    "vide": "Write di new address.",
+    "changee": "Address don change: {{adresse}}.",
+    "livreurPrevenu": " Dem don tell di delivery man.",
+    "echec": "We no fit change di address. Try again."
+  },
+  "pied": {
+    "livraison": "Delivery {{prix}} F · {{etat}} · {{part}} F for {{prenom}} when dem give am",
+    "payee": "don pay",
+    "aPayer": "to pay",
+    "assure": "insured",
+    "nonAssure": "no insurance"
+  },
+  "etats": {
+    "chargement": "Di delivery dey load",
+    "vide": {
+      "titre": "No delivery dey go on",
+      "detail": "Dis parcel no dey for moto delivery, or e no be your own."
+    },
+    "erreur": {
+      "titre": "We no fit load di delivery",
+      "detail": "Check your network, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

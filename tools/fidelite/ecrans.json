@@ -1,0 +1,229 @@
+{
+  "ecrans": {
+    "Splash": {
+      "route": "/bienvenue"
+    },
+    "Connexion": {
+      "route": "/connexion"
+    },
+    "Tuto": {
+      "route": "/tutoriel"
+    },
+    "Main": {
+      "route": "/voyager"
+    },
+    "SiegePay": {
+      "route": "/depart/dep-0800"
+    },
+    "Pass": {
+      "route": "/billet/BEX-DLA-270105-0142"
+    },
+    "Direct": {
+      "route": "/billet/BEX-DLA-270105-0142/direct"
+    },
+    "Reseau": {
+      "route": "/reseau"
+    },
+    "Covoit": {
+      "route": "/covoit"
+    },
+    "Paiement": {
+      "route": "/paiement/cmd-0001"
+    },
+    "Course": {
+      "route": "/course"
+    },
+    "MainVille": {
+      "route": "/voyager/ville"
+    },
+    "CovoitVille": {
+      "route": "/covoit/ville"
+    },
+    "CovoitConducteur": {
+      "route": "/covoit/conducteur"
+    },
+    "MainFiltres": {
+      "route": "/voyager/filtres"
+    },
+    "Arret": {
+      "route": "/monter-en-route"
+    },
+    "Groupe": {
+      "route": "/groupe"
+    },
+    "USSD": {
+      "route": "/sans-internet"
+    },
+    "Moi": {
+      "route": "/moi"
+    },
+    "ColisEnvoi": {
+      "route": "/colis"
+    },
+    "ColisCode": {
+      "route": "/colis/colis-c-dla-270105-0017"
+    },
+    "Relais": {
+      "route": "/colis/colis-c-dla-270105-0017/relais"
+    },
+    "Livraison": {
+      "route": "/colis/colis-c-dla-270105-0017/livraison"
+    },
+    "Proche": {
+      "route": "/proche"
+    },
+    "Guichet": {
+      "route": "/guichet/accueil"
+    },
+    "Vente": {
+      "route": "/guichet/vendre"
+    },
+    "Cadence": {
+      "route": "/guichet/cadence"
+    },
+    "CadenceBillet": {
+      "route": "/guichet/cadence/vendu?billet=billet-alp-dla-270105-0232"
+    },
+    "CadenceQuai": {
+      "route": "/completer"
+    },
+    "GuichetColis": {
+      "route": "/guichet/colis"
+    },
+    "Depot": {
+      "route": "/guichet/depot"
+    },
+    "Quai": {
+      "route": "/embarquement"
+    },
+    "Convoyeur": {
+      "route": "/convoyeur"
+    },
+    "Chauffeur": {
+      "route": "/chauffeur"
+    },
+    "Controleur": {
+      "route": "/inopine"
+    },
+    "Caisse": {
+      "route": "/guichet/caisse"
+    },
+    "Superviseur": {
+      "route": "/gare"
+    },
+    "SuperviseurValider": {
+      "route": "/cloture/session-k-dla-270105-2-1"
+    },
+    "SuperviseurVoir": {
+      "route": "/annulation/dem-annulation-billet-alp-dla-270105-0171"
+    },
+    "SuperviseurEquipe": {
+      "route": "/equipe"
+    },
+    "SuperviseurDebloquer": {
+      "route": "/debloquer/appareil-gu3-dla"
+    },
+    "RapportSoir": {
+      "route": "/rapport"
+    },
+    "Patron": {
+      "route": "/aujourdhui"
+    },
+    "Assistant": {
+      "route": "/assistant"
+    },
+    "Analyses": {
+      "route": "/analyses"
+    },
+    "Comptable": {
+      "route": "/comptable"
+    },
+    "Config": {
+      "route": "/reglages"
+    },
+    "Modules": {
+      "route": "/reglages/modules"
+    },
+    "Financement": {
+      "route": "/financement"
+    },
+    "InterAgences": {
+      "route": "/inter-agences"
+    },
+    "RelaisApp": {
+      "route": "/relais/accueil"
+    },
+    "Livreur": {
+      "route": "/livreur/accueil"
+    },
+    "Conducteur": {
+      "route": "/covoit/proposer"
+    },
+    "Vendeur": {
+      "route": "/vendeur/accueil"
+    },
+    "Controle": {
+      "route": "/controle"
+    },
+    "AssistantReponse": {
+      "route": "/assistant/reponse"
+    },
+    "AnalysesLigne": {
+      "route": "/analyses/ligne/ligne-alp-dlabaf"
+    },
+    "AnalysesBus": {
+      "route": "/analyses/bus/bus-lt207ab"
+    },
+    "ConfigLigne": {
+      "route": "/reglages/ligne/ligne-alp-dlabaf"
+    },
+    "ComptableRapprochement": {
+      "route": "/comptable/rapprochement"
+    },
+    "ComptableApercu": {
+      "route": "/comptable/apercu/journal_ventes"
+    },
+    "ComptableCloture": {
+      "route": "/comptable/cloture"
+    },
+    "FinancementDemande": {
+      "route": "/financement/demande/AV-2027-0041"
+    },
+    "InterAgencesConvention": {
+      "route": "/inter-agences/convention/convention-alpha-omega"
+    },
+    "PatronEquipe": {
+      "route": "/gares"
+    },
+    "PatronGare": {
+      "route": "/gares/gare-alp-dla"
+    },
+    "PatronPersonne": {
+      "route": "/personnes/pers-joseph"
+    },
+    "ConfigEquipeListe": {
+      "route": "/reglages/equipe"
+    },
+    "ConfigPersonne": {
+      "route": "/reglages/personne/pers-joseph"
+    },
+    "ConfigRegles": {
+      "route": "/reglages/regles"
+    },
+    "RelaisDevenir": {
+      "route": "/moi/devenir-relais"
+    },
+    "RelaisInscription": {
+      "route": "/moi/devenir-relais/fiche"
+    },
+    "RelaisVerification": {
+      "route": "/moi/devenir-relais/suivi"
+    },
+    "LivreurDevenir": {
+      "route": "/moi/devenir-livreur"
+    },
+    "LivreurVerification": {
+      "route": "/moi/devenir-livreur/suivi"
+    }
+  }
+}

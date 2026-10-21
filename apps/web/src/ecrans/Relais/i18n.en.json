@@ -1,0 +1,53 @@
+{
+  "retour": "Back",
+  "carte": {
+    "libelle_one": "Map of {{ville}} with {{nombre}} relay point around the {{marche}}",
+    "libelle_other": "Map of {{ville}} with {{nombre}} relay points around the {{marche}}",
+    "libelleSansMarche_one": "Map of {{ville}} with {{nombre}} relay point",
+    "libelleSansMarche_other": "Map of {{ville}} with {{nombre}} relay points",
+    "vide": "Map of the city",
+    "etiquette": "Relay points · {{ville}}",
+    "sousTitre_one": "{{count}} shopkeeper near her",
+    "sousTitre_other": "{{count}} shopkeepers near her"
+  },
+  "liste": {
+    "libelle": "Relay points near the recipient"
+  },
+  "etat": {
+    "ouvert": "· open",
+    "fermeBientot": "· closes at {{heure}}",
+    "ferme": "· closed"
+  },
+  "detail": {
+    "deChez": "{{distance}} from {{surnom}}'s place",
+    "colisRemis_one": "{{count}} parcel handed over",
+    "colisRemis_other": "{{count}} parcels handed over"
+  },
+  "supplement": "+{{montant}}",
+  "choisir": {
+    "libelle": "Choose {{nom}} · notify {{surnom}}",
+    "prix": "{{montant}} F"
+  },
+  "messages": {
+    "complet": "This relay point is full. Choose another.",
+    "tropLourd": "This parcel is too heavy for this relay point. Choose another.",
+    "echec": "The relay point could not be saved. Try again."
+  },
+  "etats": {
+    "chargement": "Loading relay points",
+    "aucun": {
+      "titre": "No relay point near here",
+      "detail": "No shopkeeper is available near the recipient for now."
+    },
+    "introuvable": {
+      "titre": "Parcel not found",
+      "detail": "This parcel does not exist, or it is not yours."
+    },
+    "erreur": {
+      "titre": "Unable to load relay points",
+      "detail": "Check your connection, then try again.",
+      "reessayer": "Try again"
+    },
+    "retourColis": "Back to the parcel"
+  }
+}

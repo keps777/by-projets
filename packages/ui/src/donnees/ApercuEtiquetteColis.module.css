@@ -1,0 +1,37 @@
+.corps {
+  display: grid;
+  grid-template-columns: 1fr 96px;
+  gap: var(--am-space-8);
+  padding: var(--am-space-10) var(--am-space-12);
+  align-items: center;
+}
+
+.texte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--am-space-2);
+  min-width: 0;
+  line-height: var(--am-lh-compacte);
+}
+
+.trajet {
+  font-family: var(--am-font-titre);
+  font-size: var(--am-fs-22);
+  font-weight: 800;
+}
+
+.destinataire {
+  font-size: var(--am-fs-12);
+  font-weight: 700;
+}
+
+.reference {
+  font-family: var(--am-font-mono);
+  font-size: var(--am-fs-10);
+  overflow-wrap: anywhere;
+}
+
+.mention {
+  font-size: 9px;
+  color: var(--am-gris-sourd);
+}

@@ -1,0 +1,67 @@
+{
+  "entete": {
+    "titre": "Sans correspondance",
+    "sousTitre_one": "{{mois}} · {{count}} transaction sur {{ventes}} · {{montant}} FCFA",
+    "sousTitre_other": "{{mois}} · {{count}} transactions sur {{ventes}} · {{montant}} FCFA",
+    "retour": "Retour"
+  },
+  "intro": "Le compte marchand a reçu l'argent, mais aucun billet ne porte la référence. Pour chaque ligne, l'app propose la cause la plus probable et l'action.",
+  "tableau": {
+    "reference": "Réf. opérateur · date · numéro",
+    "montant": "montant",
+    "total": "Total à traiter",
+    "operateur": {
+      "mtn": "MTN",
+      "orange": "Orange"
+    },
+    "action": {
+      "rembourser": "Rembourser",
+      "rattacher": "Rattacher",
+      "demander": "Demander"
+    },
+    "decision": {
+      "rembourser": "Remboursé",
+      "rattacher": "Rattaché",
+      "demander": "Réclamé"
+    }
+  },
+  "explications": {
+    "rembourser": {
+      "titre": "Remboursement",
+      "detail": "MoMo vers le même numéro · 1 touche · tracé 7 ans"
+    },
+    "rattacher": {
+      "titre": "Rattacher",
+      "detail": "la référence est écrite sur le colis ou le billet"
+    },
+    "demander": {
+      "titre": "Demander",
+      "detail": "réclamation opérateur · réponse sous 72 h"
+    }
+  },
+  "pied_one": "Rien n'est clôturé tant qu'une ligne reste ouverte. Le cabinet reçoit la décision avec sa référence.",
+  "pied_other": "Rien n'est clôturé tant qu'une ligne reste ouverte. Le cabinet reçoit les {{count}} décisions avec leurs références.",
+  "boutons": {
+    "plusTard": "Plus tard",
+    "appliquer_one": "Appliquer la ligne · mon PIN",
+    "appliquer_other": "Appliquer les {{count}} · mon PIN",
+    "remboursement_one": "{{count}} remboursement",
+    "remboursement_other": "{{count}} remboursements",
+    "rattachement_one": "{{count}} rattachement",
+    "rattachement_other": "{{count}} rattachements",
+    "reclamation_one": "{{count}} réclamation",
+    "reclamation_other": "{{count}} réclamations"
+  },
+  "signature": {
+    "sousTitre": "Ton PIN signe ces décisions",
+    "fermer": "Fermer",
+    "clavier": "Clavier PIN pour signer les décisions"
+  },
+  "etats": {
+    "chargement": "Chargement des transactions sans correspondance",
+    "vide": "Aucune transaction sans correspondance.",
+    "traite": "Toutes les transactions sont traitées.",
+    "erreur": "Les transactions ne se sont pas chargées.",
+    "reessayer": "Réessayer"
+  }
+}

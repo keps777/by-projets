@@ -1,0 +1,51 @@
+{
+  "retour": "Go back for home",
+  "partager": {
+    "libelle": "Share di ticket",
+    "message": "My {{compagnie}} ticket: {{depart}} → {{arrivee}}, for {{date}} by {{heure}}. {{lien}}"
+  },
+  "statut": {
+    "paye": "Paid · ticket don go by SMS",
+    "payeSansSms": "Paid",
+    "reserve": "Booked",
+    "embarque": "E don enter bus",
+    "voyage": "E dey travel",
+    "annule": "Cancelled",
+    "reporte": "Dem don move am",
+    "nonPresente": "E no show"
+  },
+  "horsLigne": "Di ticket dey saved for dis phone, e go update as di network come back.",
+  "billet": {
+    "passager": "{{nom}} · ID card ··· {{piece}}",
+    "passagerSansPiece": "{{nom}}",
+    "consigne": "Reach di bus park {{minutes}} min before, wit your ID.",
+    "classe": {
+      "vip": "VIP",
+      "classique": "Standard"
+    }
+  },
+  "actions": {
+    "suivre": {
+      "titre": "Follow my bus",
+      "detail": "and tell one person wey dey close to you"
+    },
+    "moto": {
+      "titre": "Moto go station",
+      "detail": "e dey go by {{heure}} · {{prix}}"
+    },
+    "annulation": "Move am or cancel am · e free till {{heure}}",
+    "colis": "+ parcel"
+  },
+  "etats": {
+    "chargement": "Di ticket dey load",
+    "vide": {
+      "titre": "We no see di ticket",
+      "detail": "Dis ticket no dey again or e no dey for your name."
+    },
+    "erreur": {
+      "titre": "Di ticket no load",
+      "detail": "Check your network, then try again.",
+      "reessayer": "Try again"
+    }
+  }
+}

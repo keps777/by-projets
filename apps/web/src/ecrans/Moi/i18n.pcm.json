@@ -1,0 +1,61 @@
+{
+  "reglages": "Settings",
+  "profil": {
+    "cni": "Dem don check di ID card",
+    "depuis": "since {{date}}",
+    "indisponible": "Profile no dey available"
+  },
+  "fidelite": {
+    "libelle": "Loyalty",
+    "points": "pts",
+    "equivalence": "= {{montant}} F for your next ticket"
+  },
+  "parrainage": {
+    "libelle": "Referral · {{code}}",
+    "ami_one": "friend",
+    "ami_other": "friend dem",
+    "detail": "{{parrain}} F for you, {{filleul}} F for dem"
+  },
+  "proches": {
+    "titre": "My people dem wey dey close to me · 1 touch to buy",
+    "ajouter": "+ add",
+    "payer": "Pay ticket for am",
+    "demander": "ask am",
+    "prevenu": "dem dey tell am as e reach",
+    "prevenue": "dem dey tell am as e reach",
+    "payeMesVoyages": "dey pay my trip dem by card",
+    "vide": "No person yet"
+  },
+  "historique": {
+    "titre": "My trip dem and parcel dem",
+    "sousTitre": "all di history",
+    "statut": {
+      "a_venir": "wey dey come",
+      "a_retirer": "to collect",
+      "voyage": "don travel",
+      "annule": "cancelled",
+      "livre": "don deliver"
+    },
+    "vide": "No trip or parcel yet"
+  },
+  "devenir": {
+    "relais": {
+      "titre": "You get shop? Become relay point",
+      "detail": "200 F for each parcel wey you give · 3 min"
+    },
+    "livreur": {
+      "titre": "You get moto? Become delivery man",
+      "detail": "700 F for each delivery · you choose your time"
+    }
+  },
+  "pied": {
+    "langue": "Language · {{code}}",
+    "recus": "My receipt dem",
+    "aide": "Help · WhatsApp"
+  },
+  "etats": {
+    "chargement": "Your account dey load",
+    "indisponible": "E no dey available for now",
+    "reessayer": "Try again"
+  }
+}
