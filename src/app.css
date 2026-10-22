@@ -1,0 +1,25 @@
+/* Jetons de conception AssureMe. Nuit par défaut (membre) ; les portails partenaires passent en clair via [data-theme='clair']. */
+:root {
+  --fond: #07090f; --carte: #0f1422; --carte2: #161d2f; --ligne: rgba(255, 255, 255, 0.08); --ligne-forte: rgba(255, 255, 255, 0.16);
+  --texte: #f3f5fa; --muted: #8b94a9; --faint: #6e778c; --doux: #c5cbda;
+  --primaire: #3050ff; --primaire-clair: #7c93ff; --primaire-fond: rgba(48, 80, 255, 0.18); --pale: #a3b3ff;
+  --bon: #3dd598; --alerte: #ff7a2f; --danger: #ff7272; --or: #c79a12;
+  --sur-primaire: #fff; --ombre: 0 12px 40px rgba(0, 0, 0, 0.45);
+  --sans: 'Geist Variable', 'Geist', system-ui, sans-serif; --mono: 'Geist Mono', ui-monospace, monospace;
+  color-scheme: dark;
+}
+:root[data-theme='clair'] {
+  --fond: #f4f6fb; --carte: #ffffff; --carte2: #eef1f8; --ligne: rgba(15, 20, 34, 0.1); --ligne-forte: rgba(15, 20, 34, 0.2);
+  --texte: #0f1422; --muted: #55607a; --faint: #8b94a9; --doux: #2b3550; --primaire-fond: rgba(48, 80, 255, 0.1); --pale: #3050ff;
+  --ombre: 0 8px 28px rgba(15, 20, 34, 0.12); color-scheme: light;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body, #app { height: 100%; }
+body { background: var(--fond); color: var(--texte); font-family: var(--sans); font-size: 15px; line-height: 1.35; -webkit-font-smoothing: antialiased; overscroll-behavior-y: none; }
+button, input, select, textarea { font: inherit; color: inherit; background: none; border: 0; }
+button { cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+:focus-visible { outline: 2px solid var(--primaire-clair); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; } }
