@@ -1,0 +1,30 @@
+{
+  "name": "assureme",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "AssureMe : toutes les grosses dépenses de la famille en une seule mensualité (PWA).",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview --host --port 4180",
+    "test": "vitest run --reporter=dot",
+    "check": "svelte-check --tsconfig ./tsconfig.json --threshold error && vitest run --reporter=dot",
+    "e2e": "playwright test"
+  },
+  "dependencies": {
+    "svelte": "^5.57.1"
+  },
+  "devDependencies": {
+    "@fontsource-variable/geist": "^5.3.0",
+    "@fontsource/geist-mono": "^5.3.0",
+    "@playwright/test": "^1.63.0",
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
+    "jsdom": "^29.1.1",
+    "svelte-check": "^4.7.6",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.2",
+    "vite-plugin-pwa": "^2.0.0",
+    "vitest": "^5.0.3"
+  }
+}
