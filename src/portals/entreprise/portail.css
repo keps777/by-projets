@@ -1,0 +1,37 @@
+/* Styles communs du portail employeur (thème clair via les variables de app.css). Tout est préfixé par .pe. */
+.pe { padding: 0 16px 48px; color: var(--texte); }
+.pe h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.01em; }
+.pe h2 { font-size: 17px; font-weight: 650; }
+.pe h3 { font-size: 14.5px; font-weight: 650; }
+.pe p { line-height: 1.45; }
+.pe .doux { color: var(--muted); }
+.pe .carte { background: var(--carte); border: 1px solid var(--ligne); border-radius: 16px; padding: 18px; }
+.pe .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 12px; font-weight: 600; font-size: 14.5px; background: var(--carte); border: 1px solid var(--ligne-forte); color: var(--texte); text-align: center; }
+.pe .btn:hover:not(:disabled) { background: var(--carte2); }
+.pe .btn.prim { background: var(--primaire); color: #fff; border-color: transparent; }
+.pe .btn.prim:hover:not(:disabled) { background: #2641d6; }
+.pe .btn.noir { background: var(--texte); color: var(--carte); border-color: transparent; }
+.pe .btn.lien { border-color: transparent; background: transparent; color: var(--primaire); padding: 0 8px; }
+.pe .btn:disabled, .pe .btn[aria-disabled='true'] { opacity: 0.45; cursor: default; pointer-events: none; }
+.pe .puce { display: inline-flex; align-items: center; min-height: 24px; padding: 2px 10px; border-radius: 99px; font: 600 12px var(--sans); background: var(--carte2); color: var(--doux); white-space: nowrap; }
+.pe .puce.bon { background: #dcf5ea; color: #0b6b44; }
+.pe .puce.alerte { background: #ffeadb; color: #8a3c05; }
+.pe .puce.primaire { background: #e4e9ff; color: #1f3acc; }
+.pe .puce.danger { background: #fde4e4; color: #a02121; }
+.pe .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.pe .champ { display: flex; flex-direction: column; gap: 6px; }
+.pe .champ > .et, .pe legend { font: 500 11px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.pe select, .pe textarea, .pe .entree { width: 100%; min-height: 52px; padding: 0 14px; border-radius: 14px; background: var(--carte); border: 1px solid var(--ligne-forte); font-size: 16px; }
+.pe textarea { padding: 12px 14px; min-height: 120px; resize: vertical; font-family: var(--mono); font-size: 14px; }
+.pe select:focus, .pe textarea:focus, .pe .entree:focus { outline: 2px solid var(--primaire); outline-offset: 0; border-color: var(--primaire); }
+.pe .champ.err select, .pe .champ.err textarea, .pe .champ.err .entree { border-color: var(--danger); }
+.pe .msg { color: #b32626; font-size: 13px; }
+.pe .tableau { overflow-x: auto; border: 1px solid var(--ligne); border-radius: 16px; background: var(--carte); }
+.pe table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.pe th { text-align: left; font: 500 11px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 12px 14px; border-bottom: 1px solid var(--ligne); white-space: nowrap; background: var(--carte2); }
+.pe td { padding: 10px 14px; border-bottom: 1px solid var(--ligne); vertical-align: middle; }
+.pe tr:last-child td { border-bottom: 0; }
+.pe td.num, .pe th.num { text-align: right; }
+.pe .vide { text-align: center; padding: 36px 18px; color: var(--muted); }
+.pe .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.pe th.cap { text-transform: capitalize; text-align: left; font-family: var(--sans); letter-spacing: 0; font-size: 14px; color: var(--texte); background: none; font-weight: 600; }
