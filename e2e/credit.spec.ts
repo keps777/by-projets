@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { aller, attendreEnregistrement, contient, etatEnregistre, JOUR_DE_PAIE, ouvrir, ouvrirDemo, patcherEtat, solde } from './aide';
+import { aller, attendreEnregistrement, contient, etatEnregistre, JOUR_DE_PAIE, ouvrirDemo, patcherEtat, rouvrirEtDeverrouiller, solde } from './aide';
 
 test.describe('règle des 33 % et crédit auto', () => {
   test('Yaris en 36 mois avec 500 000 d’apport : refusée à 40 % à cause du crédit scolaire', async ({ page }) => {
@@ -91,9 +91,7 @@ test.describe('crédit auto de bout en bout', () => {
     await attendreEnregistrement(page, (s) => s?.tranches?.auto?.dossiers?.some((d: any) => d.membre && d.etape === 'livree'));
 
     // à la paie du 28 nov. (la session a expiré : on la rouvre avec le code), la mensualité de 27 038 est prélevée une fois
-    await ouvrir(page, '/', JOUR_DE_PAIE);
-    await page.keyboard.type('482916');
-    await expect(page.getByRole('heading', { name: /Bonjour, Aïcha/ })).toBeVisible({ timeout: 15_000 });
+    await rouvrirEtDeverrouiller(page, JOUR_DE_PAIE);
     await expect.poll(() => solde(page)).toBe(86_500 + 2 * 520_000 - 2 * 69_000 - 27_038);
     await attendreEnregistrement(page, (s) => s?.dernierePaie === '2026-11-28');
     e = await etatEnregistre(page);

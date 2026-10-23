@@ -69,6 +69,11 @@ describe('facture Les Palmiers (démo)', () => {
     expect(facturesAPayer()).toEqual([]); expect(paiements().enCours).toBeNull(); expect(paiements().recus).toHaveLength(1);
     noterRecu(r.recu.ref, 5); expect(paiements().recus[0].note).toBe(5);
   });
+  it('la notification « facture à régler » est marquée lue une fois la facture payée', () => {
+    expect(app.notifications.find((n) => n.id === 'n2')).toMatchObject({ lu: false, lien: '/pay/facture?id=f-1190' });
+    preparerFacture(palmiers(), 'comptant'); executerPaiement(MAINTENANT);
+    expect(app.notifications.find((n) => n.id === 'n2')!.lu).toBe(true);
+  });
   it("ne se paie pas deux fois", () => {
     preparerFacture(palmiers(), 'comptant'); executerPaiement(MAINTENANT);
     paiements().enCours = { type: 'facture', factureId: 'f-1190', partenaire: 'x', ini: 'x', categorie: 'sante', lieu: '', montant: 7100, mode: 'comptant' };

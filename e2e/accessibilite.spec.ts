@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { aller, AUJOURDHUI, ouvrir, ouvrirDemo, pasDeDebordement, toucher } from './aide';
+import { aller, confirmerPaiement, ouvrir, ouvrirDemo, pasDeDebordement } from './aide';
 
 /** Routes membres et portails (celles qui demandent un contexte — paiement en cours, contrat — sont vues dans leurs parcours plus bas). */
 const ROUTES: [string, RegExp][] = [
@@ -46,8 +46,7 @@ test.describe('petit écran (320 px)', () => {
     await page.getByRole('button', { name: /Confirmer · 7 100 FCFA/ }).click();
     await expect(page).toHaveURL(/\/pay\/confirme$/);
     await pasDeDebordement(page, 'confirmation du paiement');
-    await page.keyboard.type('482916');
-    await expect(page).toHaveURL(/\/pay\/confirme\?ref=AM-/);
+    await confirmerPaiement(page);
     await pasDeDebordement(page, 'paiement réussi');
     await aller(page, '/pay/recu?ref=' + new URL(page.url()).searchParams.get('ref'));
     await pasDeDebordement(page, 'reçu');

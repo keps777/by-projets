@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { aller, AUJOURDHUI, corps, ouvrir, ouvrirDemo, solde, toucher } from './aide';
+import { contient, ouvrirDemo, solde } from './aide';
 
 const CODE_DEMO = '482916';
 
@@ -7,10 +7,10 @@ test.describe('compte de démonstration : accueil et prélèvement', () => {
   test('accueil : solde, score, facture à régler et prélèvement du 28 oct. de 69 000 comme dans la maquette', async ({ page }) => {
     await ouvrirDemo(page);
     expect(await solde(page)).toBe(86_500);
-    const t = await corps(page);
-    expect(t).toContain('NIVEAU PRO');
-    expect(t).toContain('742');
-    expect(t).toContain('Paie le 28 oct.');
+    const corps = page.locator('body');
+    await expect(corps).toContainText(/niveau pro/i);
+    await expect(corps).toContainText('742');
+    await expect(corps).toContainText('Paie le 28 oct.');
     // facture des Palmiers : la part du membre (7 100) et l'échéance de la clinique
     await expect(page.getByText('Facture Clinique Les Palmiers à régler')).toBeVisible();
     await expect(page.getByText('7 100 à payer avant le 25 oct.')).toBeVisible();
@@ -47,6 +47,6 @@ test.describe('compte de démonstration : accueil et prélèvement', () => {
     await page.getByRole('button', { name: /Facture Les Palmiers à régler/ }).click();
     await expect(page).toHaveURL(/\/pay\/facture\?id=f-1190/);
     await expect(page.getByRole('heading', { name: 'Clinique Les Palmiers' })).toBeVisible();
-    expect(await corps(page)).toContain('Votre part 7 100');
+    await expect(page.locator('body')).toContainText(contient('Votre part 7 100'));
   });
 });

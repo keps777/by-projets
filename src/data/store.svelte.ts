@@ -31,6 +31,8 @@ export function mouvement(m: Omit<Mouvement, 'id' | 'ts'> & { ts?: number }) {
   app.mouvements.unshift({ id: nouvelId('m'), ts: m.ts ?? maintenant(), ...m });
 }
 export function notifier(n: Omit<Notification, 'id' | 'ts' | 'lu'> & { ts?: number }) { app.notifications.unshift({ id: nouvelId('n'), ts: n.ts ?? maintenant(), lu: false, ...n }); }
+/** Marque comme lues les notifications dont le lien vérifie `ciblee` (la facture est réglée : « à régler » n'a plus de sens). */
+export function marquerLues(ciblee: (lien: string) => boolean) { for (const n of app.notifications) if (n.lien && ciblee(n.lien)) n.lu = true; }
 export const nonLues = () => app.notifications.filter((x) => !x.lu).length;
 export const creditsActifs = (): Credit[] => app.credits.filter((c) => c.statut === 'actif');
 /** Somme des mensualités de crédit en cours (entre dans la règle des 33 %). */

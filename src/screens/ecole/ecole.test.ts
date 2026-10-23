@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { app, reinitialiser, totalMensualites } from '../../data/store.svelte.ts';
 import { lignesDe, passerPaie, rattraperPaies } from '../../data/paie.ts';
+import { epargneDuGenre } from '../coffres/actions.ts';
 import { accepterPlan, alertes, ajouterEnfant, basculerEnfant, bulletinDe, coffreRentree, enfantParId, payerDemande, planDe, recap, rentreeCible, repartir, reserverSoutien, simuler } from './actions.ts';
 import { ecole } from './etat.ts';
 import { encaisse, envoyerAuxParents, famillesAvecPlan, paiementsRecus, publierEvaluation, publierGrille, saisirNote } from '../../portals/ecole/actions.ts';
@@ -18,7 +19,7 @@ describe('rentrée visée et récapitulatif de la démo', () => {
   it('3 enfants, 600 000 de frais, coffre 160 000, 440 000 à financer', () => {
     const r = recap();
     expect(r.inclus).toHaveLength(3); expect(r.total).toBe(600_000); expect(r.coffre).toBe(160_000); expect(r.aFinancer).toBe(440_000);
-    expect(coffreRentree().source).toBe('saisi');
+    expect(coffreRentree()).toEqual({ montant: 160_000, source: 'coffres' }); // le vrai coffre Rentrée de la démo, pas un montant saisi
   });
   it('décocher un enfant recalcule ; tous décochés : rien à financer', () => {
     basculerEnfant('e-marc');
@@ -53,6 +54,9 @@ describe('acceptation du plan (règle des 33 %)', () => {
     const c = app.credits.at(-1)!;
     expect(c).toMatchObject({ produit: 'ecole', capital: 440_000, mensualite: 47_711, duree: 10, payees: 0, prochaine: '2027-09-28', statut: 'actif' });
     expect(app.solde).toBe(solde); // le crédit paie l'école directement
+    // les 160 000 du coffre Rentrée partent aussi aux écoles : le coffre est vidé (et l'école ne les compte plus deux fois)
+    expect(epargneDuGenre('Rentrée')).toBe(0);
+    expect(coffreRentree().montant).toBe(0);
     expect(totalMensualites()).toBe(44_000 + 47_711);
     const plan = planDe('2027-09-01')!;
     expect(plan.tauxLancement).toBe(false); expect(plan.taux).toBe(0.015); expect(plan.total).toBe(600_000);

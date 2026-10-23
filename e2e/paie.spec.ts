@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { aller, attendreEnregistrement, contient, etatEnregistre, JOUR_DE_PAIE, ouvrir, ouvrirDemo, solde } from './aide';
+import { aller, attendreEnregistrement, contient, etatEnregistre, JOUR_DE_PAIE, ouvrirDemo, rouvrirEtDeverrouiller, solde } from './aide';
 
 const CODE_DEMO = '482916';
 
@@ -53,10 +53,7 @@ test.describe('jour de paie rejoué (?maintenant=…)', () => {
     await ouvrirDemo(page); // 23 oct. 2026
     await attendreEnregistrement(page, (e) => e?.mode === 'demo');
     // on rouvre le 28 janvier 2027 : paies du 28 oct., 28 nov., 28 déc. et 28 janv. échues ; la session a expiré, on déverrouille avec le code
-    await ouvrir(page, '/', '2027-01-28T10:00');
-    await expect(page).toHaveURL(/\/session/);
-    await page.keyboard.type(CODE_DEMO);
-    await expect(page.getByRole('heading', { name: /Bonjour, Aïcha/ })).toBeVisible({ timeout: 15_000 });
+    await rouvrirEtDeverrouiller(page, '2027-01-28T10:00');
     await expect.poll(() => solde(page)).toBe(86_500 + 4 * (520_000 - 69_000));
     await attendreEnregistrement(page, (e) => e?.dernierePaie === '2027-01-28');
     const e = await etatEnregistre(page);

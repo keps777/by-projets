@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { aller, contient, ouvrirDemo, solde } from './aide';
+import { aller, attendreEnregistrement, contient, etatEnregistre, ouvrirDemo, solde } from './aide';
 
 test.describe('école et coffres : une seule épargne', () => {
   test('l’école lit le coffre « Rentrée » : un versement dans le coffre change le financement à demander', async ({ page }) => {
@@ -36,5 +36,32 @@ test.describe('école et coffres : une seule épargne', () => {
     await expect(corps).toContainText(contient('44 000'));
     await aller(page, '/prelevement');
     await expect(page.getByRole('button', { name: /Mensualité école 3 \/ 10, 44 000/ })).toBeVisible();
+  });
+
+  test('accepter le plan de paiement : les écoles sont payées avec le crédit et le coffre Rentrée, qui est vidé', async ({ page }) => {
+    await ouvrirDemo(page);
+    await aller(page, '/ecole/frais');
+    await page.getByRole('link', { name: /Choisir mon plan de paiement/ }).or(page.getByRole('button', { name: /Choisir mon plan de paiement/ })).first().click();
+    await expect(page).toHaveURL(/\/ecole\/plan$/);
+    await expect(page.locator('body')).toContainText(contient('Mensualités totales 18 % du salaire'));
+    await page.getByRole('button', { name: /Payer les écoles dès l’accord/ }).click();
+    const feuille = page.getByRole('dialog', { name: 'Accord du plan' });
+    await expect(feuille).toContainText(contient('Versé aux écoles aujourd’hui 600 000'));
+    await feuille.getByRole('checkbox').check();
+    await feuille.getByRole('button', { name: 'Signer et accepter' }).click();
+    await attendreEnregistrement(page, (e) => e?.credits?.filter((c: any) => c.produit === 'ecole').length === 2);
+    const e = await etatEnregistre(page);
+    expect(e.credits.find((c: any) => c.id !== 'c-ecole' && c.produit === 'ecole')).toMatchObject({ capital: 440_000, mensualite: 47_711, duree: 10 });
+    const rentree = e.tranches.coffres.coffres.find((c: any) => c.genre === 'Rentrée');
+    expect(rentree.epargne).toBe(0);
+    expect(rentree.operations[0]).toMatchObject({ type: 'retrait', montant: -160_000 });
+    // le solde ne bouge pas (le crédit paie les écoles), le prélèvement d'octobre non plus : la 1re mensualité est en septembre 2027
+    await aller(page, '/');
+    expect(await solde(page)).toBe(86_500);
+    await aller(page, '/prelevement');
+    await expect(page.getByTestId('total-preleve')).toContainText('69 000');
+    // l'école ne compte plus ces 160 000 comme disponibles
+    await aller(page, '/ecole/frais');
+    await expect(page.locator('body')).toContainText(contient('Dans votre coffre Rentrée − 0'));
   });
 });

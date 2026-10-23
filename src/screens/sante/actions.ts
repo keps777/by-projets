@@ -1,12 +1,13 @@
 // Actions de la santé : toutes passent par ces fonctions (jamais de logique d'argent dans un composant).
 import { ajouterMois, jourDe, prochainePaie, jourLong } from '../../core/dates.ts';
 import { fcfa } from '../../core/money.ts';
-import { POINTS, borner } from '../../core/score.ts';
+import { POINTS } from '../../core/score.ts';
+import { ajouterPoints } from '../score/actions.ts';
 import { COUVERTURES } from '../../core/sante.ts';
 import { estCeMembre, verifierCode } from '../../core/sante-carte.ts';
 import { evaluerEtalement, type Etalement } from '../../core/sante-etalement.ts';
 import { echeanceDefaut, erreursLignes, repartirActes, statutOrdonnance, type LigneActe } from '../../core/sante-facture.ts';
-import { app, maintenant, mouvement, nouvelId, notifier, totalMensualites } from '../../data/store.svelte.ts';
+import { app, marquerLues, maintenant, mouvement, nouvelId, notifier, totalMensualites } from '../../data/store.svelte.ts';
 import { CLINIQUE, aujourdhui, beneficiaires, couvertureDe, nomComplet, numeroFacture, sante, teleconsultationsUtilisees, utilisation, type FactureSante, type Ordonnance } from './etat.ts';
 
 export type Resultat<T = object> = ({ ok: true } & T) | { ok: false; erreur: string };
@@ -77,7 +78,7 @@ export function supprimerBrouillon(id: string) { const e = sante(); e.factures =
 const trouver = (id: string) => sante().factures.find((f) => f.id === id && f.numeroMembre === app.compte?.numeroMembre && f.statut === 'a_regler');
 function pointsPaiement(f: FactureSante): boolean {
   const aTemps = aujourdhui() <= f.echeance;
-  if (aTemps) app.score.valeur = borner(app.score.valeur + POINTS.paiementFacture);
+  if (aTemps) ajouterPoints(`Facture ${f.etablissement} payée à l’heure`, POINTS.paiementFacture, 'ponctualite');
   return aTemps;
 }
 export function payerFacture(id: string): Resultat<{ facture: FactureSante }> {
@@ -85,6 +86,7 @@ export function payerFacture(id: string): Resultat<{ facture: FactureSante }> {
   if (app.solde < f.partPatient) return echec(`Solde insuffisant : il vous manque ${fcfa(f.partPatient - app.solde)} FCFA. Rechargez ou étalez votre part.`);
   mouvement({ titre: f.etablissement, sous: `Santé · facture ${f.numero}`, montant: -f.partPatient, ini: initiales(f.etablissement), categorie: 'sante' });
   f.paiement = { ts: maintenant(), mode: 'comptant', aTemps: pointsPaiement(f) }; f.statut = 'payee';
+  marquerLues((l) => l === `/pay/facture?id=${f.id}` || l === `/sante/facture/${f.id}`);
   notifier({ titre: 'Facture santé réglée', sous: `${fcfa(f.partPatient)} FCFA à ${f.etablissement}, reçu disponible`, lien: `/sante/facture/${f.id}` });
   return { ok: true, facture: f };
 }
@@ -103,6 +105,7 @@ export function etalerFacture(id: string): Resultat<{ facture: FactureSante; men
   const creditId = nouvelId('c-sante');
   app.credits.push({ id: creditId, produit: 'sante', libelle: `Santé · ${f.etablissement}`, capital: f.partPatient, mensualite: sim.mensualite, duree: sim.mois, payees: 0, prochaine, statut: 'actif' });
   f.paiement = { ts: maintenant(), mode: 'etale', aTemps: pointsPaiement(f), mensualite: sim.mensualite, mois: sim.mois, creditId }; f.statut = 'etalee';
+  marquerLues((l) => l === `/pay/facture?id=${f.id}` || l === `/sante/facture/${f.id}`);
   notifier({ titre: 'Part étalée sur 3 mois', sous: `${fcfa(sim.mensualite)} FCFA par mois à partir du ${jourLong(prochaine)}`, lien: '/prelevement' });
   return { ok: true, facture: f, mensualite: sim.mensualite };
 }

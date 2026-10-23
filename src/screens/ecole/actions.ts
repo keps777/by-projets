@@ -5,6 +5,8 @@ import { aFinancer as montantAFinancer, totalRentree } from '../../core/ecole.ts
 import { dureeAlternative, evaluerPlan, lireCoffreRentree, montantMaxFinancable, TAUX_LANCEMENT, DUREE_MAX, type EntreePlan, type ResultatPlan } from '../../core/ecole-plan.ts';
 import { lireNote, synthese, type Synthese } from '../../core/bulletin.ts';
 import { fcfa } from '../../core/money.ts';
+import { coffres as coffresLus } from '../coffres/etat.ts';
+import { prendreDansCoffres } from '../coffres/actions.ts';
 import { ecole, MAX_ENFANTS, PRIX_SOUTIEN, type Cible, type Demande, type Ecole, type Enfant, type Evaluation, type Plan } from './etat.ts';
 
 export type Resultat<T = undefined> = ({ ok: true } & (T extends undefined ? object : { valeur: T })) | { ok: false; erreur: string };
@@ -27,11 +29,20 @@ export function rentreeCible(now = maintenant()): Jour {
 export const anneeRentree = (rentree: Jour) => Number(rentree.slice(0, 4));
 export const anneeScolaire = (rentree: Jour) => `${anneeRentree(rentree)}-${String((anneeRentree(rentree) + 1) % 100).padStart(2, '0')}`;
 
-/** Coffre « Rentrée » : lu en lecture seule dans la tranche `coffres` si elle existe et contient un tel coffre, sinon montant saisi. */
+/**
+ * Coffre « Rentrée » : l'épargne des vrais coffres de ce genre (lecture seule, sûre dans un `$derived`, y compris avant la création de la tranche),
+ * à défaut une tranche `coffres` d'une autre forme lue de façon tolérante, à défaut le montant saisi à la main.
+ */
 export function coffreRentree(): { montant: number; source: 'coffres' | 'saisi' } {
+  if (epargneParGenre('Rentrée') !== null) return { montant: epargneParGenre('Rentrée')!, source: 'coffres' };
   const lu = 'coffres' in app.tranches ? lireCoffreRentree(app.tranches.coffres) : null;
   return lu !== null ? { montant: lu, source: 'coffres' } : { montant: ecole().coffreSaisi, source: 'saisi' };
 }
+/** Épargne des coffres d'un genre, ou null si le membre n'a aucun coffre de ce genre. */
+const epargneParGenre = (genre: string): number | null => {
+  const l = coffresLus().filter((c) => c.genre === genre);
+  return l.length ? l.reduce((t, c) => t + c.epargne, 0) : null;
+};
 export function saisirCoffre(texte: string): Resultat {
   const n = texte.replace(/[^\d]/g, '');
   if (!n) return ko('Entrez un montant en FCFA.');
@@ -116,6 +127,8 @@ export function accepterPlan(duree: number): Resultat<Plan> {
   };
   app.credits.push(credit);
   const e = ecole(); e.plans.push(plan);
+  // La part du coffre Rentrée part aux écoles avec le crédit : elle sort réellement du coffre (sans frais ni écriture sur le solde).
+  if (r.coffreSource === 'coffres' && r.utilise > 0 && epargneParGenre('Rentrée') !== null) prendreDansCoffres('Rentrée', r.utilise, `Frais de rentrée ${anneeRentree(rentree)} payés aux écoles`);
   // Le crédit verse les frais directement aux écoles : le solde du membre ne bouge pas (entrée puis sorties de même total).
   mouvement({ titre: credit.libelle, sous: `Crédit accordé · ${duree} mensualités`, montant: credit.capital, ini: 'CR', categorie: 'ecole', ts: now });
   const parts = repartir(credit.capital, lignes.map((l) => l.montant));

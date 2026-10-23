@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { aller, attendreEnregistrement, contient, corps, etatEnregistre, ouvrir, ouvrirDemo, solde, toucher } from './aide';
+import { aller, confirmerPaiement, contient, ouvrirDemo, solde } from './aide';
 
 /** Les portails partenaires lisent et écrivent la même tranche que l'application membre. */
 test.describe('portails partenaires ↔ application membre', () => {
@@ -49,8 +49,7 @@ test.describe('portails partenaires ↔ application membre', () => {
 
     // payée depuis les paiements : plus qu'une facture à régler, ni sur l'accueil ni dans l'écran Santé
     await page.getByRole('button', { name: /Confirmer · 4 000 FCFA/ }).click();
-    await page.keyboard.type('482916');
-    await expect(page).toHaveURL(/\/pay\/confirme\?ref=AM-/);
+    await confirmerPaiement(page);
     await aller(page, '/');
     await expect(page.getByRole('link', { name: /Facture Clinique Les Palmiers à régler/ })).toHaveCount(1);
     await expect.poll(() => solde(page)).toBe(82_500);

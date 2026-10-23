@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { aller, attendreEnregistrement, corps, ouvrir, pave, solde, toucher } from './aide';
+import { aller, attendreEnregistrement, contient, ouvrir, pave, solde, toucher } from './aide';
 
 test.describe('compte vierge : de l’inscription au premier coffre', () => {
   test('inscription complète, accueil vide, rechargement de la page, recharge, coffre, solde et mouvements', async ({ page }) => {
@@ -41,7 +41,7 @@ test.describe('compte vierge : de l’inscription au premier coffre', () => {
     await expect(page.getByRole('heading', { name: 'Bonjour, Fanta' })).toBeVisible();
     expect(await solde(page)).toBe(0);
     await expect(page.getByText('Complétons votre compte')).toBeVisible();
-    expect(await corps(page)).toContain('Niveau Start'.toUpperCase());
+    await expect(page.locator('body')).toContainText(/niveau start/i);
     await page.getByRole('button', { name: 'Historique' }).click();
     await expect(page.getByText("Aucun mouvement pour l'instant")).toBeVisible();
     await page.getByRole('button', { name: 'Fermer' }).click();
@@ -75,8 +75,7 @@ test.describe('compte vierge : de l’inscription au premier coffre', () => {
     const histo = page.getByRole('dialog').or(page.locator('[role="dialog"]'));
     await expect(histo.getByText('Coffre Mariage')).toBeVisible();
     await expect(histo.getByText('Recharge Orange Money')).toBeVisible();
-    const t = await corps(page);
-    expect(t).toContain('−10 000');
-    expect(t).toContain('+25 000');
+    await expect(histo).toContainText(contient('−10 000'));
+    await expect(histo).toContainText(contient('+25 000'));
   });
 });

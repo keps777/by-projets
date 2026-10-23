@@ -23,6 +23,24 @@ function liens(source: string): string[] {
   return trouves;
 }
 
+describe('routes déclarées', () => {
+  it('chaque route a un titre, un chemin unique et un composant chargé paresseusement', () => {
+    const routes = Object.entries(sources).filter(([f]) => /\/(screens|portals)\/[^/]+\/routes\.ts$/.test(f));
+    const chemins: string[] = [];
+    for (const [f, brut] of routes) {
+      const blocs = brut.split(/(?=\{\s*chemin:)/).slice(1);
+      expect(blocs.length, f).toBeGreaterThan(0);
+      for (const b of blocs) {
+        const chemin = /chemin:\s*'([^']+)'/.exec(b)![1];
+        chemins.push(chemin);
+        expect(/titre:\s*'[^']+'/.test(b), `${f} : ${chemin} sans titre`).toBe(true);
+        expect(/composant:\s*\(\)\s*=>\s*import\(/.test(b), `${f} : ${chemin} sans import paresseux`).toBe(true);
+      }
+    }
+    expect(new Set(chemins).size, 'chemins en double').toBe(chemins.length);
+  });
+});
+
 describe('liens internes', () => {
   it('les routes déclarées sont découvertes', () => {
     expect(declarees.length).toBeGreaterThan(40);

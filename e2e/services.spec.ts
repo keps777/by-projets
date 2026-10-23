@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { aller, attendreEnregistrement, contient, etatEnregistre, JOUR_DE_PAIE, ouvrir, ouvrirDemo, solde } from './aide';
+import { aller, attendreEnregistrement, contient, etatEnregistre, JOUR_DE_PAIE, ouvrirDemo, rouvrirEtDeverrouiller, solde } from './aide';
 
 const CODE_DEMO = '482916';
 
@@ -55,9 +55,7 @@ test.describe('accueil → services, piliers et prélèvements des services', ()
     await attendreEnregistrement(page, (e) => e?.credits?.some((c: any) => c.produit === 'solaire'));
 
     // on rouvre le 28 nov. : les paies du 28 oct. et du 28 nov. sont rattrapées, le kit n'est prélevé qu'à la seconde
-    await ouvrir(page, '/', JOUR_DE_PAIE);
-    await page.keyboard.type(CODE_DEMO);
-    await expect(page.getByRole('heading', { name: /Bonjour, Aïcha/ })).toBeVisible({ timeout: 15_000 });
+    await rouvrirEtDeverrouiller(page, JOUR_DE_PAIE);
     await expect.poll(() => solde(page)).toBe(86_500 + 2 * 520_000 - 2 * 69_000 - 17_473);
     await attendreEnregistrement(page, (e) => e?.dernierePaie === '2026-11-28');
     const e = await etatEnregistre(page);

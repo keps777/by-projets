@@ -1,29 +1,22 @@
 import { expect, test, type Page } from '@playwright/test';
-import { aller, corps, ouvrirDemo, patcherEtat, solde } from './aide';
-
-const CODE_DEMO = '482916';
+import { aller, confirmerPaiement, contient, ouvrirDemo, patcherEtat, solde } from './aide';
 
 async function versLaFacture(page: Page) {
   await ouvrirDemo(page);
   await page.getByRole('link', { name: /Facture Clinique Les Palmiers à régler/ }).click();
   await expect(page).toHaveURL(/\/pay\/facture\?id=f-1190/);
 }
-async function confirmer(page: Page) {
-  await expect(page).toHaveURL(/\/pay\/confirme$/);
-  await page.keyboard.type(CODE_DEMO);
-  await expect(page).toHaveURL(/\/pay\/confirme\?ref=AM-/);
-}
 
 test.describe('facture des Palmiers (tiers payant)', () => {
   test('payer la part : 7 100 débités, AssureMe règle 28 400, la facture disparaît partout', async ({ page }) => {
     await versLaFacture(page);
-    expect(await corps(page)).toContain('AssureMe paie la clinique · 80 % 28 400');
+    await expect(page.locator('body')).toContainText(contient('AssureMe paie la clinique · 80 % 28 400'));
     await page.getByRole('button', { name: /Confirmer · 7 100 FCFA/ }).click();
-    await confirmer(page);
-    const t = await corps(page);
-    expect(t).toContain('Payé. La clinique est réglée.');
-    expect(t).toContain('Nouveau solde 79 400 FCFA');
-    expect(t).toContain('+4 · 746');
+    await confirmerPaiement(page);
+    const recu = page.locator('body');
+    await expect(recu).toContainText('Payé. La clinique est réglée.');
+    await expect(recu).toContainText(contient('Nouveau solde 79 400 FCFA'));
+    await expect(recu).toContainText(contient('+4 · 746'));
 
     // accueil : solde débité, plus de facture à régler, un mouvement
     await aller(page, '/');
@@ -33,6 +26,11 @@ test.describe('facture des Palmiers (tiers payant)', () => {
     await expect(page.getByRole('dialog')).toContainText('Clinique Les Palmiers');
     await expect(page.getByRole('dialog')).toContainText('−7 100');
     await page.getByRole('button', { name: 'Fermer' }).click();
+
+    // score : +4 points, visibles dans le journal de l'écran Score (une seule voie pour tous les gains de points)
+    await aller(page, '/score');
+    await expect(page.locator('body')).toContainText(contient('Facture Clinique Les Palmiers payée à l’heure'));
+    await expect(page.locator('body')).toContainText('+4');
 
     // santé : la même facture n'est plus à régler, le plafond a bougé (214 400 / 1 200 000), pas de double paiement possible
     await aller(page, '/sante');
@@ -47,8 +45,8 @@ test.describe('facture des Palmiers (tiers payant)', () => {
     await versLaFacture(page);
     await page.getByRole('radio', { name: /Étaler sur 3 mois/ }).click();
     await page.getByRole('button', { name: /Confirmer · 2 438 FCFA × 3/ }).click();
-    await confirmer(page);
-    expect(await corps(page)).toContain('Facture réglée, étalée sur salaire.');
+    await confirmerPaiement(page);
+    await expect(page.locator('body')).toContainText('Facture réglée, étalée sur salaire.');
 
     await aller(page, '/');
     await expect.poll(() => solde(page)).toBe(86_500);

@@ -80,3 +80,23 @@ export async function pasDeDebordement(page: Page, contexte = '') {
   expect(m.document, `${contexte} déborde (${m.document} px > ${m.fenetre} px)`).toBeLessThanOrEqual(m.fenetre);
   expect(m.corps, `${contexte} : le corps déborde`).toBeLessThanOrEqual(m.fenetre);
 }
+
+/**
+ * Rouvre l'application à une autre date : la session de 5 minutes a expiré, l'écran « Session expirée » attend le code (démo : 482916),
+ * puis le moteur de paie rattrape les paies échues.
+ */
+export async function rouvrirEtDeverrouiller(page: Page, maintenant: string, code = '482916') {
+  await ouvrir(page, '/', maintenant);
+  await expect(page).toHaveURL(/\/session/);
+  await expect(page.getByRole('group', { name: 'Pavé numérique' })).toBeVisible();
+  await page.keyboard.type(code);
+  await expect(page.getByRole('heading', { name: /Bonjour, Aïcha/ })).toBeVisible({ timeout: 15_000 });
+}
+
+/** Écran « Confirmer le paiement » : attend le pavé, tape le code (démo : 482916), attend le reçu. */
+export async function confirmerPaiement(page: Page, code = '482916') {
+  await expect(page).toHaveURL(/\/pay\/confirme$/);
+  await expect(page.getByRole('img', { name: /^0 chiffre saisi sur 6/ })).toBeVisible();
+  await page.keyboard.type(code);
+  await expect(page).toHaveURL(/\/pay\/confirme\?ref=AM-/);
+}
