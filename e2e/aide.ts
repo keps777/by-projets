@@ -73,3 +73,10 @@ export async function patcherEtat(page: Page, modifier: (etat: any) => void) {
 
 /** Motif tolérant : les espaces (y compris insécables ou absents entre deux éléments) valent « zéro ou plus d'espaces ». */
 export const contient = (texte: string) => new RegExp(texte.trim().split(/\s+/).map((m) => m.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('\\s*'));
+
+/** Aucun défilement horizontal de la page (y compris l'éventuel `overflow` caché d'un élément décoratif qui élargit le document). */
+export async function pasDeDebordement(page: Page, contexte = '') {
+  const m = await page.evaluate(() => ({ document: document.documentElement.scrollWidth, fenetre: document.documentElement.clientWidth, corps: document.body.scrollWidth }));
+  expect(m.document, `${contexte} déborde (${m.document} px > ${m.fenetre} px)`).toBeLessThanOrEqual(m.fenetre);
+  expect(m.corps, `${contexte} : le corps déborde`).toBeLessThanOrEqual(m.fenetre);
+}

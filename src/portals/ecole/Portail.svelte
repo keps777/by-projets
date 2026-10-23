@@ -60,7 +60,7 @@
   main { padding: 28px 32px 48px; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
   header h1 { font-size: 26px; } header p { color: var(--muted); margin-top: 4px; }
   @media (max-width: 760px) {
-    .pt { grid-template-columns: 1fr; } aside { position: static; height: auto; padding: 14px 16px; } nav { flex-direction: row; overflow-x: auto; } nav button { white-space: nowrap; } .sortie { margin: 0; }
+    .pt { grid-template-columns: minmax(0, 1fr); } aside { min-width: 0; position: static; height: auto; padding: 14px 16px; } nav { flex-direction: row; overflow-x: auto; } nav button { white-space: nowrap; } .sortie { margin: 0; }
     main { padding: 18px 16px 40px; }
   }
 

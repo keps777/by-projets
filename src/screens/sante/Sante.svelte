@@ -126,9 +126,9 @@
   .carte-code { display: block; width: 100%; padding: 12px; margin-bottom: 14px; border-radius: 18px; background: color-mix(in srgb, var(--fond) 55%, transparent); border: 1px solid var(--ligne); text-align: left; }
   .plaf { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; font-size: 13px; color: var(--doux); } .plaf b { font-size: 14px; color: var(--texte); }
   .bas { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-top: 10px; font-size: 12.5px; color: var(--muted); } .num { color: var(--doux); white-space: nowrap; }
-  .actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .actions { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
   .actions a, .actions button { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 12px 4px; min-height: 84px; border-radius: 18px; background: var(--carte); border: 1px solid var(--ligne); text-align: center; }
-  .actions b { font-size: 12px; font-weight: 600; } .actions small { font-size: 11px; color: var(--muted); }
+  .actions b { font-size: 12px; font-weight: 600; max-width: 100%; overflow-wrap: anywhere; } @media (max-width: 340px) { .actions b { font-size: 11px; } .actions small { font-size: 10px; } } .actions small { font-size: 11px; color: var(--muted); }
   h2 { font-size: 16px; margin-bottom: 8px; } section { display: flex; flex-direction: column; } .ent { display: flex; justify-content: space-between; align-items: center; } .ent h2 { margin: 0; }
   .lien { min-height: 44px; padding: 0 6px; color: var(--primaire-clair); font-weight: 600; } .vide { font-size: 13.5px; } .pile { display: flex; flex-direction: column; gap: 10px; }
   .fac { display: flex; justify-content: space-between; gap: 12px; } .fm, .fd { display: flex; flex-direction: column; gap: 2px; } .fd { align-items: flex-end; text-align: right; } .fm b { font-size: 15.5px; }
