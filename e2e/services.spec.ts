@@ -63,3 +63,22 @@ test.describe('accueil → services, piliers et prélèvements des services', ()
     expect(e.mouvements.filter((m: any) => m.titre.startsWith('Kit solaire'))).toHaveLength(1);
   });
 });
+
+test.describe('protection famille', () => {
+  test('activée, la prime de 4 600 est prélevée avec la paie suivante, une seule fois', async ({ page }) => {
+    await ouvrirDemo(page);
+    await aller(page, '/protection');
+    await page.getByRole('button', { name: /Activer pour 4 600/ }).click();
+    await attendreEnregistrement(page, (e) => !!e?.tranches?.protection?.souscription);
+    await aller(page, '/prelevement');
+    await expect(page.getByTestId('total-preleve')).toContainText('73 600');
+    await expect(page.getByRole('button', { name: /Protection famille · prime du mois, 4 600/ })).toHaveCount(1);
+
+    await rouvrirEtDeverrouiller(page, '2026-10-28T10:00');
+    await expect.poll(() => solde(page)).toBe(86_500 + 520_000 - 73_600);
+    await attendreEnregistrement(page, (e) => e?.dernierePaie === '2026-10-28');
+    const e = await etatEnregistre(page);
+    expect(e.mouvements.filter((m: any) => m.titre.startsWith('Protection famille'))).toHaveLength(1);
+    expect(e.tranches.protection.souscription.primesPayees).toBe(1);
+  });
+});
