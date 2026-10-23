@@ -1,5 +1,5 @@
-import { expect, test } from '@playwright/test';
-import { aller, confirmerPaiement, ouvrir, ouvrirDemo, pasDeDebordement } from './aide';
+import { expect } from '@playwright/test';
+import { test, aller, confirmerPaiement, ouvrir, ouvrirDemo, pasDeDebordement } from './aide';
 
 /** Routes membres et portails (celles qui demandent un contexte — paiement en cours, contrat — sont vues dans leurs parcours plus bas). */
 const ROUTES: [string, RegExp][] = [

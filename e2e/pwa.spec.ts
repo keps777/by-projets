@@ -1,5 +1,5 @@
-import { expect, test } from '@playwright/test';
-import { aller, AUJOURDHUI, ouvrir, ouvrirDemo } from './aide';
+import { expect } from '@playwright/test';
+import { test, aller, AUJOURDHUI, ouvrir, ouvrirDemo } from './aide';
 
 test.describe('PWA : manifeste, service worker, chargement', () => {
   test('le manifeste et les icônes sont servis, la page les déclare', async ({ page, request }) => {

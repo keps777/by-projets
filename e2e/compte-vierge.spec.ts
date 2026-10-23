@@ -1,5 +1,5 @@
-import { expect, test } from '@playwright/test';
-import { aller, attendreEnregistrement, contient, ouvrir, pave, solde, toucher } from './aide';
+import { expect } from '@playwright/test';
+import { test, aller, attendreEnregistrement, contient, ouvrir, pave, solde, toucher } from './aide';
 
 test.describe('compte vierge : de l’inscription au premier coffre', () => {
   test('inscription complète, accueil vide, rechargement de la page, recharge, coffre, solde et mouvements', async ({ page }) => {

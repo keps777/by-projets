@@ -1,5 +1,5 @@
-import { expect, test } from '@playwright/test';
-import { aller, contient, ouvrirDemo } from './aide';
+import { expect } from '@playwright/test';
+import { test, aller, contient, ouvrirDemo } from './aide';
 
 // Pixel PNG : un vrai fichier image pour les justificatifs.
 const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');

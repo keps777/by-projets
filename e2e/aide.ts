@@ -1,6 +1,20 @@
 // Aides communes des tests de bout en bout.
 // Horloge : toutes les pages s'ouvrent avec `?maintenant=…` (gardé pour l'onglet par l'application) pour que la démo soit rejouable à l'identique.
-import { expect, type Page } from '@playwright/test';
+import { expect, test as base, type Page } from '@playwright/test';
+
+/**
+ * `test` de la suite : en plus du `page` de Playwright, toute erreur de page (exception non rattrapée comme `state_unsafe_mutation` de Svelte)
+ * ou message `console.error` fait échouer le test, pour qu'un écran qui plante sans que l'assertion le voie ne passe pas inaperçu.
+ */
+export const test = base.extend({
+  page: async ({ page }, use) => {
+    const erreurs: string[] = [];
+    page.on('pageerror', (e) => erreurs.push(`exception : ${e.message}`));
+    page.on('console', (m) => { if (m.type() === 'error') erreurs.push(`console.error : ${m.text()}`); });
+    await use(page);
+    expect(erreurs, 'erreurs de page pendant le test').toEqual([]);
+  }
+});
 
 /** Jeudi 23 octobre 2026, 10 h : cinq jours avant la paie du 28. */
 export const AUJOURDHUI = '2026-10-23T10:00';

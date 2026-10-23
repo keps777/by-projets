@@ -1,5 +1,5 @@
-import { expect, test } from '@playwright/test';
-import { aller, confirmerPaiement, contient, ouvrirDemo, solde } from './aide';
+import { expect } from '@playwright/test';
+import { test, aller, confirmerPaiement, contient, ouvrirDemo, solde } from './aide';
 
 /** Les portails partenaires lisent et écrivent la même tranche que l'application membre. */
 test.describe('portails partenaires ↔ application membre', () => {

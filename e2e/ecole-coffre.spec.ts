@@ -1,5 +1,5 @@
-import { expect, test } from '@playwright/test';
-import { aller, attendreEnregistrement, contient, etatEnregistre, ouvrirDemo, solde } from './aide';
+import { expect } from '@playwright/test';
+import { test, aller, attendreEnregistrement, contient, etatEnregistre, ouvrirDemo, solde } from './aide';
 
 test.describe('école et coffres : une seule épargne', () => {
   test('l’école lit le coffre « Rentrée » : un versement dans le coffre change le financement à demander', async ({ page }) => {

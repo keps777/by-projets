@@ -1,5 +1,5 @@
-import { expect, test } from '@playwright/test';
-import { aller, attendreEnregistrement, contient, etatEnregistre, JOUR_DE_PAIE, ouvrirDemo, rouvrirEtDeverrouiller, solde } from './aide';
+import { expect } from '@playwright/test';
+import { test, aller, attendreEnregistrement, contient, etatEnregistre, JOUR_DE_PAIE, ouvrirDemo, rouvrirEtDeverrouiller, solde } from './aide';
 
 const CODE_DEMO = '482916';
 

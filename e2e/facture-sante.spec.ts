@@ -1,5 +1,5 @@
-import { expect, test, type Page } from '@playwright/test';
-import { aller, confirmerPaiement, contient, ouvrirDemo, patcherEtat, solde } from './aide';
+import { expect, type Page } from '@playwright/test';
+import { test, aller, confirmerPaiement, contient, ouvrirDemo, patcherEtat, solde } from './aide';
 
 async function versLaFacture(page: Page) {
   await ouvrirDemo(page);

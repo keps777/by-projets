@@ -1,5 +1,5 @@
-import { expect, test } from '@playwright/test';
-import { aller, attendreEnregistrement, contient, etatEnregistre, JOUR_DE_PAIE, ouvrirDemo, patcherEtat, rouvrirEtDeverrouiller, solde } from './aide';
+import { expect } from '@playwright/test';
+import { test, aller, attendreEnregistrement, contient, etatEnregistre, JOUR_DE_PAIE, ouvrirDemo, patcherEtat, rouvrirEtDeverrouiller, solde } from './aide';
 
 test.describe('règle des 33 % et crédit auto', () => {
   test('Yaris en 36 mois avec 500 000 d’apport : refusée à 40 % à cause du crédit scolaire', async ({ page }) => {

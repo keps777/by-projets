@@ -1,5 +1,5 @@
-import { expect, test } from '@playwright/test';
-import { contient, ouvrirDemo, solde } from './aide';
+import { expect } from '@playwright/test';
+import { test, contient, ouvrirDemo, solde } from './aide';
 
 const CODE_DEMO = '482916';
 
