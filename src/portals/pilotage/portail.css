@@ -1,0 +1,31 @@
+/* Portail Pilotage (thème clair via app.css). Tout est préfixé par .pil. */
+.pil { min-height: 100dvh; display: flex; flex-wrap: wrap; align-items: stretch; background: var(--fond); color: var(--texte); }
+.pil aside { flex: 1 1 220px; max-width: 100%; min-width: 0; background: #0b0f1a; color: #fff; padding: 22px 16px; display: flex; flex-direction: column; gap: 22px; }
+.pil main { flex: 999 1 560px; min-width: 0; padding: 28px 32px 48px; display: flex; flex-direction: column; gap: 22px; }
+.pil h1 { font-size: 30px; font-weight: 600; letter-spacing: -0.5px; } .pil h2 { font-size: 20px; font-weight: 600; letter-spacing: -0.02em; } .pil h3 { font-size: 15px; font-weight: 650; }
+.pil .doux { color: var(--muted); } .pil .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.pil .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.pil .carte { background: var(--carte); border: 1px solid #e2e5ee; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.pil .rang { display: flex; flex-wrap: wrap; gap: 18px; align-items: stretch; } .pil .rang > .a3 { flex: 3 1 600px; } .pil .rang > .a2 { flex: 2 1 300px; } .pil .rang > .a1 { flex: 1 1 300px; }
+.pil .tuiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
+.pil .tuile { text-align: left; background: var(--carte); border: 1px solid #e2e5ee; border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 6px; min-height: 44px; color: var(--texte); }
+.pil button.tuile:hover { border-color: var(--primaire); }
+.pil .tuile .k { font-size: 13px; color: var(--muted); } .pil .tuile .v { font-weight: 600; font-size: 28px; letter-spacing: -0.02em; } .pil .tuile .s { font-size: 13px; color: var(--muted); } .pil .tuile .s.lien { color: var(--primaire); font-weight: 600; }
+.pil .tuile.petite .v { font-size: 22px; }
+.pil .puce { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 22px; border: 1px solid #cdd2de; background: #fff; color: #2a3142; font-weight: 600; font-size: 13px; }
+.pil .puce[aria-pressed='true'] { background: #0b0f1a; border-color: #0b0f1a; color: #fff; }
+.pil .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid #cdd2de; background: #fff; font-weight: 600; font-size: 14px; color: var(--texte); }
+.pil .btn:hover { border-color: var(--primaire); } .pil .btn.noir { background: #0b0f1a; color: #fff; border-color: #0b0f1a; } .pil .btn:disabled { background: #586176; border-color: #586176; color: #fff; cursor: default; }
+.pil .note { background: var(--fond); border-radius: 14px; padding: 12px 14px; font-size: 14px; color: #2a3142; }
+.pil .note.alerte { background: #fff1e6; color: #5e2903; } .pil .note.sim { background: #eef1ff; color: #1f3acc; border: 1px dashed #9daeff; }
+.pil .etiquette { display: inline-block; font: 600 11px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: #1f3acc; background: #e4e9ff; padding: 3px 9px; border-radius: 99px; }
+.pil .segment { display: flex; background: #eff1f6; border-radius: 12px; padding: 3px; } .pil .segment button { min-height: 44px; padding: 0 14px; border-radius: 10px; font-weight: 500; font-size: 13px; }
+.pil .segment button[aria-pressed='true'] { background: #fff; font-weight: 700; box-shadow: 0 1px 3px rgba(15, 20, 34, 0.15); }
+.pil input[type='range'] { width: 100%; min-height: 44px; accent-color: var(--primaire); }
+.pil select { min-height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid #cdd2de; background: #fff; font-size: 14px; font-weight: 600; }
+.pil .interrupteur { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; min-height: 52px; border-radius: 12px; border: 1px solid #e2e5ee; background: #fff; font-size: 14px; text-align: left; width: 100%; }
+.pil .piste { width: 40px; height: 22px; border-radius: 11px; background: #8b94a9; position: relative; flex: none; } .pil .piste i { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 8px; background: #fff; transition: left 0.15s; }
+.pil [aria-checked='true'] .piste { background: var(--primaire); } .pil [aria-checked='true'] .piste i { left: 21px; }
+.pil .stat { font-size: 14px; display: flex; justify-content: space-between; gap: 12px; } .pil .liste { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.pil .statut { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 10px; background: #eff1f6; color: #2a3142; } .pil .statut.signe { background: #ebeeff; color: #3050ff; } .pil .statut.attente { background: #fff1e6; color: #8a3c05; }
+@media (max-width: 700px) { .pil main { padding: 20px 16px 40px; } .pil h1 { font-size: 24px; } .pil .carte { padding: 16px; border-radius: 16px; } }
