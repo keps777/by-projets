@@ -52,13 +52,13 @@ export function exemple(now = maintenant()): EtatSante {
   const j = (n: number) => jourDe(new Date(now - n * 86_400_000)), c = COUVERTURES.famille, grand = 10_000_000;
   const paye = (n: number, jours: number): PaiementFacture => ({ ts: now - (jours - n) * 86_400_000, mode: 'comptant', aTemps: true });
   const factures: FactureSante[] = [
-    facture('f-1190', 1190, { patient: 'Lisa Ndiba', acte: 'Consultation pédiatrie', date: j(1), echeance: ajouterJours(j(1), 4), lignes: lignes3(), statut: 'a_regler' }, c, 1_014_000),
-    facture('f-1131', 1131, { patient: 'Lisa Ndiba', acte: 'Consultation pédiatrie', date: j(27), lignes: [{ nom: 'Consultation pédiatrie', sous: 'Dr Mbarga', montant: 15_000, categorie: 'consultation' }], statut: 'payee', paiement: paye(2, 27) }, c, grand),
+    facture('f-1190', 1190, { patient: 'Lisa Ndiba', acte: 'Consultation pédiatrie', date: j(2), echeance: ajouterJours(j(2), 4), lignes: lignes3(), statut: 'a_regler' }, c, 1_014_000),
+    facture('f-1131', 1131, { patient: 'Lisa Ndiba', acte: 'Consultation pédiatrie', date: j(27), lignes: lignes3(), statut: 'payee', paiement: paye(2, 27) }, c, grand),
     facture('f-1062', 1062, { patient: 'Paul Ndiba', acte: 'Analyses', etablissementId: 'bioplus', etablissement: 'Laboratoire Bio-Plus', medecin: 'Dr Essomba', date: j(40), lignes: [{ nom: 'Bilan sanguin complet', sous: 'Laboratoire Bio-Plus', montant: 27_500, categorie: 'examen' }], statut: 'payee', paiement: paye(1, 40) }, c, grand),
     facture('f-1179', 1179, { numeroMembre: 'AM9051', patient: 'Martine Eyenga', acte: 'Accouchement', medecin: 'Dr Ewane', date: j(14), lignes: [{ nom: 'Accouchement', sous: 'Maternité', montant: 280_000, categorie: 'hospitalisation' }], statut: 'payee', paiement: paye(6, 14) }, c, grand),
     facture('f-1172', 1172, { numeroMembre: 'AM7312', patient: 'Samuel Abena', acte: 'Radiographie', medecin: 'Dr Tchoumi', date: j(15), lignes: [{ nom: 'Radiographie thoracique', sous: 'Imagerie', montant: 36_000, categorie: 'examen' }], statut: 'a_regler' }, c, grand)
   ];
-  return { plafondInitial: 152_000, beneficiaires: ['Paul', 'Lisa', 'Junior'], factures, ordonnances: [
+  return { plafondInitial: 135_600, beneficiaires: ['Paul', 'Lisa', 'Junior'], factures, ordonnances: [
     { id: 'o-1', ts: now - 86_400_000 - 3_600_000 * 4, numeroMembre: 'AM4821', beneficiaire: 'Aïcha', pharmacieId: 'rond-point', pharmacie: 'Pharmacie du Rond-Point', medicaments: 'Amoxicilline 500 mg, paracétamol 1 g', livraison: true, fraisLivraison: 1000, partPatient: 7100 }
   ], sequence: 1191 };
 }

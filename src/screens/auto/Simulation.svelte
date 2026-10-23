@@ -9,7 +9,7 @@
   import { ASSURANCES, DUREES, FINANCEMENT_MINIMUM, apportMinimum, apportNecessaire, autoDisponible, dureeSuffisante, simuler, type Assurance } from '../../core/auto.ts';
   import { echeancierResume, PLAFOND_ENDETTEMENT } from '../../core/credit.ts';
   import { court, fcfa, lireMontant } from '../../core/money.ts';
-  import { auto, vehiculeDe } from './etat.ts';
+  import { auto, coffreVoiture, vehiculeDe } from './etat.ts';
   import { demander, entreeSimulation, erreurBrouillon, niveauMembre, reglerBrouillon } from './actions.ts';
 
   const t = auto();
@@ -28,7 +28,7 @@
   // Apports proposés en puces : ceux de la maquette, plus le minimum exigé, dans les limites du prix et du coffre.
   const puces = $derived.by(() => {
     if (!veh) return [] as number[];
-    const maxi = Math.min(t.coffreVoiture, veh.prix - FINANCEMENT_MINIMUM);
+    const maxi = Math.min(coffreVoiture(), veh.prix - FINANCEMENT_MINIMUM);
     return [...new Set([0, 500_000, 1_000_000, 1_200_000, minimum])].filter((x) => x >= minimum && x <= maxi).sort((p, q) => p - q);
   });
   const fixerApport = (x: number) => { saisie = String(x); reglerBrouillon({ apport: x }); };
@@ -39,7 +39,7 @@
   const pistes = $derived.by((): Piste[] | null => {
     if (!entree || !sim || sim.respecte33 || !veh) return null;
     const { apport: _a, ...sansApport } = entree;
-    const maxi = Math.min(t.coffreVoiture, veh.prix - FINANCEMENT_MINIMUM);
+    const maxi = Math.min(coffreVoiture(), veh.prix - FINANCEMENT_MINIMUM);
     const res: Piste[] = [];
     const duree = dureeSuffisante({ ...sansApport, apport: entree.apport });
     if (duree && duree !== entree.duree) res.push({ libelle: `Passer à ${duree} mois`, duree, apport: entree.apport });
@@ -78,7 +78,7 @@
     <section class="bloc alerte" role="alert">
       <b>Au-dessus de {pct(PLAFOND_ENDETTEMENT)} % ({pct(sim.partTotale)} % avec vos autres mensualités) : allongez ou ajoutez de l'apport.</b>
       {#if pistes.length}<div class="pistes">{#each pistes as p (p.libelle)}<button onclick={() => appliquer(p)}>{p.libelle}</button>{/each}</div>
-      {:else}<span class="muted">{t.coffreVoiture < (veh.prix - FINANCEMENT_MINIMUM) ? "Il faudrait plus d'apport que votre coffre voiture n'en contient, ou aucune durée ne suffit avec vos autres mensualités." : 'Aucune combinaison ne passe sous 33 % avec vos autres mensualités.'}</span>{/if}
+      {:else}<span class="muted">{coffreVoiture() < (veh.prix - FINANCEMENT_MINIMUM) ? "Il faudrait plus d'apport que votre coffre voiture n'en contient, ou aucune durée ne suffit avec vos autres mensualités." : 'Aucune combinaison ne passe sous 33 % avec vos autres mensualités.'}</span>{/if}
     </section>
   {/if}
 
@@ -90,7 +90,7 @@
   </section>
 
   <section class="bloc">
-    <div class="ligne"><small>Apport</small><span class="muted">Coffre voiture : <b class="mono">{fcfa(t.coffreVoiture)}</b> disponibles</span></div>
+    <div class="ligne"><small>Apport</small><span class="muted">Coffre voiture : <b class="mono">{fcfa(coffreVoiture())}</b> disponibles</span></div>
     {#if puces.length}
       <div class="puces" role="radiogroup" aria-label="Apport">
         {#each puces as p (p)}<button role="radio" aria-checked={b.apport === p} class:on={b.apport === p} onclick={() => fixerApport(p)}>{p === 0 ? '0' : court(p)}</button>{/each}

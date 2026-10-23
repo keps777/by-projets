@@ -8,6 +8,7 @@ import { jourCourt, jourDe, type Jour } from '../../core/dates.ts';
 import type { LigneAvecEffet } from '../../data/paie.ts';
 import type { Recu } from '../../core/recu-paiement.ts';
 import { factureParId, lirePaiements, paiements, toutesFactures, type Brouillon, type FacturePay } from './etat.ts';
+import { sante, utilisation } from '../sante/etat.ts';
 
 // ------------------------------------------------------------------ score
 /** Ajoute `points` au score (borné 400-900) et met à jour le mois courant de l'historique. */
@@ -38,9 +39,11 @@ export const toutMarquerLu = () => app.notifications.forEach((n) => (n.lu = true
 // ------------------------------------------------------------------ factures
 export const tauxPriseEnCharge = () => COUVERTURES[app.compte?.pass ?? 'famille'].taux;
 export const plafondSanteTotal = () => COUVERTURES[app.compte?.pass ?? 'famille'].plafond;
-export const plafondSanteRestant = () => Math.max(0, plafondSanteTotal() - lirePaiements().plafondSanteUtilise);
+/** Plafond santé restant : le plus bas de nos comptes et de celui de l'écran Santé (qui compte aussi les factures émises par les cliniques). */
+export const plafondSanteRestant = () => Math.max(0, Math.min(plafondSanteTotal() - lirePaiements().plafondSanteUtilise, utilisation().restant));
 /** Répartition tiers payant d'une facture (80 % AssureMe dans la limite du plafond restant). Hors santé : tout à la charge du membre. */
 export function repartitionFacture(f: FacturePay): Repartition {
+  if (f.repartition) return f.repartition; // facture de la clinique : répartie à son émission
   return repartirFacture(f.lignes, f.categorie === 'sante' ? tauxPriseEnCharge() : 0, plafondSanteRestant());
 }
 export function mensualiteEtalement(f: FacturePay) { return etalerPart(repartitionFacture(f).patient, MOIS_ETALEMENT, TAUX_ETALEMENT); }
@@ -90,7 +93,11 @@ export function executerPaiement(now = maintenant()): ResultatPaiement {
     }
     if (f.categorie === 'sante') t.plafondSanteUtilise += rep.assureMe;
     gagnerPoints(points, now);
-    if (t.factures.some((x) => x.id === f.id)) { const mienne = t.factures.find((x) => x.id === f.id)!; mienne.statut = etale ? 'etalee' : 'payee'; mienne.ref = ref; }
+    if (f.origine === 'sante') {
+      // La facture vit dans la tranche santé : on la marque réglée là-bas aussi (sinon l'écran Santé la proposerait encore).
+      const fs = sante().factures.find((x) => x.id === f.id);
+      if (fs) { fs.statut = etale ? 'etalee' : 'payee'; fs.paiement = { ts: now, mode: etale ? 'etale' : 'comptant', aTemps: aujourdhui <= f.echeance, ...(etale ? { mensualite, mois: MOIS_ETALEMENT, creditId: `c-pay-${ref}` } : {}) }; }
+    } else if (t.factures.some((x) => x.id === f.id)) { const mienne = t.factures.find((x) => x.id === f.id)!; mienne.statut = etale ? 'etalee' : 'payee'; mienne.ref = ref; }
     else t.factures.unshift({ ...f, statut: etale ? 'etalee' : 'payee', ref });
     const recu: Recu = {
       ...base, beneficiaire: f.beneficiaire, lignes: f.lignes.map((l) => ({ nom: l.nom, montant: l.montant })), total: rep.total, priseEnCharge: rep.assureMe, paye: rep.patient,

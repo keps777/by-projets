@@ -9,7 +9,8 @@ import {
 import { SEUILS_NIVEAU, decider, niveauDuScore, tauxMensuel, type Decision, type Niveau } from '../../core/credit.ts';
 import { jourDe, jourLong } from '../../core/dates.ts';
 import { fcfa } from '../../core/money.ts';
-import { auto, dossierDe, libelleCredit, monDossier, vehiculeDe, CONCESSION, type Dossier, type EtatVehicule, type Vehicule } from './etat.ts';
+import { auto, coffreVoiture, dossierDe, libelleCredit, monDossier, vehiculeDe, CONCESSION, type Dossier, type EtatVehicule, type Vehicule } from './etat.ts';
+import { prendreDansCoffres, rendreAuxCoffres } from '../coffres/actions.ts';
 
 // ------------------------------------------------------------------ lectures
 export const niveauMembre = (): Niveau => niveauDuScore(app.score.valeur);
@@ -37,7 +38,7 @@ export const simulerBrouillon = (): Simulation | null => {
 export const erreurBrouillon = (): string | null => {
   const b = auto().brouillon; const veh = vehiculeDe(b?.vehiculeId);
   if (!b || !veh) return 'Choisissez un véhicule dans le catalogue.';
-  return validerDemande({ prix: veh.prix, apport: b.apport, duree: b.duree, assurance: b.assurance, niveau: niveauMembre(), coffre: auto().coffreVoiture });
+  return validerDemande({ prix: veh.prix, apport: b.apport, duree: b.duree, assurance: b.assurance, niveau: niveauMembre(), coffre: coffreVoiture() });
 };
 export const offreValide = (d: Dossier) => jourAujourdhui() <= d.offreJusqua;
 export const estSigne = (d: Dossier) => d.signeLe != null;
@@ -46,7 +47,7 @@ export const estSigne = (d: Dossier) => d.signeLe != null;
 /** Apport proposé par défaut : 500 000 si possible, sinon le minimum exigé (plafonné au coffre). */
 export function apportParDefaut(prix: number): number {
   const min = apportMinimum(prix, niveauMembre());
-  return Math.max(0, Math.min(Math.max(min, Math.min(500_000, auto().coffreVoiture)), prix - FINANCEMENT_MINIMUM));
+  return Math.max(0, Math.min(Math.max(min, Math.min(500_000, coffreVoiture())), prix - FINANCEMENT_MINIMUM));
 }
 export function choisirVehicule(id: string): string | null {
   const veh = vehiculeDe(id); const t = auto();
@@ -109,7 +110,7 @@ export async function signer(trace: string, code: string): Promise<string | null
   if (d.etape !== 'nouvelle' && d.etape !== 'etude' && d.etape !== 'accordee') return "Ce dossier n'est plus ouvert.";
   if (!offreValide(d)) return "L'offre a expiré (7 jours). Relancez une simulation.";
   if (!trace.trim()) return 'Signez dans le cadre pour continuer.';
-  if (t.coffreVoiture < d.apport) return `Votre coffre voiture contient ${fcfa(t.coffreVoiture)}, il faut ${fcfa(d.apport)} d'apport.`;
+  if (coffreVoiture() < d.apport) return `Votre coffre voiture contient ${fcfa(coffreVoiture())}, il faut ${fcfa(d.apport)} d'apport.`;
   const now = maintenant();
   if (estVerrouille(app.auth.verrou, now)) return `Trop d'essais. Réessayez dans ${Math.ceil(secondesAvantDeverrou(app.auth.verrou, now) / 60)} min.`;
   if (!/^\d{6}$/.test(code)) return 'Le code AssureMe compte 6 chiffres.';
@@ -122,7 +123,7 @@ export async function signer(trace: string, code: string): Promise<string | null
   const nouvelle = decider(entreeDecision(veh, sim, null));
   if (!nouvelle.approuve) return `Votre situation a changé depuis la décision : ${nouvelle.motif}.`;
 
-  t.coffreVoiture -= d.apport;
+  prendreDansCoffres('Voiture', d.apport, `Apport ${d.vehiculeTitre}`);
   const creditId = `c-auto-${d.id}`;
   app.credits.push({ id: creditId, produit: 'auto', libelle: libelleCredit(d.vehiculeTitre), capital: d.financement, mensualite: d.mensualite, duree: d.duree, payees: 0, prochaine: premierPrelevement(jourDe(new Date(now)), c.jourPaie), statut: 'actif' });
   d.signeLe = now; d.signature = trace; d.creditId = creditId;
@@ -150,7 +151,7 @@ export function annuler(id: string): string | null {
 function rembourserSiSigne(d: Dossier) {
   if (!d.signeLe) return;
   if (d.creditId) { const i = app.credits.findIndex((c) => c.id === d.creditId); if (i >= 0) app.credits.splice(i, 1); }
-  if (d.membre) auto().coffreVoiture += d.apport;
+  if (d.membre) rendreAuxCoffres('Voiture', d.apport, `Apport rendu · ${d.vehiculeTitre}`);
   d.signeLe = null; d.signature = null; d.creditId = null;
 }
 

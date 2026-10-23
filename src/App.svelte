@@ -2,10 +2,12 @@
   import type { Component } from 'svelte';
   import { routeur, resoudre, ROUTES, aller, type Route } from './router.svelte.ts';
   import { app, maintenant } from './data/store.svelte.ts';
+  import { untrack } from 'svelte';
   import { sessionExpiree } from './core/auth.ts';
   import { toast } from './ui/toast.svelte.ts';
   import BarreOnglets from './ui/BarreOnglets.svelte';
   import NonTrouve from './screens/_socle/NonTrouve.svelte';
+  import Squelette from './ui/Squelette.svelte';
 
   /** Fonctions lancées à la connexion par les fonctionnalités (moteur de paie, rappels…) : `screens/*\/demarrage.ts`. */
   const modulesDemarrage = import.meta.glob<{ default: () => void }>(['./screens/*/demarrage.ts', './portals/*/demarrage.ts'], { eager: true });
@@ -15,7 +17,7 @@
   const trouve = $derived(resoudre(ROUTES, routeur.chemin));
   const route: Route | undefined = $derived(trouve?.route);
   let vue: Component<any> | null = $state(null);
-  let chargee = $state('');
+  let chargee = ''; // chemin de la route dont le composant est chargé (ou en cours de chargement)
 
   // Garde : connecté ou non, session expirée après 5 min d'inactivité.
   $effect(() => {
@@ -26,12 +28,16 @@
   });
   $effect(() => { document.documentElement.dataset.theme = route?.cadre === 'portail' ? 'clair' : 'nuit'; });
   $effect(() => {
-    if (!route) { vue = null; return; }
-    const cle = route.chemin; chargee = cle;
+    if (!route) { vue = null; chargee = ''; document.title = 'Page introuvable · AssureMe'; return; }
+    const cle = route.chemin;
+    // Même route (autre paramètre) : le composant est déjà là. Nouvelle route : un squelette tient la place, jamais l'écran précédent.
+    if (chargee !== cle) { chargee = cle; vue = null; }
     route.composant().then((m) => { if (chargee === cle) vue = m.default; });
     document.title = route.titre ? `${route.titre} · AssureMe` : 'AssureMe';
   });
-  $effect(() => { if (app.auth.connecte) demarrages.forEach((f) => f()); });
+  // Démarrage des fonctionnalités à la connexion. `untrack` : ces fonctions lisent et écrivent l'état (paies rattrapées…), l'effet ne doit
+  // dépendre que de la connexion et ne pas se relancer à chaque changement de solde.
+  $effect(() => { if (app.auth.connecte) untrack(() => demarrages.forEach((f) => f())); });
 
   const toucher = () => { if (app.auth.connecte) app.auth.derniereActivite = maintenant(); };
 </script>
@@ -40,7 +46,8 @@
 
 <div class="cadre" class:portail={route?.cadre === 'portail'}>
   {#if !route}<NonTrouve />
-  {:else if vue}{#key routeur.chemin}{@const V = vue}<V params={trouve?.params ?? {}} />{/key}{/if}
+  {:else if vue}{#key routeur.chemin}{@const V = vue}<V params={trouve?.params ?? {}} />{/key}
+  {:else}<Squelette portail={route.cadre === 'portail'} />{/if}
 </div>
 {#if route && (route.cadre ?? 'membre') === 'membre' && route.onglet}<BarreOnglets actif={route.onglet} />{/if}
 {#if toast.message}<div class="toast {toast.ton}" role="status">{toast.message}</div>{/if}

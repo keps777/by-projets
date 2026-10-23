@@ -24,12 +24,13 @@
   import SaisieCode from './SaisieCode.svelte';
   import { activerDemo, changerPass, lirePermissionNotif, mettreAJourInfos, quitterDemo } from './actions.ts';
   import { etatAuth } from './etat.ts';
+  import { tarifPassMembre } from './tarif.ts';
 
   const e = etatAuth();
   const c = $derived(app.compte);
   const niveau = $derived(niveauDuScore(app.score.valeur));
   const plan = $derived(c ? planDe(c.pass) : planDe('famille'));
-  const tarif = $derived(c ? tarifPass(c.pass, e.facturation, trouverEmployeur(e.employeurCode)) : null);
+  const tarif = $derived(c ? tarifPassMembre(c, c.pass, e.facturation, e.employeurCode) : null);
   const permission = lirePermissionNotif();
   const depuis = $derived(c ? moisAnnee(jourDe(new Date(c.cree))) : '');
 
@@ -51,7 +52,7 @@
 
   // --- Pass
   let passChoisi = $state<Pass>('famille'); let facturation = $state(e.facturation);
-  const tarifChoisi = $derived(tarifPass(passChoisi, facturation, trouverEmployeur(e.employeurCode)));
+  const tarifChoisi = $derived(c ? tarifPassMembre(c, passChoisi, facturation, e.employeurCode) : tarifPass(passChoisi, facturation, trouverEmployeur(e.employeurCode)));
   function ouvrirPass() { passChoisi = c?.pass ?? 'famille'; facturation = e.facturation; panneau = 'pass'; }
   function enregistrerPass() { changerPass(passChoisi, facturation); panneau = ''; montrer(`Pass ${planDe(passChoisi).nom} enregistré`); }
 

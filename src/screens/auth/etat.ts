@@ -3,7 +3,7 @@ import { app, maintenant, tranche } from '../../data/store.svelte.ts';
 import type { Jour, Pass } from '../../data/types.ts';
 import type { Facturation } from '../../core/inscription.ts';
 import { trouverEmployeurParNom } from '../../core/inscription.ts';
-import { jourDe, prochainePaie } from '../../core/dates.ts';
+import { ajouterJours, jourDe, prochainePaie } from '../../core/dates.ts';
 
 export interface Brouillon {
   debut: number;
@@ -51,7 +51,8 @@ function defaut(): EtatAuth {
     codeModifieLe: app.mode === 'demo' ? maintenant() - 3 * 86_400_000 : null,
     employeurCode: employeur?.code ?? '',
     facturation: 'mensuel',
-    passEcheance: c ? prochainePaie(jourDe(new Date(maintenant())), c.jourPaie) : null,
+    // Pass dû dès la première paie pas encore traitée (compte démo : celle qui suit la dernière paie passée).
+    passEcheance: c ? prochainePaie(app.dernierePaie ? ajouterJours(app.dernierePaie, 1) : jourDe(new Date(maintenant())), c.jourPaie) : null,
     operateur: 0,
     proches: app.mode === 'demo' ? [{ id: 'p1', nom: 'Paul', lien: 'Conjoint' }, { id: 'p2', nom: 'Lisa', lien: 'Enfant' }, { id: 'p3', nom: 'Junior', lien: 'Enfant' }] : [],
     cartesDemandees: false,
@@ -60,3 +61,5 @@ function defaut(): EtatAuth {
 }
 /** À lire dans le `<script>` d'un composant ou dans une action, jamais dans une expression de gabarit (création paresseuse). */
 export const etatAuth = (): EtatAuth => tranche<EtatAuth>('auth', defaut);
+/** Lecture seule (sûre dans un `$derived` ou un aperçu de paie) : la tranche si elle existe, sinon ses valeurs par défaut sans rien créer. */
+export const lireAuth = (): EtatAuth => (app.tranches['auth'] as EtatAuth | undefined) ?? defaut();

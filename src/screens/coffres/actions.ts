@@ -20,6 +20,30 @@ function noter(c: Coffre, type: TypeOperation, montant: number, note?: string, t
   if (c.operations.length > MAX_OPERATIONS) c.operations.length = MAX_OPERATIONS;
 }
 
+// ------------------------------------------------------------------ usage par une autre fonctionnalité (apport d'un achat)
+/** Épargne disponible dans les coffres d'un genre (« Voiture », « Rentrée »…). Lecture seule, sûre dans un `$derived`. */
+export const epargneDuGenre = (genre: string): number => coffres().filter((c) => c.genre === genre).reduce((t, c) => t + c.epargne, 0);
+/**
+ * Prend `montant` dans les coffres du genre (apport d'un crédit auto, par exemple) : sans frais ni écriture sur le solde, l'argent part chez le vendeur.
+ * Rien n'est touché si l'épargne ne suffit pas (renvoie false).
+ */
+export function prendreDansCoffres(genre: string, montant: number, motif: string): boolean {
+  if (!(montant >= 0) || epargneDuGenre(genre) < montant) return false;
+  let reste = montant;
+  for (const c of etatCoffres().coffres.filter((x) => x.genre === genre)) {
+    const pris = Math.min(c.epargne, reste); if (pris <= 0) continue;
+    c.epargne -= pris; reste -= pris; noter(c, 'retrait', -pris, motif);
+  }
+  return true;
+}
+/** Remet dans le premier coffre du genre une somme prise par `prendreDansCoffres` (contrat annulé). */
+export function rendreAuxCoffres(genre: string, montant: number, motif: string): boolean {
+  const c = etatCoffres().coffres.find((x) => x.genre === genre);
+  if (!c || !(montant > 0)) return false;
+  c.epargne += montant; noter(c, 'versement', montant, motif);
+  return true;
+}
+
 /** Points de score pour un versement : une seule fois par mois (+5), pour ne pas « farmer » le score en versant 1 000 chaque jour. */
 function pointsDeVersement(mois: string): number {
   const e = etatCoffres();

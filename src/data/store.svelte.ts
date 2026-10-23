@@ -1,6 +1,7 @@
 // Magasin unique : état réactif, persisté dans localStorage (backend simulé, voir docs/architecture.md).
 import { demo, vierge } from './seed.ts';
 import { CLE_STOCKAGE } from './constantes.ts';
+import { maintenant } from './horloge.ts';
 import type { Credit, Etat, Mouvement, Notification } from './types.ts';
 
 function charger(): Etat {
@@ -9,18 +10,19 @@ function charger(): Etat {
 }
 export const app: Etat = $state(charger());
 
-/** Horloge : surchargeable par les tests (`?maintenant=2026-10-28T09:00`) pour rejouer la paie. */
-export function maintenant(): number {
-  const p = typeof location !== 'undefined' ? new URLSearchParams(location.search).get('maintenant') : null;
-  const t = p ? Date.parse(p) : NaN;
-  return Number.isNaN(t) ? Date.now() : t;
-}
+/** Horloge : surchargeable par les tests (`?maintenant=2026-10-28T09:00`) pour rejouer la paie (voir horloge.ts). */
+export { maintenant };
 let n = 0;
 export const nouvelId = (prefixe = 'x') => `${prefixe}-${maintenant().toString(36)}-${(++n).toString(36)}${Math.floor(Math.random() * 1e4).toString(36)}`;
 
 /** Tranche d'une fonctionnalité : créée à la première lecture avec sa valeur par défaut, puis persistée avec le reste. */
 export function tranche<T extends object>(cle: string, defaut: () => T): T {
-  if (!(cle in app.tranches)) app.tranches[cle] = defaut();
+  if (!(cle in app.tranches)) {
+    const valeur = defaut();
+    // Lue depuis un `$derived` (un aperçu de paie par exemple), la création est interdite par Svelte : on rend alors la valeur par défaut,
+    // non enregistrée ; la tranche sera réellement créée par la première action, et le `$derived` se recalculera.
+    try { app.tranches[cle] = valeur; } catch { return valeur; }
+  }
   return app.tranches[cle] as T;
 }
 

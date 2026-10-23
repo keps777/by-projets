@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { app, reinitialiser } from './store.svelte.ts';
-import { fournirPrelevements, lignesDe, rattraperPaies } from './paie.ts';
+import { fournirPrelevements, lignesDe, prochaine, rattraperPaies } from './paie.ts';
 
 describe('moteur de paie', () => {
   beforeEach(() => {
@@ -28,5 +28,12 @@ describe('moteur de paie', () => {
   });
   it("l'aperçu ne modifie rien", () => {
     const l = lignesDe('2026-11-28'); expect(l.map((x) => x.montant)).toEqual([12_500, 44_000]); expect(app.solde).toBe(0);
+  });
+  it('le jour de paie traité, la prochaine paie est celle du mois suivant', () => {
+    const matin = Date.parse('2026-10-28T08:00:00');
+    expect(prochaine(matin)).toBe('2026-10-28'); // pas encore traitée
+    rattraperPaies(Date.parse('2026-10-28T10:00:00'));
+    expect(prochaine(Date.parse('2026-10-28T10:00:00'))).toBe('2026-11-28');
+    expect(prochaine(Date.parse('2026-10-29T10:00:00'))).toBe('2026-11-28');
   });
 });

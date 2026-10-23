@@ -5,9 +5,9 @@ import { POINTS, borner } from '../../core/score.ts';
 import { fournirPrelevements, type LigneAvecEffet } from '../../data/paie.ts';
 import { app } from '../../data/store.svelte.ts';
 
-/** Une ligne par mensualité de santé échue à la paie `paie`. */
+/** Une ligne par mensualité de santé échue à la paie `paie` (les crédits « c-pay-… », étalés depuis l'écran de paiement, sont prélevés par l'accueil). */
 export function lignesSante(paie: string): LigneAvecEffet[] {
-  return app.credits.filter((c) => c.produit === 'sante' && c.statut === 'actif' && c.prochaine <= paie).map((c) => ({
+  return app.credits.filter((c) => c.produit === 'sante' && !c.id.startsWith('c-pay-') && c.statut === 'actif' && c.prochaine <= paie).map((c) => ({
     id: c.id, type: 'credit' as const, libelle: c.libelle, detail: `Mensualité ${c.payees + 1} / ${c.duree}`, montant: c.mensualite,
     appliquer: () => {
       c.payees += 1; app.score.valeur = borner(app.score.valeur + POINTS.mensualiteHeure);

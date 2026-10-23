@@ -3,6 +3,7 @@ import { tranche, app, maintenant } from '../../data/store.svelte.ts';
 import { ASSURANCES, type Assurance, type Etape } from '../../core/auto.ts';
 import { mensualite, type Controle } from '../../core/credit.ts';
 import { jourDe } from '../../core/dates.ts';
+import { epargneDuGenre } from '../coffres/actions.ts';
 
 export const CONCESSION = 'Auto Plus Bassa';
 export type EtatVehicule = 'occasion' | 'quasi_neuve' | 'neuve';
@@ -28,8 +29,6 @@ export interface Dossier {
 export interface Brouillon { vehiculeId: string; apport: number; duree: number; assurance: Assurance }
 export interface TrancheAuto {
   vehicules: Vehicule[]; dossiers: Dossier[];
-  /** Coffre voiture du membre : d'où part l'apport. */
-  coffreVoiture: number;
   /** Signature dessinée lors d'un précédent contrat (tracé SVG), réutilisable. */
   signatureEnregistree: string | null;
   assuranceProposee: boolean;
@@ -85,11 +84,12 @@ export function dossiersExemple(now = maintenant()): Dossier[] {
 
 export const defautAuto = (): TrancheAuto => ({
   vehicules: vehiculesExemple(), dossiers: dossiersExemple(),
-  coffreVoiture: app.mode === 'demo' ? 1_200_000 : 0,
   signatureEnregistree: app.mode === 'demo' ? SIGNATURE_EXEMPLE : null,
   assuranceProposee: false, baseVentes: { ventes: 3, montant: 18_400_000 }, monDossier: null, brouillon: null
 });
 
+/** Apport disponible : l'épargne des coffres « Voiture » (tranche coffres, lecture seule). */
+export const coffreVoiture = (): number => epargneDuGenre('Voiture');
 export const auto = (): TrancheAuto => tranche<TrancheAuto>('auto', defautAuto);
 export const vehiculeDe = (id: string | null | undefined) => (id ? auto().vehicules.find((x) => x.id === id) : undefined);
 export const dossierDe = (id: string | null | undefined) => (id ? auto().dossiers.find((x) => x.id === id) : undefined);

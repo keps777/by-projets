@@ -41,7 +41,7 @@
   const cta = $derived(!rep ? '' : mode === 'comptant' ? (manque > 0 ? 'Recharger puis payer' : `Confirmer · ${fcfa(rep.patient)} FCFA`) : `Confirmer · ${fcfa(mensualite)} FCFA × ${MOIS_ETALEMENT}`);
 </script>
 
-<Ecran titre={f?.partenaire ?? 'Facture'} sur={f ? `FACTURE ${f.emis ? jourDe(new Date(f.emis)) + ' · ' + heure(f.emis) : ''}` : 'Facture'} retourVers="/pay/scan">
+<Ecran titre={f?.partenaire ?? 'Facture'} sur={f ? `FACTURE ${f.emis ? jourCourt(jourDe(new Date(f.emis))).toUpperCase() + ' · ' + heure(f.emis) : ''}` : 'Facture'} retourVers="/pay/scan">
   {#snippet droite()}{#if sante}<button type="button" class="tp" onclick={() => (tiers = true)} aria-label="Qu'est-ce que le tiers payant ?"><Pastille ton="bon">Tiers payant</Pastille></button>{/if}{/snippet}
 
   {#if !f}

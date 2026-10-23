@@ -5,7 +5,7 @@ import type { Jour } from '../../core/dates.ts';
 import { normaliserId, PLAFOND_PART_EMPLOYEUR, type ChampsInscription, type PartEmployeur } from '../../core/entreprise.ts';
 import { partEmployeurPass } from '../../core/prelevement.ts';
 import { PRIX_PASS } from '../../core/sante.ts';
-import { app, tranche } from '../../data/store.svelte.ts';
+import { app, maintenant, tranche } from '../../data/store.svelte.ts';
 import type { Compte } from '../../data/types.ts';
 
 export const CLE = 'entreprise';
@@ -36,7 +36,7 @@ export interface EtatEntreprise {
   suivi: Record<Jour, SuiviRetenue>;
 }
 
-const h = (jours: number) => Date.now() - jours * 86_400_000;
+const h = (jours: number) => maintenant() - jours * 86_400_000;
 const s = (id: string, nom: string, matricule: string, telephone: string, service: string, salaire: number, pass: Pass | null, score: number, credit: number, coffre: number, statut: StatutSalarie, jours: number, anciennete?: string): Salarie =>
   ({ id, nom, matricule, telephone, service, salaire, pass, score, credit, coffre, statut, ajoute: h(jours), anciennete });
 

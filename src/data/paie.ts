@@ -1,6 +1,6 @@
 // Moteur de paie : le jour de paie, le salaire est versé puis les prélèvements des fonctionnalités sont passés.
 // Une fonctionnalité s'enregistre avec `fournirPrelevements(id, fn)` dans son `demarrage.ts`. Les paies manquées (appli fermée) sont rattrapées.
-import { ajouterMois, jourDe, paiesEntre, prochainePaie, jourCourt, type Jour } from '../core/dates.ts';
+import { ajouterJours, ajouterMois, jourDe, paiesEntre, prochainePaie, jourCourt, type Jour } from '../core/dates.ts';
 import type { LignePrelevement } from '../core/prelevement.ts';
 import { app, maintenant, mouvement, notifier } from './store.svelte.ts';
 
@@ -41,5 +41,11 @@ export function rattraperPaies(now = maintenant()) {
   dues.forEach(passerPaie);
   return dues.length;
 }
-export const prochaine = (now = maintenant()): Jour | null => (app.compte ? prochainePaie(jourDe(new Date(now)), app.compte.jourPaie) : null);
+/** Prochaine paie à venir. Le jour de paie une fois traité (`dernierePaie`), la suivante est celle du mois d'après. */
+export function prochaine(now = maintenant()): Jour | null {
+  const c = app.compte; if (!c) return null;
+  const aujourdhui = jourDe(new Date(now));
+  const depuis = app.dernierePaie && app.dernierePaie >= aujourdhui ? ajouterJours(app.dernierePaie, 1) : aujourdhui;
+  return prochainePaie(depuis, c.jourPaie);
+}
 export const libelleProchaine = () => { const p = prochaine(); return p ? jourCourt(p) : ''; };

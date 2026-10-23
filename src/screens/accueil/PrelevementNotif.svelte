@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { app } from '../../data/store.svelte.ts';
+  import { app, maintenant } from '../../data/store.svelte.ts';
   import { prochaine } from '../../data/paie.ts';
   import { aller } from '../../router.svelte.ts';
   import { fcfa } from '../../core/money.ts';
@@ -53,7 +53,7 @@
     </button>
 
     {#if prelevements.length}
-      <h3 class="mono">{prelevements.length} PRÉLÈVEMENT{prelevements.length > 1 ? 'S' : ''} · {jour === jourDe(new Date()) ? 'AUJOURD’HUI' : jourCourt(jour).toUpperCase()}</h3>
+      <h3 class="mono">{prelevements.length} PRÉLÈVEMENT{prelevements.length > 1 ? 'S' : ''} · {jour === jourDe(new Date(maintenant())) ? 'AUJOURD’HUI' : jourCourt(jour).toUpperCase()}</h3>
       <ul>
         {#each prelevements as m (m.id)}
           <li><a href={LIEN[m.categorie]} onclick={(e) => { e.preventDefault(); aller(LIEN[m.categorie]); }}><span class="tx"><b>{m.titre}</b><small>{m.sous}</small></span><b class="mono">{fcfa(-m.montant)}</b></a></li>
