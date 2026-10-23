@@ -8,7 +8,9 @@
   import NonTrouve from './screens/_socle/NonTrouve.svelte';
 
   /** Fonctions lancées à la connexion par les fonctionnalités (moteur de paie, rappels…) : `screens/*\/demarrage.ts`. */
-  const demarrages = Object.values(import.meta.glob<{ default: () => void }>(['./screens/*/demarrage.ts', './portals/*/demarrage.ts'], { eager: true })).map((m) => m.default);
+  const modulesDemarrage = import.meta.glob<{ default: () => void }>(['./screens/*/demarrage.ts', './portals/*/demarrage.ts'], { eager: true });
+  // Le socle (rattrapage des paies) passe en dernier : les fonctionnalités doivent d'abord avoir enregistré leurs prélèvements.
+  const demarrages = Object.entries(modulesDemarrage).sort(([a], [b]) => Number(a.includes('/_socle/')) - Number(b.includes('/_socle/'))).map(([, m]) => m.default);
 
   const trouve = $derived(resoudre(ROUTES, routeur.chemin));
   const route: Route | undefined = $derived(trouve?.route);
