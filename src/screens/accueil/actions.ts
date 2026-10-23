@@ -1,23 +1,21 @@
 // Actions de l'accueil et des paiements : toutes les écritures sur le solde, les mouvements, les notifications et le score passent ici.
-import { app, maintenant, mouvement, notifier, totalMensualites } from '../../data/store.svelte.ts';
+import { app, marquerLues, maintenant, mouvement, notifier, totalMensualites } from '../../data/store.svelte.ts';
 import { prochaine } from '../../data/paie.ts';
 import { COUVERTURES, etalerPart, repartirFacture, type Repartition } from '../../core/sante.ts';
-import { controlerSolde, erreurRecharge, etalementAutorise, fraisRecharge, MOIS_ETALEMENT, pointsFacture, referencePaiement, reportPermis, scoreApres, SOURCES_RECHARGE, TAUX_ETALEMENT, type SourceId } from '../../core/paiement.ts';
+import { controlerSolde, erreurRecharge, etalementAutorise, fraisRecharge, MOIS_ETALEMENT, pointsFacture, referencePaiement, reportPermis, SOURCES_RECHARGE, TAUX_ETALEMENT, type SourceId } from '../../core/paiement.ts';
 import { fcfa } from '../../core/money.ts';
-import { jourCourt, jourDe, type Jour } from '../../core/dates.ts';
+import { jourDe, type Jour } from '../../core/dates.ts';
 import type { LigneAvecEffet } from '../../data/paie.ts';
 import type { Recu } from '../../core/recu-paiement.ts';
 import { factureParId, lirePaiements, paiements, toutesFactures, type Brouillon, type FacturePay } from './etat.ts';
+import { sante, utilisation } from '../sante/etat.ts';
+import { ajouterPoints } from '../score/actions.ts';
 
 // ------------------------------------------------------------------ score
-/** Ajoute `points` au score (borné 400-900) et met à jour le mois courant de l'historique. */
-export function gagnerPoints(points: number, now = maintenant()) {
+/** Ajoute `points` au score : une seule voie pour toutes les fonctionnalités (courbe, journal des événements, niveau), celle de l'écran Score. */
+export function gagnerPoints(points: number, now = maintenant(), motif = 'Paiement à l’heure') {
   if (!points) return;
-  app.score.valeur = scoreApres(app.score.valeur, points);
-  const mois = jourCourt(jourDe(new Date(now))).split(' ')[1];
-  const dernier = app.score.historique.at(-1);
-  if (dernier && dernier.mois === mois) dernier.valeur = app.score.valeur;
-  else app.score.historique = [...app.score.historique, { mois, valeur: app.score.valeur }].slice(-6);
+  ajouterPoints(motif, points, 'ponctualite', now);
 }
 
 // ------------------------------------------------------------------ recharge
@@ -38,9 +36,11 @@ export const toutMarquerLu = () => app.notifications.forEach((n) => (n.lu = true
 // ------------------------------------------------------------------ factures
 export const tauxPriseEnCharge = () => COUVERTURES[app.compte?.pass ?? 'famille'].taux;
 export const plafondSanteTotal = () => COUVERTURES[app.compte?.pass ?? 'famille'].plafond;
-export const plafondSanteRestant = () => Math.max(0, plafondSanteTotal() - lirePaiements().plafondSanteUtilise);
+/** Plafond santé restant : le plus bas de nos comptes et de celui de l'écran Santé (qui compte aussi les factures émises par les cliniques). */
+export const plafondSanteRestant = () => Math.max(0, Math.min(plafondSanteTotal() - lirePaiements().plafondSanteUtilise, utilisation().restant));
 /** Répartition tiers payant d'une facture (80 % AssureMe dans la limite du plafond restant). Hors santé : tout à la charge du membre. */
 export function repartitionFacture(f: FacturePay): Repartition {
+  if (f.repartition) return f.repartition; // facture de la clinique : répartie à son émission
   return repartirFacture(f.lignes, f.categorie === 'sante' ? tauxPriseEnCharge() : 0, plafondSanteRestant());
 }
 export function mensualiteEtalement(f: FacturePay) { return etalerPart(repartitionFacture(f).patient, MOIS_ETALEMENT, TAUX_ETALEMENT); }
@@ -89,8 +89,12 @@ export function executerPaiement(now = maintenant()): ResultatPaiement {
       app.credits.push({ id: `c-pay-${ref}`, produit: 'sante', libelle: `Soins · ${f.partenaire}`, capital: rep.patient, mensualite, duree: MOIS_ETALEMENT, payees: 0, prochaine: prochainePaie, statut: 'actif' });
     }
     if (f.categorie === 'sante') t.plafondSanteUtilise += rep.assureMe;
-    gagnerPoints(points, now);
-    if (t.factures.some((x) => x.id === f.id)) { const mienne = t.factures.find((x) => x.id === f.id)!; mienne.statut = etale ? 'etalee' : 'payee'; mienne.ref = ref; }
+    gagnerPoints(points, now, `Facture ${f.partenaire} payée à l’heure`);
+    if (f.origine === 'sante') {
+      // La facture vit dans la tranche santé : on la marque réglée là-bas aussi (sinon l'écran Santé la proposerait encore).
+      const fs = sante().factures.find((x) => x.id === f.id);
+      if (fs) { fs.statut = etale ? 'etalee' : 'payee'; fs.paiement = { ts: now, mode: etale ? 'etale' : 'comptant', aTemps: aujourdhui <= f.echeance, ...(etale ? { mensualite, mois: MOIS_ETALEMENT, creditId: `c-pay-${ref}` } : {}) }; }
+    } else if (t.factures.some((x) => x.id === f.id)) { const mienne = t.factures.find((x) => x.id === f.id)!; mienne.statut = etale ? 'etalee' : 'payee'; mienne.ref = ref; }
     else t.factures.unshift({ ...f, statut: etale ? 'etalee' : 'payee', ref });
     const recu: Recu = {
       ...base, beneficiaire: f.beneficiaire, lignes: f.lignes.map((l) => ({ nom: l.nom, montant: l.montant })), total: rep.total, priseEnCharge: rep.assureMe, paye: rep.patient,
@@ -98,6 +102,7 @@ export function executerPaiement(now = maintenant()): ResultatPaiement {
       soldeApres: app.solde, points, scoreApres: app.score.valeur, plafondRestant: f.categorie === 'sante' ? plafondSanteRestant() : undefined, plafondTotal: f.categorie === 'sante' ? plafondSanteTotal() : undefined, factureId: f.id
     };
     t.recus.unshift(recu); t.enCours = null;
+    marquerLues((l) => l === `/pay/facture?id=${f.id}` || l === `/sante/facture/${f.id}`);
     notifier({
       titre: etale ? `${f.partenaire} réglée, étalée sur ${MOIS_ETALEMENT} mois` : `Facture ${f.partenaire} payée`,
       sous: etale ? `${fcfa(mensualite)} par mois sur salaire.` : `${fcfa(rep.patient)} débités${points ? ` · +${points} pts AssureScore` : ''}.`, lien: `/pay/recu?ref=${ref}`, ts: now

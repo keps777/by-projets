@@ -2,7 +2,10 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { app, reinitialiser, totalMensualites } from '../../data/store.svelte.ts';
 import { lignesDe, passerPaie, fournirPrelevements, type LigneAvecEffet } from '../../data/paie.ts';
 import { executerPaiement, noterRecu, plafondSanteRestant, preparerEnvoi, preparerFacture, preparerPaiementLibre, recharger, reporterLigne, peutReporterLigne, repartitionFacture, mensualiteEtalement, marquerLue, toutMarquerLu } from './actions.ts';
-import { facturesAPayer, facturesDeSante, paiements, toutesFactures } from './etat.ts';
+import { FACTURE_PALMIERS, factureParId, facturesAPayer, paiements, toutesFactures } from './etat.ts';
+import { emettreFacture } from '../sante/actions.ts';
+import { facturesARegler, sante } from '../sante/etat.ts';
+import '../sante/demarrage.ts';
 import './demarrage.ts';
 
 const MAINTENANT = Date.parse('2026-10-22T10:00:00');
@@ -45,7 +48,7 @@ describe('notifications', () => {
 
 describe('facture Les Palmiers (démo)', () => {
   it('est proposée en démo, pas en compte vierge', () => {
-    expect(facturesAPayer().map((f) => f.id)).toEqual(['f-palmiers']);
+    expect(facturesAPayer().map((f) => f.id)).toEqual(['f-1190']);
     reinitialiser('vierge'); expect(facturesAPayer()).toEqual([]);
   });
   it('répartit 35 500 : 28 400 AssureMe, 7 100 pour le membre', () => {
@@ -66,9 +69,14 @@ describe('facture Les Palmiers (démo)', () => {
     expect(facturesAPayer()).toEqual([]); expect(paiements().enCours).toBeNull(); expect(paiements().recus).toHaveLength(1);
     noterRecu(r.recu.ref, 5); expect(paiements().recus[0].note).toBe(5);
   });
+  it('la notification « facture à régler » est marquée lue une fois la facture payée', () => {
+    expect(app.notifications.find((n) => n.id === 'n2')).toMatchObject({ lu: false, lien: '/pay/facture?id=f-1190' });
+    preparerFacture(palmiers(), 'comptant'); executerPaiement(MAINTENANT);
+    expect(app.notifications.find((n) => n.id === 'n2')!.lu).toBe(true);
+  });
   it("ne se paie pas deux fois", () => {
     preparerFacture(palmiers(), 'comptant'); executerPaiement(MAINTENANT);
-    paiements().enCours = { type: 'facture', factureId: 'f-palmiers', partenaire: 'x', ini: 'x', categorie: 'sante', lieu: '', montant: 7100, mode: 'comptant' };
+    paiements().enCours = { type: 'facture', factureId: 'f-1190', partenaire: 'x', ini: 'x', categorie: 'sante', lieu: '', montant: 7100, mode: 'comptant' };
     const r = executerPaiement(MAINTENANT);
     expect(r).toMatchObject({ ok: false, raison: 'deja' });
     expect(app.solde).toBe(79_400);
@@ -87,7 +95,8 @@ describe('facture Les Palmiers (démo)', () => {
   });
   it('plafond santé presque atteint : le reste passe à la charge du membre', () => {
     paiements().plafondSanteUtilise = 1_200_000 - 10_000;
-    const r = repartitionFacture(palmiers());
+    paiements().factures.push(FACTURE_PALMIERS()); // facture propre aux paiements (celle de la santé est répartie à son émission)
+    const r = repartitionFacture(factureParId('f-palmiers')!);
     expect(r.assureMe).toBe(10_000); expect(r.patient).toBe(25_500); expect(r.plafondDepasse).toBe(true);
   });
   it('étalement sur 3 mois : crédit créé, solde intact, mensualité prélevée sur salaire', () => {
@@ -164,24 +173,41 @@ describe('report d’un prélèvement', () => {
   });
 });
 
-describe('factures issues de la tranche santé (lecture seule)', () => {
-  it('lecture tolérante : ignore les données inexploitables', () => {
-    expect(facturesDeSante(undefined)).toEqual([]);
-    expect(facturesDeSante({ factures: 'x' })).toEqual([]);
-    expect(facturesDeSante({ factures: [{ id: 1 }, { id: 'a', lignes: [] }, { id: 'b', lignes: [{ nom: 'x', montant: 0 }] }] })).toEqual([]);
-    const [f] = facturesDeSante({ factures: [{ id: 'h1', etablissement: 'Hôpital Laquintinie', echeance: '2026-11-02', statut: 'emise', lignes: [{ libelle: 'Radio', montant: 20_000 }] }, { id: 'h2', statut: 'payee', lignes: [{ nom: 'x', montant: 5 }] }] });
-    expect(f).toMatchObject({ id: 'h1', partenaire: 'Hôpital Laquintinie', ini: 'HL', echeance: '2026-11-02', statut: 'a_payer' });
-    expect(f.lignes[0]).toMatchObject({ nom: 'Radio', montant: 20_000 });
+describe('factures issues de la tranche santé', () => {
+  const emettre = () => {
+    const r = emettreFacture({ beneficiaire: 'Aïcha', medecin: 'Dr Essomba', acte: 'Radiographie', lignes: [{ nom: 'Radio', sous: 'Poumons', montant: 20_000, categorie: 'examen' }] });
+    if (!r.ok) throw new Error(r.erreur);
+    return r.facture;
+  };
+  it("la facture émise par la clinique apparaît dans les paiements, avec la part et l'échéance de la clinique", () => {
+    const f = emettre();
+    expect(facturesAPayer().map((x) => x.id)).toEqual(['f-1190', f.id]);
+    const h = factureParId(f.id)!;
+    expect(h).toMatchObject({ partenaire: 'Clinique Les Palmiers', origine: 'sante', echeance: f.echeance, beneficiaire: f.patient });
+    expect(repartitionFacture(h).patient).toBe(f.partPatient);
   });
-  it('une facture de la santé se paie, puis reste réglée côté paiements', () => {
-    app.tranches.sante = { factures: [{ id: 'h1', etablissement: 'Hôpital Laquintinie', echeance: '2026-11-02', statut: 'emise', lignes: [{ nom: 'Radio', montant: 20_000 }] }] };
-    expect(facturesAPayer().map((f) => f.id)).toEqual(['f-palmiers', 'h1']);
-    const h = facturesAPayer()[1];
-    expect(repartitionFacture(h).patient).toBe(4000);
-    preparerFacture(h, 'comptant');
+  it('ne montre que les factures du membre, jamais les brouillons ni celles des autres', () => {
+    const f = emettre();
+    sante().factures.push({ ...f, id: 'autre', numeroMembre: 'AM0000' }, { ...f, id: 'brouillon', statut: 'brouillon' });
+    expect(facturesAPayer().map((x) => x.id)).toEqual(['f-1190', f.id]);
+    reinitialiser('vierge'); expect(facturesAPayer()).toEqual([]);
+  });
+  it("payer depuis l'accueil règle aussi la facture côté Santé (pas de double paiement)", () => {
+    const f = emettre(); const avant = app.solde;
+    preparerFacture(factureParId(f.id)!, 'comptant');
     const r = executerPaiement(MAINTENANT);
-    expect(r.ok).toBe(true); expect(app.solde).toBe(82_500);
-    expect(facturesAPayer().map((f) => f.id)).toEqual(['f-palmiers']);
-    expect(app.tranches.sante).toEqual({ factures: [{ id: 'h1', etablissement: 'Hôpital Laquintinie', echeance: '2026-11-02', statut: 'emise', lignes: [{ nom: 'Radio', montant: 20_000 }] }] });
+    expect(r.ok).toBe(true); expect(app.solde).toBe(avant - f.partPatient);
+    expect(sante().factures.find((x) => x.id === f.id)).toMatchObject({ statut: 'payee', paiement: { mode: 'comptant' } });
+    expect(facturesARegler().map((x) => x.id)).toEqual(['f-1190']);
+    expect(factureParId(f.id)).toMatchObject({ statut: 'payee' });
+  });
+  it("étaler depuis l'accueil : la facture santé passe à « étalée » et la mensualité n'est prélevée qu'une fois", () => {
+    preparerFacture(palmiers(), 'etale');
+    const r = executerPaiement(MAINTENANT);
+    expect(r.ok).toBe(true);
+    expect(sante().factures.find((x) => x.id === 'f-1190')).toMatchObject({ statut: 'etalee' });
+    const lignes = lignesDe('2026-10-28').filter((l) => l.type === 'credit' && l.libelle.startsWith('Soins'));
+    expect(lignes).toHaveLength(1);
+    expect(lignes[0].montant).toBe(2438);
   });
 });

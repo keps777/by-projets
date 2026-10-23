@@ -1,6 +1,6 @@
 // Moteur de paie : le jour de paie, le salaire est versé puis les prélèvements des fonctionnalités sont passés.
 // Une fonctionnalité s'enregistre avec `fournirPrelevements(id, fn)` dans son `demarrage.ts`. Les paies manquées (appli fermée) sont rattrapées.
-import { ajouterMois, jourDe, paiesEntre, prochainePaie, jourCourt, type Jour } from '../core/dates.ts';
+import { ajouterJours, ajouterMois, jourDe, paiesEntre, prochainePaie, jourCourt, type Jour } from '../core/dates.ts';
 import type { LignePrelevement } from '../core/prelevement.ts';
 import { app, maintenant, mouvement, notifier } from './store.svelte.ts';
 
@@ -21,14 +21,18 @@ export const lignesDe = (paie: Jour): LigneAvecEffet[] => [...fournisseurs.value
 /** Passe une paie : salaire, puis chaque prélèvement tant que le solde le permet. */
 export function passerPaie(paie: Jour) {
   const c = app.compte; if (!c) return;
-  if (c.salaireNet > 0) mouvement({ titre: 'Salaire reçu', sous: c.employeur, montant: c.salaireNet, ini: 'SA', categorie: 'salaire', ts: Date.parse(paie + 'T09:00:00') });
+  const lignes = lignesDe(paie);
+  const salaire = c.salaireNet > 0;
+  // Salaire inconnu (compte créé sans employeur) et rien à prélever : la paie passe sans mouvement ni notification trompeuse.
+  if (!salaire && lignes.length === 0) { app.dernierePaie = paie; return; }
+  if (salaire) mouvement({ titre: 'Salaire reçu', sous: c.employeur, montant: c.salaireNet, ini: 'SA', categorie: 'salaire', ts: Date.parse(paie + 'T09:00:00') });
   let total = 0; let reportes = 0;
-  for (const l of lignesDe(paie)) {
+  for (const l of lignes) {
     if (l.reporte || app.solde < l.montant) { l.reporter?.(); reportes++; continue; }
     mouvement({ titre: l.libelle, sous: l.detail, montant: -l.montant, ini: l.type === 'coffre' ? 'CO' : l.type === 'pass' ? 'PA' : 'CR', categorie: l.type, ts: Date.parse(paie + 'T09:01:00') });
     l.appliquer(); total += l.montant;
   }
-  notifier({ titre: 'Salaire reçu, prélèvements faits', sous: `${total.toLocaleString('fr-FR')} prélevés${reportes ? ` · ${reportes} reporté${reportes > 1 ? 's' : ''}` : ''}`, ts: Date.parse(paie + 'T09:02:00'), lien: '/prelevement' });
+  notifier({ titre: salaire ? 'Salaire reçu, prélèvements faits' : 'Prélèvements du jour de paie', sous: `${total.toLocaleString('fr-FR')} prélevés${reportes ? ` · ${reportes} reporté${reportes > 1 ? 's' : ''}` : ''}`, ts: Date.parse(paie + 'T09:02:00'), lien: '/prelevement' });
   app.dernierePaie = paie;
 }
 
@@ -41,5 +45,11 @@ export function rattraperPaies(now = maintenant()) {
   dues.forEach(passerPaie);
   return dues.length;
 }
-export const prochaine = (now = maintenant()): Jour | null => (app.compte ? prochainePaie(jourDe(new Date(now)), app.compte.jourPaie) : null);
+/** Prochaine paie à venir. Le jour de paie une fois traité (`dernierePaie`), la suivante est celle du mois d'après. */
+export function prochaine(now = maintenant()): Jour | null {
+  const c = app.compte; if (!c) return null;
+  const aujourdhui = jourDe(new Date(now));
+  const depuis = app.dernierePaie && app.dernierePaie >= aujourdhui ? ajouterJours(app.dernierePaie, 1) : aujourdhui;
+  return prochainePaie(depuis, c.jourPaie);
+}
 export const libelleProchaine = () => { const p = prochaine(); return p ? jourCourt(p) : ''; };

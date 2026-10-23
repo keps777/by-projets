@@ -3,7 +3,8 @@ import type { LigneAvecEffet } from '../../data/paie.ts';
 import { app, notifier } from '../../data/store.svelte.ts';
 import { ajouterMois, jourCourt, type Jour } from '../../core/dates.ts';
 import { fcfa } from '../../core/money.ts';
-import { borner, POINTS } from '../../core/score.ts';
+import { POINTS } from '../../core/score.ts';
+import { ajouterPoints } from '../score/actions.ts';
 import { moisCle, prochainPremier } from '../../core/avance-loyer.ts';
 import type { Bail } from './etat.ts';
 import { logementLu } from './etat.ts';
@@ -55,7 +56,7 @@ function payerLoyer(b: Bail, paie: Jour, jp: number, loyerDu: boolean, avanceId:
     b.arrieres = 0;
     if (!b.loyers.some((x) => x.mois === moisCle(premier))) b.loyers.push({ mois: moisCle(premier), montant: b.loyer, statut: 'paye' });
     b.prochaine = ajouterMois(paie, 1, jp);
-    app.score.valeur = borner(app.score.valeur + POINTS.loyerPaye);
+    ajouterPoints('Loyer payé à l’heure', POINTS.loyerPaye, 'ponctualite');
   }
   if (avanceId) avancer(avanceId, paie, jp, 'Avance de loyer remboursée');
 }

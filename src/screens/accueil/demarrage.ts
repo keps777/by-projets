@@ -17,7 +17,7 @@ export function lignesEtalement(paie: Jour): LigneAvecEffet[] {
       appliquer: () => {
         c.payees += 1; c.prochaine = ajouterMois(c.prochaine, 1, jourPaie);
         if (c.payees >= c.duree) c.statut = 'termine';
-        gagnerPoints(POINTS.mensualiteHeure);
+        gagnerPoints(POINTS.mensualiteHeure, undefined, 'Mensualité payée à l’heure');
       },
       reporter: () => { c.prochaine = ajouterMois(c.prochaine, 1, jourPaie); }
     }];

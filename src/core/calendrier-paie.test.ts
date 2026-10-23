@@ -31,6 +31,8 @@ describe('répartition du salaire', () => {
     const r = repartition(520_000, [{ ...L[1], reporte: true }, L[0]]);
     expect(r.preleve).toBe(12_500);
     expect(repartition(100_000, [{ id: 'x', type: 'credit', libelle: 'x', detail: '', montant: 34_000 }]).depassePlafond).toBe(true);
+    // le plafond ne vise que les crédits : un Pass et un coffre gros ne le déclenchent pas
+    expect(repartition(100_000, [{ id: 'p', type: 'pass', libelle: 'p', detail: '', montant: 20_000 }, { id: 'c', type: 'coffre', libelle: 'c', detail: '', montant: 20_000 }, { id: 'x', type: 'credit', libelle: 'x', detail: '', montant: 30_000 }]).depassePlafond).toBe(false);
   });
   it('salaire nul ou aucune ligne : pas de division par zéro', () => {
     expect(repartition(0, L).part).toBe(0);

@@ -3,7 +3,7 @@
   import Bouton from '../../ui/Bouton.svelte';
   import Icone from '../../ui/Icone.svelte';
   import { aller } from '../../router.svelte.ts';
-  import { app } from '../../data/store.svelte.ts';
+  import { app, maintenant } from '../../data/store.svelte.ts';
   import { premierPrelevement } from '../../core/auto.ts';
   import { jourCourt, jourDe, jourLong } from '../../core/dates.ts';
   import { fcfa } from '../../core/money.ts';
@@ -15,7 +15,7 @@
   const veh = $derived(vehiculeDe(d?.vehiculeId));
   $effect(() => { if (!d || d.etape === 'annulee') aller('/auto/catalogue', { remplacer: true }); });
   const refuse = $derived(d?.etape === 'refusee');
-  const premier = $derived(d && app.compte ? premierPrelevement(jourDe(new Date()), app.compte.jourPaie) : '');
+  const premier = $derived(d && app.compte ? premierPrelevement(jourDe(new Date(maintenant())), app.compte.jourPaie) : '');
   const controles = $derived(d?.decision?.controles ?? []);
   let ouverts = $state<Record<string, boolean>>({});
   const estOuvert = (id: string, ok: boolean) => ouverts[id] ?? !ok;

@@ -3,6 +3,7 @@ import { niveauDuScore, type Niveau } from '../../core/credit.ts';
 import { ecrireCsv } from '../../core/csv.ts';
 import { calendrierPaie, coutMensuelEmployeur, normaliserId, retenueSalarie, type EcheancePaie, type Retenue } from '../../core/entreprise.ts';
 import { app, maintenant } from '../../data/store.svelte.ts';
+import { lignesDe, prochaine } from '../../data/paie.ts';
 import { jourDe, type Jour } from '../../core/dates.ts';
 import { lire, type Entreprise, type Salarie } from './etat.ts';
 
@@ -19,7 +20,10 @@ function surcharge(s: Salarie): { salarie: Salarie; membre: boolean } {
   const c = app.compte;
   if (!c || c.telephone !== s.telephone) return { salarie: s, membre: false };
   const credit = app.credits.filter((x) => x.statut === 'actif').reduce((t, x) => t + x.mensualite, 0);
-  return { salarie: { ...s, nom: `${c.prenom} ${c.nom}`, salaire: c.salaireNet, pass: c.pass, score: app.score.valeur, credit, statut: s.statut === 'invite' ? 'nouveau' : s.statut }, membre: true };
+  // Coffres : les versements automatiques réellement prévus à la prochaine paie (le portail et l'application ne comptent pas deux fois autrement).
+  const paie = prochaine();
+  const coffre = paie ? lignesDe(paie).filter((l) => l.type === 'coffre' && !l.reporte).reduce((t, l) => t + l.montant, 0) : s.coffre;
+  return { salarie: { ...s, nom: `${c.prenom} ${c.nom}`, salaire: c.salaireNet, pass: c.pass, score: app.score.valeur, credit, coffre, statut: s.statut === 'invite' ? 'nouveau' : s.statut }, membre: true };
 }
 /** Le compte membre est salarié de l'entreprise (même employeur) mais n'a pas encore de ligne : on l'affiche quand même. */
 function ligneDuMembre(e: Entreprise, deja: Salarie[]): Salarie | null {

@@ -85,7 +85,11 @@ describe('création', () => {
 });
 
 describe('paie et intérêts', () => {
+  it('démo : seul le coffre Rentrée est prélevé (12 500), pour un prélèvement du 28 de 69 000 comme dans les maquettes', () => {
+    expect(lignesDe('2099-01-28').filter((x) => x.type === 'coffre').map((x) => x.montant)).toEqual([12_500]);
+  });
   it('le jour de paie : prélève 25 000 + 40 000 + 2 500 (part) et crédite les coffres', () => {
+    const t = etatCoffres(); t.coffres[0].mensuel = 25_000; t.coffres[1].auto = true; t.coffres[2].auto = true;
     const l = lignesDe('2099-01-28').filter((x) => x.type === 'coffre');
     expect(l.map((x) => x.montant)).toEqual([25_000, 40_000, 2_500]);
     app.solde = 0;

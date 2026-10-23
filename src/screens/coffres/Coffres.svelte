@@ -75,7 +75,7 @@
 </Ecran>
 
 <style>
-  .halo { position: absolute; top: 90px; left: 50%; width: 440px; height: 440px; margin-left: -220px; opacity: 0.45; pointer-events: none; transition: opacity 0.4s; z-index: -1; }
+  .halo { position: absolute; top: 90px; left: 50%; width: min(440px, 100vw); height: 440px; transform: translateX(-50%); opacity: 0.45; pointer-events: none; transition: opacity 0.4s; z-index: -1; }
   .total { display: flex; justify-content: space-between; align-items: baseline; padding: 0 2px; margin-bottom: 10px; }
   .total small { display: block; font-size: 10px; letter-spacing: 0.1em; color: var(--muted); }
   .total strong { font-size: 30px; font-weight: 500; letter-spacing: -0.03em; } .total em { font-style: normal; font-size: 13px; color: var(--muted); } .bon { font-size: 12px; color: var(--bon); }

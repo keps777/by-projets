@@ -3,7 +3,8 @@ import { app, reinitialiser, totalMensualites } from '../../data/store.svelte.ts
 import { lignesDe, passerPaie } from '../../data/paie.ts';
 import { hacher } from '../../core/auth.ts';
 import './demarrage.ts';
-import { auto, dossierDe, monDossier } from './etat.ts';
+import { auto, coffreVoiture, dossierDe, monDossier } from './etat.ts';
+import { etatCoffres } from '../coffres/etat.ts';
 import {
   annuler, avancer, basculerPiece, choisirCreneau, choisirVehicule, confirmerLivraison, creneauxProposes, demander, publierVehicule, refuserDossier, releveCsv, reglerBrouillon, signer, supprimerVehicule, statsMois
 } from './actions.ts';
@@ -13,6 +14,7 @@ async function preparer() {
   vi.setSystemTime(new Date('2026-10-22T10:00:00'));
   app.auth.sel = 'sel-de-test'; app.auth.hash = await hacher('482916', 'sel-de-test');
   auto();
+  etatCoffres().coffres.find((c) => c.genre === 'Voiture')!.epargne = 1_200_000; // apport de ces scénarios (le coffre de la démo en compte 500 000)
 }
 const approuver = () => {
   expect(choisirVehicule('v-yaris19')).toBeNull();
@@ -86,7 +88,8 @@ describe('signature', () => {
     expect(app.auth.verrou.echecs).toBe(0);
     const c = app.credits.find((x) => x.produit === 'auto')!;
     expect(c).toMatchObject({ capital: 3_300_000, mensualite: 114_937, duree: 48, payees: 0, prochaine: '2026-11-28', statut: 'actif', libelle: 'Auto · Toyota Yaris 2019' });
-    expect(auto().coffreVoiture).toBe(0);
+    expect(coffreVoiture()).toBe(0);
+    expect(etatCoffres().coffres.find((c) => c.genre === 'Voiture')!.operations[0]).toMatchObject({ type: 'retrait', montant: -1_200_000 });
     expect(monDossier()!.signeLe).not.toBeNull();
     expect(totalMensualites()).toBe(44_000 + 114_937);
     expect(await signer(TRACE, '482916')).toContain('déjà signé');
@@ -106,7 +109,7 @@ describe('signature', () => {
     app.credits.push({ id: 'c-x', produit: 'logement', libelle: 'x', capital: 1, mensualite: 30_000, duree: 12, payees: 0, prochaine: '2026-11-28', statut: 'actif' });
     expect(await signer(TRACE, '482916')).toContain('situation a changé');
     expect(app.credits.some((c) => c.produit === 'auto')).toBe(false);
-    expect(auto().coffreVoiture).toBe(1_200_000);
+    expect(coffreVoiture()).toBe(1_200_000);
   });
 });
 
@@ -160,7 +163,7 @@ describe('livraison et paie', () => {
     expect(annuler(d.id)).toBeNull();
     expect(d.etape).toBe('annulee');
     expect(app.credits.some((c) => c.produit === 'auto')).toBe(false);
-    expect(auto().coffreVoiture).toBe(1_200_000);
+    expect(coffreVoiture()).toBe(1_200_000);
     expect(monDossier()).toBeUndefined();
     expect(annuler(d.id)).toContain('plus être annulé');
   });
@@ -168,7 +171,7 @@ describe('livraison et paie', () => {
     const d = await jusquaLaSignature();
     expect(refuserDossier(d.id)).toBeNull();
     expect(d.etape).toBe('refusee');
-    expect(auto().coffreVoiture).toBe(1_200_000);
+    expect(coffreVoiture()).toBe(1_200_000);
     expect(app.credits.some((c) => c.produit === 'auto')).toBe(false);
     expect(app.notifications[0].titre).toContain('refusé');
   });
@@ -212,7 +215,7 @@ describe('portail concessionnaire', () => {
   it('compte vierge : tranche d’exemples pour le portail, coffre voiture vide', () => {
     reinitialiser('vierge'); delete app.tranches['auto'];
     const t = auto();
-    expect(t.coffreVoiture).toBe(0);
+    expect(coffreVoiture()).toBe(0);
     expect(t.signatureEnregistree).toBeNull();
     expect(t.dossiers.length).toBe(7);
   });

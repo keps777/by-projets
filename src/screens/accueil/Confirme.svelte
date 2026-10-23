@@ -131,6 +131,7 @@
   .flux .solde { color: var(--texte); } .flux .solde b { font-size: 24px; } .flux small { font-size: 12px; color: var(--muted); }
   .score { width: 100%; display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 16px; border-radius: 16px; background: var(--primaire-fond); border: 1px solid var(--primaire); } .score span { flex: 1; text-align: left; font-weight: 600; } .score b { color: var(--bon); }
   .ref { width: 100%; min-height: 48px; display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 0 14px; border-radius: 12px; background: var(--carte); border: 1px dashed var(--ligne-forte); font-size: 10.5px; letter-spacing: 0.05em; color: var(--muted); text-align: left; } .ref b { color: var(--primaire-clair); }
+  .ref span { min-width: 0; white-space: normal; overflow-wrap: anywhere; text-align: left; padding: 6px 0; } .ref b { flex: none; }
   .note div { display: flex; justify-content: center; gap: 2px; } .note button { width: 44px; height: 44px; display: grid; place-items: center; color: #3a4566; } .note button.on { color: var(--alerte); }
   .boutons { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
   .conf header { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; } .conf h1 { text-align: center; font-size: 17px; font-weight: 650; }

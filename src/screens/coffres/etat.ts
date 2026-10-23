@@ -45,9 +45,10 @@ function demo(): EtatCoffres {
   });
   return {
     coffres: [
-      mk('cf-rentree', 'Rentrée', 'Rentrée 2027', 600_000, 160_000, 25_000, 240),
-      mk('cf-voiture', 'Voiture', 'Apport voiture', 1_200_000, 500_000, 40_000, 330),
-      mk('cf-urgences', 'Urgences', 'Urgences famille', 200_000, 120_000, 10_000, 180, { partage: true, membres: 4 })
+      // Seul le coffre Rentrée est prélevé le 28 (12 500) : avec le Pass (12 500) et l'école (44 000), le prélèvement du 28 oct. fait 69 000 comme dans les maquettes.
+      mk('cf-rentree', 'Rentrée', 'Rentrée 2027', 600_000, 160_000, 12_500, 240),
+      mk('cf-voiture', 'Voiture', 'Apport voiture', 1_200_000, 500_000, 40_000, 330, { auto: false }),
+      mk('cf-urgences', 'Urgences', 'Urgences famille', 200_000, 120_000, 10_000, 180, { partage: true, membres: 4, auto: false })
     ],
     pointsMois: null, urgences: []
   };

@@ -2,15 +2,16 @@
 import { app } from '../../data/store.svelte.ts';
 import { fournirPrelevements } from '../../data/paie.ts';
 import { ajouterMois, jourDe, prochainePaie } from '../../core/dates.ts';
-import { planDe, tarifPass, trouverEmployeur } from '../../core/inscription.ts';
-import { etatAuth } from './etat.ts';
+import { planDe } from '../../core/inscription.ts';
+import { etatAuth, lireAuth } from './etat.ts';
+import { tarifPassMembre } from './tarif.ts';
 
 fournirPrelevements('pass', (paie) => {
   const c = app.compte; if (!c) return [];
-  const e = etatAuth();
+  const e = lireAuth(); // lecture seule : cette fonction sert aussi aux aperçus (accueil, calendrier de paie)
   const echeance = e.passEcheance ?? prochainePaie(jourDe(new Date(c.cree)), c.jourPaie);
   if (paie < echeance) return [];
-  const tarif = tarifPass(c.pass, e.facturation, trouverEmployeur(e.employeurCode));
+  const tarif = tarifPassMembre(c, c.pass, e.facturation, e.employeurCode);
   if (tarif.membre <= 0) return [];
   const pas = e.facturation === 'annuel' ? 12 : 1;
   return [{

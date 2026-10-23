@@ -31,3 +31,17 @@ Sources : `.dc.html` (templates `x-dc` avec `{{trous}}`, `sc-for`/`sc-if`, class
 ## Écarts connus des maquettes
 * La mention « 31 % / 231 700 sous les 33 % » est arithmétiquement fausse (44,6 %). Règle retenue : **somme de toutes les mensualités de crédit ≤ 33 % du net**.
 * Mensualités calculées avec les vraies formules d'annuité (`core/credit.ts`), pas les chiffres arrondis des maquettes.
+
+## Intégration (règles apprises à la fusion des fonctionnalités)
+* **Lecture sans écriture** : un aperçu (accueil, calendrier de paie, portails) lit l'état depuis un `$derived`, où Svelte interdit d'écrire. `tranche()` rend alors la valeur par défaut sans la créer ; préférer tout de même une fonction de lecture (`lirePaiements`, `lireAuth`, `coffres()`…). Un fournisseur de prélèvements ne crée jamais de tranche.
+* **Prélèvements** : `fournirPrelevements()` est appelé **à l'import** du `demarrage.ts` (jamais dans la fonction exportée) pour que le rattrapage des paies du socle les voie. Un crédit n'est prélevé que par **un** fournisseur (les crédits `c-pay-…` étalés depuis l'accueil le sont par l'accueil, pas par la santé).
+* **Une seule voie pour le score** : `ajouterPoints(motif, points, signal, now?)` de `screens/score/actions.ts` (courbe, journal des événements, changement de niveau).
+* **Une seule facture santé** : la tranche `sante` fait foi (portail clinique, écran Santé, paiements). L'accueil la lit via `facturesDeSante()` et, une fois payée ou étalée, la marque réglée dans la tranche santé.
+* **Coffres** : les autres fonctionnalités lisent `epargneDuGenre('Voiture' | 'Rentrée'…)` et prennent un apport avec `prendreDansCoffres()` / `rendreAuxCoffres()` (`screens/coffres/actions.ts`), sans copie du solde.
+* **Pass** : `tarifPassMembre()` (`screens/auth/tarif.ts`) combine le prix du Pass et `partEmployeurDuPass` du portail entreprise (le code employeur de l'inscription sert de repli).
+* **Horloge** : toujours `maintenant()` (`data/horloge.ts`), jamais `Date.now()` ni `new Date()` pour une date métier. `?maintenant=2026-11-28T10:00` est gardé pour l'onglet (`sessionStorage`) ; `?maintenant=` revient à l'heure réelle. Le seed démo en dépend (prochaine paie le 28, facture des Palmiers émise l'avant-veille).
+* **Plafond de 33 %** : il vise les crédits (et le loyer), pas le Pass ni les coffres (voir `repartition()` de `core/calendrier-paie.ts`).
+
+## Tests
+* `npm run check` : svelte-check + vitest (dont `src/liens.test.ts` : tout lien interne écrit dans le code doit pointer vers une route déclarée, chaque route a un titre et un import paresseux).
+* `npm run e2e` : Playwright (Chromium préinstallé dans `/opt/pw-browsers` si présent), 390 × 844, sur le build servi par `vite preview` (port 4180). Les parcours sont dans `e2e/*.spec.ts`, les aides dans `e2e/aide.ts` (compte démo, horloge, pavé, `patcherEtat` pour modifier l'état enregistré avant un rechargement : l'état est réécrit à `pagehide`, il ne suffit pas de modifier le `localStorage` de la page).
