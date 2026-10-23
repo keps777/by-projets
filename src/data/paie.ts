@@ -21,7 +21,7 @@ export const lignesDe = (paie: Jour): LigneAvecEffet[] => [...fournisseurs.value
 /** Passe une paie : salaire, puis chaque prélèvement tant que le solde le permet. */
 export function passerPaie(paie: Jour) {
   const c = app.compte; if (!c) return;
-  mouvement({ titre: 'Salaire reçu', sous: c.employeur, montant: c.salaireNet, ini: 'SA', categorie: 'salaire', ts: Date.parse(paie + 'T09:00:00') });
+  if (c.salaireNet > 0) mouvement({ titre: 'Salaire reçu', sous: c.employeur, montant: c.salaireNet, ini: 'SA', categorie: 'salaire', ts: Date.parse(paie + 'T09:00:00') });
   let total = 0; let reportes = 0;
   for (const l of lignesDe(paie)) {
     if (l.reporte || app.solde < l.montant) { l.reporter?.(); reportes++; continue; }
