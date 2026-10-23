@@ -4,6 +4,7 @@ import { avancerSuivi, champsDe, emettreAttestation, enregistrerParametres, envo
 import { demoEntreprise, ent, entrepriseDe, partEmployeurDuPass } from './etat.ts';
 import { analyserImport } from '../../core/entreprise.ts';
 import { csvRetenues, lignes, statistiques } from './vues.ts';
+import '../../screens/coffres/demarrage.ts'; // le portail lit le versement des coffres via le moteur de paie
 
 describe('portail entreprise : compte démo', () => {
   beforeEach(() => reinitialiser('demo'));

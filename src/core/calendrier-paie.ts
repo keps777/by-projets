@@ -25,7 +25,10 @@ export function repartition(salaire: number, lignes: LignePrelevement[]): Repart
     .filter((s) => s.montant > 0);
   segments.push({ type: 'verse', libelle: 'Versé sur votre solde', montant: verse, pct: pct(verse) });
   const part = salaire > 0 ? preleve / salaire : 0;
-  return { salaire, preleve, verse, part, depassePlafond: part > PLAFOND_ENDETTEMENT + 1e-9, segments };
+  // Le plafond de 33 % est celui des crédits (règle commune de decider() : mensualités de crédit et loyer), pas celui du Pass ni des coffres.
+  const credits = actives.filter((l) => l.type === 'credit').reduce((s, l) => s + l.montant, 0);
+  const depassePlafond = salaire > 0 && credits / salaire > PLAFOND_ENDETTEMENT + 1e-9;
+  return { salaire, preleve, verse, part, depassePlafond, segments };
 }
 /** Part du salaire en pourcentage lisible : « 13 », « 0,5 » (une décimale sous 10 %). */
 export const pourcent = (part: number): string => { const p = part * 100; return p.toLocaleString('fr-FR', { maximumFractionDigits: p < 10 ? 1 : 0 }); };
