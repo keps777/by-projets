@@ -89,7 +89,7 @@
   .pe:last-child { border: 0; }
   .haut { display: flex; align-items: center; gap: 12px; min-width: 0; }
   .nom { overflow-wrap: anywhere; }
-  .actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-left: 54px; }
+  .actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 10px; padding-left: 54px; }
   .tgl { flex: none; }
   .nouveau { white-space: nowrap; flex: none; }
   .sms { padding-left: 54px; }

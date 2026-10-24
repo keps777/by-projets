@@ -2,7 +2,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
 const CAPTURES = process.env.AM_CAPTURES ?? '';
-const DEPART = 'd-2026-11-03-BX-Classique-mvan-aller-0700';
+const DEPART = 'd-2026-11-10-BX-Classique-mvan-aller-0700'; // 14 places libres : les jours proches sont presque pleins (l'historique du patron y a vendu des billets)
 const shot = async (page: Page, nom: string) => { if (CAPTURES) await page.screenshot({ path: `${CAPTURES}/${nom}.png` }); };
 
 async function entrerCommeAicha(page: Page) {

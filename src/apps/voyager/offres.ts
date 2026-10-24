@@ -6,6 +6,7 @@ import { badge } from '../../core/tranches.ts';
 import { aujourdhui, app, maintenant } from '../../data/store.svelte.ts';
 import { compagnieDe, departsDuJour, gare, ligneDe, personne, placesLibres, prixDuDepart, remplissage } from '../../domain/actions.ts';
 import type { Depart, OffreCovoit } from '../../domain/types.ts';
+import { moduleActif } from '../patron/modules.ts';
 
 /** Prix proposé au voyageur : le tarif du départ, ajusté par le prix dynamique du patron (−500 F si peu rempli la veille, +500 F si presque plein). */
 export const prixAffiche = (d: Depart): number => prixDuDepart(d);
@@ -23,7 +24,7 @@ export function offreCovoit(o: OffreCovoit): Offre {
   return { id: o.id, genre: 'cv', heure: o.heure, retardMin: 0, ab: p ? `${p.prenom[0]}${p.nom[0]}` : 'CV', co: p ? `${p.prenom} ${p.nom[0]}.` : 'Conducteur', col: '#FF9BEA', cl: o.vehicule, gare: o.depart,
     prix: o.prix, prixBase: o.prix, dureeMin: dureeCovoit(o.de, o.vers), places, cap: Math.max(4, o.places), vip: false, covoitId: o.id, confort: confortDe('covoit'), complet: places === 0 };
 }
-const covoitsDuJour = (jour: Jour, de: string, vers: string) => app.monde.covoits.filter((c) => !c.enVille && c.statut === 'ouverte' && c.jour === jour && c.de === de && c.vers === vers
+const covoitsDuJour = (jour: Jour, de: string, vers: string) => !moduleActif('covoiturage') ? [] : app.monde.covoits.filter((c) => !c.enVille && c.statut === 'ouverte' && c.jour === jour && c.de === de && c.vers === vers
   && (jour !== aujourdhui() || new Date(`${c.jour}T${c.heure}:00`).getTime() > maintenant()));
 /** Tout ce qu'on peut réserver ce jour-là : départs en vente (hors annulés, déjà partis) + covoiturages ouverts, sans filtre. */
 export function offresDuJour(jour: Jour, de: string, vers: string): Offre[] {

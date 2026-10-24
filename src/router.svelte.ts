@@ -13,6 +13,8 @@ export interface Route {
   /** Onglet du dock voyageur à surligner (barre du bas). */
   onglet?: 'voyager' | 'billets' | 'direct' | 'moi';
   titre: string;
+  /** Module du patron (Modules) dont dépend l'écran : s'il est désactivé, l'écran est remplacé par « Service désactivé ». */
+  module?: string;
 }
 
 export const routeur = $state({ chemin: location.pathname, recherche: location.search, historique: 0 });

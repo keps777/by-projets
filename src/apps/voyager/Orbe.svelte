@@ -8,6 +8,7 @@
   import Icone from '../../ui/Icone.svelte';
   import { choisirJour, choisirTrajet, initRecherche } from './etat.ts';
   import { offresDuJour } from './offres.ts';
+  import { moduleActif } from '../patron/modules.ts';
 
   /** L'orbe : toutes les actions d'AfriMove en grille, avec une recherche qui comprend aussi « douala demain », un code de colis ou un code de billet. */
   interface Action { label: string; href: string; icone: string; mots?: string; aq?: boolean }
@@ -42,7 +43,10 @@
   const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
   const code = (s: string) => s.toUpperCase().replace(/[^A-Z0-9]/g, '');
   const terme = $derived(norm(q.trim()));
-  const groupes = $derived(GROUPES.map((g) => ({ ...g, actions: g.actions.filter((a) => !terme || norm(`${a.label} ${a.mots ?? ''}`).includes(terme)) })).filter((g) => g.actions.length));
+  /** Services que le patron peut désactiver (Modules) : leurs entrées disparaissent de l'orbe. */
+  const MODULE_DE: Record<string, string> = { '/covoit': 'covoiturage', '/groupe': 'groupe', '/proche': 'groupe', '/colis/envoi': 'colis', '/colis/suivi': 'colis', '/relais': 'relais', '/ussd': 'ussd' };
+  const permis = (a: Action) => !MODULE_DE[a.href] || moduleActif(MODULE_DE[a.href]);
+  const groupes = $derived(GROUPES.map((g) => ({ ...g, actions: g.actions.filter((a) => permis(a) && (!terme || norm(`${a.label} ${a.mots ?? ''}`).includes(terme))) })).filter((g) => g.actions.length));
   const demo = $derived(DEMO.filter((a) => !terme || norm(a.label).includes(terme)));
   const ref = aujourdhui();
   const comp = $derived(q.trim() ? analyser(q, ref, VILLES) : null);
@@ -115,7 +119,7 @@
 </Mobile>
 
 <style>
-  .halo { position: absolute; left: 50%; top: 40px; width: 420px; height: 420px; margin-left: -210px; border-radius: 50%; background: radial-gradient(circle, rgba(139, 124, 255, 0.35), transparent 60%); pointer-events: none; }
+  .halo { position: absolute; left: 50%; top: 40px; width: min(420px, 100%); height: 420px; margin-left: calc(min(420px, 100%) / -2); border-radius: 50%; background: radial-gradient(circle, rgba(139, 124, 255, 0.35), transparent 60%); pointer-events: none; }
   .champ { background: transparent; border: 0; outline: 0; color: inherit; font: inherit; min-height: 44px; min-width: 0; }
   .champ::placeholder { color: #8e99bb; }
   .pal { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }

@@ -75,10 +75,10 @@
       {#each COUPURES as v (v)}
         <div class="bill">
           <span class="col grow"><span class="t16 b7">{fcfa(v)} F</span><span class="t12 mut mono">{fcfa(v * (q[String(v)] ?? 0))} F</span></span>
-          <span class="g-stp"><button type="button" aria-label="Moins un billet de {fcfa(v)} F" disabled={ctx.lecture || !q[String(v)]} onclick={() => pas(v, -1)}>−</button><b aria-live="polite">{q[String(v)] ?? 0}</b><button type="button" aria-label="Plus un billet de {fcfa(v)} F" disabled={ctx.lecture} onclick={() => pas(v, 1)}>+</button></span>
+          <span class="g-stp"><button type="button" aria-label="Moins {v <= 500 ? 'une pièce' : 'un billet'} de {fcfa(v)} F" disabled={ctx.lecture || !q[String(v)]} onclick={() => pas(v, -1)}>−</button><b aria-live="polite">{q[String(v)] ?? 0}</b><button type="button" aria-label="Plus {v <= 500 ? 'une pièce' : 'un billet'} de {fcfa(v)} F" disabled={ctx.lecture} onclick={() => pas(v, 1)}>+</button></span>
         </div>
       {/each}
-      <div class="bill"><label class="col grow" for="pieces"><span class="t16 b7">Pièces</span><span class="t12 mut">petite monnaie, total en francs</span></label><input id="pieces" class="inp" style="width: 120px; text-align: right" inputmode="numeric" placeholder="0" bind:value={pieces} disabled={ctx.lecture} oninput={() => (confirmer = false)} /></div>
+      <div class="bill"><label class="col grow" for="pieces"><span class="t16 b7">Autres pièces</span><span class="t12 mut">moins de 50 F, total en francs</span></label><input id="pieces" class="inp" style="width: 120px; text-align: right" inputmode="numeric" placeholder="0" bind:value={pieces} disabled={ctx.lecture} oninput={() => (confirmer = false)} /></div>
     </div>
 
     {#if ev}

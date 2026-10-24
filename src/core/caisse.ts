@@ -1,5 +1,6 @@
 // Caisse du guichet : comptage par coupure, écart avec l'attendu, niveau de tolérance.
-export const COUPURES = [10000, 5000, 2000, 1000, 500] as const;
+/** Billets et pièces comptés au guichet (les pièces de moins de 50 F se saisissent en un seul total). */
+export const COUPURES = [10000, 5000, 2000, 1000, 500, 100, 50] as const;
 export const totalCompte = (q: Record<string, number>) => Object.entries(q).reduce((s, [v, n]) => s + Number(v) * n, 0);
 export const ecart = (compte: number, attendu: number) => compte - attendu;
 export type Ecart = { montant: number; niveau: 'juste' | 'tolere' | 'a_valider'; texte: string };

@@ -11,7 +11,7 @@ export const gareDuDepartId = (m: Monde, departId: string) => { const d = m.depa
 /** Gare concernée par un litige (billet ou départ), pour le router vers le bon superviseur. */
 export const gareDuLitige = (m: Monde, l: Monde['litiges'][number]) => (l.objet.type === 'billet' ? gareDuBillet(m, l.objet.id) : l.objet.type === 'depart' ? gareDuDepartId(m, l.objet.id) : undefined);
 
-export function alertesGare(m: Monde, gareId: string, now: number): Alerte[] {
+export function alertesGare(m: Monde, gareId: string, now: number, compagnieId?: string): Alerte[] {
   const jour = jourDe(new Date(now)), A: (Alerte & { ts: number })[] = [], nom = (id?: string) => m.personnes.find((p) => p.id === id)?.prenom ?? '—';
   for (const c of m.caisses.filter((x) => x.gareId === gareId)) {
     const n = numeroGuichet(m, gareId, c.agentId);
@@ -27,7 +27,7 @@ export function alertesGare(m: Monde, gareId: string, now: number): Alerte[] {
     const parti = !!d && (d.statut === 'parti' || d.statut === 'arrive' || new Date(`${d.jour}T${d.heure}:00`).getTime() + d.retardMin * 60_000 < now);
     A.push({ id: `litige-${l.id}`, genre: annul ? 'annulation' : 'litige', ton: annul ? 'er' : 'wa', etiquette: annul ? 'billet' : 'litige', titre: annul ? `Annulation demandée ${parti ? 'après' : 'avant'} départ` : `Litige · ${l.type}`, sous: annul && b ? `billet ${b.code}${b.siege ? ` · place ${b.siege}` : ''}` : l.texte, href: `/superviseur/voir?litige=${l.id}`, gravite: GRAVITE[annul ? 'annulation' : 'litige'], ts: l.ts });
   }
-  for (const v of departsGare(m, gareId, jour, now)) {
+  for (const v of departsGare(m, gareId, jour, now, compagnieId)) {
     if (v.statut !== 'prevu' && v.statut !== 'embarquement') continue;
     const href = `/superviseur/voir?depart=${v.id}`;
     if (v.enRetard) A.push({ id: `depart-${v.id}`, genre: 'depart', ton: 'er', etiquette: 'départ', titre: `Départ ${v.heure} pas encore parti`, sous: `${v.vers} · ${v.compagnie} · +${Math.round((now - v.ts) / 60_000) + v.retardMin} min`, href, gravite: GRAVITE.depart, ts: v.ts });

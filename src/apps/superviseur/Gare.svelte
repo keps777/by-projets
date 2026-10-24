@@ -21,10 +21,10 @@
   const gare = $derived(app.monde.gares.find((g) => g.id === gareId));
   const now = $derived(horloge.t);
   const jour = $derived(jourDe(new Date(now)));
-  const departs = $derived(departsGare(app.monde, gareId, jour, now));
-  const rapport = $derived(construireRapport(app.monde, { gareId, jour, now, superviseur: moi?.prenom ?? '' }));
-  const alertes = $derived(alertesGare(app.monde, gareId, now));
-  const veille = $derived(recetteDuJour(app.monde, gareId, ajouterJours(jour, -1)));
+  const departs = $derived(departsGare(app.monde, gareId, jour, now, moi?.compagnieId));
+  const rapport = $derived(construireRapport(app.monde, { gareId, jour, now, superviseur: moi?.prenom ?? '', compagnieId: moi?.compagnieId }));
+  const alertes = $derived(alertesGare(app.monde, gareId, now, moi?.compagnieId));
+  const veille = $derived(recetteDuJour(app.monde, gareId, ajouterJours(jour, -1), moi?.compagnieId));
   const deltaVeille = $derived(evolution(rapport.recette, veille));
   const nbGuichets = $derived(app.monde.personnes.filter((p) => p.role === 'guichet' && p.gareId === gareId && p.actif).length);
   const equipe = $derived(app.monde.personnes.filter((p) => p.gareId === gareId && p.actif && p.role !== 'superviseur').length);

@@ -7,8 +7,9 @@ import { supplementSiege } from '../../core/sieges.ts';
 import { fmtF } from '../../core/tarif.ts';
 import { codeAffiche, echeanceAtteinte, limiteRemboursement, messageProche, partParPersonne, totalBusEntier, type InfosMessage, type TailleBus, TAILLES_BUS } from '../../core/reglement.ts';
 import { compagnieDe, consigner, departParId, ligneDe, notifier, personne, prixDuDepart, regler, reserver } from '../../domain/actions.ts';
-import type { Billet, MoyenPaiement, OffreCovoit, Paiement } from '../../domain/types.ts';
+import type { Billet, Colis, MoyenPaiement, OffreCovoit, Paiement } from '../../domain/types.ts';
 import { calculerRemise, type Remise } from '../../core/remise.ts';
+import { placesRestantes } from '../../core/covoit.ts';
 import { bonsDisponibles, preparerFidelite } from '../entree/actions.ts';
 import { fideliteLue } from '../entree/etat.ts';
 import { cagnotteDe } from '../route/etat.ts';
@@ -26,6 +27,7 @@ export const paiementActif = (p: Paiement | undefined, now = maintenant()): p is
 /** Paiement en attente et encore valable d'un billet, sinon rien. */
 export const paiementActifDe = (b: Billet, now = maintenant()): Paiement | undefined => { const p = app.monde.paiements.find((x) => x.id === b.paiementId); return paiementActif(p, now) ? p : undefined; };
 export const billetsDuPaiement = (paiementId: string): Billet[] => app.monde.billets.filter((b) => b.paiementId === paiementId);
+export const colisDuBrouillon = (b: Brouillon | null): Colis | undefined => (b?.colisId ? app.monde.colis.find((c) => c.id === b.colisId) : undefined);
 export const offreCovoit = (id: string | null): OffreCovoit | undefined => (id ? app.monde.covoits.find((o) => o.id === id) : undefined);
 
 /** Prix des places choisies : prix du départ + supplément de siège (première rangée d'un Classique). */
@@ -36,6 +38,7 @@ export function totalBillets(departId: string, sieges: string[]): number {
 }
 /** Montant du brouillon, quelle que soit sa nature. */
 export function montantBrouillon(b: Brouillon): number {
+  if (b.nature === 'colis') { const c = colisDuBrouillon(b); return c ? paiementActif(paiementDe(b)) ? paiementDe(b)!.montant : c.prix : 0; }
   if (b.nature === 'billet' && b.sansSiege) { const d = b.departId ? departParId(b.departId) : undefined; return d ? b.passagers.length * (b.prixUnitaire ?? prixDuDepart(d)) : 0; }
   if (b.nature === 'billet') return b.departId ? totalBillets(b.departId, b.sieges) : 0;
   if (b.nature === 'covoit') return (offreCovoit(b.covoitId)?.prix ?? 0) * b.places;
@@ -81,6 +84,12 @@ export function lancerPaiement(b: Brouillon, acheteurId: string): void {
     const p = paiementDe(b);
     if (paiementActif(p, now)) { p.moyen = moyen; p.ref = ref(moyen); return; }
     b.paiementId = reserverCovoit(b.covoitId ?? '', b.places, acheteurId, moyen).paiement.id;
+  } else if (b.nature === 'colis') {
+    const c = colisDuBrouillon(b); if (!c) throw new Error('colis_inconnu');
+    if (c.statut === 'annule') throw new Error('colis_annule');
+    const p = paiementDe(b);
+    if (paiementActif(p, now)) { p.moyen = moyen; p.ref = ref(moyen); return; }
+    b.paiementId = nouveauPaiementColis(c, moyen, acheteurId).id;
   } else { b.paiementId = null; b.montant = montantBrouillon(b); b.expireLe = now + DUREE_RESERVATION_MS; }
 }
 
@@ -90,6 +99,7 @@ export function confirmerPaiement(b: Brouillon): { ok: boolean; paiement?: Paiem
   const p = paiementDe(b); if (!p) return { ok: false };
   const r = b.nature === 'covoit' ? reglerCovoit(p.id, { ok: true }) : regler(p.id, { ok: true });
   if (r.statut !== 'ok') return { ok: false, paiement: r };
+  if (b.nature === 'colis') { const c = colisDuBrouillon(b); if (c) { notifier(c.expediteurId, `Colis ${c.code} payé`, `${fmtF(r.montant)} réglés · dépose-le au guichet`, `/colis/suivi?colis=${c.id}`, 'colis'); consigner('vente', `Colis ${c.code} payé · ${r.montant} F`, c.expediteurId, c.id); } return { ok: true, paiement: r }; }
   consommerAvantages(r);
   if (b.nature === 'billet' && b.qui !== 'moi' && b.proche) envoyerMessageBrouillon(b);
   return { ok: true, paiement: r };
@@ -107,6 +117,7 @@ export function refuserPaiement(b: Brouillon, motif: string): void {
       try { const r = reserver({ departId: b.departId, sieges: siegesDemandes(b), passagers: b.passagers, acheteurId: p.payeurId, canal: 'app', moyen: p.moyen, prixUnitaire: prixDemande(b) }); r.paiement.expireLe = echeance; b.paiementId = r.paiement.id; appliquerAvantages(b, r.paiement); } catch { /* places reprises entre-temps */ }
     }
   } else if (b.nature === 'covoit' && p) { reglerCovoit(p.id, { refus: motif }); b.paiementId = null; }
+  else if (b.nature === 'colis' && p) { regler(p.id, { refus: motif }); b.paiementId = null; }
 }
 /** « Payer au guichet » : les places restent bloquées 2 h, paiement en espèces à la gare. Retourne les billets en attente. */
 export function bloquerPourGuichet(b: Brouillon, acheteurId: string): Billet[] {
@@ -168,15 +179,35 @@ export function reprendrePaiement(paiementId: string, personneId: string): Issue
   return 'ok';
 }
 
+/** Nouveau paiement d'un colis (le précédent est refusé, expiré ou n'a jamais été ouvert) : 10 minutes pour valider. */
+export function nouveauPaiementColis(c: Colis, moyen: MoyenPaiement, payeurId: string): Paiement {
+  const now = maintenant(), p: Paiement = { id: nouvelId('pay'), ts: now, montant: c.prix, moyen, statut: 'attente', ref: ref(moyen), canal: 'app', payeurId, pour: { type: 'colis', ids: [c.id] }, expireLe: now + DUREE_RESERVATION_MS };
+  app.monde.paiements.push(p); c.paiementId = p.id; return p;
+}
+export type IssueColis = 'ok' | 'introuvable' | 'deja_regle' | 'sans_paiement' | 'annule';
+/** `/paiement?colis=<id>` : règle (ou règle de nouveau) le port d'un colis de la voyageuse ; un paiement refusé ou expiré est remplacé par un nouveau. */
+export function reprendreColis(colisId: string, personneId: string): IssueColis {
+  const c = app.monde.colis.find((x) => x.id === colisId), moi = personne(personneId);
+  if (!c || !moi || c.expediteurId !== personneId) return 'introuvable';
+  if (c.statut === 'annule') return 'annule';
+  if (c.options.contreRemboursement) return 'sans_paiement';
+  const p = app.monde.paiements.find((x) => x.id === c.paiementId); if (p?.statut === 'ok') return 'deja_regle';
+  const e = etat(), a = e.brouillon; if (a?.nature === 'colis' && a.colisId === c.id) return 'ok';
+  if (a) libererReservation(a);
+  const moyen = p?.moyen === 'om' || p?.moyen === 'carte' || p?.moyen === 'visage' ? p.moyen : 'momo';
+  e.brouillon = brouillonVide({ nature: 'colis', colisId: c.id, moyen, tel: moi.tel, paiementId: paiementActif(p) ? p!.id : null, expireLe: paiementActif(p) ? p!.expireLe ?? 0 : 0 });
+  return 'ok';
+}
+
 // ------------------------------------------------------------------ covoiturage
 export function reserverCovoit(offreId: string, places: number, voyageurId: string, moyen: MoyenPaiement): { paiement: Paiement; offre: OffreCovoit } {
   const o = offreCovoit(offreId); if (!o) throw new Error('offre_inconnue');
   if (o.statut !== 'ouverte') throw new Error('offre_fermee');
   if (!Number.isInteger(places) || places < 1) throw new Error('demande_invalide');
-  if (places > o.places) throw new Error('complet');
+  if (places > placesRestantes(o)) throw new Error('complet'); // `o.places` est la capacité de l'offre ; les places prises sont dans `reservations`
   const now = maintenant(), pid = nouvelId('pay');
   const paiement: Paiement = { id: pid, ts: now, montant: o.prix * places, moyen, statut: 'attente', ref: ref(moyen), canal: 'app', payeurId: voyageurId, pour: { type: 'covoit', ids: [o.id] }, expireLe: now + DUREE_RESERVATION_MS };
-  o.places -= places; o.reservations.push({ voyageurId, places, paiementId: pid }); app.monde.paiements.push(paiement);
+  o.reservations.push({ voyageurId, places, paiementId: pid }); app.monde.paiements.push(paiement);
   return { paiement, offre: o };
 }
 /** Règle un paiement de covoiturage : accepté (places confirmées, conducteur prévenu) ou refusé / expiré (places rendues à l'offre). */
@@ -196,7 +227,7 @@ export function reglerCovoit(paiementId: string, issue: { ok: true } | { refus: 
     return p;
   }
   p.statut = 'refuse'; p.motif = 'ok' in issue ? 'Réservation expirée' : issue.refus;
-  if (o && res) { o.places += res.places; o.reservations = o.reservations.filter((r) => r.paiementId !== p.id); }
+  if (o && res) o.reservations = o.reservations.filter((r) => r.paiementId !== p.id);
   return p;
 }
 

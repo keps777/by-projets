@@ -104,7 +104,7 @@
   .pg .side a{flex:1 1 100%}
 }
 
-.pg .seg2 button{white-space:nowrap;padding:0 14px}
+.pg .seg2{flex-wrap:wrap}.pg .seg2 button{white-space:nowrap;padding:0 14px}
 .pg .map .pt{position:absolute;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:#B7C0DB;pointer-events:none}
 .pg .mainp>*{min-width:0;max-width:100%}
 .pg .scrollx,.pg .mainp{position:relative}

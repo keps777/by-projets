@@ -5,7 +5,7 @@ export default [
   { chemin: '/tuto', composant: () => import('./Tuto.svelte'), cadre: 'plein', titre: 'Tutoriel' },
   { chemin: '/connexion', composant: () => import('./Connexion.svelte'), cadre: 'plein', titre: 'Connexion' },
   { chemin: '/connexion/code', composant: () => import('./ConnexionCode.svelte'), cadre: 'plein', titre: 'Code SMS' },
-  { chemin: '/ussd', composant: () => import('./Ussd.svelte'), cadre: 'plein', titre: 'USSD et WhatsApp' },
+  { chemin: '/ussd', module: 'ussd', composant: () => import('./Ussd.svelte'), cadre: 'plein', titre: 'USSD et WhatsApp' },
   { chemin: '/erreur', composant: () => import('./Erreur.svelte'), cadre: 'plein', titre: 'Erreur' },
   { chemin: '/maintenance', composant: () => import('./Maintenance.svelte'), cadre: 'plein', titre: 'Maintenance' },
   { chemin: '/reglages', composant: () => import('./Reglages.svelte'), cadre: 'plein', roles: ['voyageur'], titre: 'Réglages' },

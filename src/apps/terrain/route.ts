@@ -55,7 +55,7 @@ export function partir(departId: string, chauffeurId: string): Depart {
   const raison = blocageDepart(d); if (raison) throw new Error(raison);
   const delta = retardActuel(d);
   if (delta > 0 && delta !== d.retardMin) annoncerRetard(d.id, delta, chauffeurId); else if (delta <= 0) d.retardMin = delta;
-  d.statut = 'parti'; const s = suiviDe(d.id); Object.assign(s, { etape: 'route', k: 1, vitesse: 62, departA: maintenant(), arriveeArretA: undefined });
+  d.statut = 'parti'; d.partiA = maintenant(); const s = suiviDe(d.id); Object.assign(s, { etape: 'route', k: 1, vitesse: 62, departA: maintenant(), arriveeArretA: undefined });
   consigner('depart', `Bus ${libelleDepart(d)} parti${delta > 0 ? ` avec ${delta} min de retard` : ''} · ${aBordIds(d.id).length} à bord`, chauffeurId, d.id); return d;
 }
 export function accelerer(departId: string) {

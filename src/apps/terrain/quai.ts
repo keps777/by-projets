@@ -36,7 +36,7 @@ export function scanQuai(contenu: string, agentId: string, departId: string, via
   const t = terrain(), brut = contenu.trim(), r = scannerBillet(brut, agentId, departId);
   const p: Passage = { id: nouvelId('ps'), ts: maintenant(), departId, agentId, statut: r.statut, billetId: r.billet?.id, code: r.billet?.code ?? codeBrut(brut).split('.')[0].slice(0, 16), message: r.message, via };
   t.passages.unshift(p); if (t.passages.length > 80) t.passages.length = 80;
-  if (r.statut !== 'ok') consigner('scan_refus', `${codeAffiche(p.code)} · ${r.message}`, agentId, r.billet?.id);
+  // le refus est déjà consigné (type `scan_refuse`) par `scannerBillet` du domaine : pas de seconde ligne au journal.
   return p;
 }
 const MOTIFS: Record<StatutScan, string> = { ok: 'billet valide', deja_scanne: 'billet déjà scanné', annule: 'billet annulé', faux: 'sceau invalide', mauvais_depart: 'autre départ', inconnu: 'billet inconnu', non_paye: 'paiement non confirmé' };

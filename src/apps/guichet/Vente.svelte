@@ -205,7 +205,7 @@
   .plan { display: flex; flex-direction: column; gap: 6px; }
   .deckw { position: relative; height: var(--h); perspective: 800px; perspective-origin: 50% 0; }
   .plan.plat .deckw { perspective: none; }
-  .deck { position: absolute; left: 50%; top: 10px; width: 270px; margin-left: -135px; padding: 10px 12px 14px; border-radius: 30px 30px 20px 20px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04)); border: 1px solid rgba(255, 255, 255, 0.24); transform: rotateX(var(--ang)); transform-style: preserve-3d; }
+  .deck { position: absolute; left: 50%; top: 10px; width: min(270px, calc(100% - 56px)); margin-left: calc(min(270px, calc(100% - 56px)) / -2); padding: 10px 12px 14px; border-radius: 30px 30px 20px 20px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04)); border: 1px solid rgba(255, 255, 255, 0.24); transform: rotateX(var(--ang)); transform-style: preserve-3d; }
   .plan.plat .deck { position: relative; left: 0; top: 0; margin: 0 auto; transform: none; width: min(100%, 300px); }
   .avant { display: block; margin-bottom: 8px; text-align: center; font: 600 10px 'Geist Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; color: #8e99bb; }
   .seats { display: grid; gap: 5px; transform-style: preserve-3d; }

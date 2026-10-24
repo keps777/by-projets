@@ -37,7 +37,7 @@
     if (!b) return;
     if (!ok) { aller('/paiement/refus'); return; }
     const id = paiement ? billetsDuPaiement(paiement.id)[0]?.id : undefined;
-    sortie = b.nature === 'billet' ? { dest: `/pass?billet=${id ?? ''}`, libelle: 'Voir mon billet' } : b.nature === 'covoit' ? { dest: '/covoit', libelle: 'Voir mon trajet' } : { dest: '/groupe', libelle: 'Revenir à la cagnotte' };
+    sortie = b.nature === 'colis' ? { dest: `/colis/suivi?colis=${b.colisId}`, libelle: 'Suivre mon colis' } : b.nature === 'billet' ? { dest: `/pass?billet=${id ?? ''}`, libelle: 'Voir mon billet' } : b.nature === 'covoit' ? { dest: '/covoit', libelle: 'Voir mon trajet' } : { dest: '/groupe', libelle: 'Revenir à la cagnotte' };
     phase = 'ok';
     setTimeout(() => { if (sortie && location.pathname === '/paiement/attente') aller_(sortie.dest); }, 1800);
   }
@@ -74,7 +74,7 @@
     { n: '✓', cls: 'ok', t: demande ? `Demande envoyée à ${b?.proche?.nom}` : b?.moyen === 'carte' ? 'Paiement transmis à ta banque' : `Demande envoyée à ${op.operateur}`, s: `${formaterTel(b?.tel ?? '')} · ${heureLocale(debut || maintenant())}` },
     { n: '2', cls: phase === 'ok' ? 'ok' : 'cur', t: demande ? `${b?.proche?.nom} paie depuis son téléphone` : b?.moyen === 'carte' ? 'Valide avec la banque (3-D Secure)' : b?.moyen === 'visage' ? 'Face ID a validé' : 'Valide sur ton téléphone',
       s: demande ? 'Elle touche le lien ou compose *123# → 5, puis tape son code.' : b?.moyen === 'carte' ? 'Une page de ta banque demande un code reçu par SMS.' : b?.moyen === 'visage' ? 'Rien à taper : ton visage a confirmé le paiement.' : `Une fenêtre ${op.operateur} s’ouvre : tape ton code. Rien à faire si tu as confirmé par le visage.` },
-    { n: '3', cls: phase === 'ok' ? 'cur' : '', t: b?.nature === 'billet' ? 'Billet holographique prêt' : b?.nature === 'covoit' ? 'Place de covoiturage confirmée' : 'Part versée à la cagnotte', s: b?.nature === 'billet' ? 'Signé hors ligne, envoyé aussi par SMS et WhatsApp.' : 'Tu reçois une notification dès que c’est validé.' }
+    { n: '3', cls: phase === 'ok' ? 'cur' : '', t: b?.nature === 'colis' ? 'Colis payé, prêt à déposer' : b?.nature === 'billet' ? 'Billet holographique prêt' : b?.nature === 'covoit' ? 'Place de covoiturage confirmée' : 'Part versée à la cagnotte', s: b?.nature === 'billet' ? 'Signé hors ligne, envoyé aussi par SMS et WhatsApp.' : 'Tu reçois une notification dès que c’est validé.' }
   ]);
 </script>
 

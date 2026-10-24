@@ -20,7 +20,7 @@
   const gareId = $derived(gareSuivie(moi, param('gare')));
   const now = $derived(horloge.t);
   const jour = $derived(jourDe(new Date(now)));
-  const rapport = $derived(construireRapport(app.monde, { gareId, jour, now, superviseur: moi?.prenom ?? '' }));
+  const rapport = $derived(construireRapport(app.monde, { gareId, jour, now, superviseur: moi?.prenom ?? '', compagnieId: moi?.compagnieId }));
   const texte = $derived(texteRapport(rapport));
   const patron = $derived(app.monde.personnes.find((p) => p.role === 'patron'));
   const lien = $derived(lienWhatsApp(texte, patron ? `237${chiffresTel(patron.tel)}` : undefined));

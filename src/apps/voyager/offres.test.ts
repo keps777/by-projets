@@ -3,7 +3,7 @@ import { filtrer, filtresVides, nbFiltres } from '../../core/recherche.ts';
 import { ajouterJours } from '../../core/dates.ts';
 import { parTranche } from '../../core/tranches.ts';
 import { app, aujourdhui, reinitialiser } from '../../data/store.svelte.ts';
-import { departsDuJour, placesLibres, reserver, siegesIndisponibles } from '../../domain/actions.ts';
+import { departsDuJour, placesLibres, prixDuDepart, reserver, siegesIndisponibles } from '../../domain/actions.ts';
 import { planSieges } from '../../core/sieges.ts';
 import { choisirJour, choisirTrajet, demain, effacerFiltres, initRecherche, lireRecherche, rechercheParDefaut } from './etat.ts';
 import { destinations, etiquette, nbAnnules, offreBus, offresDuJour, placesCovoit, prixAffiche, prixBasDuJour, villesDeDepart } from './offres.ts';
@@ -126,5 +126,22 @@ describe('recherche partagée', () => {
     r.creneaux = ['Nuit']; expect(filtrer(base, r).map((o) => o.heure).sort()).toEqual(['00:30', '22:30']); expect(nbFiltres(r)).toBe(2);
     r.compagnies = ['FX']; expect(filtrer(base, r)).toEqual([]);
     expect(rechercheParDefaut().jour).toBe(demain()); expect(filtrer(base, { ...filtresVides(), confort: ['Wi-Fi à bord'] }).every((o) => o.vip)).toBe(true);
+  });
+});
+
+describe('le prix affiché est le prix payé', () => {
+  beforeEach(() => reinitialiser());
+  it('avec ou sans prix dynamique, le panorama affiche ce que `reserver` encaisse', () => {
+    for (const dynamique of [false, true]) {
+      app.monde.params.tarifs.dynamique = dynamique;
+      for (const d of departsDuJour(J(), 'Yaoundé', 'Douala').slice(0, 6)) {
+        expect(prixAffiche(d), `${d.id} (dynamique ${dynamique})`).toBe(prixDuDepart(d));
+        const libre = planSieges('Classique', d.capacite).map((x) => x.id).find((id) => !siegesIndisponibles(d).has(id) && !/^1/.test(id));
+        if (!libre || d.capacite !== 50) continue;
+        const affiche = prixAffiche(d);
+        const { paiement } = reserver({ departId: d.id, sieges: [libre], passagers: [{ nom: 'Test', tel: '690000000' }], acheteurId: 'p-aicha', canal: 'app', moyen: 'momo' });
+        expect(paiement.montant).toBe(affiche); // prix payé = prix affiché (hors supplément de siège)
+      }
+    }
   });
 });

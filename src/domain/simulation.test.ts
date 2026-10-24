@@ -8,4 +8,11 @@ describe('simulation du monde', () => {
     avancerMonde(base - 3_600_000); expect(d.statut).toBe('prevu'); avancerMonde(base - 10 * 60_000); expect(d.statut).toBe('embarquement'); avancerMonde(base + 60 * 60_000); expect(d.statut).toBe('parti'); expect(d.avancement).toBeGreaterThan(0);
     avancerMonde(base + 5 * 3_600_000); expect(d.statut).toBe('arrive'); expect(d.avancement).toBe(1);
   });
+  it('un départ donné à la main par le chauffeur reste « parti », même si l’horloge est en retard ou si un retard est annoncé après', () => {
+    const d = app.monde.departs.find((x) => x.jour === new Date().toISOString().slice(0, 10) && x.heure === '12:00')!, base = new Date(`${d.jour}T12:00:00`).getTime();
+    d.statut = 'parti'; d.partiA = base - 5 * 60_000; d.retardMin = -5;
+    avancerMonde(base - 20 * 60_000); expect(d.statut).toBe('parti'); expect(d.avancement).toBe(0);
+    d.retardMin = 40; avancerMonde(base + 10 * 60_000); expect(d.statut).toBe('parti'); expect(d.avancement).toBeGreaterThan(0);
+    avancerMonde(base + 6 * 3_600_000); expect(d.statut).toBe('arrive');
+  });
 });

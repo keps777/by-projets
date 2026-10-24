@@ -7,7 +7,7 @@ export default [
   { chemin: '/reseau', composant: () => import('./Reseau.svelte'), titre: 'Le réseau en direct', roles: ['voyageur'], onglet: 'direct' },
   { chemin: '/course', composant: () => import('./Course.svelte'), titre: 'Moto ou taxi vers la gare', roles: ['voyageur'], onglet: 'voyager' },
   { chemin: '/arret', composant: () => import('./Arret.svelte'), titre: 'Monter en route', roles: ['voyageur'], onglet: 'voyager' },
-  { chemin: '/covoit', composant: () => import('./Covoit.svelte'), titre: 'Covoiturage', roles: ['voyageur'], onglet: 'voyager' },
-  { chemin: '/covoit/ville', composant: () => import('./CovoitVille.svelte'), titre: 'Covoiturage en ville', roles: ['voyageur'], onglet: 'voyager' },
-  { chemin: '/covoit/conduire', composant: () => import('./CovoitConducteur.svelte'), titre: 'Je conduis', roles: ['voyageur', 'conducteur'], onglet: 'voyager' }
+  { chemin: '/covoit', module: 'covoiturage', composant: () => import('./Covoit.svelte'), titre: 'Covoiturage', roles: ['voyageur'], onglet: 'voyager' },
+  { chemin: '/covoit/ville', module: 'covoiturage', composant: () => import('./CovoitVille.svelte'), titre: 'Covoiturage en ville', roles: ['voyageur'], onglet: 'voyager' },
+  { chemin: '/covoit/conduire', module: 'covoiturage', composant: () => import('./CovoitConducteur.svelte'), titre: 'Je conduis', roles: ['voyageur', 'conducteur'], onglet: 'voyager' }
 ] satisfies Route[];

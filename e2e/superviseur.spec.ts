@@ -31,7 +31,7 @@ test('la gare en direct : départs, quais, caisses et alertes', async ({ page })
   await expect(alertes.filter({ hasText: 'Guichet 2 bloqué' })).toBeVisible();
   await expect(alertes.filter({ hasText: 'Écart de caisse' })).toBeVisible();
   await expect(page.getByText(/à traiter/).first()).toBeVisible();
-  await expect(page.getByRole('link', { name: /Quai 1/ })).toBeVisible();
+  await expect(page.getByRole('link', { name: /^Quai \d :/ }).first()).toBeVisible(); // numéro de quai partagé (core/quai.ts)
   await page.getByRole('button', { name: 'Tous' }).click();
   await expect(page.locator('.dep').first()).toBeVisible();
   await page.screenshot({ path: 'test-results/sup-gare.png' });

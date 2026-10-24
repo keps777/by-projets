@@ -29,9 +29,13 @@ test('le panorama tourne au glisser, aux flèches et aux repères horaires', asy
 test('choisir un départ mène au siège, un covoiturage au paiement', async ({ page }) => {
   await entrer(page);
   await expect(page.locator('.sel')).toContainText('06:00 · Alpha VIP');
+  // le Bêta Express de 07:00 est complet (l'historique du patron l'a rempli) : on prend le Finex de 06:15
   await page.locator('.colm.front .bus', { hasText: '07:00' }).click();
   await expect(page.locator('.sel')).toContainText('07:00 · Bêta Express');
-  await expect(page.locator('.sel a.b.p')).toHaveAttribute('href', /^\/siege\?depart=d-2026-11-04-.*0700&prix=7000$/);
+  await expect(page.locator('.sel')).toContainText('Complet');
+  await page.locator('.colm.front .bus', { hasText: '06:15' }).click();
+  await expect(page.locator('.sel')).toContainText('06:15 · Finex');
+  await expect(page.locator('.sel a.b.p')).toHaveAttribute('href', /^\/siege\?depart=d-2026-11-04-.*0615&prix=6000$/);
   await page.getByRole('button', { name: 'Covoit', exact: true }).click();
   await page.locator('.tick', { hasText: '9h' }).click();
   await expect(page.locator('.sel')).toContainText('Jean-Paul N.');

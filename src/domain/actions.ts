@@ -112,7 +112,7 @@ function scannerBilletBrut(contenu: string, agentId: string, departId?: string):
 export function scannerBillet(contenu: string, agentId: string, departId?: string): ResultatScan {
   const r = scannerBilletBrut(contenu, agentId, departId);
   // Les refus sont consignés : le superviseur de la gare les voit dans ses alertes.
-  if (r.statut !== 'ok') consigner('scan_refuse', `Scan refusé (${r.statut}) : ${r.message}`, agentId, r.billet?.id);
+  if (r.statut !== 'ok') consigner('scan_refuse', `${r.billet ? `Billet ${r.billet.code} · ` : ''}${r.message} (${r.statut})`, agentId, r.billet?.id);
   return r;
 }
 

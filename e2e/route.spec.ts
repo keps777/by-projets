@@ -1,6 +1,7 @@
 // Parcours « route » : suivi du bus, retard, réseau, course, montée en route, covoiturage. Le monde est créé le 2 nov. 20:00 (billet d'Aïcha pour le 3 nov. 08:00),
 // puis l'horloge saute avec `?maintenant=` ; une garde réécrit la dernière activité pour que la session ne soit pas expirée par ces sauts.
 import { expect, test, type Page } from '@playwright/test';
+import { lireEtat } from './aide';
 
 async function entrer(page: Page) {
   await page.goto('/entree?maintenant=2026-11-02T20:00');
@@ -14,7 +15,7 @@ async function entrer(page: Page) {
   });
 }
 const aller = async (page: Page, chemin: string, t: string) => { await page.goto(`${chemin}${chemin.includes('?') ? '&' : '?'}maintenant=${t}`); };
-const monde = (page: Page) => page.evaluate(() => JSON.parse(localStorage.getItem('afrimove.v1')!));
+const monde = (page: Page) => lireEtat(page);
 
 test('Mon bus : carte en relief, arrivée estimée, avance simulée, retard annoncé', async ({ page }) => {
   await entrer(page);
@@ -45,7 +46,7 @@ test('Retard : annuler et se faire rembourser crédite le geste commercial', asy
   await expect(page).toHaveURL(/\/pass\/annule\?billet=/);
   await page.reload();
   const e = await monde(page);
-  expect(e.monde.billets.find((b: { id: string }) => b.id === 'b-aicha1').statut).toBe('rembourse');
+  expect(e.monde.billets.find((b) => b.id === 'b-aicha1')!.statut).toBe('rembourse');
   expect(e.tranches.route.cagnotte['p-aicha']).toBe(500);
 });
 
@@ -80,7 +81,7 @@ test('Monter en route : billet sans siège au prix prorata, puis paiement', asyn
   await expect(page).toHaveURL(/\/paiement\?paiement=/);
   await page.reload();
   const e = await monde(page);
-  const b = e.monde.billets.find((x: { siege: string | null; id: string }) => x.siege === null && x.id !== 'b-aicha1');
+  const b = e.monde.billets.find((x) => x.siege === null && x.acheteurId === 'p-aicha')!; // les billets sans siège du siège web (démo) ne sont pas à elle
   expect(b.prix).toBe(2150); expect(b.statut).toBe('attente_paiement');
 });
 

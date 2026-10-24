@@ -5,7 +5,7 @@ import { ajouterJours, type Jour } from '../../core/dates.ts';
 import type { MoyenChoisi, TailleBus } from '../../core/reglement.ts';
 import type { Passager } from '../../domain/types.ts';
 
-export type Nature = 'billet' | 'covoit' | 'groupe';
+export type Nature = 'billet' | 'covoit' | 'groupe' | 'colis';
 export interface Proche { id?: string; nom: string; tel: string }
 export interface Refus { motif: string; moyen: MoyenChoisi | 'proche' | 'especes'; nature: Nature; ts: number; departId: string | null; /** Paiement refusé (pour le litige « j'ai pourtant été débitée »). */ paiementId?: string | null }
 export interface Brouillon {
@@ -14,6 +14,8 @@ export interface Brouillon {
   departId: string | null; sieges: string[]; passagers: Passager[];
   // covoiturage
   covoitId: string | null; places: number;
+  // colis (payé depuis /colis/envoi ou /colis/suivi)
+  colisId?: string | null;
   // moyen
   moyen: MoyenChoisi; tel: string; visageOk: boolean;
   /** Paiement en cours dans le monde (billet ou covoit) ; absent tant qu'on n'a rien réservé. */

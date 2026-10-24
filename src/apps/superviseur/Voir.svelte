@@ -60,7 +60,7 @@
   }
 
   // ----- départ
-  const vueD = $derived(depart ? departsGare(app.monde, gareDuDepartId(app.monde, depart.id) ?? gareId, depart.jour, now).find((v) => v.id === depart.id) : undefined);
+  const vueD = $derived(depart ? departsGare(app.monde, gareDuDepartId(app.monde, depart.id) ?? gareId, depart.jour, now, moi?.compagnieId).find((v) => v.id === depart.id) : undefined);
   const permisD = $derived(!!depart && (moi?.role === 'patron' || gareDuDepartId(app.monde, depart.id) === moi?.gareId));
   const billetsD = $derived(depart ? app.monde.billets.filter((b) => b.departId === depart.id && b.statut === 'valide') : []);
   const aRembourser = $derived(billetsD.reduce((s, b) => s + b.prix, 0));
@@ -75,8 +75,8 @@
   function retard(min: number) { if (!moi || !depart) return; annoncerRetard(depart.id, min, moi.id); montrer(min ? `Retard de ${min} min annoncé aux voyageurs` : 'Départ remis à l’heure', 'wa'); }
 
   // ----- liste
-  const aDecider = $derived(alertesGare(app.monde, gareId, now));
-  const avenir = $derived(departsGare(app.monde, gareId, jourDe(new Date(now)), now).filter((d) => d.statut === 'prevu' || d.statut === 'embarquement'));
+  const aDecider = $derived(alertesGare(app.monde, gareId, now, moi?.compagnieId));
+  const avenir = $derived(departsGare(app.monde, gareId, jourDe(new Date(now)), now, moi?.compagnieId).filter((d) => d.statut === 'prevu' || d.statut === 'embarquement'));
   function chercher(e: SubmitEvent) {
     e.preventDefault(); const c = code.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
     const b = app.monde.billets.find((x) => x.code === c && (moi?.role === 'patron' || gareDuBillet(app.monde, x.id) === moi?.gareId));

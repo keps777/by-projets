@@ -23,7 +23,8 @@
     e.preventDefault();
     const route = resoudre(ROUTES, chemin)?.route;
     if (route?.roles && !peut(app.session.role, route.roles)) {
-      const qui = f.joueurs.map((j) => personne(j.id)).find((x) => x && x.actif && peut(x.role, route.roles!));
+      // la personne du parcours qui a le droit d'ouvrir l'écran ; à défaut, n'importe quel compte actif du monde qui l'a (jamais renvoyé vers l'entrée)
+      const qui = f.joueurs.map((j) => personne(j.id)).find((x) => x && x.actif && peut(x.role, route.roles!)) ?? app.monde.personnes.find((x) => x.actif && x.role !== 'patron' && peut(x.role, route.roles!));
       if (qui) { connecter(qui.id); montrer(`Connecté(e) en tant que ${qui.prenom} ${qui.nom} (démo)`); }
     }
     aller(chemin);

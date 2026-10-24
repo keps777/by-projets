@@ -9,8 +9,9 @@
   import { supplementSiege } from '../../core/sieges.ts';
   import { formaterExpiration, formaterNumeroCarte, formaterTel, OPERATEURS, telValide, validerCarte, type Carte, type MoyenChoisi } from '../../core/reglement.ts';
   import { jourSemaineCourt } from '../../core/dates.ts';
+  import { placesRestantes } from '../../core/covoit.ts';
   import { brouillonVide, cagnotte, etat, type Brouillon } from './etat.ts';
-  import { avantagesDe, lancerPaiement, libererReservation, montantBrouillon, offreCovoit, partCagnotte, paiementActif, paiementDe, purgerBrouillonTermine, remiseDe, reprendrePaiement } from './actions.ts';
+  import { avantagesDe, colisDuBrouillon, lancerPaiement, libererReservation, montantBrouillon, offreCovoit, partCagnotte, paiementActif, paiementDe, purgerBrouillonTermine, remiseDe, reprendreColis, reprendrePaiement } from './actions.ts';
   import { preparerFidelite } from '../entree/actions.ts';
 
   /** Récapitulatif et choix du moyen (MoMo, Orange Money, carte, visage), puis `reserver()` et attente de confirmation. Billet, covoiturage (?covoit=) ou part de cagnotte (?groupe=1). */
@@ -18,9 +19,9 @@
   purgerBrouillonTermine();
   if (moi) preparerFidelite(moi.id);
   /** `?paiement=<id>` : paiement déjà créé ailleurs (montée en route, places bloquées au guichet…) que l'on règle ici. */
-  const reprise = param('paiement') && moi ? reprendrePaiement(param('paiement')!, moi.id) : null;
+  const reprise: string | null = param('paiement') && moi ? reprendrePaiement(param('paiement')!, moi.id) : param('colis') && moi ? reprendreColis(param('colis')!, moi.id) : null;
   const repriseKo = reprise !== null && reprise !== 'ok';
-  const natureDemandee = param('covoit') ? 'covoit' : param('groupe') ? 'groupe' : 'billet';
+  const natureDemandee = param('covoit') ? 'covoit' : param('groupe') ? 'groupe' : param('colis') ? 'colis' : 'billet';
 
   // ---- préparation du brouillon selon l'origine
   if (natureDemandee === 'covoit') {
@@ -39,6 +40,7 @@
   const depart = $derived(b?.nature === 'billet' && b.departId ? departParId(b.departId) : undefined);
   const ligne = $derived(depart ? ligneDe(depart) : undefined);
   const offre = $derived(b?.nature === 'covoit' ? offreCovoit(b.covoitId) : undefined);
+  const colis = $derived(b?.nature === 'colis' ? colisDuBrouillon(b) : undefined);
   const conducteur = $derived(offre ? personne(offre.conducteurId) : undefined);
   const brut = $derived(b ? montantBrouillon(b) : 0);
   const remise = $derived(remiseDe(b, moi?.id));
@@ -46,6 +48,8 @@
   const dispo = $derived(avantagesDe(moi?.id));
   const avantagesPossibles = $derived(b?.nature === 'billet' && b.qui === 'moi' && (dispo.bons.length > 0 || dispo.cagnotte > 0));
   const retenue = $derived(b ? paiementDe(b) : undefined);
+  /** Places encore libres, en comptant comme libres celles que cette réservation en attente retient déjà. */
+  const restantes = $derived(offre ? placesRestantes(offre) + (retenue && paiementActif(retenue) ? b!.places : 0) : 0);
 
   const b0 = e.brouillon;
   let telMomo = $state(b0?.moyen === 'momo' && b0.tel ? b0.tel : (moi?.tel ?? '691221008'));
@@ -80,8 +84,9 @@
     try { lancerPaiement(b, moi.id); aller('/paiement/attente'); }
     catch (err) { const code = err instanceof Error ? err.message : ''; erreur = libelleErreur[code] ?? 'Impossible de réserver pour le moment.'; erreurSiege = code === 'siege_pris' || code === 'complet'; envoi = false; montrerErreur(); }
   }
-  const titre = $derived(!b ? '' : b.nature === 'covoit' ? `Covoiturage · ${conducteur?.prenom ?? ''} ${offre?.heure ?? ''}` : b.nature === 'groupe' ? `Cagnotte · ${cagnotte().motif}` : `${b.sansSiege ? 'Sans siège attribué' : `${b.sieges.length > 1 ? 'Places' : 'Place'} ${b.sieges.join(', ')}`} · ${depart ? compagnieDe(depart).nom : ''} ${depart?.heure ?? ''}`);
-  const retour = $derived(b?.nature === 'covoit' ? '/covoit' : b?.nature === 'groupe' ? '/groupe' : b?.departId ? `/siege?depart=${b.departId}` : '/');
+  const titre = $derived(!b ? '' : b.nature === 'colis' ? `Colis ${colis?.code ?? ''}` : b.nature === 'covoit' ? `Covoiturage · ${conducteur?.prenom ?? ''} ${offre?.heure ?? ''}` : b.nature === 'groupe' ? `Cagnotte · ${cagnotte().motif}` : `${b.sansSiege ? 'Sans siège attribué' : `${b.sieges.length > 1 ? 'Places' : 'Place'} ${b.sieges.join(', ')}`} · ${depart ? compagnieDe(depart).nom : ''} ${depart?.heure ?? ''}`);
+  const sortieVide = $derived(param('colis') ? '/colis/suivi' : reprise === 'deja_regle' ? '/pass' : natureDemandee === 'covoit' ? '/covoit' : '/');
+  const retour = $derived(b?.nature === 'colis' ? `/colis/suivi?colis=${b.colisId}` : b?.nature === 'covoit' ? '/covoit' : b?.nature === 'groupe' ? '/groupe' : b?.departId ? `/siege?depart=${b.departId}` : '/');
   const methodes = $derived<{ id: MoyenChoisi; sous: string }[]>([
     { id: 'momo', sous: `${formaterTel(telMomo)} · ${moi?.prenom ?? ''}` }, { id: 'om', sous: formaterTel(telOm) },
     { id: 'carte', sous: carte.numero ? `Carte •••• ${carte.numero.replace(/\D/g, '').slice(-4)}` : 'Visa, Mastercard' },
@@ -92,18 +97,18 @@
 <Mobile titre="Paiement" sous={titre} retourVers={retour}>
   {#snippet droite()}<span class="pl ok">sécurisé</span>{/snippet}
 
-  {#if repriseKo || !b || total <= 0 || (b.nature === 'billet' && (!depart || !ligne || (b.sieges.length === 0 && !b.sansSiege))) || (b.nature === 'covoit' && !offre)}
+  {#if repriseKo || !b || total <= 0 || (b.nature === 'billet' && (!depart || !ligne || (b.sieges.length === 0 && !b.sansSiege))) || (b.nature === 'covoit' && !offre) || (b.nature === 'colis' && !colis)}
     <div class="center"><span class="ill" aria-hidden="true"><Icone nom="billet" taille={56} /></span>
       <span class="ttl t20">{repriseKo ? 'Ce paiement n’est plus en attente' : 'Rien à payer pour l’instant'}</span>
-      <span class="t14 mut" style="max-width: 30ch">{reprise === 'deja_regle' ? 'Ce billet est déjà réglé : retrouve-le dans tes billets.' : reprise === 'expire' ? 'La réservation a expiré et la place a été libérée. Choisis-la de nouveau.' : repriseKo ? 'Ce paiement est introuvable.' : b?.nature === 'covoit' ? 'Cette offre de covoiturage n’est plus disponible.' : 'Choisis d’abord ta place dans un bus, puis reviens payer.'}</span>
-      <a class="b p" href={reprise === 'deja_regle' ? '/pass' : natureDemandee === 'covoit' ? '/covoit' : '/'} onclick={(ev) => { ev.preventDefault(); aller(reprise === 'deja_regle' ? '/pass' : natureDemandee === 'covoit' ? '/covoit' : '/'); }}>{reprise === 'deja_regle' ? 'Voir mes billets' : natureDemandee === 'covoit' ? 'Voir les covoiturages' : 'Voir les départs'}</a></div>
+      <span class="t14 mut" style="max-width: 30ch">{reprise === 'deja_regle' ? (param('colis') ? 'Ce colis est déjà payé : suis-le depuis ta liste.' : 'Ce billet est déjà réglé : retrouve-le dans tes billets.') : reprise === 'annule' ? 'Ce colis a été annulé.' : reprise === 'sans_paiement' ? 'Le destinataire paie à la remise : rien à régler maintenant.' : reprise === 'expire' ? 'La réservation a expiré et la place a été libérée. Choisis-la de nouveau.' : repriseKo ? 'Ce paiement est introuvable.' : b?.nature === 'covoit' ? 'Cette offre de covoiturage n’est plus disponible.' : 'Choisis d’abord ta place dans un bus, puis reviens payer.'}</span>
+      <a class="b p" href={sortieVide} onclick={(ev) => { ev.preventDefault(); aller(sortieVide); }}>{param('colis') ? 'Voir mes colis' : reprise === 'deja_regle' ? 'Voir mes billets' : natureDemandee === 'covoit' ? 'Voir les covoiturages' : 'Voir les départs'}</a></div>
   {:else}
     {#if b.refus}
       <div class="toast" role="status"><span class="bub" style="color: #FF6B6B"><Icone nom="alerte" /></span><span class="t13 grow">Refusé avec {OPERATEURS[b.refus.moyen].court} : {b.refus.motif}. Choisis un autre moyen.</span></div>
     {/if}
     <div class="gl ac col g8">
       <span class="lab">À payer</span><span class="big" aria-label="{total} francs CFA">{fmtF(total)}</span>
-      <span class="t12 mut">{b.nature === 'billet' ? 'remboursable jusqu’à 2 h avant le départ (10 % de frais)' : b.nature === 'covoit' ? 'à régler maintenant, places gardées 10 min' : `ta part de la cagnotte · remboursée à J-2 si le bus n’est pas plein`}</span>
+      <span class="t12 mut">{b.nature === 'billet' ? 'remboursable jusqu’à 2 h avant le départ (10 % de frais)' : b.nature === 'colis' ? 'à régler maintenant · le colis part après ton paiement, dépose-le au guichet' : b.nature === 'covoit' ? 'à régler maintenant, places gardées 10 min' : `ta part de la cagnotte · remboursée à J-2 si le bus n’est pas plein`}</span>
     </div>
 
     <div class="gl col" style="gap: 0">
@@ -118,17 +123,20 @@
         {/each}
         <div class="li"><span class="grow t14 mut">Frais de service AfriMove</span><span class="mono b7 okc">offerts</span></div>
         {#if remise.total > 0}<div class="li" data-testid="remise"><span class="grow t14 mut">{[remise.bons ? `Bon de fidélité${remise.bons > 1 ? 's' : ''}` : '', remise.cagnotte ? 'Cagnotte' : ''].filter(Boolean).join(' + ')}</span><span class="mono b7 okc">−{fmtF(remise.total)}</span></div>{/if}
+      {:else if b.nature === 'colis' && colis}
+        <div class="li"><span class="bub aq"><Icone nom="colis" /></span><span class="col grow"><span class="t14 b7">Colis {colis.code} · {colis.taille === 'S' ? 'enveloppe' : colis.taille === 'M' ? 'carton' : 'sac'} {colis.taille}</span><span class="t12 mut">{colis.depart} → {colis.arrivee} · pour {colis.destinataire.nom}</span></span><span class="mono b7">{fmtF(colis.prix)}</span></div>
+        {#if colis.options.assurance || colis.options.moto}<div class="li"><span class="grow t14 mut">{[colis.options.moto ? 'livraison moto' : '', colis.options.assurance ? 'assurance 50 000 F' : ''].filter(Boolean).join(' · ')}</span><span class="mono b7 okc">inclus</span></div>{/if}
       {:else if b.nature === 'covoit' && offre}
         <div class="li"><span class="bub aq"><Icone nom="taxi" /></span><span class="col grow"><span class="t14 b7">{offre.de} → {offre.vers}</span><span class="t12 mut">{jourSemaineCourt(offre.jour)} {offre.heure} · {offre.depart} · {offre.vehicule} · {conducteur?.prenom}</span></span></div>
-        <div class="li"><span class="col grow"><span class="t14 b7">Places</span><span class="t12 mut">{fmtF(offre.prix)} la place · {offre.places + (retenue && paiementActif(retenue) ? b.places : 0)} disponible{offre.places > 1 ? 's' : ''}</span></span>
-          <span class="row g8"><button type="button" class="ib" aria-label="Une place de moins" disabled={b.places <= 1 || !!retenue} onclick={() => (b.places = Math.max(1, b.places - 1))}>−</button><span class="mono b7" aria-live="polite">{b.places}</span><button type="button" class="ib" aria-label="Une place de plus" disabled={b.places >= offre.places || !!retenue} onclick={() => (b.places = Math.min(offre.places, b.places + 1))}>+</button></span></div>
+        <div class="li"><span class="col grow"><span class="t14 b7">Places</span><span class="t12 mut">{fmtF(offre.prix)} la place · {restantes} disponible{restantes > 1 ? 's' : ''}</span></span>
+          <span class="row g8"><button type="button" class="ib" aria-label="Une place de moins" disabled={b.places <= 1 || !!retenue} onclick={() => (b.places = Math.max(1, b.places - 1))}>−</button><span class="mono b7" aria-live="polite">{b.places}</span><button type="button" class="ib" aria-label="Une place de plus" disabled={b.places >= restantes || !!retenue} onclick={() => (b.places = Math.min(restantes, b.places + 1))}>+</button></span></div>
       {:else}
         <div class="li"><span class="bub aq"><Icone nom="groupe" /></span><span class="col grow"><span class="t14 b7">{cagnotte().motif}</span><span class="t12 mut">Bus de {cagnotte().taille} places · ma part</span></span><span class="mono b7">{fmtF(total)}</span></div>
       {/if}
     </div>
 
     {#if retenue && paiementActif(retenue)}
-      <span class="t12 mut c">Places retenues jusqu’à {heureLocale(retenue.expireLe ?? 0)}.</span>
+      <span class="t12 mut c">{b?.nature === 'billet' || b?.nature === 'covoit' ? 'Places retenues' : 'Paiement attendu'} jusqu’à {heureLocale(retenue.expireLe ?? 0)}.</span>
     {/if}
 
     {#if avantagesPossibles && b}

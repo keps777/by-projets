@@ -27,7 +27,7 @@
     : `${op.operateur} a répondu « ${refus.motif.toLowerCase()} ». Rien n’a été débité.${gardee && b?.nature === 'billet' ? ` Ta place ${b.sieges.join(', ')} est gardée.` : refus.nature === 'billet' ? ' Les places ne sont plus gardées.' : ''}`);
   onMount(() => { const t = setInterval(() => (tic = maintenant()), 1000); return () => clearInterval(t); });
 
-  const lienPaiement = $derived(!b ? '/' : b.nature === 'covoit' ? `/paiement?covoit=${b.covoitId}` : b.nature === 'groupe' ? '/paiement?groupe=1' : `/paiement?depart=${b.departId}`);
+  const lienPaiement = $derived(!b ? '/' : b.nature === 'colis' ? `/paiement?colis=${b.colisId}` : b.nature === 'covoit' ? `/paiement?covoit=${b.covoitId}` : b.nature === 'groupe' ? '/paiement?groupe=1' : `/paiement?depart=${b.departId}`);
   function reessayer() {
     if (!b) return; b.moyen = autre; b.tel = telAutre; b.visageOk = false; aller(lienPaiement);
   }

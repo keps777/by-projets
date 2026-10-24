@@ -3,14 +3,15 @@ import { app, reinitialiser } from '../../data/store.svelte.ts';
 import { planSieges } from '../../core/sieges.ts';
 import { ajouterJours } from '../../core/dates.ts';
 import { remboursement } from '../../core/tarif.ts';
-import { annulerBillet, billetsDe, connecter, minutesAvant, placesLibres, reserver, siegesIndisponibles } from '../../domain/actions.ts';
+import { placesRestantes } from '../../core/covoit.ts';
+import { annulerBillet, billetsDe, connecter, creerColis, minutesAvant, placesLibres, reserver, siegesIndisponibles } from '../../domain/actions.ts';
 import { bonsDisponibles, preparerFidelite, utiliserPoints } from '../entree/actions.ts';
 import { crediterCagnotte } from '../route/actions.ts';
 import { cagnotteDe } from '../route/etat.ts';
 import { brouillonVide, cagnotte, etat } from './etat.ts';
 import {
   ajouterParticipantDemo, bloquerPourGuichet, billetsDuPaiement, choisirTaille, confirmerPaiement, lancerPaiement, libererReservation, maPart, montantBrouillon, nbPayes, partagerBillet, partagerCagnotte,
-  partCagnotte, paiementActif, paiementDe, payerPartCagnotte, purgerBrouillonTermine, recommencerCagnotte, refuserPaiement, remiseDe, reprendrePaiement, reserverCovoit, reglerCovoit, siegesRetenus, totalBillets, verifierCagnotte
+  partCagnotte, paiementActif, paiementDe, payerPartCagnotte, purgerBrouillonTermine, recommencerCagnotte, refuserPaiement, remiseDe, reprendreColis, reprendrePaiement, reserverCovoit, reglerCovoit, siegesRetenus, totalBillets, verifierCagnotte
 } from './actions.ts';
 
 const demain = () => new Date(Date.now() + 86_400_000).toISOString().slice(0, 10);
@@ -92,15 +93,15 @@ describe('annulation et remboursement', () => {
 describe('covoiturage', () => {
   beforeEach(() => { reinitialiser(); connecter('p-aicha'); });
   it('réserver : places décrémentées, paiement covoit en attente ; régler : confirmé et conducteur prévenu', () => {
-    const o = app.monde.covoits[0], avant = o.places; const { paiement } = reserverCovoit(o.id, 2, 'p-aicha', 'momo');
-    expect(o.places).toBe(avant - 2); expect(paiement).toMatchObject({ statut: 'attente', montant: o.prix * 2, pour: { type: 'covoit', ids: [o.id] } }); expect(o.reservations[0]).toMatchObject({ voyageurId: 'p-aicha', places: 2 });
-    reglerCovoit(paiement.id, { ok: true }); expect(paiement.statut).toBe('ok'); expect(o.places).toBe(avant - 2);
+    const o = app.monde.covoits[0], avant = placesRestantes(o); const { paiement } = reserverCovoit(o.id, 2, 'p-aicha', 'momo');
+    expect(placesRestantes(o)).toBe(avant - 2); expect(paiement).toMatchObject({ statut: 'attente', montant: o.prix * 2, pour: { type: 'covoit', ids: [o.id] } }); expect(o.reservations[0]).toMatchObject({ voyageurId: 'p-aicha', places: 2 });
+    reglerCovoit(paiement.id, { ok: true }); expect(paiement.statut).toBe('ok'); expect(placesRestantes(o)).toBe(avant - 2); expect(o.places).toBe(avant); // la capacité de l'offre ne bouge pas
     expect(app.monde.notifications.some((n) => n.destId === o.conducteurId && n.titre === 'Nouvelle réservation')).toBe(true);
   });
   it('refus ou expiration : les places retournent à l’offre', () => {
-    const o = app.monde.covoits[1], avant = o.places; const a = reserverCovoit(o.id, 1, 'p-aicha', 'om'); reglerCovoit(a.paiement.id, { refus: 'Solde insuffisant' });
-    expect(a.paiement.statut).toBe('refuse'); expect(o.places).toBe(avant); expect(o.reservations).toHaveLength(0);
-    const c = reserverCovoit(o.id, 1, 'p-aicha', 'om'); c.paiement.expireLe = 1; reglerCovoit(c.paiement.id, { ok: true }); expect(c.paiement.motif).toBe('Réservation expirée'); expect(o.places).toBe(avant);
+    const o = app.monde.covoits[1], avant = placesRestantes(o); const a = reserverCovoit(o.id, 1, 'p-aicha', 'om'); reglerCovoit(a.paiement.id, { refus: 'Solde insuffisant' });
+    expect(a.paiement.statut).toBe('refuse'); expect(placesRestantes(o)).toBe(avant); expect(o.reservations).toHaveLength(0);
+    const c = reserverCovoit(o.id, 1, 'p-aicha', 'om'); c.paiement.expireLe = 1; reglerCovoit(c.paiement.id, { ok: true }); expect(c.paiement.motif).toBe('Réservation expirée'); expect(placesRestantes(o)).toBe(avant);
   });
   it('refuse trop de places, zéro place et une offre fermée', () => {
     const o = app.monde.covoits[0];
@@ -108,9 +109,9 @@ describe('covoiturage', () => {
     expect(() => reserverCovoit('inconnue', 1, 'p-aicha', 'momo')).toThrow('offre_inconnue'); o.statut = 'annulee'; expect(() => reserverCovoit(o.id, 1, 'p-aicha', 'momo')).toThrow('offre_fermee');
   });
   it('par le tunnel : brouillon covoit, refus puis nouvelle réservation', () => {
-    const o = app.monde.covoits[0], avant = o.places; const b = brouillonVide({ nature: 'covoit', covoitId: o.id, places: 2 }); etat().brouillon = b;
-    const e = etat().brouillon!; lancerPaiement(e, 'p-aicha'); expect(o.places).toBe(avant - 2); expect(montantBrouillon(e)).toBe(o.prix * 2);
-    refuserPaiement(e, 'Solde insuffisant'); expect(o.places).toBe(avant); expect(e.paiementId).toBeNull(); lancerPaiement(e, 'p-aicha'); expect(confirmerPaiement(e).ok).toBe(true);
+    const o = app.monde.covoits[0], avant = placesRestantes(o); const b = brouillonVide({ nature: 'covoit', covoitId: o.id, places: 2 }); etat().brouillon = b;
+    const e = etat().brouillon!; lancerPaiement(e, 'p-aicha'); expect(placesRestantes(o)).toBe(avant - 2); expect(montantBrouillon(e)).toBe(o.prix * 2);
+    refuserPaiement(e, 'Solde insuffisant'); expect(placesRestantes(o)).toBe(avant); expect(e.paiementId).toBeNull(); lancerPaiement(e, 'p-aicha'); expect(confirmerPaiement(e).ok).toBe(true);
   });
 });
 
@@ -201,5 +202,26 @@ describe('avantages au paiement : bons de fidélité et cagnotte', () => {
   });
   it('désactiver les avantages : plein tarif', () => {
     utiliserPoints('p-aicha'); const { b } = brouillon(1); b.avantages = false; lancerPaiement(b, 'p-aicha'); expect(paiementDe(b)!.montant).toBe(montantBrouillon(b)); expect(paiementDe(b)!.remise).toBeUndefined();
+  });
+});
+
+describe('paiement d’un colis (?colis=)', () => {
+  beforeEach(() => { reinitialiser(); connecter('p-aicha'); });
+  it('le colis créé à l’envoi se règle : paiement accepté, l’expéditrice est prévenue', () => {
+    const c = app.monde.colis.find((x) => x.id === 'col-1')!; const { colis, paiement } = creerColis({ expediteurId: 'p-aicha', destinataire: { nom: 'Marie', tel: '677000111' }, taille: 'M', options: { moto: false, assurance: true, contreRemboursement: false }, depart: 'Yaoundé · Mvan', arrivee: 'Douala · relais', moyen: 'momo', canal: 'app' });
+    expect(c.id).not.toBe(colis.id); expect(paiement!.statut).toBe('attente');
+    expect(reprendreColis(colis.id, 'p-aicha')).toBe('ok'); const b = etat().brouillon!; expect(b.nature).toBe('colis'); expect(montantBrouillon(b)).toBe(colis.prix);
+    lancerPaiement(b, 'p-aicha'); expect(paiementDe(b)!.id).toBe(paiement!.id); expect(confirmerPaiement(b).ok).toBe(true);
+    expect(app.monde.paiements.find((p) => p.id === paiement!.id)!.statut).toBe('ok'); expect(app.monde.notifications.some((n) => n.titre === `Colis ${colis.code} payé`)).toBe(true);
+    expect(reprendreColis(colis.id, 'p-aicha')).toBe('deja_regle');
+  });
+  it('un paiement refusé est remplacé par un nouveau au réessai ; contre-remboursement et colis d’autrui refusés', () => {
+    const { colis, paiement } = creerColis({ expediteurId: 'p-aicha', destinataire: { nom: 'Marie', tel: '677000111' }, taille: 'S', options: { moto: false, assurance: false, contreRemboursement: false }, depart: 'a', arrivee: 'b', moyen: 'momo', canal: 'app' });
+    reprendreColis(colis.id, 'p-aicha'); const b = etat().brouillon!; lancerPaiement(b, 'p-aicha'); refuserPaiement(b, 'Solde insuffisant');
+    expect(paiement!.statut).toBe('refuse'); expect(b.paiementId).toBeNull(); expect(b.refus?.nature).toBe('colis');
+    lancerPaiement(b, 'p-aicha'); expect(paiementDe(b)!.id).not.toBe(paiement!.id); expect(colis.paiementId).toBe(paiementDe(b)!.id); expect(paiementDe(b)!.statut).toBe('attente');
+    expect(reprendreColis(colis.id, 'p-maman')).toBe('introuvable');
+    const cod = creerColis({ expediteurId: 'p-aicha', destinataire: { nom: 'Marie', tel: '677000111' }, taille: 'S', options: { moto: false, assurance: false, contreRemboursement: true }, depart: 'a', arrivee: 'b', moyen: 'momo', canal: 'app' });
+    expect(reprendreColis(cod.colis.id, 'p-aicha')).toBe('sans_paiement');
   });
 });

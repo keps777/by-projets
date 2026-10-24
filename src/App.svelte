@@ -8,6 +8,8 @@
   import { toast } from './ui/toast.svelte.ts';
   import Squelette from './ui/Squelette.svelte';
   import NonTrouve from './apps/_socle/NonTrouve.svelte';
+  import ModuleOff from './apps/_socle/ModuleOff.svelte';
+  import { moduleActif } from './apps/patron/modules.ts';
 
   /** Fonctions lancées au démarrage par chaque application : `apps/*\/demarrage.ts` (export par défaut). */
   const demarrages = Object.values(import.meta.glob<{ default: () => void }>('./apps/*/demarrage.ts', { eager: true })).map((m) => m.default);
@@ -26,7 +28,7 @@
     else if (!peut(s.role, r.roles)) aller('/entree', { remplacer: true });
   });
   $effect(() => {
-    if (!route) { vue = null; return; }
+    if (!route) { vue = null; document.title = 'Page introuvable · AfriMove'; return; }
     const cle = route.chemin; chargee = cle; vue = null;
     route.composant().then((m) => { if (chargee === cle) vue = m.default; });
     document.title = `${route.titre} · AfriMove`;
@@ -39,6 +41,7 @@
 
 <div class={route?.cadre === 'web' ? 'cadre-web' : 'cadre-mobile'}>
   {#if !route}<NonTrouve />
+  {:else if route.module && !moduleActif(route.module)}<ModuleOff module={route.module} />
   {:else if vue}{#key routeur.chemin}{@const V = vue}<V params={trouve?.params ?? {}} />{/key}
   {:else}<Squelette web={route.cadre === 'web'} />{/if}
 </div>

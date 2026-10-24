@@ -23,7 +23,8 @@ export function amorcerDemo(gareId: string): boolean {
   t.demos[gareId] = true;
   const m = app.monde, now = maintenant(), jour = jourDe(new Date(now)), hier = ajouterJours(jour, -1);
   const guichets = equipeDe(gareId, 'guichet'), quai = equipeDe(gareId, 'quai')[0], sup = equipeDe(gareId, 'superviseur')[0];
-  const departsGare = m.departs.filter((d) => ligneDe(d).gareDe === gareId && d.jour >= jour && (d.statut === 'prevu' || d.statut === 'embarquement')).sort((x, y) => x.jour.localeCompare(y.jour) || x.heure.localeCompare(y.heure));
+  const cie = sup?.compagnieId, deLaCie = (d: Depart) => !cie || ligneDe(d).compagnieId === cie; // la gare accueille plusieurs compagnies : la démo reste dans celle du superviseur
+  const departsGare = m.departs.filter((d) => ligneDe(d).gareDe === gareId && deLaCie(d) && d.jour >= jour && (d.statut === 'prevu' || d.statut === 'embarquement')).sort((x, y) => x.jour.localeCompare(y.jour) || x.heure.localeCompare(y.heure));
   const [a, b] = guichets;
   if (a && departsGare.length >= 2) {
     const caisse = m.caisses.find((c) => c.agentId === a.id && c.statut === 'ouverte') ?? ouvrirCaisse(a.id, 20_000);
@@ -39,7 +40,7 @@ export function amorcerDemo(gareId: string): boolean {
     const t0 = now - 12 * 60_000; for (let i = 0; i < 3; i++) m.evenements.unshift({ id: `ev-demo-pin-${b.id}-${i}`, ts: t0 + i * 20_000, type: 'pin_faux', acteurId: b.id, texte: 'PIN erroné', ref: caisse.id });
     bloquerCaisse(caisse.id, '3 PIN faux');
   }
-  const enRoute = m.departs.filter((d) => ligneDe(d).gareDe === gareId && d.jour === jour && (d.statut === 'parti' || d.statut === 'embarquement')).sort((x, y) => Number(y.statut === 'parti') - Number(x.statut === 'parti') || y.heure.localeCompare(x.heure))[0];
+  const enRoute = m.departs.filter((d) => ligneDe(d).gareDe === gareId && deLaCie(d) && d.jour === jour && (d.statut === 'parti' || d.statut === 'embarquement')).sort((x, y) => Number(y.statut === 'parti') - Number(x.statut === 'parti') || y.heure.localeCompare(x.heure))[0];
   if (enRoute && quai) {
     const sieges = siegesLibres(enRoute, 1);
     if (sieges.length) {

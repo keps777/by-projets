@@ -78,7 +78,7 @@
   .msg.me { align-self: flex-end; border-radius: 20px 20px 4px 20px; background: linear-gradient(135deg, rgba(139, 124, 255, 0.35), rgba(61, 224, 255, 0.25)); }
   .sug { display: flex; flex-direction: column; gap: 8px; }
   .sug a { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 14px; border-radius: 16px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1); text-decoration: none; color: #f2f4ff; font-size: 14px; }
-  .halo { position: absolute; left: 50%; top: 60px; width: 360px; height: 360px; margin-left: -180px; border-radius: 50%; background: radial-gradient(circle, rgba(139, 124, 255, 0.3), transparent 60%); pointer-events: none; }
+  .halo { position: absolute; left: 50%; top: 60px; width: min(360px, 100%); height: 360px; margin-left: calc(min(360px, 100%) / -2); border-radius: 50%; background: radial-gradient(circle, rgba(139, 124, 255, 0.3), transparent 60%); pointer-events: none; }
   .compose { margin-top: auto; padding-top: 8px; } .envoi:disabled { opacity: 0.4; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   input.inp { outline: none; } input.inp:focus { border-color: #3de0ff; }

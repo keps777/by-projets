@@ -20,6 +20,7 @@ export interface Depart {
   id: string; ligneId: string; jour: Jour; heure: string; busId: string; capacite: number; prix: number; statut: StatutDepart;
   /** Retard annoncé, en minutes (0 = à l'heure). */ retardMin: number; chauffeurId?: string; convoyeurId?: string;
   /** Position estimée du bus en route, 0 à 1 (simulée). */ avancement: number;
+  /** Départ donné à la main par le chauffeur (ms) : la simulation de l'horloge ne le ramène jamais à « prévu » ou « embarquement ». */ partiA?: number;
   /** Sièges déjà pris par d'autres voyageurs (hors billets du monde simulé) : garde le stockage léger. */ prisAilleurs: string[];
 }
 
