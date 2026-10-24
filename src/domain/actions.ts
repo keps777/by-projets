@@ -38,7 +38,7 @@ export const nonLues = (personneId: string | null | undefined) => (personneId ? 
 
 // ------------------------------------------------------------------ session
 export function verifierPin(personneId: string, pin: string) { const p = personne(personneId); return !!p && p.actif && !!p.pin && p.pin === pin; }
-export function connecter(personneId: string) { const p = personne(personneId); if (!p) throw new Error('inconnu'); app.session.personneId = p.id; app.session.role = p.role; app.session.derniereActivite = maintenant(); }
+export function connecter(personneId: string) { const p = personne(personneId); if (!p) throw new Error('inconnu'); if (!p.actif) throw new Error('compte_inactif'); app.session.personneId = p.id; app.session.role = p.role; app.session.derniereActivite = maintenant(); }
 export function deconnecter() { app.session.personneId = null; app.session.role = null; }
 
 // ------------------------------------------------------------------ billets
