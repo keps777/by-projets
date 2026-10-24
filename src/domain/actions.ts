@@ -94,7 +94,7 @@ export function annulerBillet(billetId: string, parCompagnie = false): ResultatA
 export type StatutScan = 'ok' | 'deja_scanne' | 'annule' | 'faux' | 'mauvais_depart' | 'inconnu' | 'non_paye';
 export interface ResultatScan { statut: StatutScan; billet?: Billet; message: string }
 /** Scan au quai : contenu du QR (`code.sceau`) ou code saisi à la main. `departId` : on refuse un billet d'un autre départ. */
-export function scannerBillet(contenu: string, agentId: string, departId?: string): ResultatScan {
+function scannerBilletBrut(contenu: string, agentId: string, departId?: string): ResultatScan {
   const qr = lireQr(contenu), code = (qr?.code ?? contenu.trim().toUpperCase().replace(/[^A-Z0-9]/g, '')), b = app.monde.billets.find((x) => x.code === code);
   if (!b) return { statut: 'inconnu', message: 'Billet inconnu' };
   if (qr && !sceauValide({ code: b.code, departId: b.departId, siege: b.siege, nom: b.passager.nom, sceau: qr.sceau })) return { statut: 'faux', billet: b, message: 'Sceau invalide : billet falsifié' };
@@ -104,6 +104,13 @@ export function scannerBillet(contenu: string, agentId: string, departId?: strin
   if (departId && b.departId !== departId) return { statut: 'mauvais_depart', billet: b, message: 'Ce billet est pour un autre départ' };
   b.statut = 'scanne'; b.scanneLe = maintenant(); b.scannePar = agentId; consigner('scan', `Billet ${b.code} scanné`, agentId, b.id);
   return { statut: 'ok', billet: b, message: 'Billet valide' };
+}
+
+export function scannerBillet(contenu: string, agentId: string, departId?: string): ResultatScan {
+  const r = scannerBilletBrut(contenu, agentId, departId);
+  // Les refus sont consignés : le superviseur de la gare les voit dans ses alertes.
+  if (r.statut !== 'ok') consigner('scan_refuse', `Scan refusé (${r.statut}) : ${r.message}`, agentId, r.billet?.id);
+  return r;
 }
 
 // ------------------------------------------------------------------ caisse du guichet
