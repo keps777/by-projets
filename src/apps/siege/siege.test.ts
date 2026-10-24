@@ -75,7 +75,7 @@ describe('équipe', () => {
 describe('tarifs, règles et permissions', () => {
   beforeEach(() => reinitialiser());
   it('bascule un paramètre et le journalise', () => {
-    expect(basculerParametre('tarifs', 'dynamique', 'p-luther')).toBe(false); expect(app.monde.params.tarifs.dynamique).toBe(false); expect(app.monde.evenements[0].texte).toContain('dynamique'); expect(basculerParametre('regles', 'cloture')).toBe(false);
+    expect(basculerParametre('tarifs', 'etudiant', 'p-luther')).toBe(false); expect(app.monde.params.tarifs.etudiant).toBe(false); expect(app.monde.evenements[0].texte).toContain('etudiant'); expect(basculerParametre('regles', 'cloture')).toBe(false);
     expect(() => basculerParametre('regles', 'inconnue')).toThrow();
   });
   it('permissions : valeurs par défaut du rôle puis surcharge', () => {
