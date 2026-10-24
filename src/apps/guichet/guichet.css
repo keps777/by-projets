@@ -1,0 +1,32 @@
+/* Styles partagés des écrans du guichet (préfixe g- pour ne pas heurter les autres applications). */
+.g-dep{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);text-decoration:none;color:inherit;min-height:56px}
+.g-dep:last-child{border:0}
+.g-stp{display:flex;align-items:center;gap:8px}
+.g-stp button{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#F2F4FF;font:700 18px 'Sora Variable','Sora',sans-serif;cursor:pointer}
+.g-stp button:disabled{opacity:.4;cursor:default}
+.g-stp b{min-width:34px;text-align:center;font:700 18px 'Geist Mono',monospace}
+.g-note{margin:0;font-size:13px}
+.g-fix{flex:none}
+.scr input[type=checkbox]{accent-color:#3DE0FF}
+/* Papier thermique : à l'écran comme à l'impression (58 mm, noir sur blanc). */
+.g-papier{display:flex;flex-direction:column;gap:14px;align-items:center}
+.g-rcpt{width:min(100%,300px);padding:16px 14px;background:#F7F7F2;color:#111;border-radius:6px;font:500 13px/1.5 'Geist Mono',monospace;position:relative;box-shadow:0 30px 60px -30px rgba(0,0,0,.9)}
+.g-rcpt h3{margin:0 0 4px;font:800 15px 'Sora Variable','Sora',sans-serif;text-align:center}
+.g-rcpt .c{text-align:center}
+.g-rcpt .l{display:flex;justify-content:space-between;gap:8px}.g-rcpt .l b{text-align:right}
+.g-rcpt .code{margin:6px 0;font:800 22px 'Sora Variable','Sora',sans-serif;text-align:center;letter-spacing:.08em}
+.g-rcpt .qr{display:flex;justify-content:center;margin:8px 0}
+.g-rcpt hr{border:0;border-top:1px dashed #888;margin:8px 0}
+.g-rcpt .annule{margin:6px 0;padding:4px;border:2px solid #111;text-align:center;font-weight:800;letter-spacing:.1em}
+.g-rcpt .petit{font-size:11px;color:#444;text-align:center}
+@page{size:58mm auto;margin:0}
+@media print{
+  html,body,#app,.cadre-mobile,.scr,.bd{height:auto!important;min-height:0!important;overflow:visible!important;background:#fff!important;padding:0!important}
+  body *{visibility:hidden!important}
+  .a-imprimer,.a-imprimer *{visibility:visible!important}
+  .a-imprimer{position:absolute;left:0;top:0;width:58mm;display:block;margin:0}
+  .a-imprimer .g-rcpt{width:58mm;padding:3mm;margin:0;border-radius:0;box-shadow:none;background:#fff;color:#000;font-size:9pt;break-after:page;page-break-after:always}
+  .a-imprimer .g-rcpt:last-child{break-after:auto;page-break-after:auto}
+  .a-imprimer .g-rcpt .petit{color:#000}
+}
+.b:disabled{opacity:.45;cursor:default;box-shadow:none}
