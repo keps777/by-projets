@@ -83,3 +83,7 @@ a{color:#7FEBFF;text-decoration:none}a:hover{color:#B3A8FF}
 .rng .tr{position:absolute;left:0;right:0;height:6px;border-radius:3px;background:rgba(255,255,255,.12)}
 .rng .fl{position:absolute;height:6px;border-radius:3px;background:linear-gradient(90deg,#8B7CFF,#3DE0FF)}
 .rng .kn{position:absolute;top:50%;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;background:#F2F4FF;box-shadow:0 4px 14px rgba(0,0,0,.5);border:0;cursor:pointer}
+
+/* Les enfants du corps défilant ne se tassent pas (les rangées à hauteur minimale se chevauchaient). */
+.bd>*{flex-shrink:0}
+.bd>.center{flex-shrink:1}

@@ -74,7 +74,7 @@ export function regler(paiementId: string, issue: { ok: true } | { refus: string
   if ('ok' in issue) {
     if ((p.expireLe ?? 0) < maintenant()) { p.statut = 'refuse'; p.motif = 'Réservation expirée'; for (const b of billets) b.statut = 'expire'; return p; }
     p.statut = 'ok'; for (const b of billets) b.statut = 'valide';
-    const d = departParId(billets[0].departId); if (d) { const l = ligneDe(d); notifier(p.payeurId, 'Billet confirmé', `${l.de} → ${l.vers} · ${d.jour} ${d.heure}${billets[0].siege ? ` · place ${billets.map((b) => b.siege).join(', ')}` : ''}`, '/pass', 'billet'); consigner('vente', `${billets.length} billet(s) ${l.de}→${l.vers} ${d.heure} · ${p.montant} F`, p.payeurId, d.id); }
+    const d = billets[0] ? departParId(billets[0].departId) : undefined; if (d) { const l = ligneDe(d); notifier(p.payeurId, 'Billet confirmé', `${l.de} → ${l.vers} · ${d.jour} ${d.heure}${billets[0].siege ? ` · place ${billets.map((b) => b.siege).join(', ')}` : ''}`, '/pass', 'billet'); consigner('vente', `${billets.length} billet(s) ${l.de}→${l.vers} ${d.heure} · ${p.montant} F`, p.payeurId, d.id); }
   } else { p.statut = 'refuse'; p.motif = issue.refus; for (const b of billets) b.statut = 'expire'; }
   return p;
 }

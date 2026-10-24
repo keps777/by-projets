@@ -57,7 +57,7 @@ describe('panorama des départs', () => {
     const g = [dep('06:00', 8000, 4, 195, true), dep('06:15', 6000, 22, 225), dep('07:00', 7000, 14, 210)];
     expect(badge(g[0], g).texte).toBe('+ que 4 pl.'); expect(badge(g[1], g).texte).toBe('moins cher'); expect(badge(g[2], g).texte).toBe('14 places');
     expect(badge({ ...dep('07:30', 4500, 1), covoit: true }, g).texte).toBe('dernière pl.');
-    expect(duree(210)).toBe('3 h 30'); expect(heureApres('22:30', 210)).toBe('02:00');
+    expect(duree(210)).toBe('3 h 30'); expect(heureApres('22:30', 210)).toBe('02:00'); expect(heureApres('00:20', -30)).toBe('23:50');
   });
 });
 describe('colis, caisse, retard', () => {

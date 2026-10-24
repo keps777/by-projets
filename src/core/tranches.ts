@@ -27,5 +27,5 @@ export function badge(it: Tri_<unknown> & { covoit?: boolean }, groupe: Tri_<unk
   return it.covoit ? { texte: `covoit · ${it.places} pl.`, ton: 'cv' } : { texte: `${it.places} places`, ton: '' };
 }
 export const duree = (min: number) => `${Math.floor(min / 60)} h ${String(min % 60).padStart(2, '0')}`;
-export const heureApres = (heure: string, minutes: number) => { const t = Number(heure.slice(0, 2)) * 60 + Number(heure.slice(3, 5)) + minutes; return `${String(Math.floor(t / 60) % 24).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`; };
+export const heureApres = (heure: string, minutes: number) => { const t = (((Number(heure.slice(0, 2)) * 60 + Number(heure.slice(3, 5)) + minutes) % 1440) + 1440) % 1440; return `${String(Math.floor(t / 60)).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`; };
 export type { Depart };
