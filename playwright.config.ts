@@ -4,7 +4,7 @@ import { defineConfig } from '@playwright/test';
 import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
-const PORT = 4180;
+const PORT = Number(process.env.AM_PORT) || 4180;
 const dossierNavigateurs = process.env.PLAYWRIGHT_BROWSERS_PATH || '/opt/pw-browsers';
 function chromiumPreinstalle(): string | undefined {
   if (!existsSync(dossierNavigateurs)) return undefined;
@@ -39,7 +39,7 @@ export default defineConfig({
   },
   projects: [{ name: 'mobile', use: {} }],
   webServer: {
-    command: 'npm run build && npm run preview',
+    command: `npm run build && npx vite preview --host --port ${PORT}`,
     url: `http://127.0.0.1:${PORT}`,
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
