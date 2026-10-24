@@ -49,7 +49,7 @@ describe('offres du jour', () => {
   });
 });
 describe('prix dynamique', () => {
-  beforeEach(() => reinitialiser());
+  beforeEach(() => { reinitialiser(); app.monde.params.tarifs.dynamique = true; });
   it('−500 F la veille quand le bus est à moins de la moitié, +500 F au-dessus de 90 %', () => {
     const peu = dep('09:00'), presque = dep('06:00');
     expect(peu.prix).toBe(6000); expect(prixAffiche(peu)).toBe(5500);
@@ -69,7 +69,7 @@ describe('prix dynamique', () => {
   });
 });
 describe('complet, étiquettes et destinations', () => {
-  beforeEach(() => reinitialiser());
+  beforeEach(() => { reinitialiser(); app.monde.params.tarifs.dynamique = true; });
   it('un bus plein est complet et étiqueté ainsi', () => {
     const d = dep('06:00'), plan = planSieges('VIP', d.capacite).map((s) => s.id);
     d.prisAilleurs = plan; expect(siegesIndisponibles(d).size).toBe(plan.length);

@@ -100,7 +100,7 @@ export function monde(jourRef: Jour = aujourdhui()): Monde {
     compagnies: COMPAGNIES, gares: GARES, bus, lignes, departs, billets: [billet], paiements: [paiement], covoits, colis: [colis], personnes: PERSONNES.map((p) => ({ ...p })), caisses: [caisse], litiges: [],
     notifications: [{ id: 'n1', destId: 'p-aicha', ts: maintenant() - 3_000_000, titre: 'Billet confirmé', sous: 'Yaoundé → Douala · demain 08:00 · place 3C', lu: false, lien: '/pass', type: 'billet' }],
     evenements: [], params: { modules: { colis: true, covoiturage: true, moto: true, relais: true, groupe: true, assistant: true, financement: true, interAgences: true }, regles: { cloture: true, bordereau: true, scanQuai: true, cadence: true, visage: true },
-      tarifs: { dynamique: true, calendrierBas: true, etudiant: true, memePrix: true } }
+      tarifs: { dynamique: false, calendrierBas: true, etudiant: true, memePrix: true } }
   };
 }
 export const sessionVide = () => ({ personneId: null as string | null, role: null as Etat['session']['role'], derniereActivite: 0, langue: 'fr' as const, vuTuto: false, hors_ligne: false });

@@ -2,7 +2,8 @@
 // ainsi un billet vendu au guichet apparaît au quai, dans la caisse, dans les analyses du patron et dans l'app de la voyageuse.
 import { codeBillet, lireQr, sceller, sceauValide } from '../core/sceau.ts';
 import { supplementSiege } from '../core/sieges.ts';
-import { remboursement as calculRemboursement, type Remboursement } from '../core/tarif.ts';
+import { prixDynamique, remboursement as calculRemboursement, type Remboursement } from '../core/tarif.ts';
+import { ecartJours } from '../core/dates.ts';
 import { attendu as attenduCaisse, evaluerEcart, totalCompte } from '../core/caisse.ts';
 import { codeColis, codeRetrait, prixColis, suivant } from '../core/colis.ts';
 import { minutes } from '../core/retard.ts';
@@ -36,11 +37,13 @@ export const notificationsDe = (personneId: string) => app.monde.notifications.f
 export const nonLues = (personneId: string | null | undefined) => (personneId ? notificationsDe(personneId).filter((n) => !n.lu).length : 0);
 
 // ------------------------------------------------------------------ session
-export function verifierPin(personneId: string, pin: string) { return personne(personneId)?.pin === pin; }
+export function verifierPin(personneId: string, pin: string) { const p = personne(personneId); return !!p && p.actif && !!p.pin && p.pin === pin; }
 export function connecter(personneId: string) { const p = personne(personneId); if (!p) throw new Error('inconnu'); app.session.personneId = p.id; app.session.role = p.role; app.session.derniereActivite = maintenant(); }
 export function deconnecter() { app.session.personneId = null; app.session.role = null; }
 
 // ------------------------------------------------------------------ billets
+/** Prix proposé pour un départ : tarif du départ ajusté par le prix dynamique du patron (−500 F veille peu rempli, +500 F presque plein). C'est ce prix que paie `reserver`. */
+export const prixDuDepart = (d: Depart) => prixDynamique(d.prix, remplissage(d), Math.max(0, ecartJours(aujourdhui(), d.jour)), !!app.monde.params.tarifs.dynamique);
 export interface DemandeReservation {
   departId: string; /** Un siège par passager (null = placement libre, ex. cadence ou convoyeur). */ sieges: (string | null)[]; passagers: Passager[];
   acheteurId: string; canal: Canal; moyen: MoyenPaiement; /** Prix unitaire négocié (étudiant…) ; sinon prix du départ. */ prixUnitaire?: number; caisseId?: string;
@@ -51,14 +54,14 @@ export function reserver(r: DemandeReservation): ResultatReservation {
   const d = departParId(r.departId); if (!d) throw new Error('depart_inconnu');
   if (d.statut === 'annule' || d.statut === 'arrive') throw new Error('depart_ferme');
   if (r.sieges.length !== r.passagers.length || r.sieges.length === 0) throw new Error('demande_invalide');
-  const pris = siegesIndisponibles(d), ligne = ligneDe(d);
+  const pris = siegesIndisponibles(d), ligne = ligneDe(d), prixBase = prixDuDepart(d);
   if (new Set(r.sieges.filter(Boolean)).size !== r.sieges.filter(Boolean).length) throw new Error('siege_double');
   for (const s of r.sieges) if (s && pris.has(s)) throw new Error('siege_pris');
   if (r.sieges.length > placesLibres(d)) throw new Error('complet');
   const now = maintenant(), immediat = r.moyen === 'especes' && r.canal !== 'app';
   const pid = nouvelId('pay'), billets: Billet[] = r.sieges.map((siege, i) => {
     const code = codeBillet(now / 1000 + app.monde.billets.length * 13 + i * 7 + (r.passagers[i].nom.length * 31));
-    const prix = (r.prixUnitaire ?? d.prix) + (siege ? supplementSiege(ligne.classe, siege) : 0);
+    const prix = (r.prixUnitaire ?? prixBase) + (siege ? supplementSiege(ligne.classe, siege) : 0);
     return { id: nouvelId('b'), code, departId: d.id, siege, passager: r.passagers[i], prix, canal: r.canal, acheteurId: r.acheteurId, paiementId: pid, statut: immediat ? 'valide' : 'attente_paiement', creeLe: now, sceau: sceller({ code, departId: d.id, siege, nom: r.passagers[i].nom }), caisseId: r.caisseId };
   });
   const paiement: Paiement = { id: pid, ts: now, montant: billets.reduce((s, b) => s + b.prix, 0), moyen: r.moyen, statut: immediat ? 'ok' : 'attente', ref: `${r.moyen.toUpperCase()}-${Math.floor(now / 1000) % 100000}`, canal: r.canal, payeurId: r.acheteurId, pour: { type: 'billet', ids: billets.map((b) => b.id) }, expireLe: now + DUREE_RESERVATION_MS };
