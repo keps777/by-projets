@@ -59,6 +59,12 @@ describe('annulation, retard, scan', () => {
   });
 });
 describe('caisse et colis', () => {
+  it('un billet espèces remboursé : encaissé puis rendu une seule fois (frais de 10 % gardés)', () => {
+    reinitialiser(); const c = caisseOuverte('p-fatou')!, d = unDepart();
+    const { billets } = reserver({ departId: d.id, sieges: libres(d, 1), passagers: [{ nom: 'A', tel: '1' }], acheteurId: 'p-fatou', canal: 'guichet', moyen: 'especes', caisseId: c.id });
+    expect(attenduDeCaisse(c)).toBe(20_000 + billets[0].prix); annulerBillet(billets[0].id);
+    expect(attenduDeCaisse(c)).toBe(20_000 + billets[0].prix - billets[0].rembourse!);
+  });
   beforeEach(() => reinitialiser());
   it('fermeture avec écart > 1 000 F : le superviseur est prévenu puis valide avec son PIN', () => {
     const c = caisseOuverte('p-fatou')!, r = fermerCaisse(c.id, { 10000: 1 }); expect(r.niveau).toBe('a_valider'); expect(r.montant).toBe(10_000 - 20_000);

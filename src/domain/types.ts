@@ -28,7 +28,7 @@ export interface Passager { nom: string; tel: string }
 export interface Billet {
   id: string; /** Code court lisible (ex. AM7F3K22), contenu du QR avec le sceau. */ code: string; departId: string; siege: string | null;
   passager: Passager; prix: number; canal: Canal; acheteurId: string; paiementId: string; statut: StatutBillet; creeLe: number;
-  scanneLe?: number; scannePar?: string; annuleLe?: number; /** Signature du billet (voir core/sceau.ts), vérifiable hors ligne. */ sceau: string;
+  scanneLe?: number; scannePar?: string; annuleLe?: number; /** Montant réellement rendu lors d'un remboursement (frais déduits). */ rembourse?: number; /** Signature du billet (voir core/sceau.ts), vérifiable hors ligne. */ sceau: string;
   /** Vente au guichet : caisse qui a encaissé. */ caisseId?: string;
 }
 export type StatutPaiement = 'attente' | 'ok' | 'refuse' | 'rembourse';

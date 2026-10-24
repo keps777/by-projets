@@ -7,7 +7,7 @@ import { attendu as attenduCaisse, evaluerEcart, totalCompte } from '../core/cai
 import { codeColis, codeRetrait, prixColis, suivant } from '../core/colis.ts';
 import { minutes } from '../core/retard.ts';
 import { DUREE_RESERVATION_MS } from '../data/constantes.ts';
-import { app, maintenant, nouvelId } from '../data/store.svelte.ts';
+import { app, aujourdhui, maintenant, nouvelId } from '../data/store.svelte.ts';
 import type { Billet, Caisse, Canal, Colis, Compagnie, Depart, Gare, Ligne, MoyenPaiement, Paiement, Passager, Personne, Role, StatutColis } from './types.ts';
 
 // ------------------------------------------------------------------ lectures
@@ -85,7 +85,7 @@ export function annulerBillet(billetId: string, parCompagnie = false): ResultatA
   if (b.statut !== 'valide') return { billet: b, possible: false, frais: 0, rembourse: 0, raison: b.statut === 'scanne' ? 'Billet déjà utilisé' : 'Billet non remboursable' };
   const d = departParId(b.departId)!, r = calculRemboursement(b.prix, (departEnMs(d) - maintenant()) / 60_000, parCompagnie);
   if (!r.possible) return { billet: b, ...r };
-  b.statut = 'rembourse'; b.annuleLe = maintenant();
+  b.statut = 'rembourse'; b.annuleLe = maintenant(); b.rembourse = r.rembourse;
   const p = app.monde.paiements.find((x) => x.id === b.paiementId); if (p && app.monde.billets.filter((x) => x.paiementId === p.id && x.statut === 'valide').length === 0) p.statut = 'rembourse';
   notifier(b.acheteurId, 'Remboursement envoyé', `${r.rembourse.toLocaleString('fr-FR')} F renvoyés · place ${b.siege ?? ''} libérée`, '/pass', 'remboursement');
   consigner('annulation', `Billet ${b.code} remboursé ${r.rembourse} F`, b.acheteurId, b.id);
@@ -110,16 +110,16 @@ export function scannerBillet(contenu: string, agentId: string, departId?: strin
 export const caisseOuverte = (agentId: string): Caisse | undefined => app.monde.caisses.find((c) => c.agentId === agentId && c.statut === 'ouverte');
 export function ouvrirCaisse(agentId: string, fond: number): Caisse {
   const deja = caisseOuverte(agentId); if (deja) return deja; const p = personne(agentId)!;
-  const c: Caisse = { id: nouvelId('c'), agentId, gareId: p.gareId ?? '', jour: new Date(maintenant()).toISOString().slice(0, 10), ouvertA: maintenant(), fond, statut: 'ouverte' };
+  const c: Caisse = { id: nouvelId('c'), agentId, gareId: p.gareId ?? '', jour: aujourdhui(), ouvertA: maintenant(), fond, statut: 'ouverte' };
   app.monde.caisses.push(c); consigner('caisse', `Ouverture de caisse · fond ${fond} F`, agentId, c.id); return c;
 }
-/** Espèces encaissées par la caisse (billets et colis payés en espèces, moins remboursements). */
+/** Espèces de la caisse : tout ce qui a été encaissé en espèces (billets même remboursés ensuite, colis) moins ce qui a réellement été rendu. */
 export function especesCaisse(caisseId: string) {
   const bs = app.monde.billets.filter((b) => b.caisseId === caisseId && app.monde.paiements.find((p) => p.id === b.paiementId)?.moyen === 'especes');
-  const ventes = bs.filter((b) => b.statut === 'valide' || b.statut === 'scanne').reduce((s, b) => s + b.prix, 0);
-  const rembourses = bs.filter((b) => b.statut === 'rembourse').reduce((s, b) => s + calculRemboursement(b.prix, 9999).rembourse, 0);
+  const encaisses = bs.filter((b) => b.statut === 'valide' || b.statut === 'scanne' || b.statut === 'rembourse');
+  const rembourses = bs.filter((b) => b.statut === 'rembourse').reduce((s, b) => s + (b.rembourse ?? 0), 0);
   const colis = app.monde.colis.filter((c) => c.caisseId === caisseId && c.statut !== 'annule').reduce((s, c) => s + c.prix, 0);
-  return { ventes: ventes + colis, rembourses, billets: bs.filter((b) => b.statut === 'valide' || b.statut === 'scanne').length };
+  return { ventes: encaisses.reduce((s, b) => s + b.prix, 0) + colis, rembourses, billets: encaisses.filter((b) => b.statut !== 'rembourse').length };
 }
 export function attenduDeCaisse(c: Caisse) { const e = especesCaisse(c.id); return attenduCaisse(c.fond, e.ventes, e.rembourses); }
 export function fermerCaisse(caisseId: string, compte: Record<string, number>, justification?: string) {
