@@ -1,0 +1,44 @@
+// Les parcours de démonstration d'AfriMove : chaque étape pointe vers la vraie route de l'application (chemins fixes de CONTRIBUER.md).
+// Les noms de planches viennent des maquettes ; `PLANCHES` les traduit en routes.
+export const PLANCHES: Record<string, string> = {
+  Splash: '/splash', Tuto: '/tuto', Connexion: '/connexion', ConnexionCode: '/connexion/code', Main: '/', MainVoix: '/voix', MainFiltres: '/filtres', MainVille: '/ville', Destination: '/destination', Calendrier: '/calendrier',
+  SiegePay: '/siege', Paiement: '/paiement', PaiementAttente: '/paiement/attente', PaiementRefus: '/paiement/refus', Pass: '/pass', PassHorsLigne: '/pass/hors-ligne', PassAnnule: '/pass/annule', Proche: '/proche',
+  DirectIlot: '/direct/ilot', Direct: '/direct', DirectRetard: '/direct/retard', Course: '/course', Litige: '/litige', USSD: '/ussd', Erreur: '/erreur', Maintenance: '/maintenance', CovoitVille: '/covoit/ville', Arret: '/arret', Reseau: '/reseau',
+  ColisEnvoi: '/colis/envoi', ColisCode: '/colis/suivi', Relais: '/relais', Livraison: '/livraison', Groupe: '/groupe', Covoit: '/covoit', CovoitConducteur: '/covoit/conduire', MoiProches: '/moi/proches', MoiFidelite: '/moi/fidelite', Moi: '/moi',
+  Notifications: '/notifications', Reglages: '/reglages', Autorisations: '/autorisations', RelaisDevenir: '/relais/devenir', LivreurDevenir: '/livreur/devenir', RelaisInscription: '/relais/inscription',
+  Guichet: '/guichet', Vente: '/vente', VenteImprime: '/vente/ticket', Caisse: '/caisse', Cadence: '/cadence', CadenceBillet: '/cadence/billet', CadenceQuai: '/cadence/quai', Chauffeur: '/chauffeur', ChauffeurArret: '/chauffeur/arret',
+  Quai: '/quai', QuaiOk: '/quai/ok', QuaiRefus: '/quai/refus', SuperviseurVoir: '/superviseur/voir', GuichetColis: '/guichet/colis', Depot: '/depot', RelaisApp: '/relais/app', Convoyeur: '/convoyeur', Controleur: '/controleur',
+  SuperviseurValider: '/superviseur/valider', RapportSoir: '/rapport-soir', Superviseur: '/superviseur', SuperviseurDebloquer: '/superviseur/debloquer', SuperviseurEquipe: '/superviseur/equipe',
+  Patron: '/patron', PatronEquipe: '/patron/equipe', PatronGare: '/patron/gare', PatronPersonne: '/patron/personne', Assistant: '/assistant', AssistantReponse: '/assistant/reponse', Modules: '/modules',
+  Financement: '/financement', FinancementDemande: '/financement/demande', InterAgences: '/inter-agences', InterAgencesConvention: '/inter-agences/convention',
+  Analyses: '/siege/analyses', AnalysesLigne: '/siege/analyses/ligne', AnalysesBus: '/siege/analyses/bus', Comptable: '/siege/comptable', ComptableRapprochement: '/siege/comptable/rapprochement',
+  Config: '/siege/config', ConfigLigne: '/siege/config/ligne', ConfigPersonne: '/siege/config/personne', Controle: '/siege/controle', ControleSante: '/siege/controle/sante', Livreur: '/livreur', Conducteur: '/conducteur', Vendeur: '/vendeur'
+};
+export interface Joueur { /** Personne du monde simulé jouée par le bouton « Jouer en tant que… ». */ id: string; /** Indice de l'étape où ce rôle entre en scène. */ depuis?: number }
+export interface Parcours { titre: string; qui: string; groupe: 1 | 2 | 3 | 4; tag: string; ton: string; joueurs: Joueur[]; etapes: { nom: string; chemin: string }[] }
+export const GROUPES = ['Tout', 'Voyageur', 'Agents de gare', 'Patron et siège', 'Partenaires'] as const;
+
+const p = (titre: string, qui: string, groupe: Parcours['groupe'], tag: string, ton: string, joueurs: Joueur[], etapes: [string, string][]): Parcours => ({ titre, qui, groupe, tag, ton, joueurs, etapes: etapes.map(([nom, planche]) => ({ nom, chemin: PLANCHES[planche] })) });
+const AICHA: Joueur[] = [{ id: 'p-aicha' }];
+export const PARCOURS: Parcours[] = [
+  p('Première fois · du logo au premier billet', 'Aïcha, voyageuse', 1, 'cœur', 'ac', AICHA, [['Ouverture', 'Splash'], ['Tutoriel 3D', 'Tuto'], ['Visage', 'Connexion'], ['Code SMS', 'ConnexionCode'], ['Départs en 3D', 'Main']]),
+  p('Choisir un lieu, une date, une heure', 'Aïcha', 1, 'nouveau', 'ac', AICHA, [['Carte en relief', 'Destination'], ['Calendrier + tambour', 'Calendrier'], ['Panorama 3D', 'Main'], ['Siège 3D', 'SiegePay'], ['Paiement visage', 'Paiement'], ['Attente MoMo', 'PaiementAttente'], ['Billet holo', 'Pass']]),
+  p('Le jour du voyage', 'Aïcha', 1, 'cœur', 'ac', AICHA, [['Îlot écran verrouillé', 'DirectIlot'], ['Moto vers la gare', 'Course'], ['Billet au quai', 'Pass'], ['Bus en relief', 'Direct'], ['Retard', 'DirectRetard'], ['Signaler', 'Litige']]),
+  p('Quand ça coince', 'Aïcha', 1, 'bords', 'wa', AICHA, [['Refus MoMo', 'PaiementRefus'], ['Un proche paie', 'Proche'], ['Hors ligne', 'PassHorsLigne'], ['*123#', 'USSD'], ['Annuler', 'PassAnnule'], ['Erreur', 'Erreur'], ['Maintenance', 'Maintenance']]),
+  p('Dire, filtrer, bouger en ville', 'Aïcha', 1, 'variantes', '', AICHA, [['Voix', 'MainVoix'], ['Filtres', 'MainFiltres'], ['En ville', 'MainVille'], ['Covoit ville', 'CovoitVille'], ['Arrêts en route', 'Arret'], ['Réseau', 'Reseau']]),
+  p('Colis de bout en bout', 'Aïcha → Maman', 1, 'module', 'inf', AICHA, [['Envoyer (cube 3D)', 'ColisEnvoi'], ['Payer', 'Paiement'], ['Suivi', 'ColisCode'], ['Relais en relief', 'Relais'], ['Livraison moto', 'Livraison']]),
+  p('Groupe, covoiturage, proches', 'Aïcha', 1, 'module', 'inf', AICHA, [['Bus entier', 'Groupe'], ['Covoit', 'Covoit'], ['Je conduis', 'CovoitConducteur'], ['Mes proches', 'MoiProches'], ['Fidélité', 'MoiFidelite']]),
+  p('Mon compte', 'Aïcha', 1, 'réglages', '', AICHA, [['Moi', 'Moi'], ['Notifications', 'Notifications'], ['Réglages', 'Reglages'], ['Autorisations', 'Autorisations'], ['Devenir relais', 'RelaisDevenir'], ['Devenir livreur', 'LivreurDevenir']]),
+  p('Vendre un billet au guichet', 'Fatou, guichet', 2, 'cœur', 'ac', [{ id: 'p-fatou' }], [['Accueil agent', 'Guichet'], ['Vente bus 3D', 'Vente'], ['Ticket imprimé', 'VenteImprime'], ['Caisse', 'Caisse']]),
+  p('Heure de pointe · cadence', 'Fatou puis Ibrahim', 2, 'cœur', 'ac', [{ id: 'p-fatou' }, { id: 'p-ibrahim', depuis: 2 }], [['Mode cadence', 'Cadence'], ['Billet', 'CadenceBillet'], ['Compter au quai', 'CadenceQuai'], ['Départ chauffeur', 'Chauffeur']]),
+  p('Au quai · radar', 'Ibrahim, quai', 2, 'cœur', 'ac', [{ id: 'p-ibrahim' }, { id: 'p-abdou', depuis: 3 }], [['Radar', 'Quai'], ['Valide', 'QuaiOk'], ['Déjà scanné', 'QuaiRefus'], ['Superviseur décide', 'SuperviseurVoir']]),
+  p('Colis au guichet', 'Fatou', 2, 'module', 'inf', [{ id: 'p-fatou' }, { id: 'p-mado', depuis: 2 }], [['Étiquette', 'GuichetColis'], ['Dépôt prépayé', 'Depot'], ['Relais reçoit', 'RelaisApp']]),
+  p('Sur la route', 'Émile, Youssouf, Clarisse', 2, 'terrain', '', [{ id: 'p-emile' }, { id: 'p-youssouf', depuis: 2 }, { id: 'p-clarisse', depuis: 3 }], [['Feuille de route', 'Chauffeur'], ['À l’arrêt', 'ChauffeurArret'], ['Convoyeur vend', 'Convoyeur'], ['Contrôle inopiné', 'Controleur']]),
+  p('Fin de journée', 'Fatou puis Abdou', 2, 'cœur', 'ac', [{ id: 'p-fatou' }, { id: 'p-abdou', depuis: 1 }], [['Compter la caisse', 'Caisse'], ['Valider (PIN)', 'SuperviseurValider'], ['Rapport WhatsApp', 'RapportSoir'], ['Côté patron', 'Patron']]),
+  p('Superviser la gare', 'Abdou', 2, 'terrain', '', [{ id: 'p-abdou' }], [['Gare en direct', 'Superviseur'], ['Débloquer un guichet', 'SuperviseurDebloquer'], ['Équipe, PIN', 'SuperviseurEquipe']]),
+  p('Comprendre une baisse', 'Luther, patron', 3, 'cœur', 'ac', [{ id: 'p-luther' }], [['Bento 3D', 'Patron'], ['Assistant', 'Assistant'], ['Réponse chiffrée', 'AssistantReponse'], ['Ligne en détail', 'AnalysesLigne'], ['Changer le prix', 'ConfigLigne']]),
+  p('Piloter 3 gares', 'Luther', 3, 'siège', '', [{ id: 'p-luther' }], [['Analyses', 'Analyses'], ['Un bus', 'AnalysesBus'], ['Gares', 'PatronEquipe'], ['Une gare', 'PatronGare'], ['Une personne', 'PatronPersonne'], ['Salle de contrôle', 'Controle'], ['Santé', 'ControleSante']]),
+  p('Argent et partenaires', 'Luther, Nadège', 3, 'siège', '', [{ id: 'p-luther' }, { id: 'p-nadege' }], [['Comptable', 'Comptable'], ['Rapprochement', 'ComptableRapprochement'], ['Financement', 'Financement'], ['Dossier', 'FinancementDemande'], ['Inter-agences', 'InterAgences'], ['Convention', 'InterAgencesConvention']]),
+  p('Configurer', 'Luther', 3, 'siège', '', [{ id: 'p-luther' }], [['Configuration', 'Config'], ['Une personne', 'ConfigPersonne'], ['Modules', 'Modules']]),
+  p('Devenir et travailler en partenaire', 'Mado, Émile, Samuel, Brigitte', 4, 'partenaires', 'inf', [{ id: 'p-mado' }, { id: 'p-samuel', depuis: 3 }, { id: 'p-moussa', depuis: 4 }, { id: 'p-brigitte', depuis: 5 }], [['Devenir relais', 'RelaisDevenir'], ['Fiche en 3 min', 'RelaisInscription'], ['App relais', 'RelaisApp'], ['App livreur', 'Livreur'], ['Conducteur covoit', 'Conducteur'], ['Vendeur ambulant', 'Vendeur']])
+];
