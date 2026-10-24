@@ -3,11 +3,14 @@ import { app, reinitialiser } from '../../data/store.svelte.ts';
 import { planSieges } from '../../core/sieges.ts';
 import { ajouterJours } from '../../core/dates.ts';
 import { remboursement } from '../../core/tarif.ts';
-import { annulerBillet, billetsDe, connecter, minutesAvant, placesLibres, siegesIndisponibles } from '../../domain/actions.ts';
+import { annulerBillet, billetsDe, connecter, minutesAvant, placesLibres, reserver, siegesIndisponibles } from '../../domain/actions.ts';
+import { bonsDisponibles, preparerFidelite, utiliserPoints } from '../entree/actions.ts';
+import { crediterCagnotte } from '../route/actions.ts';
+import { cagnotteDe } from '../route/etat.ts';
 import { brouillonVide, cagnotte, etat } from './etat.ts';
 import {
   ajouterParticipantDemo, bloquerPourGuichet, billetsDuPaiement, choisirTaille, confirmerPaiement, lancerPaiement, libererReservation, maPart, montantBrouillon, nbPayes, partagerBillet, partagerCagnotte,
-  partCagnotte, paiementActif, paiementDe, payerPartCagnotte, purgerBrouillonTermine, recommencerCagnotte, refuserPaiement, reserverCovoit, reglerCovoit, siegesRetenus, totalBillets, verifierCagnotte
+  partCagnotte, paiementActif, paiementDe, payerPartCagnotte, purgerBrouillonTermine, recommencerCagnotte, refuserPaiement, remiseDe, reprendrePaiement, reserverCovoit, reglerCovoit, siegesRetenus, totalBillets, verifierCagnotte
 } from './actions.ts';
 
 const demain = () => new Date(Date.now() + 86_400_000).toISOString().slice(0, 10);
@@ -145,5 +148,58 @@ describe('partage de billet', () => {
     const b = billetsDe('p-aicha')[0]; const t = partagerBillet(b.id, { id: 'p-maman', nom: 'Marie', tel: '677000111' });
     expect(t).toContain('AM-7F3K-22'); expect(t).toContain('place 3C'); expect(etat().partages).toHaveLength(1); expect(b.statut).toBe('valide'); expect(b.passager.nom).toBe('Aïcha Ndiba');
     expect(app.monde.notifications.some((n) => n.destId === 'p-maman')).toBe(true); expect(() => partagerBillet('x', { nom: 'a', tel: 'b' })).toThrow('billet_inconnu');
+  });
+});
+
+describe('reprise d’un paiement en attente (?paiement=)', () => {
+  beforeEach(() => { reinitialiser(); connecter('p-aicha'); });
+  const enAttenteSansSiege = () => {
+    const d = unDepart(); const r = reserver({ departId: d.id, sieges: [null], passagers: [{ nom: 'Aïcha Ndiba', tel: '691221008' }], acheteurId: 'p-aicha', canal: 'app', moyen: 'momo', prixUnitaire: 2150 });
+    return { d, ...r };
+  };
+  it('un billet sans siège (montée en route) est repris, au prix fixé, et se règle', () => {
+    const { paiement } = enAttenteSansSiege();
+    expect(reprendrePaiement(paiement.id, 'p-aicha')).toBe('ok');
+    const b = etat().brouillon!; expect(b.sansSiege).toBe(true); expect(b.paiementId).toBe(paiement.id); expect(montantBrouillon(b)).toBe(2150);
+    b.moyen = 'om'; lancerPaiement(b, 'p-aicha'); expect(paiementDe(b)!.id).toBe(paiement.id); expect(app.monde.paiements.filter((p) => p.statut === 'attente')).toHaveLength(1);
+    expect(confirmerPaiement(b).ok).toBe(true); expect(billetsDuPaiement(paiement.id)[0].statut).toBe('valide');
+  });
+  it('un refus garde la place sans siège pour le réessai, au même prix', () => {
+    const { paiement } = enAttenteSansSiege(); reprendrePaiement(paiement.id, 'p-aicha'); const b = etat().brouillon!;
+    refuserPaiement(b, 'Solde insuffisant'); const p2 = paiementDe(b)!; expect(p2.id).not.toBe(paiement.id); expect(p2.statut).toBe('attente'); expect(p2.montant).toBe(2150);
+  });
+  it('paiement expiré, déjà réglé, d’un autre ou inconnu : refusé', () => {
+    const { paiement } = enAttenteSansSiege();
+    expect(reprendrePaiement('inconnu', 'p-aicha')).toBe('introuvable'); expect(reprendrePaiement(paiement.id, 'p-maman')).toBe('introuvable');
+    paiement.expireLe = 1; expect(reprendrePaiement(paiement.id, 'p-aicha')).toBe('expire');
+    expect(reprendrePaiement('pay-aicha1', 'p-aicha')).toBe('deja_regle');
+  });
+  it('un covoiturage en attente se reprend aussi', () => {
+    const o = app.monde.covoits.find((c) => c.statut === 'ouverte')!; const { paiement } = reserverCovoit(o.id, 2, 'p-aicha', 'momo');
+    expect(reprendrePaiement(paiement.id, 'p-aicha')).toBe('ok'); const b = etat().brouillon!; expect(b.nature).toBe('covoit'); expect(b.places).toBe(2); expect(montantBrouillon(b)).toBe(o.prix * 2);
+  });
+});
+
+describe('avantages au paiement : bons de fidélité et cagnotte', () => {
+  beforeEach(() => { reinitialiser(); connecter('p-aicha'); preparerFidelite('p-aicha'); });
+  it('un bon de 500 F se déduit du total, n’est consommé qu’à l’acceptation, et une seule fois', () => {
+    expect(utiliserPoints('p-aicha')).toMatchObject({ ok: true, montant: 500 });
+    const { b, d } = brouillon(1); const brut = montantBrouillon(b); expect(remiseDe(b, 'p-aicha').total).toBe(500);
+    lancerPaiement(b, 'p-aicha'); const p = paiementDe(b)!; expect(p.montant).toBe(brut - 500); expect(p.remise?.bon).toBe(500);
+    expect(bonsDisponibles('p-aicha')).toHaveLength(1); // pas encore consommé
+    expect(confirmerPaiement(b).ok).toBe(true); expect(bonsDisponibles('p-aicha')).toHaveLength(0);
+    expect(billetsDuPaiement(p.id)[0].prix).toBe(brut); expect(d.id).toBe(b.departId);
+    const { b: b2 } = brouillon(1); expect(remiseDe(b2, 'p-aicha').total).toBe(0);
+  });
+  it('refus : le bon reste utilisable', () => {
+    utiliserPoints('p-aicha'); const { b } = brouillon(1); lancerPaiement(b, 'p-aicha'); refuserPaiement(b, 'Solde insuffisant');
+    expect(bonsDisponibles('p-aicha')).toHaveLength(1); expect(paiementDe(b)!.remise?.bon).toBe(500); expect(paiementDe(b)!.montant).toBe(montantBrouillon(b) - 500);
+  });
+  it('la cagnotte de gestes commerciaux est débitée à l’acceptation, bornée au solde', () => {
+    crediterCagnotte('p-aicha', 1200); const { b } = brouillon(1); const brut = montantBrouillon(b);
+    lancerPaiement(b, 'p-aicha'); expect(paiementDe(b)!.montant).toBe(brut - 1200); confirmerPaiement(b); expect(cagnotteDe('p-aicha')).toBe(0);
+  });
+  it('désactiver les avantages : plein tarif', () => {
+    utiliserPoints('p-aicha'); const { b } = brouillon(1); b.avantages = false; lancerPaiement(b, 'p-aicha'); expect(paiementDe(b)!.montant).toBe(montantBrouillon(b)); expect(paiementDe(b)!.remise).toBeUndefined();
   });
 });

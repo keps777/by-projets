@@ -2,7 +2,7 @@
 import { aujourdhui } from '../../data/horloge.ts';
 import { ajouterJours } from '../../core/dates.ts';
 import { planSieges, supplementSiege } from '../../core/sieges.ts';
-import { compagnieDe, departParId, departsDuJour, ligneDe, placesLibres, regler, reserver, siegesIndisponibles } from '../../domain/actions.ts';
+import { compagnieDe, departParId, departsDuJour, ligneDe, placesLibres, prixDuDepart, regler, reserver, siegesIndisponibles } from '../../domain/actions.ts';
 import type { Billet, Canal, Depart, Paiement } from '../../domain/types.ts';
 import { crediterBillets } from './actions.ts';
 
@@ -20,7 +20,7 @@ export function premierSiegeLibre(d: Depart): string | null {
   return libres.find((id) => supplementSiege(ligneDe(d).classe, id) === 0) ?? libres[0] ?? null;
 }
 /** Prix du siège proposé (siège sans supplément si possible). */
-export const prixPropose = (d: Depart) => { const s = premierSiegeLibre(d); return d.prix + (s ? supplementSiege(ligneDe(d).classe, s) : 0); };
+export const prixPropose = (d: Depart) => { const s = premierSiegeLibre(d); return prixDuDepart(d) + (s ? supplementSiege(ligneDe(d).classe, s) : 0); };
 export type ResultatAchat = { ok: true; billet: Billet; paiement: Paiement } | { ok: false; code: 'complet' | 'siege_pris' | 'depart_ferme' | 'inconnu'; message: string };
 const MESSAGES = { complet: 'Ce depart est complet.', siege_pris: 'La place vient d’etre prise.', depart_ferme: 'Ce depart n’est plus disponible.', inconnu: 'Depart inconnu.' } as const;
 /** Réserve une place pour `passager` : `payer` règle tout de suite par MoMo (billet valide), sinon la place est retenue 10 minutes. */

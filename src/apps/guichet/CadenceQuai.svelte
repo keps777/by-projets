@@ -6,11 +6,14 @@
   import { montrer } from '../../ui/toast.svelte.ts';
   import Mobile from '../../ui/Mobile.svelte';
   import Lecture from './Lecture.svelte';
-  import { dockAgent } from './dock.ts';
-  import { compterMontee, contexte, departsDeLaGare, enregistrerComptage, nomDepart, vendusDuDepart } from './actions.ts';
+  import { dockDuRole } from '../_socle/dockRole.ts';
+  import { personneCourante } from '../../domain/actions.ts';
+  import { compterMontee, contexte, departsDeLaGare, enregistrerComptage, nomDepart, prevenirChauffeur, vendusDuDepart } from './actions.ts';
   import { etat } from './etat.ts';
 
-  const ctx = $derived(contexte());
+  const moi = $derived(personneCourante());
+  /** L'agent du quai compte lui-même les montées (cadence) ; le superviseur et le patron consultent. */
+  const ctx = $derived(moi?.role === 'quai' ? { agent: moi, lecture: false } : contexte());
   const demande = param('depart');
   const depart = $derived((demande ? departParId(demande) : undefined) ?? (ctx.agent?.gareId ? departsDeLaGare(ctx.agent.gareId, 1)[0] : undefined));
   const montes = $derived(depart ? (etat().montes[depart.id] ?? 0) : 0);
@@ -19,10 +22,11 @@
   let enregistre = $state(false);
   function plus(delta: number) { if (!depart || ctx.lecture) return; compterMontee(depart.id, delta, depart.capacite); enregistre = false; }
   function clore() { if (!depart || !ctx.agent || ctx.lecture) return; enregistrerComptage(ctx.agent.id, depart); enregistre = true; montrer('Comptage enregistré dans le journal'); }
+  function donnerDepart() { if (!depart || !ctx.agent || ctx.lecture) return; montrer(prevenirChauffeur(depart.id, ctx.agent.id) ? 'Le chauffeur est prévenu : il peut partir' : 'Aucun chauffeur n’est affecté à ce départ', 'wa'); }
   const lien = (e: MouseEvent, vers: string) => { e.preventDefault(); aller(vers); };
 </script>
 
-<Mobile titre={depart ? `${depart.heure} ${nomDepart(depart)}` : 'Comptage au quai'} sous="placement libre · compter les montées" retourVers="/cadence" dock={dockAgent()}>
+<Mobile titre={depart ? `${depart.heure} ${nomDepart(depart)}` : 'Comptage au quai'} sous="placement libre · compter les montées" retourVers={moi?.role === 'quai' ? '/quai' : '/cadence'} dock={dockDuRole(moi?.role, { guichet: '', terrain: 'quai' })}>
   {#snippet droite()}{#if etatQuai}<span class="pl {etatQuai.ton}">{etatQuai.texte}</span>{/if}{/snippet}
   {#if ctx.lecture}<Lecture agent={ctx.agent} />{/if}
   {#if !depart || !etatQuai}
@@ -37,7 +41,7 @@
     <button type="button" class="tap" disabled={ctx.lecture || montes >= depart.capacite} onclick={() => plus(1)}>+1 montée</button>
     <div class="row g8"><button type="button" class="b s" disabled={ctx.lecture || montes <= 0} onclick={() => plus(-1)}>−1</button><button type="button" class="b s" disabled={ctx.lecture} onclick={clore}>{enregistre ? 'Comptage enregistré' : 'Enregistrer le comptage'}</button></div>
     <a class="b s" href="/quai" onclick={(e) => lien(e, '/quai')}>Scanner un billet app</a>
-    <a class="b g" href="/chauffeur?depart={depart.id}" onclick={(e) => lien(e, `/chauffeur?depart=${depart.id}`)}>Donner le départ au chauffeur</a>
+    <button type="button" class="b g" disabled={ctx.lecture} onclick={donnerDepart}>Donner le départ au chauffeur</button>
     <span class="t12 mut3 c">{depart.retardMin ? `Retard +${depart.retardMin} min` : 'À l’heure'} · capacité {depart.capacite} places</span>
   {/if}
 </Mobile>

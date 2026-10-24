@@ -5,7 +5,7 @@
   import { aller } from '../../router.svelte.ts';
   import { app } from '../../data/store.svelte.ts';
   import { codeAffiche } from '../../core/terrain.ts';
-  import { heureLocale, ligneDe, placesLibres, personneCourante, departParId } from '../../domain/actions.ts';
+  import { heureLocale, ligneDe, placesLibres, personneCourante, departParId, prixDuDepart } from '../../domain/actions.ts';
   import { bilanVendeur, departsVendables, erreurLisible, libelleDestination, remettreEspeces, tauxDe, vendreAmbulant } from './actions.ts';
   import { fcfaF, gareNom, initiales } from './commun.ts';
 
@@ -40,7 +40,7 @@
       <div class="bento">
         {#each deps as d (d.id)}
           <button type="button" class="bigb" class:on={d.id === choisi} onclick={() => (choisi = d.id)} aria-label="Vendre pour le départ de {d.heure} vers {libelleDestination(d)}">
-            <span class="h">{d.heure}</span><span class="t13 b7">{libelleDestination(d)}</span><span class="t12" style="opacity: 0.8">{fcfaF(d.prix)} · {placesLibres(d)} libres</span>
+            <span class="h">{d.heure}</span><span class="t13 b7">{libelleDestination(d)}</span><span class="t12" style="opacity: 0.8">{fcfaF(prixDuDepart(d))} · {placesLibres(d)} libres</span>
           </button>
         {/each}
       </div>
@@ -62,12 +62,12 @@
   <div class="voile" role="presentation" onclick={() => (choisi = null)}></div>
   <div class="sheet pop" role="dialog" aria-modal="true" aria-label="Vendre un billet">
     <span class="grab"></span>
-    <div class="row sp"><span class="col"><span class="ttl t18">{dep.heure} {libelleDestination(dep)}</span><span class="t13 mut">{ligneDe(dep).de} {gareNom(ligneDe(dep).gareDe)} · {placesLibres(dep)} places libres</span></span><span class="ttl t20">{fcfaF(dep.prix)}</span></div>
+    <div class="row sp"><span class="col"><span class="ttl t18">{dep.heure} {libelleDestination(dep)}</span><span class="t13 mut">{ligneDe(dep).de} {gareNom(ligneDe(dep).gareDe)} · {placesLibres(dep)} places libres</span></span><span class="ttl t20">{fcfaF(prixDuDepart(dep))}</span></div>
     <div class="seg2" role="group" aria-label="Moyen de paiement"><button type="button" class:on={!momo} aria-pressed={!momo} onclick={() => (momo = false)}>Espèces à moi</button><button type="button" class:on={momo} aria-pressed={momo} onclick={() => (momo = true)}>MoMo compagnie</button></div>
     <div class="row g8"><label class="fld grow" style="gap: 4px"><span class="lab">Téléphone du client</span><input class="inp" style="min-height: 46px" type="tel" inputmode="tel" autocomplete="off" bind:value={tel} placeholder="6 90 00 00 00" /></label>
       <label class="fld grow" style="gap: 4px"><span class="lab">Nom (facultatif)</span><input class="inp" style="min-height: 46px" bind:value={nom} autocomplete="off" /></label></div>
     <span class="t12 mut">Le code du billet est envoyé par SMS au client. La place est attribuée à l’embarquement.</span>
-    <div class="row g8"><button type="button" class="b s" onclick={() => (choisi = null)}>Annuler</button><button type="button" class="b p" onclick={vendre}>Vendre · {fcfaF(dep.prix)}</button></div>
+    <div class="row g8"><button type="button" class="b s" onclick={() => (choisi = null)}>Annuler</button><button type="button" class="b p" onclick={vendre}>Vendre · {fcfaF(prixDuDepart(dep))}</button></div>
   </div>
 {/if}
 

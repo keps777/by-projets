@@ -8,8 +8,9 @@
   import { fcfa } from '../../core/money.ts';
   import { formaterTel } from '../../core/telephone.ts';
   import { pointsAvantBilletOffert } from '../../core/fidelite.ts';
+  import { cagnotteDe } from '../route/etat.ts';
   import { t } from './i18n.ts';
-  import { avancerLitiges, billetsAVenir, litigesEnCours, palierDeLaPersonne, preparerFidelite, proches, voyagesPasses } from './actions.ts';
+  import { avancerLitiges, billetsAVenir, litigesEnCours, bonsDisponibles, palierDeLaPersonne, preparerFidelite, proches, voyagesPasses } from './actions.ts';
   import { nav } from './lien.ts';
 
   /** Moi : profil de la voyageuse et accès bento à ses billets, points, proches, colis, réglages, autorisations et signalements. */
@@ -20,6 +21,8 @@
   const aVenir = $derived(moi ? billetsAVenir(moi.id).length : 0);
   const passes = $derived(moi ? voyagesPasses(moi.id).length : 0);
   const points = $derived(moi?.points ?? 0);
+  const cagnotte = $derived(cagnotteDe(moi?.id));
+  const nbBons = $derived(moi ? bonsDisponibles(moi.id).length : 0);
   const palier = $derived(moi ? palierDeLaPersonne(moi.id) : null);
   const prochesNoms = $derived(moi ? proches(moi.id).map((p) => p.prenom) : []);
   const colisEnRoute = $derived(moi ? colisDe(moi.id).filter((c) => c.statut !== 'livre' && c.statut !== 'annule').length : 0);
@@ -46,7 +49,7 @@
     </div>
     <div class="bento">
       <a class="tile" href="/pass" use:nav>{@render picto('M3.5 7.5h17v3a2 2 0 0 0 0 4v3h-17v-3a2 2 0 0 0 0-4z')}<span class="t15 b7">{t('mesBillets')}</span><span class="t12 mut">{aVenir} à venir · {passes} passé{passes > 1 ? 's' : ''}</span></a>
-      <a class="tile ac" href="/moi/fidelite" use:nav>{@render picto('M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z')}<span class="t15 b7">{fcfa(points)} point{points > 1 ? 's' : ''}</span><span class="t12 mut">{reste > 0 ? `${fcfa(reste)} avant un billet offert` : 'billet offert disponible'}</span></a>
+      <a class="tile ac" href="/moi/fidelite" use:nav>{@render picto('M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z')}<span class="t15 b7">{fcfa(points)} point{points > 1 ? 's' : ''}</span><span class="t12 mut">{reste > 0 ? `${fcfa(reste)} avant un billet offert` : 'billet offert disponible'}</span>{#if cagnotte > 0 || nbBons > 0}<span class="t12 okc" data-testid="avantages">{[cagnotte > 0 ? `cagnotte ${fcfa(cagnotte)} F` : '', nbBons > 0 ? `${nbBons} bon${nbBons > 1 ? 's' : ''}` : ''].filter(Boolean).join(' · ')}</span>{/if}</a>
       <a class="tile" href="/moi/proches" use:nav>{@render picto('M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z')}<span class="t15 b7">{t('mesProches')}</span><span class="t12 mut">{prochesNoms.length ? prochesNoms.join(', ') : 'ajoute tes proches'}</span></a>
       <a class="tile" href="/colis/suivi" use:nav>{@render picto('M12 3l8 4.5v9L12 21l-8-4.5v-9zM4 7.5L12 12l8-4.5M12 12v9')}<span class="t15 b7">{t('mesColis')}</span><span class="t12 mut">{colisEnRoute ? `${colisEnRoute} en route` : 'aucun colis en cours'}</span></a>
       <a class="tile w2" href="/reglages" use:nav style="flex-direction: row; align-items: center; min-height: 64px">{@render picto('M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1')}<span class="col grow"><span class="t15 b7">{t('reglages')}</span><span class="t12 mut">langue, paiement par défaut, visage, notifications</span></span></a>

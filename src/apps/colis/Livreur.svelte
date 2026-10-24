@@ -6,7 +6,7 @@
   import { ETAPES_COURSE, etaCourse, formaterTel, GAIN_COURSE, kmCourse } from '../../core/relais.ts';
   import Mobile from '../../ui/Mobile.svelte';
   import { montrer } from '../../ui/toast.svelte.ts';
-  import { accepterCourse, acteur, avancerCourse, basculerDispo, busQuiArrivent, coursesDisponibles, coursesEnCours, depuisRayon, gainsLivreur, livreurDispo, livrerCourse, NOM_TAILLE, nomRelais, prenomDe, quartierDe, retournerCourse } from './actions.ts';
+  import { accepterCourse, acteur, avancerCourse, basculerDispo, busQuiArrivent, coursesDisponibles, coursesEnCours, depuisRayon, gainsLivreur, livreurDispo, livrerCourse, NOM_TAILLE, nomRelais, prenomDe, quartierDe, retournerCourse, signalerCourse } from './actions.ts';
   import { courseDe } from './etat.ts';
   import Pic from './Pic.svelte';
 
@@ -19,6 +19,7 @@
   let passees = $state<string[]>([]), saisies = $state<Record<string, string>>({}), messages = $state<Record<string, string>>({}), retourDemande = $state<string | null>(null);
   const visibles = $derived(missions.filter((m) => !passees.includes(m.id)));
 
+  function signaler() { if (!moi) return; const r = signalerCourse(moi.id); if (r.ok) montrer(`Dossier ${r.dossier} ouvert : le support te répond sous 2 h`); else montrer(r.message, 'wa'); }
   function accepter(c: Colis) { if (!moi) return; const r = accepterCourse(c.id, moi.id); if (r.ok) montrer(`Course ${c.code} acceptée`); else montrer(r.message, 'er'); }
   function etapeSuivante(c: Colis) { if (moi) avancerCourse(c.id, moi.id); }
   function touche(c: Colis, d: string) {
@@ -97,7 +98,7 @@
       <div class="li"><span class="grow t14">Note</span><span class="t14 b7">{moi.note ? `★ ${moi.note.toLocaleString('fr-FR')}` : '—'}{moi.vehicule ? ` · ${moi.vehicule}` : ''}</span></div>
       <div class="li"><span class="grow t14">Cette semaine</span><span class="t14 b7">{fcfa(gains?.gainSemaine ?? 0)} F · {gains?.nbSemaine ?? 0} courses</span></div>
       <div class="li"><span class="grow t14">Versement</span><span class="t14 b7">chaque soir · MoMo</span></div>
-      <a class="li" href="/litige" onclick={(e) => lien(e, '/litige')}><span class="grow t14">Un problème sur une course</span><span class="t13 aq">signaler</span></a>
+      <button type="button" class="li" style="text-align: left; width: 100%; min-height: 44px" onclick={signaler}><span class="grow t14">Un problème sur une course</span><span class="t13 aq">signaler</span></button>
     </div>
     <a class="b g" href="/livreur/devenir" onclick={(e) => lien(e, '/livreur/devenir')}>Parrainer un livreur · +2 000 F</a>
     <button type="button" class="b g" onclick={quitter}>Changer de compte</button>

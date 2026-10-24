@@ -6,9 +6,14 @@ import { jourSemaineCourt, jourLong } from '../../core/dates.ts';
 import { supplementSiege } from '../../core/sieges.ts';
 import { fmtF } from '../../core/tarif.ts';
 import { codeAffiche, echeanceAtteinte, limiteRemboursement, messageProche, partParPersonne, totalBusEntier, type InfosMessage, type TailleBus, TAILLES_BUS } from '../../core/reglement.ts';
-import { compagnieDe, consigner, departParId, ligneDe, notifier, personne, regler, reserver } from '../../domain/actions.ts';
+import { compagnieDe, consigner, departParId, ligneDe, notifier, personne, prixDuDepart, regler, reserver } from '../../domain/actions.ts';
 import type { Billet, MoyenPaiement, OffreCovoit, Paiement } from '../../domain/types.ts';
-import { cagnotte, defautCagnotte, etat, type Brouillon, type Cagnotte, type Proche } from './etat.ts';
+import { calculerRemise, type Remise } from '../../core/remise.ts';
+import { bonsDisponibles, preparerFidelite } from '../entree/actions.ts';
+import { fideliteLue } from '../entree/etat.ts';
+import { cagnotteDe } from '../route/etat.ts';
+import { debiterCagnotte } from '../route/actions.ts';
+import { brouillonVide, cagnotte, defautCagnotte, etat, type Brouillon, type Cagnotte, type Proche } from './etat.ts';
 
 const ref = (moyen: string) => `${moyen.toUpperCase()}-${Math.floor(maintenant() / 1000) % 100000}`;
 export const DUREE_GUICHET_MS = 2 * 3_600_000;
@@ -26,10 +31,12 @@ export const offreCovoit = (id: string | null): OffreCovoit | undefined => (id ?
 /** Prix des places choisies : prix du départ + supplément de siège (première rangée d'un Classique). */
 export function totalBillets(departId: string, sieges: string[]): number {
   const d = departParId(departId); if (!d) return 0; const classe = ligneDe(d).classe;
-  return sieges.reduce((s, id) => s + d.prix + supplementSiege(classe, id), 0);
+  const base = prixDuDepart(d);
+  return sieges.reduce((s, id) => s + base + supplementSiege(classe, id), 0);
 }
 /** Montant du brouillon, quelle que soit sa nature. */
 export function montantBrouillon(b: Brouillon): number {
+  if (b.nature === 'billet' && b.sansSiege) { const d = b.departId ? departParId(b.departId) : undefined; return d ? b.passagers.length * (b.prixUnitaire ?? prixDuDepart(d)) : 0; }
   if (b.nature === 'billet') return b.departId ? totalBillets(b.departId, b.sieges) : 0;
   if (b.nature === 'covoit') return (offreCovoit(b.covoitId)?.prix ?? 0) * b.places;
   return b.montant;
@@ -50,8 +57,11 @@ export function libererReservation(b: Brouillon, motif = 'Réservation modifiée
 export function abandonnerBrouillon() {
   const b = etat().brouillon; if (b) libererReservation(b, 'Annulé par le voyageur'); etat().brouillon = null;
 }
+/** Un siège par passager, `null` pour un billet sans siège (montée en route). */
+const siegesDemandes = (b: Brouillon): (string | null)[] => (b.sansSiege ? b.passagers.map(() => null) : b.sieges);
+const prixDemande = (b: Brouillon) => (b.sansSiege ? b.prixUnitaire : undefined);
 const memesBillets = (bs: Billet[], b: Brouillon, acheteurId: string) =>
-  bs.length === b.sieges.length && bs.every((x, i) => x.siege === b.sieges[i] && x.passager.nom === b.passagers[i]?.nom && x.passager.tel === b.passagers[i]?.tel && x.acheteurId === acheteurId);
+  bs.length === siegesDemandes(b).length && bs.every((x, i) => x.siege === siegesDemandes(b)[i] && x.passager.nom === b.passagers[i]?.nom && x.passager.tel === b.passagers[i]?.tel && x.acheteurId === acheteurId);
 
 /**
  * Lance le paiement du brouillon : appelle `reserver()` (billets en attente 10 min), réserve des places de covoiturage ou ouvre l'attente d'une part de cagnotte.
@@ -63,10 +73,10 @@ export function lancerPaiement(b: Brouillon, acheteurId: string): void {
   if (b.nature === 'billet') {
     if (!b.departId) throw new Error('depart_inconnu');
     const p = paiementDe(b);
-    if (paiementActif(p, now) && p.payeurId === acheteurId && memesBillets(billetsDuPaiement(p.id), b, acheteurId)) { p.moyen = moyen; p.ref = ref(moyen); return; }
+    if (paiementActif(p, now) && p.payeurId === acheteurId && memesBillets(billetsDuPaiement(p.id), b, acheteurId)) { p.moyen = moyen; p.ref = ref(moyen); appliquerAvantages(b, p); return; }
     if (paiementActif(p, now)) libererReservation(b);
-    const r = reserver({ departId: b.departId, sieges: b.sieges, passagers: b.passagers, acheteurId, canal: 'app', moyen });
-    b.paiementId = r.paiement.id;
+    const r = reserver({ departId: b.departId, sieges: siegesDemandes(b), passagers: b.passagers, acheteurId, canal: 'app', moyen, prixUnitaire: prixDemande(b) });
+    b.paiementId = r.paiement.id; appliquerAvantages(b, r.paiement);
   } else if (b.nature === 'covoit') {
     const p = paiementDe(b);
     if (paiementActif(p, now)) { p.moyen = moyen; p.ref = ref(moyen); return; }
@@ -80,6 +90,7 @@ export function confirmerPaiement(b: Brouillon): { ok: boolean; paiement?: Paiem
   const p = paiementDe(b); if (!p) return { ok: false };
   const r = b.nature === 'covoit' ? reglerCovoit(p.id, { ok: true }) : regler(p.id, { ok: true });
   if (r.statut !== 'ok') return { ok: false, paiement: r };
+  consommerAvantages(r);
   if (b.nature === 'billet' && b.qui !== 'moi' && b.proche) envoyerMessageBrouillon(b);
   return { ok: true, paiement: r };
 }
@@ -93,7 +104,7 @@ export function refuserPaiement(b: Brouillon, motif: string): void {
   if (b.nature === 'billet' && p) {
     const echeance = p.expireLe ?? 0; regler(p.id, { refus: motif }); b.paiementId = null;
     if (echeance > now && b.departId) {
-      try { const r = reserver({ departId: b.departId, sieges: b.sieges, passagers: b.passagers, acheteurId: p.payeurId, canal: 'app', moyen: p.moyen }); r.paiement.expireLe = echeance; b.paiementId = r.paiement.id; } catch { /* places reprises entre-temps */ }
+      try { const r = reserver({ departId: b.departId, sieges: siegesDemandes(b), passagers: b.passagers, acheteurId: p.payeurId, canal: 'app', moyen: p.moyen, prixUnitaire: prixDemande(b) }); r.paiement.expireLe = echeance; b.paiementId = r.paiement.id; appliquerAvantages(b, r.paiement); } catch { /* places reprises entre-temps */ }
     }
   } else if (b.nature === 'covoit' && p) { reglerCovoit(p.id, { refus: motif }); b.paiementId = null; }
 }
@@ -101,12 +112,60 @@ export function refuserPaiement(b: Brouillon, motif: string): void {
 export function bloquerPourGuichet(b: Brouillon, acheteurId: string): Billet[] {
   if (b.nature !== 'billet' || !b.departId) throw new Error('demande_invalide');
   let p = paiementDe(b);
-  if (!paiementActif(p)) { p = reserver({ departId: b.departId, sieges: b.sieges, passagers: b.passagers, acheteurId, canal: 'app', moyen: 'especes' }).paiement; b.paiementId = p.id; }
-  p.moyen = 'especes'; p.ref = ref('especes'); p.expireLe = maintenant() + DUREE_GUICHET_MS;
+  if (!paiementActif(p)) { p = reserver({ departId: b.departId, sieges: siegesDemandes(b), passagers: b.passagers, acheteurId, canal: 'app', moyen: 'especes', prixUnitaire: prixDemande(b) }).paiement; b.paiementId = p.id; }
+  p.moyen = 'especes'; p.ref = ref('especes'); p.expireLe = maintenant() + DUREE_GUICHET_MS; retirerAvantages(p);
   const bs = billetsDuPaiement(p.id), d = departParId(b.departId)!, g = app.monde.gares.find((x) => x.id === ligneDe(d).gareDe);
   notifier(p.payeurId, 'Places bloquées 2 h', `Paie en espèces à ${g?.nom ?? 'la gare'} avec le code ${bs.map((x) => codeAffiche(x.code)).join(', ')}`, '/pass', 'billet');
   consigner('reservation', `${bs.length} place(s) bloquée(s) 2 h pour paiement au guichet`, p.payeurId, d.id);
   b.refus = null; return bs;
+}
+
+// ------------------------------------------------------------------ avantages (bons de fidélité, cagnotte)
+/** Ce que la voyageuse peut déduire d'un billet : montants de ses bons (non utilisés) et solde de sa cagnotte AfriMove. */
+export const avantagesDe = (personneId: string | null | undefined) => ({ bons: personneId ? bonsDisponibles(personneId).map((x) => x.montant) : [], cagnotte: cagnotteDe(personneId) });
+/** Remise prévue pour un brouillon de billet (aucune pour un covoiturage, une cagnotte de groupe, ni quand quelqu'un d'autre paie). */
+export function remiseDe(b: Brouillon | null, personneId: string | null | undefined): Remise {
+  if (!b || b.nature !== 'billet' || b.avantages === false || b.qui !== 'moi') return calculerRemise(0, [], 0);
+  const a = avantagesDe(personneId); return calculerRemise(montantBrouillon(b), a.bons, a.cagnotte);
+}
+const brutDe = (p: Paiement) => billetsDuPaiement(p.id).reduce((s, x) => s + x.prix, 0);
+function retirerAvantages(p: Paiement) { if (p.remise && !p.remise.consommee) { p.montant = brutDe(p); delete p.remise; } }
+/** Fixe la remise sur le paiement en attente : `montant` devient le net encaissé par l'opérateur ; bons et cagnotte ne sont consommés qu'à l'acceptation. */
+export function appliquerAvantages(b: Brouillon, p: Paiement) {
+  if (p.pour.type !== 'billet') return;
+  retirerAvantages(p);
+  const brut = brutDe(p), a = avantagesDe(p.payeurId), r = b.avantages === false || b.qui !== 'moi' ? calculerRemise(0, [], 0) : calculerRemise(brut, a.bons, a.cagnotte);
+  if (r.total <= 0) return;
+  p.montant = brut - r.total; p.remise = { bon: r.bon, bonIds: bonsDisponibles(p.payeurId).slice(0, r.bons).map((x) => x.id), cagnotte: r.cagnotte };
+}
+/** Paiement accepté : les bons sont marqués utilisés et la cagnotte débitée (une seule fois). */
+function consommerAvantages(p: Paiement) {
+  const rm = p.remise; if (!rm || rm.consommee) return;
+  preparerFidelite(p.payeurId); const bons = fideliteLue(p.payeurId)?.bons ?? [];
+  for (const x of bons) if (rm.bonIds.includes(x.id)) x.utilise = true;
+  if (rm.cagnotte > 0) debiterCagnotte(p.payeurId, rm.cagnotte);
+  rm.consommee = true; consigner('fidelite', `Avantages utilisés : −${rm.bon + rm.cagnotte} F`, p.payeurId, p.id);
+}
+
+// ------------------------------------------------------------------ reprise d'un paiement en attente (/paiement?paiement=<id>)
+export type IssueReprise = 'ok' | 'introuvable' | 'expire' | 'deja_regle';
+/** Rouvre l'écran de paiement sur un paiement déjà créé ailleurs (montée en route, places bloquées au guichet…) : le brouillon reprend ses billets. */
+export function reprendrePaiement(paiementId: string, personneId: string): IssueReprise {
+  const p = app.monde.paiements.find((x) => x.id === paiementId), moi = personne(personneId);
+  if (!p || !moi || p.payeurId !== personneId || p.pour.type === 'colis') return 'introuvable';
+  if (p.statut === 'ok') return 'deja_regle';
+  if (!paiementActif(p)) return 'expire';
+  const e = etat(), a = e.brouillon; if (a?.paiementId === p.id) return 'ok';
+  const moyen = p.moyen === 'om' || p.moyen === 'carte' || p.moyen === 'visage' ? p.moyen : 'momo';
+  if (p.pour.type === 'covoit') {
+    const o = offreCovoit(p.pour.ids[0] ?? null), res = o?.reservations.find((r) => r.paiementId === p.id); if (!o || !res) return 'introuvable';
+    if (a) libererReservation(a); e.brouillon = brouillonVide({ nature: 'covoit', covoitId: o.id, places: res.places, moyen, tel: moi.tel, paiementId: p.id, expireLe: p.expireLe ?? 0 }); return 'ok';
+  }
+  const bs = billetsDuPaiement(p.id).filter((x) => x.statut === 'attente_paiement'); if (!bs.length) return 'introuvable';
+  const sansSiege = bs.some((x) => !x.siege);
+  if (a) libererReservation(a);
+  e.brouillon = brouillonVide({ nature: 'billet', departId: bs[0].departId, sieges: sansSiege ? [] : bs.map((x) => x.siege!), passagers: bs.map((x) => x.passager), sansSiege, prixUnitaire: sansSiege ? bs[0].prix : undefined, moyen, tel: moi.tel, paiementId: p.id, expireLe: p.expireLe ?? 0 });
+  return 'ok';
 }
 
 // ------------------------------------------------------------------ covoiturage

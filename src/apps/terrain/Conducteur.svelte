@@ -56,7 +56,6 @@
       {:else if o.statut === 'en_route'}<button type="button" class="b p" onclick={terminer}>Terminer le trajet · encaisser {fcfaF(reserve * o.prix)}</button>
       {:else if o.statut === 'terminee'}<div class="gl c"><span class="t14 b7">Trajet terminé</span><span class="t12 mut">{verse ? `${fcfaF(verse.montant)} versés en MoMo` : 'Merci pour ce trajet.'}</span></div>
       {:else}<div class="gl c"><span class="t14 b7">Trajet annulé</span></div>{/if}
-      <a class="b g" href="/covoit" onclick={(e) => { e.preventDefault(); aller('/covoit'); }}>Voir mon annonce côté passager</a>
       {#if o.statut === 'ouverte' && placesLibresCovoit(o) > 0}<button type="button" class="b g sm" style="align-self: center" onclick={demo}>Démo · simuler une réservation</button>{/if}
     </div>
   {/if}

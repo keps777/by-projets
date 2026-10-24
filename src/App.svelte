@@ -1,7 +1,7 @@
 <script lang="ts">
   import { untrack, type Component } from 'svelte';
   import { routeur, resoudre, ROUTES, aller } from './router.svelte.ts';
-  import { app, maintenant } from './data/store.svelte.ts';
+  import { app, maintenant, surReinitialisation } from './data/store.svelte.ts';
   import { SESSION_INACTIVITE_MS } from './data/constantes.ts';
   import { peut } from './domain/acces.ts';
   import { avancerMonde } from './domain/simulation.ts';
@@ -31,7 +31,7 @@
     route.composant().then((m) => { if (chargee === cle) vue = m.default; });
     document.title = `${route.titre} · AfriMove`;
   });
-  $effect(() => { untrack(() => { demarrages.forEach((f) => f()); avancerMonde(); }); const t = setInterval(() => avancerMonde(), 30_000); return () => clearInterval(t); });
+  $effect(() => { untrack(() => { demarrages.forEach((f) => f()); avancerMonde(); surReinitialisation(() => { demarrages.forEach((f) => f()); avancerMonde(); }); }); const t = setInterval(() => avancerMonde(), 30_000); return () => clearInterval(t); });
   const toucher = () => { if (app.session.personneId) app.session.derniereActivite = maintenant(); };
 </script>
 

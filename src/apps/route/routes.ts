@@ -9,5 +9,5 @@ export default [
   { chemin: '/arret', composant: () => import('./Arret.svelte'), titre: 'Monter en route', roles: ['voyageur'], onglet: 'voyager' },
   { chemin: '/covoit', composant: () => import('./Covoit.svelte'), titre: 'Covoiturage', roles: ['voyageur'], onglet: 'voyager' },
   { chemin: '/covoit/ville', composant: () => import('./CovoitVille.svelte'), titre: 'Covoiturage en ville', roles: ['voyageur'], onglet: 'voyager' },
-  { chemin: '/covoit/conduire', composant: () => import('./CovoitConducteur.svelte'), titre: 'Je conduis', roles: ['voyageur'], onglet: 'voyager' }
+  { chemin: '/covoit/conduire', composant: () => import('./CovoitConducteur.svelte'), titre: 'Je conduis', roles: ['voyageur', 'conducteur'], onglet: 'voyager' }
 ] satisfies Route[];

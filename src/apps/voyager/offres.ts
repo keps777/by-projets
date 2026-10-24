@@ -1,16 +1,14 @@
 // Offres du voyageur : les départs du monde (prix dynamique compris) et les covoiturages, au même format pour le panorama.
-import { ecartJours, type Jour } from '../../core/dates.ts';
+import type { Jour } from '../../core/dates.ts';
 import { confortDe, type Offre } from '../../core/recherche.ts';
-import { fmtF, prixDynamique } from '../../core/tarif.ts';
+import { fmtF } from '../../core/tarif.ts';
 import { badge } from '../../core/tranches.ts';
 import { aujourdhui, app, maintenant } from '../../data/store.svelte.ts';
-import { compagnieDe, departsDuJour, gare, ligneDe, personne, placesLibres, remplissage } from '../../domain/actions.ts';
+import { compagnieDe, departsDuJour, gare, ligneDe, personne, placesLibres, prixDuDepart, remplissage } from '../../domain/actions.ts';
 import type { Depart, OffreCovoit } from '../../domain/types.ts';
 
 /** Prix proposé au voyageur : le tarif du départ, ajusté par le prix dynamique du patron (−500 F si peu rempli la veille, +500 F si presque plein). */
-export function prixAffiche(d: Depart): number {
-  return prixDynamique(d.prix, remplissage(d), Math.max(0, ecartJours(aujourdhui(), d.jour)), !!app.monde.params.tarifs.dynamique);
-}
+export const prixAffiche = (d: Depart): number => prixDuDepart(d);
 const enVente = (d: Depart) => d.statut === 'prevu' || d.statut === 'embarquement';
 export function offreBus(d: Depart): Offre {
   const l = ligneDe(d), c = compagnieDe(d), places = placesLibres(d);

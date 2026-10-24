@@ -23,6 +23,8 @@ export interface Brouillon {
   /** Paiement par/pour un proche : `payeur` = null quand c'est la voyageuse qui règle. */
   qui: 'moi' | 'paie_pour' | 'demande'; proche: Proche | null;
   refus: Refus | null;
+  /** Billet sans siège attribué (montée en route…) : un seul prix fixé à la réservation. */ sansSiege?: boolean; prixUnitaire?: number;
+  /** Utiliser bons de fidélité et cagnotte au paiement (par défaut oui, tant qu'il y en a). */ avantages?: boolean;
 }
 export interface Partage { ts: number; versNom: string; versTel: string; canal: 'whatsapp' | 'sms'; texte: string; billetId?: string }
 export interface EtatReglement { brouillon: Brouillon | null; partages: Partage[]; motifsAnnulation: Record<string, string> }

@@ -11,7 +11,7 @@ export default [
   { chemin: '/vente/ticket', composant: () => import('./VenteTicket.svelte'), titre: 'Ticket imprimé', roles },
   { chemin: '/cadence', composant: () => import('./Cadence.svelte'), titre: 'Mode cadence', roles },
   { chemin: '/cadence/billet', composant: () => import('./CadenceBillet.svelte'), titre: 'Billet cadence', roles },
-  { chemin: '/cadence/quai', composant: () => import('./CadenceQuai.svelte'), titre: 'Comptage au quai', roles },
+  { chemin: '/cadence/quai', composant: () => import('./CadenceQuai.svelte'), titre: 'Comptage au quai', roles: [...roles, 'quai'] },
   { chemin: '/depot', composant: () => import('./Depot.svelte'), titre: 'Dépôt prépayé', roles },
   { chemin: '/caisse', composant: () => import('./Caisse.svelte'), titre: 'Caisse', roles }
 ] satisfies Route[];

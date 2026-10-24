@@ -6,7 +6,7 @@ import { LIBELLE } from '../../core/colis.ts';
 import { sceauValide } from '../../core/sceau.ts';
 import { formaterTel, normaliserTel } from '../../core/telephone.ts';
 import { fcfa } from '../../core/money.ts';
-import { billetsDe, colisDe, departParId, heureLocale, ligneDe, personne, personneCourante } from '../../domain/actions.ts';
+import { billetsDe, colisDe, departParId, heureLocale, ligneDe, personne, personneCourante, prixDuDepart } from '../../domain/actions.ts';
 import type { Billet, Passager } from '../../domain/types.ts';
 import { acheter, demain, departsReservables, nomCourt, premierSiegeLibre, prixPropose } from './achat.ts';
 import { proches as prochesDe, voyagesPasses } from './actions.ts';
@@ -33,7 +33,7 @@ const descBillet = (b: Billet) => { const d = departParId(b.departId), l = d && 
 const fcfaU = (n: number) => `${fcfa(n)} F`;
 
 /** Prix « dès » vers une ville demain (null si plus aucun départ). */
-export function prixDes(vers: string): number | null { const ds = departsReservables('Yaoundé', vers, demain()); return ds.length ? Math.min(...ds.map((d) => d.prix)) : null; }
+export function prixDes(vers: string): number | null { const ds = departsReservables('Yaoundé', vers, demain()); return ds.length ? Math.min(...ds.map((d) => prixDuDepart(d))) : null; }
 
 export function affichage(s: SessionUssd): Affichage {
   const e = ecranCourant(s), moi = titulaire();

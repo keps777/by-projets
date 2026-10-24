@@ -10,7 +10,8 @@
   let choisie = $state<string | null>(null), saisie = $state(''), erreur = $state('');
   const groupes: { titre: string; roles: Role[] }[] = [{ titre: 'Équipe de gare', roles: ROLES_EQUIPE }, { titre: 'Patron et siège', roles: ROLES_SIEGE }, { titre: 'Partenaires', roles: ROLES_PARTENAIRES }];
   const gens = $derived(app.monde.personnes);
-  const unique = (role: Role) => gens.filter((p) => p.role === role && p.pin);
+  const unique = (role: Role) => gens.filter((p) => p.role === role && p.pin && p.actif);
+  const inactifs = $derived(gens.filter((p) => p.pin && !p.actif).length);
   const p = $derived(personne(choisie));
   function entrer(id: string) { connecter(id); aller(ACCUEIL[personne(id)!.role]); }
   function touche(c: string) { if (!p) return; saisie = (saisie + c).slice(0, 4); erreur = ''; if (saisie.length === 4) { if (verifierPin(p.id, saisie)) entrer(p.id); else { erreur = 'PIN incorrect'; saisie = ''; } } }
@@ -31,6 +32,7 @@
       {/each}
     </div>
   {/each}
+  {#if inactifs}<p class="t12 mut3" role="status">{inactifs} compte{inactifs > 1 ? 's' : ''} suspendu{inactifs > 1 ? 's' : ''} (masqué{inactifs > 1 ? 's' : ''}) : réactive-le depuis le siège → Configuration.</p>{/if}
   <a class="b g" href="/parcours" onclick={(e) => { e.preventDefault(); aller('/parcours'); }}>Tous les parcours</a>
   <button type="button" class="b g" onclick={() => { reinitialiser(); }}>Remettre le monde à zéro</button>
 </Mobile>

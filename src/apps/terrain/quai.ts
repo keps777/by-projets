@@ -1,5 +1,6 @@
 // Quai : choix du départ à embarquer, scan des billets, passages, appel du superviseur, billets de démonstration.
 import { codeBrut, codeAffiche } from '../../core/terrain.ts';
+import { quaiDe } from '../../core/quai.ts';
 import { planSieges } from '../../core/sieges.ts';
 import { billetsDuDepart, consigner, departEnMs, departParId, ligneDe, personne, reserver, scannerBillet, siegesIndisponibles, type StatutScan } from '../../domain/actions.ts';
 import type { Depart, Personne } from '../../domain/types.ts';
@@ -24,7 +25,7 @@ export function departDuQuai(agent: Personne | undefined): Depart | undefined {
 export const choisirDepart = (departId: string) => { terrain().quai.departId = departId; };
 export const basculerRadar = (actif?: boolean) => { const q = terrain().quai; q.radar = actif ?? !q.radar; };
 /** Quai attribué à un départ (1 à 6), stable pour un même départ. */
-export const numeroQuai = (d: Depart) => 1 + (hash(d.id) % 6);
+export const numeroQuai = (d: Depart) => quaiDe(d.id);
 export const enteteQuai = (d: Depart) => `Quai ${numeroQuai(d)} · ${libelleDepart(d)}`;
 export const compteurABord = (departId: string) => billetsDuDepart(departId).filter((b) => b.statut === 'scanne').length;
 export const passagesDuDepart = (departId: string): Passage[] => lireTerrain().passages.filter((p) => p.departId === departId);

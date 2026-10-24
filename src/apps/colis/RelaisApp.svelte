@@ -136,7 +136,6 @@
             </div>
           {:else}<button type="button" class="b g" onclick={effacer}>Autre code</button>{/if}
         {/if}
-        <a class="b g" href="/depot" onclick={(e) => lien(e, '/depot')}>Recevoir un dépôt (code client)</a>
       </div>
 
     {:else if gains}

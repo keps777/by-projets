@@ -8,7 +8,7 @@
   import { montrer } from '../../ui/toast.svelte.ts';
   import Icone from '../../ui/Icone.svelte';
   import Mobile from '../../ui/Mobile.svelte';
-  import { dockVoyageur } from '../../ui/dockVoyageur.ts';
+  import { accueilDe, dockDuRole } from '../_socle/dockRole.ts';
   import { annulerOffre, demarrerTrajet, offresDe, optionsDe, publierOffre, refuserReservation, simulerReservation, terminerTrajet, versementDe } from './actions.ts';
   import { nav } from './nav.ts';
 
@@ -33,7 +33,7 @@
   const pas = (v: number, d: number, min: number, max: number) => Math.max(min, Math.min(max, v + d));
 </script>
 
-<Mobile titre="Je conduis" sous="Publie ton trajet en 30 s" retourVers="/covoit" dock={dockVoyageur('voyager')}>
+<Mobile titre="Je conduis" sous="Publie ton trajet en 30 s" retourVers={moi?.role === 'conducteur' ? accueilDe(moi.role) : '/covoit'} dock={dockDuRole(moi?.role, { voyageur: 'voyager', terrain: 'trajets' })}>
   {#snippet droite()}<span class="pl ok">vérifié</span>{/snippet}
 
   <form class="col g12" onsubmit={(e) => { e.preventDefault(); publier(); }}>
@@ -98,7 +98,7 @@
   {:else}
     <div class="gl row g12"><span class="bub aq"><Icone nom="taxi" taille={20} /></span><span class="t13 grow">Tu n’as encore rien publié. Les réservations de tes passagers apparaîtront ici.</span></div>
   {/each}
-  <a class="b g" href="/covoit" use:nav>Voir les trajets des autres conducteurs</a>
+  {#if moi?.role !== 'conducteur'}<a class="b g" href="/covoit" use:nav>Voir les trajets des autres conducteurs</a>{/if}
 </Mobile>
 
 <style>

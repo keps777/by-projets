@@ -6,6 +6,7 @@ import type { Colis, Depart, Personne } from '../../domain/types.ts';
 import { codeRetrait as genererCode } from '../../core/colis.ts';
 import { jourDe } from '../../core/dates.ts';
 import { COMMISSION_RELAIS, distanceBoutique, erreurDestinataire, erreursBoutique, etatOuverture, GAIN_COURSE, heureArrivee, MAX_COURSES_ACTIVES, normaliserCodeColis, normaliserTel, positionSimulee, QUARTIERS, type Boutique, type EtatOuverture } from '../../core/relais.ts';
+import { signalerProbleme } from '../entree/actions.ts';
 import { boutiqueDe, brouillonVide, candidatures, courseDe, trancheCandidatures, trancheColis, trancheRelais, type Brouillon, type Candidature, type FicheLivreur, type FicheRelais } from './etat.ts';
 
 export type Echec = { ok: false; message: string };
@@ -146,6 +147,13 @@ export const livreurDispo = (livreurId: string) => (app.tranches.colis as { livr
 export function basculerDispo(livreurId: string) { const t = trancheColis(); t.livreurs[livreurId] = { dispo: !livreurDispo(livreurId) }; return t.livreurs[livreurId].dispo; }
 export const coursesDisponibles = () => app.monde.colis.filter((c) => c.options.moto && c.statut === 'au_relais' && !c.livreurId).sort((a, b) => depuisRayon(a) - depuisRayon(b));
 export const coursesEnCours = (livreurId: string) => app.monde.colis.filter((c) => c.livreurId === livreurId && c.statut === 'en_livraison');
+/** Le livreur signale un problème sur sa course (en cours, sinon la dernière) : un dossier est ouvert au nom du colis et le patron prévenu. */
+export function signalerCourse(livreurId: string): { ok: true; dossier: string } | Echec {
+  const c = coursesEnCours(livreurId)[0] ?? [...app.monde.colis].reverse().find((x) => x.livreurId === livreurId);
+  if (!c) return { ok: false, message: 'Aucune course à signaler pour le moment' };
+  const l = signalerProbleme({ auteurId: livreurId, categorie: 'Bagage ou colis', objet: { type: 'colis', id: c.id }, texte: `Problème signalé par le livreur sur la course ${c.code}` });
+  return { ok: true, dossier: l.id };
+}
 export const quartierDe = (colisId: string) => courseDe(colisId)?.quartier ?? 'Bonamoussadi';
 export function accepterCourse(colisId: string, livreurId: string): { ok: true; colis: Colis } | Echec {
   const l = personne(livreurId); if (l?.role !== 'livreur' || !l.actif) return { ok: false, message: 'Compte livreur non activé' };

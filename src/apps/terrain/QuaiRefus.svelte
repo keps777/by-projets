@@ -5,11 +5,12 @@
   import { aller, param } from '../../router.svelte.ts';
   import { jourSemaineCourt } from '../../core/dates.ts';
   import { codeAffiche } from '../../core/terrain.ts';
-  import { billetParId, departParId, heureLocale, ligneDe, personne, personneCourante } from '../../domain/actions.ts';
+  import { billetParId, departParId, heureLocale, ligneDe, personne, personneCourante, placesLibres, prixDuDepart } from '../../domain/actions.ts';
   import type { StatutScan } from '../../domain/actions.ts';
   import { appelerSuperviseur, numeroQuai, passageParId, refuserAcces, verifierIdentite } from './actions.ts';
   import { fcfaF, libelleDepart, superviseursDe } from './commun.ts';
-  import { dockAgent } from './dock.ts';
+  import { dockDuRole } from '../_socle/dockRole.ts';
+  import { app } from '../../data/store.svelte.ts';
 
   const agent = $derived(personneCourante());
   const passage = $derived(passageParId(param('passage')));
@@ -37,7 +38,7 @@
   function verifier(conforme: boolean) { if (agent && passage) { verifierIdentite(passage.id, conforme, agent.id); montrer(conforme ? 'Identité confirmée · décision au superviseur' : 'Identité non conforme · accès refusé', conforme ? 'ok' : 'er'); } }
 </script>
 
-<Mobile titre={passage ? TITRES[passage.statut] : 'Refus'} retourVers="/quai" dock={dockAgent('quai', 'quai')}>
+<Mobile titre={passage ? TITRES[passage.statut] : 'Refus'} retourVers="/quai" dock={dockDuRole(app.session.role, { guichet: 'quai', terrain: 'quai' })}>
   {#snippet droite()}<span class="pl er">refus</span>{/snippet}
   {#if !passage || !depart}
     <div class="center"><div class="ill" aria-hidden="true"><Icone nom="scan" taille={56} /></div><span class="ttl t20">Aucun refus à afficher</span><span class="t14 mut">Les billets refusés au scan s’affichent ici.</span></div>
@@ -69,7 +70,7 @@
     {/if}
     {#if passage.superviseurAppele && sup[0]}<a class="b g" href="tel:+237{sup[0].tel}">Appeler {sup[0].prenom} · {tel(sup[0].tel)}</a>{/if}
     <div class="col g8" style="margin-top: auto">
-      <a class="b p" href="/vente?depart={depart.id}" onclick={(e) => { e.preventDefault(); aller(`/vente?depart=${depart.id}`); }}>Vendre une place libre · {fcfaF(depart.prix)}</a>
+      <p class="gl t13 mut" style="margin: 0" data-testid="orienter">Pas de billet valable : oriente la personne vers le guichet ({placesLibres(depart)} place{placesLibres(depart) > 1 ? 's' : ''} libre{placesLibres(depart) > 1 ? 's' : ''} à {fcfaF(prixDuDepart(depart))}).</p>
       <button class="b g" type="button" onclick={refuser}>Refuser l’accès · retour au radar</button>
     </div>
   {/if}

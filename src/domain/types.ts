@@ -35,6 +35,8 @@ export type StatutPaiement = 'attente' | 'ok' | 'refuse' | 'rembourse';
 export interface Paiement {
   id: string; ts: number; montant: number; moyen: MoyenPaiement; statut: StatutPaiement; ref: string; canal: Canal; payeurId: string;
   pour: { type: 'billet' | 'colis' | 'covoit'; ids: string[] }; /** Motif de refus affiché au voyageur. */ motif?: string; expireLe?: number;
+  /** Avantages déduits du montant à régler (bons de fidélité, cagnotte) ; consommés quand le paiement est accepté. `montant` est le net réellement encaissé. */
+  remise?: { bon: number; bonIds: string[]; cagnotte: number; consommee?: boolean };
 }
 
 export interface OffreCovoit {

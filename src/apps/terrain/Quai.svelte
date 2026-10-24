@@ -8,7 +8,8 @@
   import { basculerRadar, choisirDepart, compteurABord, departDuQuai, departsDeLaGare, enteteQuai, genererBilletsDemo, motifRefus, passagesDuDepart, scanQuai, scansSimulables } from './actions.ts';
   import { hash, libelleDepart } from './commun.ts';
   import { lireTerrain } from './etat.ts';
-  import { dockAgent } from './dock.ts';
+  import { dockDuRole } from '../_socle/dockRole.ts';
+  import { app } from '../../data/store.svelte.ts';
   import Scanner from './Scanner.svelte';
 
   const agent = $derived(personneCourante());
@@ -44,7 +45,7 @@
 </script>
 
 <svelte:window onkeydown={(e) => (e.key === 'Escape') && (choixOuvert = false)} />
-<Mobile titre={depart ? enteteQuai(depart) : 'Quai'} sous={agent ? `${agent.prenom} · ${depart ? (depart.statut === 'embarquement' ? 'embarquement' : depart.statut === 'parti' ? 'bus parti' : 'embarquement pas encore ouvert') : 'aucun départ'}` : ''} sansRetour dock={dockAgent('quai', 'quai')}>
+<Mobile titre={depart ? enteteQuai(depart) : 'Quai'} sous={agent ? `${agent.prenom} · ${depart ? (depart.statut === 'embarquement' ? 'embarquement' : depart.statut === 'parti' ? 'bus parti' : 'embarquement pas encore ouvert') : 'aucun départ'}` : ''} sansRetour dock={dockDuRole(app.session.role, { guichet: 'quai', terrain: 'quai' })}>
   {#snippet droite()}{#if depart}<span class="pl ok"><span class="dot"></span>{n} / {depart.capacite}</span>{/if}{/snippet}
   {#if !depart}
     <div class="center"><div class="ill" aria-hidden="true"><Icone nom="bus" taille={56} /></div><span class="ttl t20">Aucun départ aujourd’hui</span><span class="t14 mut">Il n’y a pas de départ au programme de ta gare pour la journée.</span></div>

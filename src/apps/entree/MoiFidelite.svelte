@@ -7,6 +7,7 @@
   import { nbPaliers, PALIERS, palierDe, palierSuivant, POINTS_BILLET_OFFERT, POINTS_BON, POINTS_PARRAINAGE, pointsAvantBilletOffert, pourcentBilletOffert, VALEUR_BON } from '../../core/fidelite.ts';
   import { bonsDisponibles, codeParrainDe, dateMouvement, preparerFidelite, utiliserPoints } from './actions.ts';
   import { fideliteLue } from './etat.ts';
+  import { cagnotteDe } from '../route/etat.ts';
   import { nav } from './lien.ts';
 
   /** Fidélité et parrainage : 1 point par 100 F de billet payé, quatre paliers, code parrain, bons et historique. */
@@ -18,6 +19,7 @@
   const suivant = $derived(palierSuivant(f?.cumul ?? 0));
   const reste = $derived(pointsAvantBilletOffert(points));
   const bons = $derived(moi ? bonsDisponibles(moi.id) : []);
+  const cagnotte = $derived(cagnotteDe(moi?.id));
   const code = $derived(moi ? codeParrainDe(moi) : '');
 
   async function partager() {
@@ -53,6 +55,9 @@
     <button class="b s sm grow" type="button" onclick={utiliser} disabled={points < POINTS_BON}>Utiliser {POINTS_BON} pts</button>
     <a class="b s sm grow" href="/" use:nav>Acheter un billet</a>
   </div>
+  {#if cagnotte > 0}
+    <div class="gl row sp" data-testid="cagnotte"><span class="col"><span class="lab">Cagnotte AfriMove</span><span class="t12 mut">gestes commerciaux · déduite au paiement</span></span><span class="ttl t20 okc">{fcfa(cagnotte)} F</span></div>
+  {/if}
   {#if bons.length}
     <div class="gl col" style="gap: 4px" aria-label="Bons de réduction">
       {#each bons as b (b.id)}<div class="row sp"><span class="t14 b7">Bon de {fcfa(b.montant)} F</span><span class="pl ok">à utiliser au paiement</span></div>{/each}

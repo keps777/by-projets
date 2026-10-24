@@ -9,7 +9,7 @@
   import { billetParId, departParId, ligneDe } from '../../domain/actions.ts';
   import { compteurABord, passageParId } from './actions.ts';
   import { fcfaF, libelleMoyen } from './commun.ts';
-  import { dockAgent } from './dock.ts';
+  import { dockDuRole } from '../_socle/dockRole.ts';
 
   const passage = $derived(passageParId(param('passage')));
   const billet = $derived(passage?.billetId ? billetParId(passage.billetId) : undefined);
@@ -30,7 +30,7 @@
   });
 </script>
 
-<Mobile titre="Billet valide" retourVers="/quai" dock={dockAgent('quai', 'quai')}>
+<Mobile titre="Billet valide" retourVers="/quai" dock={dockDuRole(app.session.role, { guichet: 'quai', terrain: 'quai' })}>
   {#snippet droite()}{#if depart}<span class="pl ok">{n} / {depart.capacite}</span>{/if}{/snippet}
   {#if !ok || !billet}
     <div class="center"><div class="ill" aria-hidden="true"><Icone nom="scan" taille={56} /></div><span class="ttl t20">Aucun scan à afficher</span><span class="t14 mut">Scanne un billet depuis le radar pour voir son détail.</span></div>

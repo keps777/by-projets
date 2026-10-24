@@ -1,6 +1,6 @@
 // Transactions du guichet, bâties sur les primitives de domain/actions.ts : ouverture et clôture de caisse, vente, cadence, colis, dépôt prépayé, remboursement.
 import { aujourdhui, app, maintenant } from '../../data/store.svelte.ts';
-import { annulerBillet, avancerColis, billetParId, caisseOuverte, consigner, creerColis, departEnMs, equipeDe, gare, ligneDe, notifier, ouvrirCaisse, personne, personneCourante, placesLibres, regler, reserver, type ResultatReservation } from '../../domain/actions.ts';
+import { annulerBillet, avancerColis, billetParId, caisseOuverte, consigner, creerColis, departEnMs, equipeDe, gare, ligneDe, notifier, ouvrirCaisse, personne, personneCourante, placesLibres, prixDuDepart, regler, reserver, type ResultatReservation } from '../../domain/actions.ts';
 import type { Billet, Caisse, Colis, Depart, MoyenPaiement, Paiement, Passager, Personne } from '../../domain/types.ts';
 import { evaluerEcart, totalCompte } from '../../core/caisse.ts';
 import { TAILLES, prixColis } from '../../core/colis.ts';
@@ -83,7 +83,7 @@ export const derniereCaisse = (agentId: string): Caisse | undefined => app.monde
 
 // ------------------------------------------------------------------ vente
 /** Prix d'une vente : tarif du départ (ou négocié) + supplément de place. */
-export const totalVente = (d: Depart, sieges: (string | null)[], prixUnitaire?: number) => sieges.reduce((s, siege) => s + (prixUnitaire ?? d.prix) + (siege ? supplementSiege(ligneDe(d).classe, siege) : 0), 0);
+export const totalVente = (d: Depart, sieges: (string | null)[], prixUnitaire?: number) => sieges.reduce((s, siege) => s + (prixUnitaire ?? prixDuDepart(d)) + (siege ? supplementSiege(ligneDe(d).classe, siege) : 0), 0);
 export interface DemandeVente { agentId: string; departId: string; sieges: (string | null)[]; passagers: Passager[]; moyen: 'especes' | 'momo' | 'om'; prixUnitaire?: number; /** Espèces reçues (par défaut : le juste prix). */ recu?: number }
 function notifierVoyageur(billets: Billet[]) {
   const d = app.monde.departs.find((x) => x.id === billets[0].departId); if (!d) return; const l = ligneDe(d);
@@ -154,6 +154,12 @@ export function statsCadence(agentId: string) {
 export function compterMontee(departId: string, delta: number, capacite: number): number { const e = etat(); e.montes[departId] = Math.max(0, Math.min(capacite, (e.montes[departId] ?? 0) + delta)); return e.montes[departId]; }
 /** Passagers attendus : places occupées (billets du monde et places prises ailleurs). */
 export const vendusDuDepart = (d: Depart) => d.capacite - placesLibres(d);
+/** Cadence : le bus est monté, le chauffeur est prévenu qu'il peut partir (notification avec le comptage). Renvoie faux s'aucun chauffeur n'est affecté au départ. */
+export function prevenirChauffeur(departId: string, agentId: string): boolean {
+  const d = app.monde.departs.find((x) => x.id === departId); if (!d?.chauffeurId) return false;
+  notifier(d.chauffeurId, 'Bus monté : tu peux partir', `${d.heure} ${nomDepart(d)} · ${etat().montes[d.id] ?? 0} montés / ${vendusDuDepart(d)} vendus`, '/chauffeur', 'depart');
+  consigner('quai', `Chauffeur prévenu : départ ${d.heure} ${nomDepart(d)}`, agentId, d.id); return true;
+}
 export function enregistrerComptage(agentId: string, d: Depart) { const m = etat().montes[d.id] ?? 0; consigner('quai', `Comptage cadence ${d.heure} ${nomDepart(d)} : ${m} montés / ${vendusDuDepart(d)} vendus`, agentId, d.id); }
 
 // ------------------------------------------------------------------ colis au guichet

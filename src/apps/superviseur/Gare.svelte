@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { quaiDe } from '../../core/quai.ts';
   import { app } from '../../data/store.svelte.ts';
   import { param } from '../../router.svelte.ts';
   import { personneCourante } from '../../domain/actions.ts';
@@ -65,12 +66,12 @@
   <div class="quais">
     {#each quais as q, i (i)}
       {#if q}
-        <a class="q" class:hot={q.statut === 'embarquement'} href="/quai?depart={q.id}" onclick={va(`/quai?depart=${q.id}`)} aria-label="Quai {i + 1} : {q.heureReelle} {q.vers}, {q.statut === 'embarquement' ? 'embarquement' : 'prévu'}, rempli à {Math.round(q.remplissage * 100)} %">
-          <span class="lab">Q{i + 1}</span><span class="t14 b7 mono">{q.heureReelle}</span><span class="t12 mut ell">{q.vers}{q.classe === 'VIP' ? ' VIP' : ''}</span>
+        <a class="q" class:hot={q.statut === 'embarquement'} href="/quai?depart={q.id}" onclick={va(`/quai?depart=${q.id}`)} aria-label="Quai {quaiDe(q.id)} : {q.heureReelle} {q.vers}, {q.statut === 'embarquement' ? 'embarquement' : 'prévu'}, rempli à {Math.round(q.remplissage * 100)} %">
+          <span class="lab">Q{quaiDe(q.id)}</span><span class="t14 b7 mono">{q.heureReelle}</span><span class="t12 mut ell">{q.vers}{q.classe === 'VIP' ? ' VIP' : ''}</span>
           <div class="bar" aria-hidden="true"><i class:wa={q.remplissage >= 0.9} style="width: {Math.round(q.remplissage * 100)}%"></i></div>
         </a>
       {:else}
-        <div class="q libre"><span class="lab">Q{i + 1}</span><span class="t14 b7">—</span><span class="t12 mut">libre</span><div class="bar" aria-hidden="true"><i style="width: 0%"></i></div></div>
+        <div class="q libre"><span class="lab">Q—</span><span class="t14 b7">—</span><span class="t12 mut">libre</span><div class="bar" aria-hidden="true"><i style="width: 0%"></i></div></div>
       {/if}
     {/each}
   </div>

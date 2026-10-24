@@ -1,5 +1,6 @@
 <script lang="ts">
   import { ajouterJours, jourCourt } from '../../core/dates.ts';
+  import { quaiDe } from '../../core/quai.ts';
   import { initiales, ETIQUETTE_ROLE } from '../../core/equipe.ts';
   import { caissesDe, etatRapport, ficheGare, quais, REF_PERIODE } from '../../core/fichegare.ts';
   import { libelleVariation, type Periode } from '../../core/indicateurs.ts';
@@ -59,7 +60,7 @@
     <div class="quais">
       {#each [0, 1, 2, 3] as i (i)}
         {@const q = prochains[i]}
-        <div class="q"><span class="lab">Q{i + 1}</span><span class="t13 b7 ell">{q ? q.vers : 'libre'}</span><span class="t12 mut">{q ? q.heure : '—'}</span><div class="bar" role="img" aria-label="Remplissage {q ? pourcent(q.remplissage) : '0 %'}"><i class:wa={q && q.remplissage >= 0.9} style="width: {q ? Math.round(q.remplissage * 100) : 0}%"></i></div></div>
+        <div class="q"><span class="lab">{q ? `Q${quaiDe(q.departId)}` : 'Q—'}</span><span class="t13 b7 ell">{q ? q.vers : 'libre'}</span><span class="t12 mut">{q ? q.heure : '—'}</span><div class="bar" role="img" aria-label="Remplissage {q ? pourcent(q.remplissage) : '0 %'}"><i class:wa={q && q.remplissage >= 0.9} style="width: {q ? Math.round(q.remplissage * 100) : 0}%"></i></div></div>
       {/each}
     </div>
 

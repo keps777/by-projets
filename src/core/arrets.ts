@@ -63,5 +63,4 @@ export function prochainArret(arrets: Arret[], nowMin: number): { arret: Arret; 
 }
 /** Un arrêt est « passé » quand le bus l'a dépassé (ou quand il est parti de la gare, pour le départ). */
 export const arretPasse = (a: Arret, nowMin: number) => a.min <= nowMin;
-/** Quai d'embarquement (1 à 6), stable pour un départ donné. */
-export function quaiDe(departId: string): number { let h = 0; for (const c of departId) h = (h * 31 + c.charCodeAt(0)) % 9973; return (h % 6) + 1; }
+export { quaiDe } from './quai.ts';

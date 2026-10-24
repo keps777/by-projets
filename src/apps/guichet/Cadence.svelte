@@ -2,7 +2,7 @@
   import './guichet.css';
   import { maintenant } from '../../data/store.svelte.ts';
   import { aller } from '../../router.svelte.ts';
-  import { billetParId, caisseOuverte, heureLocale, placesLibres } from '../../domain/actions.ts';
+  import { billetParId, caisseOuverte, heureLocale, placesLibres, prixDuDepart } from '../../domain/actions.ts';
   import { fcfa } from '../../core/money.ts';
   import { estPointe, libelleErreur } from '../../core/guichet.ts';
   import { montrer } from '../../ui/toast.svelte.ts';
@@ -53,8 +53,8 @@
     <span class="t13 mut">Touche le départ · {quantite > 1 ? `${quantite} billets s’impriment` : 'le billet s’imprime'}</span>
     {#each departs as d (d.id)}
       {@const libres = placesLibres(d)}
-      <button type="button" class="bigb" class:on={dernierDepartId === d.id} disabled={libres < quantite || ctx.lecture} aria-label="{d.heure} {nomDepart(d)}, {fcfa(d.prix)} F, {libres} libres. {quantite} billet{quantite > 1 ? 's' : ''}" onclick={() => toucher(d.id)}>
-        <span class="h">{d.heure}</span><span class="t14 b7">{nomDepart(d)}{d.retardMin ? ` · retard +${d.retardMin} min` : ''}</span><span class="t13">{fcfa(d.prix)} F · {libres === 0 ? 'complet' : `${libres} libres`}</span>
+      <button type="button" class="bigb" class:on={dernierDepartId === d.id} disabled={libres < quantite || ctx.lecture} aria-label="{d.heure} {nomDepart(d)}, {fcfa(prixDuDepart(d))} F, {libres} libres. {quantite} billet{quantite > 1 ? 's' : ''}" onclick={() => toucher(d.id)}>
+        <span class="h">{d.heure}</span><span class="t14 b7">{nomDepart(d)}{d.retardMin ? ` · retard +${d.retardMin} min` : ''}</span><span class="t13">{fcfa(prixDuDepart(d))} F · {libres === 0 ? 'complet' : `${libres} libres`}</span>
       </button>
     {:else}
       <p class="t13 mut">Aucun départ à venir depuis cette gare.</p>

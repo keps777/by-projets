@@ -39,6 +39,8 @@ export function alternativeAuRetard(d: Depart, now = maintenant()): Depart | und
   return choix ? departParId(choix.id) : undefined;
 }
 export function crediterCagnotte(personneId: string, montant: number) { const e = etat(); e.cagnotte[personneId] = (e.cagnotte[personneId] ?? 0) + montant; }
+/** Débite la cagnotte (jamais sous zéro) ; renvoie le montant réellement débité. */
+export function debiterCagnotte(personneId: string, montant: number): number { const e = etat(), pris = Math.max(0, Math.min(montant, e.cagnotte[personneId] ?? 0)); e.cagnotte[personneId] = (e.cagnotte[personneId] ?? 0) - pris; return pris; }
 export interface ResultatRetard { choix: ChoixRetard; geste: number; rembourse: number; redirection: string }
 /** Enregistre le choix du voyageur face à un retard. « Changer » et « rembourser » annulent le billet sans frais (annulation par la compagnie) ; le geste commercial (≥ 30 min) est crédité une seule fois par billet. */
 export function choisirRetard(billetId: string, choix: ChoixRetard): ResultatRetard {

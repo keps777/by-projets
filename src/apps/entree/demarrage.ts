@@ -3,6 +3,7 @@ import { app } from '../../data/store.svelte.ts';
 import { avancerLitiges, crediterBillets } from './actions.ts';
 import { preferences } from './etat.ts';
 
+let minuteur: ReturnType<typeof setInterval> | undefined;
 export default function demarrage() {
   preferences();
   if (typeof document !== 'undefined') document.documentElement.lang = app.session.langue === 'pcm' ? 'en' : app.session.langue;
@@ -11,5 +12,5 @@ export default function demarrage() {
     const id = app.session.personneId; if (id && app.session.role === 'voyageur') crediterBillets(id);
   };
   tick();
-  setInterval(tick, 30_000);
+  if (!minuteur) minuteur = setInterval(tick, 30_000); // un seul minuteur, même si le démarrage est rejoué après « remettre le monde à zéro »
 }

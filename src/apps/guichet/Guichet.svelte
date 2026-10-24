@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { quaiDe } from '../../core/quai.ts';
   import './guichet.css';
   import { app, maintenant } from '../../data/store.svelte.ts';
   import { aller } from '../../router.svelte.ts';
@@ -74,7 +75,7 @@
       {@const p = pillDepart(d)}
       <a class="g-dep" href="/vente?depart={d.id}" onclick={(e) => lien(e, `/vente?depart=${d.id}`)}>
         <span class="ttl t18" style="min-width: 58px">{d.heure}</span>
-        <span class="col grow"><span class="t14 b7 ell">{nomDepart(d)} · {compagnieDe(d).abrev}</span><div class="bar" style="margin-top: 6px"><i class:wa={remplissage(d) > 0.85} style="width: {Math.round(remplissage(d) * 100)}%"></i></div></span>
+        <span class="col grow"><span class="t14 b7 ell">{nomDepart(d)} · {compagnieDe(d).abrev} · quai {quaiDe(d.id)}</span><div class="bar" style="margin-top: 6px"><i class:wa={remplissage(d) > 0.85} style="width: {Math.round(remplissage(d) * 100)}%"></i></div></span>
         <span class="col" style="align-items: flex-end"><span class="t13 b7">{placesLibres(d)} libres</span><span class="pl {p.c}">{p.t}</span></span>
       </a>
     {:else}
