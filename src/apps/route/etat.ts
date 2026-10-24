@@ -1,0 +1,31 @@
+// État propre à la tranche « route » : cagnotte, gestes commerciaux, courses, montées en route, options de covoiturage.
+import { app, tranche } from '../../data/store.svelte.ts';
+import type { Mode, EtapeCourse, MoyenCourse } from '../../core/course.ts';
+
+export type ChoixRetard = 'attendre' | 'changer' | 'rembourser';
+export interface GesteRetard { billetId: string; departId: string; montant: number; choix: ChoixRetard; ts: number }
+export interface CourseVoyage {
+  id: string; personneId: string; mode: Mode; quartier: string; km: number; gare: string; departId: string; prix: number; moyen: MoyenCourse;
+  etape: EtapeCourse; statut: 'en_cours' | 'terminee' | 'annulee'; creeLe: number; majLe: number;
+}
+export interface MonteeEnRoute { billetId: string; departId: string; arretId: string; arret: string; heure: string; prix: number; ts: number }
+export interface OptionsCovoit { femmes: boolean; bagages: boolean; arrets: boolean }
+export interface Versement { offreId: string; personneId: string; montant: number; ts: number }
+export interface EtatRoute {
+  /** Cagnotte AfriMove par personne (FCFA) : gestes commerciaux, reversements. */ cagnotte: Record<string, number>;
+  /** Gestes commerciaux de retard, par billet (un seul par billet). */ gestes: Record<string, GesteRetard>;
+  courses: CourseVoyage[]; /** Montées en route, par billet. */ montees: Record<string, MonteeEnRoute>;
+  optionsCovoit: Record<string, OptionsCovoit>; versements: Versement[];
+}
+const defaut = (): EtatRoute => ({ cagnotte: {}, gestes: {}, courses: [], montees: {}, optionsCovoit: {}, versements: [] });
+const VIDE: EtatRoute = Object.freeze(defaut()) as EtatRoute;
+
+/** Tranche en écriture : à appeler depuis une action ou un script, jamais depuis un `$derived`. Complète les champs absents (ancienne sauvegarde). */
+export function etat(): EtatRoute {
+  const e = tranche<EtatRoute>('route', defaut);
+  for (const [k, v] of Object.entries(defaut())) if (!(k in e)) (e as unknown as Record<string, unknown>)[k] = v;
+  return e;
+}
+/** Tranche en lecture seule : sans création, utilisable dans un `$derived`. */
+export const lire = (): EtatRoute => ({ ...VIDE, ...((app.tranches.route as Partial<EtatRoute> | undefined) ?? {}) });
+export const cagnotteDe = (personneId: string | null | undefined) => (personneId ? lire().cagnotte[personneId] ?? 0 : 0);
