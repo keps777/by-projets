@@ -1,6 +1,6 @@
 // Le guichet, le quai, le superviseur et la caisse partagent un seul monde : (d) une vente en espèces est scannable au quai, visible chez le superviseur et dans la caisse ;
 // (e) une clôture avec écart est validée au PIN par le superviseur.
-import { aller, entrerEn, expect, lireMonde, nombre, ouvrir, taper, test } from './aide';
+import { aller, entrerEn, expect, lireMonde, nombre, ouvrir, siegeLibre, taper, test } from './aide';
 
 const placeLibre = (page: import('@playwright/test').Page) => page.locator('[aria-label^="Place "]:not([aria-label*="prise"]):not([aria-label*="libre"])').last();
 
@@ -107,4 +107,37 @@ test('(e) clôture de caisse avec écart : justification et bordereau exigés, p
   await entrerEn(page, 'p-fatou');
   await aller(page, '/caisse');
   await expect(page.getByText('clôture validée').first()).toBeVisible();
+});
+
+test('(d) un billet payé dans l’app se scanne au quai avec son QR signé : mauvais départ refusé, faux sceau refusé, bon départ accepté', async ({ page }) => {
+  const DEPART = 'd-2026-11-03-BX-Classique-mvan-aller-0900'; // aujourd'hui 09 h, Bêta Express
+  await ouvrir(page, `/siege?depart=${DEPART}`, { connecte: 'p-aicha' });
+  await siegeLibre(page).click();
+  await page.getByRole('button', { name: /^Payer 6 000 F/ }).click();
+  await page.getByRole('button', { name: /^Payer 6 000 F/ }).click();
+  await page.getByRole('button', { name: /Simuler la validation MTN/ }).click();
+  await expect(page).toHaveURL(/\/pass\?billet=/);
+  const billet = (await lireMonde(page)).billets.find((b) => b.departId === DEPART && b.acheteurId === 'p-aicha')!;
+  const qr = `${billet.code}.${billet.sceau}`;
+
+  await entrerEn(page, 'p-ibrahim');
+  const scanner = async (contenu: string) => {
+    await page.getByRole('link', { name: 'Scanner un billet' }).first().click();
+    await page.getByLabel('Code du billet').fill(contenu);
+    await page.getByRole('button', { name: 'Valider' }).click();
+  };
+  await scanner(qr); // le radar est sur le départ de 07 h 30 : ce billet est pour un autre départ
+  await expect(page).toHaveURL(/\/quai\/refus\?passage=/);
+  await expect(page.getByText('Autre départ').first()).toBeVisible();
+  await page.getByRole('navigation', { name: 'Navigation principale' }).getByRole('link', { name: 'Quai', exact: true }).click(); // retour au radar par la barre du bas
+  await page.getByRole('button', { name: 'Changer' }).click();
+  await page.getByRole('button', { name: /09:00/ }).first().click();
+  await scanner(`${billet.code}.000000000000`); // sceau falsifié
+  await expect(page).toHaveURL(/\/quai\/refus\?passage=/);
+  await expect(page.getByText(/falsifié|Sceau invalide/i).first()).toBeVisible();
+  await page.getByRole('navigation', { name: 'Navigation principale' }).getByRole('link', { name: 'Quai', exact: true }).click(); // retour au radar par la barre du bas
+  await scanner(qr);
+  await expect(page).toHaveURL(/\/quai\/ok\?passage=/);
+  await expect(page.getByText('Aïcha Ndiba')).toBeVisible();
+  expect((await lireMonde(page)).billets.find((b) => b.id === billet.id)).toMatchObject({ statut: 'scanne', scannePar: 'p-ibrahim' });
 });

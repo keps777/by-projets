@@ -2,7 +2,7 @@
   import { aller, param } from '../../router.svelte.ts';
   import Mobile from '../../ui/Mobile.svelte';
   import Icone from '../../ui/Icone.svelte';
-  import { annulerBillet, billetParId, compagnieDe, departEnMs, departParId, gare, heureLocale, ligneDe, minutesAvant, personne, personneCourante, type ResultatAnnulation } from '../../domain/actions.ts';
+  import { annulerBillet, billetParId, compagnieDe, departEnMs, departParId, gare, heureLocale, ligneDe, minutesAvant, partPayee, personne, personneCourante, type ResultatAnnulation } from '../../domain/actions.ts';
   import { app, aujourdhui } from '../../data/store.svelte.ts';
   import { DELAI_ANNULATION_MIN, fmtF, remboursement } from '../../core/tarif.ts';
   import { ajouterJours, jourDe, jourSemaineCourt } from '../../core/dates.ts';
@@ -18,7 +18,7 @@
   const ligne = $derived(depart ? ligneDe(depart) : undefined);
   const paiement = $derived(billet ? app.monde.paiements.find((p) => p.id === billet.paiementId) : undefined);
   const payeur = $derived(personne(paiement?.payeurId ?? billet?.acheteurId));
-  const apercu = $derived(billet && depart ? remboursement(billet.prix, minutesAvant(depart)) : null);
+  const apercu = $derived(billet && depart ? (() => { const r = remboursement(billet.prix, minutesAvant(depart)); return { ...r, rembourse: Math.round(r.rembourse * partPayee(billet)) }; })() : null);
   const limite = $derived(depart ? departEnMs(depart) - DELAI_ANNULATION_MIN * 60_000 : 0);
   const vers = $derived(!paiement ? 'ton compte' : paiement.moyen === 'om' ? 'Orange Money' : paiement.moyen === 'carte' ? 'ta carte bancaire' : paiement.moyen === 'especes' ? 'le guichet (espèces)' : paiement.moyen === 'proche' && payeur?.id !== moi?.id ? `le compte de ${payeur?.prenom ?? 'ton proche'}` : 'MoMo');
   const quandLimite = $derived.by(() => { const j = jourDe(new Date(limite)), auj = aujourdhui(); return j === auj ? 'aujourd’hui' : j === ajouterJours(auj, 1) ? 'demain' : `le ${jourSemaineCourt(j)}`; });

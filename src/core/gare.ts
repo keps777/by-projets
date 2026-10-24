@@ -1,7 +1,6 @@
 // Vue d'une gare à partir du monde : départs du jour, ventes par guichet, caisses, rapport du soir. Fonctions pures (le monde est passé en argument),
 // donc utilisables dans un `$derived` comme dans un test. Les montants suivent `domain/actions.especesCaisse` et `core/caisse`.
 import { ajouterJours, jourDe, jourSemaineLong, type Jour } from './dates.ts';
-import { remboursement } from './tarif.ts';
 import { attendu } from './caisse.ts';
 import { minutes } from './retard.ts';
 import { evolution, type LigneVente, type Rapport } from './rapport.ts';
@@ -93,7 +92,7 @@ export function construireRapport(m: Monde, p: { gareId: string; jour: Jour; now
 }
 /** Espèces attendues en caisse, d'après le monde passé (même règle que `domain/actions.attenduDeCaisse`). */
 export function attenduCaisseMonde(m: Monde, c: Caisse): number {
-  const bs = m.billets.filter((b) => b.caisseId === c.id && payeEnEspeces(m, b)), ventes = bs.filter(vendu).reduce((s, b) => s + b.prix, 0);
-  const rembourses = bs.filter((b) => b.statut === 'rembourse').reduce((s, b) => s + remboursement(b.prix, 9999).rembourse, 0);
+  const bs = m.billets.filter((b) => b.caisseId === c.id && payeEnEspeces(m, b)), ventes = bs.filter((b) => vendu(b) || b.statut === 'rembourse').reduce((s, b) => s + b.prix, 0);
+  const rembourses = bs.filter((b) => b.statut === 'rembourse').reduce((s, b) => s + (b.rembourse ?? 0), 0); // ce qui a réellement été rendu (frais, annulation par la compagnie…)
   return attendu(c.fond, ventes + colisDeCaisse(m, c.id).reduce((s, x) => s + x.prix, 0), rembourses);
 }

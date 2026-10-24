@@ -225,3 +225,17 @@ describe('paiement d’un colis (?colis=)', () => {
     expect(reprendreColis(cod.colis.id, 'p-aicha')).toBe('sans_paiement');
   });
 });
+
+describe('remboursement d’un billet payé avec un avantage', () => {
+  beforeEach(() => { reinitialiser(); connecter('p-aicha'); preparerFidelite('p-aicha'); });
+  it('on ne rend en argent que ce qui a été payé : 10 % de frais sur 6 000 F, au prorata des 5 500 F réellement réglés', () => {
+    utiliserPoints('p-aicha'); const { b } = brouillon(1); lancerPaiement(b, 'p-aicha'); const p = paiementDe(b)!; confirmerPaiement(b);
+    const bil = billetsDuPaiement(p.id)[0]; const brut = bil.prix; expect(p.montant).toBe(brut - 500);
+    const r = annulerBillet(bil.id); expect(r.possible).toBe(true);
+    expect(bil.rembourse).toBe(Math.round(remboursement(brut, 9999).rembourse * (brut - 500) / brut)); expect(bil.rembourse).toBeLessThan(remboursement(brut, 9999).rembourse);
+  });
+  it('sans avantage : le remboursement habituel', () => {
+    const { b } = brouillon(1); lancerPaiement(b, 'p-aicha'); const p = paiementDe(b)!; confirmerPaiement(b); const bil = billetsDuPaiement(p.id)[0];
+    annulerBillet(bil.id); expect(bil.rembourse).toBe(remboursement(bil.prix, 9999).rembourse);
+  });
+});

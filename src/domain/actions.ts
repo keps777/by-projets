@@ -81,6 +81,11 @@ export function regler(paiementId: string, issue: { ok: true } | { refus: string
   } else { p.statut = 'refuse'; p.motif = issue.refus; for (const b of billets) b.statut = 'expire'; }
   return p;
 }
+/** Part du prix d'un billet réellement payée en argent : un bon de fidélité ou la cagnotte déduits au paiement ne se rendent pas en argent (1 sans remise). */
+export function partPayee(b: Billet): number {
+  const p = app.monde.paiements.find((x) => x.id === b.paiementId), brut = app.monde.billets.filter((x) => x.paiementId === b.paiementId).reduce((s, x) => s + x.prix, 0);
+  return p?.remise && brut > 0 && p.montant < brut ? p.montant / brut : 1;
+}
 export interface ResultatAnnulation extends Remboursement { billet: Billet }
 /** Annulation d'un billet : remboursement selon `core/tarif.remboursement` ; la place est libérée. */
 export function annulerBillet(billetId: string, parCompagnie = false): ResultatAnnulation {
@@ -88,8 +93,10 @@ export function annulerBillet(billetId: string, parCompagnie = false): ResultatA
   if (b.statut !== 'valide') return { billet: b, possible: false, frais: 0, rembourse: 0, raison: b.statut === 'scanne' ? 'Billet déjà utilisé' : 'Billet non remboursable' };
   const d = departParId(b.departId)!, r = calculRemboursement(b.prix, (departEnMs(d) - maintenant()) / 60_000, parCompagnie);
   if (!r.possible) return { billet: b, ...r };
+  r.rembourse = Math.round(r.rembourse * partPayee(b));
   b.statut = 'rembourse'; b.annuleLe = maintenant(); b.rembourse = r.rembourse;
-  const p = app.monde.paiements.find((x) => x.id === b.paiementId); if (p && app.monde.billets.filter((x) => x.paiementId === p.id && x.statut === 'valide').length === 0) p.statut = 'rembourse';
+  const p = app.monde.paiements.find((x) => x.id === b.paiementId);
+  if (p && app.monde.billets.filter((x) => x.paiementId === p.id && x.statut === 'valide').length === 0) p.statut = 'rembourse';
   notifier(b.acheteurId, 'Remboursement envoyé', `${r.rembourse.toLocaleString('fr-FR')} F renvoyés · place ${b.siege ?? ''} libérée`, '/pass', 'remboursement');
   consigner('annulation', `Billet ${b.code} remboursé ${r.rembourse} F`, b.acheteurId, b.id);
   return { billet: b, ...r };
