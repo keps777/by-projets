@@ -109,7 +109,7 @@
 <style>
   .ta { min-height: 110px; align-items: flex-start; padding: 12px 14px; resize: vertical; font-family: inherit; display: block; }
   .photo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .photo button { aspect-ratio: 1; min-height: 64px; border-radius: 14px; border: 1px dashed rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.04); color: #8e99bb; cursor: pointer; display: grid; place-items: center; font-size: 22px; }
+  .photo button { aspect-ratio: 1; min-height: 64px; border-radius: 14px; border: 1px dashed rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.04); color: #a1accb; cursor: pointer; display: grid; place-items: center; font-size: 22px; }
   .photo .ok { border-style: solid; background: linear-gradient(135deg, rgba(139, 124, 255, 0.3), rgba(61, 224, 255, 0.2)); color: #7febff; }
   .b:disabled { opacity: 0.45; pointer-events: none; }
   .choix { width: 100%; background: transparent; border: 0; border-bottom: 1px solid rgba(255, 255, 255, 0.08); text-align: left; cursor: pointer; color: inherit; font: inherit; }

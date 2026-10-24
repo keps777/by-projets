@@ -1,6 +1,7 @@
 // Parcours du patron (Luther) : tableau 3D, assistant chiffré, modules, financement, convention signée, colis inter-agences.
 // Horloge figée au mardi 3 novembre 2026, 19:10 (`?maintenant=`). Connexion par l'entrée de démonstration (PIN 0001).
-import { expect, test, type Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { expect, test } from './aide'; // le test d'aide échoue à la moindre exception de page ou console.error
 
 async function entrerCommeLuther(page: Page) {
   await page.goto('/entree?maintenant=2026-11-03T19:10');
@@ -100,7 +101,7 @@ test.describe('patron', () => {
     await page.setViewportSize({ width: 320, height: 640 });
     for (const chemin of ['/patron', '/patron/equipe', '/patron/gare?gare=mvan', '/patron/personne?personne=p-fatou', '/assistant', '/assistant/reponse?q=bilan', '/modules', '/financement', '/financement/demande', '/inter-agences', '/inter-agences/convention?partenaire=AV']) {
       await ouvrir(page, chemin);
-      await page.waitForTimeout(400);
+      await expect(page.locator('[aria-busy="true"]')).toHaveCount(0); // écran chargé
       const largeurs = await page.evaluate(() => [document.documentElement.scrollWidth, ...[...document.querySelectorAll('.bd')].map((e) => e.scrollWidth)]);
       expect(Math.max(...largeurs), chemin).toBeLessThanOrEqual(320);
     }

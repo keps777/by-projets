@@ -1,12 +1,13 @@
 // Parcours « route » : suivi du bus, retard, réseau, course, montée en route, covoiturage. Le monde est créé le 2 nov. 20:00 (billet d'Aïcha pour le 3 nov. 08:00),
 // puis l'horloge saute avec `?maintenant=` ; une garde réécrit la dernière activité pour que la session ne soit pas expirée par ces sauts.
-import { expect, test, type Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { expect, test } from './aide'; // le test d'aide échoue à la moindre exception de page ou console.error
 import { lireEtat } from './aide';
 
 async function entrer(page: Page) {
   await page.goto('/entree?maintenant=2026-11-02T20:00');
   await page.getByRole('button', { name: 'Entrer directement comme Aïcha' }).click();
-  await page.waitForTimeout(300);
+  await page.evaluate(() => dispatchEvent(new Event('pagehide'))); // l'état est écrit dans le stockage
   await page.addInitScript(() => {
     try {
       const t = new URLSearchParams(location.search).get('maintenant'), e = JSON.parse(localStorage.getItem('afrimove.v1') || 'null');

@@ -60,7 +60,7 @@
   video { width: 100%; height: 100%; object-fit: cover; }
   .vide video { visibility: hidden; }
   .cadre { position: absolute; inset: 28px 80px; border-radius: 18px; border: 2px solid #3de0ff; box-shadow: 0 0 0 999px rgba(5, 7, 13, 0.35); }
-  .msg { position: absolute; inset: 0; display: grid; place-items: center; color: #8e99bb; }
+  .msg { position: absolute; inset: 0; display: grid; place-items: center; color: #a1accb; }
   summary { list-style: none; cursor: pointer; }
   summary::-webkit-details-marker { display: none; }
   .liste { margin-top: 8px; max-height: 34dvh; overflow-y: auto; }

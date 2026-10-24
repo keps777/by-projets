@@ -1,5 +1,6 @@
 // Parcours du règlement : siège → paiement → attente → pass, refus puis réessai, annulation, hors ligne, bus entier, proche, covoiturage.
-import { expect, test, type Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { expect, test } from './aide'; // le test d'aide échoue à la moindre exception de page ou console.error
 
 const CAPTURES = process.env.AM_CAPTURES ?? '';
 const DEPART = 'd-2026-11-10-BX-Classique-mvan-aller-0700'; // 14 places libres : les jours proches sont presque pleins (l'historique du patron y a vendu des billets)
@@ -8,7 +9,7 @@ const shot = async (page: Page, nom: string) => { if (CAPTURES) await page.scree
 async function entrerCommeAicha(page: Page) {
   await page.goto('/entree?maintenant=2026-11-02T07:30');
   await page.getByRole('button', { name: 'Entrer directement comme Aïcha' }).click();
-  await page.waitForTimeout(200);
+  await page.evaluate(() => dispatchEvent(new Event('pagehide'))); // l'état est écrit dans le stockage
 }
 const siegeLibre = (page: Page, depuisLaFin: number) => page.locator('button.st:not([disabled])').nth(-1 - depuisLaFin);
 async function aller(page: Page, chemin: string) { await page.evaluate((c) => { history.pushState({}, '', c); dispatchEvent(new PopStateEvent('popstate')); }, chemin); }

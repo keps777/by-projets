@@ -80,6 +80,6 @@
   .bulle { max-width: 85%; padding: 10px 12px; border-radius: 16px; font-size: 14px; line-height: 1.4; white-space: pre-wrap; overflow-wrap: anywhere; }
   .bulle.bot { align-self: flex-start; background: rgba(255, 255, 255, 0.1); border-top-left-radius: 4px; }
   .bulle.moi { align-self: flex-end; background: rgba(37, 211, 102, 0.22); border: 1px solid rgba(37, 211, 102, 0.4); border-top-right-radius: 4px; }
-  .bulle.ecrit { letter-spacing: 3px; color: #8e99bb; }
+  .bulle.ecrit { letter-spacing: 3px; color: #a1accb; }
   .seg2 { flex: none; }
 </style>

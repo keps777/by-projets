@@ -42,7 +42,7 @@
 
   // plan 3D : inclinaison au doigt (poignée) ; à plat si l'utilisateur réduit les animations
   let plat = $state(typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches), angle = $state(48);
-  const hauteurPlan = $derived(grille ? Math.round((grille.rangs * 31 + 50) * Math.cos((angle * Math.PI) / 180) * 1.4 + 30) : 120);
+  const hauteurPlan = $derived(grille ? Math.round((grille.rangs * 31 + 50) * Math.cos((angle * Math.PI) / 180) * 1.55 + 44) : 120);
   let glisse: { y: number; a: number } | null = null;
   const incliner = (e: PointerEvent) => { if (glisse) angle = Math.max(15, Math.min(70, Math.round(glisse.a + (e.clientY - glisse.y) * 0.4))); };
   const toucheIncl = (e: KeyboardEvent) => { if (e.key === 'ArrowUp') angle = Math.min(70, angle + 4); else if (e.key === 'ArrowDown') angle = Math.max(15, angle - 4); else return; e.preventDefault(); };
@@ -207,10 +207,10 @@
   .plan.plat .deckw { perspective: none; }
   .deck { position: absolute; left: 50%; top: 10px; width: min(270px, calc(100% - 56px)); margin-left: calc(min(270px, calc(100% - 56px)) / -2); padding: 10px 12px 14px; border-radius: 30px 30px 20px 20px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04)); border: 1px solid rgba(255, 255, 255, 0.24); transform: rotateX(var(--ang)); transform-style: preserve-3d; }
   .plan.plat .deck { position: relative; left: 0; top: 0; margin: 0 auto; transform: none; width: min(100%, 300px); }
-  .avant { display: block; margin-bottom: 8px; text-align: center; font: 600 10px 'Geist Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; color: #8e99bb; }
+  .avant { display: block; margin-bottom: 8px; text-align: center; font: 600 10px 'Geist Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; color: #a1accb; }
   .seats { display: grid; gap: 5px; transform-style: preserve-3d; }
   .st { position: relative; height: 26px; border-radius: 7px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.1); color: #b7c0db; font: 700 10px 'Geist Mono', monospace; cursor: pointer; display: grid; place-items: center; transform: translateZ(6px); padding: 0; }
-  .plan.plat .st { height: 40px; font-size: 12px; transform: none; }
+  .plan.plat .st { height: 44px; font-size: 12px; transform: none; }
   .st.tk { background: rgba(255, 255, 255, 0.03); color: rgba(255, 255, 255, 0.25); border-style: dashed; transform: none; cursor: default; }
   .st.on { background: linear-gradient(135deg, #8b7cff, #3de0ff); color: #06080f; border-color: transparent; transform: translateZ(16px); }
   .plan.plat .st.on { transform: none; box-shadow: 0 0 0 2px #fff; }

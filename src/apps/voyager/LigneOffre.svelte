@@ -30,6 +30,6 @@
   .sb { font-size: 11px; color: #b7c0db; }
   .rt { align-items: flex-end; flex: none; }
   .pr { font: 700 13px 'Geist Mono', monospace; }
-  .bd2 { font: 600 10px 'Geist Mono', monospace; color: #8e99bb; white-space: nowrap; }
+  .bd2 { font: 600 10px 'Geist Mono', monospace; color: #a1accb; white-space: nowrap; }
   .bd2.ok { color: #7cf0a6; } .bd2.wa { color: #ffc24b; } .bd2.inf { color: #7fb8ff; } .bd2.cv { color: #ff9bea; } .bd2.er { color: #ff6b6b; }
 </style>

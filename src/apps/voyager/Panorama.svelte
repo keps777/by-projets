@@ -111,9 +111,9 @@
   .hh small { font-size: 14px; color: #b7c0db; letter-spacing: 0; }
   .lg { flex: none; width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; font: 800 10px 'Sora Variable', 'Sora', sans-serif; color: #06080f; }
   .lg.cv { border-radius: 50%; font-size: 11px; }
-  .bd2 { font: 600 10px 'Geist Mono', monospace; color: #8e99bb; white-space: nowrap; }
+  .bd2 { font: 600 10px 'Geist Mono', monospace; color: #a1accb; white-space: nowrap; }
   .bd2.ok { color: #7cf0a6; } .bd2.wa { color: #ffc24b; } .bd2.inf { color: #7fb8ff; } .bd2.cv { color: #ff9bea; } .bd2.er { color: #ff6b6b; }
-  .more { min-height: 24px; border: 0; background: transparent; color: #7febff; font: 600 12px 'Sora Variable', 'Sora', sans-serif; text-align: center; cursor: pointer; flex: none; text-decoration: underline; }
+  .more { min-height: 44px; margin: -10px 0; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; color: #7febff; font: 600 12px 'Sora Variable', 'Sora', sans-serif; text-align: center; cursor: pointer; flex: none; text-decoration: underline; }
   .foot { margin-top: auto; flex: none; }
   .foot .b { min-height: 46px; font-size: 14px; flex: 1; white-space: nowrap; }
   .b:disabled { opacity: 0.45; cursor: not-allowed; }
@@ -127,5 +127,5 @@
   .seats { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
   .seats i { display: block; height: 100%; background: linear-gradient(90deg, #8b7cff, #3de0ff); }
   .cta { margin-top: auto; min-height: 46px; white-space: nowrap; }
-  .empty { flex: 1; display: grid; place-items: center; text-align: center; color: #8e99bb; font-size: 13px; padding: 10px; border-radius: 20px; border: 1px dashed rgba(255, 255, 255, 0.14); }
+  .empty { flex: 1; display: grid; place-items: center; text-align: center; color: #a1accb; font-size: 13px; padding: 10px; border-radius: 20px; border: 1px dashed rgba(255, 255, 255, 0.14); }
 </style>

@@ -1,12 +1,13 @@
 // Parcours de l'entrée et de « Moi » : splash → tutoriel → connexion (visage simulé, passkey, code SMS), USSD, fidélité, litige, réglages.
-import { expect, test, type Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { expect, test } from './aide'; // le test d'aide échoue à la moindre exception de page ou console.error
 
 const HORLOGE = '?maintenant=2026-11-03T07:30';
 /** Entre comme Aïcha via l'entrée de démonstration, puis ouvre `chemin`. */
 async function connecterAicha(page: Page, chemin = '/moi') {
   await page.goto(`/entree${HORLOGE}`);
   await page.getByRole('button', { name: 'Entrer directement comme Aïcha' }).click();
-  await page.waitForTimeout(400); // l'état est écrit dans le stockage après 150 ms
+  await page.evaluate(() => dispatchEvent(new Event('pagehide'))); // l'état est écrit dans le stockage
   await page.goto(chemin);
 }
 const stubCredentials = (page: Page, corps: string) => page.addInitScript(`Object.defineProperty(navigator, 'credentials', { configurable: true, value: { get: ${corps}, create: ${corps} } });`);
@@ -80,7 +81,7 @@ test('code SMS : un numéro inconnu crée un compte voyageur avec son nom', asyn
   await page.getByLabel('Code parrain (facultatif)').fill('AICHA-24');
   await page.getByRole('button', { name: 'Créer mon compte' }).click();
   await expect(page).toHaveURL(/\/$/);
-  await page.waitForTimeout(400);
+  await page.evaluate(() => dispatchEvent(new Event('pagehide'))); // l'état est écrit dans le stockage
   await page.goto('/moi/fidelite');
   await expect(page.getByTestId('points')).toContainText('500');
 });
@@ -102,7 +103,7 @@ test('USSD : acheter un billet par menu, il apparaît dans Moi et rapporte des p
   await page.getByRole('button', { name: '1', exact: true }).click();
   await expect(terminal).toContainText('Paiement en cours');
   await expect(terminal).toContainText(/Billet AM-[A-Z0-9]{4}-[A-Z0-9]{2}/);
-  await page.waitForTimeout(400);
+  await page.evaluate(() => dispatchEvent(new Event('pagehide'))); // l'état est écrit dans le stockage
   await page.goto('/moi');
   await expect(page.getByText('2 à venir · 0 passé')).toBeVisible();
   await page.goto('/moi/fidelite');
@@ -177,7 +178,7 @@ test('accessibilité de base : pas de débordement horizontal à 320 px', async 
   await page.setViewportSize({ width: 320, height: 640 });
   for (const url of ['/splash', '/tuto', '/connexion', '/connexion/code', '/ussd', '/erreur', '/maintenance']) {
     await page.goto(url + HORLOGE);
-    await page.waitForTimeout(300);
+    await expect(page.locator('[aria-busy="true"]')).toHaveCount(0); // écran chargé
     const deborde = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1 || [...document.querySelectorAll('.scr, .bd')].some((e) => e.scrollWidth > e.clientWidth + 1));
     expect(deborde, url).toBe(false);
   }
@@ -187,7 +188,7 @@ test('écrans de Moi sans débordement horizontal à 320 px', async ({ page }) =
   await connecterAicha(page, '/moi');
   await page.setViewportSize({ width: 320, height: 640 });
   for (const url of ['/moi', '/moi/fidelite', '/moi/proches', '/notifications', '/litige', '/reglages', '/autorisations']) {
-    await page.goto(url); await page.waitForTimeout(300);
+    await page.goto(url); await expect(page.locator('[aria-busy="true"]')).toHaveCount(0); // écran chargé
     const deborde = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1 || [...document.querySelectorAll('.scr, .bd')].some((e) => e.scrollWidth > e.clientWidth + 1));
     expect(deborde, url).toBe(false);
   }

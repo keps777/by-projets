@@ -121,7 +121,7 @@
 <style>
   .halo { position: absolute; left: 50%; top: 40px; width: min(420px, 100%); height: 420px; margin-left: calc(min(420px, 100%) / -2); border-radius: 50%; background: radial-gradient(circle, rgba(139, 124, 255, 0.35), transparent 60%); pointer-events: none; }
   .champ { background: transparent; border: 0; outline: 0; color: inherit; font: inherit; min-height: 44px; min-width: 0; }
-  .champ::placeholder { color: #8e99bb; }
+  .champ::placeholder { color: #a1accb; }
   .pal { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
   .pal a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 84px; padding: 8px; border-radius: 18px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1); text-decoration: none; color: #f2f4ff; font: 600 12px 'Sora Variable', 'Sora', sans-serif; text-align: center; overflow-wrap: anywhere; }
   .pal a .bub { width: 36px; height: 36px; border-radius: 12px; }

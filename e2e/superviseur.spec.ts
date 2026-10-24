@@ -1,5 +1,6 @@
 // Parcours du superviseur (Abdou, gare de Mvan) sur l'application construite, horloge figée à 07:30.
-import { expect, test, type Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { expect, test } from './aide'; // le test d'aide échoue à la moindre exception de page ou console.error
 
 const HEURE = '?maintenant=2026-11-03T07:30';
 async function entrer(page: Page, prenom: string, pin: string, chemin = '') {
@@ -131,7 +132,7 @@ test('320 px : aucun débordement horizontal sur les six écrans', async ({ page
   await entrer(page, 'Abdou', '1357');
   for (const c of ['/superviseur', '/superviseur/voir', '/superviseur/valider', '/superviseur/equipe', '/superviseur/debloquer', '/rapport-soir', '/superviseur/moi']) {
     await page.evaluate((x) => { history.pushState({}, '', x); dispatchEvent(new PopStateEvent('popstate')); }, c);
-    await page.waitForTimeout(250);
+    await expect(page.locator('[aria-busy="true"]')).toHaveCount(0); // écran chargé
     await pasDeDebordement(page);
   }
 });

@@ -114,7 +114,7 @@
 
 <style>
   .split { display: flex; height: 14px; border-radius: 7px; overflow: hidden; } .split i { background: #3de0ff; } .split b { background: #ff5bde; }
-  .sig { height: 110px; border-radius: 18px; border: 1px dashed rgba(255, 255, 255, 0.3); display: grid; place-items: center; color: #8e99bb; background: rgba(255, 255, 255, 0.04); width: 100%; font: inherit; position: relative; flex: none; }
+  .sig { height: 110px; border-radius: 18px; border: 1px dashed rgba(255, 255, 255, 0.3); display: grid; place-items: center; color: #a1accb; background: rgba(255, 255, 255, 0.04); width: 100%; font: inherit; position: relative; flex: none; }
   .sig.ok { border-style: solid; border-color: #4ade80; color: #4ade80; font: italic 700 22px 'Unbounded Variable', 'Unbounded', sans-serif; }
   canvas.tracer { touch-action: none; cursor: crosshair; display: block; } canvas.tracer:focus-visible { outline: 2px solid #7febff; outline-offset: 2px; }
   .signature { position: relative; flex: none; } .indice { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }

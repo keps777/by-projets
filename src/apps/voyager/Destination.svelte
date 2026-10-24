@@ -82,7 +82,7 @@
 
 <style>
   .champ { background: transparent; border: 0; outline: 0; color: inherit; font: inherit; min-height: 44px; min-width: 0; }
-  .champ::placeholder { color: #8e99bb; }
+  .champ::placeholder { color: #a1accb; }
   .inp:focus-within { border-color: #3de0ff; }
   .map { position: relative; height: 300px; margin: 0 -16px; overflow: hidden; perspective: 800px; perspective-origin: 50% 20%; flex: none; }
   .plane { position: absolute; left: -30%; right: -30%; top: 0; bottom: -50%; transform: rotateX(58deg); transform-origin: 50% 60%; background-image: linear-gradient(rgba(61, 224, 255, 0.16) 1px, transparent 1px), linear-gradient(90deg, rgba(61, 224, 255, 0.16) 1px, transparent 1px); background-size: 40px 40px; background-color: rgba(10, 14, 28, 0.6); }
@@ -94,7 +94,7 @@
   .pin.on b { background: linear-gradient(135deg, #8b7cff, #3de0ff); color: #06080f; border-color: transparent; }
   .pin .beam { position: absolute; left: 50%; bottom: 8px; width: 2px; height: 0; background: linear-gradient(0deg, #ff5bde, transparent); transition: height 0.25s; }
   .pin.on .beam { height: 50px; }
-  .pin.off { opacity: 0.45; } .pin.off i { background: #8e99bb; box-shadow: none; } .pin.off b { border-style: dashed; }
+  .pin.off { opacity: 0.45; } .pin.off i { background: #a1accb; box-shadow: none; } .pin.off b { border-style: dashed; }
   .pin.depart { pointer-events: none; } .pin.depart i { background: #7cf0a6; box-shadow: 0 0 16px #7cf0a6; }
   .city { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 18px; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.06); color: #f2f4ff; cursor: pointer; font: inherit; text-align: left; width: 100%; min-height: 60px; flex: none; }
   .city.on { background: linear-gradient(135deg, rgba(139, 124, 255, 0.22), rgba(61, 224, 255, 0.14)); border-color: rgba(139, 124, 255, 0.45); }

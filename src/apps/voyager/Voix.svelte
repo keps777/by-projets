@@ -113,7 +113,7 @@
   @keyframes wv { 0%, 100% { height: 18px; } 50% { height: 88px; } }
   .wave.still i { animation: none; height: 10px; opacity: 0.5; }
   .trans { font: 500 22px/1.3 'Sora Variable', 'Sora', sans-serif; margin: 0; overflow-wrap: anywhere; }
-  .trans.vide { font-size: 16px; color: #8e99bb; }
+  .trans.vide { font-size: 16px; color: #a1accb; }
   .mic { width: 96px; height: 96px; margin: 0 auto; border-radius: 50%; border: 0; display: grid; place-items: center; cursor: pointer; color: #06080f; background: conic-gradient(from 200deg, #8b7cff, #3de0ff, #ff5bde, #8b7cff); box-shadow: 0 20px 50px -16px rgba(124, 108, 255, 0.8); flex: none; }
   .mic.on { animation: pulse 1.6s infinite; }
   .b:disabled { opacity: 0.45; cursor: not-allowed; }

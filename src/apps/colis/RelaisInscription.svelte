@@ -149,7 +149,7 @@
 <style>
   .steps { display: flex; gap: 6px; } .steps span { flex: 1; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.12); } .steps span.on { background: linear-gradient(90deg, #8b7cff, #3de0ff); }
   .photo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .photo button { aspect-ratio: 1; min-height: 88px; border-radius: 14px; border: 1px dashed rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.04); color: #8e99bb; cursor: pointer; display: grid; place-items: center; }
+  .photo button { aspect-ratio: 1; min-height: 88px; border-radius: 14px; border: 1px dashed rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.04); color: #a1accb; cursor: pointer; display: grid; place-items: center; }
   .photo .ok { border-style: solid; background: linear-gradient(135deg, rgba(139, 124, 255, 0.3), rgba(61, 224, 255, 0.2)); color: #7febff; }
   .inp.err { border-color: #ff6b6b; }
   select.inp { appearance: none; }

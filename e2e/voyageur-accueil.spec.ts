@@ -1,5 +1,6 @@
 // Parcours voyageur : panorama 3D, filtres, calendrier, destination, voix et orbe (application construite, horloge figée au 3 nov. 2026, 07 h 30).
-import { expect, test, type Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { expect, test } from './aide'; // le test d'aide échoue à la moindre exception de page ou console.error
 
 const NOW = '?maintenant=2026-11-03T07:30';
 async function entrer(page: Page) {

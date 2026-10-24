@@ -156,13 +156,13 @@
   .sortc.vw { margin-left: auto; border-style: dashed; }
   .ribbon { display: flex; justify-content: space-between; align-items: flex-end; padding: 0 2px; position: relative; }
   .ribbon:before { content: ''; position: absolute; left: 12px; right: 12px; bottom: 19px; height: 2px; background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), rgba(61, 224, 255, 0.5), rgba(255, 255, 255, 0.08)); }
-  .tick { display: flex; flex-direction: column; align-items: center; gap: 5px; font: 600 11px 'Geist Mono', monospace; color: #8e99bb; border: 0; background: transparent; cursor: pointer; padding: 0; flex: 1 1 0; min-width: 0; max-width: 46px; min-height: 44px; justify-content: flex-end; position: relative; }
-  .tick b { font: 700 10px 'Geist Mono', monospace; color: #8e99bb; }
+  .tick { display: flex; flex-direction: column; align-items: center; gap: 5px; font: 600 11px 'Geist Mono', monospace; color: #a1accb; border: 0; background: transparent; cursor: pointer; padding: 0; flex: 1 1 0; min-width: 0; max-width: 46px; min-height: 44px; justify-content: flex-end; position: relative; }
+  .tick b { font: 700 10px 'Geist Mono', monospace; color: #a1accb; }
   .tick.on b { color: #7febff; }
   .tick i { width: 10px; height: 10px; border-radius: 50%; background: rgba(255, 255, 255, 0.25); border: 2px solid transparent; }
   .tick.on { color: #7febff; }
   .tick.on i { background: #3de0ff; box-shadow: 0 0 14px #3de0ff; width: 14px; height: 14px; }
-  .lh { font: 600 12px 'Geist Mono', monospace; letter-spacing: 0.1em; color: #8e99bb; padding: 10px 2px 2px; display: flex; justify-content: space-between; gap: 8px; }
+  .lh { font: 600 12px 'Geist Mono', monospace; letter-spacing: 0.1em; color: #a1accb; padding: 10px 2px 2px; display: flex; justify-content: space-between; gap: 8px; }
   .sel { display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 22px; background: rgba(10, 14, 28, 0.9); border: 1px solid rgba(139, 124, 255, 0.45); }
   .sel.cv { border-color: rgba(255, 91, 222, 0.55); }
   .sel.colle { position: sticky; bottom: -14px; z-index: 5; backdrop-filter: blur(14px); }

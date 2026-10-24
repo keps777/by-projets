@@ -41,7 +41,7 @@
 .pg .hm{display:grid;grid-template-columns:36px repeat(12,1fr);gap:4px}
 .pg .hm i{height:22px;border-radius:5px;background:rgba(61,224,255,var(--a,.1));font-style:normal}
 .pg .hm i.vide{background:rgba(255,255,255,.04)}
-.pg .hm i.lb{background:transparent;font:600 11px 'Geist Mono',monospace;color:#8E99BB;display:flex;align-items:center}
+.pg .hm i.lb{background:transparent;font:600 11px 'Geist Mono',monospace;color:#a1accb;display:flex;align-items:center}
 .pg .stp{display:flex;align-items:center;gap:8px}
 .pg .stp button{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#F2F4FF;font:700 16px 'Sora Variable','Sora',sans-serif;cursor:pointer}
 .pg .stp b{min-width:76px;text-align:center;font:700 16px 'Geist Mono',monospace}
@@ -72,10 +72,10 @@
 .pg .steps a,.pg .steps button.etape{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 12px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#F2F4FF;text-decoration:none;font:600 13px 'Sora Variable','Sora',sans-serif;cursor:pointer}
 .pg .steps a:hover{background:rgba(61,224,255,.18);border-color:rgba(61,224,255,.5)}
 .pg .steps .go{background:linear-gradient(135deg,#8B7CFF,#3DE0FF);color:#06080F;border-color:transparent}
-.pg .steps i{color:#8E99BB;font-style:normal}
+.pg .steps i{color:#a1accb;font-style:normal}
 .pg .gridp{display:grid;grid-template-columns:1fr 1fr;gap:12px}.pg .gridp>*{min-width:0}
 .pg .fld{display:flex;flex-direction:column;gap:6px}
-.pg .fld label,.pg .fld .etq{font:600 12px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8E99BB}
+.pg .fld label,.pg .fld .etq{font:600 12px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#a1accb}
 .pg .in{width:100%;min-height:44px;padding:0 14px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);color:#F2F4FF;font:500 15px 'Sora Variable','Sora',sans-serif}
 .pg select.in option{background:#0B1020;color:#F2F4FF}
 .pg .in[aria-invalid=true]{border-color:#FF6B6B}

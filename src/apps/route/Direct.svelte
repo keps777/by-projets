@@ -130,7 +130,7 @@
   .tl::before { content: ''; position: absolute; left: 9px; top: 10px; bottom: 10px; width: 2px; background: rgba(255, 255, 255, 0.12); }
   .st { position: relative; display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 44px; color: #b7c0db; }
   .st::before { content: ''; position: absolute; left: -22px; top: 50%; width: 12px; height: 12px; margin-top: -6px; border-radius: 50%; background: rgba(255, 255, 255, 0.2); border: 2px solid #05070d; }
-  .st.ok { color: #8e99bb; } .st.ok::before { background: #4ade80; }
+  .st.ok { color: #a1accb; } .st.ok::before { background: #4ade80; }
   .st.cur { color: #f2f4ff; font-weight: 700; } .st.cur::before { background: #3de0ff; box-shadow: 0 0 14px #3de0ff; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   button:disabled { opacity: 0.5; cursor: not-allowed; }

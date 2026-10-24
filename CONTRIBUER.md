@@ -30,3 +30,12 @@ Patron : `/patron` `/patron/equipe` `/patron/gare` `/patron/personne` `/assistan
 Siège (web) : `/siege/analyses` `/siege/analyses/ligne` `/siege/analyses/bus` `/siege/comptable` `/siege/comptable/rapprochement` `/siege/config` `/siege/config/ligne` `/siege/config/personne` `/siege/controle` `/siege/controle/sante` `/parcours`.
 Partenaires : `/relais/app` `/livreur` `/conducteur` `/vendeur`. Entrée de démo : `/entree`.
 Paramètres de requête pour passer un contexte : `?depart=<id>` (départ choisi), `?billet=<id>`, `?colis=<id>`, `?paiement=<id>`, `?jour=AAAA-MM-JJ`.
+
+## Règles d'intégration (apprises à la fusion des dix applications)
+- **Un seul calcul partagé** par notion transversale : prix payé = prix affiché = `prixDuDepart(d)` (jamais `d.prix` à l'écran ou au paiement) ; quai = `quaiDe(departId)` de `core/quai.ts` ; places d'un covoiturage : `OffreCovoit.places` est la **capacité**, les places prises sont dans `reservations` (`placesRestantes`).
+- **Liens** : `src/liens.test.ts` échoue si un lien interne vise une route inconnue ou fermée au rôle qui le voit, si deux routes ont le même chemin ou si un titre manque. Un écran partagé entre rôles prend sa barre du bas dans `apps/_socle/dockRole.ts`.
+- **Paiement** : `/paiement` sait régler un billet (`?depart`), un covoiturage (`?covoit`), une cagnotte (`?groupe`), un paiement en attente (`?paiement=<id>`) et un colis (`?colis=<id>`). Bons de fidélité et cagnotte se déduisent au paiement (`core/remise.ts`, consommés à l'acceptation) : `Paiement.montant` est le net encaissé.
+- **Modules du patron** : une route peut déclarer `module: 'colis'` ; désactivé, l'écran devient « Service désactivé » (`apps/_socle/ModuleOff.svelte`).
+- **Remise à zéro** : `reinitialiser()` rejoue les `demarrage.ts` de chaque application (équipages, historique de démonstration) ; écrire un démarrage idempotent.
+- **Stockage** : l'état est écrit par `data/codec.ts` (listes du monde par colonnes, JSON) ; relire avec `decoder`. Garder `localStorage['afrimove.v1']` sous 400 Ko (testé en e2e).
+- **Parcours e2e** (`e2e/*.spec.ts`) : importer `test` de `e2e/aide.ts` (échoue sur toute exception de page ou `console.error`), ouvrir avec `ouvrir(page, chemin, { connecte })`, changer de rôle avec `entrerEn(page, personneId)` (PIN réel), lire le monde avec `lireMonde` ; aucune pause fixe.

@@ -166,7 +166,7 @@
   .deckw { position: relative; flex: none; margin: 0 -16px; }
   .deck { position: absolute; top: 12px; left: 50%; width: min(284px, calc(100vw - 84px)); padding: 18px 14px 20px; border-radius: 40px 40px 26px 26px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04)); border: 1px solid rgba(255, 255, 255, 0.24); transform: translateX(-50%) perspective(1700px) rotateX(30deg); transform-origin: 50% 0; transform-style: preserve-3d; box-shadow: 0 60px 80px -40px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.2); }
   .deck::before { content: ''; position: absolute; left: 50%; top: -6px; width: 150px; height: 14px; margin-left: -75px; border-radius: 10px 10px 0 0; background: linear-gradient(90deg, #8b7cff, #3de0ff); opacity: 0.8; }
-  .cab { display: flex; justify-content: space-between; align-items: center; padding: 0 4px 10px; font: 600 11px 'Geist Mono', monospace; color: #8e99bb; height: 38px; }
+  .cab { display: flex; justify-content: space-between; align-items: center; padding: 0 4px 10px; font: 600 11px 'Geist Mono', monospace; color: #a1accb; height: 38px; }
   .wheel { width: 28px; height: 28px; border-radius: 50%; border: 3px solid rgba(255, 255, 255, 0.35); }
   .seats { transform-style: preserve-3d; display: grid; grid-template-columns: 1fr 1fr 22px 1fr 1fr; gap: 7px; }
   .seats.vip { grid-template-columns: 1fr 22px 1fr 1fr; }

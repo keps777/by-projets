@@ -107,9 +107,9 @@
 
 <style>
   .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
-  .wd { font: 600 11px 'Geist Mono', monospace; color: #8e99bb; text-align: center; padding: 4px 0; text-transform: uppercase; }
+  .wd { font: 600 11px 'Geist Mono', monospace; color: #a1accb; text-align: center; padding: 4px 0; text-transform: uppercase; }
   .dc { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 48px; border-radius: 12px; border: 1px solid transparent; background: rgba(255, 255, 255, 0.04); color: #f2f4ff; cursor: pointer; padding: 2px 0; font: inherit; }
-  .dc b { font: 700 14px 'Sora Variable', 'Sora', sans-serif; } .dc small { font: 600 10px 'Geist Mono', monospace; color: #8e99bb; min-height: 12px; }
+  .dc b { font: 700 14px 'Sora Variable', 'Sora', sans-serif; } .dc small { font: 600 10px 'Geist Mono', monospace; color: #a1accb; min-height: 12px; }
   .dc.lo small { color: #4ade80; } .dc.hi small { color: #ffc24b; }
   .dc:disabled { opacity: 0.35; cursor: not-allowed; }
   .dc.on { background: linear-gradient(135deg, #8b7cff, #3de0ff); color: #06080f; box-shadow: 0 10px 24px -10px rgba(124, 108, 255, 0.8); } .dc.on small { color: #06080f; }

@@ -108,7 +108,7 @@
   .tl:before { content: ''; position: absolute; left: 11px; top: 14px; bottom: 14px; width: 2px; background: rgba(255, 255, 255, 0.12); }
   .st { position: relative; display: flex; align-items: center; gap: 8px; min-height: 52px; padding: 4px 0; color: #b7c0db; }
   .st:before { content: ''; position: absolute; left: -25px; top: 50%; width: 14px; height: 14px; margin-top: -7px; border-radius: 50%; background: #05070d; border: 3px solid rgba(255, 255, 255, 0.3); }
-  .st.ok { color: #8e99bb; } .st.ok:before { background: #4ade80; border-color: #4ade80; }
+  .st.ok { color: #a1accb; } .st.ok:before { background: #4ade80; border-color: #4ade80; }
   .st.cur { color: #f2f4ff; font-weight: 600; } .st.cur:before { background: #3de0ff; border-color: #3de0ff; box-shadow: 0 0 14px #3de0ff; }
   .sos { background: #ff6b6b; color: #06080f; }
   .chk { cursor: pointer; } .chk input { flex: none; width: 24px; height: 24px; accent-color: #3de0ff; }

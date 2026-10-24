@@ -64,7 +64,7 @@
   .tl:before { content: ''; position: absolute; left: 11px; top: 14px; bottom: 14px; width: 2px; background: rgba(255, 255, 255, 0.12); }
   .ev { position: relative; display: flex; justify-content: space-between; gap: 8px; min-height: 48px; padding: 6px 0; color: #b7c0db; align-items: center; }
   .ev:before { content: ''; position: absolute; left: -25px; top: 14px; width: 14px; height: 14px; border-radius: 50%; background: #05070d; border: 3px solid rgba(255, 255, 255, 0.3); }
-  .ev.ok { color: #8e99bb; } .ev.ok:before { background: #4ade80; border-color: #4ade80; }
+  .ev.ok { color: #a1accb; } .ev.ok:before { background: #4ade80; border-color: #4ade80; }
   .ev.cur { color: #f2f4ff; font-weight: 600; } .ev.cur:before { background: #3de0ff; border-color: #3de0ff; box-shadow: 0 0 14px #3de0ff; }
   .b:disabled { opacity: 0.5; }
 </style>
