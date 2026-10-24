@@ -1,0 +1,5 @@
+<script lang="ts">
+  let { taille = 64, classe = '' }: { taille?: number; classe?: string } = $props();
+</script>
+
+<svg class={classe} width={taille} height={taille} viewBox="0 0 72 72" aria-hidden="true"><rect width="72" height="72" rx="22" fill="#0A0E1C" /><circle cx="36" cy="36" r="22" fill="none" stroke="#8B7CFF" stroke-width="3" stroke-dasharray="6 5" /><path d="M36 20 L48 50 L41 50 L36 36 L31 50 L24 50 Z" fill="#3DE0FF" /><circle cx="55" cy="22" r="4" fill="#FF5BDE" /></svg>
