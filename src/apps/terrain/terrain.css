@@ -1,0 +1,4 @@
+/* Dans une colonne flex défilante (.bd), un élément avec « overflow » (rangée de puces, barre) peut être écrasé à 0 de hauteur : on le fige. */
+.fixe { flex: none; }
+/* Carte de chiffre (étiquette au-dessus, valeur dessous) : les maquettes comptent sur un bloc, on force la colonne. */
+.kc { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
