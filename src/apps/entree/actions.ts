@@ -99,13 +99,15 @@ export const LIBELLE_STATUT_LITIGE: Record<Litige['statut'], string> = { ouvert:
 export interface DemandeLitige { auteurId: string; categorie: string; objet: Litige['objet']; texte: string; photos?: number }
 export class ErreurLitige extends Error { constructor(public code: 'texte_court' | 'objet_inconnu') { super(code); } }
 /** Ouvre un dossier lié à un billet, un colis ou un départ ; prévient la voyageuse et le patron. */
+/** L'écran « Signaler un problème » est celui de la voyageuse : un livreur, un relais ou un conducteur reçoit sa notification sans lien. */
+const lienLitige = (auteurId: string) => (personne(auteurId)?.role === 'voyageur' ? '/litige' : undefined);
 export function signalerProbleme(r: DemandeLitige): Litige {
   const texte = r.texte.trim(); if (texte.length < 5) throw new ErreurLitige('texte_court');
   const existe = r.objet.type === 'billet' ? billetParId(r.objet.id) : r.objet.type === 'colis' ? app.monde.colis.find((c) => c.id === r.objet.id) : departParId(r.objet.id);
   if (!existe) throw new ErreurLitige('objet_inconnu');
   const l: Litige = { id: `L-${2041 + app.monde.litiges.length}`, ts: maintenant(), auteurId: r.auteurId, type: r.categorie, objet: r.objet, statut: 'ouvert', texte: r.photos ? `${texte} (${r.photos} photo${r.photos > 1 ? 's' : ''} jointe${r.photos > 1 ? 's' : ''})` : texte };
   app.monde.litiges.push(l);
-  notifier(r.auteurId, `Dossier ${l.id} ouvert`, `${r.categorie} · réponse sous 2 h`, '/litige', 'litige');
+  notifier(r.auteurId, `Dossier ${l.id} ouvert`, `${r.categorie} · réponse sous 2 h`, lienLitige(r.auteurId), 'litige');
   for (const patron of app.monde.personnes.filter((p) => p.role === 'patron')) notifier(patron.id, `Nouveau litige ${l.id}`, `${r.categorie} · ${personne(r.auteurId)?.prenom ?? ''}`, '/patron', 'litige');
   consigner('litige', `Litige ${l.id} · ${r.categorie}`, r.auteurId, l.id);
   return l;
@@ -116,10 +118,10 @@ export const DELAI_PRISE_EN_CHARGE_MS = 15 * 60_000, DELAI_REPONSE_MS = 2 * 3_60
 /** Le monde simulé traite les dossiers : pris en charge après 15 min, réponse après 2 h (horloge de l'application). */
 export function avancerLitiges(now = maintenant()) {
   for (const l of app.monde.litiges) {
-    if (l.statut === 'ouvert' && now - l.ts >= DELAI_PRISE_EN_CHARGE_MS) { l.statut = 'en_cours'; notifier(l.auteurId, `Dossier ${l.id} pris en charge`, 'La compagnie examine ton signalement', '/litige', 'litige'); }
+    if (l.statut === 'ouvert' && now - l.ts >= DELAI_PRISE_EN_CHARGE_MS) { l.statut = 'en_cours'; notifier(l.auteurId, `Dossier ${l.id} pris en charge`, 'La compagnie examine ton signalement', lienLitige(l.auteurId), 'litige'); }
     if (l.statut === 'en_cours' && now - l.ts >= DELAI_REPONSE_MS) {
       l.statut = 'resolu'; l.reponse = 'Dossier traité par la compagnie. Si le préjudice est fondé, le remboursement part sur ton moyen de paiement.';
-      notifier(l.auteurId, `Dossier ${l.id} résolu`, 'Lis la réponse de la compagnie', '/litige', 'litige');
+      notifier(l.auteurId, `Dossier ${l.id} résolu`, 'Lis la réponse de la compagnie', lienLitige(l.auteurId), 'litige');
     }
   }
 }
