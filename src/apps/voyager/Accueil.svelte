@@ -60,7 +60,7 @@
       <svg width="38" height="38" viewBox="0 0 72 72" aria-hidden="true"><rect width="72" height="72" rx="22" fill="#0A0E1C" /><circle cx="36" cy="36" r="22" fill="none" stroke="#8B7CFF" stroke-width="3" stroke-dasharray="6 5" /><path d="M36 20 L48 50 L41 50 L36 36 L31 50 L24 50 Z" fill="#3DE0FF" /><circle cx="55" cy="22" r="4" fill="#FF5BDE" /></svg>
       <div class="col"><span class="ttl t16">AfriMove</span><span class="t13 mut ell">Salut {prenom}</span></div>
     </div>
-    <span class="pl ok"><span class="dot"></span>{base.length} départ{base.length > 1 ? 's' : ''} {quand}</span>
+    <span class="pl ok" style="flex: none"><span class="dot"></span>{base.length} départ{base.length > 1 ? 's' : ''}<span class="long">&nbsp;{quand}</span></span>
   </header>
 {/snippet}
 
@@ -69,7 +69,7 @@
   <div class="gl hl" style="padding: 10px 12px">
     <div class="row sp">
       <a class="row g10 grow" href="/destination" onclick={(e) => go(e, '/destination')} style="text-decoration: none; color: inherit; min-height: 44px" aria-label="Changer de destination : {R.de} vers {R.vers}">
-        <span class="bub aq"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6-5.3-6-11a6 6 0 0 1 12 0c0 5.7-6 11-6 11z" /><circle cx="12" cy="10" r="2.2" /></svg></span>
+        <span class="bub aq bubv"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6-5.3-6-11a6 6 0 0 1 12 0c0 5.7-6 11-6 11z" /><circle cx="12" cy="10" r="2.2" /></svg></span>
         <span class="col grow"><span class="t15 b7 ell">{R.de} → {R.vers}</span><span class="t12 mut ell">{nbBus} bus · {pluriel(nbCv, 'covoiturage')} · {pluriel(nbGares, 'gare')}</span></span>
       </a>
       <a class="pl ac" href="/calendrier" onclick={(e) => go(e, '/calendrier')} style="text-decoration: none; min-height: 44px" aria-label="Changer la date : {jourSemaineCourt(R.jour)}">{jourSemaineCourt(R.jour)}</a>
@@ -156,7 +156,7 @@
   .sortc.vw { margin-left: auto; border-style: dashed; }
   .ribbon { display: flex; justify-content: space-between; align-items: flex-end; padding: 0 2px; position: relative; }
   .ribbon:before { content: ''; position: absolute; left: 12px; right: 12px; bottom: 19px; height: 2px; background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), rgba(61, 224, 255, 0.5), rgba(255, 255, 255, 0.08)); }
-  .tick { display: flex; flex-direction: column; align-items: center; gap: 5px; font: 600 11px 'Geist Mono', monospace; color: #8e99bb; border: 0; background: transparent; cursor: pointer; padding: 0; min-width: 38px; min-height: 44px; justify-content: flex-end; position: relative; }
+  .tick { display: flex; flex-direction: column; align-items: center; gap: 5px; font: 600 11px 'Geist Mono', monospace; color: #8e99bb; border: 0; background: transparent; cursor: pointer; padding: 0; flex: 1 1 0; min-width: 0; max-width: 46px; min-height: 44px; justify-content: flex-end; position: relative; }
   .tick b { font: 700 10px 'Geist Mono', monospace; color: #8e99bb; }
   .tick.on b { color: #7febff; }
   .tick i { width: 10px; height: 10px; border-radius: 50%; background: rgba(255, 255, 255, 0.25); border: 2px solid transparent; }
@@ -166,8 +166,10 @@
   .sel { display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 22px; background: rgba(10, 14, 28, 0.9); border: 1px solid rgba(139, 124, 255, 0.45); }
   .sel.cv { border-color: rgba(255, 91, 222, 0.55); }
   .sel.colle { position: sticky; bottom: -14px; z-index: 5; backdrop-filter: blur(14px); }
+  .sel .b.p { font-size: 15px; padding: 0 10px; }
   .sel .b:disabled { opacity: 0.45; cursor: not-allowed; }
   .vide { display: flex; flex-direction: column; gap: 10px; padding: 20px 16px; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  @media (max-width: 359px) { .long, .bubv { display: none; } }
   .g10 { gap: 10px; } .t15 { font-size: 15px; }
 </style>

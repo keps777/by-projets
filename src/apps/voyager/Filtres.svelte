@@ -49,8 +49,8 @@
   </div>
   <span class="lab">Confort</span>
   <div class="gl col" style="gap: 0">
-    {#each OPTIONS_CONFORT as o (o)}
-      <div class="li"><span class="grow t14 b6" id="opt-{o}">{o}</span><button type="button" class="sw" class:on={R.confort.includes(o)} role="switch" aria-checked={R.confort.includes(o)} aria-labelledby="opt-{o}" onclick={() => (R.confort = bascule(R.confort, o))}></button></div>
+    {#each OPTIONS_CONFORT as o, i (o)}
+      <div class="li"><span class="grow t14 b6" id="opt-{i}">{o}</span><button type="button" class="sw" class:on={R.confort.includes(o)} role="switch" aria-checked={R.confort.includes(o)} aria-labelledby="opt-{i}" onclick={() => (R.confort = bascule(R.confort, o))}></button></div>
     {/each}
   </div>
   <p class="t12 mut3">{R.de} → {R.vers} · {base.length} départ{base.length > 1 ? 's' : ''} ce jour-là{R.genre === 'tout' ? '' : R.genre === 'bus' ? ' (bus seulement)' : ' (covoiturages seulement)'}</p>

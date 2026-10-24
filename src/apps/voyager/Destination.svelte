@@ -76,7 +76,6 @@
         <span class="ttl t20 aq">{sel.prix === null ? '—' : fmtF(sel.prix)}</span>
       </div>
       <button type="button" class="b p" onclick={() => suite('/calendrier')}><Icone nom="calendrier" taille={20} />Choisir la date et l’heure</button>
-      <button type="button" class="b g sm" style="width: 100%" onclick={() => suite('/')}>Voir les départs tout de suite</button>
     </div>
   {/if}
 </Mobile>

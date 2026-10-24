@@ -104,7 +104,7 @@
   .pano.glisse { cursor: grabbing; }
   .pano:focus-visible { outline: 2px solid #7febff; }
   .ring { position: absolute; left: 50%; top: 6px; width: 262px; height: 378px; margin-left: -131px; transform-style: preserve-3d; }
-  .colm { position: absolute; inset: 0; padding: 10px 9px 9px; border-radius: 26px; border: 1px solid rgba(255, 255, 255, 0.22); background: linear-gradient(160deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.04)); display: flex; flex-direction: column; gap: 6px; box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.18); user-select: none; transition: opacity 0.3s; overflow: hidden; }
+  .colm { position: absolute; inset: 0; padding: 10px 9px 9px; border-radius: 26px; border: 1px solid rgba(255, 255, 255, 0.22); background: linear-gradient(160deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.04)); display: flex; flex-direction: column; gap: 6px; box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.18); user-select: none; transition: opacity 0.3s; }
   .colm.front { border-color: rgba(139, 124, 255, 0.7); box-shadow: 0 40px 70px -30px rgba(124, 108, 255, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.22); }
   .chc { display: flex; align-items: flex-end; justify-content: space-between; gap: 6px; padding: 0 4px 2px; border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; text-align: left; min-height: 44px; flex: none; }
   .hh { font: 700 26px/1 'Unbounded Variable', 'Unbounded', sans-serif; letter-spacing: -0.04em; white-space: nowrap; }

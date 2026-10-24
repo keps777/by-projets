@@ -35,7 +35,7 @@
   const quandSous = $derived(`${jourSemaineCourt(jour)}${fenetre ? ` · ${fenetre[0]} – ${fenetre[1] === '24:00' ? '00:00' : fenetre[1]}` : ' · toute la journée'}`);
   const resultat = $derived(!ligne ? `Aucune ligne ${de} → ${vers} pour le moment`
     : !trouves.length ? `Aucun départ ${fenetre ? 'dans ce créneau' : 'ce jour-là'}${fenetre ? ' · essaie une autre heure' : ''}`
-    : `${trouves.length} départ${trouves.length > 1 ? 's' : ''}${fenetre ? ` entre ${trouves[0].heure} et ${trouves[trouves.length - 1].heure}` : ''}, dès ${fmtF(Math.min(...trouves.map((o) => o.prix)))}`);
+    : `${trouves.length} départ${trouves.length > 1 ? 's' : ''}${fenetre ? (trouves.length === 1 ? ` à ${trouves[0].heure}` : ` entre ${trouves[0].heure} et ${trouves[trouves.length - 1].heure}`) : ''}, dès ${fmtF(Math.min(...trouves.map((o) => o.prix)))}`);
   const peutContinuer = $derived(!phrase.trim() || (compris && ligne));
   const hint = $derived(erreur || (ecoute ? 'Parle en français, en anglais ou en pidgin · touche pour arrêter' : SR && !horsLigne ? 'Touche le micro pour reformuler' : 'Écris ta phrase ci-dessous, par exemple « Douala demain matin »'));
 
@@ -89,7 +89,7 @@
     <a class="tile" href="/calendrier" onclick={(e) => corriger(e, '/calendrier')}><span class="lab">Quand</span><span class="t18 b7">{quand}</span><span class="t12 mut">{quandSous}</span></a>
     <div class="tile w2 ac" aria-live="polite"><span class="lab">Résultat</span><span class="t16 b7">{resultat}</span><span class="t12 mut">{trouves.length ? 'Le plus tôt sera en face dans le panorama' : de + ' → ' + vers}</span></div>
   </div>
-  <button class="mic" class:on={ecoute} type="button" onclick={parler} aria-pressed={ecoute} aria-label={ecoute ? 'Arrêter l’écoute' : 'Parler'}><Icone nom="micro" taille={40} trait={2} /></button>
+  <button class="mic" class:on={ecoute} type="button" onclick={parler} aria-label={ecoute ? 'Arrêter l’écoute' : 'Parler'}><Icone nom="micro" taille={40} trait={2} /></button>
   <span class="t13 c" class:mut={!erreur} class:erc={!!erreur} role={erreur ? 'alert' : undefined}>{hint}</span>
   {#if ecrire}
     <form class="row g8" onsubmit={soumettre}>
