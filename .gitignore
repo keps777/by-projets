@@ -1,9 +1,9 @@
 node_modules
 dist
-.turbo
-*.log
+test-results
+playwright-report
 .env
 .env.*
 !.env.example
-coverage
-tools/fidelite/sortie
+*.log
+.DS_Store

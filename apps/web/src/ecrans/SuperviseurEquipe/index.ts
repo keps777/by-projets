@@ -1,1 +1,0 @@
-export { EcranSuperviseurEquipe } from "./EcranSuperviseurEquipe";

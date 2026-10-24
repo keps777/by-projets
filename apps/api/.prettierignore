@@ -1,4 +1,0 @@
-dist
-node_modules
-src/socle/db/generated
-prisma/migrations

@@ -1,1 +1,0 @@
-export { EcranComptable } from "./EcranComptable";

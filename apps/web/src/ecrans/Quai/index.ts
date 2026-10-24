@@ -1,1 +1,0 @@
-export { EcranQuai } from "./EcranQuai";

@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-# Faux curl pour les tests : note l'appel (et le corps envoyé) dans le journal des faux.
-set -euo pipefail
-echo "curl $*" >>"${JOURNAL_STUBS:-/dev/null}"
-[ "${CURL_PANNE:-}" != 1 ] || exit 22

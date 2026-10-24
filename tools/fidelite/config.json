@@ -1,8 +1,0 @@
-{
-  "appUrl": "http://localhost:5173",
-  "maquettes": "../../docs/maquettes-v3",
-  "sortie": "sortie",
-  "params": { "scenario": "scenario", "conception": "conception", "horloge": "horloge" },
-  "cleStockageConception": "afrimove.conception",
-  "polices": []
-}

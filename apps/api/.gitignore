@@ -1,4 +1,0 @@
-# Client Prisma généré (prisma generate, lancé par les scripts build/typecheck/test)
-src/socle/db/generated
-dist
-.env

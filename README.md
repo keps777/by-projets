@@ -1,31 +1,34 @@
 # AfriMove
 
-Application web installable (PWA React + Vite) pour tous les rôles, API NestJS + PostgreSQL, puis emballage Capacitor pour les stores.
+Tout le transport interurbain dans une seule application : voyageur (bus, covoiturage, moto, colis, proches), agents de gare (guichet, quai, chauffeur, convoyeur, contrôleur), superviseur, patron, siège web, partenaires (point relais, livreur, conducteur covoiturage, vendeur ambulant). PWA Svelte 5 + TypeScript + Vite, thème nuit en verre dépoli, avec des vues 3D (panorama des départs, plan du bus, billet holographique, cartes en relief).
 
-- Architecture : « AfriMove · Architecture technique » (claude.ai/code/artifact/0541a6e9-0150-43be-8f54-c02403d3ab9b)
-- Maquettes V3 (source de vérité visuelle) : `docs/maquettes-v3/`
-- Tickets : `docs/tickets.md` (version humaine), `docs/tickets.json` (version machine)
+> État : application complète construite à partir des ~95 maquettes « AfriMove V5 », avec un **backend simulé** : un seul « monde » (compagnies, départs, billets, colis, équipes) dans `localStorage`, partagé par toutes les applications.
 
-## Lancer
-
+## Démarrer
+```bash
+npm install
+npm run dev        # http://localhost:5173
+npm run check      # svelte-check + tests unitaires
+npm run build && npm run preview   # PWA de production
+npm run e2e        # parcours Playwright (Chromium)
 ```
-pnpm i
-pnpm build && pnpm lint && pnpm typecheck && pnpm test
-```
+Entrée de démonstration : `/entree` (choisir une personne ; PIN affiché), `/parcours` (tous les parcours de bout en bout), ou « Entrer directement comme Aïcha ». SMS de démonstration : `4821`. Rejouer une journée : `?maintenant=2026-11-03T07:30`.
 
-| Dossier | Rôle |
+## Les applications
+| Qui | Où |
 |---|---|
-| `apps/web` | application web (tous les rôles, route `/controle` pour la salle de contrôle) |
-| `apps/api` | API NestJS |
-| `packages/design` | tokens de design v3 et polices |
-| `packages/ui` | kit de composants |
-| `packages/domain` | entités, états, numérotation, tarifs |
-| `packages/fixtures` | données de démonstration, un scénario par planche |
-| `packages/contrats` | schémas d'API (zod) |
-| `packages/api-client` | client d'API, adaptateurs mock et HTTP |
-| `tools/fidelite` | banc de fidélité maquette ↔ app |
+| Voyageur (Aïcha) | `/` panorama des départs, `/siege`, `/paiement`, `/pass`, `/direct`, `/covoit`, `/colis/envoi`, `/moi`… |
+| Guichet (Fatou, PIN 4821) | `/guichet`, `/vente`, `/cadence`, `/caisse`, `/depot` |
+| Terrain | `/quai`, `/chauffeur`, `/convoyeur`, `/controleur` |
+| Superviseur (Abdou, PIN 1357) | `/superviseur`, `/rapport-soir` |
+| Patron (Luther, PIN 0001) | `/patron`, `/assistant`, `/modules`, `/financement`, `/inter-agences` |
+| Siège (web) | `/siege/analyses`, `/siege/comptable`, `/siege/config`, `/siege/controle`, `/parcours` |
+| Partenaires | `/relais/app`, `/livreur`, `/conducteur`, `/vendeur` |
 
-## Règle d'or
+## Règles métier clés
+* Billet scellé par HMAC-SHA256 (`src/core/sceau.ts`) : vérifiable hors ligne, un scan le consomme (déjà scanné / faux sceau / annulé refusés).
+* Annulation : 10 % de frais jusqu'à 2 h avant le départ, rien après, remboursement intégral si la compagnie annule.
+* Caisse du guichet : comptage par coupure, écart toléré ≤ 1 000 F, au-delà le superviseur valide avec son PIN.
+* Panorama : départs rangés en 8 tranches de 3 h, tri heure/prix/places/confort ; prix dynamique optionnel (patron).
 
-Un ticket = un périmètre de fichiers (champ `perimetre` du ticket). On ne modifie rien hors de son périmètre ; s'il manque quelque chose ailleurs, on le note dans la PR et on ouvre un ticket.
-Branche `am-XXX-titre-court`, une PR par ticket, CI verte avant fusion.
+Voir `CONTRIBUER.md` (contrat d'architecture), `docs/architecture.md`, `docs/ecarts-maquettes.md`.

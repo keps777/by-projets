@@ -1,1 +1,0 @@
-export { EcranMain } from "./EcranMain";

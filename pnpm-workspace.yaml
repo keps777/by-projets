@@ -1,6 +1,0 @@
-packages:
-  - "apps/*"
-  - "packages/*"
-  - "tools/*"
-  - "tests/*"
-  - "infra/sauvegardes"

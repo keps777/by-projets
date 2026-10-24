@@ -1,1 +1,0 @@
-export { EcranInterAgences } from "./EcranInterAgences";

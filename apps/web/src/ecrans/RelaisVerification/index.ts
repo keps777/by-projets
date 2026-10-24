@@ -1,1 +1,0 @@
-export { EcranRelaisVerification } from "./EcranRelaisVerification";

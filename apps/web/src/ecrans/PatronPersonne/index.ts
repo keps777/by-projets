@@ -1,1 +1,0 @@
-export { EcranPatronPersonne } from "./EcranPatronPersonne";

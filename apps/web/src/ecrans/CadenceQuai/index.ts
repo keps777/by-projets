@@ -1,1 +1,0 @@
-export { EcranCadenceQuai } from "./EcranCadenceQuai";

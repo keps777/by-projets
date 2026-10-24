@@ -1,1 +1,0 @@
-export { EcranColisEnvoi } from "./EcranColisEnvoi";

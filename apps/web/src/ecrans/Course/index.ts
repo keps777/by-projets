@@ -1,1 +1,0 @@
-export { EcranCourse } from "./EcranCourse";

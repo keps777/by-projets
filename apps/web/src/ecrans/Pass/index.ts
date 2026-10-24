@@ -1,1 +1,0 @@
-export { EcranPass } from "./EcranPass";

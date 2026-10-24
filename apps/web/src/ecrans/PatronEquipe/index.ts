@@ -1,1 +1,0 @@
-export { EcranPatronEquipe } from "./EcranPatronEquipe";

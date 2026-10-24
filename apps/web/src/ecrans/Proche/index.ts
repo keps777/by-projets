@@ -1,1 +1,0 @@
-export { EcranProche } from "./EcranProche";

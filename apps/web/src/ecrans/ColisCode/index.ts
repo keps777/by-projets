@@ -1,1 +1,0 @@
-export { EcranColisCode } from "./EcranColisCode";
