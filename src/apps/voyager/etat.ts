@@ -1,6 +1,7 @@
 // Recherche partagée du voyageur (tranche « recherche ») : trajet, jour, filtres, tri, vue. Lue aussi par les autres écrans (siège, paiement, réseau…).
 import { ajouterJours, type Jour } from '../../core/dates.ts';
 import { filtresVides, type Filtres, type Vue } from '../../core/recherche.ts';
+import type { TailleColis } from '../../core/prixColis.ts';
 import type { Tri } from '../../core/tranches.ts';
 import { app, aujourdhui, tranche } from '../../data/store.svelte.ts';
 
@@ -8,9 +9,13 @@ export interface Recherche extends Filtres {
   de: string; vers: string; jour: Jour; tri: Tri; vue: Vue;
   /** Heure souhaitée (HH:MM) choisie au calendrier ou à la voix : l'accueil met cette tranche en face, une seule fois. */
   heureCible: string | null;
+  /** Voyage personnel ou envoi d'un colis : change les départs proposés et les prix affichés. */
+  objet: 'personne' | 'colis';
+  /** Taille du colis cherché (mode colis). */
+  tailleColis: TailleColis;
 }
 export const demain = (): Jour => ajouterJours(aujourdhui(), 1);
-export const rechercheParDefaut = (): Recherche => ({ de: 'Yaoundé', vers: 'Douala', jour: demain(), ...filtresVides(), tri: 'heure', vue: '3d', heureCible: null });
+export const rechercheParDefaut = (): Recherche => ({ de: 'Yaoundé', vers: 'Douala', jour: demain(), ...filtresVides(), tri: 'heure', vue: '3d', heureCible: null, objet: 'personne', tailleColis: 'M' });
 
 /** Crée la tranche si besoin et la remet d'aplomb (champs manquants, jour passé). À appeler depuis un script ou une action, jamais depuis un `$derived`. */
 export function initRecherche(): Recherche {

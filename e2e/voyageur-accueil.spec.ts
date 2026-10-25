@@ -1,6 +1,6 @@
 // Parcours voyageur : panorama 3D, filtres, calendrier, destination, voix et orbe (application construite, horloge figée au 3 nov. 2026, 07 h 30).
 import type { Page } from '@playwright/test';
-import { expect, test } from './aide'; // le test d'aide échoue à la moindre exception de page ou console.error
+import { aller, expect, test } from './aide'; // le test d'aide échoue à la moindre exception de page ou console.error
 
 const NOW = '?maintenant=2026-11-03T07:30';
 async function entrer(page: Page) {
@@ -44,9 +44,17 @@ test('choisir un départ mène au siège, un covoiturage au paiement', async ({ 
   await expect(page).toHaveURL(/\/paiement\?covoit=v3/);
 });
 
-test('les filtres comptent les vrais départs', async ({ page }) => {
+test('le bouton Filtres ouvre une fenêtre sans quitter l’accueil', async ({ page }) => {
   await entrer(page);
-  await page.getByRole('link', { name: 'Filtres' }).click();
+  await page.getByRole('button', { name: 'Filtres' }).click();
+  await expect(page.getByRole('dialog', { name: /Filtres/ })).toBeVisible();
+  await expect(page).toHaveURL(/\/\?maintenant/);
+  await expect(page.getByRole('button', { name: /^Trier|^Heure$|^Prix$/ })).toHaveCount(0); // la rangée de tri n’est plus sur la page
+});
+
+test('les filtres comptent les vrais départs (page des filtres, toujours valide en lien profond)', async ({ page }) => {
+  await entrer(page);
+  await aller(page, '/filtres');
   await expect(page.getByRole('link', { name: 'Voir 19 départs' })).toBeVisible();
   await page.getByRole('button', { name: 'Matin' }).click();
   await expect(page.getByRole('link', { name: 'Voir 6 départs' })).toBeVisible();
@@ -56,8 +64,8 @@ test('les filtres comptent les vrais départs', async ({ page }) => {
   await expect(page.getByRole('link', { name: 'Voir 1 départ' })).toBeVisible();
   await page.getByRole('switch', { name: 'Wi-Fi à bord' }).click();
   await page.getByRole('link', { name: 'Voir 2 départs' }).click();
-  await expect(page.getByRole('link', { name: 'Filtres · 2' })).toBeVisible();
-  await page.getByRole('link', { name: 'Filtres · 2' }).click();
+  await expect(page.getByRole('button', { name: 'Filtres · 2' })).toBeVisible();
+  await aller(page, '/filtres');
   await page.getByRole('button', { name: 'Effacer' }).click();
   await expect(page.getByRole('link', { name: 'Voir 19 départs' })).toBeVisible();
 });

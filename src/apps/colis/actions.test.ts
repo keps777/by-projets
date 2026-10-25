@@ -2,7 +2,9 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { app, reinitialiser } from '../../data/store.svelte.ts';
 import { avancerColis, colisDe, creerColis, personne } from '../../domain/actions.ts';
 import { prixColis } from '../../core/colis.ts';
-import { accepterCourse, annulerColis, avancerCourse, basculerDispo, busQuiArrivent, candidatureDe, candidaterLivreur, candidaterRelais, colisAttendus, colisEnRayon, colisPourRemise, coursesDisponibles, coursesEnCours, envoyerColis, garantirRelais, gainsLivreur, gainsRelais, livrerCourse, messageWhatsApp, modifierBoutique, partager, prochainDepartColis, recevoirColis, relaisDuMonde, remettreColis, repondreCandidature, retournerCourse, simulerEtapeSuivante, validerEnvoi, type ErreursEnvoi } from './actions.ts';
+import { prixColisLigne } from '../../core/prixColis.ts';
+import { ligneDe } from '../../domain/actions.ts';
+import { accepterCourse, annulerColis, avancerCourse, basculerDispo, busQuiArrivent, candidatureDe, candidaterLivreur, candidaterRelais, colisAttendus, colisEnRayon, colisPourRemise, coursesDisponibles, coursesEnCours, envoyerColis, garantirRelais, gainsLivreur, gainsRelais, livrerCourse, messageWhatsApp, modifierBoutique, partager, prochainDepartColis, recevoirColis, relaisDuMonde, remettreColis, repondreCandidature, retournerCourse, simulerEtapeSuivante, validerEnvoi, type ErreursEnvoi, prixEnvoi, trajetColis } from './actions.ts';
 import { brouillonVide, boutiqueDe, trancheColis, type Brouillon, type FicheRelais } from './etat.ts';
 
 const brouillon = (o: Partial<Brouillon> = {}): Brouillon => ({ ...brouillonVide(), nom: 'Maman', tel: '6 77 10 22 33', relaisId: 'p-mado', ...o });
@@ -191,4 +193,26 @@ describe('colis déposés par un autre agent', () => {
     expect(colisAttendus('p-mado').map((c) => c.id)).not.toContain(vivant.id); expect(colisEnRayon('p-relais-bali').map((c) => c.id)).toEqual([vivant.id]);
     expect(remettreColis(vivant.id, vivant.codeRetrait, 'p-relais-bali', true).ok).toBe(true);
   });
+});
+
+describe('envoi depuis l’accueil (mode Colis)', () => {
+  it('trajetColis lit le départ ou le covoiturage, seulement Yaoundé → Douala', () => {
+    const d = prochainDepartColis()!;
+    expect(trajetColis(d.id)).toMatchObject({ departId: d.id, heure: d.heure });
+    expect(trajetColis('inconnu')).toBeUndefined();
+    const lointain = app.monde.departs.find((x) => ligneDe(x).vers !== 'Douala')!;
+    expect(trajetColis(lointain.id)).toBeUndefined();
+    const cv = app.monde.covoits.find((c) => c.de === 'Yaoundé' && c.vers === 'Douala')!;
+    expect(trajetColis(null, cv.id)).toMatchObject({ covoitId: cv.id });
+  });
+  it('le prix payé est celui de la ligne (options en plus) et le départ choisi est retenu', () => {
+    const d = prochainDepartColis()!, t = trajetColis(d.id)!;
+    const attendu = prixColisLigne('M', ligneDe(d).dureeMin) + 500; // assurance par défaut
+    expect(prixEnvoi(brouillon({ taille: 'M' }), t)).toBe(attendu);
+    const r = envoyerColis(brouillon({ taille: 'M' }), 'p-aicha', t); expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.colis.prix).toBe(attendu); expect(r.colis.departId).toBe(d.id);
+    expect(app.monde.paiements.find((p) => p.id === r.colis.paiementId)!.montant).toBe(attendu);
+  });
+  it('sans trajet, le tarif de base est conservé', () => { expect(prixEnvoi(brouillon({ taille: 'M' }))).toBe(prixColis('M', { moto: false, assurance: true })); });
 });
