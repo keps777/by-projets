@@ -9,16 +9,16 @@ const arrondi50 = (n: number) => Math.round(n / 50) * 50;
 export const prixCourse = (mode: Mode, km: number) => (mode === 'moto' ? arrondi50(100 * km) : arrondi50(250 + 180 * km));
 /** Temps de trajet (min) : la moto passe partout, le taxi subit les embouteillages. */
 export const trajetMin = (mode: Mode, km: number) => Math.round((mode === 'moto' ? 2 : 2.4) * km);
-/** Attente avant l'arrivée du véhicule (min). */
+/** Attente par défaut avant l'arrivée du véhicule (min) ; l'écran utilise l'estimation de la flotte (`courseFlotte.ts`). */
 export const attenteMin = (mode: Mode) => (mode === 'moto' ? 2 : 5);
 export interface ConducteurCourse { nom: string; societe: string; note: number; courses: number; plaque: string; initiales: string }
 export const CONDUCTEURS: Record<Mode, ConducteurCourse> = {
   moto: { nom: 'Jean-Baptiste', societe: 'Yango', note: 4.9, courses: 1240, plaque: 'LT 482 AB', initiales: 'JB' },
   taxi: { nom: 'Roger', societe: 'Taxi jaune', note: 4.8, courses: 3105, plaque: 'LT 215 CE', initiales: 'RO' }
 };
-export const MOYENS_COURSE = ['momo', 'cagnotte', 'especes'] as const;
+export const MOYENS_COURSE = ['momo', 'om', 'cagnotte', 'especes'] as const;
 export type MoyenCourse = (typeof MOYENS_COURSE)[number];
-export const NOM_MOYEN: Record<MoyenCourse, string> = { momo: 'MoMo', cagnotte: 'Cagnotte AfriMove', especes: 'Espèces' };
+export const NOM_MOYEN: Record<MoyenCourse, string> = { momo: 'MoMo', om: 'Orange Money', cagnotte: 'Cagnotte AfriMove', especes: 'Espèces' };
 export type EtapeCourse = 0 | 1 | 2 | 3;
 export interface InfoEtape { titre: string; pill: string; ton: 'ok' | 'ac' | 'inf'; cta: string }
 export const ETAPES: InfoEtape[] = [
@@ -26,8 +26,8 @@ export const ETAPES: InfoEtape[] = [
   { titre: 'Vers la gare', pill: 'en route', ton: 'inf', cta: 'Montrer mon billet au quai' }, { titre: 'Arrivée à la gare', pill: 'terminé', ton: 'ok', cta: 'Voir mon billet de bus' }
 ];
 /** Marge (min) entre l'arrivée à la gare et le départ du bus ; négative = bus raté. */
-export const marge = (departMs: number, nowMs: number, mode: Mode, km: number) => Math.round((departMs - nowMs) / 60_000) - attenteMin(mode) - trajetMin(mode, km);
+export const marge = (departMs: number, nowMs: number, mode: Mode, km: number, attente = attenteMin(mode)) => Math.round((departMs - nowMs) / 60_000) - attente - trajetMin(mode, km);
 /** Marge mini conseillée à la gare. */
 export const MARGE_MINI = 10;
 /** Heure recommandée de commande (ms) pour arriver 25 min avant le départ. */
-export const heureRecommandee = (departMs: number, mode: Mode, km: number) => departMs - (25 + attenteMin(mode) + trajetMin(mode, km)) * 60_000;
+export const heureRecommandee = (departMs: number, mode: Mode, km: number, attente = attenteMin(mode)) => departMs - (25 + attente + trajetMin(mode, km)) * 60_000;

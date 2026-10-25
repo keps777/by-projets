@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { aller } from '../../router.svelte.ts';
+  import { aller, param } from '../../router.svelte.ts';
+  import Feuille from '../../ui/Feuille.svelte';
   import { app } from '../../data/store.svelte.ts';
   import { compagnieDe, departEnMs, departParId, heureLocale, ligneDe, notificationsDe, personneCourante, placesLibres } from '../../domain/actions.ts';
   import { gesteRetard, hhmm, minutes } from '../../core/retard.ts';
@@ -11,10 +12,13 @@
   import { alternativeAuRetard, billetASuivre, choisirRetard } from './actions.ts';
   import { cagnotteDe, lire, type ChoixRetard } from './etat.ts';
   import { nav } from './nav.ts';
+  import { billetChoisi } from '../reglement/selection.ts';
+  import PartageContenu from '../reglement/PartageContenu.svelte';
 
   const MOYEN: Record<string, string> = { momo: 'MoMo', om: 'Orange Money', carte: 'ta carte', visage: 'ton compte', especes: 'espèces', proche: 'ton proche' };
   const moi = $derived(personneCourante());
-  const billet = $derived(moi ? billetASuivre(moi.id) : undefined);
+  const billet = $derived((moi ? billetChoisi(moi.id, param('billet')) : undefined) ?? (moi ? billetASuivre(moi.id) : undefined)); // le bus choisi dans « Ton bus »
+  let partage = $state(false);
   const d = $derived(billet ? departParId(billet.departId) : undefined);
   const ligne = $derived(d ? ligneDe(d) : undefined);
   const alt = $derived(d && d.retardMin > 0 ? alternativeAuRetard(d) : undefined);
@@ -95,10 +99,12 @@
     <div class="col g8" style="margin-top: auto">
       <button type="button" class="b p" class:d={aConfirmer} onclick={valider} disabled={occupe}>{aConfirmer ? `Oui, ${choix === 'changer' ? 'changer de départ' : 'annuler et rembourser'}` : cta}</button>
       {#if aConfirmer}<button type="button" class="b s" onclick={() => (aConfirmer = false)}>Non, revenir</button>{/if}
-      <a class="b g" href="/proche" use:nav>Prévenir mes proches</a>
+      <button type="button" class="b g" aria-haspopup="dialog" onclick={() => (partage = true)}>Prévenir mes proches</button>
     </div>
   {/if}
 </Mobile>
+
+<Feuille bind:ouvert={partage} titre="Prévenir mes proches" sous="Envoie-leur le code de ton billet et le nouvel horaire" hauteur="haute">{#if billet}<PartageContenu billetId={billet.id} onfermer={() => (partage = false)} />{/if}</Feuille>
 
 <style>
   .opt { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 18px; border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(255, 255, 255, 0.06); color: #f2f4ff; cursor: pointer; font: inherit; text-align: left; width: 100%; min-height: 64px; }

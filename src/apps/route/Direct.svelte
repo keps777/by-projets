@@ -1,5 +1,7 @@
 <script lang="ts">
-  import { annoncerRetard, compagnieDe, departEnMs, departParId, heureLocale, ligneDe, personneCourante } from '../../domain/actions.ts';
+  import { aller, param } from '../../router.svelte.ts';
+  import Feuille from '../../ui/Feuille.svelte';
+  import { annoncerRetard, compagnieDe, departEnMs, gare, departParId, heureLocale, ligneDe, personneCourante } from '../../domain/actions.ts';
   import { distanceKm, prochainArret, quaiDe } from '../../core/arrets.ts';
   import { hhmm, minutes } from '../../core/retard.ts';
   import { pointSurRoute, TRACE_ROUTE } from '../../core/carte.ts';
@@ -9,6 +11,11 @@
   import Mobile from '../../ui/Mobile.svelte';
   import { dockVoyageur } from '../../ui/dockVoyageur.ts';
   import { arretsDuDepart, billetASuivre, leverRetard } from './actions.ts';
+  import SelecteurBillet from '../reglement/SelecteurBillet.svelte';
+  import { billetChoisi, billetsEnCours, itemsDe, memoriserBillet } from '../reglement/selection.ts';
+  import CourseContenu from './CourseContenu.svelte';
+  import PartageContenu from '../reglement/PartageContenu.svelte';
+  import LitigeContenu from '../entree/LitigeContenu.svelte';
   import Relief from './Relief.svelte';
   import { horloge } from './temps.svelte.ts';
   import { nav } from './nav.ts';
@@ -16,7 +23,15 @@
   const h = horloge(10_000);
   let decalage = $state(0), az = $state(0); // minutes de simulation « Simuler l’avance »
   const moi = $derived(personneCourante());
-  const billet = $derived(moi ? billetASuivre(moi.id, h.ms) : undefined);
+  /** Le bus suivi : celui choisi dans le sélecteur « Ton bus » (le même que sur la page Billets), sinon le prochain billet à suivre. */
+  const enCours = $derived(moi ? billetsEnCours(moi.id) : []);
+  const billet = $derived((moi ? billetChoisi(moi.id, param('billet')) : undefined) ?? (moi ? billetASuivre(moi.id, h.ms) : undefined));
+  const items = $derived(moi ? itemsDe(billet && !enCours.includes(billet) ? [billet, ...enCours] : enCours, moi.id) : []);
+  $effect(() => { if (param('billet') && enCours.some((b) => b.id === param('billet'))) memoriserBillet(param('billet')!); });
+  function choisirDansMenu(id: string) { memoriserBillet(id); decalage = 0; if (param('billet')) aller(`/direct?billet=${id}`, { remplacer: true }); }
+  let fenetre = $state<'' | 'course' | 'partage' | 'probleme'>('');
+  const ouverte = (f: typeof fenetre) => fenetre === f, ferme = (f: typeof fenetre) => (v: boolean) => { if (!v && fenetre === f) fenetre = ''; };
+  const fermer = () => (fenetre = '');
   const d = $derived(billet ? departParId(billet.departId) : undefined);
   const ligne = $derived(d ? ligneDe(d) : undefined);
   const maint = $derived(h.ms + decalage * 60_000);
@@ -60,6 +75,7 @@
     <a class="b p" href="/" use:nav>Voir les départs</a>
     <a class="b s" href="/reseau" use:nav>Voir tout le réseau en direct</a>
   {:else}
+    {#if items.length}<SelecteurBillet {items} valeur={billet.id} onchoisir={choisirDansMenu} etiquette="Bus suivi" id="sel-direct" />{/if}
     <Relief label="Carte en relief : le bus avance. {pos}" bind:az hauteur={270} echelle={0.95}>
       <div class="rl-colline" style="left: 20px; top: 20px; width: 150px; height: 90px"></div>
       <div class="rl-colline" style="left: 190px; top: 110px; width: 170px; height: 100px"></div>
@@ -97,8 +113,9 @@
     <div class="row g8 wrapf">
       <button type="button" class="b s sm grow" onclick={avancer}>Simuler l’avance</button>
       <a class="b s sm grow" href="/direct/ilot" use:nav>Voir l’îlot</a>
-      <a class="b s sm grow" href="/proche" use:nav>Partager</a>
+      <button type="button" class="b s sm grow" aria-haspopup="dialog" onclick={() => (fenetre = 'partage')}>Partager</button>
     </div>
+    <button type="button" class="b s" aria-haspopup="dialog" onclick={() => (fenetre = 'course')}><Icone nom="moto" taille={20} />Moto-taxi vers la gare</button>
 
     <span class="lab">Étapes</span>
     <div class="gl">
@@ -115,9 +132,13 @@
       {#if d.retardMin > 0}<button type="button" class="b s sm" onclick={lever}>Retirer le retard</button>
       {:else}<button type="button" class="b s sm" onclick={annoncer} disabled={phase === 'arrive'}>Annoncer un retard de 45 min</button>{/if}
     </div>
-    <a class="b g" href="/litige" use:nav>Un souci à bord ? Signaler</a>
+    <button type="button" class="b g" aria-haspopup="dialog" onclick={() => (fenetre = 'probleme')}>Un souci à bord ? Signaler</button>
   {/if}
 </Mobile>
+
+<Feuille bind:ouvert={() => ouverte('course'), ferme('course')} titre="Moto-taxi vers la gare" sous={d && ligne ? `Vers la gare de ${gare(ligne.gareDe)?.nom ?? ''} · bus de ${d.heure}` : 'Moto ou taxi, au choix'} hauteur="haute"><CourseContenu departId={d?.id} onfermer={fermer} /></Feuille>
+<Feuille bind:ouvert={() => ouverte('partage'), ferme('partage')} titre="Partager mon billet" sous="Le code part, le billet reste à son nom" hauteur="haute">{#if billet}<PartageContenu billetId={billet.id} onfermer={fermer} />{/if}</Feuille>
+<Feuille bind:ouvert={() => ouverte('probleme'), ferme('probleme')} titre="Signaler un problème" sous="Réponse sous 2 h" hauteur="haute"><LitigeContenu billetId={billet?.id} onfermer={fermer} /></Feuille>
 
 <style>
   .tag { padding: 4px 8px; border-radius: 999px; background: rgba(5, 7, 13, 0.85); border: 1px solid rgba(255, 255, 255, 0.2); font: 600 11px 'Geist Mono', monospace; white-space: nowrap; margin-top: -6px; }

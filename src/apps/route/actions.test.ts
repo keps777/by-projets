@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { app, reinitialiser } from '../../data/store.svelte.ts';
 import { billetParId, billetsDe, departParId, placesLibres } from '../../domain/actions.ts';
 import { alternativeAuRetard, amorcerVille, annulerCourse, annulerOffre, avancerCourse, billetASuivre, choisirRetard, commanderCourse, courseActive, crediterCagnotte, demarrerTrajet, leverRetard, monterEnRoute,
-  offresVilleProches, publierOffre, refuserReservation, simulerReservation, terminerTrajet, versementDe, arretsDuDepart } from './actions.ts';
+  offresVilleProches, publierOffre, commissionsDues, commissionDeCourse, estimationPourLieu, refuserReservation, simulerReservation, terminerTrajet, versementDe, arretsDuDepart } from './actions.ts';
 import { annoncerRetard } from '../../domain/actions.ts';
 import { cagnotteDe, lire } from './etat.ts';
 import { lignesReseau, busEnRoute } from './reseau.ts';
@@ -91,6 +91,37 @@ describe('course vers la gare', () => {
     expect(() => commanderCourse({ personneId: 'p-aicha', departId: dId(), mode: 'moto', quartier: 'Bastos', moyen: 'momo' })).toThrow('course_en_cours');
     avancerCourse(c.id); expect(() => annulerCourse(c.id)).toThrow('course_commencee'); avancerCourse(c.id); avancerCourse(c.id);
     departParId(dId())!.statut = 'parti'; expect(() => commanderCourse({ personneId: 'p-aicha', departId: dId(), mode: 'moto', quartier: 'Bastos', moyen: 'momo' })).toThrow('depart_ferme');
+  });
+});
+
+describe('course : commission AfriMove et estimation d’arrivée', () => {
+  const dId = () => bAicha().departId;
+  const cmd = (moyen: 'momo' | 'om' | 'cagnotte' | 'especes', quartier = 'Bastos', mode: 'moto' | 'taxi' = 'moto') => commanderCourse({ personneId: 'p-aicha', departId: dId(), mode, quartier, moyen });
+  it('espèces : commission de 10 % enregistrée comme due par le conducteur (tranche route)', () => {
+    const c = cmd('especes'); expect(c).toMatchObject({ prix: 700, commission: 70, commissionMode: 'due', moyen: 'especes' });
+    expect(commissionsDues()).toHaveLength(1);
+    expect(commissionDeCourse(c.id)).toMatchObject({ montant: 70, prixCourse: 700, statut: 'due', conducteur: c.conducteur });
+    expect(lire().commissionsDues[0].montant).toBe(70);
+    for (let i = 0; i < 3; i++) avancerCourse(c.id);
+    expect(commissionsDues()).toHaveLength(0); expect(commissionDeCourse(c.id)?.statut).toBe('prelevee'); expect(commissionsDues('prelevee')).toHaveLength(1);
+  });
+  it('espèces annulées avant la prise en charge : la commission due est annulée', () => {
+    const c = cmd('especes'); annulerCourse(c.id); expect(commissionDeCourse(c.id)?.statut).toBe('annulee'); expect(commissionsDues()).toHaveLength(0);
+  });
+  it('MoMo, Orange Money, cagnotte : commission retenue sur le paiement, aucune dette du conducteur', () => {
+    crediterCagnotte('p-aicha', 5000);
+    for (const moyen of ['momo', 'om', 'cagnotte'] as const) { const c = cmd(moyen); expect(c).toMatchObject({ commission: 70, commissionMode: 'retenue', moyen }); annulerCourse(c.id); }
+    expect(lire().commissionsDues).toHaveLength(0);
+  });
+  it('taxi à Mendong : 2 050 F, commission 205 F ; un lieu saisi à la main est accepté (6 km), un lieu vide non', () => {
+    const t = cmd('especes', 'Mendong', 'taxi'); expect(t).toMatchObject({ prix: 2050, commission: 205 }); annulerCourse(t.id);
+    const l = cmd('momo', 'chez ma tante'); expect(l.km).toBe(6); expect(l.prix).toBe(600); annulerCourse(l.id);
+    expect(() => cmd('momo', '  ')).toThrow('lieu_inconnu');
+  });
+  it('l’arrivée annoncée vient de la flotte et suit le lieu de départ', () => {
+    const c = cmd('momo'); const est = estimationPourLieu('moto', 'Bastos', 'Yaoundé');
+    expect(c.attente).toBe(est.arriveeMin); expect(c.conducteur).toBe(est.plusProche?.nom); annulerCourse(c.id);
+    const autre = estimationPourLieu('moto', 'Mendong', 'Yaoundé'); expect(autre.arriveeMin).not.toBe(est.arriveeMin);
   });
 });
 
