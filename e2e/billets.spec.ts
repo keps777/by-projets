@@ -256,7 +256,7 @@ test.describe('Ton bus : sélecteur de billet', () => {
     const holo = page.getByRole('group', { name: /Billet holographique/ });
     await expect(holo).toContainText('Marie Ndiba'); await expect(holo).toContainText('AM-9K2P-47'); await expect(holo).toContainText('7B');
     await expect(holo.getByRole('img', { name: /AM-9K2P-47/ })).toBeVisible();
-    await expect(page.getByText(/Billet payé/)).toBeVisible();
+    await expect(page.getByText(/Incline le billet/)).toBeVisible();
     await expect(selecteur).toContainText('Marie');
     await page.getByRole('button', { name: 'Sans réseau' }).click();
     await expect(fenetre(page, 'Sans réseau')).toContainText('AM-9K2P-47');
@@ -294,7 +294,7 @@ test.describe('Ton bus : sélecteur de billet', () => {
     await expect(page.getByRole('group', { name: /Billet holographique/ })).toContainText('AM-9K2P-47');
     // un clic ailleurs referme le menu
     await selecteur.click(); await expect(selecteur).toHaveAttribute('aria-expanded', 'true');
-    await page.getByText('Billet payé').click(); await expect(selecteur).toHaveAttribute('aria-expanded', 'false');
+    await page.getByText(/Incline le billet/).click(); await expect(selecteur).toHaveAttribute('aria-expanded', 'false');
   });
 
   test('le choix est mémorisé (tranche reglement) et repris par /direct, et inversement', async ({ page }) => {

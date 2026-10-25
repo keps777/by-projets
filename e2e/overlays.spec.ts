@@ -19,7 +19,7 @@ const preparerNotifs = (e: import('../src/domain/types').Etat) => {
 const fermetures = async (page: Page, boite: (p: Page) => ReturnType<typeof orbe>, ouvrirFn: () => Promise<void>) => {
   const url = await chemin(page);
   await ouvrirFn(); await page.keyboard.press('Escape'); await expect(boite(page)).toHaveCount(0); expect(await chemin(page)).toBe(url);
-  await ouvrirFn(); await page.mouse.click(195, 30); await expect(boite(page)).toHaveCount(0); expect(await chemin(page)).toBe(url); // le voile, au-dessus de la fenêtre haute
+  await ouvrirFn(); await page.mouse.click(195, 6); await expect(boite(page)).toHaveCount(0); expect(await chemin(page)).toBe(url); // le voile, au-dessus de la fenêtre haute
   await ouvrirFn(); await expect(page.locator('.feuille')).toBeVisible();
   await expect.poll(async () => { const a = (await page.locator('.poignee').boundingBox())!.y; await page.waitForTimeout(120); return a === (await page.locator('.poignee').boundingBox())!.y; }).toBe(true); // la montée est finie
   const p = (await page.locator('.poignee').boundingBox())!;
