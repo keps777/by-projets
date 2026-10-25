@@ -138,10 +138,10 @@ test('les départs, les badges et la vue Liste restent là', async ({ page }) =>
   await expect(page.locator('.colm.front .bd2').first()).toBeVisible(); // badge : « + que 4 pl. »
   await expect(page.locator('.colm.front')).toContainText('+ que 4 pl.');
   await expect(page.locator('.colm.front')).toContainText('+ 3 autres départs');
-  await page.getByRole('button', { name: 'Liste', exact: true }).click();
+  await page.getByRole('radio', { name: 'Liste', exact: true }).click();
   await expect(page.locator('.pano')).toHaveCount(0);
   expect(await page.locator('.lst .bus').count()).toBe(19);
-  await page.getByRole('button', { name: '3D', exact: true }).click();
+  await page.getByRole('radio', { name: '3D', exact: true }).click();
   await expect(page.locator('.pano')).toBeVisible();
 });
 
