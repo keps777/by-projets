@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { app, reinitialiser } from '../../data/store.svelte.ts';
+import { app, aujourdhui, reinitialiser } from '../../data/store.svelte.ts';
 import { attenduDeCaisse, caisseOuverte, creerColis, placesLibres, scannerBillet, validerCaisse } from '../../domain/actions.ts';
 import { contenuQr } from '../../core/sceau.ts';
 import { planSieges } from '../../core/sieges.ts';
@@ -9,7 +9,7 @@ import { etat } from './etat.ts';
 
 const FATOU = 'p-fatou';
 /** Un départ de Mvan dans plus de 2 h (remboursable), jour de la démo. */
-const depart = () => departsDeLaGare('mvan', 200).find((d) => d.capacite === 50 && d.jour > '2000-01-01')!;
+const depart = () => departsDeLaGare('mvan', 200).find((d) => d.capacite === 50 && d.jour > aujourdhui())!;
 const libres = (d: ReturnType<typeof depart>, n: number) => { const pris = new Set(d.prisAilleurs); return planSieges('Classique', d.capacite).map((s) => s.id).filter((i) => !pris.has(i)).slice(0, n); };
 const pax = (n = 1) => Array.from({ length: n }, (_, i) => ({ nom: `Client ${i + 1}`, tel: '690000000' }));
 beforeEach(() => { reinitialiser(); etat(); });
