@@ -151,3 +151,14 @@ test('captures de la montée', async ({ page }) => {
   await page.getByRole('button', { name: /^Notifications/ }).click();
   for (let i = 0; i < 9; i++) { await page.screenshot({ path: `${dossier}/notifs-${i}.png` }); await page.waitForTimeout(100); }
 });
+
+test('l’orbe propose le carrousel des personnages (édition agence) et un geste change de rôle', async ({ page }) => {
+  await ouvrir(page, '/pass', { connecte: 'p-aicha' });
+  await ouvrirOrbeClavier(page);
+  const car = orbe(page).getByRole('list', { name: 'Changer de personnage' });
+  await expect(car).toBeVisible();
+  for (const role of ['Voyageur', 'Conducteur covoiturage', 'Guichet', 'Chauffeur', 'Patron', 'Point relais', 'Livreur moto']) await expect(car.getByRole('listitem').filter({ hasText: role }).first()).toBeAttached();
+  await expect(car.getByRole('listitem').filter({ hasText: 'Voyageur' }).first()).toHaveAttribute('aria-current', 'true');
+  await car.getByRole('listitem').filter({ hasText: 'Patron' }).first().click();
+  await expect(page).toHaveURL(/\/patron/);
+});

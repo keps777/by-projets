@@ -10,6 +10,9 @@ const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR
 const photo = (nom: string) => ({ name: `${nom}.png`, mimeType: 'image/png', buffer: PNG });
 const carte = (page: Page, nom: RegExp) => page.getByRole('article', { name: nom });
 const dialogue = (page: Page, nom: string | RegExp) => page.getByRole('dialog', { name: nom });
+/** Le panneau du mode en cours (région nommée « Passager » ou « Conducteur »), et le passage de l'un à l'autre par le bouton flottant. */
+const modeEnCours = (page: Page, nom: 'Passager' | 'Conducteur') => page.getByRole('region', { name: nom, exact: true });
+const passerEn = async (page: Page, nom: 'Passager' | 'Conducteur') => { await page.locator('.fab').click({ force: true }); await page.getByRole('menuitemradio', { name: new RegExp(nom) }).click(); };
 const fermer = (d: Locator) => d.getByRole('button', { name: 'Fermer', exact: true }).click();
 async function choisirJour(page: Page, nom: RegExp) { await page.getByRole('button', { name: /^Quand/ }).click(); await dialogue(page, 'Quand pars-tu ?').getByRole('option', { name: nom }).click(); }
 /** Débordement horizontal du contenu de la page (`.bd`) et des fenêtres ouvertes (`.feuille`) : le dock partagé à six entrées dépasse seul à 320 px, il n'est pas de ce périmètre. */
@@ -27,7 +30,7 @@ const profilAicha = (e: Etat) => { (e.tranches as Record<string, unknown>).route
 test('l’onglet est vivant dès l’ouverture : 7 jours d’offres, plusieurs axes, stockage maîtrisé', async ({ page }) => {
   await ouvrir(page, '/covoit', { connecte: 'p-aicha' });
   await expect(page.getByRole('heading', { name: 'Covoiturage' })).toBeVisible();
-  await expect(page.getByRole('tab', { name: 'Voyageur' })).toHaveAttribute('aria-selected', 'true');
+  await expect(modeEnCours(page, 'Passager')).toBeVisible();
   await expect(page.getByRole('status').filter({ hasText: /trajets?/ })).toContainText(/\d+ trajets?/);
   const m = await lireMonde(page), inter = m.covoits.filter((o) => !o.enVille), jours = new Set(inter.map((o) => o.jour));
   expect(inter.length).toBeGreaterThanOrEqual(15); expect(jours.size).toBe(7);
@@ -106,7 +109,7 @@ test('réserver 2 places → paiement → billet de covoiturage → partage, app
 
 test('premier passage en conducteur : profil obligatoire, publier en 3 étapes avec aide au prix, trajet complet avec avis', async ({ page }) => {
   await ouvrir(page, '/covoit', { connecte: 'p-maman' });
-  await page.getByRole('tab', { name: 'Conducteur' }).click();
+  await passerEn(page, 'Conducteur');
   const profil = dialogue(page, 'Mon profil conducteur'); await expect(profil).toBeVisible(); await expect(profil.getByText('Obligatoire pour publier un trajet')).toBeVisible();
   // validation : rien n'avance sans les champs obligatoires
   await profil.getByRole('button', { name: 'Continuer' }).click(); await expect(profil.getByText(/Numéro de carte d’identité : 8 à 12 chiffres/)).toBeVisible(); await expect(profil.getByText('Ajoute la photo du recto de ta carte.')).toBeVisible();
@@ -121,7 +124,7 @@ test('premier passage en conducteur : profil obligatoire, publier en 3 étapes a
   await profil.getByLabel('Ajouter une photo du véhicule').setInputFiles(photo('vehicule')); await expect(profil.getByRole('img', { name: 'Photo du véhicule 1' })).toBeVisible();
   await profil.getByRole('button', { name: 'Enregistrer mon profil' }).click(); await expect(profil).toHaveCount(0);
   // on reste en mode Conducteur : badge de vérification, véhicule 3D, trajet vide
-  await expect(page.getByRole('tab', { name: 'Conducteur' })).toHaveAttribute('aria-selected', 'true'); await expect(page.getByText('profil en vérification')).toBeVisible();
+  await expect(modeEnCours(page, 'Conducteur')).toBeVisible(); await expect(page.getByText('profil en vérification')).toBeVisible();
   await expect(page.getByRole('figure', { name: /Toyota Yaris, plaque CE 100 AA : 0 place occupée sur 3/ })).toBeVisible(); await expect(page.getByText('Publie ton premier trajet')).toBeVisible();
   const p = ((await lireEtat(page)).tranches.route as { conducteurs: Record<string, { vehicule: { plaque: string; carrosserie: string; photos: string[] }; statut: string }> }).conducteurs['p-maman'];
   expect(p).toMatchObject({ statut: 'en_verification', vehicule: { plaque: 'CE 100 AA', carrosserie: 'citadine' } }); expect(p.vehicule.photos).toHaveLength(1);
@@ -137,7 +140,7 @@ test('premier passage en conducteur : profil obligatoire, publier en 3 étapes a
   await expect(page.getByRole('group', { name: 'Mes trajets' }).or(page.getByLabel('Mon trajet')).first()).toBeVisible(); await expect(page.getByText('Net après la commission d’AfriMove (10 %)')).toBeVisible();
 
   // Aïcha réserve ce trajet et paie
-  await entrerEn(page, 'p-aicha'); await aller(page, '/covoit'); await expect(page.getByRole('tab', { name: 'Voyageur' })).toHaveAttribute('aria-selected', 'true');
+  await entrerEn(page, 'p-aicha'); await aller(page, '/covoit'); await expect(modeEnCours(page, 'Passager')).toBeVisible();
   await carte(page, /Marie N\..*09:30/).getByRole('button', { name: /Voir et réserver/ }).click(); await dialogue(page, 'Marie Ndiba').getByRole('button', { name: 'Réserver · 4 500 F' }).click();
   await expect(page).toHaveURL(new RegExp(`/paiement\\?covoit=${o.id}&places=1`)); await page.getByRole('button', { name: /^Payer 4 500 F/ }).click(); await page.getByRole('button', { name: /Simuler la validation MTN/ }).click();
   await expect(page).toHaveURL(/\/covoit$/); const codeAicha = (await page.locator('.code').innerText()).trim();
@@ -165,7 +168,7 @@ test('premier passage en conducteur : profil obligatoire, publier en 3 étapes a
 
 test('un conducteur partenaire (Moussa) publie ; la voyageuse réserve ; il termine et reçoit son gain net de 10 %', async ({ page }) => {
   await ouvrir(page, '/covoit/conduire', { connecte: 'p-moussa' });
-  await expect(page.getByRole('tab', { name: 'Voyageur' })).toHaveCount(0); // un partenaire n'a que le panneau Conducteur
+  await expect(page.locator('.fab')).toHaveCount(0); // un partenaire n'a que le panneau Conducteur, donc pas de bouton de changement de mode
   await expect(page.getByRole('figure', { name: /Toyota Corolla, plaque CE 482 KM/ })).toBeVisible(); await expect(page.getByText('profil vérifié')).toBeVisible();
   await page.getByRole('button', { name: 'Ajouter un trajet' }).click(); const pub = dialogue(page, 'Ajouter un trajet');
   await pub.getByLabel('Point de départ (quartier)').fill('Mvolyé'); await pub.getByRole('button', { name: 'Continuer' }).click();
@@ -182,22 +185,27 @@ test('un conducteur partenaire (Moussa) publie ; la voyageuse réserve ; il term
   expect((e.tranches.route as { versements: { offreId: string; personneId: string; montant: number }[] }).versements).toContainEqual(expect.objectContaining({ offreId: offre.id, personneId: 'p-moussa', montant: 4050 }));
 });
 
-test('sélecteur Voyageur | Conducteur : clic, flèches, balayage, mémorisé', async ({ page }) => {
+test('bouton flottant Passager | Conducteur : choix, balayage, mémorisé, plus de sélecteur en haut', async ({ page }) => {
   await ouvrir(page, '/covoit', { connecte: 'p-aicha', preparer: profilAicha });
-  const voy = page.getByRole('tab', { name: 'Voyageur' }), cond = page.getByRole('tab', { name: 'Conducteur' });
-  await expect(page.getByRole('tablist', { name: 'Mode du covoiturage' })).toBeVisible(); await expect(page.getByRole('tabpanel')).toContainText('Réserver un covoiturage');
-  await voy.focus(); await page.keyboard.press('ArrowRight'); await expect(cond).toHaveAttribute('aria-selected', 'true'); await expect(page.getByRole('tabpanel')).toContainText('Publie ton premier trajet');
-  await page.keyboard.press('ArrowLeft'); await expect(voy).toHaveAttribute('aria-selected', 'true');
-  // balayage horizontal sur la page (vers la gauche : Conducteur, vers la droite : Voyageur)
+  await expect(page.getByRole('tablist', { name: 'Mode du covoiturage' })).toHaveCount(0); // plus de sélecteur en en-tête
+  const fab = page.locator('.fab');
+  await expect(modeEnCours(page, 'Passager')).toContainText('Réserver un covoiturage'); await expect(fab).toContainText('Je conduis');
+  // le bouton ouvre le choix, le mode courant est coché
+  await fab.click({ force: true }); await expect(page.getByRole('menu', { name: 'Mon rôle en covoiturage' })).toBeVisible();
+  await expect(page.getByRole('menuitemradio', { name: /Passager/ })).toHaveAttribute('aria-checked', 'true');
+  await page.keyboard.press('Escape'); await expect(page.getByRole('menu')).toHaveCount(0);
+  await passerEn(page, 'Conducteur'); await expect(modeEnCours(page, 'Conducteur')).toContainText('Publie ton premier trajet'); await expect(fab).toContainText('Je voyage');
+  await passerEn(page, 'Passager'); await expect(modeEnCours(page, 'Passager')).toBeVisible(); await expect(fab).toContainText('Je conduis');
+  // balayage horizontal sur la page (vers la gauche : Conducteur, vers la droite : Passager)
   const balayer = async (de: number, vers: number, y: number) => { await page.mouse.move(de, y); await page.mouse.down(); await page.mouse.move((de + vers) / 2, y + 4, { steps: 4 }); await page.mouse.move(vers, y + 6, { steps: 4 }); await page.mouse.up(); };
-  await balayer(330, 90, 420); await expect(cond).toHaveAttribute('aria-selected', 'true'); await balayer(70, 330, 640); await expect(voy).toHaveAttribute('aria-selected', 'true');
+  await balayer(330, 90, 420); await expect(modeEnCours(page, 'Conducteur')).toBeVisible(); await balayer(70, 330, 640); await expect(modeEnCours(page, 'Passager')).toBeVisible();
   // un défilement vertical n'est pas un balayage
-  await page.mouse.move(200, 500); await page.mouse.down(); await page.mouse.move(204, 300, { steps: 6 }); await page.mouse.up(); await expect(voy).toHaveAttribute('aria-selected', 'true');
+  await page.mouse.move(200, 500); await page.mouse.down(); await page.mouse.move(204, 300, { steps: 6 }); await page.mouse.up(); await expect(modeEnCours(page, 'Passager')).toBeVisible();
   // mémorisation : après rechargement, Aïcha repart en Conducteur
-  await cond.click(); await page.reload(); await expect(page.getByRole('tab', { name: 'Conducteur' })).toHaveAttribute('aria-selected', 'true');
+  await passerEn(page, 'Conducteur'); await page.reload(); await expect(modeEnCours(page, 'Conducteur')).toBeVisible();
   expect(((await lireEtat(page)).tranches.route as { modesCovoit: Record<string, string> }).modesCovoit).toEqual({ 'p-aicha': 'conducteur' });
   // liens profonds : « Je conduis » et « En ville »
-  await aller(page, '/covoit/conduire'); await expect(page.getByRole('tab', { name: 'Conducteur' })).toHaveAttribute('aria-selected', 'true');
+  await aller(page, '/covoit/conduire'); await expect(modeEnCours(page, 'Conducteur')).toBeVisible();
   await aller(page, '/covoit/ville'); await expect(page.getByRole('tab', { name: 'Dans la ville' })).toHaveAttribute('aria-selected', 'true');
 });
 
@@ -209,7 +217,7 @@ test('/moi/conducteur : même profil, une fois enregistré retour sur Covoiturag
   await page.getByLabel('Marque').fill('Kia'); await page.getByLabel('Modèle').fill('Sportage'); await page.getByLabel('Plaque d’immatriculation').fill('LT 555 BB'); await page.getByRole('button', { name: 'Gris' }).click(); await page.getByRole('radio', { name: /SUV/ }).click();
   await page.getByRole('button', { name: 'Plus de places passagers' }).click(); await page.getByRole('button', { name: 'Continuer' }).click();
   await page.getByLabel('Ajouter une photo du véhicule').setInputFiles(photo('veh')); await page.getByRole('button', { name: 'Enregistrer mon profil' }).click();
-  await expect(page).toHaveURL(/\/covoit$/); await expect(page.getByRole('tab', { name: 'Conducteur' })).toHaveAttribute('aria-selected', 'true'); await expect(page.getByRole('figure', { name: /Kia Sportage, plaque LT 555 BB : 0 place occupée sur 4/ })).toBeVisible();
+  await expect(page).toHaveURL(/\/covoit$/); await expect(modeEnCours(page, 'Conducteur')).toBeVisible(); await expect(page.getByRole('figure', { name: /Kia Sportage, plaque LT 555 BB : 0 place occupée sur 4/ })).toBeVisible();
   // on peut ensuite tout modifier
   await aller(page, '/moi/conducteur'); await expect(page.getByLabel('Numéro de carte d’identité')).toHaveValue('223344556'); await expect(page.getByRole('img', { name: /Aperçu : recto/ })).toBeVisible();
   await page.getByRole('button', { name: 'Continuer' }).click(); await expect(page.getByLabel('Numéro de permis de conduire')).toHaveValue('LT-998877'); await page.getByRole('button', { name: 'Continuer' }).click(); await expect(page.getByLabel('Plaque d’immatriculation')).toHaveValue('LT 555 BB');
@@ -220,7 +228,7 @@ test('à 320 px, aucun débordement : voyageur avec réservation, conducteur ave
   await ouvrir(page, '/covoit', { connecte: 'p-aicha', preparer: (e) => { profilAicha(e); const o = e.monde.covoits.find((x) => x.id === 'v2')!; e.monde.paiements.push({ id: 'pay-cv', ts: 0, montant: o.prix, moyen: 'momo', statut: 'ok', ref: 'M', canal: 'app', payeurId: 'p-aicha', pour: { type: 'covoit', ids: ['v2'] } }); o.reservations.push({ voyageurId: 'p-aicha', places: 1, paiementId: 'pay-cv' }); } });
   await expect(page.locator('.holo')).toBeVisible(); expect(await debord(page), 'débordement (px)').toEqual([]);
   await page.getByRole('button', { name: 'Annuler', exact: true }).click(); await expect(dialogue(page, 'Annuler ma réservation')).toBeVisible(); expect(await debord(page), 'débordement (px)').toEqual([]); await fermer(dialogue(page, 'Annuler ma réservation'));
-  await page.getByRole('tab', { name: 'Conducteur' }).click(); await expect(page.locator('.cv-v3d')).toBeVisible(); expect(await debord(page), 'débordement (px)').toEqual([]);
+  await passerEn(page, 'Conducteur'); await expect(page.locator('.cv-v3d')).toBeVisible(); expect(await debord(page), 'débordement (px)').toEqual([]);
   await page.getByRole('button', { name: 'Ajouter un trajet' }).click(); await expect(dialogue(page, 'Ajouter un trajet')).toBeVisible(); expect(await debord(page), 'débordement (px)').toEqual([]);
 });
 

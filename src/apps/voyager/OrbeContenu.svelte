@@ -9,6 +9,8 @@
   import { offresDuJour } from './offres.ts';
   import { moduleActif } from '../patron/modules.ts';
   import { estRaccourciOrbe } from '../../core/fenetres.ts';
+  import { personnagesVisibles } from '../../core/edition.ts';
+  import Personnages from './Personnages.svelte';
 
   /** Contenu de l'orbe : toutes les actions d'AfriMove en grille, avec une recherche qui comprend aussi « douala demain », un code de colis ou un code de billet.
    *  Monté par la page autonome `/orbe` ET par la fenêtre globale (`OrbeFeuille`). `fenetre` : entrée en cascade ; `apres` : appelé avant toute navigation (ferme la fenêtre). */
@@ -35,9 +37,6 @@
       { label: '*123#', href: '/ussd', icone: P.ussd, mots: 'ussd téléphone sans internet' }, { label: 'Signaler', href: '/litige', icone: P.signaler, mots: 'litige problème réclamation' },
       { label: 'Réglages', href: '/reglages', icone: P.reglages, mots: 'langue notifications compte' }] }
   ];
-  const DEMO: (Action & { qui?: string })[] = [
-    { label: 'Agent de gare', href: '/guichet', icone: P.agent, qui: 'p-fatou' }, { label: 'Patron', href: '/patron', icone: P.patron, qui: 'p-luther' }, { label: 'Tous les parcours', href: '/parcours', icone: P.parcours }
-  ];
   const SUGGESTIONS = ['douala demain', 'colis AM-C-9Q2', 'billet AM7F3K22', 'payer pour maman'];
 
   const R = initRecherche();
@@ -56,7 +55,8 @@
   });
   const debutDemo = $derived(groupes.reduce((n, g) => n + 1 + g.actions.length, 3));
   const rang = (n: number) => Math.min(n, 16);
-  const demo = $derived(DEMO.filter((a) => !terme || norm(a.label).includes(terme)));
+  /** Carrousel des personnages : réservé à l'édition « agence » (un particulier ne le voit pas). */
+  const personnages = $derived(personnagesVisibles() && (!terme || norm('personnage rôle agent gare guichet patron chauffeur convoyeur superviseur relais livreur conducteur parcours').includes(terme)));
   const ref = aujourdhui();
   const comp = $derived(q.trim() ? analyser(q, ref, VILLES) : null);
   const moi = $derived(personneCourante());
@@ -74,12 +74,11 @@
     }
     return res;
   })());
-  const rienTrouve = $derived(!!terme && !groupes.length && !demo.length && !aTrouve.length);
+  const rienTrouve = $derived(!!terme && !groupes.length && !personnages && !aTrouve.length);
 
   /** Ferme la fenêtre (si c'en est une) puis navigue. */
   const va = (href: string) => { apres?.(); aller(href); };
   const go = (e: MouseEvent, href: string) => { e.preventDefault(); va(href); };
-  function changerDePersonnage(a: Action & { qui?: string }, e: MouseEvent) { e.preventDefault(); apres?.(); if (a.qui) connecter(a.qui); aller(a.href); }
   onMount(() => {
     const k = (e: KeyboardEvent) => { if (estRaccourciOrbe(e)) { e.preventDefault(); champ?.focus(); } };
     window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k);
@@ -111,11 +110,9 @@
       {/each}
     </div>
   {/each}
-  {#if demo.length}
-    <span class="lab cas" style:--i={rang(debutDemo)}>Changer de personnage (démo)</span>
-    <div class="pal">
-      {#each demo as a, k (a.href)}<a class="k cas" style:--i={rang(debutDemo + 1 + k)} href={a.href} onclick={(e) => changerDePersonnage(a, e)}><span class="bub" style="color: #FF5BDE">{@render pastille(a.icone)}</span>{a.label}</a>{/each}
-    </div>
+  {#if personnages}
+    <span class="lab cas" style:--i={rang(debutDemo)}>Personnages · glisse pour changer de rôle</span>
+    <div class="cas" style:--i={rang(debutDemo + 1)}><Personnages {apres} /></div>
   {/if}
   {#if rienTrouve}<div class="gl" role="status"><span class="t14 b7">Rien ne correspond à « {q} »</span><p class="t12 mut">Essaie « douala demain », un code de colis ou de billet, ou « colis ».</p></div>{/if}
 </div>
