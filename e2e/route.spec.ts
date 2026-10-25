@@ -1,4 +1,4 @@
-// Parcours « route » : suivi du bus, retard, réseau, course, montée en route, covoiturage. Le monde est créé le 2 nov. 20:00 (billet d'Aïcha pour le 3 nov. 08:00),
+// Parcours « route » : suivi du bus, retard, réseau, course, montée en route (le covoiturage a ses parcours dans covoit.spec.ts). Le monde est créé le 2 nov. 20:00 (billet d'Aïcha pour le 3 nov. 08:00),
 // puis l'horloge saute avec `?maintenant=` ; une garde réécrit la dernière activité pour que la session ne soit pas expirée par ces sauts.
 import type { Page } from '@playwright/test';
 import { expect, test } from './aide'; // le test d'aide échoue à la moindre exception de page ou console.error
@@ -86,20 +86,4 @@ test('Monter en route : billet sans siège au prix prorata, puis paiement', asyn
   const e = await monde(page);
   const b = e.monde.billets.find((x) => x.siege === null && x.acheteurId === 'p-aicha')!; // les billets sans siège du siège web (démo) ne sont pas à elle
   expect(b.prix).toBe(2150); expect(b.statut).toBe('attente_paiement');
-});
-
-test('Covoiturage : publier, recevoir une réservation, démarrer, terminer', async ({ page }) => {
-  await entrer(page);
-  await aller(page, '/covoit', '2026-11-02T20:00');
-  await expect(page.getByText('Moussa K.')).toBeVisible();
-  await page.getByRole('button', { name: /Fiche de Moussa/ }).click();
-  await expect(page.getByRole('dialog')).toBeVisible();
-  await page.keyboard.press('Escape');
-  await page.getByRole('link', { name: 'je conduis' }).click();
-  await expect(page).toHaveURL(/\/covoit\/conduire/);
-  await page.getByRole('button', { name: 'Publier le trajet' }).click();
-  await page.getByRole('button', { name: 'Simuler une réservation' }).click();
-  await page.getByRole('button', { name: 'Démarrer le trajet' }).click();
-  await page.getByRole('button', { name: 'Terminer le trajet' }).click();
-  await expect(page.getByText(/versés sur MoMo/)).toBeVisible();
 });

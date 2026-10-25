@@ -28,3 +28,5 @@ const VEHICULES: Record<string, string> = { Corolla: 'Toyota Corolla', Picanto: 
 export const nomVehicule = (v: string | undefined) => (v ? VEHICULES[v] ?? v : 'Véhicule');
 /** Départ d'une offre en ms. */
 export const departOffreMs = (o: Pick<OffreCovoit, 'jour' | 'heure'>) => new Date(`${o.jour}T${o.heure}:00`).getTime();
+
+export * from './covoitPrix.ts';
