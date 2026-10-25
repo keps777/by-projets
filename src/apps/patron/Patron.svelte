@@ -15,6 +15,7 @@
   import { dockPatron } from './dockPatron.ts';
   import { compagnieNom, contexte, francs, gareNom, millions, pourcent, signe } from './lecture.ts';
   import { moduleActif } from './modules.ts';
+  import { ouvrirNotifications } from '../../ui/overlays.svelte.ts';
 
   let now = $state(maintenant());
   $effect(() => { const t = setInterval(() => (now = maintenant()), 30_000); return () => clearInterval(t); });
@@ -56,9 +57,9 @@
         <span class="av hot" aria-hidden="true">{moi ? `${moi.prenom[0]}${moi.nom[0]}` : 'LN'}</span>
         <div class="col"><span class="ttl t16">{moi?.prenom ?? 'Patron'} · {compagnieNom(ctx.compagnieId)}</span><span class="t13 mut">{t.gares.length} gares · {jourSemaineLong(ctx.jour)} · {heure}</span></div>
       </div>
-      <a class="ib" href="/notifications" aria-label="Alertes{nbAlertes ? `, ${nbAlertes} non lues` : ''}" onclick={(e) => aire(e, '/notifications')}>
+      <button type="button" class="ib" aria-haspopup="dialog" aria-label="Alertes{nbAlertes ? `, ${nbAlertes} non lues` : ''}" onclick={ouvrirNotifications}>
         <Icone nom="cloche" />{#if nbAlertes}<span class="badge" aria-hidden="true">{nbAlertes}</span>{/if}
-      </a>
+      </button>
     </header>
   {/snippet}
 <Colonne>

@@ -4,3 +4,5 @@ export const ouvrirOrbe = () => (overlays.orbe = true);
 export const fermerOrbe = () => (overlays.orbe = false);
 export const ouvrirNotifications = () => (overlays.notifications = true);
 export const fermerNotifications = () => (overlays.notifications = false);
+/** Ferme toutes les fenêtres globales (changement de page, déconnexion, rôle sans droit). */
+export const fermerTout = () => { overlays.orbe = false; overlays.notifications = false; };

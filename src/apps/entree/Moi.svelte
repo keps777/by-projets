@@ -12,6 +12,7 @@
   import { t } from './i18n.ts';
   import { avancerLitiges, billetsAVenir, litigesEnCours, bonsDisponibles, palierDeLaPersonne, preparerFidelite, proches, voyagesPasses } from './actions.ts';
   import { nav } from './lien.ts';
+  import { ouvrirNotifications } from '../../ui/overlays.svelte.ts';
 
   /** Moi : profil de la voyageuse et accès bento à ses billets, points, proches, colis, réglages, autorisations et signalements. */
   const moi = $derived(personneCourante());
@@ -36,7 +37,7 @@
 
 <Mobile titre={t('moi')} sansRetour dock={dockVoyageur('moi')}>
   {#snippet droite()}
-    <a class="ib notif" href="/notifications" use:nav aria-label={nonLu ? `Notifications, ${pl(nonLu, 'non lue')}` : 'Notifications'}><Icone nom="cloche" />{#if nonLu}<span class="badge" aria-hidden="true">{nonLu > 9 ? '9+' : nonLu}</span>{/if}</a>
+    <button type="button" class="ib notif" aria-haspopup="dialog" onclick={ouvrirNotifications} aria-label={nonLu ? `Notifications, ${pl(nonLu, 'non lue')}` : 'Notifications'}><Icone nom="cloche" />{#if nonLu}<span class="badge" aria-hidden="true">{nonLu > 9 ? '9+' : nonLu}</span>{/if}</button>
   {/snippet}
   {#if moi}
     <div class="gl ac hero">

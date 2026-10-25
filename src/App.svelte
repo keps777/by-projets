@@ -10,6 +10,8 @@
   import NonTrouve from './apps/_socle/NonTrouve.svelte';
   import ModuleOff from './apps/_socle/ModuleOff.svelte';
   import { moduleActif } from './apps/patron/modules.ts';
+  import { overlays, ouvrirOrbe, fermerTout } from './ui/overlays.svelte.ts';
+  import { cleDePage, estRaccourciOrbe, notificationsAutorisees, orbeAutorisee } from './core/fenetres.ts';
 
   /** Fonctions lancées au démarrage par chaque application : `apps/*\/demarrage.ts` (export par défaut). */
   const demarrages = Object.values(import.meta.glob<{ default: () => void }>('./apps/*/demarrage.ts', { eager: true })).map((m) => m.default);
@@ -34,10 +36,24 @@
     document.title = `${route.titre} · AfriMove`;
   });
   $effect(() => { untrack(() => { demarrages.forEach((f) => f()); avancerMonde(); surReinitialisation(() => { demarrages.forEach((f) => f()); avancerMonde(); }); }); const t = setInterval(() => avancerMonde(), 30_000); return () => clearInterval(t); });
+
+  // Fenêtres globales (orbe du dock, cloche) : elles s'affichent SUR la page courante, chargées à la première ouverture.
+  // L'orbe : pages voyageur seulement ; les notifications : toute personne connectée sur une page mobile (pas au siège).
+  const orbeOk = $derived(!!route?.roles?.includes('voyageur') && orbeAutorisee(app.session.role, route?.cadre, routeur.chemin));
+  const notifsOk = $derived(!!route?.roles && notificationsAutorisees(app.session.role, route.cadre, routeur.chemin));
+  let OrbeF: Component | null = $state(null), NotifsF: Component | null = $state(null);
+  $effect(() => { if (overlays.orbe && orbeOk && !OrbeF) import('./apps/voyager/OrbeFeuille.svelte').then((m) => (OrbeF = m.default)); });
+  $effect(() => { if (overlays.notifications && notifsOk && !NotifsF) import('./apps/entree/NotificationsFeuille.svelte').then((m) => (NotifsF = m.default)); });
+  // Toute navigation (lien, retour arrière, remplacement) ferme les fenêtres ; sans droit sur la page, elles ne restent pas « armées » pour plus tard.
+  let pageVue = '';
+  $effect(() => { const cle = cleDePage(routeur.chemin, routeur.recherche); if (cle !== pageVue) { pageVue = cle; fermerTout(); } });
+  $effect(() => { if (!orbeOk) overlays.orbe = false; if (!notifsOk) overlays.notifications = false; });
+  /** Ctrl/⌘ + K : ouvre l'orbe sur la page courante (déjà ouverte ou page `/orbe` : le champ de recherche prend le focus). */
+  const raccourci = (e: KeyboardEvent) => { if (orbeOk && estRaccourciOrbe(e)) { e.preventDefault(); if (!overlays.orbe) ouvrirOrbe(); } };
   const toucher = () => { if (app.session.personneId) app.session.derniereActivite = maintenant(); };
 </script>
 
-<svelte:window onpointerdown={toucher} onkeydown={toucher} />
+<svelte:window onpointerdown={toucher} onkeydown={(e) => { toucher(); raccourci(e); }} />
 
 <div class={route?.cadre === 'web' ? 'cadre-web' : 'cadre-mobile'}>
   {#if !route}<NonTrouve />
@@ -45,6 +61,8 @@
   {:else if vue}{#key routeur.chemin}{@const V = vue}<V params={trouve?.params ?? {}} />{/key}
   {:else}<Squelette web={route.cadre === 'web'} />{/if}
 </div>
+{#if orbeOk && OrbeF}<OrbeF />{/if}
+{#if notifsOk && NotifsF}<NotifsF />{/if}
 {#if toast.message}<div class="toast-app {toast.ton}" role="status">{toast.message}</div>{/if}
 
 <style>

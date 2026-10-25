@@ -7,6 +7,7 @@
   import { ACCUEIL, NOM_ROLE } from '../../domain/acces.ts';
   import { gare, notificationsDe, personneCourante } from '../../domain/actions.ts';
   import { deconnecter, marquerLue, toutMarquerLu } from './actions.ts';
+  import { ouvrirNotifications } from '../../ui/overlays.svelte.ts';
   import { initiales } from './commun.ts';
   import { dockAgent } from './dock.ts';
 
@@ -23,7 +24,7 @@
     <div class="gl ac row g12"><span class="av">{initiales(p)}</span>
       <span class="col grow"><span class="ttl t18">{p.prenom} {p.nom}</span><span class="t13 mut">{NOM_ROLE[p.role]}{p.gareId ? ` · gare ${gare(p.gareId)?.nom ?? p.gareId}` : ''}{p.zone ? ` · ${p.zone}` : ''}</span><span class="t12 mut3 mono">{tel(p.tel)}</span></span></div>
     {#if p.commission}<div class="gl row sp"><span class="t14">Commission</span><span class="ttl t18 okc">{p.commission} %</span></div>{/if}
-    <div class="row sp"><span class="lab">Notifications{nonLues ? ` · ${nonLues} non lue${nonLues > 1 ? 's' : ''}` : ''}</span>{#if nonLues}<button type="button" class="t13 aq" style="background: none; border: 0; min-height: 44px; cursor: pointer" onclick={() => toutMarquerLu(p.id)}>Tout marquer lu</button>{/if}</div>
+    <div class="row sp"><span class="lab">Notifications{nonLues ? ` · ${nonLues} non lue${nonLues > 1 ? 's' : ''}` : ''}</span><span class="row g8">{#if nonLues}<button type="button" class="t13 aq" style="background: none; border: 0; min-height: 44px; cursor: pointer" onclick={() => toutMarquerLu(p.id)}>Tout marquer lu</button>{/if}<button type="button" class="t13 aq" style="background: none; border: 0; min-height: 44px; cursor: pointer" aria-haspopup="dialog" onclick={ouvrirNotifications}>Tout voir</button></span></div>
     <div class="gl col" style="gap: 0">
       {#each notifs as n (n.id)}
         <button type="button" class="li nt" onclick={() => ouvrir(n.id, n.lien)}>
