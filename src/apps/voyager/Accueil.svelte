@@ -49,7 +49,7 @@
   let trajetOuvert = $state(false);
   let filtresOuverts = $state(false);
   /** Le trajet (ou le jour) vient d'être appliqué dans la fenêtre : on recentre le panorama sur la tranche voulue. */
-  function recentrer() { const d = depart(); rot = -d.i * 45; selId = d.id; R.heureCible = null; }
+  function recentrer() { const d = depart(); rot = -d.i * 45; selId = d.id; } // l'heure souhaitée reste dans la tranche : elle est consommée au prochain montage de l'accueil
 
   const devant = $derived(trancheDevant(rot));
   const sel = $derived(offres.find((o) => o.id === selId) ?? colonnes[devant].items[0] ?? offres[0] ?? null);

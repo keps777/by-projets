@@ -81,6 +81,8 @@ test.describe('première ligne', () => {
   test('le sting ne joue jamais au chargement, seulement après une interaction et avec « Sons et jingle »', async ({ page }) => {
     await page.addInitScript(() => {
       (window as unknown as { __sons: number }).__sons = 0;
+      // activation « jamais touchée » imposée : seuls de vrais gestes de la personne comptent (le navigateur la garde d'une page à l'autre)
+      try { Object.defineProperty(navigator, 'userActivation', { get: () => ({ hasBeenActive: false, isActive: false }) }); } catch { /* déjà figé */ }
       class Faux { state = 'running'; currentTime = 0; destination = {}; resume() { return Promise.resolve(); } close() { return Promise.resolve(); }
         createGain() { return { gain: { value: 1, setValueAtTime() {}, linearRampToValueAtTime() {}, exponentialRampToValueAtTime() {} }, connect: (n: unknown) => n }; }
         createBiquadFilter() { return { frequency: {}, Q: {}, connect: (n: unknown) => n }; }
