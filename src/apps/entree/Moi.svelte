@@ -61,6 +61,7 @@
       <a class="tile hot" href="/relais/devenir" use:nav><span class="t15 b7">Devenir point relais</span><span class="t12 mut">ta boutique reçoit les colis · 300 F chacun</span></a>
       <a class="tile hot" href="/livreur/devenir" use:nav><span class="t15 b7">Devenir livreur</span><span class="t12 mut">moto · 1 000 F la course</span></a>
       <a class="tile w2" href="/covoit/conduire" use:nav style="flex-direction: row; align-items: center; min-height: 60px"><span class="col grow"><span class="t15 b7">Je conduis · covoiturage</span><span class="t12 mut">remplis ta voiture vers Douala</span></span><span class="pl ac" title="3 places à 4 500 F">+13 500 F</span></a>
+      <a class="tile w2" href="/moi/conducteur" use:nav style="flex-direction: row; align-items: center; min-height: 60px"><span class="col grow"><span class="t15 b7">Mon profil conducteur</span><span class="t12 mut">identité, permis, véhicule et photos</span></span><span class="pl">modifier</span></a>
     </div>
     <a class="b g" href="/ussd" use:nav>{t('aide')}</a>
   {/if}

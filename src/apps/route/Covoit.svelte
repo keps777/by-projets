@@ -1,82 +1,70 @@
 <script lang="ts">
-  import { aujourdhui } from '../../data/horloge.ts';
-  import { ajouterJours, jourSemaineCourt } from '../../core/dates.ts';
-  import { initiales, nomCourt, nomVehicule, placesRestantes } from '../../core/covoit.ts';
-  import { fmtF } from '../../core/tarif.ts';
-  import { param } from '../../router.svelte.ts';
-  import { app } from '../../data/store.svelte.ts';
-  import { personne, personneCourante } from '../../domain/actions.ts';
-  import { montrer } from '../../ui/toast.svelte.ts';
-  import Icone from '../../ui/Icone.svelte';
+  import { personneCourante } from '../../domain/actions.ts';
   import Mobile from '../../ui/Mobile.svelte';
   import { dockVoyageur } from '../../ui/dockVoyageur.ts';
-  import { offresInterurbain } from './actions.ts';
-  import FicheConducteur from './FicheConducteur.svelte';
-  import { nav } from './nav.ts';
+  import { accueilDe, dockDuRole } from '../_socle/dockRole.ts';
+  import './covoit.css';
+  import { choisirMode, mesReservations, modeCovoit } from './covoitActions.ts';
+  import IconeCv from './IconeCv.svelte';
+  import PanneauConducteur from './PanneauConducteur.svelte';
+  import PanneauVoyageur from './PanneauVoyageur.svelte';
+  import SegmentGlissant from './SegmentGlissant.svelte';
 
-  const moi = $derived(personneCourante());
-  const FILTRES = ['Tous', 'Tôt', 'Pas cher', '2+ places'] as const;
-  let filtre = $state<(typeof FILTRES)[number]>('Tous'), fiche = $state<string | null>(null);
-  const toutes = $derived(offresInterurbain());
-  // Trajet affiché : ?de=&vers=&jour= ; sinon la ligne et le jour de la prochaine offre.
-  const premiere = $derived(toutes.find((o) => o.jour >= aujourdhui()) ?? toutes[0]);
-  const de = $derived(param('de') ?? premiere?.de ?? 'Yaoundé'), vers = $derived(param('vers') ?? premiere?.vers ?? 'Douala'), jour = $derived(param('jour') ?? premiere?.jour ?? ajouterJours(aujourdhui(), 1));
-  const duTrajet = $derived(toutes.filter((o) => o.de === de && o.vers === vers && o.jour === jour));
-  const prixMin = $derived(Math.min(...duTrajet.map((o) => o.prix)));
-  const offres = $derived(duTrajet.filter((o) => filtre === 'Tous' || (filtre === 'Tôt' && o.heure < '09:00') || (filtre === 'Pas cher' && o.prix === prixMin) || (filtre === '2+ places' && placesRestantes(o) >= 2)));
-  const reservee = (id: string) => !!moi && app.monde.covoits.find((o) => o.id === id)?.reservations.some((r) => r.voyageurId === moi.id);
-  const note = (n?: number) => (n ? String(n).replace('.', ',') : '—');
-  function ecrire(nom: string) { montrer(`Message envoyé à ${nom}`); }
+  /** L'application Covoiturage : un sélecteur « Voyageur | Conducteur » (pastille glissante, balayage horizontal, flèches), mémorisé. */
+  let { forcer, modeInitial = 'villes' }: { forcer?: 'voyageur' | 'conducteur'; modeInitial?: 'villes' | 'ville' } = $props();
+  const moi = personneCourante(), partenaire = moi?.role === 'conducteur';
+  let mode = $state<string>(partenaire ? 'conducteur' : (forcer ?? modeCovoit(moi?.id))), sens = $state(1), decalage = $state(0), glisse = $state(false), debut: { x: number; y: number } | null = null;
+  if (forcer && !partenaire && moi) choisirMode(forcer, moi.id);
+  function change(m: string) { sens = m === 'conducteur' ? 1 : -1; mode = m; if (moi) choisirMode(m as 'voyageur' | 'conducteur', moi.id); decalage = 0; document.querySelector('.bd')?.scrollTo({ top: 0 }); }
+  function bas(e: PointerEvent) { if (partenaire || (e.target as HTMLElement).closest('input, select, textarea, [data-noswipe="true"], .chips, .scene, .holo, .feuille, .voile')) return; debut = { x: e.clientX, y: e.clientY }; glisse = false; }
+  function bouge(e: PointerEvent) {
+    if (!debut) return; const dx = e.clientX - debut.x, dy = e.clientY - debut.y;
+    if (!glisse && Math.abs(dx) > 14 && Math.abs(dx) > Math.abs(dy) * 1.6) glisse = true;
+    if (glisse) decalage = Math.max(-90, Math.min(90, dx * 0.5));
+  }
+  function haut(e: PointerEvent) {
+    if (!debut) return; const dx = e.clientX - debut.x; debut = null;
+    if (glisse && Math.abs(dx) > 70) { const cible = dx < 0 ? 'conducteur' : 'voyageur'; if (cible !== mode) { change(cible); glisse = false; return; } }
+    glisse = false; decalage = 0;
+  }
+  // Le bouton « Je conduis » flotte quand il ne cache rien : sans réservation en tête, ou une fois la page défilée au-delà du billet.
+  let defile = $state(false);
+  $effect(() => { const bd = document.querySelector('.bd'); if (!bd) return; const f = () => (defile = bd.scrollTop > 420); f(); bd.addEventListener('scroll', f, { passive: true }); return () => bd.removeEventListener('scroll', f); });
+  const fab = $derived(mode === 'voyageur' && !partenaire && (defile || mesReservations(moi?.id).length === 0));
+  const dock = $derived(partenaire ? dockDuRole(moi?.role, { terrain: 'trajets' }) : dockVoyageur('covoit'));
+  function versConducteur() { change('conducteur'); }
 </script>
 
-<Mobile titre="Covoiturage" sous="{de} → {vers} · {jourSemaineCourt(jour)}" retourVers="/" dock={dockVoyageur('voyager')}>
-  {#snippet droite()}<a class="pl ac" href="/covoit/conduire" use:nav>je conduis</a>{/snippet}
+<Mobile {dock} sansRetour={!partenaire} retourVers={partenaire ? accueilDe(moi?.role) : undefined}>
+  {#snippet enteteLibre()}
+    <header class="hd entete">
+      <h1 class="ttl t18">Covoiturage</h1>
+      {#if !partenaire}<div class="selecteur"><SegmentGlissant petit bind:valeur={mode} label="Mode du covoiturage" idPrefixe="mode" options={[{ id: 'voyageur', label: 'Voyageur' }, { id: 'conducteur', label: 'Conducteur' }]} onchoisir={change} /></div>{/if}
+    </header>
+  {/snippet}
 
-  <div class="seg2" role="group" aria-label="Type de covoiturage">
-    <button type="button" class="on" aria-pressed="true">Interurbain</button>
-    <a class="b g" href="/covoit/ville" use:nav style="flex: 1; min-height: 44px; border-radius: 14px; font-size: 14px">En ville</a>
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div class="piste" onpointerdown={bas} onpointermove={bouge} onpointerup={haut} onpointercancel={haut} role="presentation">
+    {#key mode}
+      <div class="panneau" class:glisse role="tabpanel" aria-labelledby="mode-{mode}" tabindex="-1" style="--sens: {sens};{decalage ? ` transform: translateX(${decalage}px); opacity: ${1 - Math.abs(decalage) / 260};` : ''}">
+        {#if mode === 'conducteur' && moi}<PanneauConducteur moiId={moi.id} ouvrirProfil />{:else}<PanneauVoyageur onconduire={versConducteur} {modeInitial} />{/if}
+      </div>
+    {/key}
   </div>
-  <div class="chips" role="group" aria-label="Filtres">
-    {#each FILTRES as f (f)}<button type="button" class="ch" class:on={filtre === f} aria-pressed={filtre === f} onclick={() => (filtre = f)}>{f}</button>{/each}
-  </div>
-
-  {#each offres as o, i (o.id)}
-    {@const c = personne(o.conducteurId)}
-    {@const libres = placesRestantes(o)}
-    <article class="drv" class:top={i === 0}>
-      <div class="row g12">
-        <span class="av" class:hot={c?.note === 5 || i === 1}>{initiales(c?.prenom ?? '?', c?.nom)}</span>
-        <span class="col grow"><span class="t16 b7 ell">{c ? nomCourt(c.prenom, c.nom) : 'Conducteur'}</span><span class="t13 mut ell">★ {note(c?.note)} · départ {o.depart}</span></span>
-        <span class="col" style="align-items: flex-end"><span class="ttl t20">{fmtF(o.prix)}</span><span class="t12 mut3">par place</span></span>
-      </div>
-      <div class="row sp">
-        <span class="row g8"><span class="mono t13 b7">{o.heure}</span><span class="t13 mut">{nomVehicule(o.vehicule)}</span></span>
-        <span class="row g8"><span class="t12 mut">{libres} place{libres > 1 ? 's' : ''} libre{libres > 1 ? 's' : ''}</span><span class="sts" role="img" aria-label="{libres} places libres sur {o.places}">{#each Array.from({ length: o.places }, (_, k) => k) as k (k)}<i class:f={k < libres}></i>{/each}</span></span>
-      </div>
-      <div class="row g8">
-        {#if reservee(o.id)}<span class="b s sm grow" style="cursor: default">Réservé</span>
-        {:else if libres === 0}<span class="b s sm grow" style="cursor: default; opacity: 0.6">Complet</span>
-        {:else}<a class="b p sm grow" href="/paiement?covoit={o.id}" use:nav>Réserver {fmtF(o.prix)}</a>{/if}
-        <button type="button" class="ib" aria-label="Fiche de {c ? c.prenom : 'conducteur'}" onclick={() => (fiche = o.id)}><Icone nom="moi" taille={20} /></button>
-      </div>
-    </article>
-  {:else}
-    <div class="center">
-      <div class="ill" aria-hidden="true"><Icone nom="groupe" taille={64} trait={1.6} /></div>
-      <span class="ttl t20">{duTrajet.length ? 'Aucun conducteur pour ce filtre' : 'Pas encore de conducteur'}</span>
-      <span class="t14 mut">{duTrajet.length ? 'Essaie un autre filtre.' : `Personne ne propose ${de} → ${vers} ce jour-là. Publie ton trajet pour en faire profiter les autres.`}</span>
-    </div>
-    {#if duTrajet.length}<button type="button" class="b s" onclick={() => (filtre = 'Tous')}>Voir tous les conducteurs</button>{:else}<a class="b p" href="/covoit/conduire" use:nav>Je conduis ce jour-là</a>{/if}
-  {/each}
-
-  <div class="toast"><span class="bub aq"><Icone nom="info" taille={18} /></span><span class="t13 grow">Conducteurs vérifiés (CNI, permis, visage). Paiement bloqué jusqu’à l’arrivée.</span></div>
+  {#if fab}
+    <div class="fab-zone"><button type="button" class="fab" onclick={versConducteur}><IconeCv nom="voiture" taille={22} /><span>Je conduis</span></button></div>
+  {/if}
 </Mobile>
 
-{#if fiche}<FicheConducteur offreId={fiche} fermer={() => (fiche = null)} ecrire={ecrire} />{/if}
-
 <style>
-  .chips { flex: none; }
-  .drv { display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 22px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1); }
-  .drv.top { background: linear-gradient(135deg, rgba(139, 124, 255, 0.22), rgba(61, 224, 255, 0.14)); border-color: rgba(139, 124, 255, 0.45); }
-  .sts { display: flex; gap: 4px; } .sts i { width: 14px; height: 18px; border-radius: 4px 4px 2px 2px; background: rgba(255, 255, 255, 0.14); } .sts i.f { background: #3de0ff; }
+  .entete { flex-wrap: wrap; row-gap: 8px; } .entete h1 { margin: 0; flex: none; }
+  .selecteur { flex: 1 1 200px; max-width: 260px; min-width: 0; margin-left: auto; }
+  .piste { touch-action: pan-y; display: flex; flex-direction: column; overflow-x: clip; }
+  .panneau { display: flex; flex-direction: column; gap: 12px; animation: entre 0.42s cubic-bezier(0.2, 0.9, 0.3, 1); transition: transform 0.25s; } .panneau.glisse { transition: none; }
+  @keyframes entre { from { opacity: 0; transform: translateX(calc(var(--sens) * 56px)); } }
+  .fab-zone { position: absolute; right: 16px; bottom: 104px; z-index: 5; pointer-events: none; }
+  .fab { pointer-events: auto; display: inline-flex; align-items: center; gap: 8px; min-height: 56px; padding: 0 20px 0 16px; border-radius: 28px; border: 1px solid rgba(255, 255, 255, 0.35); background: linear-gradient(135deg, #8b7cff, #3de0ff); color: #06080f; font: 800 15px 'Sora Variable', 'Sora', sans-serif; cursor: pointer; box-shadow: 0 18px 36px -10px rgba(124, 108, 255, 0.9), 0 0 0 6px rgba(139, 124, 255, 0.18); animation: flotte 3.2s ease-in-out infinite; }
+  .fab:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+  @keyframes flotte { 50% { transform: translateY(-4px); } }
+  @media (prefers-reduced-motion: reduce) { .fab { animation: none; } .panneau { animation: none; } }
 </style>

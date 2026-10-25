@@ -160,7 +160,7 @@ export const versementDe = (offreId: string) => lire().versements.find((v) => v.
 
 /** Trois départs de covoiturage en ville autour de « maintenant » (démo), créés seulement s'il n'en reste plus d'à venir. */
 export function amorcerVille(now = maintenant()): number {
-  if (offresVilleProches(now).length > 0) return 0;
+  if (offresVilleProches(now).some((o) => departOffreMs(o) - now < 3 * 3_600_000)) return 0; // il reste un départ dans les 3 h
   app.monde.covoits = app.monde.covoits.filter((o) => !(o.enVille && o.reservations.length === 0 && departOffreMs(o) < now - 30 * 60_000));
   const defs: [string, number, number, number][] = [['p-aminata', 4, 2, 400], ['p-sandrine', 9, 1, 500], ['p-boris', 15, 3, 350]];
   for (const [conducteurId, dans, places, prix] of defs) {
