@@ -112,18 +112,14 @@
         {#if choisi.statut === 'scanne'}<span class="cachet inf">SCANNÉ {choisi.scanneLe ? heureLocale(choisi.scanneLe) : ''}</span>{:else if annule}<span class="cachet er">{choisi.statut === 'rembourse' ? 'REMBOURSÉ' : 'ANNULÉ'}</span>{/if}
       </div>
     </div>
-    <span class="t12 mut3 c">{annule ? 'Ce billet n’est plus valable.' : 'Incline le billet : l’hologramme bouge, preuve qu’il n’est pas une capture d’écran.'}</span>
-
-    <div class="col g8">
-      <a class="b p" href="/direct?billet={choisi.id}" onclick={(ev) => nav(ev, `/direct?billet=${choisi.id}`)}>Suivre ce bus</a>
-      <button type="button" class="b s" disabled={!actif} aria-haspopup="dialog" onclick={() => (fenetre = 'course')}><Icone nom="moto" taille={20} />Moto-taxi vers la gare</button>
+    <div class="actions" role="group" aria-label="Actions sur ce billet">
+      <a class="b p suivre" href="/direct?billet={choisi.id}" onclick={(ev) => nav(ev, `/direct?billet=${choisi.id}`)}>Suivre ce bus</a>
+      <button type="button" class="b s sm" disabled={!actif} aria-haspopup="dialog" onclick={() => (fenetre = 'course')}><Icone nom="moto" taille={18} />Moto-taxi vers la gare</button>
+      <button type="button" class="b s sm" aria-haspopup="dialog" onclick={() => (fenetre = 'partage')}>Partager</button>
+      <button type="button" class="b s sm" aria-haspopup="dialog" disabled={choisi.statut !== 'valide'} onclick={() => (fenetre = 'annule')}>Annuler</button>
+      <button type="button" class="b s sm" aria-haspopup="dialog" onclick={() => (fenetre = 'probleme')}>Problème</button>
     </div>
-    <div class="row g8">
-      <button type="button" class="b s sm grow" aria-haspopup="dialog" onclick={() => (fenetre = 'partage')}>Partager</button>
-      <button type="button" class="b s sm grow" aria-haspopup="dialog" disabled={choisi.statut !== 'valide'} onclick={() => (fenetre = 'annule')}>Annuler</button>
-      <button type="button" class="b s sm grow" aria-haspopup="dialog" onclick={() => (fenetre = 'probleme')}>Problème</button>
-    </div>
-    <span class="t12 mut3 c">Billet payé {fmtF(choisi.prix)} · {actif ? 'à présenter au quai' : libelleFin(choisi)}</span>
+    <span class="t12 mut3 c">{annule ? 'Ce billet n’est plus valable.' : `Incline le billet pour voir l’hologramme · payé ${fmtF(choisi.prix)} · ${actif ? 'à présenter au quai' : libelleFin(choisi)}`}</span>
   {/if}
 
   {#if passes.length}
@@ -147,13 +143,15 @@
 <Feuille bind:ouvert={() => ouverte('probleme'), ferme('probleme')} titre="Signaler un problème" sous="Réponse sous 2 h" hauteur="haute"><LitigeContenu billetId={choisi?.id} onfermer={fermer} /></Feuille>
 
 <style>
+  /* Toutes les actions du billet tiennent dans la première vue, au-dessus du dock : Suivre en pleine largeur, puis quatre boutons en grille 2 × 2. */
+  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex: none; } .actions .suivre { grid-column: 1 / -1; } .actions :global(.b.sm) { width: 100%; min-height: 46px; padding: 0 10px; font-size: 13.5px; }
   .holo { flex: none; perspective: 1000px; margin: 0 -4px; touch-action: none; border-radius: 28px; }
   .holo:focus-visible { outline: 2px solid #7febff; outline-offset: 4px; }
-  .card { position: relative; border-radius: 28px; padding: 18px; min-height: 300px; display: flex; flex-direction: column; gap: 12px; background: linear-gradient(150deg, #141a33, #0a0e1c 60%, #1a1030); border: 1px solid rgba(255, 255, 255, 0.26); transform-style: preserve-3d; transition: transform 0.15s; box-shadow: 0 40px 80px -40px rgba(124, 108, 255, 0.8); overflow: hidden; user-select: none; }
+  .card { position: relative; border-radius: 28px; padding: 16px; min-height: 236px; display: flex; flex-direction: column; gap: 12px; background: linear-gradient(150deg, #141a33, #0a0e1c 60%, #1a1030); border: 1px solid rgba(255, 255, 255, 0.26); transform-style: preserve-3d; transition: transform 0.15s; box-shadow: 0 40px 80px -40px rgba(124, 108, 255, 0.8); overflow: hidden; user-select: none; }
   .card.off { filter: grayscale(0.8); opacity: 0.8; }
   .sheen { position: absolute; inset: 0; background: linear-gradient(115deg, transparent 30%, rgba(139, 124, 255, 0.35) 42%, rgba(61, 224, 255, 0.45) 50%, rgba(255, 91, 222, 0.35) 58%, transparent 70%); background-size: 220% 100%; mix-blend-mode: screen; pointer-events: none; border-radius: 28px; }
   .card::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(255, 255, 255, 0.03) 3px 4px); pointer-events: none; }
-  .qr { position: relative; width: 112px; height: 112px; border-radius: 14px; overflow: hidden; background: #f2f4ff; transform: translateZ(20px); display: grid; place-items: center; }
+  .qr { position: relative; width: 96px; height: 96px; border-radius: 14px; overflow: hidden; background: #f2f4ff; transform: translateZ(20px); display: grid; place-items: center; }
   .qr :global(svg) { display: block; width: 100%; height: 100%; }
   .qr.gris :global(svg) { opacity: 0.3; }
   .barre { font: 800 14px 'Sora Variable', 'Sora', sans-serif; color: #ff6b6b; letter-spacing: 0.1em; transform: rotate(-12deg); }

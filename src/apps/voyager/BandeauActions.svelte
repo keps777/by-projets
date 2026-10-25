@@ -32,7 +32,7 @@
 <nav class="bandeau" class:defile aria-label="Actions rapides" onpointerdown={() => (appui = true)} onpointerup={() => (appui = false)} onpointercancel={() => (appui = false)} onpointerleave={() => (appui = false)}>
   <div class="piste" class:appui>
     {@render liens(false)}
-    {#if defile}{@render liens(true)}{/if}
+    {#if defile}{@render liens(true)}{@render liens(true)}{/if}
   </div>
 </nav>
 
@@ -40,12 +40,14 @@
   .bandeau { margin: 0 -16px; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain; }
   .bandeau::-webkit-scrollbar { display: none; }
   .piste { display: flex; width: max-content; min-width: 100%; padding: 2px 0; }
-  .moitie { display: flex; gap: 8px; padding: 0 16px 0 16px; flex: none; }
+  /* Même écart (8 px) entre toutes les puces, y compris à la jointure d'une copie à l'autre : chaque moitié porte 8 px à droite, rien à gauche. */
+  .moitie { display: flex; gap: 8px; padding: 0 8px 0 0; flex: none; }
+  .piste { padding-left: 16px; }
   .defile { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
   .defile .piste { animation: bandeau 26s linear infinite; will-change: transform; }
-  .defile .moitie { padding-right: 8px; min-width: min(100vw, 460px); }
+  .defile .piste { padding-left: 0; }
   .defile:hover .piste, .defile:focus-within .piste, .defile .piste.appui { animation-play-state: paused; }
   .puce { flex: none; white-space: nowrap; background: linear-gradient(135deg, rgba(139, 124, 255, 0.2), rgba(61, 224, 255, 0.12)); border-color: rgba(139, 124, 255, 0.4); backdrop-filter: blur(14px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14); }
   .puce:focus-visible { outline: 2px solid #7febff; outline-offset: 2px; }
-  @keyframes bandeau { to { transform: translate3d(-50%, 0, 0); } }
+  @keyframes bandeau { to { transform: translate3d(-33.3333%, 0, 0); } }
 </style>

@@ -7,7 +7,7 @@
   import { onMount } from 'svelte';
   import { aller } from '../router.svelte.ts';
   import Icone from './Icone.svelte';
-  import { ouvrirOrbe } from './overlays.svelte.ts';
+  import { fermerOrbe, ouvrirOrbe, overlays } from './overlays.svelte.ts';
   export interface ItemDock { href: string; label: string; icone: string; /** Bouton central en relief (orbe). */ orbe?: boolean; actif?: boolean }
   /** Barre de navigation flottante du bas (verre dépoli) avec pastille d'onglet actif qui glisse d'un onglet à l'autre (« liquid glass »). */
   let { items, label = 'Navigation principale' }: { items: ItemDock[]; label?: string } = $props();
@@ -56,7 +56,7 @@
   function cliquer(e: MouseEvent, it: ItemDock) {
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
-    if (it.orbe && it.href === '/orbe') ouvrirOrbe(); // fenêtre sur la page courante ; le href reste pour l'accessibilité et le clic milieu
+    if (it.orbe && it.href === '/orbe') (overlays.orbe ? fermerOrbe() : ouvrirOrbe()); // fenêtre sur la page courante ; le href reste pour l'accessibilité et le clic milieu
     else aller(it.href);
   }
 </script>

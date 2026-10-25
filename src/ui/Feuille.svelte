@@ -3,9 +3,9 @@
   import { tick } from 'svelte';
   /** Fenêtre modale commune AfriMove (verre dépoli) : monte du bas avec un ressort doux, se ferme au glisser vers le bas, sur Échap ou sur le voile.
    *  Toute action qui « ouvrait une autre page » (hors réseau, annuler, problème, partager, moto-taxi, orbe…) s'affiche dans cette fenêtre, sur la page courante. */
-  let { ouvert = $bindable(false), titre = '', sous = '', hauteur = 'auto', sens = 'bas', surfermer, children, pied }: {
+  let { ouvert = $bindable(false), titre = '', sous = '', hauteur = 'auto', sens = 'bas', audessusDock = false, surfermer, children, pied }: {
     ouvert?: boolean; titre?: string; sous?: string; /** `auto` (selon le contenu) ou `haute` (≈ 90 % de l'écran). */ hauteur?: 'auto' | 'haute'; /** `bas` : monte du bas ; `haut` : se déroule depuis le haut. */ sens?: 'bas' | 'haut';
-    surfermer?: () => void; children: Snippet; pied?: Snippet;
+    /** La fenêtre monte DEPUIS le haut de la barre du bas (orbe comprise) sans la recouvrir ; le voile s'arrête aussi au-dessus. */ audessusDock?: boolean; surfermer?: () => void; children: Snippet; pied?: Snippet;
   } = $props();
   let el = $state<HTMLElement | undefined>(), decalage = $state(0), glisse = $state(false), debut = 0, precedent: Element | null = null;
   const fermer = () => { ouvert = false; surfermer?.(); };
@@ -28,8 +28,8 @@
 </script>
 
 {#if ouvert}
-  <div class="voile" role="presentation" onclick={fermer}></div>
-  <div bind:this={el} class="feuille {sens}" class:haute={hauteur === 'haute'} class:glisse role="dialog" aria-modal="true" aria-label={titre || 'Fenêtre'} tabindex="-1" onkeydown={touche}
+  <div class="voile" class:dock={audessusDock} role="presentation" onclick={fermer}></div>
+  <div bind:this={el} class="feuille {sens}" class:dock={audessusDock} class:haute={hauteur === 'haute'} class:glisse role="dialog" aria-modal="true" aria-label={titre || 'Fenêtre'} tabindex="-1" onkeydown={touche}
     style:transform={decalage ? `translate(-50%, ${sens === 'bas' ? decalage : -decalage}px)` : null}>
     <div class="poignee" role="presentation" onpointerdown={bas} onpointermove={deplace} onpointerup={haut} onpointercancel={haut}><span></span></div>
     {#if titre}<header><div class="col"><h2 class="ttl t20">{titre}</h2>{#if sous}<span class="t13 mut">{sous}</span>{/if}</div><button type="button" class="ib" aria-label="Fermer" onclick={fermer}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg></button></header>{/if}
@@ -44,9 +44,13 @@
     background: linear-gradient(180deg, rgba(24, 28, 52, 0.96), rgba(8, 11, 24, 0.98)); border: 1px solid rgba(255, 255, 255, 0.18); box-shadow: 0 -30px 80px -20px rgba(124, 108, 255, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.16); color: #f2f4ff; transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1); }
   .feuille.bas { bottom: 0; transform: translateX(-50%); border-radius: 28px 28px 0 0; animation: monte 0.42s cubic-bezier(0.18, 1.1, 0.3, 1); }
   .feuille.haut { top: 0; transform: translateX(-50%); border-radius: 0 0 28px 28px; padding-top: calc(env(safe-area-inset-top) + 12px); animation: descend 0.42s cubic-bezier(0.18, 1.1, 0.3, 1); }
-  .feuille.haute { height: 90dvh; } .feuille.glisse { transition: none; }
+  .feuille.haute { height: 90dvh; }
+  /* Au-dessus du dock : barre (22 px + 66 px) et orbe qui dépasse de 30 px restent visibles ; la fenêtre sort de ce bord en s'ouvrant vers le haut. */
+  .voile.dock { bottom: 124px; }
+  .feuille.dock { bottom: 124px; max-height: calc(100dvh - 124px - 16px); border-radius: 28px; padding-bottom: 16px; animation: sortDuDock 0.46s cubic-bezier(0.18, 1.05, 0.3, 1); transform-origin: 50% 100%; }
+  .feuille.dock.haute { height: calc(100dvh - 124px - 16px); } .feuille.glisse { transition: none; }
   .poignee { display: grid; place-items: center; min-height: 26px; touch-action: none; cursor: grab; } .poignee span { width: 44px; height: 5px; border-radius: 3px; background: rgba(255, 255, 255, 0.3); }
   header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; } .corps { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; scrollbar-width: none; } footer { display: flex; flex-direction: column; gap: 8px; }
-  @keyframes monte { from { transform: translate(-50%, 100%); opacity: 0.6; } } @keyframes descend { from { transform: translate(-50%, -100%); opacity: 0.6; } } @keyframes fond { from { opacity: 0; } }
+  @keyframes sortDuDock { from { clip-path: inset(100% 0 0 0 round 28px); transform: translate(-50%, 28px) scale(0.96); opacity: 0.4; } to { clip-path: inset(0 round 28px); transform: translate(-50%, 0) scale(1); opacity: 1; } } @keyframes monte { from { transform: translate(-50%, 100%); opacity: 0.6; } } @keyframes descend { from { transform: translate(-50%, -100%); opacity: 0.6; } } @keyframes fond { from { opacity: 0; } }
   @media (prefers-reduced-motion: reduce) { .feuille.bas, .feuille.haut { animation: fond 0.2s; } }
 </style>

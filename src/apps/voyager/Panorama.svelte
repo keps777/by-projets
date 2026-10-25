@@ -1,7 +1,5 @@
 <script lang="ts">
-  import { untrack } from 'svelte';
   import { aller } from '../../router.svelte.ts';
-  import { adoucir, angleRelatif, cibleInertie, dureeRecalage, filtreCarte, PAS_TRANCHE, poseTranche, transformCarte } from '../../core/anneau.ts';
   import { trancheDevant, type Genre, type Offre } from '../../core/recherche.ts';
   import { fmtF } from '../../core/tarif.ts';
   import { duree, type Tranche } from '../../core/tranches.ts';
@@ -10,61 +8,32 @@
   import { lienEnvoiColis } from './colisOffres.ts';
   import type { TailleColis } from '../../core/prixColis.ts';
 
-  /** Panorama 3D : les 8 tranches de 3 h forment un carrousel cylindrique qui tourne vers l'arrière (glisser au doigt ou à la souris avec inertie et aimantation, flèches du clavier) ; la tranche en face s'ouvre.
-   *  `rot` (liaison) est l'angle visé de l'anneau (45° par tranche) ; `aff` est l'angle affiché, qui le rejoint par une animation. La géométrie vit dans `core/anneau.ts`. */
+  /** Panorama 3D : les 8 tranches de 3 h forment un anneau qui tourne (glisser au doigt ou à la souris, flèches du clavier) ; la tranche en face s'ouvre. */
   let { colonnes, rot = $bindable(), selId = $bindable(), genre, horsLigne = false, onliste, colis = null }: {
     colonnes: Tranche<Offre>[]; rot: number; selId: string | null; genre: Genre; horsLigne?: boolean; onliste: () => void; /** Mode Colis : taille cherchée ; les boutons mènent à l'envoi d'un colis. */ colis?: TailleColis | null;
   } = $props();
-  const TH = PAS_TRANCHE, LIGNES_MAX = 3, DEG_PAR_PX = 0.45;
-  let aff = $state(untrack(() => rot));
-  let drag = $state<{ x: number; r: number; t: number } | null>(null);
-  let deplace = false, echant: { t: number; x: number }[] = [], raf = 0;
+  const TH = 45, R = 350, LIGNES_MAX = 3;
+  let drag = $state<{ x: number; r: number } | null>(null);
+  let deplace = false;
   let glisse = $state(false);
   const devant = $derived(trancheDevant(rot, colonnes.length));
-  const poses = $derived(colonnes.map((c) => poseTranche(angleRelatif(c.index, aff, TH))));
 
-  const reduit = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  /** Rejoint l'angle visé par un glissement doux avec léger dépassement (aimant) ; sans animation si le mouvement est réduit. */
-  function animer(cible: number) {
-    cancelAnimationFrame(raf);
-    const depart = aff;
-    if (reduit() || depart === cible) { aff = cible; return; }
-    const t0 = performance.now(), dur = dureeRecalage(cible - depart);
-    const pas = (t: number) => { const k = (t - t0) / dur; if (k >= 1) { aff = cible; return; } aff = depart + (cible - depart) * adoucir(k); raf = requestAnimationFrame(pas); };
-    raf = requestAnimationFrame(pas);
-  }
-  // Tout changement de `rot` hors glissement (flèches, repères horaires, accueil) est animé ; pendant le glissement `aff` suit `rot` d'un seul pas.
-  $effect(() => { const c = rot; untrack(() => { if (!drag && aff !== c) animer(c); }); });
-  $effect(() => () => cancelAnimationFrame(raf));
-
-  /** Aimante `r` (déjà multiple de 45°) comme angle visé et met en face le premier départ de la tranche. */
   function caler(r: number) {
-    const f = trancheDevant(r, colonnes.length), it = colonnes[f]?.items ?? [];
-    rot = r; drag = null;
+    const rr = Math.round(r / TH) * TH, f = trancheDevant(rr, colonnes.length), it = colonnes[f]?.items ?? [];
+    rot = rr; drag = null;
     if (it.length && !it.some((x) => x.id === selId)) selId = it[0].id;
   }
   /** Tourne vers une tranche par le chemin le plus court. */
   function vers(i: number) { const base = -i * TH; caler(base + 360 * Math.round((rot - base) / 360)); }
   const cliquable = (e: Event) => !(e.target as Element).closest('a');
-  function bas(e: PointerEvent) { if (!cliquable(e)) return; deplace = false; drag = { x: e.clientX, r: aff, t: e.timeStamp }; echant = [{ t: e.timeStamp, x: e.clientX }]; }
+  function bas(e: PointerEvent) { if (!cliquable(e)) return; deplace = false; drag = { x: e.clientX, r: rot }; }
   function bouge(e: PointerEvent) {
     if (!drag) return;
     const dx = e.clientX - drag.x;
-    if (!deplace && Math.abs(dx) > 8) { deplace = true; glisse = true; cancelAnimationFrame(raf); try { (e.currentTarget as Element).setPointerCapture(e.pointerId); } catch { /* pointeur déjà relâché */ } }
-    if (!deplace) return;
-    echant.push({ t: e.timeStamp, x: e.clientX }); if (echant.length > 12) echant.shift();
-    aff = rot = drag.r + dx * DEG_PAR_PX;
+    if (!deplace && Math.abs(dx) > 8) { deplace = true; glisse = true; try { (e.currentTarget as Element).setPointerCapture(e.pointerId); } catch { /* pointeur déjà relâché */ } }
+    if (deplace) rot = drag.r + dx * 0.45;
   }
-  /** Lâcher : l'élan du geste (vitesse des ~100 dernières ms) prolonge la rotation, puis l'anneau s'aimante sur une tranche. */
-  function haut(e: PointerEvent) {
-    if (!drag) return;
-    glisse = false;
-    if (!deplace) { drag = null; return; }
-    const fin = echant[echant.length - 1], debut = echant.find((s) => fin.t - s.t <= 100) ?? fin, dt = fin.t - debut.t;
-    const v = dt > 0 && e.timeStamp - fin.t < 80 ? ((fin.x - debut.x) / dt) * DEG_PAR_PX : 0;
-    caler(cibleInertie(rot, v, e.timeStamp - drag.t));
-    setTimeout(() => (deplace = false), 60);
-  }
+  function haut() { if (!drag) return; glisse = false; if (deplace) { caler(rot); setTimeout(() => (deplace = false), 60); } else drag = null; }
   function touche(e: KeyboardEvent) {
     if (e.key === 'ArrowRight') { e.preventDefault(); caler(rot - TH); } else if (e.key === 'ArrowLeft') { e.preventDefault(); caler(rot + TH); }
     else if (e.key === 'Home') { e.preventDefault(); vers(0); } else if (e.key === 'End') { e.preventDefault(); vers(colonnes.length - 1); }
@@ -80,18 +49,18 @@
 <div class="pano" class:glisse role="group" aria-roledescription="panorama" tabindex="0" onkeydown={touche}
   aria-label="Départs par tranche de 3 heures · glisse à gauche ou à droite pour tourner, ou utilise les flèches du clavier"
   onpointerdown={bas} onpointermove={bouge} onpointerup={haut} onpointercancel={haut}>
-  <div class="sol" aria-hidden="true"></div>
-  <div class="ring">
+  <div class="ring" style="transform: translateZ(-{R}px) rotateY({rot}deg); transition: {drag ? 'none' : 'transform .45s cubic-bezier(.2,.8,.2,1)'}">
     {#each colonnes as c (c.index)}
-      {@const p = poses[c.index]}
+      {@const a = c.index * TH}
+      {@const rel = (((a + rot) % 360) + 360) % 360}
+      {@const dist = Math.min(rel, 360 - rel)}
+      {@const facing = dist <= 50}
       {@const isF = c.index === devant}
       {@const n = c.items.length}
       {@const fs = c.items.find((x) => x.id === selId) ?? c.items[0]}
       {@const prixMin = n ? Math.min(...c.items.map((x) => x.prix)) : 0}
-      <!-- Une tranche voisine (aria-hidden, atteignable au clavier par les flèches et les repères) se touche en entier pour tourner vers elle. -->
-      <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_noninteractive_element_interactions -->
-      <article class="colm" class:front={isF} data-i={c.index} data-angle={p.angle.toFixed(1)} aria-hidden={isF ? undefined : 'true'} onclick={() => { if (!isF && !deplace) vers(c.index); }}
-        style:transform={transformCarte(p)} style:opacity={p.opacite.toFixed(2)} style:filter={filtreCarte(p)} style:pointer-events={p.interactive ? 'auto' : 'none'}>
+      <article class="colm" class:front={isF} aria-hidden={isF ? undefined : 'true'}
+        style="transform: rotateY({a}deg) translateZ({R}px); opacity: {facing ? (1 - dist / 115).toFixed(2) : 0}; pointer-events: {facing ? 'auto' : 'none'}">
         <button type="button" class="chc" tabindex={isF ? undefined : -1} onclick={() => { if (deplace) return; if (isF) onliste(); else vers(c.index); }}
           aria-label="{c.h1} – {c.h2} h{n ? `, ${n} départ${n > 1 ? 's' : ''}` : ', aucun départ'}{isF ? ', voir la liste' : ', tourner vers cette tranche'}">
           <span class="hh">{c.h1}<small> – {c.h2} h</small></span>
@@ -135,17 +104,12 @@
 </div>
 
 <style>
-  .pano { flex: none; position: relative; height: 440px; perspective: 1000px; perspective-origin: 50% 46%; margin: 0 -16px; touch-action: pan-y; cursor: grab; overflow: hidden; outline-offset: -3px; border-radius: 12px; }
+  .pano { flex: none; position: relative; height: 390px; perspective: 1000px; perspective-origin: 50% 30%; margin: 0 -16px; touch-action: pan-y; cursor: grab; overflow: hidden; outline-offset: -3px; border-radius: 12px; }
   .pano.glisse { cursor: grabbing; }
   .pano:focus-visible { outline: 2px solid #7febff; }
-  /* Anneau : conteneur 3D immobile ; chaque tranche reçoit sa propre pose (core/anneau.ts) calculée à partir de l'angle affiché. Pas d'overflow ni de backdrop-filter sur les colonnes. */
-  .ring { position: absolute; left: 50%; top: 40px; width: 238px; height: 366px; margin-left: -119px; transform-style: preserve-3d; }
-  /* Sol : halo ovale + liseré lumineux sous le cylindre (le « disque » sur lequel il tourne). */
-  .sol { position: absolute; left: 50%; bottom: 8px; width: 330px; height: 46px; margin-left: -165px; border-radius: 50%; pointer-events: none;
-    background: radial-gradient(ellipse at center, rgba(139, 124, 255, 0.55) 0%, rgba(61, 224, 255, 0.16) 48%, rgba(0, 0, 0, 0) 72%); filter: blur(5px); }
-  .sol::after { content: ''; position: absolute; left: 22%; right: 22%; top: 38%; height: 26%; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(160, 235, 255, 0.5), rgba(160, 235, 255, 0) 70%); }
-  .colm { position: absolute; inset: 0; padding: 10px 9px 9px; border-radius: 26px; border: 1px solid rgba(255, 255, 255, 0.22); background: linear-gradient(160deg, #262d5c 0%, #141a3d 55%, #0c1028 100%); display: flex; flex-direction: column; gap: 6px; box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.18); user-select: none; will-change: transform, opacity, filter; }
-  .colm.front { border-color: rgba(139, 124, 255, 0.75); box-shadow: 0 40px 70px -30px rgba(124, 108, 255, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.22); }
+  .ring { position: absolute; left: 50%; top: 6px; width: 262px; height: 378px; margin-left: -131px; transform-style: preserve-3d; }
+  .colm { position: absolute; inset: 0; padding: 10px 9px 9px; border-radius: 26px; border: 1px solid rgba(255, 255, 255, 0.22); background: linear-gradient(160deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.04)); display: flex; flex-direction: column; gap: 6px; box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.18); user-select: none; transition: opacity 0.3s; }
+  .colm.front { border-color: rgba(139, 124, 255, 0.7); box-shadow: 0 40px 70px -30px rgba(124, 108, 255, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.22); }
   .chc { display: flex; align-items: flex-end; justify-content: space-between; gap: 6px; padding: 0 4px 2px; border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; text-align: left; min-height: 44px; flex: none; }
   .hh { font: 700 26px/1 'Unbounded Variable', 'Unbounded', sans-serif; letter-spacing: -0.04em; white-space: nowrap; }
   .hh small { font-size: 14px; color: #b7c0db; letter-spacing: 0; }
@@ -163,8 +127,7 @@
   .one .lg { width: 52px; height: 52px; border-radius: 16px; font-size: 15px; } .one .lg.cv { border-radius: 50%; }
   .tm { font: 700 42px/1 'Unbounded Variable', 'Unbounded', sans-serif; letter-spacing: -0.05em; white-space: nowrap; }
   .co { font: 700 16px/1.2 'Sora Variable', 'Sora', sans-serif; }
-  .px { font: 700 24px/1 'Unbounded Variable', 'Unbounded', sans-serif; color: #7febff; letter-spacing: -0.03em; white-space: nowrap; }
-  .one .bd2 { white-space: normal; text-align: right; min-width: 0; }
+  .px { font: 700 26px/1 'Unbounded Variable', 'Unbounded', sans-serif; color: #7febff; letter-spacing: -0.03em; white-space: nowrap; }
   .seats { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
   .seats i { display: block; height: 100%; background: linear-gradient(90deg, #8b7cff, #3de0ff); }
   .cta { margin-top: auto; min-height: 46px; white-space: nowrap; }
