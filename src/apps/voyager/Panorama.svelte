@@ -5,10 +5,12 @@
   import { duree, type Tranche } from '../../core/tranches.ts';
   import { etiquette, lienPlace, lienReserverCovoit, prixInsecable } from './offres.ts';
   import LigneOffre from './LigneOffre.svelte';
+  import { lienEnvoiColis } from './colisOffres.ts';
+  import type { TailleColis } from '../../core/prixColis.ts';
 
   /** Panorama 3D : les 8 tranches de 3 h forment un anneau qui tourne (glisser au doigt ou à la souris, flèches du clavier) ; la tranche en face s'ouvre. */
-  let { colonnes, rot = $bindable(), selId = $bindable(), genre, horsLigne = false, onliste }: {
-    colonnes: Tranche<Offre>[]; rot: number; selId: string | null; genre: Genre; horsLigne?: boolean; onliste: () => void;
+  let { colonnes, rot = $bindable(), selId = $bindable(), genre, horsLigne = false, onliste, colis = null }: {
+    colonnes: Tranche<Offre>[]; rot: number; selId: string | null; genre: Genre; horsLigne?: boolean; onliste: () => void; /** Mode Colis : taille cherchée ; les boutons mènent à l'envoi d'un colis. */ colis?: TailleColis | null;
   } = $props();
   const TH = 45, R = 350, LIGNES_MAX = 3;
   let drag = $state<{ x: number; r: number } | null>(null);
@@ -79,6 +81,7 @@
             <div class="seats" aria-hidden="true"><i style="width: {Math.round((100 * o.places) / o.cap)}%"></i></div>
             {#if o.complet}<button type="button" class="b p cta" disabled tabindex={isF ? undefined : -1}>Complet</button>
             {:else if horsLigne}<button type="button" class="b p cta" disabled tabindex={isF ? undefined : -1}>Hors ligne</button>
+            {:else if colis}<a class="b p cta" href={lienEnvoiColis(o, colis)} tabindex={isF ? undefined : -1} onclick={(e) => aller_(e, lienEnvoiColis(o, colis))}>Envoyer un colis</a>
             {:else if cv}<a class="b p cta" href={lienReserverCovoit(o)} tabindex={isF ? undefined : -1} onclick={(e) => aller_(e, lienReserverCovoit(o))}>Réserver une place</a>
             {:else}<a class="b p cta" href={lienPlace(o)} tabindex={isF ? undefined : -1} onclick={(e) => aller_(e, lienPlace(o))}>Choisir ma place</a>{/if}
           </div>
@@ -90,6 +93,7 @@
           <div class="row g8 foot">
             {#if fs.complet}<button type="button" class="b p" disabled tabindex={isF ? undefined : -1}>Complet</button>
             {:else if horsLigne}<button type="button" class="b p" disabled tabindex={isF ? undefined : -1}>Hors ligne</button>
+            {:else if colis}<a class="b p" href={lienEnvoiColis(fs, colis)} tabindex={isF ? undefined : -1} aria-label="Envoyer un colis, départ {fs.heure} {fs.co}, {fmtF(fs.prix)}" onclick={(e) => aller_(e, lienEnvoiColis(fs, colis))}>Envoyer un colis · {prixInsecable(fs.prix)}</a>
             {:else if fs.genre === 'bus'}<a class="b p" href={lienPlace(fs)} tabindex={isF ? undefined : -1} aria-label="Choisir ma place, départ {fs.heure} {fs.co}, {fmtF(fs.prix)}" onclick={(e) => aller_(e, lienPlace(fs))}>Choisir ma place · {prixInsecable(fs.prix)}</a>
             {:else}<a class="b p" href={lienReserverCovoit(fs)} tabindex={isF ? undefined : -1} aria-label="Réserver, covoiturage {fs.heure} {fs.co}, {fmtF(fs.prix)}" onclick={(e) => aller_(e, lienReserverCovoit(fs))}>Réserver · {prixInsecable(fs.prix)}</a>{/if}
           </div>

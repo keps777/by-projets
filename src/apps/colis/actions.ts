@@ -3,7 +3,9 @@
 import { app, aujourdhui, maintenant, nouvelId } from '../../data/store.svelte.ts';
 import { avancerColis, compagnieDe, consigner, creerColis, departEnMs, departParId, gare, ligneDe, notifier, personne, personneCourante } from '../../domain/actions.ts';
 import type { Colis, Depart, Personne } from '../../domain/types.ts';
-import { codeRetrait as genererCode } from '../../core/colis.ts';
+import { codeRetrait as genererCode, prixColis, TAILLES } from '../../core/colis.ts';
+import { prixColisLigne } from '../../core/prixColis.ts';
+import { offreCovoit } from '../voyager/offres.ts';
 import { jourDe } from '../../core/dates.ts';
 import { COMMISSION_RELAIS, distanceBoutique, erreurDestinataire, erreursBoutique, etatOuverture, GAIN_COURSE, heureArrivee, MAX_COURSES_ACTIVES, normaliserCodeColis, normaliserTel, positionSimulee, QUARTIERS, type Boutique, type EtatOuverture } from '../../core/relais.ts';
 import { signalerProbleme } from '../entree/actions.ts';
@@ -44,6 +46,17 @@ export function prochainDepartColis(): Depart | undefined {
   const now = maintenant();
   return app.monde.departs.filter((d) => { if (d.statut !== 'prevu' || departEnMs(d) - now < 30 * 60_000) return false; const l = ligneDe(d); return l.de === 'Yaoundé' && l.vers === 'Douala' && l.compagnieId === 'BX'; }).sort((a, b) => departEnMs(a) - departEnMs(b))[0];
 }
+/** Le trajet choisi depuis l'accueil (`?depart=` ou `?covoit=`) : sa durée fixe le prix du colis sur la ligne. Seul Yaoundé → Douala a des relais d'arrivée. */
+export interface TrajetColis { departId?: string; covoitId?: string; dureeMin: number; heure: string }
+export function trajetColis(departId: string | null | undefined, covoitId?: string | null): TrajetColis | undefined {
+  const d = departId ? departParId(departId) : undefined;
+  if (d) { const l = ligneDe(d); return l.de === 'Yaoundé' && l.vers === 'Douala' ? { departId: d.id, dureeMin: l.dureeMin, heure: d.heure } : undefined; }
+  const c = covoitId ? app.monde.covoits.find((x) => x.id === covoitId) : undefined;
+  return c && c.de === 'Yaoundé' && c.vers === 'Douala' ? { covoitId: c.id, dureeMin: offreCovoit(c).dureeMin, heure: c.heure } : undefined;
+}
+/** Prix du colis : sur un trajet choisi, tarif de la ligne (arrondi à 100 F) + options ; sinon tarif de base. */
+export const prixEnvoi = (b: Pick<Brouillon, 'taille' | 'moto' | 'assurance'>, t?: TrajetColis): number =>
+  t ? prixColisLigne(b.taille, t.dureeMin) + (prixColis(b.taille, b) - TAILLES[b.taille].prix) : prixColis(b.taille, b);
 export const arriveeDepart = (d: Depart) => heureArrivee(d.heure, ligneDe(d).dureeMin, d.retardMin);
 export type ErreursEnvoi = { nom?: string; tel?: string; relais?: string; quartier?: string; general?: string };
 export function validerEnvoi(b: Brouillon): ErreursEnvoi {
@@ -54,16 +67,20 @@ export function validerEnvoi(b: Brouillon): ErreursEnvoi {
   if (app.session.hors_ligne) e.general = 'Tu es hors ligne : reconnecte-toi pour créer le colis';
   return e;
 }
-export function envoyerColis(b: Brouillon, expediteurId: string): { ok: true; colis: Colis; payer: boolean } | { ok: false; erreurs: ErreursEnvoi } {
+export function envoyerColis(b: Brouillon, expediteurId: string, trajet?: TrajetColis): { ok: true; colis: Colis; payer: boolean } | { ok: false; erreurs: ErreursEnvoi } {
   const erreurs = validerEnvoi(b);
   if (Object.keys(erreurs).length) return { ok: false, erreurs };
-  const dep = prochainDepartColis(), relais = relaisDuMonde().find((r) => r.personne.id === b.relaisId)!;
+  const dep = (trajet?.departId ? departParId(trajet.departId) : undefined) ?? prochainDepartColis(), relais = relaisDuMonde().find((r) => r.personne.id === b.relaisId)!;
   const { colis } = creerColis({
     expediteurId, destinataire: { nom: b.nom.trim(), tel: normaliserTel(b.tel)! }, taille: b.taille, options: { moto: b.moto, assurance: b.assurance, contreRemboursement: b.cod },
     depart: `Yaoundé · ${dep ? gare(ligneDe(dep).gareDe)?.nom ?? 'gare' : 'gare'}`, arrivee: `Douala · relais ${relais.boutique.nom}`, relaisId: relais.personne.id, moyen: 'momo', canal: 'app'
   });
   const vivant = app.monde.colis.find((c) => c.id === colis.id)!;
-  if (dep) vivant.departId = dep.id;
+  if (dep && !trajet?.covoitId) vivant.departId = dep.id;
+  if (trajet) { // le prix payé est celui affiché sur la ligne
+    vivant.prix = prixEnvoi(b, trajet);
+    const pay = app.monde.paiements.find((x) => x.id === vivant.paiementId); if (pay) pay.montant = vivant.prix;
+  }
   const t = trancheColis();
   if (b.moto) t.courses[vivant.id] = { quartier: b.quartier, etape: 0, essais: 0 };
   Object.assign(t.brouillon, brouillonVide());

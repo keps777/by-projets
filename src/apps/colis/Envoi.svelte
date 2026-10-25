@@ -1,26 +1,30 @@
 <script lang="ts">
-  import { aller } from '../../router.svelte.ts';
+  import { aller, param } from '../../router.svelte.ts';
   import { app } from '../../data/store.svelte.ts';
-  import { personne, personneCourante } from '../../domain/actions.ts';
-  import { prixColis, SUPPLEMENT_ASSURANCE, SUPPLEMENT_MOTO, TAILLES } from '../../core/colis.ts';
+  import { departParId, personne, personneCourante } from '../../domain/actions.ts';
+  import { SUPPLEMENT_ASSURANCE, SUPPLEMENT_MOTO, TAILLES } from '../../core/colis.ts';
   import { fcfa } from '../../core/money.ts';
   import { formaterDistance, formaterTel, libelleHoraires, normaliserTel, QUARTIERS } from '../../core/relais.ts';
   import Mobile from '../../ui/Mobile.svelte';
   import { dockVoyageur } from '../../ui/dockVoyageur.ts';
   import { montrer } from '../../ui/toast.svelte.ts';
-  import { arriveeDepart, envoyerColis, garantirRelais, prenomDe, prochainDepartColis, relaisDuMonde, validerEnvoi, type ErreursEnvoi } from './actions.ts';
+  import { arriveeDepart, envoyerColis, garantirRelais, prenomDe, prixEnvoi, prochainDepartColis, relaisDuMonde, trajetColis, validerEnvoi, type ErreursEnvoi } from './actions.ts';
   import { trancheColis, type Taille } from './etat.ts';
   import Pic from './Pic.svelte';
 
   garantirRelais();
   const b = trancheColis().brouillon;
+  // Depuis l'accueil (mode Colis) : `?depart=` ou `?covoit=` présélectionne le trajet (et fixe le prix de la ligne), `?taille=` la taille.
+  const trajet = trajetColis(param('depart'), param('covoit'));
+  const tailleDemandee = param('taille');
+  if (tailleDemandee === 'S' || tailleDemandee === 'M' || tailleDemandee === 'L') b.taille = tailleDemandee;
   const moi = $derived(personneCourante());
   const proches = $derived((moi?.prochesIds ?? []).map((id) => personne(id)).filter((p) => !!p));
-  const dep = $derived(prochainDepartColis());
+  const dep = $derived((trajet?.departId ? departParId(trajet.departId) : undefined) ?? prochainDepartColis());
   const liste = $derived(relaisDuMonde());
   // Le relais le plus proche est proposé tant que rien n'est choisi.
   const choisi = $derived(liste.find((r) => r.personne.id === b.relaisId) ?? (b.relaisId ? undefined : liste[0]));
-  const total = $derived(prixColis(b.taille, b));
+  const total = $derived(prixEnvoi(b, trajet));
   const prenom = $derived(b.nom.trim() ? prenomDe(b.nom) : 'Le destinataire');
   const cote: Record<Taille, number> = { S: 56, M: 84, L: 110 };
   const nomTaille: Record<Taille, string> = { S: 'S · enveloppe', M: 'M · carton', L: 'L · sac' };
@@ -42,15 +46,15 @@
     if (envoi) return;
     essaye = true; erreursServeur = {};
     const quiPaie = prenom;
-    const r = envoyerColis({ ...b, relaisId: choisi?.personne.id ?? null }, moi!.id);
+    const r = envoyerColis({ ...b, relaisId: choisi?.personne.id ?? null }, moi!.id, trajet);
     if (!r.ok) { erreursServeur = r.erreurs; if (r.erreurs.general) montrer(r.erreurs.general, 'er'); document.getElementById(r.erreurs.nom ? 'dest-nom' : r.erreurs.tel ? 'dest-tel' : 'zone-relais')?.focus(); return; }
     envoi = true;
     if (r.payer) aller(`/paiement?colis=${r.colis.id}`); else { montrer(`Colis ${r.colis.code} créé · ${quiPaie} paiera à la remise`); aller(`/colis/suivi?colis=${r.colis.id}`); }
   }
-  const sous = $derived(`colis ${fcfa(TAILLES[b.taille].prix)}${b.moto ? ` + moto ${fcfa(SUPPLEMENT_MOTO)}` : ''}${b.assurance ? ` + assurance ${fcfa(SUPPLEMENT_ASSURANCE)}` : ''}${dep ? ` · arrive ${arriveeDepart(dep)}` : ''}`);
+  const sous = $derived(`colis ${fcfa(trajet ? prixEnvoi({ ...b, moto: false, assurance: false }, trajet) : TAILLES[b.taille].prix)}${b.moto ? ` + moto ${fcfa(SUPPLEMENT_MOTO)}` : ''}${b.assurance ? ` + assurance ${fcfa(SUPPLEMENT_ASSURANCE)}` : ''}${dep ? ` · arrive ${arriveeDepart(dep)}` : ''}`);
 </script>
 
-<Mobile titre="Envoyer un colis" sous={dep ? `Yaoundé → Douala · bus de ${dep.heure}` : 'Yaoundé → Douala'} retourVers="/" dock={dockVoyageur('voyager')}>
+<Mobile titre="Envoyer un colis" sous={trajet?.covoitId ? `Yaoundé → Douala · covoiturage de ${trajet.heure}` : dep ? `Yaoundé → Douala · bus de ${dep.heure}` : 'Yaoundé → Douala'} retourVers="/" dock={dockVoyageur('voyager')}>
   {#snippet droite()}<a class="pl ac" href="/colis/suivi" onclick={(e) => { e.preventDefault(); aller('/colis/suivi'); }}>suivre</a>{/snippet}
 
   <div class="gl cadre">
