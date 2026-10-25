@@ -7,7 +7,11 @@ export interface GesteRetard { billetId: string; departId: string; montant: numb
 export interface CourseVoyage {
   id: string; personneId: string; mode: Mode; quartier: string; km: number; gare: string; departId: string; prix: number; moyen: MoyenCourse;
   etape: EtapeCourse; statut: 'en_cours' | 'terminee' | 'annulee'; creeLe: number; majLe: number;
+  /** Arrivée annoncée du véhicule (min) d'après la flotte simulée au moment de la commande. */ attente?: number; /** Conducteur le plus proche à la commande. */ conducteur?: string;
+  /** Commission AfriMove (10 %). `retenue` sur le paiement (MoMo, Orange Money, cagnotte) ; `due` : espèces, prélevée sur le compte du conducteur. */ commission?: number; commissionMode?: 'retenue' | 'due';
 }
+/** Commission d'une course payée en espèces : AfriMove la prélève sur le compte du conducteur, qui a encaissé tout le prix. */
+export interface CommissionDue { id: string; courseId: string; conducteur: string; montant: number; prixCourse: number; ts: number; majLe: number; statut: 'due' | 'prelevee' | 'annulee' }
 export interface MonteeEnRoute { billetId: string; departId: string; arretId: string; arret: string; heure: string; prix: number; ts: number }
 export interface OptionsCovoit { femmes: boolean; bagages: boolean; arrets: boolean }
 export interface Versement { offreId: string; personneId: string; montant: number; ts: number }
@@ -16,8 +20,9 @@ export interface EtatRoute {
   /** Gestes commerciaux de retard, par billet (un seul par billet). */ gestes: Record<string, GesteRetard>;
   courses: CourseVoyage[]; /** Montées en route, par billet. */ montees: Record<string, MonteeEnRoute>;
   optionsCovoit: Record<string, OptionsCovoit>; versements: Versement[];
+  /** Commissions AfriMove dues par les conducteurs pour les courses payées en espèces. */ commissionsDues: CommissionDue[];
 }
-const defaut = (): EtatRoute => ({ cagnotte: {}, gestes: {}, courses: [], montees: {}, optionsCovoit: {}, versements: [] });
+const defaut = (): EtatRoute => ({ cagnotte: {}, gestes: {}, courses: [], montees: {}, optionsCovoit: {}, versements: [], commissionsDues: [] });
 const VIDE: EtatRoute = Object.freeze(defaut()) as EtatRoute;
 
 /** Tranche en écriture : à appeler depuis une action ou un script, jamais depuis un `$derived`. Complète les champs absents (ancienne sauvegarde). */

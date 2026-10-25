@@ -49,7 +49,9 @@ test('le bouton Filtres ouvre une fenêtre sans quitter l’accueil', async ({ p
   await page.getByRole('button', { name: 'Filtres' }).click();
   await expect(page.getByRole('dialog', { name: /Filtres/ })).toBeVisible();
   await expect(page).toHaveURL(/\/\?maintenant/);
-  await expect(page.getByRole('button', { name: /^Trier|^Heure$|^Prix$/ })).toHaveCount(0); // la rangée de tri n’est plus sur la page
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /^Trier|^Heure$|^Prix$/ })).toHaveCount(0); // la rangée de tri n’est plus sur la page (elle est dans la fenêtre)
 });
 
 test('les filtres comptent les vrais départs (page des filtres, toujours valide en lien profond)', async ({ page }) => {

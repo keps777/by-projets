@@ -93,19 +93,35 @@ test.describe('règlement', () => {
     const boite = (await holo.boundingBox())!;
     await page.mouse.move(boite.x + boite.width * 0.85, boite.y + boite.height * 0.15);
     await shot(page, '10-holo-incline');
-    await page.getByRole('link', { name: 'Mode hors ligne' }).click();
-    await expect(page.getByText('sceau vérifié sur ce téléphone')).toBeVisible();
-    await expect(page.getByText('Billet signé, valable sans internet.')).toBeVisible();
+    // « Sans réseau » s'ouvre dans une fenêtre sur la page Billets : l'adresse ne change pas
+    await page.getByRole('button', { name: 'Sans réseau' }).click();
+    const hors = page.getByRole('dialog', { name: 'Sans réseau' });
+    await expect(hors.getByText('sceau vérifié sur ce téléphone')).toBeVisible();
+    await expect(hors.getByText('Billet signé, valable sans internet.')).toBeVisible();
+    await expect(page).toHaveURL(/\/pass(\?|$)/);
     await shot(page, '11-hors-ligne');
+    await page.keyboard.press('Escape');
+    await expect(hors).toBeHidden();
+    await page.getByRole('button', { name: 'Annuler', exact: true }).click();
+    const annule = page.getByRole('dialog', { name: 'Annuler ce billet' });
+    await expect(annule.getByText('− 750 F')).toBeVisible();
+    await expect(annule.getByText('6 750 F').first()).toBeVisible();
+    await shot(page, '12-annule');
+    await annule.getByRole('button', { name: 'Confirmer l’annulation' }).click();
+    await expect(annule.getByText('6 750 F renvoyés sur MoMo')).toBeVisible();
+    await shot(page, '13-annule-fait');
+    await annule.getByRole('button', { name: 'Fermer' }).click();
+    await expect(page.getByText('REMBOURSÉ', { exact: true })).toBeVisible();
+  });
+
+  test('liens profonds : /pass/hors-ligne et /pass/annule restent des pages valides', async ({ page }) => {
+    await aller(page, '/pass/hors-ligne?billet=b-aicha1');
+    await expect(page.getByText('sceau vérifié sur ce téléphone')).toBeVisible();
+    await shot(page, '11b-hors-ligne-page');
     await aller(page, '/pass/annule?billet=b-aicha1');
     await expect(page.getByText('− 750 F')).toBeVisible();
-    await expect(page.getByText('6 750 F').first()).toBeVisible();
-    await shot(page, '12-annule');
     await page.getByRole('button', { name: 'Confirmer l’annulation' }).click();
     await expect(page.getByText('6 750 F renvoyés sur MoMo')).toBeVisible();
-    await shot(page, '13-annule-fait');
-    await aller(page, '/pass?billet=b-aicha1');
-    await expect(page.getByText('REMBOURSÉ', { exact: true })).toBeVisible();
   });
 
   test('bus entier : cagnotte, démo, part payée', async ({ page }) => {

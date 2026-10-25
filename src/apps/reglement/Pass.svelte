@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { aller, param } from '../../router.svelte.ts';
   import Mobile from '../../ui/Mobile.svelte';
+  import Feuille from '../../ui/Feuille.svelte';
   import Icone from '../../ui/Icone.svelte';
   import Qr from '../../ui/Qr.svelte';
   import { dockVoyageur } from '../../ui/dockVoyageur.ts';
@@ -13,9 +14,18 @@
   import { fmtF } from '../../core/tarif.ts';
   import { codeAffiche } from '../../core/reglement.ts';
   import type { Billet } from '../../domain/types.ts';
+  import { choisirBillet } from '../../core/selectionBillet.ts';
   import { paiementActifDe } from './actions.ts';
+  import { billetMemorise, billetsEnCours, itemsDe, memoriserBillet } from './selection.ts';
+  import SelecteurBillet from './SelecteurBillet.svelte';
+  import HorsLigneContenu from './HorsLigneContenu.svelte';
+  import CourseContenu from '../route/CourseContenu.svelte';
+  import PartageContenu from './PartageContenu.svelte';
+  import AnnuleContenu from './AnnuleContenu.svelte';
+  import LitigeContenu from '../entree/LitigeContenu.svelte';
 
-  /** Mes billets : le billet sélectionné en hologramme (QR réel, reflet qui suit l'inclinaison), puis les actions et les billets passés. */
+  /** Mes billets : le sélecteur « Ton bus » (tous les billets en cours et à venir, les miens et ceux achetés pour des proches), le billet choisi en hologramme (QR réel, reflet qui suit l'inclinaison),
+   *  puis les actions et les billets passés. Sans réseau, Moto-taxi, Partager, Annuler et Problème s'ouvrent dans des fenêtres sur cette page (les routes `/pass/hors-ligne`, `/course`, `/proche`, `/pass/annule`, `/litige` restent valides). */
   const moi = personneCourante();
   let tic = $state(maintenant());
   onMount(() => { const t = setInterval(() => (tic = maintenant()), 1000); return () => clearInterval(t); });
@@ -23,10 +33,19 @@
   const tous = $derived(moi ? billetsDe(moi.id) : []);
   const utiles = $derived(tous.filter((b) => b.statut === 'valide' || b.statut === 'scanne' || b.statut === 'annule' || b.statut === 'rembourse'));
   const enAttente = $derived(tous.filter((b) => b.statut === 'attente_paiement' && paiementActifDe(b, tic)));
-  const termine = (b: Billet) => { const d = departParId(b.departId); return !d || d.statut === 'arrive' || d.statut === 'annule'; };
-  const aVenir = $derived(utiles.filter((b) => (b.statut === 'valide' || b.statut === 'scanne') && !termine(b)).sort((a, c) => departEnMs(departParId(a.departId)!) - departEnMs(departParId(c.departId)!)));
+  const aVenir = $derived(moi ? billetsEnCours(moi.id) : []);
   const passes = $derived(utiles.filter((b) => !aVenir.includes(b)).sort((a, c) => departEnMs(departParId(c.departId)!) - departEnMs(departParId(a.departId)!)));
-  const choisi = $derived(utiles.find((b) => b.id === param('billet')) ?? aVenir[0] ?? passes[0]);
+  /** Billet du lien (`?billet=`), sinon dernier choix du sélecteur s'il est encore en cours, sinon prochain départ, sinon le plus récent des billets passés. */
+  const choisiId = $derived(choisirBillet({ enCours: aVenir.map((b) => b.id), tous: utiles.map((b) => b.id), demande: param('billet'), memorise: billetMemorise() }));
+  const choisi = $derived(utiles.find((b) => b.id === choisiId) ?? passes[0]);
+  /** Entrées du sélecteur : tous les billets en cours, plus le billet passé ou annulé quand on l'ouvre depuis la liste. */
+  const items = $derived(moi ? itemsDe(choisi && !aVenir.includes(choisi) ? [choisi, ...aVenir] : aVenir, moi.id) : []);
+  $effect(() => { if (param('billet') && aVenir.some((b) => b.id === param('billet'))) memoriserBillet(param('billet')!); });
+  function choisirDansMenu(id: string) { memoriserBillet(id); if (param('billet')) aller(`/pass?billet=${id}`, { remplacer: true }); }
+  type Fenetre = '' | 'horsligne' | 'course' | 'partage' | 'annule' | 'probleme';
+  let fenetre = $state<Fenetre>('');
+  const ouverte = (f: Fenetre) => fenetre === f, ferme = (f: Fenetre) => (v: boolean) => { if (!v && fenetre === f) fenetre = ''; };
+  const fermer = () => (fenetre = '');
   const depart = $derived(choisi ? departParId(choisi.departId) : undefined);
   const ligne = $derived(depart ? ligneDe(depart) : undefined);
   const siege = $derived(ligne && depart && choisi?.siege ? planSieges(ligne.classe, depart.capacite).find((s) => s.id === choisi.siege) : undefined);
@@ -52,9 +71,7 @@
 
 <Mobile titre="Mes billets" sous={`${aVenir.length} à venir · ${passes.length} passé${passes.length > 1 ? 's' : ''}`} sansRetour dock={dockVoyageur('billets')}>
   {#snippet droite()}
-    <a class="ib" href="/pass/hors-ligne{choisi ? `?billet=${choisi.id}` : ''}" aria-label="Mode hors ligne" onclick={(ev) => nav(ev, `/pass/hors-ligne${choisi ? `?billet=${choisi.id}` : ''}`)}>
-      <svg class="ic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9a14 14 0 0 1 8-3.6M21 9a14 14 0 0 0-3.4-2.5M6.5 12.5a9 9 0 0 1 3.5-2M17.5 12.5a9 9 0 0 0-2-1.4M10 16a4 4 0 0 1 4 0M12 19.5h.01M4 4l16 16" /></svg>
-    </a>
+    <button type="button" class="b s sm" onclick={() => (fenetre = 'horsligne')} aria-haspopup="dialog"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9a14 14 0 0 1 8-3.6M21 9a14 14 0 0 0-3.4-2.5M6.5 12.5a9 9 0 0 1 3.5-2M17.5 12.5a9 9 0 0 0-2-1.4M10 16a4 4 0 0 1 4 0M12 19.5h.01M4 4l16 16" /></svg>Sans réseau</button>
   {/snippet}
 
   {#if !choisi}
@@ -74,12 +91,9 @@
     {/each}
   {/if}
 
+  {#if items.length}<SelecteurBillet {items} valeur={choisi?.id} onchoisir={choisirDansMenu} />{/if}
+
   {#if choisi && depart && ligne}
-    {#if aVenir.length > 1}
-      <div class="chips" role="group" aria-label="Billets à venir">
-        {#each aVenir as b (b.id)}<a class="ch" class:on={b.id === choisi.id} aria-current={b.id === choisi.id ? 'true' : undefined} href="/pass?billet={b.id}" onclick={(ev) => nav(ev, `/pass?billet=${b.id}`)}>{departParId(b.departId)!.heure} · {ligneDe(departParId(b.departId)!).vers} · {b.siege ?? '—'}</a>{/each}
-      </div>
-    {/if}
     <!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_noninteractive_element_interactions -->
     <div class="holo" onpointermove={incline} onpointerleave={remise} onpointerup={remise} onkeydown={touche} role="group" tabindex="0" aria-label="Billet holographique {ligne.de} vers {ligne.vers}, {jourSemaineCourt(depart.jour)} à {depart.heure}, place {choisi.siege ?? 'libre'}. Flèches du clavier pour l’incliner.">
       <div class="card" class:off={annule} style="transform: rotateX({rx.toFixed(1)}deg) rotateY({ry.toFixed(1)}deg)">
@@ -100,15 +114,14 @@
     </div>
     <span class="t12 mut3 c">{annule ? 'Ce billet n’est plus valable.' : 'Incline le billet : l’hologramme bouge, preuve qu’il n’est pas une capture d’écran.'}</span>
 
-    <div class="row g8">
-      <a class="b p" href="/direct?depart={depart.id}" onclick={(ev) => nav(ev, `/direct?depart=${depart.id}`)}>Suivre mon bus</a>
-      <a class="b s" href="/course" onclick={(ev) => nav(ev, '/course')}>Moto vers la gare</a>
+    <div class="col g8">
+      <a class="b p" href="/direct?billet={choisi.id}" onclick={(ev) => nav(ev, `/direct?billet=${choisi.id}`)}>Suivre ce bus</a>
+      <button type="button" class="b s" disabled={!actif} aria-haspopup="dialog" onclick={() => (fenetre = 'course')}><Icone nom="moto" taille={20} />Moto-taxi vers la gare</button>
     </div>
     <div class="row g8">
-      <a class="b s sm grow" href="/proche?billet={choisi.id}" onclick={(ev) => nav(ev, `/proche?billet=${choisi.id}`)}>Partager</a>
-      {#if choisi.statut === 'valide'}<a class="b s sm grow" href="/pass/annule?billet={choisi.id}" onclick={(ev) => nav(ev, `/pass/annule?billet=${choisi.id}`)}>Annuler</a>
-      {:else}<button type="button" class="b s sm grow" disabled>Annuler</button>{/if}
-      <a class="b s sm grow" href="/litige?billet={choisi.id}" onclick={(ev) => nav(ev, `/litige?billet=${choisi.id}`)}>Problème</a>
+      <button type="button" class="b s sm grow" aria-haspopup="dialog" onclick={() => (fenetre = 'partage')}>Partager</button>
+      <button type="button" class="b s sm grow" aria-haspopup="dialog" disabled={choisi.statut !== 'valide'} onclick={() => (fenetre = 'annule')}>Annuler</button>
+      <button type="button" class="b s sm grow" aria-haspopup="dialog" onclick={() => (fenetre = 'probleme')}>Problème</button>
     </div>
     <span class="t12 mut3 c">Billet payé {fmtF(choisi.prix)} · {actif ? 'à présenter au quai' : libelleFin(choisi)}</span>
   {/if}
@@ -126,6 +139,12 @@
     {/each}
   {/if}
 </Mobile>
+
+<Feuille bind:ouvert={() => ouverte('horsligne'), ferme('horsligne')} titre="Sans réseau" sous="Ton billet reste valable sans internet" hauteur="haute"><HorsLigneContenu billetId={choisi?.id} onfermer={fermer} /></Feuille>
+<Feuille bind:ouvert={() => ouverte('course'), ferme('course')} titre="Moto-taxi vers la gare" sous={depart && ligne ? `Vers la gare de ${gare(ligne.gareDe)?.nom ?? ''} · bus de ${depart.heure}` : 'Moto ou taxi, au choix'} hauteur="haute"><CourseContenu departId={choisi?.departId} onfermer={fermer} /></Feuille>
+<Feuille bind:ouvert={() => ouverte('partage'), ferme('partage')} titre="Partager mon billet" sous="Le code part, le billet reste à son nom" hauteur="haute">{#if choisi}<PartageContenu billetId={choisi.id} onfermer={fermer} />{/if}</Feuille>
+<Feuille bind:ouvert={() => ouverte('annule'), ferme('annule')} titre="Annuler ce billet" sous="Remboursement : 10 % de frais jusqu’à 2 h avant le départ"><AnnuleContenu billetId={choisi?.id} onfermer={fermer} /></Feuille>
+<Feuille bind:ouvert={() => ouverte('probleme'), ferme('probleme')} titre="Signaler un problème" sous="Réponse sous 2 h" hauteur="haute"><LitigeContenu billetId={choisi?.id} onfermer={fermer} /></Feuille>
 
 <style>
   .holo { flex: none; perspective: 1000px; margin: 0 -4px; touch-action: none; border-radius: 28px; }
@@ -145,5 +164,4 @@
   .tk { flex: none; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 18px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1); text-decoration: none; color: inherit; min-height: 60px; }
   .tk.sel { border-color: #8b7cff; }
   .b:disabled { opacity: 0.45; cursor: not-allowed; }
-  .ch { text-decoration: none; }
 </style>

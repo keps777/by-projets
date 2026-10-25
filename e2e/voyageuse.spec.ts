@@ -79,19 +79,21 @@ test('(b) paiement refusé (numéro en 00) : la place reste gardée, puis réess
 test('(c) annulation : 10 % de frais retenus, place libérée, billet remboursé', async ({ page }) => {
   await ouvrir(page, '/pass', { connecte: 'p-aicha' });
   await expect(page.getByText('AM-7F3K-22')).toBeVisible();
-  await page.getByRole('link', { name: /Annuler/ }).first().click();
-  await expect(page).toHaveURL(/\/pass\/annule\?billet=b-aicha1/);
-  await expect(page.getByText('− 750 F')).toBeVisible();
-  await expect(page.getByText('6 750 F').first()).toBeVisible();
+  await page.getByRole('button', { name: 'Annuler', exact: true }).click(); // fenêtre « Annuler ce billet » sur la page Billets
+  const fenetre = page.getByRole('dialog', { name: 'Annuler ce billet' });
+  await expect(page).toHaveURL(/\/pass(\?|$)/);
+  await expect(fenetre.getByText('− 750 F')).toBeVisible();
+  await expect(fenetre.getByText('6 750 F').first()).toBeVisible();
   const avant = (await lireMonde(page)).billets.find((b) => b.id === 'b-aicha1')!;
   expect(avant.statut).toBe('valide');
-  await page.getByRole('button', { name: 'Confirmer l’annulation' }).click();
-  await expect(page.getByText('6 750 F renvoyés sur MoMo')).toBeVisible();
+  await fenetre.getByRole('button', { name: 'Confirmer l’annulation' }).click();
+  await expect(fenetre.getByText('6 750 F renvoyés sur MoMo')).toBeVisible();
   const m = await lireMonde(page);
   const b = m.billets.find((x) => x.id === 'b-aicha1')!;
   expect(b).toMatchObject({ statut: 'rembourse', rembourse: 6750 });
   expect(m.paiements.find((p) => p.id === b.paiementId)?.statut).toBe('rembourse');
   expect(m.notifications.some((n) => n.destId === 'p-aicha' && n.titre === 'Remboursement envoyé')).toBe(true);
+  await page.keyboard.press('Escape');
   await aller(page, '/pass?billet=b-aicha1');
   await expect(page.getByText('REMBOURSÉ', { exact: true })).toBeVisible();
   expect(await chemin(page)).toBe('/pass?billet=b-aicha1');

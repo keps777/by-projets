@@ -5,7 +5,7 @@ export default [
   { chemin: '/direct/ilot', composant: () => import('./DirectIlot.svelte'), titre: 'Îlot dynamique', roles: ['voyageur'], onglet: 'direct', cadre: 'plein' },
   { chemin: '/direct/retard', composant: () => import('./DirectRetard.svelte'), titre: 'Retard annoncé', roles: ['voyageur'], onglet: 'direct' },
   { chemin: '/reseau', composant: () => import('./Reseau.svelte'), titre: 'Le réseau en direct', roles: ['voyageur'], onglet: 'direct' },
-  { chemin: '/course', composant: () => import('./Course.svelte'), titre: 'Moto ou taxi vers la gare', roles: ['voyageur'], onglet: 'voyager' },
+  { chemin: '/course', composant: () => import('./Course.svelte'), titre: 'Moto-taxi vers la gare', roles: ['voyageur'], onglet: 'voyager' },
   { chemin: '/arret', composant: () => import('./Arret.svelte'), titre: 'Monter en route', roles: ['voyageur'], onglet: 'voyager' },
   { chemin: '/covoit', module: 'covoiturage', composant: () => import('./Covoit.svelte'), titre: 'Covoiturage', roles: ['voyageur'], onglet: 'voyager' },
   { chemin: '/covoit/ville', module: 'covoiturage', composant: () => import('./CovoitVille.svelte'), titre: 'Covoiturage en ville', roles: ['voyageur'], onglet: 'voyager' },

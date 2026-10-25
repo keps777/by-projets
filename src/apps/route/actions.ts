@@ -1,7 +1,10 @@
 // Transactions de l'application « route » (suivi du bus, retard, réseau, course, arrêts, covoiturage) : elles s'appuient sur app.monde et sur les primitives de domain/actions.ts.
 import { meilleureAlternative } from '../../core/alternative.ts';
 import { arretPasse, parcours, prixArret, type Arret } from '../../core/arrets.ts';
-import { attenteMin, ETAPES, MODES, prixCourse, QUARTIERS, trajetMin, type Mode, type MoyenCourse } from '../../core/course.ts';
+import { attenteMin, ETAPES, MODES, prixCourse, trajetMin, type Mode, type MoyenCourse } from '../../core/course.ts';
+import { commissionCourse } from '../../core/courseCommission.ts';
+import { estimerArrivee, flotte } from '../../core/courseFlotte.ts';
+import { kmVersGare, lieuLibre, trouverLieu } from '../../core/lieux.ts';
 import { departOffreMs, erreurOffre, gainConducteur, nomVehicule, placesReservees, placesRestantes, type SaisieOffre } from '../../core/covoit.ts';
 import { jourDe } from '../../core/dates.ts';
 import { gesteRetard } from '../../core/retard.ts';
@@ -9,7 +12,7 @@ import { minutesDepuisMinuit } from '../../core/suivi.ts';
 import { app, maintenant, nouvelId } from '../../data/store.svelte.ts';
 import { annulerBillet, billetParId, billetsDe, consigner, departParId, gare, ligneDe, notifier, personne, placesLibres, reserver } from '../../domain/actions.ts';
 import type { Billet, Depart, OffreCovoit, Paiement } from '../../domain/types.ts';
-import { cagnotteDe, etat, lire, type ChoixRetard, type CourseVoyage, type OptionsCovoit } from './etat.ts';
+import { cagnotteDe, etat, lire, type ChoixRetard, type CommissionDue, type CourseVoyage, type OptionsCovoit } from './etat.ts';
 
 const fr = (n: number) => `${Math.round(n).toLocaleString('fr-FR').replace(/[  ]/g, ' ')} F`;
 const hhmmDe = (ms: number) => new Date(ms).toTimeString().slice(0, 5);
@@ -80,34 +83,49 @@ export function monterEnRoute(departId: string, arretId: string, personneId: str
 
 // ------------------------------------------------------------------ course moto / taxi
 export const courseActive = (personneId: string | null | undefined): CourseVoyage | undefined => (personneId ? lire().courses.find((c) => c.personneId === personneId && c.statut === 'en_cours') : undefined);
-export const kmQuartier = (quartier: string) => QUARTIERS.find((q) => q.nom === quartier)?.km ?? 7;
-export interface DemandeCourse { personneId: string; departId: string; mode: Mode; quartier: string; moyen: MoyenCourse }
+/** Distance (km) d'un lieu à la gare de départ (6 km si le lieu ou la gare est inconnu). */
+export const kmQuartier = (lieu: string, gareId?: string) => (gareId ? kmVersGare(lieu, gareId) : kmVersGare(lieu, 'mvan'));
+export interface DemandeCourse { personneId: string; departId: string; mode: Mode; /** Nom du lieu de prise en charge (liste de `core/lieux.ts` ou saisie libre). */ quartier: string; moyen: MoyenCourse }
+/** Estimation d'arrivée d'un véhicule au lieu de prise en charge, d'après la flotte simulée de la ville de la gare de départ. */
+export function estimationPourLieu(mode: Mode, nomLieu: string, ville: string, instant = maintenant()) {
+  const lieu = trouverLieu(nomLieu, ville) ?? lieuLibre(nomLieu || 'Ma position', ville);
+  return estimerArrivee(mode, lieu, flotte(ville, mode, instant));
+}
+/** Commande une course vers la gare de départ du billet. La commission AfriMove (10 %) est toujours due : retenue sur le paiement (MoMo, Orange Money, cagnotte) ou, en espèces, enregistrée comme due par le conducteur. */
 export function commanderCourse(r: DemandeCourse): CourseVoyage {
   const d = departParId(r.departId); if (!d || d.statut === 'annule' || d.statut === 'arrive' || d.statut === 'parti') throw new Error('depart_ferme');
   if (!MODES.includes(r.mode)) throw new Error('mode_inconnu');
-  if (!QUARTIERS.some((q) => q.nom === r.quartier)) throw new Error('quartier_inconnu');
+  if (!r.quartier.trim()) throw new Error('lieu_inconnu');
   if (courseActive(r.personneId)) throw new Error('course_en_cours');
-  const km = kmQuartier(r.quartier), prix = prixCourse(r.mode, km), e = etat();
+  const l = ligneDe(d), ville = gare(l.gareDe)?.ville ?? l.de, km = kmVersGare(trouverLieu(r.quartier, ville) ?? lieuLibre(r.quartier, ville), l.gareDe), prix = prixCourse(r.mode, km), e = etat();
   if (r.moyen === 'cagnotte') { if ((e.cagnotte[r.personneId] ?? 0) < prix) throw new Error('solde_insuffisant'); e.cagnotte[r.personneId] -= prix; }
-  const l = ligneDe(d), c: CourseVoyage = { id: nouvelId('cs'), personneId: r.personneId, mode: r.mode, quartier: r.quartier, km, gare: `${l.de} · ${gare(l.gareDe)?.nom ?? ''}`, departId: d.id, prix, moyen: r.moyen, etape: 0, statut: 'en_cours', creeLe: maintenant(), majLe: maintenant() };
-  e.courses.unshift(c); consigner('course', `Course ${r.mode} ${r.quartier} → gare · ${fr(prix)}`, r.personneId, c.id);
+  const est = estimationPourLieu(r.mode, r.quartier, ville), commission = commissionCourse(prix), id = nouvelId('cs'), now = maintenant();
+  const c: CourseVoyage = { id, personneId: r.personneId, mode: r.mode, quartier: r.quartier.trim(), km, gare: `${l.de} · ${gare(l.gareDe)?.nom ?? ''}`, departId: d.id, prix, moyen: r.moyen, etape: 0, statut: 'en_cours', creeLe: now, majLe: now,
+    attente: est.arriveeMin ?? attenteMin(r.mode), conducteur: est.plusProche?.nom, commission, commissionMode: r.moyen === 'especes' ? 'due' : 'retenue' };
+  e.courses.unshift(c);
+  if (r.moyen === 'especes') e.commissionsDues.unshift({ id: nouvelId('cd'), courseId: id, conducteur: c.conducteur ?? 'Conducteur', montant: commission, prixCourse: prix, ts: now, majLe: now, statut: 'due' });
+  consigner('course', `Course ${r.mode} ${c.quartier} → gare · ${fr(prix)} · commission ${fr(commission)} ${r.moyen === 'especes' ? 'due par le conducteur' : 'retenue'}`, r.personneId, id);
   return e.courses[0];
 }
+/** Commissions AfriMove dues (pas encore prélevées) par les conducteurs pour des courses payées en espèces. */
+export const commissionsDues = (statut: CommissionDue['statut'] = 'due'): CommissionDue[] => lire().commissionsDues.filter((x) => x.statut === statut);
+export const commissionDeCourse = (courseId: string): CommissionDue | undefined => lire().commissionsDues.find((x) => x.courseId === courseId);
+const majCommission = (courseId: string, statut: CommissionDue['statut']) => { const x = etat().commissionsDues.find((y) => y.courseId === courseId); if (x && x.statut === 'due') { x.statut = statut; x.majLe = maintenant(); } };
 const cours = (id: string) => { const c = etat().courses.find((x) => x.id === id); if (!c) throw new Error('course_inconnue'); return c; };
 export function avancerCourse(id: string): CourseVoyage {
   const c = cours(id); if (c.statut !== 'en_cours') return c;
   if (c.etape < 3) c.etape = (c.etape + 1) as CourseVoyage['etape']; c.majLe = maintenant();
-  if (c.etape === 3) { c.statut = 'terminee'; notifier(c.personneId, 'Course terminée', `Tu es à la gare · ${fr(c.prix)}${c.moyen === 'especes' ? ' à régler en espèces' : ''}`, '/pass', 'course'); }
+  if (c.etape === 3) { c.statut = 'terminee'; majCommission(c.id, 'prelevee'); notifier(c.personneId, 'Course terminée', `Tu es à la gare · ${fr(c.prix)}${c.moyen === 'especes' ? ' à régler en espèces' : ''}`, '/pass', 'course'); }
   return c;
 }
 /** Annulation gratuite tant que le véhicule n'est pas arrivé ; rend le montant payé avec la cagnotte. */
 export function annulerCourse(id: string): CourseVoyage {
   const c = cours(id); if (c.statut !== 'en_cours') return c; if (c.etape > 0) throw new Error('course_commencee');
-  c.statut = 'annulee'; c.majLe = maintenant(); if (c.moyen === 'cagnotte') crediterCagnotte(c.personneId, c.prix);
+  c.statut = 'annulee'; c.majLe = maintenant(); majCommission(c.id, 'annulee'); if (c.moyen === 'cagnotte') crediterCagnotte(c.personneId, c.prix);
   consigner('course', 'Course annulée', c.personneId, c.id); return c;
 }
 export const infoEtape = (c: CourseVoyage) => ETAPES[c.etape];
-export const delaiCourse = (c: CourseVoyage) => (c.etape === 0 ? attenteMin(c.mode) : c.etape === 1 ? trajetMin(c.mode, c.km) : 0);
+export const delaiCourse = (c: CourseVoyage) => (c.etape === 0 ? (c.attente ?? attenteMin(c.mode)) : c.etape === 1 ? trajetMin(c.mode, c.km) : 0);
 
 // ------------------------------------------------------------------ covoiturage
 export const offresInterurbain = (jour?: string) => app.monde.covoits.filter((o) => !o.enVille && o.statut === 'ouverte' && (!jour || o.jour === jour)).sort((a, b) => departOffreMs(a) - departOffreMs(b));

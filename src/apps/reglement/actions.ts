@@ -267,9 +267,9 @@ export function texteBilletPartage(b: Billet, destinataire: string): string {
   }, destinataire);
 }
 /** Partage d'un billet avec un proche : message avec le code, le billet reste au nom du passager. */
-export function partagerBillet(billetId: string, proche: Proche, canal: 'whatsapp' | 'sms' = 'whatsapp'): string {
+export function partagerBillet(billetId: string, proche: Proche, canal: 'whatsapp' | 'sms' = 'whatsapp', texteFourni?: string): string {
   const b = app.monde.billets.find((x) => x.id === billetId); if (!b) throw new Error('billet_inconnu');
-  const texte = texteBilletPartage(b, proche.nom); enregistrerPartage(proche, texte, canal, b.id); return texte;
+  const texte = texteFourni ?? texteBilletPartage(b, proche.nom); enregistrerPartage(proche, texte, canal, b.id); return texte;
 }
 /** Un paiement terminé n'a plus de brouillon : on repart de zéro au prochain choix de place. */
 export function purgerBrouillonTermine() { const e = etat(); const b = e.brouillon; if (b && paiementDe(b)?.statut === 'ok') e.brouillon = null; }

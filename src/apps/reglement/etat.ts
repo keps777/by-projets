@@ -29,7 +29,7 @@ export interface Brouillon {
   /** Utiliser bons de fidélité et cagnotte au paiement (par défaut oui, tant qu'il y en a). */ avantages?: boolean;
 }
 export interface Partage { ts: number; versNom: string; versTel: string; canal: 'whatsapp' | 'sms'; texte: string; billetId?: string }
-export interface EtatReglement { brouillon: Brouillon | null; partages: Partage[]; motifsAnnulation: Record<string, string> }
+export interface EtatReglement { brouillon: Brouillon | null; partages: Partage[]; motifsAnnulation: Record<string, string>; /** Billet choisi dans le sélecteur « Ton bus » (page Billets, repris par /direct). */ billetChoisi?: string | null }
 
 export const etat = (): EtatReglement => tranche<EtatReglement>('reglement', () => ({ brouillon: null, partages: [], motifsAnnulation: {} }));
 
