@@ -1,7 +1,7 @@
 <script lang="ts">
   import { aller } from '../../router.svelte.ts';
   import { jourSemaineCourt, jourCourt } from '../../core/dates.ts';
-  import { filtrer, nbFiltres, plusProche, trancheDevant, type Genre, type Offre } from '../../core/recherche.ts';
+  import { filtrer, plusProche, trancheDevant, type Genre, type Offre } from '../../core/recherche.ts';
   import { fmtF } from '../../core/tarif.ts';
   import { TAILLES } from '../../core/colis.ts';
   import { TAILLES_COLIS, type TailleColis } from '../../core/prixColis.ts';
@@ -12,6 +12,7 @@
   import { dockVoyageur } from '../../ui/dockVoyageur.ts';
   import { ouvrirNotifications } from '../../ui/overlays.svelte.ts';
   import { effacerFiltres, initRecherche } from './etat.ts';
+  import { nbReglages } from './filtres.ts';
   import { etiquette, lienArrets, lienConducteur, lienPlace, lienReserverCovoit, nbAnnules, offresDuJour, prixInsecable } from './offres.ts';
   import LigneOffre from './LigneOffre.svelte';
   import Panorama from './Panorama.svelte';
@@ -62,7 +63,7 @@
   const nbNonLues = $derived(nonLues(personneCourante()?.id));
   const sousSalut = $derived(`${jourSemaineCourt(aujourdhui())} · ${heureLocale(maintenant())}`);
   const quand = $derived(((): string => { const e = (new Date(R.jour + 'T12:00').getTime() - new Date(aujourdhui() + 'T12:00').getTime()) / 86_400_000; return e === 0 ? 'aujourd’hui' : e === 1 ? 'demain' : e === 2 ? 'après-demain' : `le ${jourCourt(R.jour)}`; })());
-  const nf = $derived(nbFiltres(R));
+  const nf = $derived(nbReglages(R));
   const annonce = $derived(`Tranche ${colonnes[devant].h1} – ${colonnes[devant].h2} h : ${colonnes[devant].items.length ? `${colonnes[devant].items.length} départ${colonnes[devant].items.length > 1 ? 's' : ''}, dès ${fmtF(Math.min(...colonnes[devant].items.map((o) => o.prix)))}` : 'aucun départ'}.`);
   const OBJETS: { id: 'personne' | 'colis'; nom: string }[] = [{ id: 'personne', nom: 'Voyage personnel' }, { id: 'colis', nom: 'Colis' }];
   const GENRES: { id: Genre; nom: string }[] = [{ id: 'tout', nom: 'Tout' }, { id: 'bus', nom: 'Bus' }, { id: 'covoit', nom: 'Covoit' }];
