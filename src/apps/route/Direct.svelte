@@ -20,15 +20,17 @@
   import { horloge } from './temps.svelte.ts';
   import { nav } from './nav.ts';
 
+  /** `enFeuille` : le contenu s'affiche dans la grande fenêtre ouverte depuis « Billets » (sans page, sans dock, sans fenêtres imbriquées). */
+  let { enFeuille = false, billetId }: { enFeuille?: boolean; billetId?: string } = $props();
   const h = horloge(10_000);
   let decalage = $state(0), az = $state(0); // minutes de simulation « Simuler l’avance »
   const moi = $derived(personneCourante());
   /** Le bus suivi : celui choisi dans le sélecteur « Ton bus » (le même que sur la page Billets), sinon le prochain billet à suivre. */
   const enCours = $derived(moi ? billetsEnCours(moi.id) : []);
-  const billet = $derived((moi ? billetChoisi(moi.id, param('billet')) : undefined) ?? (moi ? billetASuivre(moi.id, h.ms) : undefined));
+  const billet = $derived((moi ? billetChoisi(moi.id, billetId ?? param('billet')) : undefined) ?? (moi ? billetASuivre(moi.id, h.ms) : undefined));
   const items = $derived(moi ? itemsDe(billet && !enCours.includes(billet) ? [billet, ...enCours] : enCours, moi.id) : []);
-  $effect(() => { if (param('billet') && enCours.some((b) => b.id === param('billet'))) memoriserBillet(param('billet')!); });
-  function choisirDansMenu(id: string) { memoriserBillet(id); decalage = 0; if (param('billet')) aller(`/direct?billet=${id}`, { remplacer: true }); }
+  $effect(() => { const id = billetId ?? param('billet'); if (id && enCours.some((b) => b.id === id)) memoriserBillet(id); });
+  function choisirDansMenu(id: string) { memoriserBillet(id); decalage = 0; if (!enFeuille && param('billet')) aller(`/direct?billet=${id}`, { remplacer: true }); }
   let fenetre = $state<'' | 'course' | 'partage' | 'probleme'>('');
   const ouverte = (f: typeof fenetre) => fenetre === f, ferme = (f: typeof fenetre) => (v: boolean) => { if (!v && fenetre === f) fenetre = ''; };
   const fermer = () => (fenetre = '');
@@ -60,12 +62,7 @@
   function lever() { if (d && moi) { leverRetard(d.id, moi.id); montrer('Le bus repart à l’heure'); } }
 </script>
 
-<Mobile titre="Ton bus" sous={ligne && d ? `${compagnieDe(d).nom} · ${ligne.de} → ${ligne.vers}` : 'Suivi en direct'} sansRetour dock={dockVoyageur('direct')}>
-  {#snippet droite()}
-    {#if d && d.retardMin > 0}<a class="pl wa" href="/direct/retard" use:nav><span class="dot"></span>+{d.retardMin} min</a>
-    {:else if d}<span class="pl ok"><span class="dot"></span>à l’heure</span>{/if}
-  {/snippet}
-
+{#snippet corps()}
   {#if !billet || !d || !ligne || !est}
     <div class="center">
       <div class="ill" aria-hidden="true"><Icone nom="direct" taille={64} trait={1.6} /></div>
@@ -113,9 +110,9 @@
     <div class="row g8 wrapf">
       <button type="button" class="b s sm grow" onclick={avancer}>Simuler l’avance</button>
       <a class="b s sm grow" href="/direct/ilot" use:nav>Voir l’îlot</a>
-      <button type="button" class="b s sm grow" aria-haspopup="dialog" onclick={() => (fenetre = 'partage')}>Partager</button>
+      {#if !enFeuille}<button type="button" class="b s sm grow" aria-haspopup="dialog" onclick={() => (fenetre = 'partage')}>Partager</button>{/if}
     </div>
-    <button type="button" class="b s" aria-haspopup="dialog" onclick={() => (fenetre = 'course')}><Icone nom="moto" taille={20} />Moto-taxi vers la gare</button>
+    {#if !enFeuille}<button type="button" class="b s" aria-haspopup="dialog" onclick={() => (fenetre = 'course')}><Icone nom="moto" taille={20} />Moto-taxi vers la gare</button>{/if}
 
     <span class="lab">Étapes</span>
     <div class="gl">
@@ -132,13 +129,27 @@
       {#if d.retardMin > 0}<button type="button" class="b s sm" onclick={lever}>Retirer le retard</button>
       {:else}<button type="button" class="b s sm" onclick={annoncer} disabled={phase === 'arrive'}>Annoncer un retard de 45 min</button>{/if}
     </div>
-    <button type="button" class="b g" aria-haspopup="dialog" onclick={() => (fenetre = 'probleme')}>Un souci à bord ? Signaler</button>
+    {#if !enFeuille}<button type="button" class="b g" aria-haspopup="dialog" onclick={() => (fenetre = 'probleme')}>Un souci à bord ? Signaler</button>{/if}
   {/if}
-</Mobile>
+{/snippet}
 
+{#if enFeuille}
+  <div class="col g12 direct-feuille">{@render corps()}</div>
+{:else}
+<Mobile titre="Ton bus" sous={ligne && d ? `${compagnieDe(d).nom} · ${ligne.de} → ${ligne.vers}` : 'Suivi en direct'} sansRetour dock={dockVoyageur('billets')}>
+  {#snippet droite()}
+    {#if d && d.retardMin > 0}<a class="pl wa" href="/direct/retard" use:nav><span class="dot"></span>+{d.retardMin} min</a>
+    {:else if d}<span class="pl ok"><span class="dot"></span>à l’heure</span>{/if}
+  {/snippet}
+  {@render corps()}
+</Mobile>
+{/if}
+
+{#if !enFeuille}
 <Feuille bind:ouvert={() => ouverte('course'), ferme('course')} titre="Moto-taxi vers la gare" sous={d && ligne ? `Vers la gare de ${gare(ligne.gareDe)?.nom ?? ''} · bus de ${d.heure}` : 'Moto ou taxi, au choix'} hauteur="haute"><CourseContenu departId={d?.id} onfermer={fermer} /></Feuille>
 <Feuille bind:ouvert={() => ouverte('partage'), ferme('partage')} titre="Partager mon billet" sous="Le code part, le billet reste à son nom" hauteur="haute">{#if billet}<PartageContenu billetId={billet.id} onfermer={fermer} />{/if}</Feuille>
 <Feuille bind:ouvert={() => ouverte('probleme'), ferme('probleme')} titre="Signaler un problème" sous="Réponse sous 2 h" hauteur="haute"><LitigeContenu billetId={billet?.id} onfermer={fermer} /></Feuille>
+{/if}
 
 <style>
   .tag { padding: 4px 8px; border-radius: 999px; background: rgba(5, 7, 13, 0.85); border: 1px solid rgba(255, 255, 255, 0.2); font: 600 11px 'Geist Mono', monospace; white-space: nowrap; margin-top: -6px; }

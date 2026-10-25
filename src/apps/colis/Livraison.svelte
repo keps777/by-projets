@@ -33,7 +33,7 @@
   const labelSuite = $derived(etape >= 2 ? `Simuler la remise · ${prenomDest} donne son code` : 'Simuler l’étape suivante');
 </script>
 
-<Mobile titre="Livraison moto" sous={c ? `Colis ${c.code} · vers ${prenomDest}, ${quartier}` : 'Aucune livraison'} retourVers={c ? `/colis/suivi?colis=${c.id}` : '/colis/suivi'} dock={dockVoyageur('direct')}>
+<Mobile titre="Livraison moto" sous={c ? `Colis ${c.code} · vers ${prenomDest}, ${quartier}` : 'Aucune livraison'} retourVers={c ? `/colis/suivi?colis=${c.id}` : '/colis/suivi'} dock={dockVoyageur('billets')}>
   {#snippet droite()}{#if c}<span class="pl {ton}" role="status"><span class="dot"></span>{pilule}</span>{/if}{/snippet}
 
   {#if !c}

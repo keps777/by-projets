@@ -3,6 +3,7 @@
   import { aller, param } from '../../router.svelte.ts';
   import Mobile from '../../ui/Mobile.svelte';
   import Feuille from '../../ui/Feuille.svelte';
+  import DirectFeuille from '../route/DirectFeuille.svelte';
   import Icone from '../../ui/Icone.svelte';
   import Qr from '../../ui/Qr.svelte';
   import { dockVoyageur } from '../../ui/dockVoyageur.ts';
@@ -42,7 +43,7 @@
   const items = $derived(moi ? itemsDe(choisi && !aVenir.includes(choisi) ? [choisi, ...aVenir] : aVenir, moi.id) : []);
   $effect(() => { if (param('billet') && aVenir.some((b) => b.id === param('billet'))) memoriserBillet(param('billet')!); });
   function choisirDansMenu(id: string) { memoriserBillet(id); if (param('billet')) aller(`/pass?billet=${id}`, { remplacer: true }); }
-  type Fenetre = '' | 'horsligne' | 'course' | 'partage' | 'annule' | 'probleme';
+  type Fenetre = '' | 'direct' | 'horsligne' | 'course' | 'partage' | 'annule' | 'probleme';
   let fenetre = $state<Fenetre>('');
   const ouverte = (f: Fenetre) => fenetre === f, ferme = (f: Fenetre) => (v: boolean) => { if (!v && fenetre === f) fenetre = ''; };
   const fermer = () => (fenetre = '');
@@ -113,7 +114,7 @@
       </div>
     </div>
     <div class="actions" role="group" aria-label="Actions sur ce billet">
-      <a class="b p suivre" href="/direct?billet={choisi.id}" onclick={(ev) => nav(ev, `/direct?billet=${choisi.id}`)}>Suivre ce bus</a>
+      <button type="button" class="b p suivre" aria-haspopup="dialog" onclick={() => (fenetre = 'direct')}>Suivre ce bus</button>
       <button type="button" class="b s sm" disabled={!actif} aria-haspopup="dialog" onclick={() => (fenetre = 'course')}><Icone nom="moto" taille={18} />Moto-taxi vers la gare</button>
       <button type="button" class="b s sm" aria-haspopup="dialog" onclick={() => (fenetre = 'partage')}>Partager</button>
       <button type="button" class="b s sm" aria-haspopup="dialog" disabled={choisi.statut !== 'valide'} onclick={() => (fenetre = 'annule')}>Annuler</button>
@@ -136,6 +137,7 @@
   {/if}
 </Mobile>
 
+<DirectFeuille bind:ouvert={() => ouverte('direct'), ferme('direct')} billetId={choisi?.id} />
 <Feuille bind:ouvert={() => ouverte('horsligne'), ferme('horsligne')} titre="Sans réseau" sous="Ton billet reste valable sans internet" hauteur="haute"><HorsLigneContenu billetId={choisi?.id} onfermer={fermer} /></Feuille>
 <Feuille bind:ouvert={() => ouverte('course'), ferme('course')} titre="Moto-taxi vers la gare" sous={depart && ligne ? `Vers la gare de ${gare(ligne.gareDe)?.nom ?? ''} · bus de ${depart.heure}` : 'Moto ou taxi, au choix'} hauteur="haute"><CourseContenu departId={choisi?.departId} onfermer={fermer} /></Feuille>
 <Feuille bind:ouvert={() => ouverte('partage'), ferme('partage')} titre="Partager mon billet" sous="Le code part, le billet reste à son nom" hauteur="haute">{#if choisi}<PartageContenu billetId={choisi.id} onfermer={fermer} />{/if}</Feuille>

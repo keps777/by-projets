@@ -32,7 +32,7 @@
   }
 </script>
 
-<Mobile titre="Le réseau" sous={sous} retourVers="/" dock={dockVoyageur('direct')}>
+<Mobile titre="Le réseau" sous={sous} retourVers="/" dock={dockVoyageur('voyager')}>
   {#snippet droite()}<span class="pl ok"><span class="dot"></span>live</span>{/snippet}
 
   <Relief label="Carte du réseau en relief : {bus.length} bus en route. Glisse pour tourner." bind:az hauteur={270} echelle={1.3} incl={52}>

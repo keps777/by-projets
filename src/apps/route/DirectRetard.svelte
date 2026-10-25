@@ -52,7 +52,7 @@
   }
 </script>
 
-<Mobile titre="Retard annoncé" retourVers="/direct" dock={dockVoyageur('direct')}>
+<Mobile titre="Retard annoncé" retourVers="/direct" dock={dockVoyageur('billets')}>
   {#snippet droite()}{#if d && d.retardMin > 0}<span class="pl wa"><span class="dot"></span>+{d.retardMin} min</span>{/if}{/snippet}
 
   {#if !billet || !d || !ligne}

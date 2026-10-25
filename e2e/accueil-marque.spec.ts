@@ -4,11 +4,11 @@ import { aller, expect, ouvrir, test } from './aide';
 
 test.describe('dock', () => {
   for (const largeur of [320, 390]) {
-    test(`six positions qui tiennent à ${largeur} px, orbe hors de la pastille`, async ({ page }) => {
+    test(`cinq positions qui tiennent à ${largeur} px, orbe hors de la pastille`, async ({ page }) => {
       await page.setViewportSize({ width: largeur, height: 740 });
       await ouvrir(page, '/', { connecte: 'p-aicha' });
       const dock = page.getByRole('navigation', { name: 'Navigation principale' });
-      await expect(dock.getByRole('link')).toHaveCount(6);
+      await expect(dock.getByRole('link')).toHaveCount(5);
       const boite = (await dock.boundingBox())!;
       for (const l of await dock.getByRole('link').all()) {
         const b = (await l.boundingBox())!;
@@ -140,7 +140,7 @@ test.describe('bandeau d’actions', () => {
   test('?bandeau=anime : il défile en continu, copie masquée aux lecteurs d’écran, pause au toucher', async ({ page }) => {
     await ouvrir(page, '/?bandeau=anime', { connecte: 'p-aicha' });
     const piste = page.locator('.bandeau .piste');
-    await expect(page.locator('.bandeau .moitie[aria-hidden="true"]')).toHaveCount(1);
+    await expect(page.locator('.bandeau .moitie[aria-hidden="true"]')).toHaveCount(2);
     const pos = () => piste.evaluate((n) => new DOMMatrixReadOnly(getComputedStyle(n).transform).m41);
     const a = await pos(); await page.waitForTimeout(500); const b = await pos();
     expect(b).toBeLessThan(a);

@@ -304,18 +304,20 @@ test.describe('Ton bus : sélecteur de billet', () => {
     expect((await lireEtat(page)).tranches.reglement.billetChoisi).toBe('b-marie');
     await page.reload();
     await expect(page.getByRole('group', { name: /Billet holographique/ })).toContainText('AM-9K2P-47'); // repris après rechargement
-    // /direct suit le bus choisi (même sélecteur en haut de l'écran)
-    await page.getByRole('link', { name: 'Suivre ce bus' }).click();
-    await expect(page).toHaveURL(/\/direct\?billet=b-marie/);
-    const sel = page.getByRole('combobox', { name: /Bus suivi/ });
+    // « Suivre ce bus » ouvre le direct du bus choisi dans une grande fenêtre (même sélecteur en haut)
+    await page.getByRole('button', { name: 'Suivre ce bus' }).click();
+    const direct = page.getByRole('dialog', { name: /Ton bus en direct/ });
+    await expect(direct).toBeVisible();
+    await expect(page).toHaveURL(/\/pass/);
+    const sel = direct.getByRole('combobox', { name: /Bus suivi/ });
     await expect(sel).toContainText('Marie');
-    await expect(page.getByText('AM-9K2P-47').or(page.getByText('AM9K2P47'))).toBeVisible();
+    await expect(direct.getByText('AM-9K2P-47').or(direct.getByText('AM9K2P47'))).toBeVisible();
     await shot(page, 'direct-selecteur');
     await sel.click(); await page.getByRole('option', { name: /Toi/ }).click();
-    await expect(page.getByText('AM7F3K22')).toBeVisible();
+    await expect(direct.getByText('AM7F3K22')).toBeVisible();
     expect((await lireEtat(page)).tranches.reglement.billetChoisi).toBe('b-aicha1');
-    await page.evaluate(() => { history.pushState({}, '', '/pass'); dispatchEvent(new PopStateEvent('popstate')); });
-    await expect(page.getByRole('group', { name: /Billet holographique/ })).toContainText('AM-7F3K-22'); // /pass reprend le choix fait dans /direct
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('group', { name: /Billet holographique/ })).toContainText('AM-7F3K-22'); // /pass reprend le choix fait dans le direct
   });
 
   test('un seul billet : pas de menu inutile ; aucun billet : pas de sélecteur', async ({ page }) => {

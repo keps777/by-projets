@@ -11,7 +11,7 @@ export interface Route {
   /** Rôles autorisés ; absent = public. Un rôle absent de la liste est redirigé vers /entree. */
   roles?: Role[];
   /** Onglet du dock voyageur à surligner (barre du bas). */
-  onglet?: 'voyager' | 'covoit' | 'billets' | 'direct' | 'moi';
+  onglet?: 'voyager' | 'covoit' | 'billets' | 'moi';
   titre: string;
   /** Module du patron (Modules) dont dépend l'écran : s'il est désactivé, l'écran est remplacé par « Service désactivé ». */
   module?: string;

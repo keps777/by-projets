@@ -5,7 +5,7 @@ export default [
   { chemin: '/colis/envoi', module: 'colis', composant: () => import('./Envoi.svelte'), titre: 'Envoyer un colis', roles: ['voyageur'], onglet: 'voyager' },
   { chemin: '/colis/suivi', module: 'colis', composant: () => import('./Suivi.svelte'), titre: 'Mon colis', roles: ['voyageur'], onglet: 'billets' },
   { chemin: '/relais', module: 'relais', composant: () => import('./Relais.svelte'), titre: 'Points relais', roles: ['voyageur', 'relais', 'livreur'], onglet: 'voyager' },
-  { chemin: '/livraison', module: 'moto', composant: () => import('./Livraison.svelte'), titre: 'Livraison moto', roles: ['voyageur'], onglet: 'direct' },
+  { chemin: '/livraison', module: 'moto', composant: () => import('./Livraison.svelte'), titre: 'Livraison moto', roles: ['voyageur'], onglet: 'billets' },
   { chemin: '/relais/devenir', module: 'relais', composant: () => import('./RelaisDevenir.svelte'), titre: 'Devenir point relais', roles: ['voyageur'], onglet: 'moi' },
   { chemin: '/relais/inscription', module: 'relais', composant: () => import('./RelaisInscription.svelte'), titre: 'Fiche point relais', roles: ['voyageur', 'relais'], onglet: 'moi' },
   { chemin: '/livreur/devenir', composant: () => import('./LivreurDevenir.svelte'), titre: 'Devenir livreur moto', roles: ['voyageur', 'livreur'], onglet: 'moi' },
