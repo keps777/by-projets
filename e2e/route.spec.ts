@@ -67,6 +67,8 @@ test('Réseau : bus en route sur la carte, filtre par compagnie', async ({ page 
 test('Course : commander une moto et la suivre jusqu’à la gare', async ({ page }) => {
   await entrer(page);
   await aller(page, '/course', '2026-11-03T07:00');
+  await page.getByRole('combobox', { name: 'Je pars de' }).fill('bas');
+  await page.getByRole('option', { name: /^Bastos/ }).click();
   await page.getByRole('button', { name: /^Commander/ }).click();
   await expect(page.getByText('Moto en route').first()).toBeVisible();
   for (const t of ['Moto arrivée', 'Vers la gare', 'Arrivée à la gare']) { await page.getByRole('button', { name: /Simuler l’étape suivante/ }).click(); await expect(page.getByText(t).first()).toBeVisible(); }
