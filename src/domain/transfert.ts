@@ -104,6 +104,9 @@ export function delaiHM(ms: number): string {
 }
 
 // ─── Le transfert ───
+/** Le message reçu par le proche : « Alex T. vous a transféré YUL → CDG. Nommez le voyageur avant le 13 déc. 18:05. » ; `msAvertissement` : le temps qui reste si l'échéance est proche. */
+export const messageRecu = (deNom: string, trajet: string, echeance: number, msAvertissement?: number): string =>
+  `${deNom} vous a transféré ${trajet}. Nommez le voyageur avant le ${jourHeure(echeance)}.${msAvertissement !== undefined ? ` Échéance proche : il reste ${delaiHM(msAvertissement)}.` : ''}`;
 /** Transfère le droit de `deId` à `versId`, sans vente : chaîne « transfert », statut du droit inchangé pour le nouveau détenteur, Transfert enregistré, notifications aux deux, frais éventuels au solde de l'expéditeur. */
 export function transferer(droitId: string, deId: string, versId: string): Transfert {
   const de = compteDe(deId), vers = compteDe(versId);
@@ -115,15 +118,14 @@ export function transferer(droitId: string, deId: string, versId: string): Trans
   if (!f.ok) throw new ErreurTransfert(f.motif === 'echeance' ? 'echeance' : 'droit', f.raison ?? RAISONS.autre);
   if (!recevable(vers)) throw new ErreurTransfert('destinataire', 'Ce proche n’a pas de compte NexG-TT actif : le droit ne peut pas lui être transféré.');
   const frais = fraisTransfert(); if (frais > 0 && de.solde < frais) throw new ErreurTransfert('solde', 'Solde NexG insuffisant pour les frais de transfert.');
-  const quand = maintenant(); const trajet = `${v.de} → ${v.vers}`; const ech = jourHeure(f.echeance);
+  const quand = maintenant(); const trajet = `${v.de} → ${v.vers}`;
   if (frais > 0) ecrire(deId, 'transfert', `Frais de transfert ${trajet}`, -frais, { sous: `Vol ${v.numero} · à ${nomCourt(vers)}`, droitId: d.id, hypothese: true });
   const m: Maillon = { id: nouvelId('m'), quand, type: 'transfert', de: deId, vers: versId, prix: 0, note: 'Transfert sans vente' };
   d.chaine.push(m); d.detenteurId = versId; d.statut = 'detenu'; d.origine = 'transfert'; delete d.annonce;
   const t: Transfert = { id: nouvelId('t'), droitId, de: deId, vers: versId, quand, statut: 'fait', ...(f.avertissement ? { note: 'Échéance proche' } : {}) };
   app.monde.transferts.push(t);
   if (!de.proches.includes(versId)) de.proches.push(versId);
-  const court = f.avertissement ? ` Échéance proche : il reste ${delaiHM(f.msRestant)}.` : '';
-  notifier(versId, { type: 'transfert', titre: 'Droit de voyage reçu', sous: `${nomCourt(de)} vous a transféré ${trajet}. Nommez le voyageur avant le ${ech}.${court}`, essentielle: true, lien: `/droit/${d.id}` });
+  notifier(versId, { type: 'transfert', titre: 'Droit de voyage reçu', sous: messageRecu(nomCourt(de), trajet, f.echeance, f.avertissement ? f.msRestant : undefined), essentielle: true, lien: `/droit/${d.id}` });
   notifier(deId, { type: 'transfert', titre: `Droit transféré à ${nomCourt(vers)}`, sous: `${trajet} · vol ${v.numero} · statut « Cédé ».`, essentielle: true, lien: '/portefeuille' });
   return t;
 }
