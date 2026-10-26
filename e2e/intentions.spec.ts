@@ -91,7 +91,7 @@ test.describe('réserver les fonds', () => {
     await page.locator('#src-balance').check(); await expect(page.getByText(/sont mis de côté sur votre solde NexG/)).toBeVisible();
     await page.getByLabel(/Je comprends/).check(); await bouton(page, /Confirmer la réservation/).click(); await expect.poll(() => chemin(page)).toBe('/intentions');
     let e = await lireEtat(page); expect(e.monde.comptes.find((c) => c.id === ALEX)).toMatchObject({ solde: 1700, enAttente: 1300 });
-    await page.getByRole('button', { name: 'Retirer cette intention' }).first().click(); await bouton(page, 'Retirer (démo)').click(); await expect(page.getByText(/Intention retirée · 1 300 \$ libérés/)).toBeVisible();
+    await page.getByRole('button', { name: 'Retirer cette intention' }).first().click(); await bouton(page, 'Retirer (démo)').click(); await expect(page.getByText(/Intention retirée · 1\s300\s\$ libérés/)).toBeVisible();
     e = await lireEtat(page); expect(e.monde.comptes.find((c) => c.id === ALEX)).toMatchObject({ solde: 3000, enAttente: 0 }); expect(e.monde.ecritures.filter((x) => x.type === 'fonds_reserves').map((x) => x.montant)).toEqual([-1300, 1300]);
   });
   test('sans brouillon, on revient à « Dites votre prix »', async ({ page }) => {
@@ -176,7 +176,7 @@ test.describe('une proposition reçue', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Proposition reçue' })).toBeVisible(); await expect(page.getByText('Nordelle · Vol 224')).toBeVisible();
     await expect(page.getByText('Vendredi 18 décembre 2026 · dans votre fenêtre 15–20 déc.')).toBeVisible(); await expect(page.getByText('+80 $ vs votre max')).toBeVisible();
     await expect(page.getByRole('timer')).toHaveText(/^2[45]:\d\d:\d\d$/); await expect(page.getByText('Le vendeur s’est engagé 48 h.')).toBeVisible();
-    await expect(page.getByText('+80 $ (+6 %)')).toBeVisible(); await expect(page.getByText('−27 %')).toBeVisible(); await expect(page.getByText(/la différence \(80 \$\) est débitée en plus des fonds réservés/)).toBeVisible();
+    await expect(page.getByText('+80 $ (+6 %)')).toBeVisible(); await expect(page.getByText('−27 %')).toBeVisible(); await expect(page.getByText(/la différence \(80\s\$\) est débitée en plus des fonds réservés/)).toBeVisible();
     await expect(page.getByText('Détenteur vérifié · « P. »')).toBeVisible(); await expect(page.getByText('1er détenteur de ce billet · identité vérifiée par NexG-TT')).toBeVisible();
     await expect(bouton(page, /^Accepter 1 380 \$ \(démo\)/)).toBeVisible(); await expect(bouton(page, 'Contre-proposer')).toBeVisible(); await expect(bouton(page, 'Refuser cette proposition')).toBeVisible();
     await page.screenshot({ path: `${CAPTURES}/intentions-4.png`, fullPage: true });
@@ -186,7 +186,7 @@ test.describe('une proposition reçue', () => {
     await bouton(page, 'Contre-proposer').click(); const c = page.locator('#counter-range'); await expect(c).toHaveAttribute('min', '1300'); await expect(c).toHaveAttribute('max', '1380'); await expect(c).toHaveValue('1340');
     await expect(page.getByText('−40 $ vs proposition')).toBeVisible(); await c.fill('1350'); await expect(page.getByRole('region').or(page.locator('section')).filter({ hasText: 'Contre-proposer' }).first()).toContainText('1 350 $');
     await page.screenshot({ path: `${CAPTURES}/intentions-4b.png`, fullPage: true });
-    await bouton(page, /^Envoyer/).click(); await expect(page.getByRole('status').filter({ hasText: 'Contre-proposition de 1 350 $ envoyée.' })).toBeVisible(); await expect(page.getByText(/Vous pouvez toujours accepter 1 380 \$/)).toBeVisible();
+    await bouton(page, /^Envoyer/).click(); await expect(page.getByRole('status').filter({ hasText: 'Contre-proposition de 1 350 $ envoyée.' })).toBeVisible(); await expect(page.getByText(/Vous pouvez toujours accepter 1\s380\s\$/)).toBeVisible();
     await expect(bouton(page, 'Modifier ma contre-proposition')).toBeVisible(); await expect(bouton(page, /^Accepter 1 380/)).toBeVisible();
     expect(((await lireEtat(page)).tranches.intentions as { contres: { propositionId: string; prix: number }[] }).contres).toMatchObject([{ propositionId: 'p-2', prix: 1350 }]);
   });

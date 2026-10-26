@@ -95,7 +95,7 @@ test.describe('Rechercher', () => {
     await page.locator('#to').fill('Atlantide'); await page.locator('#from').click(); await go.click();
     await expect(page.getByRole('alert').filter({ hasText: 'Choisissez un aéroport dans la liste.' })).toBeVisible();
     // l'erreur disparaît dès qu'on corrige
-    await page.locator('#to').fill('Rome'); await page.getByRole('option', { name: /Rome \(FCO\)/ }).click(); await expect(page.getByRole('alert')).toHaveCount(0);
+    await page.locator('#to').click(); await page.locator('#to').fill('Rome'); await page.getByRole('option', { name: /Rome \(FCO\)/ }).click(); await expect(page.getByRole('alert')).toHaveCount(0);
     // aller-retour sans date de retour
     await page.getByRole('button', { name: 'Aller-retour' }).click(); await expect(page.locator('#date-back')).toBeVisible(); await go.click();
     await expect(page.getByRole('alert').filter({ hasText: 'Choisissez la date de retour.' })).toBeVisible(); await expect(page.locator('#date-back')).toBeFocused();
