@@ -7,7 +7,9 @@
   import { compagnieDe, totalAPayer, volDe } from '../../domain/marche.ts';
   import { droitDuCompte } from './actions.ts';
   import { chronologie, statutVoyage } from './chrono.ts';
-  import { heure, jourComplet, jourMoisHeure } from './dates.ts';
+  import { heure, jourComplet, jourMoisAHeure, jourMoisHeure } from './dates.ts';
+  import { ecran } from './ecranPc.svelte.ts';
+  import { reseau } from './reseau.svelte.ts';
   import Introuvable from './Introuvable.svelte';
   import { naviguer } from './lien.ts';
 
@@ -26,15 +28,42 @@
 {:else if !droit || !vol || !ch}
   <Introuvable titre="Droit introuvable" message="Ce droit de voyage n’est pas dans votre portefeuille." lien="/portefeuille" libelleLien="Voir mon portefeuille" retour="/" />
 {:else}
-  <Ecran titre="Confirmation" face="jour" retour="/">
-    <section class="hero" aria-labelledby="conf-t">
-      <span class="halo" aria-hidden="true"><span class="coche"><Icone nom="ok" taille={44} trait={2.5} /></span></span>
-      <h1 id="conf-t" class="t-conf">Vous détenez ce droit de voyage</h1>
-      <p class="sous" role="status">Paiement de démonstration accepté — aucun débit réel.</p>
+  {#snippet pied()}
+    <a class="btn" href="/portefeuille" onclick={(e) => naviguer(e, '/portefeuille')}><Icone nom="portefeuille" taille={20} />Voir mon portefeuille</a>
+    {#if !nomme && ch.ouvert}<a class="btn sec" href="/nommer/{droit.id}" onclick={(e) => naviguer(e, `/nommer/${droit.id}`)}><Icone nom="piece" taille={20} />Nommer le voyageur maintenant</a>
+    {:else}<a class="btn sec" href="/voyage/{droit.id}" onclick={(e) => naviguer(e, `/voyage/${droit.id}`)}><Icone nom="avion" taille={20} />Voir mon voyage</a>{/if}
+  {/snippet}
+
+  {#snippet suite()}
+    <section class="suite" aria-labelledby="act-t">
+      <h2 id="act-t" class="t-h2">Et ensuite</h2>
+      <p class="suite-p">Votre droit de voyage est dans votre portefeuille. L’échéance pour nommer le voyageur est le {jourMoisAHeure(ch.echeance)}.</p>
+      <a class="btn" href="/portefeuille" onclick={(e) => naviguer(e, '/portefeuille')}>Voir mon portefeuille<Icone nom="portefeuille" taille={20} /></a>
+      {#if !nomme && ch.ouvert}
+        {#if reseau.enLigne}<a class="btn sec" href="/nommer/{droit.id}" onclick={(e) => naviguer(e, `/nommer/${droit.id}`)}><Icone nom="piece" taille={20} />Nommer le voyageur maintenant</a>
+        {:else}<span class="btn sec" role="link" aria-disabled="true" aria-describedby="msg-hors-ligne"><Icone nom="piece" taille={20} />Nommer le voyageur maintenant</span>{/if}
+        <a class="lien-suite" href="/voyage/{droit.id}" onclick={(e) => naviguer(e, `/voyage/${droit.id}`)}>Voir mon prochain voyage<Icone nom="suivant" taille={18} trait={2} /></a>
+      {:else}
+        <a class="btn sec" href="/voyage/{droit.id}" onclick={(e) => naviguer(e, `/voyage/${droit.id}`)}><Icone nom="avion" taille={20} />Voir mon voyage</a>
+      {/if}
+    </section>
+  {/snippet}
+
+  <Ecran titre={ecran.pc ? undefined : 'Confirmation'} face="jour" retour="/" onglet={ecran.pc ? 'rechercher' : undefined} large pied={ecran.pc ? undefined : pied}>
+    {#if ecran.pc}
+      {#if !reseau.enLigne}<div class="hors" id="msg-hors-ligne" role="status"><Icone nom="hors_ligne" taille={22} /><span class="al-t"><strong>Hors ligne</strong><span>Cette confirmation reste affichée. Nommer le voyageur demande le réseau.</span></span></div>{/if}
+      <div class="demo" role="note"><Icone nom="info" taille={18} trait={2} />MODE DÉMO — aucun paiement réel</div>
+    {/if}
+    <section class="hero" class:pcx={ecran.pc} aria-labelledby="conf-t">
+      <span class="halo" aria-hidden="true"><span class="coche"><Icone nom="ok" taille={ecran.pc ? 28 : 44} trait={2.5} /></span></span>
+      <div class="ht"><h1 id="conf-t" class="t-conf">Vous détenez ce droit de voyage</h1>
+      <p class="sous" role="status">Paiement de démonstration accepté — aucun débit réel.</p></div>
     </section>
 
-    <section class="billet" aria-label="Votre billet {vol.de} → {vol.vers}">
+    <div class="grille" class:pcx={ecran.pc}><div class="gauche">
+    <section class="billet" class:pcx={ecran.pc} aria-label="Votre billet {vol.de} → {vol.vers}">
       <div class="haut">
+        {#if ecran.pc}<span class="etiq-t">Votre billet</span>{/if}
         <div class="trajet"><span class="code">{vol.de}</span>
           <span class="fil" aria-hidden="true"><span class="pointille"></span><Icone nom="avion" taille={18} /><span class="pointille"></span></span>
           <span class="code">{vol.vers}</span></div>
@@ -51,20 +80,18 @@
       </div>
     </section>
 
-    <section aria-labelledby="suite-t" class="col g12">
+    <section aria-labelledby="suite-t" class="col g12 maintenant" class:pcx={ecran.pc}>
       <h2 id="suite-t" class="t-h2">Et maintenant</h2>
       <ol class="etapes liste-plain">
-        <li><span class="num on" aria-hidden="true">1</span><span class="tx"><span class="t1">Gardez-le, revendez-le ou transférez-le</span><span class="t-sec">Depuis votre portefeuille, jusqu’au {jourMoisHeure(ch.echeance)}.</span></span></li>
-        <li><span class="num" aria-hidden="true">2</span><span class="tx"><span class="t1">Nommez le voyageur au plus tard à J-1</span><span class="t-sec">Vous ou un proche.</span></span></li>
+        <li><span class="num" class:on={!ecran.pc} aria-hidden="true">1</span><span class="tx"><span class="t1">Gardez-le, revendez-le ou transférez-le</span><span class="t-sec">Depuis votre portefeuille, jusqu’au {jourMoisHeure(ch.echeance)}.</span></span></li>
+        <li><span class="num" class:on={ecran.pc} aria-hidden="true">2</span><span class="tx"><span class="t1">Nommez le voyageur au plus tard à J-1</span><span class="t-sec">Vous ou un proche.{ecran.pc ? ' À l’échéance, sans action de votre part, le détenteur est nommé voyageur par défaut.' : ''}</span></span></li>
         <li><span class="num" aria-hidden="true">3</span><span class="tx"><span class="t1">La compagnie émet le billet nominatif</span><span class="t-sec">Il apparaît dans votre portefeuille, prêt à voyager.</span></span></li>
       </ol>
     </section>
 
-    {#snippet pied()}
-      <a class="btn" href="/portefeuille" onclick={(e) => naviguer(e, '/portefeuille')}><Icone nom="portefeuille" taille={20} />Voir mon portefeuille</a>
-      {#if !nomme && ch.ouvert}<a class="btn sec" href="/nommer/{droit.id}" onclick={(e) => naviguer(e, `/nommer/${droit.id}`)}><Icone nom="piece" taille={20} />Nommer le voyageur maintenant</a>
-      {:else}<a class="btn sec" href="/voyage/{droit.id}" onclick={(e) => naviguer(e, `/voyage/${droit.id}`)}><Icone nom="avion" taille={20} />Voir mon voyage</a>{/if}
-    {/snippet}
+    </div>
+    {#if ecran.pc}{@render suite()}{/if}
+    </div>
   </Ecran>
 {/if}
 
@@ -99,4 +126,46 @@
   .num.on { background: #0b1b2e; color: #fff; }
   .tx { display: flex; flex-direction: column; gap: 2px; padding-top: 5px; }
   .t1 { font: 600 15px/20px 'Barlow', sans-serif; }
+  /* PC (≥ 900 px) : planche WebConfirmation — titre à gauche, billet horizontal, « Et maintenant » à gauche, « Et ensuite » à droite. */
+  .ht { display: contents; }
+  .demo { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px 16px; border-radius: 12px; background: rgba(26, 100, 200, 0.1); color: var(--accent-2); font: 700 13px/18px 'Barlow', sans-serif; letter-spacing: 0.04em; }
+  .hors { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 16px; border-radius: 14px; background: var(--surface2); border: 1px solid var(--line-strong); }
+  .al-t { display: flex; flex-direction: column; gap: 2px; flex: 1 1 280px; min-width: 0; } .al-t strong { font: 700 15px/20px 'Barlow', sans-serif; } .al-t span { font: 400 14px/20px 'Barlow', sans-serif; color: var(--ink2); }
+  .grille, .gauche { display: contents; }
+  .grille.pcx { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 24px; align-items: start; }
+  .grille.pcx .gauche { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .hero.pcx { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 12px 20px; text-align: left; }
+  .hero.pcx .ht { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .hero.pcx .halo { width: 56px; height: 56px; flex: none; border: 0; background: rgba(11, 122, 85, 0.1); }
+  .hero.pcx .coche { width: 56px; height: 56px; border: 0; background: none; }
+  .hero.pcx .t-conf { font-size: 44px; line-height: 44px; }
+  .hero.pcx .sous { font: 600 13px/18px 'Barlow', sans-serif; }
+  .billet.pcx { display: flex; align-items: stretch; box-shadow: 0 1px 0 var(--line), 0 12px 32px rgba(11, 27, 46, 0.1); border-radius: 18px; }
+  .billet.pcx .haut { flex: 1 1 auto; min-width: 0; padding: 20px 24px; gap: 14px; }
+  .billet.pcx .code { font-size: 64px; line-height: 64px; }
+  .billet.pcx .trajet { gap: 12px; }
+  .billet.pcx .haut .t-sec { font: 600 15px/22px 'Barlow', sans-serif; color: var(--ink); }
+  .billet.pcx .perfore { flex: none; width: 0; height: auto; margin: 22px 0; border-top: 0; border-left: 2px dashed var(--line); }
+  .billet.pcx .perfore::before { left: -12px; right: auto; top: -33px; } .billet.pcx .perfore::after { left: -12px; right: auto; top: auto; bottom: -33px; }
+  .billet.pcx .bas { flex: 0 0 290px; box-sizing: border-box; padding: 20px 22px; justify-content: center; gap: 14px; }
+  .billet.pcx .bas .puce { align-self: stretch; padding: 8px 12px; border-radius: 14px; font: 700 13px/18px 'Barlow', sans-serif; letter-spacing: 0; text-transform: none; }
+  .billet.pcx .bas .puce.signal { background: rgba(255, 210, 63, 0.3); color: #5c4600; }
+  .billet.pcx .refs { display: flex; flex-direction: column; gap: 8px; }
+  .billet.pcx .refs > div { flex-direction: row; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .billet.pcx .etiq { font: 400 13px/18px 'Barlow', sans-serif; letter-spacing: 0; text-transform: none; }
+  .billet.pcx .ref, .billet.pcx .prix { font-size: 14px; letter-spacing: 0; }
+  .etiq-t { font: 700 12px/16px 'Barlow', sans-serif; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink2); }
+  .maintenant.pcx { gap: 16px; padding: 18px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); }
+  .maintenant.pcx .t-h2 { font-size: 24px; line-height: 28px; }
+  .maintenant.pcx .etapes li { display: flex; align-items: flex-start; padding-bottom: 14px; }
+  .maintenant.pcx .etapes li:last-child { padding-bottom: 0; }
+  .maintenant.pcx .etapes li:not(:last-child)::before { left: 13px; top: 30px; bottom: -14px; border-left: 2px dashed var(--line); }
+  .maintenant.pcx .num { flex: none; width: 28px; height: 28px; }
+  .maintenant.pcx .tx { padding-top: 0; } .maintenant.pcx .t1 { font-weight: 700; font-size: 16px; }
+  .maintenant.pcx .tx .t-sec { font: 400 14px/20px 'Barlow', sans-serif; color: var(--ink2); }
+  .suite { display: flex; flex-direction: column; gap: 12px; padding: 18px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); }
+  .suite-p { font-size: 14px; line-height: 20px; color: var(--ink2); }
+  .suite .btn { min-height: 52px; } .suite .btn.sec { font-size: 15px; }
+  .suite .btn[aria-disabled='true'] { background: var(--surface2); color: var(--ink2); border-color: var(--line-strong); opacity: 1; cursor: not-allowed; }
+  .lien-suite { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; color: var(--accent); font: 700 15px/1 'Barlow', sans-serif; }
 </style>

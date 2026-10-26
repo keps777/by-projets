@@ -1,5 +1,6 @@
 <script lang="ts">
   import Ecran from '../../ui/Ecran.svelte';
+  import { ecran } from '../achat/ecranPc.svelte.ts';
   import Picto from '../bagages/Picto.svelte';
   import { aller } from '../../router.svelte.ts';
   import { jourDe, maintenant } from '../../data/store.svelte.ts';
@@ -29,7 +30,15 @@
   const sansAutres = $derived(!a || a.refusees === 0 ? '' : ` ; ${a.refusees === 1 ? 'l’autre proposition a été déclinée' : `les ${a.refusees} autres propositions ont été déclinées`} automatiquement`);
 </script>
 
-<Ecran titre="Accord conclu" face="jour" sansRetour>
+{#snippet droite()}<button type="button" class="fermer" aria-label="Fermer" onclick={() => aller('/')}><Picto nom="croix" taille={22} trait={1.75} /></button>{/snippet}
+
+{#snippet pied()}
+    {#if droit && a && !nomme}<button type="button" class="btn" onclick={() => aller(`/nommer/${droit.id}`)}><Picto nom="identite" taille={20} trait={1.75} />Nommer le voyageur</button>{/if}
+    {#if droit && a}<a class="btn sec" href="/portefeuille" onclick={(e) => { e.preventDefault(); aller('/portefeuille'); }}><Picto nom="portefeuille" taille={20} trait={1.75} />Voir mon portefeuille</a>{/if}
+  {/snippet}
+
+<Ecran titre="Accord conclu" face="jour" sansRetour large droite={ecran.pc ? undefined : droite} pied={ecran.pc ? undefined : pied}>
+<div class="pc-col">
   <h1 class="sr">Accord conclu</h1>
   {#if !i || !a || !droit || !vol || !cie || !compte || i.compteId !== compte.id}
     <section class="carte vide"><h2 class="t-section">Pas encore d’accord</h2><p class="t-sec">Cette intention n’a pas d’accord conclu : les propositions reçues sont dans vos intentions.</p><button type="button" class="btn" onclick={() => aller('/intentions')}>Mes intentions</button></section>
@@ -76,12 +85,8 @@
         <li class="sep"><span class="pt vide-p mono" aria-hidden="true">3</span><span class="col g2"><span class="e1">Recevez la carte d’embarquement</span><span class="e2">Une fois le voyageur nommé et confirmé par la compagnie, elle apparaît dans Portefeuille.</span></span></li>
       </ol></section>
   {/if}
-
-  {#snippet droite()}<button type="button" class="fermer" aria-label="Fermer" onclick={() => aller('/')}><Picto nom="croix" taille={22} trait={1.75} /></button>{/snippet}
-  {#snippet pied()}
-    {#if droit && a && !nomme}<button type="button" class="btn" onclick={() => aller(`/nommer/${droit.id}`)}><Picto nom="identite" taille={20} trait={1.75} />Nommer le voyageur</button>{/if}
-    {#if droit && a}<a class="btn sec" href="/portefeuille" onclick={(e) => { e.preventDefault(); aller('/portefeuille'); }}><Picto nom="portefeuille" taille={20} trait={1.75} />Voir mon portefeuille</a>{/if}
-  {/snippet}
+{#if ecran.pc}{@render pied()}{/if}
+</div>
 </Ecran>
 
 <style>
@@ -109,4 +114,7 @@
   .e1 { font: 600 15px/20px 'Barlow', sans-serif; } .e2 { font: 400 13px/18px 'Barlow', sans-serif; color: #3e4f66; }
   .fermer { width: 44px; height: 44px; box-sizing: border-box; border-radius: 999px; background: #fff; border: 1px solid #d3dce6; display: grid; place-items: center; color: #0b1b2e; cursor: pointer; }
   @keyframes nx-outline { 0%, 45% { opacity: 1; } 100% { opacity: 0; } } @keyframes nx-materialize { 0% { box-shadow: 0 0 0 rgba(11, 27, 46, 0); } 100% { box-shadow: 0 1px 0 #d3dce6, 0 12px 32px rgba(11, 27, 46, 0.1); } } @keyframes nx-check { 0% { transform: scale(0.6); } 100% { transform: scale(1); } }
+  /* PC (≥ 900 px) : pas de planche ; colonne centrée de 640 px au plus (la barre d'action suit le contenu). */
+  .pc-col { display: contents; }
+  @media (min-width: 900px) { .pc-col { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 640px; margin-inline: auto; } }
 </style>

@@ -8,7 +8,9 @@
   import { dateFinalisation, etapesChaine } from './chaine.ts';
   import { chronologie, statutVoyage } from './chrono.ts';
   import { dureeVol, heure, jourMoisAnnee, jourMoisSiAnnee } from './dates.ts';
+  import { ecran } from './ecranPc.svelte.ts';
   import Introuvable from './Introuvable.svelte';
+  import { aller } from '../../router.svelte.ts';
   import { naviguer } from './lien.ts';
   import Pic from './Pic.svelte';
   import { bagagesDuDroit, basculerWallet, dansLeWallet, KG_BAGAGE, noteBagages } from './preparation.ts';
@@ -43,7 +45,12 @@
       <a class="btn sec" href="/voyage/{droit.id}" onclick={(e) => naviguer(e, `/voyage/${droit.id}`)}>Voir mon voyage</a></div>
   </Ecran>
 {:else}
-  <Ecran titre="Prêt à voyager" face="jour" retour="/portefeuille">
+  <Ecran titre={ecran.pc ? undefined : 'Prêt à voyager'} face="jour" retour="/portefeuille" onglet={ecran.pc ? 'rechercher' : undefined} large>
+    {#if ecran.pc}
+      <button type="button" class="retour-o" onclick={() => aller(`/voyage/${droit.id}`)}><Icone nom="retour" taille={20} trait={2} />Mon voyage</button>
+      <section class="titre-pc" aria-labelledby="titre-pc"><h1 id="titre-pc">Prêt à voyager</h1><p>Voyager · {vol.de} → {vol.vers} · {jourMoisAnnee(ch.depart)}</p></section>
+    {/if}
+    <div class="grille" class:pcx={ecran.pc}><div class="gauche">
     <p class="transmis" role="status"><Icone nom="ok" taille={18} trait={2.25} />Nom transmis à {compagnieDe(vol).nom} le {jourMoisAnnee(quandNomme)} (démo)</p>
 
     <article class="carte-b" aria-labelledby="bp-h">
@@ -78,6 +85,7 @@
       {#if ajoute}<p class="note" role="status">Démo&nbsp;: aucun ajout réel n’a été effectué.</p>{/if}
     </div>
 
+    </div><div class="droite">
     <section class="chaine" aria-labelledby="ch-h">
       <div class="ligne"><h2 id="ch-h" class="t-h2">Chaîne de détention</h2><span class="finalisee">Finalisée</span></div>
       <ol class="liste-plain etapes">
@@ -94,6 +102,7 @@
     </section>
 
     <a class="retour-p" href="/portefeuille" onclick={(e) => naviguer(e, '/portefeuille')}>Retour au portefeuille<Icone nom="suivant" taille={18} trait={2} /></a>
+    </div></div>
   </Ecran>
 {/if}
 
@@ -141,4 +150,12 @@
   .corps { padding-bottom: 18px; min-width: 0; } .dernier .corps { padding-bottom: 0; }
   .t1 { font: 600 15px/20px 'Barlow', sans-serif; } .t1.vert { color: var(--ok); }
   .retour-p { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; font: 600 15px/20px 'Barlow', sans-serif; }
+  /* PC (≥ 900 px) : pas de planche dédiée ; mise en page de WebVoyage — carte d'embarquement à gauche, chaîne de détention à droite. */
+  .grille, .gauche, .droite { display: contents; }
+  .grille.pcx { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  .grille.pcx .gauche, .grille.pcx .droite { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .grille.pcx .carte-b { box-shadow: 0 1px 0 var(--line), 0 12px 32px rgba(11, 27, 46, 0.1); border-radius: 24px; }
+  .retour-o { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px 0 6px; margin-left: -6px; border: 0; border-radius: 12px; background: none; color: var(--accent); font: 700 15px/1 'Barlow', sans-serif; cursor: pointer; }
+  .titre-pc h1 { margin: 0; font: 600 44px/44px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.01em; text-transform: uppercase; text-wrap: balance; }
+  .titre-pc p { margin: 6px 0 0; font: 600 13px/18px 'Barlow', sans-serif; color: var(--ink2); }
 </style>

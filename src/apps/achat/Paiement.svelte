@@ -4,7 +4,7 @@
   import Icone from '../../ui/Icone.svelte';
   import { fmt } from '../../core/argent.ts';
   import { FRAIS_SERVICE } from '../../core/regles.ts';
-  import { aller } from '../../router.svelte.ts';
+  import { aller, retour as reculer } from '../../router.svelte.ts';
   import { maintenant } from '../../data/store.svelte.ts';
   import { compteCourant } from '../../domain/compte.ts';
   import { compagnieDe, totalAPayer, volDe } from '../../domain/marche.ts';
@@ -15,6 +15,7 @@
   import { CARTE_DE_TEST, DELAI_TRAITEMENT_MS, erreurCvc, erreurExpiration, erreurMobile, erreurNom, erreurNumero, formaterExpiration, formaterNumero, type ChoixMoyen } from './moyens.ts';
   import { libelleTypeOffre, obstacleAchat, trouverOffre } from './offre.ts';
   import Pic from './Pic.svelte';
+  import { ecran } from './ecranPc.svelte.ts';
   import { reseau } from './reseau.svelte.ts';
 
   /** Paiement de démonstration : récapitulatif, moyen de paiement (carte de test, wallet, mobile money), règles de finalisation J-1. Rien n'est conservé ; le résultat du « prestataire » est simulé. */
@@ -65,7 +66,118 @@
   const libelleBouton = $derived(`Payer ${fmt(total)} (démo)`);
 </script>
 
-<Ecran titre="Paiement" face="jour">
+{#snippet recapBloc()}
+  {#if offre && vol && ch}
+    <div class="recap">
+      <div class="vol">
+        <div class="vol-t"><span class="route">{vol.de} → {vol.vers}</span><span class="t-sec">{jourCourt(ch.depart)} · {heure(ch.depart)} · {compagnieDe(vol).nom} {vol.numero.split(' ')[1]}</span></div>
+        <span class="type">{libelleTypeOffre(offre.type)}</span>
+      </div>
+      <dl class="lignes">
+        <div><dt>Billet (droit de voyage)</dt><dd class="mono">{fmt(offre.prix)}</dd></div>
+        <div><dt>Frais de service <span class="hyp">hypothèse</span></dt><dd class="mono">{fmt(FRAIS_SERVICE)}</dd></div>
+      </dl>
+      <div class="total"><span>Total</span><span class="mono grand">{fmt(total)}</span></div>
+    </div>
+  {/if}
+{/snippet}
+
+{#snippet alertes()}
+  {#if !reseau.enLigne}
+    {#if ecran.pc}<div class="alerte info" id="msg-hors-ligne" role="alert"><Icone nom="hors_ligne" taille={22} /><span class="al-t"><strong>Hors ligne</strong><span>Le paiement demande le réseau : le bouton Payer se réactive à son retour. Rien n’a été débité.</span></span></div>
+    {:else}<p class="alerte" role="alert"><Icone nom="hors_ligne" taille={18} />Vous êtes hors ligne : le paiement attend le retour du réseau.</p>{/if}
+  {/if}
+  {#if refus}
+    {#if ecran.pc}<div class="alerte" role="alert"><Icone nom="alerte" taille={22} /><span class="al-t"><strong>Paiement refusé (démo)</strong><span>{refus}</span></span>
+      <button type="button" class="btn sec sm" onclick={() => { choisir('carte'); document.getElementById('pm-card')?.focus(); }}><Icone nom="carteok" taille={18} trait={2} />Choisir un autre moyen</button></div>
+    {:else}<p class="alerte" role="alert"><Icone nom="alerte" taille={18} />{refus}</p>{/if}
+  {/if}
+  {#if obstacle}<p class="alerte" role="alert"><Icone nom="alerte" taille={ecran.pc ? 22 : 18} />{obstacle}</p>{/if}
+  {#if fermee}<p class="alerte" role="alert"><Icone nom="alerte" taille={ecran.pc ? 22 : 18} />L’échéance de ce vol est passée : plus aucune transaction n’est possible.</p>{/if}
+{/snippet}
+
+{#snippet boutonPayer()}
+  <p class="sr" role="status">{phase === 'traitement' ? 'Traitement du paiement en cours.' : ''}</p>
+  <button class="btn" type="submit" form="form-paiement" aria-disabled={!reseau.enLigne || phase === 'traitement' || !!obstacle || fermee ? 'true' : undefined} aria-busy={phase === 'traitement' ? 'true' : undefined}>
+    {#if phase === 'traitement'}<span class="rond-att" aria-hidden="true"></span>Traitement du paiement…{:else}<Icone nom="cadenas" taille={18} trait={2} />Payer <span class="mono">{fmt(total)}</span> (démo){/if}
+  </button>
+{/snippet}
+
+{#snippet pied()}
+  {#if offre && vol && compte && phase !== 'reussi'}
+    {@render alertes()}
+    {@render boutonPayer()}
+  {/if}
+{/snippet}
+
+{#snippet secuPara()}
+  <p class="secu"><span class="vert"><Pic nom="bouclier" taille={18} /></span>Paiement traité par un prestataire certifié. NexG-TT ne conserve pas votre carte.</p>
+{/snippet}
+
+{#snippet formulaire()}
+  <form id="form-paiement" class="col g20 form" class:pcx={ecran.pc} onsubmit={soumettre} novalidate aria-label="Paiement">
+    <fieldset class="moyens">
+      <legend class="sur">Moyen de paiement</legend>
+      <div class="liste">
+        <label class="tuile" for="pm-card"><input id="pm-card" type="radio" name="pm" value="carte" checked={moyen === 'carte'} onchange={() => choisir('carte')} /><Icone nom="carteok" taille={22} /><span class="tx"><span class="t1">Carte</span><span class="t2">Crédit ou débit</span></span></label>
+        <label class="tuile" for="pm-wallet"><input id="pm-wallet" type="radio" name="pm" value="wallet" checked={moyen === 'wallet'} onchange={() => choisir('wallet')} /><Icone nom="portefeuille" taille={22} /><span class="tx"><span class="t1">Wallet du téléphone</span><span class="t2">Choisissez une carte déjà enregistrée dans le wallet de votre téléphone</span></span></label>
+        <label class="tuile" for="pm-mobile"><input id="pm-mobile" type="radio" name="pm" value="mobile" checked={moyen === 'mobile'} onchange={() => choisir('mobile')} /><Icone nom="telephone" taille={22} /><span class="tx"><span class="t1">Mobile money (selon la région)</span><span class="t2">Numéro de téléphone, confirmation par code — selon votre pays</span></span></label>
+      </div>
+    </fieldset>
+
+    <div aria-live="polite" class="col g20">
+    {#if moyen === 'carte'}
+      <section aria-label="Carte de test" class="col g14 sect">
+        {#if ecran.pc}<h2 class="t-h2">Carte de test</h2>{/if}
+        <div class="champ" data-erreur={msgNumero ? '' : undefined}>
+          <label for="cc-num">Numéro de carte</label>
+          <div class="avec-tag"><input id="cc-num" class="mono" type="text" inputmode="numeric" autocomplete="off" placeholder={CARTE_DE_TEST} value={numero} oninput={(e) => { numero = formaterNumero(e.currentTarget.value); e.currentTarget.value = numero; }} onblur={marquer('numero')} aria-invalid={msgNumero ? 'true' : undefined} aria-describedby={msgNumero ? 'cc-num-e' : 'cc-num-a'} /><span class="tag" aria-hidden="true">TEST</span></div>
+          {#if msgNumero}<span class="erreur" id="cc-num-e" role="alert"><Icone nom="alerte" taille={16} />{msgNumero}</span>{:else}<span class="aide" id="cc-num-a">{CARTE_DE_TEST} — carte de test</span>{/if}
+        </div>
+        <div class="duo">
+          <div class="champ" data-erreur={msgExp ? '' : undefined}>
+            <label for="cc-exp">Expiration (MM/AA)</label>
+            <input id="cc-exp" class="mono" type="text" inputmode="numeric" autocomplete="off" placeholder="MM/AA" maxlength="5" value={exp} oninput={(e) => { exp = formaterExpiration(e.currentTarget.value); e.currentTarget.value = exp; }} onblur={marquer('exp')} aria-invalid={msgExp ? 'true' : undefined} aria-describedby={msgExp ? 'cc-exp-e' : undefined} />
+            {#if msgExp}<span class="erreur" id="cc-exp-e" role="alert"><Icone nom="alerte" taille={16} />{msgExp}</span>{/if}
+          </div>
+          <div class="champ" data-erreur={msgCvc ? '' : undefined}>
+            <label for="cc-cvc">Code de sécurité</label>
+            <input id="cc-cvc" class="mono" type="text" inputmode="numeric" autocomplete="off" placeholder="123" maxlength="3" value={cvc} oninput={(e) => { cvc = e.currentTarget.value.replace(/\D/g, '').slice(0, 3); e.currentTarget.value = cvc; }} onblur={marquer('cvc')} aria-invalid={msgCvc ? 'true' : undefined} aria-describedby={msgCvc ? 'cc-cvc-e' : undefined} />
+            {#if msgCvc}<span class="erreur" id="cc-cvc-e" role="alert"><Icone nom="alerte" taille={16} />{msgCvc}</span>{/if}
+          </div>
+        </div>
+        <div class="champ" data-erreur={msgNom ? '' : undefined}>
+          <label for="cc-name">Nom sur la carte</label>
+          <input id="cc-name" type="text" autocomplete="off" placeholder="ALEX T. (TEST)" bind:value={nom} onblur={marquer('nom')} aria-invalid={msgNom ? 'true' : undefined} aria-describedby={msgNom ? 'cc-name-e' : undefined} />
+          {#if msgNom}<span class="erreur" id="cc-name-e" role="alert"><Icone nom="alerte" taille={16} />{msgNom}</span>{/if}
+        </div>
+      </section>
+    {:else if moyen === 'wallet'}
+      <div class="note"><span class="bleu"><Icone nom="portefeuille" taille={22} /></span><p>Vous choisirez une carte déjà enregistrée dans le wallet de votre téléphone, puis confirmerez sur l’appareil. En démo, aucune fenêtre réelle ne s’ouvre.</p></div>
+    {:else}
+      <section aria-label="Mobile money" class="col g14 sect">
+        {#if ecran.pc}<h2 class="t-h2">Mobile money</h2>{/if}
+        <div class="champ" data-erreur={msgMobile ? '' : undefined}>
+          <label for="mm-tel">Numéro de téléphone (mobile money)</label>
+          <input id="mm-tel" class="mono" type="tel" inputmode="tel" autocomplete="off" placeholder="+1 514 555 0142" bind:value={mobile} onblur={marquer('mobile')} aria-invalid={msgMobile ? 'true' : undefined} aria-describedby={msgMobile ? 'mm-tel-e' : 'mm-tel-a'} />
+          {#if msgMobile}<span class="erreur" id="mm-tel-e" role="alert"><Icone nom="alerte" taille={16} />{msgMobile}</span>{:else}<span class="aide" id="mm-tel-a">Numéro fictif. Le compte mobile money doit être à votre nom.</span>{/if}
+        </div>
+        <div class="note"><span class="bleu"><Icone nom="telephone" taille={22} /></span><p>Un code de confirmation vous sera envoyé par message sur ce numéro. Disponible selon votre pays et votre opérateur. En démo, aucun code réel n’est envoyé.</p></div>
+      </section>
+    {/if}
+    </div>
+
+    <div class="col g8">
+      <label class="consent" class:err={erreurConsent} for="consent"><input id="consent" type="checkbox" bind:checked={consent} onchange={() => (erreurConsent = false)} aria-describedby="consent-aide{erreurConsent ? ' consent-e' : ''}" aria-invalid={erreurConsent ? 'true' : undefined} />
+        <span class="col g4"><span class="t1">J’accepte les règles de revente et de finalisation (J-1)</span><span class="t-sec" id="consent-aide">Vous devrez nommer le voyageur au plus tard le {jourCourt(ch!.echeance)} à {heure(ch!.echeance)}.{ecran.pc ? ' À l’échéance, le détenteur est nommé voyageur par défaut.' : ''}</span></span></label>
+      {#if erreurConsent}<p class="erreur" id="consent-e" role="alert"><Icone nom="alerte" taille={16} />Cochez cette case pour continuer.</p>{/if}
+    </div>
+
+    {#if !ecran.pc}{@render secuPara()}{/if}
+  </form>
+{/snippet}
+
+<Ecran titre={ecran.pc ? undefined : 'Paiement'} face="jour" onglet={ecran.pc ? 'rechercher' : undefined} large pied={ecran.pc ? undefined : pied}>
   {#if !offreId}
     <!-- l'application réinstancie brièvement l'ancien écran au changement de route : rien à montrer -->
   {:else if phase === 'reussi'}
@@ -76,94 +188,26 @@
       <a class="btn" href="/rechercher" onclick={(e) => naviguer(e, '/rechercher')}>Voir d’autres offres</a></div>
   {:else}
     <div class="demo" role="note"><Icone nom="info" taille={18} trait={2} />MODE DÉMO — aucun paiement réel</div>
-
-    <section aria-labelledby="recap-t" class="bloc">
-      <h2 id="recap-t" class="sur">Récapitulatif</h2>
-      <div class="recap">
-        <div class="vol">
-          <div class="vol-t"><span class="route">{vol.de} → {vol.vers}</span><span class="t-sec">{jourCourt(ch!.depart)} · {heure(ch!.depart)} · {compagnieDe(vol).nom} {vol.numero.split(' ')[1]}</span></div>
-          <span class="type">{libelleTypeOffre(offre.type)}</span>
-        </div>
-        <dl class="lignes">
-          <div><dt>Billet (droit de voyage)</dt><dd class="mono">{fmt(offre.prix)}</dd></div>
-          <div><dt>Frais de service <span class="hyp">hypothèse</span></dt><dd class="mono">{fmt(FRAIS_SERVICE)}</dd></div>
-        </dl>
-        <div class="total"><span>Total</span><span class="mono grand">{fmt(total)}</span></div>
+    {#if ecran.pc}
+      <button type="button" class="retour-o" onclick={() => reculer(`/offre/${encodeURIComponent(offreId)}`)}><Icone nom="retour" taille={20} trait={2} />Offre</button>
+      <section class="titre-pc" aria-labelledby="titre-pc"><h1 id="titre-pc">Paiement</h1><p>Voyager · {vol.de} → {vol.vers} · {jourCourt(ch!.depart)} {new Date(ch!.depart).getFullYear()}</p></section>
+      <div class="grille">
+        <div class="gauche">{@render alertes()}{@render formulaire()}</div>
+        <aside class="recap-pc" aria-labelledby="recap-t">
+          <h2 id="recap-t" class="t-h2">Récapitulatif</h2>
+          {@render recapBloc()}
+          {@render boutonPayer()}
+          {@render secuPara()}
+        </aside>
       </div>
-    </section>
-
-    <form id="form-paiement" class="col g20" onsubmit={soumettre} novalidate aria-label="Paiement">
-      <fieldset class="moyens">
-        <legend class="sur">Moyen de paiement</legend>
-        <div class="liste">
-          <label class="tuile" for="pm-card"><input id="pm-card" type="radio" name="pm" value="carte" checked={moyen === 'carte'} onchange={() => choisir('carte')} /><Icone nom="carteok" taille={22} /><span class="tx"><span class="t1">Carte</span><span class="t2">Crédit ou débit</span></span></label>
-          <label class="tuile" for="pm-wallet"><input id="pm-wallet" type="radio" name="pm" value="wallet" checked={moyen === 'wallet'} onchange={() => choisir('wallet')} /><Icone nom="portefeuille" taille={22} /><span class="tx"><span class="t1">Wallet du téléphone</span><span class="t2">Choisissez une carte déjà enregistrée dans le wallet de votre téléphone</span></span></label>
-          <label class="tuile" for="pm-mobile"><input id="pm-mobile" type="radio" name="pm" value="mobile" checked={moyen === 'mobile'} onchange={() => choisir('mobile')} /><Icone nom="telephone" taille={22} /><span class="tx"><span class="t1">Mobile money (selon la région)</span><span class="t2">Numéro de téléphone, confirmation par code — selon votre pays</span></span></label>
-        </div>
-      </fieldset>
-
-      <div aria-live="polite" class="col g20">
-      {#if moyen === 'carte'}
-        <section aria-label="Carte de test" class="col g14">
-          <div class="champ" data-erreur={msgNumero ? '' : undefined}>
-            <label for="cc-num">Numéro de carte</label>
-            <div class="avec-tag"><input id="cc-num" class="mono" type="text" inputmode="numeric" autocomplete="off" placeholder={CARTE_DE_TEST} value={numero} oninput={(e) => { numero = formaterNumero(e.currentTarget.value); e.currentTarget.value = numero; }} onblur={marquer('numero')} aria-invalid={msgNumero ? 'true' : undefined} aria-describedby={msgNumero ? 'cc-num-e' : 'cc-num-a'} /><span class="tag" aria-hidden="true">TEST</span></div>
-            {#if msgNumero}<span class="erreur" id="cc-num-e" role="alert"><Icone nom="alerte" taille={16} />{msgNumero}</span>{:else}<span class="aide" id="cc-num-a">{CARTE_DE_TEST} — carte de test</span>{/if}
-          </div>
-          <div class="duo">
-            <div class="champ" data-erreur={msgExp ? '' : undefined}>
-              <label for="cc-exp">Expiration (MM/AA)</label>
-              <input id="cc-exp" class="mono" type="text" inputmode="numeric" autocomplete="off" placeholder="MM/AA" maxlength="5" value={exp} oninput={(e) => { exp = formaterExpiration(e.currentTarget.value); e.currentTarget.value = exp; }} onblur={marquer('exp')} aria-invalid={msgExp ? 'true' : undefined} aria-describedby={msgExp ? 'cc-exp-e' : undefined} />
-              {#if msgExp}<span class="erreur" id="cc-exp-e" role="alert"><Icone nom="alerte" taille={16} />{msgExp}</span>{/if}
-            </div>
-            <div class="champ" data-erreur={msgCvc ? '' : undefined}>
-              <label for="cc-cvc">Code de sécurité</label>
-              <input id="cc-cvc" class="mono" type="text" inputmode="numeric" autocomplete="off" placeholder="123" maxlength="3" value={cvc} oninput={(e) => { cvc = e.currentTarget.value.replace(/\D/g, '').slice(0, 3); e.currentTarget.value = cvc; }} onblur={marquer('cvc')} aria-invalid={msgCvc ? 'true' : undefined} aria-describedby={msgCvc ? 'cc-cvc-e' : undefined} />
-              {#if msgCvc}<span class="erreur" id="cc-cvc-e" role="alert"><Icone nom="alerte" taille={16} />{msgCvc}</span>{/if}
-            </div>
-          </div>
-          <div class="champ" data-erreur={msgNom ? '' : undefined}>
-            <label for="cc-name">Nom sur la carte</label>
-            <input id="cc-name" type="text" autocomplete="off" placeholder="ALEX T. (TEST)" bind:value={nom} onblur={marquer('nom')} aria-invalid={msgNom ? 'true' : undefined} aria-describedby={msgNom ? 'cc-name-e' : undefined} />
-            {#if msgNom}<span class="erreur" id="cc-name-e" role="alert"><Icone nom="alerte" taille={16} />{msgNom}</span>{/if}
-          </div>
-        </section>
-      {:else if moyen === 'wallet'}
-        <div class="note"><span class="bleu"><Icone nom="portefeuille" taille={22} /></span><p>Vous choisirez une carte déjà enregistrée dans le wallet de votre téléphone, puis confirmerez sur l’appareil. En démo, aucune fenêtre réelle ne s’ouvre.</p></div>
-      {:else}
-        <section aria-label="Mobile money" class="col g14">
-          <div class="champ" data-erreur={msgMobile ? '' : undefined}>
-            <label for="mm-tel">Numéro de téléphone (mobile money)</label>
-            <input id="mm-tel" class="mono" type="tel" inputmode="tel" autocomplete="off" placeholder="+1 514 555 0142" bind:value={mobile} onblur={marquer('mobile')} aria-invalid={msgMobile ? 'true' : undefined} aria-describedby={msgMobile ? 'mm-tel-e' : 'mm-tel-a'} />
-            {#if msgMobile}<span class="erreur" id="mm-tel-e" role="alert"><Icone nom="alerte" taille={16} />{msgMobile}</span>{:else}<span class="aide" id="mm-tel-a">Numéro fictif. Le compte mobile money doit être à votre nom.</span>{/if}
-          </div>
-          <div class="note"><span class="bleu"><Icone nom="telephone" taille={22} /></span><p>Un code de confirmation vous sera envoyé par message sur ce numéro. Disponible selon votre pays et votre opérateur. En démo, aucun code réel n’est envoyé.</p></div>
-        </section>
-      {/if}
-      </div>
-
-      <div class="col g8">
-        <label class="consent" class:err={erreurConsent} for="consent"><input id="consent" type="checkbox" bind:checked={consent} onchange={() => (erreurConsent = false)} aria-describedby="consent-aide{erreurConsent ? ' consent-e' : ''}" aria-invalid={erreurConsent ? 'true' : undefined} />
-          <span class="col g4"><span class="t1">J’accepte les règles de revente et de finalisation (J-1)</span><span class="t-sec" id="consent-aide">Vous devrez nommer le voyageur au plus tard le {jourCourt(ch!.echeance)} à {heure(ch!.echeance)}.</span></span></label>
-        {#if erreurConsent}<p class="erreur" id="consent-e" role="alert"><Icone nom="alerte" taille={16} />Cochez cette case pour continuer.</p>{/if}
-      </div>
-
-      <p class="secu"><span class="vert"><Pic nom="bouclier" taille={18} /></span>Paiement traité par un prestataire certifié. NexG-TT ne conserve pas votre carte.</p>
-    </form>
-  {/if}
-
-  {#snippet pied()}
-    {#if offre && vol && compte && phase !== 'reussi'}
-      {#if !reseau.enLigne}<p class="alerte" role="alert"><Icone nom="hors_ligne" taille={18} />Vous êtes hors ligne : le paiement attend le retour du réseau.</p>{/if}
-      {#if refus}<p class="alerte" role="alert"><Icone nom="alerte" taille={18} />{refus}</p>{/if}
-      {#if obstacle}<p class="alerte" role="alert"><Icone nom="alerte" taille={18} />{obstacle}</p>{/if}
-      {#if fermee}<p class="alerte" role="alert"><Icone nom="alerte" taille={18} />L’échéance de ce vol est passée : plus aucune transaction n’est possible.</p>{/if}
-      <p class="sr" role="status">{phase === 'traitement' ? 'Traitement du paiement en cours.' : ''}</p>
-      <button class="btn" type="submit" form="form-paiement" aria-disabled={!reseau.enLigne || phase === 'traitement' || !!obstacle || fermee ? 'true' : undefined} aria-busy={phase === 'traitement' ? 'true' : undefined}>
-        {#if phase === 'traitement'}<span class="rond-att" aria-hidden="true"></span>Traitement du paiement…{:else}<Icone nom="cadenas" taille={18} trait={2} />Payer <span class="mono">{fmt(total)}</span> (démo){/if}
-      </button>
+    {:else}
+      <section aria-labelledby="recap-t" class="bloc">
+        <h2 id="recap-t" class="sur">Récapitulatif</h2>
+        {@render recapBloc()}
+      </section>
+      {@render formulaire()}
     {/if}
-  {/snippet}
+  {/if}
 </Ecran>
 
 <style>
@@ -214,4 +258,35 @@
   .vide .t-section { text-transform: uppercase; letter-spacing: 0.02em; }
   .rond-att { width: 16px; height: 16px; border-radius: 999px; border: 2px solid currentColor; border-right-color: transparent; animation: tourne 0.8s linear infinite; }
   @keyframes tourne { to { transform: rotate(360deg); } }
+  /* PC (≥ 900 px) : formulaire à gauche, récapitulatif collant à droite (planche WebPaiement). Le balisage PC n'existe que si `ecran.pc`. */
+  .t-h2 { margin: 0; font: 600 22px/26px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; }
+  .retour-o { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px 0 6px; margin-left: -6px; border: 0; border-radius: 12px; background: none; color: var(--accent); font: 700 15px/1 'Barlow', sans-serif; cursor: pointer; }
+  .titre-pc h1 { margin: 0; font: 600 44px/44px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.01em; text-transform: uppercase; text-wrap: balance; }
+  .titre-pc p { margin: 6px 0 0; font: 600 13px/18px 'Barlow', sans-serif; color: var(--ink2); }
+  .grille { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 24px; align-items: start; }
+  .gauche { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .recap-pc { position: sticky; top: 16px; display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); }
+  .recap-pc .recap { display: flex; flex-direction: column; gap: 14px; border: 0; border-radius: 0; background: none; overflow: visible; }
+  .recap-pc .vol { align-items: flex-start; padding: 0; border: 0; }
+  .recap-pc .lignes { padding: 0; gap: 0; }
+  .recap-pc .lignes > div { padding: 10px 0; border-top: 1px solid var(--line); }
+  .recap-pc dt { font-size: 14px; } .recap-pc dd { font-weight: 600; }
+  .recap-pc .total { align-items: baseline; padding: 12px 0 0; border-top: 2px solid var(--ink); }
+  .recap-pc .grand { font-size: 34px; line-height: 38px; }
+  .recap-pc .btn { min-height: 52px; }
+  .recap-pc .btn[aria-disabled='true'] { background: var(--surface2); color: var(--ink2); border-color: var(--line-strong); opacity: 1; cursor: not-allowed; }
+  .pcx { gap: 18px; }
+  .pcx .moyens, .pcx .sect { padding: 18px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); }
+  .pcx .moyens legend { padding: 0 6px; margin: 0 0 0 -6px; font: 600 22px/26px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink); }
+  .pcx .liste { flex-direction: row; flex-wrap: wrap; gap: 10px; }
+  .pcx .tuile { flex: 1 1 210px; min-width: 0; min-height: 76px; padding: 12px 14px; }
+  .pcx .t1 { font-weight: 700; } .pcx .t2 { color: var(--ink2); }
+  .pcx .tag { right: 10px; padding: 0 10px; border-radius: 999px; background: var(--signal); color: #0B1B2E; }
+  .pcx .note { padding: 16px; background: rgba(26, 100, 200, 0.1); border-color: var(--accent); }
+  .pcx .note p { font-size: 14px; line-height: 21px; color: var(--ink); }
+  .gauche .alerte { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 16px; border-radius: 14px; background: var(--err-soft); border: 1px solid var(--err); color: var(--ink); font: 500 15px/20px 'Barlow', sans-serif; }
+  .gauche .alerte.info { background: var(--surface2); border-color: var(--line-strong); }
+  .gauche .alerte > :global(svg) { flex: none; color: var(--err); } .gauche .alerte.info > :global(svg) { color: var(--ink); }
+  .al-t { display: flex; flex-direction: column; gap: 2px; flex: 1 1 280px; min-width: 0; }
+  .al-t strong { font: 700 15px/20px 'Barlow', sans-serif; } .al-t span { font: 400 14px/20px 'Barlow', sans-serif; color: var(--ink2); }
 </style>
