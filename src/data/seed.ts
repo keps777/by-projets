@@ -129,7 +129,7 @@ export const DROPS_A_VENIR: DropAVenir[] = [
 const ORDRES: Ordre[] = [{ id: 'o-1', compteId: ALEX, volId: 'v-ae816', limite: 1450, validite: 'semaine', statut: 'actif', creeLe: d('2026-10-09T09:30') }];
 const INTENTIONS: Intention[] = [
   { id: 'INT-4F7K', compteId: ALEX, de: 'YUL', vers: 'CDG', volId: 'v-ae816', budget: 1300, fondsReserves: 1300, creeLe: d('2026-09-12T10:00'), statut: 'publiee', propositions: [
-    { id: 'p-1', intentionId: 'INT-4F7K', vendeurId: 'ACC-0301', droitId: 'd-r816', prix: 1500, quand: d('2026-10-09T10:00'), statut: 'recue' }, { id: 'p-2', intentionId: 'INT-4F7K', vendeurId: 'ACC-0233', droitId: 'd-r224', prix: 1380, quand: d('2026-10-10T10:00'), statut: 'recue' }, { id: 'p-3', intentionId: 'INT-4F7K', vendeurId: 'ACC-0356', droitId: 'd-r816b', prix: 1300, quand: d('2026-10-11T10:00'), statut: 'recue' }
+    { id: 'p-1', intentionId: 'INT-4F7K', vendeurId: 'ACC-0301', droitId: 'd-r816', prix: 1500, quand: NOW - 10 * H, statut: 'recue' }, { id: 'p-2', intentionId: 'INT-4F7K', vendeurId: 'ACC-0233', droitId: 'd-r224', prix: 1380, quand: NOW - 5 * H, statut: 'recue' }, { id: 'p-3', intentionId: 'INT-4F7K', vendeurId: 'ACC-0356', droitId: 'd-r816b', prix: 1300, quand: NOW - 2 * H, statut: 'recue' }
   ] },
   { id: 'INT-2B9X', compteId: ALEX, de: 'YUL', vers: 'HAV', volId: 'v-no156', budget: 350, fondsReserves: 0, creeLe: d('2026-09-20T10:00'), statut: 'accord', propositions: [] }
 ];

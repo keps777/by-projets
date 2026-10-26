@@ -6,7 +6,7 @@ import { ErreurIntention, accepterProposition, actualiser, contreProposer, creer
 import { accordDe, contreDe, detailDe, intentionDe, lire, motifFin, trancheIntentions, type Brouillon } from './modele.ts';
 
 const ALEX = 'ACC-0412', J = 86_400_000;
-beforeEach(() => { for (const k of Object.keys(app)) delete (app as unknown as Record<string, unknown>)[k]; Object.assign(app, etatInitial()); });
+beforeEach(() => { for (const k of Object.keys(app)) delete (app as unknown as Record<string, unknown>)[k]; Object.assign(app, etatInitial()); /* la proposition p-1 date de plus de 48 h : expirée dès l'ouverture */ app.monde.intentions[0].propositions[0].quand = Date.parse('2026-10-09T10:00'); });
 const alex = () => compteDe(ALEX)!;
 const brouillon = (o: Partial<Brouillon> = {}): Brouillon => ({ de: 'YUL', vers: 'CDG', aller: 'simple', du: '2026-12-15', au: '2026-12-20', flexible: true, voyageurs: 1, budget: 1300, validite: '30', auto: true, auDessus: true, anonyme: true, ...o });
 const code = (f: () => unknown): string | undefined => { try { f(); } catch (e) { return (e as ErreurIntention).code ?? (e as Error).message; } return undefined; };
@@ -55,7 +55,7 @@ describe('retirer une intention : les fonds sont libérés', () => {
     expect(alex().solde).toBe(3000); expect(alex().enAttente).toBe(0); expect(i.statut).toBe('annulee'); expect(i.fondsReserves).toBe(0); expect(i.propositions.map((p) => p.statut)).toEqual(['refusee']); expect(motifFin(i.id)).toBe('retiree');
     expect(ledger().slice(-2)).toEqual([['fonds_reserves', -1000], ['fonds_reserves', 1000]]);
   });
-  it('INT-4F7K (carte) : 1 300 $ libérés, 3 propositions déclinées, le solde ne bouge pas', () => {
+  it('INT-4F7K (carte) : 1\u00A0300\u00A0$ libérés, 3 propositions déclinées, le solde ne bouge pas', () => {
     const i = intentionDe('INT-4F7K')!; expect(retirerIntention(ALEX, i.id)).toBe(1300); expect(i.fondsReserves).toBe(0); expect(i.propositions.every((p) => p.statut === 'refusee')).toBe(true); expect(alex().solde).toBe(1152);
   });
   it('refuse de retirer deux fois, une intention conclue ou celle d’un autre', () => {
@@ -104,7 +104,7 @@ describe('accepter une proposition', () => {
     const a = accepterProposition(ALEX, 'INT-4F7K', 'p-2'); const i = intentionDe('INT-4F7K')!;
     expect(a).toMatchObject({ prix: 1380, reserve: 1300, capture: 1300, enPlus: 80, source: 'carte' }); expect(i.statut).toBe('accord'); expect(i.fondsReserves).toBe(0);
     const d = app.monde.droits.find((x) => x.id === 'd-r224')!; expect([d.detenteurId, d.prixPaye, d.statut, d.annonce]).toEqual([ALEX, 1380, 'detenu', undefined]);
-    expect(d.chaine.at(-1)).toMatchObject({ type: 'revente', de: 'ACC-0233', vers: ALEX, prix: 1380, commission: 138 }); // vendeur membre du Pass : 10 %
+    expect(d.chaine.at(-1)).toMatchObject({ type: 'revente', de: 'ACC-0233', vers: ALEX, prix: 1380, commission: 138 }); // vendeur membre du Pass : 10\u00A0%
     expect(compteDe('ACC-0233')!.solde).toBe(1242); expect(i.propositions.map((p) => p.statut)).toEqual(['refusee', 'acceptee', 'refusee']); expect(a.refusees).toBe(2);
     expect(accordDe(i)).toEqual(a); expect(app.monde.droits.find((x) => x.id === 'd-r816b')!.statut).toBe('en_vente'); // les autres billets restent en vente
   });
@@ -123,7 +123,7 @@ describe('accepter une proposition', () => {
     alex().solde = 3000; const i = creerIntention(ALEX, brouillon({ budget: 1000, auto: false }), 'solde'); const p = recevoirProposition(i.id, 'd-r224', 1380)!;
     expect(accepterProposition(ALEX, i.id, p.id)).toMatchObject({ reserve: 1000, capture: 1000, enPlus: 380 }); expect(alex().solde).toBe(3000 - 1380);
     alex().solde = 2000; const j = creerIntention(ALEX, brouillon({ budget: 1000, auto: false }), 'solde'); const q = recevoirProposition(j.id, 'd-r816', 1500)!;
-    alex().solde = 400; // 400 $ disponibles + 1 000 réservés < 1 500
+    alex().solde = 400; // 400\u00A0$ disponibles + 1\u00A0000 réservés < 1\u00A0500
     expect(code(() => accepterProposition(ALEX, j.id, q.id))).toBe('solde'); expect(alex().solde).toBe(400); expect(j.statut).toBe('publiee'); expect(j.fondsReserves).toBe(1000);
   });
 });
@@ -133,7 +133,7 @@ describe('refuser et contre-proposer', () => {
     expect(refuserProposition(ALEX, 'INT-4F7K', 'p-2')).toBe(1); // reste p-3 (p-1 a expiré avec le temps)
     const i = intentionDe('INT-4F7K')!; expect(i.statut).toBe('publiee'); expect(i.propositions[1].statut).toBe('refusee'); expect(code(() => refuserProposition(ALEX, 'INT-4F7K', 'p-2'))).toBe('statut');
   });
-  it('contre-proposer : entre le prix max et la proposition, par pas de 10 $, remplaçable ; la proposition reste acceptable', () => {
+  it('contre-proposer : entre le prix max et la proposition, par pas de 10\u00A0$, remplaçable ; la proposition reste acceptable', () => {
     expect(contreProposer(ALEX, 'INT-4F7K', 'p-2', 1340)).toMatchObject({ propositionId: 'p-2', prix: 1340 });
     expect(code(() => contreProposer(ALEX, 'INT-4F7K', 'p-2', 1290))).toBe('prix'); expect(code(() => contreProposer(ALEX, 'INT-4F7K', 'p-2', 1385))).toBe('prix'); expect(code(() => contreProposer(ALEX, 'INT-4F7K', 'p-2', 1390))).toBe('prix');
     contreProposer(ALEX, 'INT-4F7K', 'p-2', 1360); expect(trancheIntentions().contres).toHaveLength(1); expect(contreDe('p-2')?.prix).toBe(1360);

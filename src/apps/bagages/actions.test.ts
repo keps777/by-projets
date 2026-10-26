@@ -34,8 +34,8 @@ describe('soute : offres du même vol', () => {
     demanderBagage(ALEX, D812, 80); expect(compteursSoute(V812).demandes).toBe(1);
   });
   it('compare au comptoir avec un écart signé', () => {
-    expect(ecartComptoir(90, 150)).toMatchObject({ abs: -60, libelle: '−60 $', moinsCher: true });
-    expect(ecartComptoir(170, 150).libelle).toBe('+20 $'); expect(ecartComptoir(150, 150).moinsCher).toBe(false);
+    expect(ecartComptoir(90, 150)).toMatchObject({ abs: -60, libelle: '−60\u00A0$', moinsCher: true });
+    expect(ecartComptoir(170, 150).libelle).toBe('+20\u00A0$'); expect(ecartComptoir(150, 150).moinsCher).toBe(false);
     expect(partDe(90, 150)).toBe(60); expect(partDe(300, 150)).toBe(100); expect(partDe(5, 0)).toBe(0);
     expect(choisir(offresSoute(V812, ALEX), 2).map((b) => b.prix)).toEqual([90, 95]);
   });
@@ -72,7 +72,7 @@ describe('acheter des bagages', () => {
   it('prend les moins chères, crédite chaque vendeur net de commission et transfère le droit', () => {
     const t = acheterBagages(ALEX, D812, 2);
     expect(t.total).toBe(185); expect(t.lignes.map((l) => l.prix)).toEqual([90, 95]); expect(t.confirme).toBe(false); expect(t.ref).toMatch(/^NXG-/);
-    // vendeur b-2 : ACC-0187, sans Pass → 90 − 12,5 % (11,25) = 78,75
+    // vendeur b-2 : ACC-0187, sans Pass → 90 − 12,5\u00A0% (11,25) = 78,75
     const v = compteDe('ACC-0187')!; expect(v.solde).toBe(78.75);
     const l = app.monde.ecritures.filter((e) => e.compteId === 'ACC-0187'); expect(l.map((e) => [e.type, e.montant])).toEqual([['bagage', 90], ['commission', -11.25]]); expect(l[1].solde).toBe(78.75); expect(l[1].hypothese).toBe(true);
     expect(compteDe('ACC-0301')!.solde).toBe(83.12); // 95 − 11,875 arrondi à 11,88
@@ -82,10 +82,10 @@ describe('acheter des bagages', () => {
   });
   it('applique la commission réduite du Pass au vendeur membre', () => {
     app.monde.bagages.find((b) => b.id === 'b-7')!.prix = 80; // ACC-0402 (Pass) devient le moins cher
-    acheterBagages(ALEX, D812, 1); expect(compteDe('ACC-0402')!.solde).toBe(72); // 80 − 10 % (8)
+    acheterBagages(ALEX, D812, 1); expect(compteDe('ACC-0402')!.solde).toBe(72); // 80 − 10\u00A0% (8)
   });
   it('avec le solde NexG : débite l’acheteur et refuse si insuffisant', () => {
-    expect(erreur(() => acheterBagages('ACC-0187', 'd-8wc2', 3, 'solde'))?.code).toBe('solde'); // 0 $ de solde
+    expect(erreur(() => acheterBagages('ACC-0187', 'd-8wc2', 3, 'solde'))?.code).toBe('solde'); // 0\u00A0$ de solde
     const avant = compteDe(ALEX)!.solde; acheterBagages(ALEX, D812, 2, 'solde'); expect(compteDe(ALEX)!.solde).toBe(avant - 185);
     expect(app.monde.ecritures.at(-1)).toMatchObject({ compteId: ALEX, type: 'bagage', montant: -185 });
   });

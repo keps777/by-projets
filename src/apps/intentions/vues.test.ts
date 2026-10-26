@@ -9,7 +9,7 @@ import { horloge, horlogeAria, joursRestants } from './temps.ts';
 import type { Brouillon } from './modele.ts';
 
 const ALEX = 'ACC-0412';
-beforeEach(() => { for (const k of Object.keys(app)) delete (app as unknown as Record<string, unknown>)[k]; Object.assign(app, etatInitial()); });
+beforeEach(() => { for (const k of Object.keys(app)) delete (app as unknown as Record<string, unknown>)[k]; Object.assign(app, etatInitial()); /* la proposition p-1 date de plus de 48 h : expirée dès l'ouverture */ app.monde.intentions[0].propositions[0].quand = Date.parse('2026-10-09T10:00'); });
 const crit = { de: 'YUL', vers: 'CDG', du: '2026-12-15', au: '2026-12-20', flexible: true };
 const b = (o: Partial<Brouillon> = {}): Brouillon => ({ ...crit, aller: 'simple', voyageurs: 1, budget: 1300, validite: '30', auto: true, auDessus: true, anonyme: true, ...o });
 
@@ -40,7 +40,7 @@ describe('prix maximum', () => {
   });
   it('textes d’aide selon les choix', () => {
     expect(aideFenetre(true, '2026-12-15', '2026-12-20')).toBe('Tout départ du 15 au 20 déc. vous convient : un vendeur peut proposer n’importe quel jour de la fenêtre.'); expect(aideFenetre(false, '2026-12-15', '2026-12-20')).toContain('exactement du 15 déc. ou du 20 déc.');
-    const o = { auto: true, auDessus: false, anonyme: false }; expect(aideOptions(o, '1 300 $', 'A.', 'Alex T.')).toEqual({ auto: 'Une proposition à 1 300 $ ou moins conclut l’accord sans attendre.', auDessus: 'Seules les propositions à votre prix ou moins vous parviendront.', anonyme: 'Les vendeurs voient « Alex T. », votre trajet et votre prix max.' });
+    const o = { auto: true, auDessus: false, anonyme: false }; expect(aideOptions(o, '1\u00A0300\u00A0$', 'A.', 'Alex T.')).toEqual({ auto: 'Une proposition à 1\u00A0300\u00A0$ ou moins conclut l’accord sans attendre.', auDessus: 'Seules les propositions à votre prix ou moins vous parviendront.', anonyme: 'Les vendeurs voient « Alex T. », votre trajet et votre prix max.' });
     expect(aideValidite('30', Date.parse('2026-11-21T12:00'))).toBe('Expire le 21 nov. 2026. Fonds libérés automatiquement à cette date si aucun accord.'); expect(aideValidite('j3', Date.parse('2026-12-12T23:59'))).toContain('trois jours avant');
     expect(expirationDe('7', '2026-12-15', Date.parse('2026-10-22T10:00')) - Date.parse('2026-10-22T10:00')).toBe(7 * 86_400_000);
   });
@@ -58,13 +58,13 @@ describe('validation du brouillon', () => {
 
 describe('propositions affichées', () => {
   it('écart signé au prix maximum, en $ et en %', () => {
-    expect(ecartProposition(1380, 1300)).toMatchObject({ libelle: '+80 $', pct: '+6 %', sens: 'dessus', court: '+80 $ vs votre max' }); expect(ecartProposition(1300, 1300)).toMatchObject({ libelle: '= votre prix', sens: 'egal' });
-    expect(ecartProposition(1250, 1300)).toMatchObject({ libelle: '−50 $', sens: 'dessous' }); expect(ecartNeuf(1380, app.monde.vols.find((v) => v.id === 'v-ae816')!)).toBe('−33 %');
+    expect(ecartProposition(1380, 1300)).toMatchObject({ libelle: '+80\u00A0$', pct: '+6\u00A0%', sens: 'dessus', court: '+80\u00A0$ vs votre max' }); expect(ecartProposition(1300, 1300)).toMatchObject({ libelle: '= votre prix', sens: 'egal' });
+    expect(ecartProposition(1250, 1300)).toMatchObject({ libelle: '−50\u00A0$', sens: 'dessous' }); expect(ecartNeuf(1380, app.monde.vols.find((v) => v.id === 'v-ae816')!)).toBe('−33\u00A0%');
   });
   it('les lignes de INT-4F7K : de la moins chère à la plus chère, badges, billets du monde simulé', () => {
     const l = lignesPropositions(intentionDe('INT-4F7K')!); expect(l.map((x) => x.prix)).toEqual([1300, 1380, 1500]);
     expect(l[0]).toMatchObject({ delta: '= votre prix', badge: 'Au prix : accord automatique en cours', ton: 'vert', ouverte: true, titre: 'Aérolys 816 · direct', sous: 'ven. 18 déc. · détenteur vérifié' });
-    expect(l[1]).toMatchObject({ delta: '+80 $', badge: 'Au-dessus de votre prix', ton: 'gris', titre: 'Nordelle 224 · 1 escale (KEF)' }); expect(l[1].aria).toContain('80 $ au-dessus de votre prix');
+    expect(l[1]).toMatchObject({ delta: '+80\u00A0$', badge: 'Au-dessus de votre prix', ton: 'gris', titre: 'Nordelle 224 · 1 escale (KEF)' }); expect(l[1].aria).toContain('80\u00A0$ au-dessus de votre prix');
     expect(l[2]).toMatchObject({ ouverte: false, badge: 'Expirée', ton: 'neutre' }); expect(ouvertes(intentionDe('INT-4F7K')!).map((p) => p.id)).toEqual(['p-2', 'p-3']);
   });
   it('libellés : vendeur, vol, rang, source des fonds', () => {
@@ -73,7 +73,7 @@ describe('propositions affichées', () => {
     expect(libelleSource('carte', compteDe(ALEX))).toBe('Carte •••• 4821 (test)'); expect(libelleSource('solde', compteDe(ALEX))).toBe('Solde NexG'); expect(libelleSource('wallet', undefined)).toBe('Wallet du téléphone');
   });
   it('ce que voient les vendeurs : initiale, trajet, fenêtre, prix max, jamais le nom', () => {
-    const v = vueVendeurs(intentionDe('INT-4F7K')!, compteDe(ALEX)); expect(v).toEqual({ initiale: 'A.', trajet: 'YUL → CDG', fenetre: '15–20 déc.', max: '1 300 $', fonds: true }); expect(JSON.stringify(v)).not.toMatch(/Tremblay|4821/);
+    const v = vueVendeurs(intentionDe('INT-4F7K')!, compteDe(ALEX)); expect(v).toEqual({ initiale: 'A.', trajet: 'YUL → CDG', fenetre: '15–20 déc.', max: '1\u00A0300\u00A0$', fonds: true }); expect(JSON.stringify(v)).not.toMatch(/Tremblay|4821/);
   });
   it('onglets : actives, conclues, expirées', () => {
     const o = comptesOnglets(ALEX); expect([o.actives.length, o.conclues.length, o.expirees.length]).toEqual([1, 1, 0]); expect(dansOnglet(intentionDe('INT-2B9X')!, 'conclues')).toBe(true);
