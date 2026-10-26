@@ -31,3 +31,7 @@ Application **Svelte 5 (runes) + TypeScript + Vite**, PWA, **backend simulé** d
 
 ## Git
 Une branche `nx/<nom>` par agent dans un worktree `/home/user/nx-<nom>` ; commits en français ; ne pas pousser ; la fusion est faite par le coordinateur.
+
+## Comparer à la maquette
+`node scripts/maquette.mjs <Planche> /tmp/x.png [largeur hauteur]` capture une planche rendable de `design/maquettes/` (mobile 390×844 par défaut ; variante PC : `WebInscription /tmp/x.png 1280 800`). Les sources de `design/mobile-*/` portent le même contenu mais ne se rendent pas seules ; leur équivalent est dans `design/maquettes/`. Capturer **votre** écran avec Playwright (`page.screenshot`) et comparer à l'œil : espacements, tailles, couleurs.
+La barre « Aperçu des états » (Normal · Chargement · Erreur · Hors ligne) et le bandeau « Prototype · données fictives » des variantes PC sont des outils de la maquette : le bandeau est déjà fourni par `Ecran` (pied PC) ; les états se déclenchent par vraies conditions (champ invalide, hors ligne `navigator.onLine`, attente) et, pour les tests, par `?etat=chargement|erreur|horsligne` si c'est utile.
