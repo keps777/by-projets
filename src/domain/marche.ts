@@ -18,14 +18,14 @@ export const droitDe = (id: string): Droit | undefined => app.monde.droits.find(
 export const droitsDe = (compteId: string): Droit[] => app.monde.droits.filter((d) => d.detenteurId === compteId);
 export const departDuVol = (v: Vol): number => departDe(v.jour, v.heureDepart);
 
-/** Toutes les offres d'un vol : le neuf (émis via NexG-TT), les reventes en cours, les offres d'agence et le drop membres (masqué sans Pass). Triées par prix croissant, drop masqué en dernier. */
+/** Toutes les offres d'un vol : le neuf (émis via NexG-TT), les reventes en cours, les offres d'agence (hors agences suspendues) et le drop membres, une fois ouvert (masqué sans Pass). Triées par prix croissant, drop masqué en dernier. */
 export function offresDuVol(volId: string, pass = false): Offre[] {
   const v = volDe(volId); if (!v) return [];
   const e = (prix: number) => ecart(v.prixNeuf, prix).pct;
   const offres: Offre[] = [{ id: `neuf:${v.id}`, type: 'neuf', volId, prix: v.prixNeuf, ecartPct: 0, vendeur: 'Émis via NexG-TT', masquee: false }];
   for (const d of app.monde.droits) if (d.volId === volId && d.statut === 'en_vente' && d.annonce) offres.push({ id: `revente:${d.id}`, type: 'revente', volId, prix: d.annonce.prix, ecartPct: e(d.annonce.prix), droitId: d.id, vendeur: 'Détenteur vérifié', masquee: false, detenteurs: d.chaine.length });
-  for (const o of app.monde.offresAgence) if (o.volId === volId) { const a = app.monde.agences.find((x) => x.id === o.agenceId); offres.push({ id: `agence:${o.id}`, type: 'agence', volId, prix: o.prix, ecartPct: e(o.prix), agenceId: o.agenceId, vendeur: `Vendu par ${a?.nom ?? 'une agence'}`, masquee: false }); }
-  for (const dr of app.monde.drops) if (dr.volId === volId && dr.restantes > 0 && maintenant() < dr.fin) offres.push({ id: `drop:${dr.id}`, type: 'drop', volId, prix: dr.prixMembre, ecartPct: e(dr.prixMembre), dropId: dr.id, vendeur: 'Drop membres', masquee: !pass });
+  for (const o of app.monde.offresAgence) if (o.volId === volId) { const a = app.monde.agences.find((x) => x.id === o.agenceId); if (a?.suspendue) continue; offres.push({ id: `agence:${o.id}`, type: 'agence', volId, prix: o.prix, ecartPct: e(o.prix), agenceId: o.agenceId, vendeur: `Vendu par ${a?.nom ?? 'une agence'}`, masquee: false }); }
+  for (const dr of app.monde.drops) if (dr.volId === volId && dr.restantes > 0 && dr.ouvre <= maintenant() && maintenant() < dr.fin) offres.push({ id: `drop:${dr.id}`, type: 'drop', volId, prix: dr.prixMembre, ecartPct: e(dr.prixMembre), dropId: dr.id, vendeur: 'Drop membres', masquee: !pass });
   return offres.sort((a, b) => Number(a.masquee) - Number(b.masquee) || a.prix - b.prix);
 }
 /** La meilleure offre visible (la moins chère hors drop masqué), pour le baromètre du marché. */
@@ -64,7 +64,7 @@ export function acheter(offre: Offre, acheteurId: string, moyen: MoyenPaiement =
     if (vendeur) { ecrire(vendeur.id, 'revente', `Revente ${v.de} → ${v.vers}`, prix, { sous: `Vol ${v.numero} · billet vendu`, droitId: d.id }); ecrire(vendeur.id, 'commission', `Commission de revente${vendeur.pass.actif ? ' · membre Pass' : ''}`, -comm, { sous: `Taux hypothèse ${vendeur.pass.actif ? '10' : '12,5'} %`, droitId: d.id, hypothese: true }); notifier(vendeur.id, { type: 'vente', titre: `Billet vendu : ${v.de} → ${v.vers}`, sous: `Vol ${v.numero} · vous recevez ${net(prix, vendeur.pass.actif)} $ sur votre solde NexG.`, essentielle: true, lien: '/solde' }); }
     d.chaine.push(maillon('revente', d.detenteurId, acheteurId, prix, comm)); d.detenteurId = acheteurId; d.statut = 'detenu'; d.prixPaye = prix; d.origine = 'revente'; delete d.annonce; droit = d;
   } else if (offre.type === 'agence') {
-    const o = app.monde.offresAgence.find((x) => `agence:${x.id}` === offre.id); if (!o) throw new ErreurMarche('offre_indisponible', 'Cette offre d’agence n’est plus disponible.');
+    const o = app.monde.offresAgence.find((x) => `agence:${x.id}` === offre.id); if (!o || app.monde.agences.find((x) => x.id === o.agenceId)?.suspendue) throw new ErreurMarche('offre_indisponible', 'Cette offre d’agence n’est plus disponible.');
     droit = { id: nouvelId('d'), ref: refUnique(), pnr: pnr(), volId: v.id, detenteurId: acheteurId, statut: 'detenu', prixPaye: o.prix, origine: 'agence', agenceId: o.agenceId, chaine: [maillon('agence', `agence:${o.agenceId}`, acheteurId, o.prix)], bagagesInclus: 2 }; app.monde.droits.push(droit);
   } else {
     droit = { id: nouvelId('d'), ref: refUnique(), pnr: pnr(), volId: v.id, detenteurId: acheteurId, statut: 'detenu', prixPaye: v.prixNeuf, origine: 'neuf', chaine: [maillon('achat_neuf', 'nexgtt', acheteurId, v.prixNeuf)], bagagesInclus: 2 }; app.monde.droits.push(droit);
