@@ -65,7 +65,7 @@ const VOLS_BRUT: V[] = [
 ];
 export const VOLS: Vol[] = VOLS_BRUT.map((b) => {
   const v = vol(b);
-  if (ARRIVEES[v.id]) { v.heureArrivee = ARRIVEES[v.id]; v.plusJours = 1; }
+  if (ARRIVEES[v.id]) { v.heureArrivee = ARRIVEES[v.id]; v.plusJours = v.id === 'v-no905' ? 0 : 1; }
   else { const [h, m] = b.dep.split(':').map(Number), total = h * 60 + m + b.duree + (DECALAGE[b.vers] ?? 0) - 0; v.plusJours = Math.floor(total / 1440); v.heureArrivee = hhmm(((total % 1440) + 1440) % 1440); }
   return v;
 });
