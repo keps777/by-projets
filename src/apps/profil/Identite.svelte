@@ -6,6 +6,7 @@
   import { compteCourant } from '../../domain/compte.ts';
   import { DOCUMENTS, numeroDocumentValide, resultatIdentite, retourSur, verifierIdentite, type TypeDocument } from './actions.ts';
   import { reseau } from './enligne.svelte.ts';
+  import { largeur } from './largeur.svelte.ts';
 
   /** Identité facultative : on explique quand elle est demandée, puis on simule la vérification (document, saisie, attente, résultat). Aucun document n'est envoyé. */
   type Phase = 'intro' | 'saisie' | 'attente' | 'ok' | 'refuse';
@@ -40,66 +41,75 @@
   const suite = () => aller(retour);
 </script>
 
-<Ecran titre="Facultatif" face="jour" retour={retour}>
-  <section class="hero" data-face="nuit">
-    <div class="row g10"><span class="volets" aria-hidden="true"><span style="animation-delay:120ms">I</span><span style="animation-delay:220ms">D</span></span>
-      <span class="sur"><Icone nom="lune" taille={14} trait={2} />Pour l'espace Mes actifs</span></div>
-    <h1>Vérifier votre identité, seulement quand il le faut</h1>
-    <p>Pour explorer et acheter, rien à faire. La vérification arrive au moment de revendre ou de recevoir de l'argent.</p>
-  </section>
-
-  <section class="col g12">
-    <table class="quand"><caption>Quand est-ce demandé ?</caption>
-      <thead><tr><th scope="col">Ce que vous faites</th><th scope="col" class="c2">Vérification</th></tr></thead>
-      <tbody>
-        {#each lignes as l (l.q)}<tr><th scope="row">{l.q}</th><td>{#if l.non}<span class="p non">Non</span>{:else}<span class="p oui"><Icone nom="verifie" taille={12} trait={2.5} />Oui</span>{/if}</td></tr>{/each}
-        <tr><th scope="row">Nommer un voyageur</th><td class="petit">Informations du passeport du voyageur seulement</td></tr>
-      </tbody></table>
-    <p class="info"><Icone nom="info" taille={16} /><span>Revendre et recevoir de l'argent : requis par la réglementation sur les versements (à confirmer).</span></p>
-  </section>
-
-  <section class="bloc" aria-labelledby="steps-title">
-    <div class="tete"><h2 id="steps-title" class="t-section">Si vous le faites maintenant</h2><span class="est"><Icone nom="horloge" taille={14} trait={2} />Quelques minutes — estimation</span></div>
-    <ol class="liste-plain etapes">
-      {#each etapes as s, i (s.t)}
-        {@const n = i + 1}
-        <li><span class="rond" class:actif={enCours && etapeActive === n} class:fait={etapeActive > n} aria-hidden="true">{#if etapeActive > n}<Icone nom="ok" taille={16} trait={2.5} />{:else}{n}{/if}</span>
-          <span class="col g4"><span class="t">{s.t}</span><span class="s">{s.s}</span></span></li>
-      {/each}
-    </ol>
-
-    {#if !reseau.enLigne && phase !== 'ok'}<p class="alerte" role="alert"><Icone nom="hors_ligne" taille={18} />Vous êtes hors ligne : la vérification reprendra au retour du réseau.</p>{/if}
-
-    {#if phase === 'saisie'}
-      <form class="saisie" onsubmit={envoyer} novalidate>
-        <p class="demo"><Icone nom="piece" taille={18} /><span><strong>Démo : étape 1 ouverte.</strong> L'appareil photo s'ouvrirait ici. Aucun document n'est envoyé dans cette maquette.</span></p>
-        <fieldset class="docs"><legend class="t-sec">Type de document</legend>
-          {#each DOCUMENTS as d (d.id)}<label class="radio" class:on={typeDoc === d.id}><input type="radio" name="doc" value={d.id} bind:group={typeDoc} />{d.label}</label>{/each}</fieldset>
-        <div class="champ" data-erreur={erreur ? '' : undefined}><label for="id-num">Numéro du document (démo)</label>
-          <input id="id-num" type="text" autocomplete="off" autocapitalize="characters" bind:value={numero} oninput={() => (erreur = '')} aria-invalid={erreur ? 'true' : undefined} aria-describedby={erreur ? 'id-num-e' : 'id-num-a'} />
-          {#if erreur}<span class="erreur" id="id-num-e" role="alert"><Icone nom="alerte" taille={16} />{erreur}</span>{:else}<span class="aide" id="id-num-a">Inventez-en un : six caractères ou plus. Rien n'est envoyé.</span>{/if}</div>
-        <button type="submit" class="btn fonce" disabled={!reseau.enLigne}>Envoyer pour vérification</button>
-      </form>
-    {:else if phase === 'attente'}
-      <p class="attente" role="status"><span class="tour" aria-hidden="true"></span><span><strong>Vérification en cours…</strong> {etapeActive === 2 ? 'Comparaison du portrait (simulée).' : 'Confirmation de la réponse (simulée).'}</span></p>
-    {:else if phase === 'ok'}
-      <p class="ok" role="status"><Icone nom="verifie" taille={20} trait={2} /><span><strong>Identité vérifiée.</strong> Vous pouvez maintenant revendre et recevoir de l'argent. Démo : aucun vrai document n'a été examiné.</span></p>
-    {:else if phase === 'refuse'}
-      <p class="alerte" role="alert"><Icone nom="alerte" taille={18} /><span><strong>Document illisible (démo).</strong> La vérification n'a pas abouti. Reprenez avec un autre numéro.</span></p>
-    {:else if dejaFait}
-      <p class="ok" role="status"><Icone nom="verifie" taille={20} trait={2} /><span><strong>Identité déjà vérifiée.</strong> Rien à refaire.</span></p>
-    {/if}
-  </section>
-
-  <p class="plus">Vous pourrez la faire plus tard depuis Mes actifs, au moment de revendre un billet.</p>
-
-  {#snippet pied()}
+{#snippet actions()}
     {#if phase === 'intro' && !dejaFait}<button type="button" class="btn sec" onclick={commencer}><Icone nom="piece" taille={20} />Vérifier maintenant</button>{/if}
     {#if enCours}<button type="button" class="btn sec" onclick={stopper}>Arrêter la vérification (démo)</button>{/if}
     {#if phase === 'refuse'}<button type="button" class="btn sec" onclick={commencer}>Réessayer</button>{/if}
     {#if phase === 'ok' || (phase === 'intro' && dejaFait)}<button type="button" class="btn" onclick={suite}>Continuer<Icone nom="suivant" taille={20} /></button>
     {:else}<button type="button" class="btn" onclick={suite}>Plus tard</button>{/if}
   {/snippet}
+
+<Ecran titre="Facultatif" face="jour" retour={retour} large pied={largeur.pc ? undefined : actions}>
+  <section class="hero" data-face="nuit">
+    <div class="row g10">{#if largeur.pc}<span class="facultatif">Facultatif</span>{/if}<span class="volets" aria-hidden="true"><span style="animation-delay:120ms">I</span><span style="animation-delay:220ms">D</span></span>
+      <span class="sur"><Icone nom="lune" taille={14} trait={2} />Pour l'espace Mes actifs</span></div>
+    <h1>Vérifier votre identité, seulement quand il le faut</h1>
+    <p>Pour explorer et acheter, rien à faire. La vérification arrive au moment de revendre ou de recevoir de l'argent.</p>
+  </section>
+
+  <div class="grille">
+    <div class="gauche">
+    <section class="col g12 quand-sec">
+        <table class="quand"><caption>Quand est-ce demandé ?</caption>
+          <thead><tr><th scope="col">Ce que vous faites</th><th scope="col" class="c2">Vérification</th></tr></thead>
+          <tbody>
+            {#each lignes as l (l.q)}<tr><th scope="row">{l.q}</th><td>{#if l.non}<span class="p non">Non</span>{:else}<span class="p oui"><Icone nom="verifie" taille={12} trait={2.5} />Oui</span>{/if}</td></tr>{/each}
+            <tr><th scope="row">Nommer un voyageur</th><td class="petit">Informations du passeport du voyageur seulement</td></tr>
+          </tbody></table>
+        <p class="info"><Icone nom="info" taille={16} /><span>Revendre et recevoir de l'argent : requis par la réglementation sur les versements (à confirmer).</span></p>
+        {#if largeur.pc}<p class="hyp"><span class="h">[H]</span><span>Moment et modalités de la vérification : à valider (obligations sur les versements, SECURITY_REQUIREMENTS R6 et R14).</span></p>{/if}
+      </section>
+
+    </div>
+    <div class="droite">
+    <section class="bloc" aria-labelledby="steps-title">
+        <div class="tete"><h2 id="steps-title" class="t-section">Si vous le faites maintenant</h2><span class="est"><Icone nom="horloge" taille={14} trait={2} />Quelques minutes — estimation</span></div>
+        <ol class="liste-plain etapes">
+          {#each etapes as s, i (s.t)}
+            {@const n = i + 1}
+            <li><span class="rond" class:actif={enCours && etapeActive === n} class:fait={etapeActive > n} aria-hidden="true">{#if etapeActive > n}<Icone nom="ok" taille={16} trait={2.5} />{:else}{n}{/if}</span>
+              <span class="col g4"><span class="t">{s.t}</span><span class="s">{s.s}</span></span></li>
+          {/each}
+        </ol>
+
+        {#if !reseau.enLigne && phase !== 'ok'}<p class="alerte" role="alert"><Icone nom="hors_ligne" taille={18} />Vous êtes hors ligne : la vérification reprendra au retour du réseau.</p>{/if}
+
+        {#if phase === 'saisie'}
+          <form class="saisie" onsubmit={envoyer} novalidate>
+            <p class="demo"><Icone nom="piece" taille={18} /><span><strong>Démo : étape 1 ouverte.</strong> L'appareil photo s'ouvrirait ici. Aucun document n'est envoyé dans cette maquette.</span></p>
+            <fieldset class="docs"><legend class="t-sec">Type de document</legend>
+              {#each DOCUMENTS as d (d.id)}<label class="radio" class:on={typeDoc === d.id}><input type="radio" name="doc" value={d.id} bind:group={typeDoc} />{d.label}</label>{/each}</fieldset>
+            <div class="champ" data-erreur={erreur ? '' : undefined}><label for="id-num">Numéro du document (démo)</label>
+              <input id="id-num" type="text" autocomplete="off" autocapitalize="characters" bind:value={numero} oninput={() => (erreur = '')} aria-invalid={erreur ? 'true' : undefined} aria-describedby={erreur ? 'id-num-e' : 'id-num-a'} />
+              {#if erreur}<span class="erreur" id="id-num-e" role="alert"><Icone nom="alerte" taille={16} />{erreur}</span>{:else}<span class="aide" id="id-num-a">Inventez-en un : six caractères ou plus. Rien n'est envoyé.</span>{/if}</div>
+            <button type="submit" class="btn fonce" disabled={!reseau.enLigne}>Envoyer pour vérification</button>
+          </form>
+        {:else if phase === 'attente'}
+          <p class="attente" role="status"><span class="tour" aria-hidden="true"></span><span><strong>Vérification en cours…</strong> {etapeActive === 2 ? 'Comparaison du portrait (simulée).' : 'Confirmation de la réponse (simulée).'}</span></p>
+        {:else if phase === 'ok'}
+          <p class="ok" role="status"><Icone nom="verifie" taille={20} trait={2} /><span><strong>Identité vérifiée.</strong> Vous pouvez maintenant revendre et recevoir de l'argent. Démo : aucun vrai document n'a été examiné.</span></p>
+        {:else if phase === 'refuse'}
+          <p class="alerte" role="alert"><Icone nom="alerte" taille={18} /><span><strong>Document illisible (démo).</strong> La vérification n'a pas abouti. Reprenez avec un autre numéro.</span></p>
+        {:else if dejaFait}
+          <p class="ok" role="status"><Icone nom="verifie" taille={20} trait={2} /><span><strong>Identité déjà vérifiée.</strong> Rien à refaire.</span></p>
+        {/if}
+      </section>
+
+      {#if largeur.pc}<div class="act">{@render actions()}</div>{/if}
+      <p class="plus">Vous pourrez la faire plus tard depuis Mes actifs, au moment de revendre un billet.</p>
+
+    </div>
+  </div>
 </Ecran>
 
 <style>
@@ -132,4 +142,28 @@
   @keyframes tour { to { transform: rotate(360deg); } }
   .plus { font-size: 13px; line-height: 19px; color: var(--ink3); }
   @keyframes nx-rise { 0% { opacity: 0; transform: translateY(12px); } 100% { opacity: 1; transform: translateY(0); } }
+  .grille, .gauche, .droite { display: contents; } .facultatif, .hyp { display: none; }
+  @media (min-width: 900px) {
+    .hero { gap: 18px; padding: 28px; margin: 0; border-radius: 24px; }
+    .row.g10 { gap: 12px 16px; align-items: center; }
+    .facultatif { display: inline-flex; align-items: center; min-height: 32px; padding: 0 14px; border-radius: 999px; background: var(--surface2); color: var(--ink2); font: 700 12px/1 'Barlow', sans-serif; letter-spacing: 0.14em; text-transform: uppercase; }
+    .volets { gap: 4px; } .volets span { width: 34px; height: 48px; border-radius: 6px; font-size: 26px; box-shadow: inset 0 -24px 0 #15171B; } .sur { font-size: 13px; gap: 8px; color: var(--ink2); }
+    .hero h1 { max-width: 820px; font-size: 48px; line-height: 48px; letter-spacing: 0; } .hero p { max-width: 720px; font-size: 17px; line-height: 26px; }
+    .grille { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 520px); gap: 24px; align-items: start; }
+    .gauche, .droite { display: flex; flex-direction: column; min-width: 0; } .droite { gap: 18px; }
+    .quand-sec { gap: 0; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); overflow: hidden; }
+    .quand { border: 0; border-radius: 0; font-size: 14px; line-height: 20px; }
+    caption { padding: 18px 18px 12px; font-size: 26px; line-height: 30px; }
+    thead th { padding: 10px 18px; font-size: 12px; letter-spacing: 0.12em; color: var(--ink2); } .c2 { width: auto; }
+    tbody th, tbody td { padding: 14px 18px; } tbody th { width: 56%; font-size: 16px; font-weight: 700; } .petit { font: 400 14px/20px 'Barlow', sans-serif; }
+    .p { height: 28px; padding: 0 12px; } .non { background: var(--surface2); } .oui { color: var(--accent-2); }
+    .info { padding: 14px 18px 18px; font-size: 14px; line-height: 20px; } .info :global(svg) { margin-top: 1px; flex: none; }
+    .hyp { display: flex; align-items: flex-start; gap: 8px; margin: 0; padding: 0 18px 18px; font-size: 13px; line-height: 20px; color: var(--ink2); }
+    .h { flex: none; display: inline-flex; align-items: center; height: 20px; padding: 0 6px; border-radius: 6px; background: rgba(255, 210, 63, 0.30); color: #5C4600; font: 700 12px/1 'Barlow', sans-serif; letter-spacing: 0.04em; }
+    .bloc { padding: 22px; gap: 14px; } .bloc .t-section { margin: 0; font-size: 22px; line-height: 26px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .est { background: none; padding: 0; min-height: 0; font-weight: 600; }
+    .etapes { gap: 16px; } .etapes li { gap: 14px; } .rond { width: 36px; height: 36px; font-size: 16px; } .t { font-size: 16px; line-height: 22px; } .s { font-size: 14px; line-height: 20px; } .etapes li .col { padding-top: 2px; }
+    .act { display: flex; flex-direction: column; gap: 12px; } .act .btn { min-height: 56px; font-size: 16px; } .act .btn:not(.sec):not(.fonce) { font-size: 17px; }
+    .plus { font-size: 14px; line-height: 20px; color: var(--ink2); }
+  }
 </style>
