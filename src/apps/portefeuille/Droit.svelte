@@ -46,7 +46,8 @@
     </div>
   </Ecran>
 {:else}
-  <Ecran titre="Droit de voyage" face="nuit" retour="/portefeuille">
+  <Ecran titre="Droit de voyage" face="nuit" retour="/portefeuille" large>
+    <div class="pc-duo etroit"><div class="pc-col colle">
     <BilletRV {vue} now={temps.maintenant} {compagnie} ville={ville(vue.vol.vers)} villeDepart={ville(vue.vol.de)} detenteur={nom} />
 
     <section class="valeur" aria-labelledby="val-h">
@@ -68,6 +69,7 @@
       {/if}
       <p class="note">Prix d’un billet neuf équivalent sur ce vol, relevé chaque mois depuis l’achat. Indicatif, non garanti.</p>
     </section>
+    </div><div class="pc-col">
 
     {#if vue.actions.length}
       <section class="que-faire" aria-labelledby="act-h">
@@ -167,11 +169,13 @@
         {/each}
       </ol>
     </section>
+    </div></div>
     <p class="aide-c">Prix indicatifs. Un droit de voyage n’est pas un placement financier.</p>
   </Ecran>
 {/if}
 
 <style>
+  @media (min-width: 900px) { .aide-c { text-align: center; } }
   .col { display: flex; flex-direction: column; } .g2 { gap: 2px; } .g4 { gap: 4px; } .grow { flex: 1; min-width: 0; }
   .mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; } .petit { font-size: 12px; color: var(--ink2); }
   .t-section { text-transform: uppercase; letter-spacing: 0.04em; }

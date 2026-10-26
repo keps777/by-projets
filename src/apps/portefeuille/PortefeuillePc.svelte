@@ -152,7 +152,7 @@
         </section>
         {#if sel.statut === 'en_vente'}
           <div class="col g8">
-            <p class="info"><Icone nom="info" taille={18} trait={2} /><span>En vente à {fmt(sel.annonce ?? 0)}{selDroit?.annonce ? ` depuis le ${jourCourt(selDroit.annonce.depuis)}` : ''}. Retirez l’annonce pour nommer un voyageur ou transférer ce droit.</span></p>
+            <p class="info"><Icone nom="info" taille={18} trait={2} /><span>En vente à {fmt(sel.annonce ?? 0)}{selDroit?.annonce ? ` depuis le ${jourCourt(selDroit.annonce.depuis)}` : '.'} Retirez l’annonce pour nommer un voyageur ou transférer ce droit.</span></p>
             <a class="b-grand sec" href="/droit/{sel.droitId}" onclick={(e) => va(e, `/droit/${sel.droitId}`)}><Pic nom="etiquette" taille={20} trait={1.75} />Gérer l’annonce</a>
           </div>
         {:else}

@@ -65,7 +65,8 @@
   <Absent titre={t.titre} message={t.message} details={t.details} lien="/portefeuille" libelleLien="Voir mon portefeuille" retour="/portefeuille" />
 {:else}
   {@const cie = compagnieDe(vol)}
-  <Ecran titre="Options de vente" face="nuit" retour="/portefeuille">
+  <Ecran titre="Options de vente" face="nuit" retour="/portefeuille" large>
+    <div class="pc-duo"><div class="pc-col">
     <section class="billet" aria-label="Votre droit"><div class="gauche"><span class="route">{vol.de} → {vol.vers}</span><span class="detail">{jourComplet(depart)} · {cie.nom} · vol {vol.numero.split(' ')[1]}</span></div>
       <div class="coupe" aria-hidden="true"></div><div class="droite"><span class="l">Payé</span><span class="m mono">{fmt(droit.prixPaye)}</span><span class="l sp">Prix équivalent</span><span class="m mono">{fmt(vol.prixNeuf)}</span></div></section>
 
@@ -101,6 +102,7 @@
       {:else}<p class="explique"><span class="jaune"><Icone nom="info" taille={18} trait={2} /></span><span><strong>Attendre&nbsp;:</strong> jusqu’à ~{fmt(attente.prix)} estimés si la demande monte, avec un risque de ne pas vendre avant l’échéance du {jourCourt(echeanceDe(depart))} (J-1).</span></p>{/if}
     </section>
 
+    </div><div class="pc-col">
     <section aria-labelledby="cmp-t" class="comparer"><h2 id="cmp-t" class="t-section">Comparer</h2>
       <div class="deux">
         <button type="button" aria-pressed={mode === 'rachat'} class="opt" class:sel={mode === 'rachat'} onclick={choisirRachat}>
@@ -117,6 +119,7 @@
     <a class="echeance" href="/echeances" onclick={(e) => naviguer(e, '/echeances')}><Icone nom="horloge" taille={18} trait={2} /><span class="grow">Échéance le {jourHeure(echeanceDe(depart))}&nbsp;: après, plus aucune vente possible</span><Icone nom="suivant" taille={18} trait={2} /></a>
     {#if erreur}<p class="erreur" role="alert"><Icone nom="alerte" taille={18} trait={2} /><span>{erreur}</span></p>{/if}
     <div class="mentions"><p class="fort">Estimations indicatives, aucun prix garanti.</p><p>Un droit de voyage n’est pas un placement financier. Données fictives de démonstration.</p></div>
+    </div></div>
 
     {#snippet pied()}
       <button type="button" class="btn grand" class:sec={mode !== 'rachat'} onclick={() => (confirmer = true)} disabled={!rachat}>Accepter le rachat · <span class="mono">{fmt(rachat?.prix ?? est.prix)}</span></button>

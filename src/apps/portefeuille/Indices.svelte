@@ -25,7 +25,7 @@
   const aria = (r: RouteIndice) => `${r.code}, ${r.ville}, ${fmtPct(r.variation[periode])} ${LONG[periode]}. Voir le cours.`;
 </script>
 
-<Ecran titre="Indices NexG" face="nuit">
+<Ecran titre="Indices NexG" face="nuit" large>
   <section class="bandeau" aria-label="Prix équivalents des principales routes, variation sur 24 h">
     <span class="b-lib">24 h</span>
     <div class="vue"><div class="piste" class:pause>
@@ -115,4 +115,13 @@
   .tuile:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
   .legende { display: flex; flex-direction: column; gap: 6px; } .degrade { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; height: 12px; } .degrade span:first-child { border-radius: 3px 0 0 3px; } .degrade span:last-child { border-radius: 0 3px 3px 0; }
   .l-bornes { display: flex; justify-content: space-between; gap: 8px; font: 400 11px/14px 'IBM Plex Mono', ui-monospace, monospace; color: var(--ink3); }
+  @media (min-width: 900px) {
+    .bandeau { margin: 0; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+    .intro { max-width: 760px; } .intro h1 { font-size: 44px; line-height: 44px; }
+    .periodes { width: 360px; }
+    .indices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .chaleur { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; row-gap: 16px; align-items: start; }
+    .chaleur > .col:first-child, .extremes, .legende { grid-column: 1 / -1; } .extremes { max-width: 520px; }
+    .tuiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
 </style>

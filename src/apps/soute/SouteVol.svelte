@@ -48,7 +48,7 @@
   </div>
 {/snippet}
 
-<Ecran titre={m ? `Soute du vol ${m.vol.numero}` : 'Soute du vol'} face="nuit" retour={retourVers} pied={compte && m && droit ? piedActions : undefined}>
+<Ecran titre={m ? `Soute du vol ${m.vol.numero}` : 'Soute du vol'} face="nuit" large retour={retourVers} pied={compte && m && droit ? piedActions : undefined}>
   {#if !compte || !m}
     <section class="vide carte" aria-live="polite">
       <span class="rond" aria-hidden="true"><Picto nom="valise" taille={26} /></span>
@@ -60,6 +60,7 @@
     <MemeVol vol={quand} />
     {#if !reseau.enLigne}<p class="hors" role="alert"><Picto nom="alerte" taille={18} />Vous êtes hors ligne : cette soute date de votre dernière visite.</p>{/if}
 
+    <div class="pc-duo etroit"><div class="pc-col colle">
     <section class="reperes" aria-label="Repères de prix des bagages">
       <div><span class="lib"><i class="carre"></i>Offre min.</span><span class="mono val down">{m.offreMin !== undefined ? fmt(m.offreMin) : '—'}</span><span class="sous">{m.offres.length ? pluriel(m.offres.length, 'proposé') : 'aucune offre'}</span></div>
       <div><span class="lib"><i class="rond-b"></i>Demande max.</span><span class="mono val up">{m.demandeMax !== undefined ? fmt(m.demandeMax) : '—'}</span><span class="sous">{m.nbDemandes ? pluriel(m.nbDemandes, 'demande') : 'aucune demande'}</span></div>
@@ -97,6 +98,7 @@
       </ul>
     </section>
 
+    </div><div class="pc-col">
     <section class="fiche carte2" aria-label="Bagage sélectionné" aria-live="polite">
       {#if sel && ecart}
         <div class="fiche-tete">
@@ -187,6 +189,7 @@
       {:else}<p class="vide-ligne cadre-vide">Aucune transaction sur cette soute pour l’instant.</p>{/if}
     </section>
 
+    </div></div>
     <p class="echeance"><Picto nom="horloge" taille={18} /><span>Transferts possibles jusqu’au <span class="mono">{echeance}</span>, à l’échéance de nommage (à valider).</span></p>
     <p class="aide centre">Sous réserve d’accord avec la compagnie. Données de démonstration.</p>
   {/if}

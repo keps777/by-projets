@@ -35,8 +35,8 @@
   const va = (e: MouseEvent, c: string) => { if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; e.preventDefault(); aller(c); };
 </script>
 
-<Ecran titre="Pass NexG" face="nuit" retour={compte ? '/compte' : '/explorer'}>
-  <div class="cp page">
+<Ecran titre="Pass NexG" face="nuit" retour={compte ? '/compte' : '/explorer'} large>
+  <div class="cp page"><div class="pc-duo"><div class="pc-col colle">
     <figure class="fig">
       <div class="carte-pass" role="img" aria-label={`Carte de membre Pass NexG${compte ? ` au nom de ${nomCourt(compte)}` : ''}`}>
         <div class="corps">
@@ -61,6 +61,7 @@
     {#if fait}<p class="statut" role="status"><Pic nom="ok" taille={18} trait={2} /><span>{fait}</span></p>{/if}
     {#if erreur}<p class="cp-err" role="alert"><Icone nom="alerte" taille={16} />{erreur}</p>{/if}
 
+    </div><div class="pc-col">
     <section class="cp-groupe g12" aria-labelledby="perks-title">
       <h2 id="perks-title" class="cp-h2">Ce que le Pass ouvre</h2>
       <ul class="avantages">
@@ -102,6 +103,7 @@
       </ol>
       <p class="cp-note">Taux de commission de revente par niveau — hypothèse. Sans Pass{NB}: {pct(TAUX_COMMISSION)}.</p>
     </section>
+    </div></div>
   </div>
 
   {#snippet pied()}

@@ -80,7 +80,8 @@
   <Absent titre={t.titre} message={t.message} details={t.details} lien="/portefeuille" libelleLien="Voir mon portefeuille" retour="/portefeuille" />
 {:else}
   {@const cie = compagnieDe(vol)}
-  <Ecran titre="Revendre" face="nuit" retour="/portefeuille">
+  <Ecran titre="Revendre" face="nuit" retour="/portefeuille" large>
+    <div class="pc-duo"><div class="pc-col">
     <div class="billet" aria-label="Votre droit"><span class="route">{vol.de} → {vol.vers}</span><span class="detail">{jourComplet(depart)}<br />{cie.nom} {vol.numero.split(' ')[1]} · {vol.heureDepart}</span><span class="paye"><span class="l">Payé</span><span class="m mono">{fmt(droit.prixPaye)}</span></span></div>
     {#if enVente}<p class="en-vente" role="status"><Pic nom="etiquette" taille={18} />Votre droit est en vente à <span class="mono">{fmt(droit.annonce?.prix ?? 0)}</span> depuis le {jourHeure(droit.annonce?.depuis ?? 0)}. Modifiez le prix ou retirez l’annonce.</p>{/if}
 
@@ -105,6 +106,7 @@
         <ul>{#each lignes as l}<li class:vous={l.moi}><span class="n">{l.moi ? 'Votre annonce' : 'Autre détenteur'}</span><span class="mono p">{fmt(l.p)}</span></li>{/each}</ul>
         {#if !autres.length}<p class="seule">Aucune autre annonce sur ce vol : la vôtre serait la seule.</p>{/if}</div></section>
 
+    </div><div class="pc-col">
     <section class="calcul carte" aria-labelledby="calc-h"><h2 id="calc-h" class="t-section">Ce que vous recevez</h2>
       <dl><div class="l1"><dt>Prix de vente</dt><dd class="mono">{fmt(prix)}</dd></div>
         <div class="l2"><dt>Commission NexG-TT (hypothèse)<span class="mono sous">{r.tauxLabel}{pass ? ' · membre Pass' : ' · sans Pass'}</span></dt><dd class="mono" data-testid="commission">{r.commission === 0 ? fmt(0) : `−${fmt(r.commission)}`}</dd></div>
@@ -118,6 +120,7 @@
     <p class="retrait"><Icone nom="horloge" taille={16} trait={2} /><span>Retrait automatique de l’annonce à J-1 ({jourHeure(echeanceDe(depart))}).</span></p>
     {#if erreur}<p class="erreur" role="alert"><Icone nom="alerte" taille={18} trait={2} /><span>{erreur}</span></p>{/if}
     <p class="t-aide centre">Prix indicatifs. Un droit de voyage n’est pas un placement financier.</p>
+    </div></div>
 
     {#snippet pied()}
       <p class="resume"><span>Vous recevez <span class="mono clair">{fmt(r.net)}</span></span><span>Commission {r.tauxLabel} (hypothèse)</span></p>
