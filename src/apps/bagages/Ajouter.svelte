@@ -1,5 +1,6 @@
 <script lang="ts">
   import Ecran from '../../ui/Ecran.svelte';
+  import { ecran } from '../achat/ecranPc.svelte.ts';
   import Picto from './Picto.svelte';
   import { aller, param } from '../../router.svelte.ts';
   import { app } from '../../data/store.svelte.ts';
@@ -56,7 +57,19 @@
   const villeDe = (code: string) => app.monde.aeroports.find((a) => a.code === code)?.ville ?? code;
 </script>
 
-<Ecran titre="Ajouter des bagages" face="jour" retour={droit ? `/bagages${query}` : '/'}>
+{#snippet pied()}
+    {#if droit}
+      {#if erreur}<p class="alerte" role="alert"><Picto nom="alerte" taille={16} />{erreur}</p>{/if}
+      {#if ok && qte > 0}
+        <button type="button" class="btn" disabled={envoi} onclick={acheter}>{envoi ? 'Traitement…' : 'Acheter'} {envoi ? '' : `${qte} ${mot} · `}<span class="mono">{envoi ? '' : fmt(total)}</span></button>
+      {:else}
+        <button type="button" class="btn sec" aria-disabled="true" onclick={(e) => e.preventDefault()}><Picto nom="cadenas" taille={18} />{ok ? 'Aucun bagage à acheter' : 'Achat impossible sur ce vol'}</button>
+      {/if}
+    {/if}
+  {/snippet}
+
+<Ecran titre="Ajouter des bagages" face="jour" retour={droit ? `/bagages${query}` : '/'} large pied={ecran.pc ? undefined : pied}>
+<div class="pc-col">
   <h1 class="sr">Ajouter des bagages</h1>
   {#if !compte || !droit || !vol || !cie}
     <section class="vide carte"><h2 class="t-section">Aucune réservation</h2><p class="t-sec">Les bagages s’ajoutent à une réservation : détenez d’abord un droit de voyage.</p><button type="button" class="btn" onclick={() => aller('/rechercher')}>Rechercher un vol</button></section>
@@ -152,17 +165,8 @@
       </section>
     {/if}
   {/if}
-
-  {#snippet pied()}
-    {#if droit}
-      {#if erreur}<p class="alerte" role="alert"><Picto nom="alerte" taille={16} />{erreur}</p>{/if}
-      {#if ok && qte > 0}
-        <button type="button" class="btn" disabled={envoi} onclick={acheter}>{envoi ? 'Traitement…' : 'Acheter'} {envoi ? '' : `${qte} ${mot} · `}<span class="mono">{envoi ? '' : fmt(total)}</span></button>
-      {:else}
-        <button type="button" class="btn sec" aria-disabled="true" onclick={(e) => e.preventDefault()}><Picto nom="cadenas" taille={18} />{ok ? 'Aucun bagage à acheter' : 'Achat impossible sur ce vol'}</button>
-      {/if}
-    {/if}
-  {/snippet}
+{#if ecran.pc}{@render pied()}{/if}
+</div>
 </Ecran>
 
 <style>
@@ -219,4 +223,7 @@
   .alerte { margin: 0; display: flex; align-items: center; gap: 6px; font: 500 13px/18px 'Barlow', sans-serif; color: #b02c27; background: #fff; border-radius: 10px; padding: 6px 8px; }
   .vide { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
   .g2 { gap: 2px; }
+  /* PC (≥ 900 px) : pas de planche ; colonne centrée de 640 px au plus (la barre d'action suit le contenu). */
+  .pc-col { display: contents; }
+  @media (min-width: 900px) { .pc-col { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 640px; margin-inline: auto; } }
 </style>

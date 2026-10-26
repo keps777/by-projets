@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import Ecran from '../../ui/Ecran.svelte';
+  import { ecran } from '../achat/ecranPc.svelte.ts';
   import Picto from '../bagages/Picto.svelte';
   import { aller } from '../../router.svelte.ts';
   import { jourDe, maintenant } from '../../data/store.svelte.ts';
@@ -44,7 +45,16 @@
   }
 </script>
 
-<Ecran titre="Réserver les fonds" face="jour" retour="/intention/nouvelle">
+{#snippet pied()}
+    {#if b && compte}
+      {#if erreur}<p class="err sur-pied" role="alert"><Picto nom="alerte" taille={16} />{erreur}</p>{/if}
+      <button type="button" class="btn" disabled={envoi} aria-describedby="cta-help" onclick={confirmer}><Picto nom="reserve" taille={20} />{envoi ? 'Réservation en cours…' : 'Confirmer la réservation (démo)'}</button>
+      <p id="cta-help" class="cta-help">Aucun débit tant qu’aucun billet n’est accepté.</p>
+    {/if}
+  {/snippet}
+
+<Ecran titre="Réserver les fonds" face="jour" retour="/intention/nouvelle" large pied={ecran.pc ? undefined : pied}>
+<div class="pc-col">
   <h1 class="sr">Réserver les fonds</h1>
   {#if !b || !compte}
     <section class="carte vide"><h2 class="t-section">Aucune intention à réserver</h2><p class="t-sec">Dites d’abord votre prix : les fonds se réservent à la dernière étape.</p><button type="button" class="btn" onclick={() => aller('/intention/nouvelle')}>Dire mon prix</button></section>
@@ -107,14 +117,8 @@
     </div>
     <p class="secu"><Picto nom="bouclier" taille={18} trait={1.75} /><span>Réservation traitée par un prestataire de paiement certifié. NexG-TT ne conserve pas votre carte. <span class="hyp">Hypothèse</span> cadre de la réservation de fonds à valider.</span></p>
   {/if}
-
-  {#snippet pied()}
-    {#if b && compte}
-      {#if erreur}<p class="err sur-pied" role="alert"><Picto nom="alerte" taille={16} />{erreur}</p>{/if}
-      <button type="button" class="btn" disabled={envoi} aria-describedby="cta-help" onclick={confirmer}><Picto nom="reserve" taille={20} />{envoi ? 'Réservation en cours…' : 'Confirmer la réservation (démo)'}</button>
-      <p id="cta-help" class="cta-help">Aucun débit tant qu’aucun billet n’est accepté.</p>
-    {/if}
-  {/snippet}
+{#if ecran.pc}{@render pied()}{/if}
+</div>
 </Ecran>
 
 <style>
@@ -142,4 +146,7 @@
   .secu { margin: 0; display: flex; align-items: flex-start; gap: 10px; font: 400 13px/18px 'Barlow', sans-serif; color: #3e4f66; } .hyp { display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 999px; background: #e3eaf2; color: #3e4f66; font: 700 12px/1 'Barlow', sans-serif; letter-spacing: 0.04em; vertical-align: middle; }
   .cta-help { margin: 0; text-align: center; font: 400 12px/16px 'Barlow', sans-serif; color: #5e6e84; }
   @media (max-width: 359px) { .issues { grid-template-columns: 1fr; } }
+  /* PC (≥ 900 px) : pas de planche ; colonne centrée de 640 px au plus (la barre d'action suit le contenu). */
+  .pc-col { display: contents; }
+  @media (min-width: 900px) { .pc-col { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 640px; margin-inline: auto; } }
 </style>

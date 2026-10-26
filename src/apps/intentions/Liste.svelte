@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import Ecran from '../../ui/Ecran.svelte';
+  import { ecran } from '../achat/ecranPc.svelte.ts';
   import Picto from '../bagages/Picto.svelte';
   import { aller, param } from '../../router.svelte.ts';
   import { app, jourDe, maintenant } from '../../data/store.svelte.ts';
@@ -45,7 +46,10 @@
     <span class="p-corps"><span class="pt">{p.titre}</span><span class="t-sec">{p.sous}</span><span class="badge" class:vert={p.ton === 'vert'}>{p.badge}</span></span>
 {/snippet}
 
-<Ecran titre="Mes intentions" face="jour" retour="/">
+{#snippet pied()}<a class="btn" href="/intention/nouvelle" onclick={(e) => go(e, '/intention/nouvelle')}><Picto nom="plus" taille={20} />Nouvelle intention</a>{/snippet}
+
+<Ecran titre="Mes intentions" face="jour" retour="/" large pied={ecran.pc ? undefined : pied}>
+<div class="pc-col">
   <h1 class="sr">Mes intentions</h1>
   <div class="onglets" role="tablist" aria-label="Intentions par état" tabindex="-1" onkeydown={clavier}>
     {#each ONGLETS as o (o.id)}
@@ -144,9 +148,9 @@
       {/each}
     </div>
   {/if}
-
+{#if ecran.pc}{@render pied()}{/if}
+</div>
   {#snippet droite()}<a class="rond-plus" href="/intention/nouvelle" aria-label="Nouvelle intention" onclick={(e) => go(e, '/intention/nouvelle')}><Picto nom="plus" taille={22} trait={1.75} /></a>{/snippet}
-  {#snippet pied()}<a class="btn" href="/intention/nouvelle" onclick={(e) => go(e, '/intention/nouvelle')}><Picto nom="plus" taille={20} />Nouvelle intention</a>{/snippet}
 </Ecran>
 
 <style>
@@ -183,4 +187,7 @@
   .vide-etat { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 36px 24px; border-radius: 20px; background: #fff; border: 1px solid #d3dce6; text-align: center; } .vide-etat.gauche { align-items: stretch; text-align: left; padding: 18px; gap: 8px; } .vide-etat .btn { align-self: flex-start; width: auto; }
   .ticket-v { position: relative; width: 120px; height: 72px; border-radius: 12px; border: 2px dashed #b9c5d3; display: grid; place-items: center; color: #5e6e84; } .trj { margin: 0; font: 700 28px/30px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.02em; }
   .chip.gris { background: #e3eaf2; } .rond-plus { width: 44px; height: 44px; box-sizing: border-box; border-radius: 999px; background: #fff; border: 1px solid #d3dce6; display: grid; place-items: center; color: #0b1b2e; text-decoration: none; }
+  /* PC (≥ 900 px) : pas de planche ; colonne centrée de 640 px au plus (la barre d'action suit le contenu). */
+  .pc-col { display: contents; }
+  @media (min-width: 900px) { .pc-col { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 640px; margin-inline: auto; } }
 </style>

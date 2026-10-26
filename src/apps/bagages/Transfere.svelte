@@ -1,5 +1,6 @@
 <script lang="ts">
   import Ecran from '../../ui/Ecran.svelte';
+  import { ecran } from '../achat/ecranPc.svelte.ts';
   import Picto from './Picto.svelte';
   import { aller, param } from '../../router.svelte.ts';
   import { fmt } from '../../core/argent.ts';
@@ -28,7 +29,16 @@
   const larg = $derived(n >= 3 ? 38 : 52), pas = $derived(n >= 3 ? 44 : 66);
 </script>
 
-<Ecran titre="Transfert de bagages" face="jour" sansRetour>
+{#snippet droite()}
+    <button type="button" class="fermer" aria-label="Fermer" onclick={() => aller('/')}><Picto nom="croix" taille={22} trait={1.75} /></button>
+  {/snippet}
+
+{#snippet pied()}
+    {#if t}<button type="button" class="btn" onclick={() => aller(droit ? `/voyage/${droit.id}` : '/')}>Retour à mon voyage</button>{/if}
+  {/snippet}
+
+<Ecran titre="Transfert de bagages" face="jour" sansRetour large droite={ecran.pc ? undefined : droite} pied={ecran.pc ? undefined : pied}>
+<div class="pc-col">
   <h1 class="sr">Transfert de bagages</h1>
   {#if !t || !vol || !cie || !droit}
     <section class="carte vide"><h2 class="t-section">Aucun transfert récent</h2><p class="t-sec">Quand vous achetez des bagages sur la soute d’un vol, le suivi du transfert apparaît ici.</p><button type="button" class="btn" onclick={() => aller('/bagages')}>Mes bagages</button></section>
@@ -96,13 +106,8 @@
 
     <p class="reserve" role="note"><span class="h">[H]</span><span><strong>Sous réserve d’accord avec la compagnie.</strong> Si la compagnie refuse le transfert, le paiement serait remboursé&nbsp;: modalités à valider. Chacun enregistre ses propres bagages&nbsp;: on vend un droit de bagage, jamais le transport du bagage d’autrui.</span></p>
   {/if}
-
-  {#snippet droite()}
-    <button type="button" class="fermer" aria-label="Fermer" onclick={() => aller('/')}><Picto nom="croix" taille={22} trait={1.75} /></button>
-  {/snippet}
-  {#snippet pied()}
-    {#if t}<button type="button" class="btn" onclick={() => aller(droit ? `/voyage/${droit.id}` : '/')}>Retour à mon voyage</button>{/if}
-  {/snippet}
+{#if ecran.pc}{@render pied()}{/if}
+</div>
 </Ecran>
 
 <style>
@@ -145,4 +150,7 @@
   .reserve { margin: 0; display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #e3eaf2; font: 400 13px/18px 'Barlow', sans-serif; color: #3e4f66; } .reserve .h { flex: none; display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border-radius: 999px; background: #0b1b2e; color: #fff; font: 600 12px/1 'IBM Plex Mono', ui-monospace, monospace; } .reserve strong { color: #0b1b2e; }
   .fermer { width: 44px; height: 44px; box-sizing: border-box; border-radius: 999px; background: #fff; border: 1px solid #d3dce6; display: grid; place-items: center; color: #0b1b2e; cursor: pointer; }
   .g2 { gap: 2px; } .g6 { gap: 6px; }
+  /* PC (≥ 900 px) : pas de planche ; colonne centrée de 640 px au plus (la barre d'action suit le contenu). */
+  .pc-col { display: contents; }
+  @media (min-width: 900px) { .pc-col { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 640px; margin-inline: auto; } }
 </style>

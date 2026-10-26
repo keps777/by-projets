@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import Ecran from '../../ui/Ecran.svelte';
+  import { ecran } from '../achat/ecranPc.svelte.ts';
   import Picto from '../bagages/Picto.svelte';
   import { aller } from '../../router.svelte.ts';
   import { maintenant } from '../../data/store.svelte.ts';
@@ -60,7 +61,19 @@
   const sousContre = $derived(i && p ? (p.prix - valeurContre > 0 ? `−${p.prix - valeurContre} $ vs proposition` : 'au prix proposé') : '');
 </script>
 
-<Ecran titre="Proposition reçue" face="jour" retour="/intentions">
+{#snippet pied()}
+    {#if i && p && vol}
+      {#if ouverte}
+        <button type="button" class="btn" disabled={envoi} onclick={accepter}>{envoi ? 'Conclusion de l’accord…' : 'Accepter'} {#if !envoi}<span class="mono">{fmt(p.prix)}</span> (démo){/if}</button>
+        {#if peutContre}<button type="button" class="btn sec" aria-expanded={contreOuverte} aria-controls="counter-title" onclick={() => { contreOuverte = !contreOuverte; if (contreOuverte) envoyee = false; }}><Picto nom="echange" taille={20} />{contre || envoyee ? 'Modifier ma contre-proposition' : contreOuverte ? 'Annuler la contre-proposition' : 'Contre-proposer'}</button>{/if}
+      {:else}
+        <button type="button" class="btn sec" onclick={() => aller('/intentions')}>Retour aux propositions</button>
+      {/if}
+    {/if}
+  {/snippet}
+
+<Ecran titre="Proposition reçue" face="jour" retour="/intentions" large pied={ecran.pc ? undefined : pied}>
+<div class="pc-col">
   <h1 class="sr">Proposition reçue</h1>
   {#if !i || !p || !vol || !cie || !e || !d}
     <section class="carte vide"><h2 class="t-section">Proposition introuvable</h2><p class="t-sec">Cette proposition n’existe plus ou n’appartient pas à votre compte.</p><button type="button" class="btn" onclick={() => aller('/intentions')}>Mes intentions</button></section>
@@ -135,17 +148,8 @@
     {#if erreur}<p class="err" role="alert"><Picto nom="alerte" taille={16} />{erreur}</p>{/if}
     {#if ouverte}<button type="button" class="refuser" onclick={refuser}><Picto nom="croix" taille={18} />Refuser cette proposition</button>{/if}
   {/if}
-
-  {#snippet pied()}
-    {#if i && p && vol}
-      {#if ouverte}
-        <button type="button" class="btn" disabled={envoi} onclick={accepter}>{envoi ? 'Conclusion de l’accord…' : 'Accepter'} {#if !envoi}<span class="mono">{fmt(p.prix)}</span> (démo){/if}</button>
-        {#if peutContre}<button type="button" class="btn sec" aria-expanded={contreOuverte} aria-controls="counter-title" onclick={() => { contreOuverte = !contreOuverte; if (contreOuverte) envoyee = false; }}><Picto nom="echange" taille={20} />{contre || envoyee ? 'Modifier ma contre-proposition' : contreOuverte ? 'Annuler la contre-proposition' : 'Contre-proposer'}</button>{/if}
-      {:else}
-        <button type="button" class="btn sec" onclick={() => aller('/intentions')}>Retour aux propositions</button>
-      {/if}
-    {/if}
-  {/snippet}
+{#if ecran.pc}{@render pied()}{/if}
+</div>
 </Ecran>
 
 <style>
@@ -178,4 +182,7 @@
   .b-sombre { display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #0b1b2e; color: #fff; border: 0; font: 700 16px/1 'Barlow', sans-serif; cursor: pointer; }
   .refuser { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 8px; border: 0; background: transparent; color: #c2362f; font: 600 15px/1 'Barlow', sans-serif; cursor: pointer; }
   .err { margin: 0; display: flex; align-items: center; gap: 6px; font: 500 13px/18px 'Barlow', sans-serif; color: #c2362f; }
+  /* PC (≥ 900 px) : pas de planche ; colonne centrée de 640 px au plus (la barre d'action suit le contenu). */
+  .pc-col { display: contents; }
+  @media (min-width: 900px) { .pc-col { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 640px; margin-inline: auto; } }
 </style>

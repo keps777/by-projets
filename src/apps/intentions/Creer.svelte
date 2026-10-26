@@ -1,5 +1,6 @@
 <script lang="ts">
   import Ecran from '../../ui/Ecran.svelte';
+  import { ecran } from '../achat/ecranPc.svelte.ts';
   import Picto from '../bagages/Picto.svelte';
   import { aller, param } from '../../router.svelte.ts';
   import { aujourdhui, maintenant } from '../../data/store.svelte.ts';
@@ -56,7 +57,13 @@
   ]);
 </script>
 
-<Ecran titre="Dites votre prix" face="jour" retour="/rechercher">
+{#snippet pied()}
+    {#if tente && invalide}<p class="err sur-pied" role="alert"><Picto nom="alerte" taille={16} />Corrigez les champs signalés pour réserver les fonds.</p>{/if}
+    <button type="button" class="btn" aria-disabled={invalide} onclick={continuer}><Picto nom="reserve" taille={20} />Réserver&nbsp;<span class="mono">{fmt(prix * voyageurs)}</span>&nbsp;et publier</button>
+  {/snippet}
+
+<Ecran titre="Dites votre prix" face="jour" retour="/rechercher" large pied={ecran.pc ? undefined : pied}>
+<div class="pc-col">
   <h1 class="sr">Dites votre prix</h1>
   <div class="intro"><span class="sur">Intention d’achat</span><p class="p15">Vous dites votre prix et réservez les fonds. Les détenteurs d’un billet compatible viennent à vous.</p></div>
 
@@ -141,11 +148,8 @@
       <li><span class="n mono" aria-hidden="true">3</span><span><strong>Vous acceptez ou non.</strong> <span class="gris">L’argent n’est pris qu’à l’accord. Sans accord, il est libéré à l’expiration.</span></span></li>
     </ol>
     <p class="hyp"><span class="h">Hypothèse</span>Modalités de réservation des fonds à valider (cadre juridique).</p></section>
-
-  {#snippet pied()}
-    {#if tente && invalide}<p class="err sur-pied" role="alert"><Picto nom="alerte" taille={16} />Corrigez les champs signalés pour réserver les fonds.</p>{/if}
-    <button type="button" class="btn" aria-disabled={invalide} onclick={continuer}><Picto nom="reserve" taille={20} />Réserver&nbsp;<span class="mono">{fmt(prix * voyageurs)}</span>&nbsp;et publier</button>
-  {/snippet}
+{#if ecran.pc}{@render pied()}{/if}
+</div>
 </Ecran>
 
 <style>
@@ -184,4 +188,7 @@
   .comment ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; } .comment li { display: flex; align-items: flex-start; gap: 12px; font: 400 15px/22px 'Barlow', sans-serif; } .comment strong { font-weight: 600; } .gris { color: #c9d3df; }
   .n { flex: none; width: 28px; height: 28px; border-radius: 999px; background: #ffd23f; color: #0b1b2e; display: grid; place-items: center; font: 600 14px/1 'IBM Plex Mono', ui-monospace, monospace; }
   .hyp { margin: 0; display: flex; align-items: center; gap: 8px; font: 400 13px/18px 'Barlow', sans-serif; color: #c9d3df; } .h { flex: none; display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; background: rgba(255, 255, 255, 0.12); color: #fff; font: 700 12px/1 'Barlow', sans-serif; letter-spacing: 0.04em; }
+  /* PC (≥ 900 px) : pas de planche ; colonne centrée de 640 px au plus (la barre d'action suit le contenu). */
+  .pc-col { display: contents; }
+  @media (min-width: 900px) { .pc-col { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 640px; margin-inline: auto; } }
 </style>

@@ -1,5 +1,6 @@
 <script lang="ts">
   import Ecran from '../../ui/Ecran.svelte';
+  import { ecran } from '../achat/ecranPc.svelte.ts';
   import Picto from './Picto.svelte';
   import { aller, param } from '../../router.svelte.ts';
   import { app } from '../../data/store.svelte.ts';
@@ -37,7 +38,8 @@
   const ariaJauge = $derived(`Jauge de franchise : ${pluriel(resume.utilises, 'bagage utilisé', 'bagages utilisés')} sur ${resume.inclus} inclus, ${pluriel(resume.libres, 'inutilisé')}${resume.vendus ? `, ${pluriel(resume.vendus, 'vendu')}` : ''}`);
 </script>
 
-<Ecran titre="Mes bagages" face="jour" retour={droit ? `/voyage/${droit.id}` : '/'}>
+<Ecran titre="Mes bagages" face="jour" retour={droit ? `/voyage/${droit.id}` : '/'} large>
+<div class="pc-col">
   <h1 class="sr">Mes bagages</h1>
   {#if !compte || !droit || !vol || !cie}
     <section class="vide carte" aria-live="polite">
@@ -47,6 +49,7 @@
       <button type="button" class="btn" onclick={() => aller('/rechercher')}>Rechercher un vol</button>
     </section>
   {:else}
+    <div class="grille"><div class="g1">
     <section class="intro" aria-labelledby="intro-t">
       <p class="sur">{cie.nom} {num} · {vol.de} → {vol.vers} · {jourCourt(vol.jour)}</p>
       <h2 id="intro-t" class="grand">{titre[0]}<br />{titre[1]}</h2>
@@ -90,6 +93,7 @@
       <p class="note">Inclus dans le tarif du droit de voyage {droit.ref} (hypothèse de démonstration). Poids et dimensions selon la compagnie.</p>
     </section>
 
+    </div><div class="g2">
     <section class="actions" aria-label="Que faire de votre franchise">
       {#if resume.libres > 0}
         <a class="act jaune" href="/bagages/vendre{query}" onclick={(e) => { e.preventDefault(); aller(`/bagages/vendre${query}`); }}>
@@ -133,7 +137,9 @@
     </section>
 
     <p class="reserve" role="note"><span class="h">[H]</span><span><strong>Sous réserve d’accord avec la compagnie.</strong> Retirer une franchise d’une réservation pour l’ajouter à une autre suppose un accord avec {cie.nom}. Aucun accord n’existe à ce jour. Commission&nbsp;: hypothèse {pourcent(taux(compte.pass.actif))}.</span></p>
+    </div></div>
   {/if}
+</div>
 </Ecran>
 
 <style>
@@ -209,4 +215,13 @@
   .reserve { margin: 0; display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #e3eaf2; font: 400 13px/18px 'Barlow', sans-serif; color: #3e4f66; }
   .reserve .h { flex: none; display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border-radius: 999px; background: #0b1b2e; color: #fff; font: 600 12px/1 'IBM Plex Mono', ui-monospace, monospace; } .reserve strong { color: #0b1b2e; }
   @media (max-width: 359px) { .ligne { font-size: 10.5px; letter-spacing: 0; } .tag { padding-inline: 8px; } .legendes { grid-template-columns: 1fr; } .rang { font-size: 11px; } }
+  /* PC (≥ 900 px) : pas de planche ; colonne centrée de 640 px au plus (la barre d'action suit le contenu). */
+  .pc-col, .grille, .g1, .g2 { display: contents; }
+  /* Deux colonnes : étiquettes et franchise à gauche ; options, comparaison et règle à droite. */
+  @media (min-width: 900px) {
+    .pc-col { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 1120px; margin-inline: auto; }
+    .grille { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; align-items: start; }
+    .g1, .g2 { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+    .vide { max-width: 640px; width: 100%; margin-inline: auto; }
+  }
 </style>

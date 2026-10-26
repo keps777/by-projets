@@ -9,10 +9,12 @@
   import { chronologie, compteARebours, libelleJ, statutVoyage } from './chrono.ts';
   import { decalageMinutes, heureAilleurs, heureArriveeAMontreal, jourAilleurs, libelleDecalage, nomAeroport, paysAvecPreposition, phraseDecalage } from './destination.ts';
   import { dureeVol, heure, instantDuJour, jourCourt, jourMoisHeure, moisLong, nomCourt } from './dates.ts';
+  import { ecran } from './ecranPc.svelte.ts';
   import Introuvable from './Introuvable.svelte';
   import { naviguer } from './lien.ts';
   import Pic from './Pic.svelte';
   import { bagagesDuDroit, basculerCoche, cochesDe, detailBagages, progression, titreBagages, TOTAL_PREPARATION, type CleCoche } from './preparation.ts';
+  import { reseau } from './reseau.svelte.ts';
   import { nomEnCapitales } from './voyageur.ts';
 
   /** Mon voyage — J-63 : compte à rebours, route, échéance de nommage, préparation (nommer, passeport, enregistrement, bagages), destination. */
@@ -52,14 +54,20 @@
 {:else if !droit || !vol || !ch}
   <Introuvable titre="Voyage introuvable" message="Ce droit de voyage n’est pas dans votre portefeuille." lien="/portefeuille" libelleLien="Voir mon portefeuille" retour="/" />
 {:else}
-  <Ecran titre="Mon voyage" face="jour">
-    <section class="hero" aria-labelledby="hero-t">
+  <Ecran titre={ecran.pc ? undefined : 'Mon voyage'} face="jour" onglet={ecran.pc ? 'rechercher' : undefined} large>
+    {#if ecran.pc}
+      {#if !reseau.enLigne}<div class="hors" id="msg-hors-ligne" role="status"><Icone nom="hors_ligne" taille={22} /><span class="al-t"><strong>Hors ligne</strong><span>Vous voyez votre voyage tel qu’enregistré sur cet appareil. Nommer le voyageur, revendre et gérer les bagages demandent le réseau.</span></span></div>{/if}
+      <section class="titre-pc" aria-labelledby="titre-pc"><div><h1 id="titre-pc">Mon voyage</h1><p class="sous-pc">Voyager · {villeDepart} → {villeDest} · {jourCourt(ch.depart)} {new Date(ch.depart).getFullYear()}</p></div>
+        <p class="intro-pc">Suivez l’échéance pour nommer le voyageur, préparez votre départ et gardez la main sur votre billet jusqu’à J-1.</p></section>
+    {/if}
+    <div class="grille" class:pcx={ecran.pc}><div class="gauche">
+    <section class="hero" class:pcx={ecran.pc} aria-labelledby="hero-t"><div class="h-g">
       <div class="ligne"><h2 id="hero-t" class="sur">{villeDepart} → {villeDest}</h2>
         {#if nomme}<span class="puce ready"><Icone nom="ok" taille={14} trait={2.5} />Nommé — prêt</span>{:else}<span class="puce signal">À nommer</span>{/if}</div>
       <div class="jour">
         <p class="grosJ" aria-label={ch.joursDepart > 0 ? `Départ dans ${ch.joursDepart} jours` : 'Jour du départ'}>{libelleJ(ch.joursDepart)}</p>
         <p class="date"><span class="d1">{jourCourt(ch.depart)}</span><span class="d2">{new Date(ch.depart).getFullYear()} · {compagnieDe(vol).nom} {numeroVol}</span></p>
-      </div>
+      </div></div><div class="h-d">
       <div class="compte"><span class="pt" aria-hidden="true"></span><span class="lib">Décollage dans</span><span class="mono val" role="timer" aria-live="off">{compteARebours(ch.depart, tick)}</span></div>
       <div class="arc">
         <div class="col g4"><span class="code">{vol.de}</span><span class="mono h">{vol.heureDepart}</span></div>
@@ -71,7 +79,7 @@
         <div class="col g4 fin"><span class="code">{vol.vers}</span><span class="mono h">{vol.heureArrivee}{vol.plusJours ? ` (+${vol.plusJours})` : ''}</span></div>
       </div>
       <p class="t-sec">{direct} · {dureeVol(vol.dureeMin)} · droit de voyage {droit.ref}</p>
-    </section>
+    </div></section>
 
     <section aria-labelledby="route-t" class="col g12">
       <h2 id="route-t" class="t-h2">La route jusqu’à {villeDest}</h2>
@@ -95,7 +103,7 @@
           <span class="nd" class:jaune={aNommer && ch.ouvert} class:vert={nomme} aria-hidden="true">{#if nomme}<Icone nom="ok" taille={14} trait={2.5} />{:else}<Icone nom="horloge" taille={14} trait={2.25} />{/if}</span>
           <div class="tx"><span class="date-b" class:jaune={aNommer}>{jourCourt(ch.echeance)} · {heure(ch.echeance)}</span>
             <span class="rang"><span class="t1">{nomme ? 'Voyageur nommé' : 'Nommer le voyageur'}</span><span class="puce signal mini">Échéance J-1</span></span>
-            <span class="t-sec">{nomme && droit.voyageur ? `${nomEnCapitales(droit.voyageur)}, transmis à ${compagnieDe(vol).nom}.` : 'L’identité du voyageur est transmise à la compagnie ; le billet devient nominatif. Ensuite, plus aucune transaction.'}</span></div>
+            <span class="t-sec">{nomme && droit.voyageur ? `${nomEnCapitales(droit.voyageur)}, transmis à ${compagnieDe(vol).nom}.` : `L’identité du voyageur est transmise à la compagnie ; le billet devient nominatif. Ensuite, plus aucune transaction.${ecran.pc ? ' À l’échéance, sans action de votre part, le détenteur est nommé voyageur par défaut.' : ''}`}</span></div>
         </li>
         <li class="pas">
           <span class="trait plein" style="top: 26px"></span>
@@ -114,7 +122,8 @@
       </ol>
     </section>
 
-    <section aria-labelledby="prep-t" class="col g12">
+    </div><div class="droite">
+    <section aria-labelledby="prep-t" class="col g12 prep" class:pcx={ecran.pc}>
       <div class="entete-prep"><h2 id="prep-t" class="t-h2">À préparer</h2><span class="mono prets">Prêt : {fait} / {TOTAL_PREPARATION}</span></div>
       <div class="barre" role="progressbar" aria-label="Préparation du voyage" aria-valuemin="0" aria-valuemax={TOTAL_PREPARATION} aria-valuenow={fait} aria-valuetext="{fait} étapes sur {TOTAL_PREPARATION}"><div class="rempli" style="width: {fait * 25}%"></div></div>
       <ul class="liste liste-plain">
@@ -122,7 +131,8 @@
           <span class="pastille" class:ok={nomme} aria-hidden="true">{#if nomme}<Icone nom="ok" taille={14} trait={2.5} />{:else}<Icone nom="horloge" taille={14} trait={2.25} />{/if}</span>
           <span class="tx grow"><span class="t1 pt15" class:barre-txt={nomme}>Nommer le voyageur</span>
             <span class="t-sec">{nomme && droit.voyageur ? `${nomEnCapitales(droit.voyageur)} · transmis à ${compagnieDe(vol).nom}` : `Avant le ${jourMoisHeure(ch.echeance)} · coché une fois le voyageur nommé`}</span></span>
-          {#if aNommer && ch.ouvert}<a class="btn-jaune" href="/nommer/{droit.id}" aria-label="Nommer le voyageur" onclick={(e) => naviguer(e, `/nommer/${droit.id}`)}>Nommer</a>
+          {#if ecran.pc && aNommer && ch.ouvert && !reseau.enLigne}<span class="btn-jaune ferme-r" role="link" aria-disabled="true" aria-label="Nommer le voyageur" aria-describedby="msg-hors-ligne">Nommer</span>
+          {:else if aNommer && ch.ouvert}<a class="btn-jaune" href="/nommer/{droit.id}" aria-label="Nommer le voyageur" onclick={(e) => naviguer(e, `/nommer/${droit.id}`)}>Nommer</a>
           {:else if nomme}<a class="btn-lien" href="/pret-a-voyager/{droit.id}" aria-label="Voir la carte d’embarquement" onclick={(e) => naviguer(e, `/pret-a-voyager/${droit.id}`)}>Voir</a>{/if}
         </li>
         {#each cases as c (c.cle)}
@@ -133,7 +143,8 @@
           <label class="case"><input type="checkbox" checked={!!coches.bagages} onchange={() => basculerCoche(droit.id, 'bagages')} />
             <span class="tx"><span class="t1 pt15" class:barre-txt={coches.bagages}>{resumeBagages ? titreBagages(resumeBagages) : 'Bagages'}</span><span class="t-sec">{resumeBagages ? detailBagages(resumeBagages) : ''}</span></span></label>
           <div class="sous-bag">
-            <a class="lien-bag" href="/bagages" onclick={(e) => naviguer(e, '/bagages')}><Icone nom="sac" taille={18} /><span class="grow">Gérer mes bagages</span><Icone nom="suivant" taille={18} trait={2} /></a>
+            {#if ecran.pc && !reseau.enLigne}<span class="lien-bag ferme-r" role="link" aria-disabled="true" aria-describedby="msg-hors-ligne"><Icone nom="sac" taille={18} /><span class="grow">Gérer mes bagages</span></span>
+            {:else}<a class="lien-bag" href="/bagages" onclick={(e) => naviguer(e, '/bagages')}><Icone nom="sac" taille={18} /><span class="grow">Gérer mes bagages</span><Icone nom="suivant" taille={18} trait={2} /></a>{/if}
             <p class="t-sec">Besoin d’un bagage de plus&nbsp;? Les passagers du vol {numeroVol} en proposent.</p>
           </div>
         </li>
@@ -141,7 +152,7 @@
     </section>
 
     {#if dest}
-      <section class="dest" aria-labelledby="dest-t">
+      <section class="dest" class:pcx={ecran.pc} aria-labelledby="dest-t">
         <div class="ligne"><span class="sur-sombre">À destination</span><span class="mono decal">{libelleDecalage(decalVol)}</span></div>
         <h2 id="dest-t" class="ville">{villeDest}</h2>
         <div class="horloges">
@@ -152,10 +163,11 @@
       </section>
     {/if}
 
-    <section class="col g8">
+    <section class="col g8 actions" class:pcx={ecran.pc}>
       {#if peutRevendre}
-        <a class="btn sec revendre" href="/revendre/{droit.id}" onclick={(e) => naviguer(e, `/revendre/${droit.id}`)}><span class="lune" aria-hidden="true"><Icone nom="lune" taille={16} trait={2} /></span>Plans changés&nbsp;? Revendre ce billet</a>
-        <p class="note">Ouvre le verso · revente possible jusqu’au {jourMoisHeure(ch.echeance)}.</p>
+        {#if ecran.pc && !reseau.enLigne}<span class="btn sec revendre ferme-r" role="link" aria-disabled="true" aria-describedby="msg-hors-ligne"><span class="lune" aria-hidden="true"><Icone nom="lune" taille={16} trait={2} /></span>Plans changés&nbsp;? Revendre ce billet</span>
+        {:else}<a class="btn sec revendre" href="/revendre/{droit.id}" onclick={(e) => naviguer(e, `/revendre/${droit.id}`)}><span class="lune" aria-hidden="true"><Icone nom="lune" taille={16} trait={2} /></span>Plans changés&nbsp;? Revendre ce billet</a>{/if}
+        <p class="note">{ecran.pc ? 'Revente possible jusqu’au' : 'Ouvre le verso · revente possible jusqu’au'} {jourMoisHeure(ch.echeance)}{ecran.pc ? ', depuis l’espace Mes actifs.' : '.'}</p>
         <a class="btn texte" href="/transferer/{droit.id}" onclick={(e) => naviguer(e, `/transferer/${droit.id}`)}><Pic nom="proches" taille={18} />Transférer à un proche</a>
       {:else if nomme}
         <a class="btn sec" href="/pret-a-voyager/{droit.id}" onclick={(e) => naviguer(e, `/pret-a-voyager/${droit.id}`)}><Icone nom="piece" taille={20} />Voir ma carte d’embarquement</a>
@@ -164,6 +176,7 @@
         <p class="note">Plus aucune transaction n’est possible sur ce billet.</p>
       {/if}
     </section>
+    </div></div>
   </Ecran>
 {/if}
 
@@ -234,4 +247,44 @@
   .revendre { gap: 10px; }
   .lune { width: 28px; height: 28px; flex: none; border-radius: 999px; background: #0b1b2e; color: var(--signal); display: flex; align-items: center; justify-content: center; }
   .note { font: 400 13px/18px 'Barlow', sans-serif; color: var(--ink3); text-align: center; }
+  /* PC (≥ 900 px) : planche WebVoyage — titre et chapeau, deux colonnes (carte J-n et route · préparation, destination, revente). */
+  .h-g, .h-d, .grille, .gauche, .droite { display: contents; }
+  .hors { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 16px; border-radius: 14px; background: var(--surface2); border: 1px solid var(--line-strong); }
+  .al-t { display: flex; flex-direction: column; gap: 2px; flex: 1 1 280px; min-width: 0; } .al-t strong { font: 700 15px/20px 'Barlow', sans-serif; } .al-t span { font: 400 14px/20px 'Barlow', sans-serif; color: var(--ink2); }
+  .titre-pc { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 32px; }
+  .titre-pc h1 { margin: 0; font: 600 44px/44px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.01em; text-transform: uppercase; text-wrap: balance; }
+  .sous-pc { margin: 6px 0 0; font: 600 13px/18px 'Barlow', sans-serif; color: var(--ink2); }
+  .intro-pc { margin: 0; flex: 0 1 560px; font: 400 15px/22px 'Barlow', sans-serif; color: var(--ink2); }
+  .grille.pcx { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; align-items: start; }
+  .grille.pcx .gauche, .grille.pcx .droite { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .hero.pcx { flex-direction: row; flex-wrap: wrap; gap: 20px 40px; padding: 24px; box-shadow: 0 1px 0 var(--line), 0 12px 32px rgba(11, 27, 46, 0.1); }
+  .hero.pcx .h-g { display: flex; flex-direction: column; gap: 14px; flex: 1 1 360px; min-width: 0; }
+  .hero.pcx .h-d { display: flex; flex-direction: column; gap: 14px; flex: 1 1 300px; min-width: 0; justify-content: center; }
+  .hero.pcx .grosJ { font-size: 120px; }
+  .hero.pcx .d1 { font-size: 16px; } .hero.pcx .d2 { font-size: 14px; }
+  .hero.pcx .compte { min-height: 48px; padding: 0 14px; } .hero.pcx .lib { font-size: 14px; } .hero.pcx .val { font-size: 18px; }
+  .hero.pcx .arc { column-gap: 10px; } .hero.pcx .arc .code { font-size: 38px; line-height: 36px; } .hero.pcx .arc .h { font-size: 14px; }
+  .hero.pcx .t-sec { font: 400 14px/20px 'Barlow', sans-serif; }
+  .route { padding-block: 20px 4px; }
+  .prep.pcx { padding: 18px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); }
+  .prep.pcx .barre { height: 8px; } .prep.pcx .rempli { background: var(--accent); }
+  .prep.pcx .liste { border: 0; border-radius: 0; background: none; overflow: visible; }
+  .prep.pcx .rang-liste { min-height: 52px; padding: 10px 0; }
+  .prep.pcx .case { min-height: 52px; padding: 10px 0; }
+  .prep.pcx .case input { accent-color: var(--accent); }
+  .prep.pcx .pastille:not(.ok) { width: 22px; height: 22px; box-sizing: border-box; border-radius: 6px; border: 2px dashed var(--ink3); background: none; }
+  .prep.pcx .pastille:not(.ok) :global(svg) { display: none; }
+  .prep.pcx .sous-bag { padding: 0 0 8px 34px; }
+  .prep.pcx .lien-bag { background: var(--bg); color: var(--ink); font-weight: 700; }
+  .ferme-r { background: var(--surface2); color: var(--ink2); border: 1px solid var(--line-strong); cursor: not-allowed; }
+  .dest.pcx { gap: 10px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
+  .dest.pcx .sur-sombre { color: var(--ink2); } .dest.pcx .decal { background: var(--surface2); color: var(--ink2); }
+  .dest.pcx .ville { font: 600 34px/36px 'Barlow Condensed', 'Arial Narrow', sans-serif; }
+  .dest.pcx .horloges { display: flex; flex-wrap: wrap; gap: 14px; }
+  .dest.pcx .horloge { flex: 1 1 140px; padding: 0; background: none; border-radius: 0; }
+  .dest.pcx .h1, .dest.pcx .h3, .dest.pcx .h4 { font: 400 13px/18px 'Barlow', sans-serif; color: var(--ink2); }
+  .dest.pcx .hh { font-size: 28px; line-height: 32px; }
+  .actions.pcx .revendre { justify-content: flex-start; gap: 12px; min-height: 56px; padding: 8px 14px; font-size: 15px; text-align: left; }
+  .actions.pcx .lune { width: 36px; height: 36px; border-radius: 10px; background: var(--bg); color: var(--ink); }
+  .actions.pcx .note { text-align: left; }
 </style>
