@@ -33,3 +33,5 @@ export function decaler(jour: string, n: number): string { const d = midi(jour);
 export const dureeLibelle = (min: number): string => `${Math.floor(min / 60)} h ${p2(min % 60)}`;
 /** Pluriel simple : `pluriel(2, 'bagage')` → « 2 bagages ». */
 export const pluriel = (n: number, mot: string, mots = `${mot}s`): string => `${n} ${n > 1 ? mots : mot}`;
+/** « 12,5 % » / « 10 % » (espace insécable) depuis un taux (0,125). */
+export const pourcent = (taux: number): string => `${String(Math.round(taux * 1000) / 10).replace('.', ',')}\u00A0%`;

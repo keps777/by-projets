@@ -2,7 +2,7 @@
 // Règles (provisoires, à valider avec la compagnie) : un bagage ne voyage que sur son vol (même numéro, même date) ; prix plafonné au prix du bagage au comptoir.
 import { app, maintenant } from '../../data/store.svelte.ts';
 import { arrondi, fmtSigne } from '../../core/argent.ts';
-import { departDuVol, droitsDe, volDe } from '../../domain/marche.ts';
+import { compagnieDe, departDuVol, droitsDe, volDe } from '../../domain/marche.ts';
 import type { BagageDroit, DemandeBagage, Droit, StatutDroit, Vol } from '../../domain/types.ts';
 import { decaler } from './format.ts';
 
@@ -95,7 +95,7 @@ export function titreFranchise(r: ResumeFranchise): [string, string] {
 }
 
 /* ---------- vol identique ---------- */
-export interface VolCandidat { numero: string; jour: string; heure: string; origine: 'portefeuille' | 'exemple' }
+export interface VolCandidat { code: string; compagnie: string; numero: string; jour: string; heure: string; de: string; vers: string; origine: 'portefeuille' | 'exemple' }
 export interface Comparaison { numero: { soute: string; autre: string; identique: boolean }; date: { soute: string; autre: string; identique: boolean }; memeVol: boolean }
 /** Même vol = même numéro ET même date. */
 export function comparerVols(soute: { numero: string; jour: string }, autre: { numero: string; jour: string }): Comparaison {
@@ -105,7 +105,8 @@ export function comparerVols(soute: { numero: string; jour: string }, autre: { n
 /** Les « autres vols » qu'on peut essayer : les autres droits du compte, puis deux exemples (autre numéro le même jour ; même numéro un autre jour). */
 export function volsAEssayer(droit: Droit): VolCandidat[] {
   const v = volDe(droit.volId)!, no = Number(numeroVol(v)), liste: VolCandidat[] = [];
-  for (const d of droitsAVenir(droit.detenteurId)) { const w = volDe(d.volId); if (w && (w.numero !== v.numero || w.jour !== v.jour)) liste.push({ numero: numeroVol(w), jour: w.jour, heure: w.heureDepart, origine: 'portefeuille' }); }
-  liste.push({ numero: String(no + 2), jour: v.jour, heure: '21:40', origine: 'exemple' }, { numero: numeroVol(v), jour: decaler(v.jour, 1), heure: v.heureDepart, origine: 'exemple' });
+  const de = (w: Vol, origine: VolCandidat['origine'], extra: Partial<VolCandidat> = {}): VolCandidat => ({ code: compagnieDe(w).code, compagnie: compagnieDe(w).nom, numero: numeroVol(w), jour: w.jour, heure: w.heureDepart, de: w.de, vers: w.vers, origine, ...extra });
+  for (const d of droitsAVenir(droit.detenteurId)) { const w = volDe(d.volId); if (w && (w.numero !== v.numero || w.jour !== v.jour)) liste.push(de(w, 'portefeuille')); }
+  liste.push(de(v, 'exemple', { numero: String(no + 2), heure: '21:40' }), de(v, 'exemple', { jour: decaler(v.jour, 1) }));
   return liste;
 }
