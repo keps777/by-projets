@@ -11,7 +11,7 @@
   let { titre, sous, face = 'jour', onglet, retour, sansRetour = false, etape, droite, children, large = false, pied }:
     { titre?: string; sous?: string; face?: 'jour' | 'nuit'; onglet?: Onglet; retour?: string; sansRetour?: boolean; etape?: string; droite?: Snippet; children: Snippet; large?: boolean; pied?: Snippet } = $props();
   const compte = $derived(app.monde.comptes.find((c) => c.id === app.session.compteId));
-  const initiales = $derived(compte ? `${compte.prenom[0]}${compte.nom[0]}` : '');
+  const initiales = $derived(compte ? `${compte.prenom[0] ?? ""}${compte.nom[0] ?? ""}` : '');
   const nonLues = $derived(compte ? app.monde.notifications.filter((n) => n.compteId === compte.id && !n.lu).length : 0);
 </script>
 
