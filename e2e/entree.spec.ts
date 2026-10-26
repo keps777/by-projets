@@ -33,7 +33,7 @@ test('ouverture : « j’ai déjà un compte » et « explorer sans compte »', 
   await ouvrir(page, '/ouverture');
   await page.getByRole('link', { name: 'J’ai déjà un compte' }).click(); await expect.poll(() => chemin(page)).toBe('/connexion');
   await page.goto('/ouverture'); await page.getByRole('link', { name: 'Explorer sans compte' }).click(); await expect.poll(() => chemin(page)).toBe('/explorer');
-  await expect(page.getByText('Bienvenue sur NexG-TT')).toBeVisible();
+  await expect(page.getByText('Bienvenue · lundi 12 octobre')).toBeVisible();
 });
 
 test('ouverture : le panneau se pose sur NEXG·TT et sur les trois départs', async ({ page }) => {

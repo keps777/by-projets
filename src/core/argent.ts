@@ -1,5 +1,5 @@
 // Montants en dollars canadiens : formatage « 1 480 $ » / « 1 152,00 $ », arrondi au cent, écarts toujours signés (jamais la couleur seule).
-const NBSP = ' ';
+const NBSP = '\u00A0';
 export const arrondi = (x: number): number => Math.round((x + Number.EPSILON) * 100) / 100;
 /** « 1 480 $ » ; avec centimes si le montant n'est pas entier ou si `centimes` est vrai (« 1 152,00 $ »). */
 export function fmt(x: number, { centimes = false }: { centimes?: boolean } = {}): string {

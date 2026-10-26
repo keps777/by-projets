@@ -25,10 +25,10 @@ describe('préparation du voyage', () => {
 describe('chaîne de détention', () => {
   it('décrit l’achat neuf d’Alex, puis la finalisation', () => {
     const d = app.monde.droits.find((x) => x.id === 'd-812')!; let e = etapesChaine(d, app.monde, MAI);
-    expect(e).toHaveLength(1); expect(e[0]).toMatchObject({ date: '12 janv.', titre: 'Achat neuf', detail: 'Alex T. devient détenteur · 1 000 $', finale: false });
+    expect(e).toHaveLength(1); expect(e[0]).toMatchObject({ date: '12 janv.', titre: 'Achat neuf', detail: 'Alex T. devient détenteur · 1\u00A0000\u00A0$', finale: false });
     d.chaine.push({ id: 'm-n', quand: MAI, type: 'nommage', de: 'ACC-0412', vers: 'ACC-0412', prix: 0 }); d.voyageur = { prenom: 'Alex', nom: 'Exemple', pourSoi: true };
     e = etapesChaine(d, app.monde, MAI); expect(e[1]).toMatchObject({ date: '12 oct.', titre: 'Finalisation — voyageur nommé', detail: 'Alex Exemple, transmis à la compagnie. Revente et transfert fermés.', finale: true }); expect(dateFinalisation(d, 0)).toBe(MAI);
   });
   it('nomme les parties : NexG-TT, agence, compte, inconnu', () => { expect(nomPartie('nexgtt', app.monde)).toBe('NexG-TT'); expect(nomPartie('agence:horizon', app.monde)).toBe('Agence Horizon'); expect(nomPartie('ACC-0187', app.monde)).toBe('Camille T.'); expect(nomPartie('ACC-9', app.monde)).toBe('Un détenteur'); });
-  it('revente : prix et nouveau détenteur', () => { const d = app.monde.droits.find((x) => x.id === 'd-ppt')!; const e = etapesChaine(d, app.monde, MAI); expect(e.map((x) => x.titre)).toEqual(['Achat neuf', 'Revente', 'Revente']); expect(e[2].detail).toBe('Alex T. devient détenteur · 1 850 $'); });
+  it('revente : prix et nouveau détenteur', () => { const d = app.monde.droits.find((x) => x.id === 'd-ppt')!; const e = etapesChaine(d, app.monde, MAI); expect(e.map((x) => x.titre)).toEqual(['Achat neuf', 'Revente', 'Revente']); expect(e[2].detail).toBe('Alex T. devient détenteur · 1\u00A0850\u00A0$'); });
 });

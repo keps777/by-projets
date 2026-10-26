@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { ecart, fmt, fmtPct, fmtSigne } from './argent.ts';
+import { ecart, fmt as fmtBrut, fmtPct as fmtPctBrut, fmtSigne as fmtSigneBrut } from './argent.ts';
+
+/** Les montants utilisent des espaces insécables ; les tests les comparent à des espaces ordinaires. */
+const ns = (s: string) => s.replace(/\u00A0/g, ' ');
+const fmt: typeof fmtBrut = (x, o) => ns(fmtBrut(x, o)), fmtPct = (x: number) => ns(fmtPctBrut(x)), fmtSigne: typeof fmtSigneBrut = (x, o) => ns(fmtSigneBrut(x, o));
+it('utilise bien des espaces insécables', () => { expect(fmtBrut(1480)).toBe('1\u00A0480\u00A0$'); });
 
 describe('argent', () => {
   it('formate les dollars à la québécoise', () => {

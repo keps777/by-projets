@@ -4,6 +4,8 @@ import { defineConfig } from '@playwright/test';
 import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
+// Le monde de démonstration est fabriqué dans le processus de test : même fuseau que le navigateur (Montréal), sinon les instants du seed sont décalés.
+process.env.TZ = 'America/Toronto';
 const PORT = Number(process.env.NX_PORT) || 4190;
 const dossierNavigateurs = process.env.PLAYWRIGHT_BROWSERS_PATH || '/opt/pw-browsers';
 function chromiumPreinstalle(): string | undefined {
