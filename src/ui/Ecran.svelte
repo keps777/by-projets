@@ -27,7 +27,7 @@
       </div>
     {:else}
       <a class="marque pc" href="/" onclick={(e) => { e.preventDefault(); aller('/'); }} aria-label="NexG-TT, accueil"><Logo /></a>
-      {#if sansRetour}<span class="vide" aria-hidden="true"></span>{:else}<button type="button" class="rond mob" aria-label="Retour" onclick={() => (retour ? aller(retour) : reculer('/'))}><Icone nom="retour" /></button>{/if}
+      {#if sansRetour}<span class="vide mob" aria-hidden="true"></span>{:else}<button type="button" class="rond mob" aria-label="Retour" onclick={() => (retour ? aller(retour) : reculer('/'))}><Icone nom="retour" /></button>{/if}
       <div class="titre mob"><p class="t-ecran-c">{titre ?? ''}</p>{#if etape}<span class="t-aide">{etape}</span>{/if}</div>
       {#if droite}<div class="actions">{@render droite()}</div>{:else}<span class="vide mob" aria-hidden="true"></span>{/if}
     {/if}
