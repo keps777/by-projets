@@ -15,7 +15,7 @@
   const nonLues = $derived(compte ? app.monde.notifications.filter((n) => n.compteId === compte.id && !n.lu).length : 0);
 </script>
 
-<div class="nx ecran" data-face={face} class:large>
+<div class="nx ecran" data-face={face} class:large class:avecnav={!!onglet}>
   <header class="entete">
     {#if onglet}
       <a class="marque" href="/" onclick={(e) => { e.preventDefault(); aller('/'); }} aria-label="NexG-TT, accueil"><Logo /></a>
@@ -47,6 +47,7 @@
   [data-face='jour'] .rond.av { background: #0B1B2E; color: #fff; }
   .pastille { position: absolute; top: 9px; right: 10px; width: 9px; height: 9px; border-radius: 999px; background: var(--signal); border: 2px solid var(--surface); }
   .contenu { grid-area: contenu; min-height: 0; padding: 8px 20px 24px; } .interieur { display: flex; flex-direction: column; gap: 20px; } .sous { margin-top: -8px; }
+  .avecnav .pied { bottom: calc(56px + env(safe-area-inset-bottom)); } /* une barre d'action au-dessus de la barre d'onglets, jamais superposée */
   .pied { grid-area: pied; position: sticky; bottom: 0; padding: 12px 20px calc(12px + env(safe-area-inset-bottom)); background: linear-gradient(180deg, transparent, var(--bg) 28%); } .pied .interieur { gap: 8px; }
   .ecran > :global(.nav) { grid-area: nav; position: sticky; bottom: 0; z-index: 20; }
   .pc, .retour-pc, .pied-pc { display: none; }

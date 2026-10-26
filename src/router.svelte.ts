@@ -1,5 +1,6 @@
 // Routeur minimal par History API. Chaque écran se déclare dans le `routes.ts` de son dossier (voir CONTRIBUER.md).
 import type { Component } from 'svelte';
+import { RESERVEES } from './apps/_socle/reservees.ts';
 
 export interface Route {
   /** Chemin, avec paramètres `:id` éventuels. */
@@ -37,4 +38,6 @@ export function resoudre(routes: Route[], chemin: string): { route: Route; param
 
 /** Toutes les routes déclarées par les dossiers `src/apps/*`. */
 const modules = import.meta.glob<{ default: Route[] }>('./apps/*/routes.ts', { eager: true });
-export const ROUTES: Route[] = Object.values(modules).flatMap((m) => m.default);
+const declarees: Route[] = Object.values(modules).flatMap((m) => m.default);
+/** Les routes déclarées, plus les écrans réservés pas encore construits (page « Bientôt »), sans doublon. */
+export const ROUTES: Route[] = [...declarees, ...RESERVEES.filter(([chemin]) => !declarees.some((r) => r.chemin === chemin)).map(([chemin, titre]): Route => ({ chemin, titre, composant: () => import('./apps/_socle/Bientot.svelte') }))];

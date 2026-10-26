@@ -50,8 +50,37 @@ Planches : `design/mobile-3/NN.dc.html` (texte : `design/digest/m3-NN.txt`) ; re
 
 Les planches Web (`m3-15…22`) sont reportées. **Routes du verso réservées** (page « Bientôt » tient la place, voir `apps/_socle/routes.ts`) : `/portefeuille`, `/droit/:id`, `/cours/:id`, `/revendre/:id`, `/transferer/:id`, `/echeances`, `/solde`, `/drops`, `/pass`, `/compte`, `/notifications`, `/alertes`, `/aide`. Les écrans du recto y renvoient par de simples liens.
 
-## Phase 3 — Verso · Mes actifs (nuit)
-`mobile-2/00`–`37` : accueil Mes actifs, cours et carnet d'ordres, ordre à cours limité, indices, vendre ou attendre, solde et grand livre, portefeuille, droit de voyage, revendre, échéances, import, compte, drops, alertes, Pass, soute, transferts (`21`–`26`), notifications (`27`–`28`), aide (`29`–`30`), administration (`31`–`34`), intentions (`35`–`37`).
+## Phase 3 — Verso · Mes actifs (nuit) — mobile d'abord
+Planches : `design/mobile-2/NN.dc.html` (texte : `design/digest/m2-NN.txt`) ; rendu : équivalent de `design/maquettes/`. L'administration (`mobile-2/31`–`34`, console PC) est reportée avec les variantes PC.
+
+| Écran | Planche | Route | Agent |
+|---|---|---|---|
+| Portefeuille | m2-06 | `/portefeuille` | portefeuille |
+| Mon droit de voyage (billet recto/verso) | m2-07 | `/droit/:droitId` | portefeuille |
+| Calendrier des échéances | m2-09 | `/echeances` | portefeuille |
+| Importer un billet externe | m2-10 | `/importer` | portefeuille |
+| Indices NexG | m2-03 | `/indices` | portefeuille |
+| Cours du vol et carnet d'ordres | m2-01 | `/cours/:volId` | marche |
+| Ordre à cours limité | m2-02 | `/ordre/:volId` | marche |
+| Vendre ou attendre (liquidité) | m2-04 | `/liquidite/:droitId` | marche |
+| Revendre | m2-08 | `/revendre/:droitId` | marche |
+| Tableau des intentions d'achat | m2-35 | `/marche-intentions` | marche |
+| Proposer mon billet / issue | m2-36, m2-37 | `/marche-intentions/proposer/:intentionId`, `/marche-intentions/issue/:intentionId` | marche |
+| Solde et grand livre | m2-05 | `/solde` | compte |
+| Compte | m2-11 | `/compte` | compte |
+| Pass NexG (abonnement) | m2-15 | `/pass` (public) | compte |
+| Alertes | m2-14 | `/alertes` | compte |
+| Centre de notifications | m2-27 | `/notifications` | compte |
+| Préférences de notifications | m2-28 | `/notifications/preferences` | compte |
+| Aide / Contacter l'assistance | m2-29, m2-30 | `/aide`, `/aide/contact` | compte |
+| Drop membres en direct / épuisé | m2-12, m2-13 | `/drops` | transferts |
+| Transférer : choisir le proche | m2-21 | `/transferer/:droitId` | transferts |
+| Proche sans compte / confirmer / échéance proche / fait / erreur | m2-22…26 | `/transferer/:droitId/sans-compte`, `/confirmer`, `/echeance`, `/fait`, `/erreur` | transferts |
+| Soute du vol | m2-16 | `/soute/:volId` | soute |
+| Revendre mon bagage inutilisé | m2-17 | `/bagages/vendre` | soute |
+| Chercher un bagage sur ce vol | m2-18 | `/bagages/demande` | soute |
+
+Les écrans réservés pas encore construits sont listés dans `src/apps/_socle/reservees.ts` (page « Bientôt ») ; **ne touche pas à ce fichier** : déclarer sa route dans son dossier suffit à remplacer la page « Bientôt ».
 
 ## Fondations
 `mobile-5/00` manifeste, `01` billet qui se retourne, `02` cycle de vie, `03` design system (couleurs, typographies, composants, principes) — voir `src/ui/nexg.css`.
