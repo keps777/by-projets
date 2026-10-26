@@ -1,7 +1,8 @@
 import { chemin, expect, ouvrir, sansDebordement, test } from './aide';
 
-test('sans compte, l’accueil renvoie vers l’ouverture ; avec un compte, il s’affiche', async ({ page }) => {
-  await ouvrir(page, '/'); await expect.poll(() => chemin(page)).toBe('/ouverture');
+test('sans compte, l’accueil est public ; une page réservée renvoie vers l’ouverture', async ({ page }) => {
+  await ouvrir(page, '/'); await expect(page.getByText('Bienvenue sur NexG-TT')).toBeVisible();
+  await page.goto('/prive'); await expect.poll(() => chemin(page)).toBe('/ouverture');
 });
 test('Alex connecté voit l’accueil provisoire et l’annuaire des écrans', async ({ page }) => {
   await ouvrir(page, '/', { connecte: 'ACC-0412' });
