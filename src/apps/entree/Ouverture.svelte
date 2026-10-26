@@ -2,6 +2,8 @@
   import { onMount } from 'svelte';
   import Icone from '../../ui/Icone.svelte';
   import Palette from './Palette.svelte';
+  import PcEntete from './PcEntete.svelte';
+  import PcPied from './PcPied.svelte';
   import { compteCourant } from '../../domain/compte.ts';
   import { aller, param } from '../../router.svelte.ts';
   import { ALT_TABLEAU, DEPARTS, MARQUE, PAS_MS, PAS_TOTAL, cellule, poseLigne, poseMarque } from './panneau.ts';
@@ -31,11 +33,20 @@
 
 {#if !connecte}
 <div class="nx racine" data-face="nuit">
+  <PcEntete>
+    {#snippet liens()}
+      <a href="/explorer" onclick={(e) => va(e, '/explorer')}>Explorer sans compte</a>
+      {#if hors}<span role="link" aria-disabled="true" tabindex="0" aria-describedby="msg-hors-ligne">J’ai déjà un compte</span>{:else}<a href="/connexion" onclick={(e) => va(e, '/connexion')}>J’ai déjà un compte</a>{/if}
+    {/snippet}
+  </PcEntete>
+  {#if hors}
+    <div class="hors pc-hors nx" data-face="jour" role="status"><Icone nom="hors_ligne" taille={22} /><span class="col g4"><strong>Hors ligne</strong><span>Vous pouvez parcourir cette présentation et choisir votre langue. Se connecter ou créer un compte demande le réseau : rien n’a été envoyé.</span></span></div>
+  {/if}
   <main id="contenu" class="principal">
     <div class="meta"><span class="gauche"><Icone nom="avion" taille={16} />Départs · Departures</span><span>YUL · 12 oct.</span></div>
     {#if chargement}<p class="sr" role="status">Chargement du tableau des départs…</p>{/if}
     {#if hors}
-      <div class="hors" role="status" id="msg-hors-ligne"><Icone nom="hors_ligne" taille={20} /><span class="col g4"><strong>Hors ligne</strong><span>Vous pouvez parcourir cette présentation et choisir votre langue. Se connecter ou créer un compte demande le réseau : rien n’a été envoyé.</span></span></div>
+      <div class="hors mob-seul" role="status" id="msg-hors-ligne"><Icone nom="hors_ligne" taille={20} /><span class="col g4"><strong>Hors ligne</strong><span>Vous pouvez parcourir cette présentation et choisir votre langue. Se connecter ou créer un compte demande le réseau : rien n’a été envoyé.</span></span></div>
     {/if}
     <section class="tableau" role="img" aria-label={ALT_TABLEAU}>
       <div class="ligne tete"><span>Heure</span><span>Dest.</span><span>Ville</span><span>Statut</span></div>
@@ -59,6 +70,7 @@
   </main>
 
   <section class="feuille nx" data-face="jour" aria-label="Commencer">
+    <h2 class="pc-titre">Par où commencer ?</h2>
     <div class="billet" aria-hidden="true">
       <span class="face recto"><span class="sur"><Icone nom="soleil" taille={14} trait={2} />Recto</span><span class="gros">Voyager</span><span class="pet">Chercher, réserver, partir</span></span>
       <span class="face verso"><span class="sur"><Icone nom="lune" taille={14} trait={2} />Verso</span><span class="gros">Gérer</span><span class="pet">Revendre, transférer, nommer</span></span>
@@ -68,9 +80,11 @@
     <div class="liens">
       {#if hors}<span class="lien inactif" role="link" aria-disabled="true" tabindex="0" aria-describedby="msg-hors-ligne">J’ai déjà un compte</span>
       {:else}<a class="lien" href="/connexion" onclick={(e) => va(e, '/connexion')}>J’ai déjà un compte</a>{/if}
-      <a class="lien" href="/explorer" onclick={(e) => va(e, '/explorer')}>Explorer sans compte</a>
+      <a class="lien expl" href="/explorer" onclick={(e) => va(e, '/explorer')}>Explorer sans compte</a>
     </div>
+    <p class="mention">Prototype · données fictives · aucun paiement réel</p>
   </section>
+  <PcPied />
 </div>
 {/if}
 
@@ -113,4 +127,42 @@
     .commencer { height: 48px; font-size: 16px; } .feuille { padding-top: 10px; } .legende { font-size: 10px; }
   }
   @media (prefers-reduced-motion: reduce) { .titre, .feuille, .bat, .sq { animation: none; } }
+  /* PC (≥ 900 px) : en-tête à liens, tableau des départs large et appel à l'action côte à côte (en dessous de 1100 px : l'un sous l'autre), pied « Mode démo ». Planche WebOuverture. */
+  .pc-hors, .pc-titre, .mention { display: none; }
+  @media (min-width: 900px) {
+    .racine { width: 100%; max-width: none; min-height: 100dvh; display: grid; overflow-x: clip; align-content: start; color: #0B1B2E; background: #EEF3F8;
+      grid-template-columns: minmax(32px, 1fr) minmax(0, 1120px) minmax(32px, 1fr); grid-template-rows: auto auto auto auto 1fr;
+      grid-template-areas: 'entete entete entete' '. hors .' '. principal .' '. feuille .' 'bas bas bas'; }
+    .racine > :global(.pc-pied) { align-self: end; margin-top: 28px; }
+    .mob-seul { display: none; }
+    .pc-hors { grid-area: hors; margin-top: 16px; display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: 14px; background: #E3EAF2; border: 1px solid #7A8597; color: #0B1B2E; }
+    .pc-hors strong { font-size: 15px; } .pc-hors .col span { font-size: 14px; line-height: 20px; color: #3E4F66; }
+    .principal { grid-area: principal; margin-top: 16px; flex: none; justify-content: flex-start; gap: 0; padding: 28px; border-radius: 24px; background: #0B1B2E; color: #fff; }
+    .meta { min-height: 28px; padding-bottom: 12px; font-size: 12px; color: #C9D3DF; } .gauche { gap: 8px; }
+    .tableau { border-radius: 0; background: transparent; border: 0; overflow: visible; }
+    .ligne { grid-template-columns: 72px 96px minmax(0, 1fr) auto; gap: 14px; min-height: 56px; padding: 0 4px; border-top: 1px solid rgba(255, 255, 255, 0.14); }
+    .tete { min-height: 0; padding: 8px 4px; color: #C9D3DF; }
+    .marque { gap: 10px; padding: 18px 4px 20px; border-top: 1px solid rgba(255, 255, 255, 0.14); } .cases { gap: 6px; } .cases.p { gap: 4px; }
+    .legende { font-size: 12px; color: #C9D3DF; }
+    .heure { font-size: 18px; } .ville { font-size: 17px; color: #C9D3DF; } .statut { gap: 8px; font-size: 12px; } .pt { width: 7px; height: 7px; }
+    .sq { background: #1B2D45; border-radius: 10px; }
+    .titre { gap: 12px; padding-top: 6px; margin-top: 26px; animation-delay: 300ms; }
+    h1 { font: 700 52px/48px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.02em; text-wrap: balance; }
+    .titre p { max-width: 560px; font-size: 17px; line-height: 26px; color: #C9D3DF; }
+    .feuille { grid-area: feuille; margin-top: 18px; justify-content: center; gap: 20px; padding: 28px; border-radius: 24px; background: #fff; border: 1px solid #D3DCE6; box-shadow: 0 1px 0 #D3DCE6, 0 12px 32px rgba(11, 27, 46, 0.10); animation: none; max-width: 520px; }
+    .pc-titre { display: block; font: 600 26px/28px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; color: #0B1B2E; }
+    .billet { box-shadow: 0 1px 0 #D3DCE6, 0 12px 32px rgba(11, 27, 46, 0.10); }
+    .recto { padding: 16px 16px 16px 18px; border: 1px solid #D3DCE6; border-right: 0; border-radius: 16px 0 0 16px; } .verso { padding: 16px 18px 16px 20px; border-radius: 0 16px 16px 0; }
+    .gros { font-size: 28px; line-height: 30px; } .pet { font-size: 13px; line-height: 18px; } .sur { font-size: 11px; }
+    .perfo { border-left-color: #B9C5D3; } .enc { background: #fff; }
+    .commencer { height: auto; min-height: 56px; font-size: 17px; }
+    .liens { margin-top: 0; } .lien.expl { display: none; } .lien { min-height: 48px; font-size: 16px; font-weight: 700; color: var(--accent); }
+    .lien.inactif { color: #3E4F66; }
+    .mention { display: block; text-align: center; font-size: 13px; line-height: 18px; color: #3E4F66; }
+    h1 span { color: #FFD23F; }
+  }
+  @media (min-width: 1100px) {
+    .racine { grid-template-columns: minmax(32px, 1fr) minmax(0, 716px) 24px 380px minmax(32px, 1fr); grid-template-areas: 'entete entete entete entete entete' '. hors hors hors .' '. principal . feuille .' 'bas bas bas bas bas'; }
+    .feuille { max-width: none; margin-top: 16px; }
+  }
 </style>

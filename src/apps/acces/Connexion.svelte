@@ -48,7 +48,12 @@
   }
 </script>
 
-<Ecran titre="NexG-TT" face="jour">
+{#snippet droite()}
+  <span class="fantome" aria-hidden="true"></span>
+  <nav class="haut-pc" aria-label="Accès au compte"><a href="/explorer" onclick={(e) => va(e, '/explorer')}>Explorer sans compte</a><a href="/inscription" onclick={(e) => va(e, '/inscription')}>Créer un compte</a></nav>
+{/snippet}
+
+<Ecran titre="NexG-TT" face="jour" large {droite}>
   {#if horsLigne}
     <div class="bandeau" role="status"><Icone nom="hors_ligne" /><div><b>Hors ligne</b><span>La connexion demande le réseau : la clé d’accès et le code par courriel sont suspendus. Rien n’a été envoyé.</span></div></div>
   {/if}
@@ -56,6 +61,7 @@
     <div class="bandeau err" role="alert"><Icone nom="info" /><div><b>Clé d’accès non reconnue</b><span>Votre appareil n’a pas confirmé la clé d’accès (confirmation annulée ou clé non reconnue). Aucune connexion n’a eu lieu. Réessayez, ou recevez un code par courriel.</span></div><button type="button" class="btn sm sec" onclick={() => { cleEchec = false; cle(); }}>Réessayer</button></div>
   {/if}
 
+  <div class="mise"><div class="gauche">
   {#if appareil}
     <section class="accueil">
       <span class="avatar" aria-hidden="true">{initiales(appareil)}</span>
@@ -89,12 +95,15 @@
     </form>
     <p class="liens"><a href="/inscription" onclick={(e) => va(e, '/inscription')}>Créer un compte</a><a href="/explorer" onclick={(e) => va(e, '/explorer')}>Explorer sans compte</a></p>
   {/if}
+  <p class="proto-pc">Prototype · données fictives</p>
+  </div>
 
   <aside class="securite" aria-labelledby="sec-titre">
     <span class="bouclier" aria-hidden="true"><Icone nom="verifie" taille={20} /></span>
     <span class="col g4"><span id="sec-titre" class="sec-titre">Nous ne vous demanderons jamais votre code par téléphone.</span><span class="t-sec">Ne le communiquez à personne, même à quelqu’un qui se présente comme NexG-TT.</span>
       <span class="hyp"><b class="puce-h">[H]</b>Connexion par clé d’accès : hypothèse à valider avec la double authentification (EF-01). Aucune règle de sécurité n’est décidée ici.</span></span>
   </aside>
+  </div>
 </Ecran>
 
 <Feuille bind:ouvert={feuille} titre="Clé d’accès" surfermer={annulerCle}>
@@ -138,4 +147,26 @@
   @keyframes tourne { to { transform: rotate(360deg); } }
   @media (prefers-reduced-motion: reduce) { .onde, .tourne, .s0, .s1 { animation: none; } .onde { display: none; } }
   @media (max-width: 340px) { .accueil h1 { font-size: 36px; line-height: 38px; } .cle { gap: 12px; padding: 14px; } .titre { font-size: 16px; } }
+  /* PC (≥ 900 px) : clé d'accès à gauche, encart de sécurité sombre collant à droite. Planche WebConnexion. */
+  .fantome { display: block; width: 44px; height: 44px; } .haut-pc, .proto-pc { display: none; } .mise, .gauche { display: contents; }
+  @media (min-width: 900px) {
+    .fantome { display: none; }
+    .haut-pc { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+    .haut-pc a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 12px; font: 700 15px/1 'Barlow', sans-serif; }
+    .mise { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px; }
+    .gauche { display: flex; flex: 1 1 520px; min-width: 0; max-width: 680px; flex-direction: column; gap: 22px; }
+    .accueil { display: grid; grid-template-columns: 84px minmax(0, 1fr); grid-template-areas: 'a h' 'a p'; align-items: center; justify-items: start; column-gap: 20px; row-gap: 4px; text-align: left; padding-top: 0; }
+    .avatar { grid-area: a; width: 84px; height: 84px; font-size: 32px; } .accueil h1 { grid-area: h; margin-top: 0; align-self: end; } .courriel { grid-area: p; align-self: start; font-size: 16px; color: #3E4F66; }
+    .cle { gap: 16px; } .titre { font-size: 19px; line-height: 24px; } .sous { font-size: 15px; line-height: 20px; } .aide-cle { color: #3E4F66; }
+    .ou { font-size: 14px; color: #3E4F66; } .ou span { border-top-color: #D3DCE6; }
+    .pas-moi { min-height: 48px; font-size: 16px; font-weight: 700; text-decoration: none; }
+    .liens { display: none; } .intro { font-size: 17px; line-height: 26px; color: #3E4F66; }
+    .proto-pc { display: block; font-size: 13px; line-height: 18px; color: #3E4F66; }
+    .securite { margin-top: 0; display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 14px; row-gap: 4px; flex: 1 1 320px; max-width: 460px; min-width: 0; position: sticky; top: 16px; padding: 22px; border-radius: 20px; background: #0B1B2E; color: #fff; border: 0; }
+    .securite > :global(.col) { display: contents; }
+    .bouclier { grid-row: 1 / span 2; width: 44px; height: 44px; border-radius: 12px; background: rgba(255, 255, 255, 0.12); color: #fff; }
+    .sec-titre { grid-column: 2; font-size: 18px; line-height: 24px; } .securite :global(.t-sec) { grid-column: 2; font-size: 15px; line-height: 22px; color: #C9D3DF; }
+    .hyp { grid-column: 1 / -1; display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; font-size: 13px; line-height: 20px; color: #C9D3DF; }
+    .puce-h { flex: none; display: inline-flex; align-items: center; height: 20px; margin: 0; padding: 0 6px; border-radius: 6px; background: rgba(255, 210, 63, 0.16); color: #FFD23F; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; }
+  }
 </style>

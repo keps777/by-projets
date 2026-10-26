@@ -8,5 +8,11 @@
   .charn { position: absolute; left: 0; right: 0; top: 13px; height: 2px; background: #060708; }
   .pose { color: var(--signal); animation: nx-flap 160ms ease-out; }
   .grande { flex-basis: 40px; height: 58px; border-radius: 6px; box-shadow: inset 0 -29px 0 #15171B; font-size: 34px; } .grande .charn { top: 28px; }
+  /* PC : palettes du tableau large (planche WebOuverture). */
+  @media (min-width: 900px) {
+    .cel { flex: none; width: 26px; height: 36px; border-radius: 6px; background: #1B2D45; box-shadow: inset 0 -18px 0 #15263C; font-size: 19px; color: #C9D3DF; } .charn { top: 17px; background: #0B1B2E; }
+    .pose { color: var(--signal); }
+    .grande { width: 52px; height: 76px; box-shadow: inset 0 -38px 0 #15263C; font-size: 44px; } .grande .charn { top: 37px; }
+  }
   @media (prefers-reduced-motion: reduce) { .pose { animation: none; } }
 </style>
