@@ -13,4 +13,4 @@ npm run e2e        # tests de bout en bout (Playwright, Chromium)
 
 Démonstration : « lundi 12 octobre 2026 » (Alex T., `ACC-0412`) ; `?maintenant=2026-12-13T10:00` rejoue une autre date. Code de vérification de démonstration : `482915`.
 
-État : **phase 1 — accès** (ouverture, langue, promesses, inscription, code, clé d'accès, profil, partage, notifications, carte, identité, espace prêt). Ensuite : le recto (Voyager), puis le verso (Mes actifs). Voir `docs/ecrans.md`.
+État : **phase 1 — accès (mobile)** faite : ouverture, langue, promesses, inscription, code, clé d’accès, profil, partage, notifications, carte, identité, espace prêt. Ensuite : le recto (Voyager), puis le verso (Mes actifs) ; variantes PC en dernier. Voir `docs/ecrans.md`.

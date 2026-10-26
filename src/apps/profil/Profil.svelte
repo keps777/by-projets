@@ -27,7 +27,7 @@
   function plusTard() { aller('/partage'); }
 </script>
 
-<Ecran titre="" face="jour" retour="/code">
+<Ecran titre="" face="jour" sansRetour>
   {#snippet droite()}<a class="plus-tard" href="/partage" onclick={(e) => { e.preventDefault(); plusTard(); }}>Plus tard</a>{/snippet}
   <Etapes etape={2} />
   <form class="col g20" onsubmit={continuer} id="form-profil" novalidate>
