@@ -1,0 +1,11 @@
+.pc-seul { display: none; }
+/* Verso · variante PC (≥ 900 px) : les écrans de la face nuit sans mise en page large sont centrés (720 px) ; les écrans `large` gèrent leur propre grille.
+   Les éléments réservés au mobile portent la classe `.mob-seul` (masqués ici). Sélecteurs renforcés pour passer devant ceux du cadre `Ecran`. */
+@media (min-width: 900px) {
+  .nx.ecran .pc-seul { display: block; }
+  .nx.ecran.ecran[data-face='nuit']:not(.large) .interieur, .nx.ecran.ecran[data-face='nuit']:not(.large) .pied .interieur { margin-inline: auto; width: 100%; max-width: 720px; }
+  .nx.ecran[data-face='nuit'] .mob-seul { display: none !important; }
+  .nx.ecran.ecran[data-face='nuit'] .interieur { gap: 24px; }
+  /* Mise en page PC large (1344 px, comme les planches Web…) : un écran qui contient `.pc-1344` élargit le cadre (en-tête, contenu, pied). */
+  .nx.ecran.ecran:has(.pc-1344) .contenu, .nx.ecran.ecran:has(.pc-1344) .entete, .nx.ecran.ecran:has(.pc-1344) .pied-pc { padding-inline: max(32px, calc((100% - 1344px) / 2)); }
+}

@@ -1,4 +1,5 @@
 import type { Route } from '../../router.svelte.ts';
+import './pcverso.css';
 // Verso · Mes actifs (face nuit) : portefeuille, droit de voyage (billet recto/verso), calendrier des échéances, import d'un billet externe, indices NexG. Tous demandent un compte connecté.
 const routes: Route[] = [
   { chemin: '/portefeuille', composant: () => import('./Portefeuille.svelte'), titre: 'Portefeuille', acces: 'compte' },

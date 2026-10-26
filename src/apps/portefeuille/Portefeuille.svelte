@@ -11,6 +11,8 @@
   import { reseau, tempsReel } from '../voyager/temps.svelte.ts';
   import CarteBillet from './CarteBillet.svelte';
   import Pic from './Pic.svelte';
+  import PortefeuillePc from './PortefeuillePc.svelte';
+  import { pc } from './pc.svelte.ts';
   import { vuePortefeuille, type OngletPf } from './portefeuille.ts';
 
   /** Portefeuille (verso, nuit) : prix équivalent total des droits actifs, onglets Actifs / En revente / Historique, calendrier, solde, import. */
@@ -27,7 +29,11 @@
   const dernierRetrait = $derived(vue?.revente.length ? vue.revente[0].retrait : '');
 </script>
 
-<Ecran face="nuit" onglet="portefeuille">
+<Ecran face="nuit" onglet="portefeuille" large={pc.large}>
+  {#if pc.large && vue && compte}
+    {#if !reseau.enLigne}<p class="hors" role="status"><Icone nom="hors_ligne" taille={18} />Hors ligne : prix indicatifs du dernier relevé enregistré sur cet appareil.</p>{/if}
+    <PortefeuillePc {vue} maintenant={temps.maintenant} nom={`${compte.prenom} ${compte.nom ? `${compte.nom[0].toUpperCase()}.` : ''}`.trim()} />
+  {:else}
   <div class="bascule" role="group" aria-label="Face de l’application">
     <button type="button" aria-pressed="false" onclick={versVoyager}><Icone nom="soleil" taille={16} trait={2} />Voyager</button>
     <button type="button" aria-pressed="true" aria-current="page"><Icone nom="lune" taille={16} trait={2} />Mes actifs</button>
@@ -129,6 +135,7 @@
       <p class="aide-c">Acheté directement chez une compagnie ? Confiez-le à NexG-TT, selon les compagnies partenaires.</p>
     </div>
     <p class="aide-c">Prix indicatifs. Un droit de voyage n’est pas un placement financier.</p>
+  {/if}
   {/if}
 </Ecran>
 
