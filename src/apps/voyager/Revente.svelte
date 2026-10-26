@@ -25,11 +25,24 @@
     devant: { transform: 'translate(0px, 0px) rotate(0deg) scale(1)', opacity: 1, z: 4 },
     derriere1: { transform: 'translate(6px, -22px) rotate(2.2deg) scale(0.95)', opacity: 1, z: 3 },
     derriere2: { transform: 'translate(-6px, -42px) rotate(-2.6deg) scale(0.9)', opacity: 1, z: 2 },
-    sortie: { transform: 'translate(-130%, 40px) rotate(-18deg) scale(1)', opacity: 0, z: 5 },
+    dernier: { transform: 'translate(10px, -58px) rotate(3.2deg) scale(0.86)', opacity: 0.55, z: 1 },
+    sortie: { transform: 'translate(-120%, 30px) rotate(-16deg) scale(1)', opacity: 0.2, z: 5 },
     cachee: { transform: 'translate(-6px, -42px) rotate(-2.6deg) scale(0.9)', opacity: 0, z: 1 }
   };
   const rang = (i: number) => (n ? (i - (idx % n) + n) % n : 0);
-  const passer = () => { if (n > 1) idx = (idx + 1) % n; };
+  // « Passer » : la carte quitte la pile par la gauche, puis revient se ranger tout au fond (on la revoit derrière les autres). Glisser vers la gauche = passer, vers la droite = revenir à la précédente.
+  let sortant = $state(-1), dx = $state(0), tire = false, x0 = 0;
+  const reduit = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const passer = () => {
+    if (n < 2 || sortant >= 0) return; const i = idx % n; dx = 0;
+    if (reduit) { idx = (idx + 1) % n; return; }
+    sortant = i; setTimeout(() => { idx = (idx + 1) % n; sortant = -1; }, 300);
+  };
+  const precedent = () => { if (n > 1 && sortant < 0) { dx = 0; idx = (idx - 1 + n) % n; } };
+  const bas = (e: PointerEvent) => { if (n < 2 || sortant >= 0) return; tire = true; x0 = e.clientX; (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId); };
+  const bouge = (e: PointerEvent) => { if (tire) dx = Math.max(-220, Math.min(220, e.clientX - x0)); };
+  const lache = () => { if (!tire) return; tire = false; const d = dx; if (d < -70) passer(); else if (d > 70) { dx = 0; precedent(); } else dx = 0; };
+  const touche = (e: KeyboardEvent) => { if (e.key === 'ArrowLeft') { e.preventDefault(); passer(); } else if (e.key === 'ArrowRight') { e.preventDefault(); precedent(); } };
   const paysDate = (ms: number) => jourSemaine(ms);
   const phrase = $derived(courant ? `Billet ${(idx % n) + 1} sur ${n} : ${courant.ville}, ${paysDate(courant.departMs)}, ${fmt(courant.prix)}` : '');
   const signe = (pct: number) => fmtPct(pct);
@@ -52,10 +65,12 @@
       <a class="btn" href="/radar" onclick={(e) => va(e, '/radar')}>Explorer le radar</a>
     </section>
   {:else}
-    <div class="pile" role="region" aria-label="Pile de billets en revente">
+    <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+    <div class="pile" role="region" aria-label="Pile de billets en revente. Flèches gauche et droite : passer ou revenir." tabindex="0" onkeydown={touche} onpointerdown={bas} onpointermove={bouge} onpointerup={lache} onpointercancel={lache}>
       {#each cartes as c, i (c.droitId)}
-        {@const p = POSES[poseDe(rang(i), n)]}
-        <article class="billet" aria-hidden={rang(i) === 0 ? undefined : 'true'} aria-label="{c.ville}, {paysDate(c.departMs)}, {fmt(c.prix)}" style="transform:{p.transform};opacity:{p.opacity};z-index:{p.z}">
+        {@const pose = sortant === i ? 'sortie' : poseDe(rang(i), n)}
+        {@const p = pose === 'devant' && dx !== 0 ? { ...POSES.devant, transform: `translate(${dx}px, 0px) rotate(${dx / 14}deg) scale(1)` } : POSES[pose]}
+        <article class="billet" aria-hidden={rang(i) === 0 ? undefined : 'true'} aria-label="{c.ville}, {paysDate(c.departMs)}, {fmt(c.prix)}" style="transform:{p.transform};opacity:{p.opacity};z-index:{p.z};{dx !== 0 && pose === 'devant' ? 'transition:none;' : ''}">
           <div class="bandeau"><span>YUL → {c.code} · {paysDate(c.departMs).toUpperCase()}</span><span class="vol">{c.compagnie.toUpperCase()} {c.numero.split(' ')[1]}</span></div>
           <div class="corps">
             <span class="filigrane" aria-hidden="true">{c.code}</span>
@@ -114,7 +129,7 @@
   .h2 { font: 600 34px/34px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.005em; text-wrap: balance; }
   .vide { display: flex; flex-direction: column; gap: 12px; padding: 18px; }
   /* Pile : les billets derrière dépassent de 22 et 42 px ; la hauteur s'adapte à l'écran pour que l'action reste visible */
-  .pile { position: relative; flex: none; height: clamp(372px, calc(100dvh - 312px), 460px); margin-top: 6px; }
+  .pile { touch-action: pan-y; user-select: none; position: relative; flex: none; height: clamp(372px, calc(100dvh - 312px), 460px); margin-top: 6px; }
   .billet { position: absolute; left: 6px; right: 6px; top: 46px; bottom: 0; display: flex; flex-direction: column; border-radius: 20px; background: var(--surface); box-shadow: var(--ombre); transform-origin: 50% 0; transition: transform 560ms cubic-bezier(.2, .8, .2, 1), opacity 420ms ease; }
   .bandeau { height: 30px; flex: none; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 16px; border-radius: 20px 20px 0 0; background: #0B1B2E; color: #fff; font: 600 11px/1 'IBM Plex Mono', ui-monospace, monospace; letter-spacing: 0.08em; white-space: nowrap; }
   .vol { color: #C9D3DF; }

@@ -40,10 +40,10 @@ export function trier(liste: Revente[], tri: Tri): Revente[] {
 export const arrivee = (r: Pick<Revente, 'heureArrivee' | 'plusJours'>): string => `${r.heureArrivee}${r.plusJours > 0 ? ` (+${r.plusJours})` : ''}`;
 /** Taille (px) du nom de la ville sur la carte : le plus grand possible sans déborder (92 px pour « Paris », moins pour « Punta Cana »). */
 export const tailleVille = (nom: string): number => Math.max(52, Math.min(92, Math.floor(280 / (Math.max(nom.length, 1) * 0.44))));
-/** Pose d'une carte de la pile selon son rang devant la pile : 0 = devant, 1 et 2 = visibles derrière, la dernière passée sort à gauche, les autres attendent cachées. */
-export type Pose = 'devant' | 'derriere1' | 'derriere2' | 'sortie' | 'cachee';
+/** Pose d'une carte de la pile selon son rang devant la pile : 0 = devant, 1 et 2 = visibles derrière, la dernière passée est revenue tout au fond (encore visible), les autres attendent cachées. `sortie` : la carte qu'on vient de passer quitte la pile par la gauche, avant de revenir au fond. */
+export type Pose = 'devant' | 'derriere1' | 'derriere2' | 'dernier' | 'sortie' | 'cachee';
 export function poseDe(rang: number, total: number): Pose {
   if (rang === 0) return 'devant';
-  if (total > 3 && rang === total - 1) return 'sortie';
+  if (total > 3 && rang === total - 1) return 'dernier';
   return rang === 1 ? 'derriere1' : rang === 2 ? 'derriere2' : 'cachee';
 }

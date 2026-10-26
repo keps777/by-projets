@@ -33,8 +33,8 @@ describe('reventes de la semaine', () => {
 describe('pile de billets', () => {
   it('taille du nom de ville', () => { expect(tailleVille('Paris')).toBe(92); expect(tailleVille('Reykjavik')).toBeLessThan(92); expect(tailleVille('Punta Cana')).toBeLessThan(tailleVille('Reykjavik')); expect(tailleVille('Papeete et au-delà de tout')).toBe(52); });
   it('poses : devant, deux derrière, la dernière passée sort, les autres attendent', () => {
-    expect([0, 1, 2, 3].map((r) => poseDe(r, 4))).toEqual(['devant', 'derriere1', 'derriere2', 'sortie']);
-    expect([0, 1, 2, 3, 4, 5].map((r) => poseDe(r, 6))).toEqual(['devant', 'derriere1', 'derriere2', 'cachee', 'cachee', 'sortie']);
+    expect([0, 1, 2, 3].map((r) => poseDe(r, 4))).toEqual(['devant', 'derriere1', 'derriere2', 'dernier']);
+    expect([0, 1, 2, 3, 4, 5].map((r) => poseDe(r, 6))).toEqual(['devant', 'derriere1', 'derriere2', 'cachee', 'cachee', 'dernier']);
     expect([0, 1, 2].map((r) => poseDe(r, 3))).toEqual(['devant', 'derriere1', 'derriere2']); expect(poseDe(0, 1)).toBe('devant');
   });
 });

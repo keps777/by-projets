@@ -182,6 +182,17 @@ test.describe('radar des destinations', () => {
 });
 
 test.describe('ces billets cherchent un voyageur', () => {
+  test('la pile : Passer envoie la carte vers l’arrière (elle reste visible derrière), glisser à droite la ramène', async ({ page }) => {
+    await ouvrir(page, '/revente', { connecte: 'ACC-0412' });
+    const premiere = page.locator('article.billet[aria-label^="Paris"]'); await expect(premiere).toBeVisible();
+    await page.getByRole('button', { name: 'Passer' }).click(); await page.waitForTimeout(250);
+    expect(await premiere.evaluate((e) => getComputedStyle(e).opacity)).not.toBe('1'); // en route vers la gauche
+    await page.waitForTimeout(900);
+    const o = Number(await premiere.evaluate((e) => getComputedStyle(e).opacity)); expect(o).toBeGreaterThan(0.3); expect(o).toBeLessThan(0.9); // rangée tout au fond, encore visible
+    await expect(page.getByText('2/6')).toBeVisible();
+    const pile = page.getByRole('region', { name: /Pile de billets/ }); await pile.focus(); await page.keyboard.press('ArrowRight'); await expect(page.getByText('1/6')).toBeVisible();
+    await page.waitForTimeout(700); expect(await premiere.evaluate((e) => getComputedStyle(e).opacity)).toBe('1');
+  });
   test('la pile : six billets de la semaine, Passer fait défiler, Je le prends mène à l’offre', async ({ page }) => {
     await alex(page, '/revente');
     await expect(page.getByText('Partir ce week-end', { exact: true })).toBeVisible(); await expect(page.getByRole('heading', { name: 'Ces billets cherchent un voyageur' })).toBeVisible();
@@ -194,7 +205,7 @@ test.describe('ces billets cherchent un voyageur', () => {
     await page.screenshot({ path: '/tmp/accueil-revente.png' });
     await page.getByRole('button', { name: 'Passer' }).click(); await expect(page.getByText('2/6')).toBeVisible();
     await expect(page.getByRole('link', { name: /Je le prends : Lisbonne, 590 \$/ })).toHaveAttribute('href', '/offre/revente:d-r611'); await expect(page.getByText('Billet 2 sur 6 : Lisbonne')).toBeAttached();
-    for (let i = 0; i < 4; i++) await page.getByRole('button', { name: 'Passer' }).click(); await expect(page.getByText('6/6')).toBeVisible();
+    for (let i = 0; i < 4; i++) { await page.getByRole('button', { name: 'Passer' }).click(); await page.waitForTimeout(450); } await expect(page.getByText('6/6')).toBeVisible();
     await page.getByRole('button', { name: 'Passer' }).click(); await expect(page.getByText('1/6')).toBeVisible();
     await page.getByRole('link', { name: /Je le prends/ }).click(); await expect.poll(() => chemin(page)).toBe('/offre/revente:d-r830');
   });

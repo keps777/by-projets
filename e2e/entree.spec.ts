@@ -160,7 +160,7 @@ for (const largeur of [320, 390]) {
 // Sur un iPhone avec la barre de Safari (≈ 390 × 700), tout le texte de l'ouverture est visible dès la première vue : rien n'est recouvert par la feuille du bas.
 for (const [l, h] of [[390, 844], [390, 700], [390, 640], [360, 640]] as const) {
   test(`ouverture ${l} × ${h} : tout le texte est visible sans défiler`, async ({ page }) => {
-    await page.setViewportSize({ width: l, height: h }); await ouvrir(page, '/ouverture'); await page.waitForTimeout(2400);
+    await page.setViewportSize({ width: l, height: h }); await ouvrir(page, '/ouverture'); await page.waitForTimeout(3000);
     await expect(page.getByText('Nommez le voyageur avant le départ.')).toBeVisible();
     const boite = async (sel: string) => (await page.locator(sel).first().boundingBox())!;
     const para = await boite('.titre p'), feuille = await boite('.feuille'), liens = await boite('.liens'), cta = await boite('.commencer');

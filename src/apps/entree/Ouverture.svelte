@@ -94,7 +94,7 @@
   .titre { display: flex; flex-direction: column; gap: 10px; animation: nx-fade 520ms cubic-bezier(.2, .7, .2, 1) 1500ms both; }
   h1 { font: 600 clamp(34px, 5.4dvh, 46px)/0.96 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.005em; } h1 span { color: var(--signal); }
   .titre p { font-size: 15px; line-height: clamp(19px, 2.8dvh, 22px); color: var(--ink2); }
-  .feuille { position: relative; display: flex; flex-direction: column; gap: clamp(6px, 1.3dvh, 12px); padding: clamp(12px, 2.2dvh, 20px) 20px calc(clamp(10px, 2dvh, 22px) + env(safe-area-inset-bottom)); border-radius: 28px 28px 0 0; color: var(--ink); animation: nx-rise 640ms cubic-bezier(.2, .8, .2, 1) 1700ms both; }
+  .feuille { position: relative; display: flex; flex-direction: column; gap: clamp(6px, 1.3dvh, 12px); padding: clamp(12px, 2.2dvh, 20px) 20px calc(clamp(10px, 2dvh, 22px) + env(safe-area-inset-bottom)); border-radius: 28px 28px 0 0; color: var(--ink); animation: nx-rise 640ms cubic-bezier(.2, .8, .2, 1) 1600ms backwards; box-shadow: 0 160px 0 0 var(--bg); }
   .billet { position: relative; display: grid; grid-template-columns: 1fr 1fr; border-radius: 16px; overflow: hidden; box-shadow: var(--ombre); }
   .face { display: flex; flex-direction: column; gap: 2px; min-width: 0; } .recto { padding: clamp(8px, 1.4dvh, 12px) 14px clamp(8px, 1.4dvh, 12px) 16px; background: #fff; color: #0B1B2E; } .verso { padding: clamp(8px, 1.4dvh, 12px) 16px clamp(8px, 1.4dvh, 12px) 18px; background: #0B1B2E; color: #fff; }
   .sur { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; } .recto .sur, .recto .pet { color: #3E4F66; } .verso .sur, .verso .pet { color: #C9D3DF; }
