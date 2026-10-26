@@ -23,7 +23,7 @@
   </div>
   <form class="recherche" role="search" onsubmit={chercher}>
     <label class="sr" for="rech-pc">Rechercher une ville, un code d’aéroport ou une référence</label>
-    <Icone nom="chercher" taille={18} /><input id="rech-pc" type="search" placeholder="Rechercher une ville, un code d’aéroport ou une référence" autocomplete="off" bind:value={q} />
+    <Icone nom="chercher" taille={18} /><input id="rech-pc" type="search" placeholder="Ville, code d’aéroport ou référence" autocomplete="off" bind:value={q} />
   </form>
   <div class="actions">
     <a class="rond" href="/notifications" aria-label={nonLues ? `Notifications, ${nonLues} non lues` : 'Notifications'} onclick={(e) => { e.preventDefault(); aller('/notifications'); }}><Icone nom="cloche" />{#if nonLues}<span class="pastille" aria-hidden="true"></span>{/if}</a>
