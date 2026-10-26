@@ -39,7 +39,7 @@
 <style>
   .ecran { min-height: 100dvh; display: grid; grid-template-rows: auto 1fr auto auto; grid-template-areas: 'entete' 'contenu' 'pied' 'nav'; width: min(100%, 520px); margin: 0 auto; position: relative; }
   .entete { grid-area: entete; display: grid; grid-template-columns: 44px 1fr auto; align-items: center; gap: 8px; padding: max(24px, env(safe-area-inset-top)) 12px 8px; }
-  .entete:has(.marque) { grid-template-columns: 1fr auto; padding: max(24px, env(safe-area-inset-top)) 20px 8px; }
+  .entete:has(.marque:not(.pc)) { grid-template-columns: 1fr auto; padding: max(24px, env(safe-area-inset-top)) 20px 8px; }
   .titre { text-align: center; display: flex; flex-direction: column; } .t-ecran-c { font: 600 20px/24px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; margin: 0; }
   .actions { display: flex; gap: 8px; align-items: center; } .vide { width: 44px; height: 44px; }
   .rond { position: relative; width: 44px; height: 44px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); display: grid; place-items: center; cursor: pointer; text-decoration: none; }
