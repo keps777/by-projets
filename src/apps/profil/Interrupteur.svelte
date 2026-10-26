@@ -16,4 +16,10 @@
   .piste.on { background: var(--accent); border-color: var(--accent); }
   .bouton { position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 999px; background: var(--ink3); display: flex; align-items: center; justify-content: center; color: var(--accent); transition: left 0.2s ease; }
   .piste.on .bouton { left: 23px; background: #fff; }
+  @media (min-width: 900px) {
+    .rang { min-height: 76px; padding: 14px 18px; gap: 16px; } .txt { gap: 3px; }
+    .t { font-size: 17px; line-height: 22px; } .s { font-size: 14px; line-height: 20px; } .badge { font-size: 12px; }
+    .piste { width: 56px; border: 2px solid #7A8597; box-sizing: border-box; } .piste.on { border-color: var(--accent); }
+    .bouton { top: 3px; left: 3px; width: 22px; height: 22px; background: var(--ink2); } .piste.on .bouton { left: 27px; background: #fff; }
+  }
 </style>
