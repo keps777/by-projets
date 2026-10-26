@@ -119,7 +119,7 @@
           {/if}
         </div>
         {#if dernier}
-          <div class="liens"><a class="lien" href="/connexion" onclick={(e) => va(e, '/connexion')}>J’ai déjà un compte</a><a class="lien" href="/" onclick={(e) => va(e, '/')}>Explorer sans compte</a></div>
+          <div class="liens"><a class="lien" href="/connexion" onclick={(e) => va(e, '/connexion')}>J’ai déjà un compte</a><a class="lien" href="/explorer" onclick={(e) => va(e, '/explorer')}>Explorer sans compte</a></div>
         {/if}
       </div>
     </section>

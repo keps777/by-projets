@@ -13,7 +13,8 @@
   const acces = $derived(route?.acces ?? 'compte');
   const compte = $derived(compteCourant());
   /** Redirection de garde : pas de compte → ouverture ; compte non admin sur une route admin → accueil. */
-  const redirection = $derived(!route ? null : acces === 'public' ? null : !compte ? '/ouverture' : acces === 'admin' && !estAdmin(compte) ? '/' : null);
+  const appareilConnu = $derived(!!(app.tranches.acces as { appareil?: unknown } | undefined)?.appareil);
+  const redirection = $derived(!route ? null : acces === 'public' ? null : !compte ? (appareilConnu ? '/connexion' : '/ouverture') : acces === 'admin' && !estAdmin(compte) ? '/' : null);
   $effect(() => { if (redirection) aller(redirection, { remplacer: true }); });
 
   let Ecran = $state<Component<any> | null>(null), erreur = $state(false);

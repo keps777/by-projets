@@ -68,7 +68,7 @@
     <div class="liens">
       {#if hors}<span class="lien inactif" role="link" aria-disabled="true" tabindex="0" aria-describedby="msg-hors-ligne">J’ai déjà un compte</span>
       {:else}<a class="lien" href="/connexion" onclick={(e) => va(e, '/connexion')}>J’ai déjà un compte</a>{/if}
-      <a class="lien" href="/" onclick={(e) => va(e, '/')}>Explorer sans compte</a>
+      <a class="lien" href="/explorer" onclick={(e) => va(e, '/explorer')}>Explorer sans compte</a>
     </div>
     <p class="demo">Prototype · données fictives · aucun paiement réel</p>
   </section>

@@ -87,7 +87,7 @@
       {#if inconnu}<p class="inconnu" role="alert"><Icone nom="info" taille={16} trait={2} /><span><b>Aucun compte pour cet identifiant.</b> <a href="/inscription" onclick={(e) => va(e, '/inscription')}>Créer un compte</a></span></p>{/if}
       <button type="submit" class="btn" aria-disabled={horsLigne || envoi}>{#if envoi}<span class="tourne" aria-hidden="true"></span>Envoi du code en cours…{:else}Continuer<Pictos nom="fleche" />{/if}</button>
     </form>
-    <p class="liens"><a href="/inscription" onclick={(e) => va(e, '/inscription')}>Créer un compte</a><a href="/" onclick={(e) => va(e, '/')}>Explorer sans compte</a></p>
+    <p class="liens"><a href="/inscription" onclick={(e) => va(e, '/inscription')}>Créer un compte</a><a href="/explorer" onclick={(e) => va(e, '/explorer')}>Explorer sans compte</a></p>
   {/if}
 
   <aside class="securite" aria-labelledby="sec-titre">

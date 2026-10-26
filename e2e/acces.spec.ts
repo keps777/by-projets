@@ -70,7 +70,7 @@ test.describe('Créer un compte', () => {
     await page.getByRole('button', { name: 'Lire les conditions en bref' }).click(); await expect(page.getByText('Texte complet en cours de rédaction avec un juriste (prototype).')).toBeVisible();
     await page.getByRole('button', { name: 'Continuer avec Apple' }).click(); await expect(page.getByText('Démo : la connexion avec Apple n’est pas encore branchée')).toBeVisible();
     await page.getByRole('link', { name: 'J’ai déjà un compte' }).click(); await expect.poll(() => chemin(page)).toBe('/connexion');
-    await page.goBack(); await page.getByRole('link', { name: 'Explorer sans compte' }).click(); await expect.poll(() => chemin(page)).toBe('/');
+    await page.goBack(); await page.getByRole('link', { name: 'Explorer sans compte' }).click(); await expect.poll(() => chemin(page)).toBe('/explorer');
   });
 
   test('hors ligne : le formulaire reste utilisable, l’envoi est suspendu ; échec d’envoi : Réessayer', async ({ page, context }) => {

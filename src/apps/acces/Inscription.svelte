@@ -103,7 +103,7 @@
     <div class="barre">
       {#if resume}<p class="resume-err" aria-hidden="true"><Icone nom="info" taille={16} trait={2} /><span>{resume}</span></p>{/if}
       <button type="button" class="btn" aria-disabled={envoi === 'charge' || horsLigne} onclick={envoyer}>{#if envoi === 'charge'}<span class="tourne" aria-hidden="true"></span>Envoi du code en cours…{:else}Recevoir mon code<Pictos nom="fleche" />{/if}</button>
-      <div class="liens"><a href="/" onclick={(e) => va(e, '/')}>Explorer sans compte</a><a href="/connexion" onclick={(e) => va(e, '/connexion')}>J’ai déjà un compte</a></div>
+      <div class="liens"><a href="/explorer" onclick={(e) => va(e, '/explorer')}>Explorer sans compte</a><a href="/connexion" onclick={(e) => va(e, '/connexion')}>J’ai déjà un compte</a></div>
     </div>
   {/snippet}
 </Ecran>

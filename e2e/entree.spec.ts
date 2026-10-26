@@ -32,7 +32,7 @@ test('parcours : ouverture → langue → promesses → inscription', async ({ p
 test('ouverture : « j’ai déjà un compte » et « explorer sans compte »', async ({ page }) => {
   await ouvrir(page, '/ouverture');
   await page.getByRole('link', { name: 'J’ai déjà un compte' }).click(); await expect.poll(() => chemin(page)).toBe('/connexion');
-  await page.goto('/ouverture'); await page.getByRole('link', { name: 'Explorer sans compte' }).click(); await expect.poll(() => chemin(page)).toBe('/');
+  await page.goto('/ouverture'); await page.getByRole('link', { name: 'Explorer sans compte' }).click(); await expect.poll(() => chemin(page)).toBe('/explorer');
   await expect(page.getByText('Bienvenue sur NexG-TT')).toBeVisible();
 });
 
