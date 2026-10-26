@@ -1,0 +1,18 @@
+.pc-seul { display: none; }
+/* Deux colonnes PC : `.pc-duo` contient deux `.pc-col` ; sur mobile ils disparaissent (display: contents) et l'ordre du DOM est celui de la colonne unique. `.etroit` : colonne de gauche de 420 px, `.inverse` : colonne étroite à droite. */
+.pc-duo, .pc-col { display: contents; }
+/* Verso · variante PC (≥ 900 px) : les écrans de la face nuit sans mise en page large sont centrés (720 px) ; les écrans `large` gèrent leur propre grille.
+   Les éléments réservés au mobile portent la classe `.mob-seul` (masqués ici). Sélecteurs renforcés pour passer devant ceux du cadre `Ecran`. */
+@media (min-width: 900px) {
+  .nx.ecran .pc-seul { display: block; }
+  .nx.ecran.ecran[data-face='nuit']:not(.large) .interieur, .nx.ecran.ecran[data-face='nuit']:not(.large) .pied .interieur { margin-inline: auto; width: 100%; max-width: 720px; }
+  .nx.ecran[data-face='nuit'] .mob-seul { display: none !important; }
+  .nx.ecran.ecran[data-face='nuit'] .interieur { gap: 24px; }
+  .pc-duo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; width: 100%; max-width: 1120px; margin-inline: auto; }
+  .pc-duo.etroit { grid-template-columns: minmax(0, 420px) minmax(0, 1fr); } .pc-duo.inverse { grid-template-columns: minmax(0, 1fr) minmax(0, 420px); }
+  .pc-col { display: flex; flex-direction: column; gap: 20px; min-width: 0; } .pc-col.colle { position: sticky; top: 16px; }
+  .nx.ecran.ecran[data-face='nuit']:has(.pc-duo) .pied .interieur { max-width: 1120px; }
+  .pc-centre { width: 100%; max-width: 1120px; margin-inline: auto; }
+  /* Mise en page PC large (1344 px, comme les planches Web…) : un écran qui contient `.pc-1344` élargit le cadre (en-tête, contenu, pied). */
+  .nx.ecran.ecran:has(.pc-1344) .contenu, .nx.ecran.ecran:has(.pc-1344) .entete, .nx.ecran.ecran:has(.pc-1344) .pied-pc { padding-inline: max(32px, calc((100% - 1344px) / 2)); }
+}

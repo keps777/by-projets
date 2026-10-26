@@ -52,11 +52,12 @@
   <Absent titre="Vol introuvable" message="Ce vol n’existe pas ou n’est plus coté." lien="/portefeuille" libelleLien="Voir mon portefeuille" retour="/portefeuille" />
 {:else}
   {@const cie = compagnieDe(vol)}
-  <Ecran titre="Cours du vol" face="nuit" retour="/portefeuille">
+  <Ecran titre="Cours du vol" face="nuit" retour="/portefeuille" large>
     {#snippet droite()}
       <button type="button" class="cloche" class:on={alerte} aria-pressed={alerte} aria-label="Alerte de prix sur ce vol" onclick={() => compte && basculerAlerte(compte.id, id)}><Icone nom="cloche" /></button>
     {/snippet}
 
+    <div class="pc-duo"><div class="pc-col">
     <section class="vol carte" aria-label="Vol">
       <div class="trajet" role="img" aria-label="{vol.de} vers {vol.vers}"><Plaque code={vol.de} /><Icone nom="suivant" taille={18} /><Plaque code={vol.vers} /></div>
       <div class="qui"><span class="num">{cie.nom} {vol.numero.split(' ')[1]}</span><span class="date">{jourSemaine(depart)}</span></div>
@@ -85,6 +86,7 @@
       <Graphique {offre} {neuf} volumes={vols} reperes={reperesDates(neuf.length, maintenant())} {description} hausse={chg?.sens === 'hausse'} maintenant={maintenant()} />
     </section>
 
+    </div><div class="pc-col">
     <section class="carnet carte" aria-labelledby="ob-t">
       <div class="entete-h"><h2 id="ob-t" class="t-section">Carnet d’ordres</h2><span class="t-aide">Billets · cumul</span></div>
       <div class="cote"><p id="asks-t" class="sur vente"><span class="carre"></span>Offres de vente</p>
@@ -110,6 +112,7 @@
       {:else}<p class="carte2 t-sec" style="padding: 14px">Aucune transaction sur ce vol pour l’instant.</p>{/if}
     </section>
 
+    </div></div>
     {#if ouvert}<p class="jn"><Icone nom="horloge" taille={18} trait={2} /><span><span class="mono">J-{joursAvant(depart, maintenant())}</span> avant le départ : les échanges s’arrêtent le {jourHeure(echeanceDe(depart))}, à la finalisation nominative.</span></p>
     {:else}<p class="jn" role="alert"><Icone nom="horloge" taille={18} trait={2} /><span>Les échanges sont fermés sur ce vol : l’échéance du {jourHeure(echeanceDe(depart))} est passée.</span></p>{/if}
     <p class="t-aide mentions">Prix indicatifs. Un droit de voyage n’est pas un placement financier. Données de démonstration.</p>

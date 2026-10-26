@@ -59,7 +59,7 @@
   <Absent titre="Ordre impossible" message="Il reste moins de deux jours avant ce départ : un ordre à cours limité ne peut plus être placé." details={['Les échanges s’arrêtent à J-1. Vous pouvez encore acheter une annonce existante depuis le cours du vol.']} lien="/cours/{id}" libelleLien="Voir le cours du vol" retour="/cours/{id}" />
 {:else}
   {@const cie = compagnieDe(vol)}
-  <Ecran titre="Ordre à cours limité" face="nuit" retour="/cours/{id}">
+  <Ecran titre="Ordre à cours limité" face="nuit" retour="/cours/{id}" large>
     <section class="intro" aria-label="Vol"><div class="ligne"><span class="trajet">{vol.de} → {vol.vers}</span><span class="t-sec">{cie.nom} {vol.numero.split(' ')[1]} · {jourSemaine(depart)}</span></div>
       <h2 class="titre">Achetez automatiquement si le prix descend à votre seuil</h2></section>
 
@@ -76,6 +76,7 @@
         <button type="button" class="btn sec" onclick={() => (resultat = undefined)}>Placer un autre ordre</button>
       </section>
     {:else}
+      <div class="pc-duo"><div class="pc-col">
       <section class="seuil" aria-labelledby="seuil-t">
         <p id="seuil-t" class="t-sur">Votre seuil d’achat</p>
         <div class="stepper">
@@ -109,6 +110,7 @@
           <button type="button" aria-pressed={validite === c.cle} onclick={() => (validite = c.cle)}><span class="t">{c.titre}</span><span class="s">{jourCourt(expire(c.cle))}</span></button>{/each}</div>
       </section>
 
+      </div><div class="pc-col">
       <section class="proba carte" aria-labelledby="prob-t">
         <div class="jauge"><svg role="img" aria-label="Probabilité d’exécution estimée : {prob.pct} %, {prob.niveau.toLowerCase()}" width="150" height="88" viewBox="0 0 150 88"><path d="M 13 80 A 62 62 0 0 1 137 80" fill="none" stroke="#262a33" stroke-width="12" stroke-linecap="round" /><path d="M 13 80 A 62 62 0 0 1 137 80" fill="none" stroke="#62c7ff" stroke-width="12" stroke-linecap="round" stroke-dasharray="{(prob.pct / 100 * arc).toFixed(1)} 400" /></svg><span class="pct" aria-hidden="true">{prob.pct} %</span></div>
         <div class="col g4"><h3 id="prob-t" class="t-sur petit">Probabilité d’exécution (estimation)</h3><span class="niveau">{prob.niveau}</span><span class="t-aide">Calcul simplifié selon l’écart avec la meilleure offre et la durée de validité. Aucune garantie.</span></div>
@@ -125,6 +127,7 @@
           <dl><dt>Vol</dt><dd>{cie.nom} {vol.numero.split(' ')[1]} · {jourSemaine(depart)}</dd><dt>Seuil maximal</dt><dd class="mono">{fmt(seuil)}</dd><dt>Quantité</dt><dd class="mono">1</dd><dt>Validité</dt><dd>{recapValidite}</dd><dt>Paiement</dt><dd>Carte de test •••• 4242</dd><dt>Commission</dt><dd>{tauxLabel} sur les reventes (hypothèse, plage 10–20 %)</dd></dl></div>
         <div class="coupe" aria-hidden="true"></div>
         <div class="bas"><p class="fort">Si une offre ≤ seuil apparaît, nous achetons pour vous et vous devenez détenteur. Annulable à tout moment avant exécution.</p><p class="fin">Vous payez le prix de l’offre trouvée, jamais plus que votre seuil. Le droit de voyage est inscrit à votre nom dans le registre NexG-TT ; le voyageur se nomme au plus tard à J-1.</p></div></section>
+      </div></div>
     {/if}
 
     {#if erreur}<p class="erreur" role="alert"><Icone nom="alerte" taille={18} trait={2} /><span>{erreur}</span></p>{/if}

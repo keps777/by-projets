@@ -41,10 +41,11 @@
   const va = (e: MouseEvent, chemin: string) => { if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; e.preventDefault(); aller(chemin); };
 </script>
 
-<Ecran titre="Compte" face="nuit" onglet="compte" sansRetour>
+<Ecran titre="Compte" face="nuit" onglet="compte" sansRetour large>
   {#if compte}
-  <div class="cp page">
-    <div role="group" aria-label="Face de l’application" class="bascule">
+  <div class="cp page pc-1344">
+    <div class="titre-pc pc-seul"><p class="gt">Compte</p><p class="st">{nomCourt(compte)} · espace Mes actifs</p></div>
+    <div role="group" aria-label="Face de l’application" class="bascule mob-seul">
       <button type="button" aria-pressed="false" onclick={() => { app.session.face = 'voyage'; aller('/'); }}><Icone nom="soleil" taille={16} trait={2} />Voyager</button>
       <button type="button" aria-pressed="true" aria-current="page"><Icone nom="lune" taille={16} trait={2} />Mes actifs</button>
     </div>
@@ -85,6 +86,7 @@
       </ul>
     </section>
 
+    <div class="droite">
     <section class="cp-groupe" aria-labelledby="g-pref"><h2 id="g-pref" class="cp-sur">Sécurité et préférences</h2>
       <ul class="cp-liste">
         <li><label class="cp-ligne cle"><Pic nom="cle" /><span class="cp-txt"><span class="cp-t">Sécurité · clé d’accès</span><span class="cp-s" class:vert={compte.passkey}>{#if compte.passkey}<Pic nom="ok" taille={14} trait={2} />Clé d’accès activée{:else}Clé d’accès non activée{/if}</span></span>
@@ -99,6 +101,8 @@
     </section>
 
     <button type="button" class="sortir" onclick={sortir}><Pic nom="quitter" taille={20} />Se déconnecter</button>
+    <p class="version pc-seul">NexG-TT 4.0 · prototype — toutes les données sont fictives</p>
+    </div>
   </div>
 
   <Feuille bind:ouvert={ajout} titre="Ajouter un proche" sous="Il pourra être nommé voyageur sur vos billets.">
@@ -128,5 +132,12 @@
   .seg { display: flex; gap: 2px; padding: 3px; border-radius: 12px; background: var(--surface2); border: 1px solid var(--line); } .seg button { min-height: 44px; min-width: 44px; padding: 0 12px; border-radius: 9px; border: 0; background: transparent; color: var(--ink2); font-size: 14px; font-weight: 700; cursor: pointer; }
   .seg button[aria-pressed='true'] { background: var(--signal); color: #0D0E11; }
   .sortir { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; border-radius: 14px; border: 1px solid var(--line-strong); background: transparent; color: var(--ink); font: 600 15px/1 'Barlow', sans-serif; cursor: pointer; }
+  .droite { display: contents; } .titre-pc .gt { font: 600 44px/44px 'Barlow Condensed', 'Arial Narrow', sans-serif; text-transform: uppercase; letter-spacing: 0.01em; } .titre-pc .st { margin-top: 6px; font-size: 13px; font-weight: 600; color: var(--ink2); } .version { text-align: center; font-size: 13px; color: var(--ink3); }
+  @media (min-width: 900px) {
+    .page { display: grid; grid-template-columns: minmax(0, 1fr) 400px; column-gap: 24px; row-gap: 18px; align-items: start; grid-auto-flow: row; }
+    .page > :global(*) { grid-column: 1; } .titre-pc { grid-column: 1 / -1; } .moi { padding: 20px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); }
+    .droite { display: flex; flex-direction: column; gap: 18px; grid-column: 2; grid-row: 2 / span 4; } .moi h1 { font-size: 40px; line-height: 40px; }
+    .droite .cp-sur { padding-top: 0; }
+  }
   @media (max-width: 340px) { .rang { gap: 8px; } .seg button { padding: 0 8px; font-size: 13px; } .langue .t-sec { margin-left: 0; } }
 </style>

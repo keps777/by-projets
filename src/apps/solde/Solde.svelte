@@ -50,8 +50,9 @@
   function reinitialiser() { if (compte) { reinitialiserDemo(compte.id); etape = 'repos'; filtre = 'tout'; erreur = ''; } }
 </script>
 
-<Ecran titre="Mes actifs · Solde NexG" face="nuit" retour="/portefeuille">
+<Ecran titre="Mes actifs · Solde NexG" face="nuit" retour="/portefeuille" large>
   {#if compte}
+  <div class="pc-duo etroit"><div class="pc-col colle">
   <section class="solde" aria-labelledby="bal-title">
     <div class="ligne"><h2 id="bal-title" class="sur">Solde disponible</h2><span class="mono dev">$ CA</span></div>
     <p class="tuiles"><span class="sr">{fmtC(solde)}</span><span aria-hidden="true" class="rang">{#each tuiles as t, i (i)}<span class="t {t.type}">{t.type === 'espace' ? '' : t.c}</span>{/each}</span></p>
@@ -96,6 +97,7 @@
     <a href={verifie ? '/compte' : '/identite?retour=/solde'} onclick={(e) => { e.preventDefault(); aller(verifie ? '/compte' : '/identite?retour=/solde'); }}>{verifie ? 'Gérer' : 'Vérifier'}</a>
   </section>
 
+  </div><div class="pc-col">
   <section class="livre" aria-labelledby="gl-title">
     <div class="ligne base"><h2 id="gl-title" class="t-section maj">Grand livre</h2><span class="t-aide">{periode(lignes, now)}</span></div>
     <div role="group" aria-label="Filtrer les mouvements" class="seg">
@@ -130,6 +132,7 @@
     <p class="note">Chaque commission de revente est une ligne distincte, placée sous la revente qui l'a déclenchée. Taux{NB}: hypothèse 10 %, dans une plage de 10 à 20 % à valider.</p>
   </section>
 
+  </div></div>
   <div class="col g4 mentions"><p class="fort">Montants fictifs de démonstration.</p><p>Aucun paiement réel. Compte •••• {carte4} fictif. Un droit de voyage n'est pas un placement financier.</p></div>
   {/if}
 </Ecran>

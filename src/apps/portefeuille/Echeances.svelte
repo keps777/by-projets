@@ -24,12 +24,13 @@
   const basculer = (cle: CleRappel, libelle: string) => { annonce = `Rappel ${libelle} ${basculerRappel(cle) ? 'activé' : 'désactivé'}.`; };
 </script>
 
-<Ecran titre="Mes actifs · Échéances" face="nuit" retour="/portefeuille">
+<Ecran titre="Mes actifs · Échéances" face="nuit" retour="/portefeuille" large>
   <section class="intro">
     <h1 class="t-h1">Calendrier des échéances</h1>
     <p>Chaque droit de voyage doit être finalisé, voyageur nommé, au plus tard 24 h avant le départ. Passé ce délai, plus aucune revente ni aucun transfert.</p>
   </section>
 
+  <div class="pc-duo"><div class="pc-col colle">
   {#if prochain && cd}
     <section class="prochaine" aria-labelledby="next-t">
       <div class="p-haut"><h2 id="next-t"><span class="pouls" aria-hidden="true"></span>Prochaine échéance</h2><span class="etat" class:vente={prochain.statut === 'en_vente'}>{prochain.statutLib}</span></div>
@@ -64,6 +65,7 @@
     <p class="sr" role="status" aria-live="polite">{annonce}</p>
   </section>
 
+  </div><div class="pc-col">
   <section class="echelle" aria-labelledby="lad-t">
     <div class="col g4"><h2 id="lad-t" class="t-section">Échelle des échéances</h2><p class="t-sec">{resumeEchelle(mois, liste.length)}</p></div>
     <div class="legende">
@@ -99,6 +101,7 @@
     <p class="t-sec">Après l’échéance, plus aucune revente ni aucun transfert. Solutions de repli à l’étude, selon les accords avec les transporteurs&nbsp;:</p>
     <ul><li>rachat par NexG-TT à un prix annoncé d’avance&nbsp;;</li><li>expiration du droit, avec ou sans remboursement partiel.</li></ul>
   </section>
+  </div></div>
   <p class="aide">Échéance = 24 h avant le départ, à l’heure du vol.</p>
 </Ecran>
 
@@ -144,4 +147,5 @@
   .defaut { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: 12px; background: var(--accent-soft); border: 1px solid rgba(255, 210, 63, 0.45); font-size: 15px; line-height: 21px; font-weight: 600; } .defaut :global(svg) { color: var(--accent); margin-top: 1px; }
   .regle ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; line-height: 20px; color: var(--ink2); } .regle p.t-sec { font-size: 14px; line-height: 20px; }
   .aide { font-size: 12px; line-height: 17px; color: var(--ink3); }
+  @media (min-width: 900px) { .intro { max-width: 760px; } .intro h1 { font-size: 44px; line-height: 44px; } .aide { text-align: center; } }
 </style>

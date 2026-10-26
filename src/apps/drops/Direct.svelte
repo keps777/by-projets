@@ -25,7 +25,8 @@
   let regles = $state(false), feuille = $state(false);
 </script>
 
-<Ecran titre="Drops" face="nuit" onglet="drops" sansRetour>
+<Ecran titre="Drops" face="nuit" onglet="drops" sansRetour large>
+  <div class="pc-duo etroit"><div class="pc-col colle">
   {#if vol}
     <section class="hero" aria-labelledby="drop-route">
       <p class="live"><span class="pouls" data-nx-motion="1" aria-hidden="true"></span>Drop N° {drop.n} · en direct</p>
@@ -66,6 +67,7 @@
     </section>
   {/if}
 
+  </div><div class="pc-col">
   <Prochains {compte} {now} />
 
   <section class="col g12" aria-labelledby="how-title">
@@ -87,6 +89,7 @@
       </div>
     {/if}
   </section>
+  </div></div>
 </Ecran>
 
 {#if vol && compte && membre}<Reserver bind:ouvert={feuille} {drop} {vol} {compte} />{/if}
@@ -118,4 +121,5 @@
   .regles-b { min-height: 44px; padding: 0; background: none; border: 0; color: var(--accent); font: 600 14px/1 'Barlow', sans-serif; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
   .regles { display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
   .regles ul { margin: 0; padding: 0 0 0 18px; display: flex; flex-direction: column; gap: 6px; font: 400 14px/20px 'Barlow', sans-serif; color: var(--ink2); } .hyp { font: 400 12px/16px 'Barlow', sans-serif; color: var(--ink3); }
+  @media (min-width: 900px) { .hero { margin: 0; border-radius: 28px; } }
 </style>
