@@ -46,3 +46,7 @@ Technique : `achat/ecranPc.svelte.ts` expose `ecran.pc` (même requête que `@me
 ## Phase 4 — Variantes PC du recto (agent `nx/pc-recto`)
 Accueil Voyager jour et nuit (grilles ≥ 900 px, barre de recherche `BarreRecherche`), Rechercher (carte « Votre trajet »), Résultats (jour : filtres, cartes, baromètre, alerte de prix ; nuit, quand `session.face === 'marche'` : « Marché des billets », tableau des départs à volets, offre sélectionnée, drop en direct, portefeuille), détail de l'offre (billet horizontal, panneau « Acheter ce billet »), radar, reventes, vitrine d'agence.
 À retenir : `recherche/largeur.svelte.ts` (`largeur.pc`, même seuil 900 px) sert quand la structure change (Résultats, détail, accueil) : le mobile garde son balisage d'origine ; filtres et tris PC dans `recherche/filtresPc.ts` (testé) ; e2e `pc-recto.spec.ts`.
+
+## Phase 4 — Intégration (coordinateur)
+Fusion des sept branches (`pc-acces`, `pc-profil`, `pc-recto`, `pc-achat`, `pc-verso`, `admin-droits`, `admin-drops`). 646 tests unitaires, 659 e2e (dont la passe globale `e2e/pc-global.spec.ts` : aucun débordement horizontal à 900, 1280 et 1440 px sur ~35 écrans). Deux tests restent instables sous forte charge (`portefeuille.spec.ts:129`, `pc-recto.spec.ts:109`) mais passent seuls.
+Restant : rappels J-30 / J-7 / J-2 non planifiés, achat automatique de bagage sans tâche de fond, prix d'équivalent du drop 128 (1 000 $) différent du prix neuf du vol (940 $), `/marche-intentions` vérifié surtout à vide, tri Durée / Écart absents de la version PC des résultats.

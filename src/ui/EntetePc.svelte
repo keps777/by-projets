@@ -39,17 +39,17 @@
   .bascule { display: flex; gap: 2px; padding: 3px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
   .bascule button { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: var(--ink2); font: 700 13px/1 'Barlow', sans-serif; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
   .bascule button[aria-pressed='true'] { background: var(--signal); color: #0B1B2E; }
-  [data-face='jour'] .bascule button[aria-pressed='true'] { background: #0B1B2E; color: #fff; }
+  :global([data-face='jour']) .bascule button[aria-pressed='true'] { background: #0B1B2E; color: #fff; }
   .recherche { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 14px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line-strong); color: var(--ink3); max-width: 420px; justify-self: end; width: 100%; }
   .recherche input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 15px; }
   .recherche:focus-within { border-color: var(--focus); }
   .actions { display: flex; gap: 8px; align-items: center; }
   .rond { position: relative; width: 44px; height: 44px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); display: grid; place-items: center; text-decoration: none; }
   .rond.av { background: var(--accent); color: var(--on-signal); font: 700 15px/1 'Barlow', sans-serif; letter-spacing: 0.04em; }
-  [data-face='jour'] .rond.av { background: #0B1B2E; color: #fff; }
+  :global([data-face='jour']) .rond.av { background: #0B1B2E; color: #fff; }
   .pastille { position: absolute; top: 9px; right: 10px; width: 9px; height: 9px; border-radius: 999px; background: var(--signal); border: 2px solid var(--surface); }
   .liens { display: flex; gap: 4px; margin-top: 8px; }
   .liens a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 10px; color: var(--ink2); font: 600 15px/1 'Barlow', sans-serif; border-bottom: 2px solid transparent; }
   .liens a.on { color: var(--ink); border-bottom-color: var(--signal); background: var(--accent-soft); }
-  [data-face='jour'] .liens a.on { border-bottom-color: var(--accent); }
+  :global([data-face='jour']) .liens a.on { border-bottom-color: var(--accent); }
 </style>

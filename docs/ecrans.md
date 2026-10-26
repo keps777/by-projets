@@ -82,5 +82,18 @@ Planches : `design/mobile-2/NN.dc.html` (texte : `design/digest/m2-NN.txt`) ; re
 
 Les écrans réservés pas encore construits sont listés dans `src/apps/_socle/reservees.ts` (page « Bientôt ») ; **ne touche pas à ce fichier** : déclarer sa route dans son dossier suffit à remplacer la page « Bientôt ».
 
+## Phase 4 — Variantes PC et administration
+
+Tous les écrans de l'application ont une variante PC (≥ 900 px, planches `Web…`) dans le même composant ; routes inchangées. La console d'administration est réservée au PC (`acces: 'admin'`, MFA simulée, entrée `/admin` : « Entrer comme adm-01 (démo) »).
+
+| Écran | Route | Dossier |
+|---|---|---|
+| Entrée de la console | `/admin` | admin |
+| Registre des droits (gel / dégel) | `/admin/droits` | admin |
+| Chaîne de détention d'un droit | `/admin/droits/:id` | admin |
+| Drops et agences | `/admin/drops` | admin |
+| Journal d'audit | `/admin/audit` | admin |
+
+
 ## Fondations
 `mobile-5/00` manifeste, `01` billet qui se retourne, `02` cycle de vie, `03` design system (couleurs, typographies, composants, principes) — voir `src/ui/nexg.css`.
