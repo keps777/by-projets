@@ -14,6 +14,9 @@
   import { agregatPortefeuille, pointsLigne, prochaineEcheance, serieValeur } from './portefeuille.ts';
   import { mouvementReduit } from './temps.svelte.ts';
   import { tendances } from './tendances.ts';
+  import BarreRecherche from '../recherche/BarreRecherche.svelte';
+  import { largeur } from '../recherche/largeur.svelte.ts';
+  import { rechercheInitiale } from '../recherche/actions.ts';
 
   /** Face « Mes actifs » (nuit) de l'accueil : bandeau des prix, drop en direct, portefeuille, départs qui montent, indices. */
   let { compte, now }: { compte: Compte; now: number } = $props();
@@ -51,11 +54,12 @@
   <main class="corps">
     <section class="hello"><p class="salut">Bonjour {compte.prenom}</p><h1 class="titre-ecran">Mes actifs</h1></section>
 
+    {#if largeur.pc}<div class="barre-pc"><BarreRecherche init={{ ...rechercheInitiale(compte.id), vers: 'partout' }} nuit ou="acn" /></div>{:else}
     <a class="recherche" href="/rechercher" onclick={(e) => va(e, '/rechercher')}>
       <Icone nom="chercher" taille={22} trait={2} />
       <span class="texte"><span class="q">{ville(compte.aeroport)} ({compte.aeroport}) → Partout</span><span class="s">Dates flexibles · 1 voyageur · neuf et revente</span></span>
       <span class="filtres" aria-hidden="true"><Picto nom="filtres" taille={20} trait={1.75} /></span>
-    </a>
+    </a>{/if}
 
     {#if drop && dropVol}
       <a class="drop" href="/drops" onclick={(e) => va(e, '/drops')}>
@@ -188,6 +192,14 @@
   .indices :global(> svg:last-child) { color: var(--ink2); }
   .ic { width: 36px; height: 36px; flex: none; border-radius: 10px; background: rgba(98, 199, 255, 0.12); color: var(--up); display: flex; align-items: center; justify-content: center; }
   .q2 { font: 600 18px/22px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; } .indices .s { color: var(--ink2); }
+  /* PC (≥ 900 px) : « Mes actifs » en grille. Bandeau des prix pleine largeur, titre, recherche ; à gauche le drop et le portefeuille, à droite les départs qui montent. */
+  @media (min-width: 900px) {
+    .bandeau { margin: 0; border-radius: 14px; border: 1px solid var(--line); overflow: hidden; }
+    .corps { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 24px; row-gap: 18px; align-items: start; padding-top: 6px; }
+    .hello, .barre-pc, .corps > .aide { grid-column: 1 / -1; }
+    .titre-ecran { font-size: 44px; line-height: 44px; } .hello { flex-direction: column-reverse; } .salut { font-size: 13px; font-weight: 600; line-height: 18px; }
+    .drop, .sans-drop { grid-column: 1; grid-row: 3; } .portefeuille { grid-column: 1; grid-row: 4; } .montent { grid-column: 2; grid-row: 3 / span 2; }
+  }
   a:focus-visible, button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   @media (prefers-reduced-motion: reduce) { .face { animation: nx-fondu 250ms ease backwards !important; animation-duration: 250ms !important; } .piste { animation: none !important; } .vue { overflow-x: auto; } .pouls { animation: none !important; } }

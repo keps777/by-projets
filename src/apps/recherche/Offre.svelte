@@ -10,11 +10,12 @@
   import { alerteActive, basculerAlerte, trouverOffre } from './actions.ts';
   import { chaineDe } from './chaine.ts';
   import Courbe from './Courbe.svelte';
-  import { fmtDuree, fmtEscales, fmtInstant, fmtInstantCourt, fmtJourLong } from './dates.ts';
+  import { fmtDuree, fmtEscales, fmtInstant, fmtInstantCourt, fmtJourAnnee, fmtJourLong } from './dates.ts';
   import { lienAgence, va } from './nav.ts';
   import { departDuVol, fmtEcart } from './offres.ts';
   import Pictos from './Pictos.svelte';
   import { versUrl, rechercheVide } from './params.ts';
+  import { largeur } from './largeur.svelte.ts';
 
   /** Détail d'une offre (revente, neuf, agence) : le billet, le prix et son écart signé, le graphique du prix équivalent, ce que le détenteur peut faire (droits), le vendeur et sa chaîne, les conditions, l'alerte de prix et l'achat. */
   let { offreId = '' }: { offreId?: string } = $props(); // vide l'espace d'un instant quand le routeur change d'écran
@@ -41,10 +42,38 @@
   }
   const urlTrajet = $derived(res.vol ? versUrl({ ...rechercheVide(res.vol.de), vers: res.vol.vers, jour: res.vol.jour }) : '/rechercher');
   const paiement = $derived(o ? `/paiement/${encodeURIComponent(o.id)}` : '#');
+  const peutAcheter = $derived(!!res.ok && !res.laMienne && ouvert);
+  const retourPc = $derived(vol ? urlTrajet : '/rechercher');
 </script>
 
-<Ecran {titre} face="jour" retour={vol ? undefined : '/rechercher'}>
-  <h1 class="sr">{titre}</h1>
+{#snippet pied()}
+  {#if res.ok && !etatForce && o && vol}
+    <div role="status" aria-live="polite" class="vivant">
+      {#if alerteOn}<p class="statut"><Pictos nom="cloche" taille={18} trait={2} />Alerte créée : vous serez prévenu si le prix change.</p>
+      {:else if annonce}<p class="statut"><Pictos nom="info" taille={18} trait={2} />{annonce}</p>{/if}
+    </div>
+    {#if res.laMienne}
+      <p class="mienne" role="note"><Pictos nom="info" taille={18} />C’est votre annonce : gérez-la depuis votre portefeuille.</p>
+    {:else if !ouvert}
+      <p class="mienne err" role="alert"><Pictos nom="alerte" taille={18} />L’échéance de ce vol est passée : plus aucune transaction n’est possible.</p>
+    {/if}
+    <div class="achat">
+      {#if res.laMienne || !ouvert}
+        <button type="button" class="btn go" aria-disabled="true" onclick={(e) => e.preventDefault()}>Acheter · <span class="mono">{dollars(o.prix)}</span></button>
+      {:else}
+        <a class="btn go" href={paiement} onclick={(e) => va(e, paiement)}>Acheter · <span class="mono">{dollars(o.prix)}</span></a>
+      {/if}
+      <button type="button" class="cloche" class:on={alerteOn} aria-label="Créer une alerte" aria-pressed={alerteOn} onclick={alerte}><Pictos nom="cloche" taille={22} /></button>
+    </div>
+  {/if}
+{/snippet}
+
+<Ecran titre={largeur.pc ? undefined : titre} face="jour" large onglet={largeur.pc ? 'rechercher' : undefined} retour={vol ? undefined : '/rechercher'} pied={largeur.pc ? undefined : pied}>
+  {#if largeur.pc}
+    <a class="retour-res" href={retourPc} onclick={(e) => va(e, retourPc)}><Pictos nom="retour" taille={18} trait={2} />Résultats</a>
+    <header class="tete-pc"><h1>{titre}</h1>{#if vol}<p class="sous-pc">Voyager · {vol.de} → {vol.vers} · {fmtJourAnnee(vol.jour)}</p>{/if}</header>
+  {:else}<h1 class="sr">{titre}</h1>{/if}
+  <div class="grille-pc"><div class="col-main">
   {#if etatForce === 'chargement'}
     <div class="squelette" aria-busy="true"><p class="sr" role="status">Chargement de l’offre…</p><span class="s1"></span><span class="s2"></span><span class="s2"></span></div>
   {:else if etatForce === 'erreur'}
@@ -100,6 +129,7 @@
       </ul>
     </section>
 
+    <div class="duo">
     <section aria-labelledby="seller-title" class="vendeur">
       <h2 id="seller-title" class="sur">Vendeur</h2>
       <div class="v-ent"><span class="v-i" aria-hidden="true"><Pictos nom={o.type === 'revente' ? 'bouclier-ok' : o.type === 'agence' ? 'agence' : 'avion'} taille={22} /></span>
@@ -119,29 +149,28 @@
         <div><dt>Si la compagnie annule</dt><dd>Remboursement au détenteur <span class="puce">À valider</span></dd></div>
       </dl>
     </section>
+    </div>
   {/if}
+  </div>
+  {#if largeur.pc && res.ok && !etatForce && o && vol}
+    <aside class="achat-pc" aria-labelledby="achat-pc-t">
+      <h2 id="achat-pc-t">Acheter ce billet</h2>
+      <p class="intro-achat">{o.type === 'revente' ? 'Prix demandé par le détenteur, comparé au prix d’un billet neuf équivalent (indicatif).' : o.type === 'agence' ? 'Prix de l’agence, comparé au prix d’un billet neuf équivalent (indicatif).' : 'Prix neuf de référence, émis via NexG-TT (indicatif).'}</p>
+      {#if res.laMienne}<p class="mienne" role="note"><Pictos nom="info" taille={18} />C’est votre annonce : gérez-la depuis votre portefeuille.</p>
+      {:else if !ouvert}<p class="mienne err" role="alert"><Pictos nom="alerte" taille={18} />L’échéance de ce vol est passée : plus aucune transaction n’est possible.</p>{/if}
+      {#if peutAcheter}<a class="btn go" href={paiement} onclick={(e) => va(e, paiement)}>Acheter · <span class="mono">{dollars(o.prix)}</span></a>
+      {:else}<button type="button" class="btn go" aria-disabled="true" onclick={(e) => e.preventDefault()}>Acheter · <span class="mono">{dollars(o.prix)}</span></button>{/if}
+      <button type="button" class="btn sec alerte-pc" class:on={alerteOn} aria-pressed={alerteOn} onclick={alerte}><Pictos nom="cloche" taille={18} trait={2} />{alerteOn ? 'Alerte activée' : 'Créer une alerte'}</button>
+      <div role="status" aria-live="polite">{#if alerteOn}<p class="statut-pc"><Pictos nom="ok" taille={16} trait={2} />Alerte créée : vous serez prévenu si le prix change.</p>{:else if annonce}<p class="statut-pc"><Pictos nom="info" taille={16} trait={2} />{annonce}</p>{/if}</div>
+      <ul class="rappels liste-plain">
+        <li><Pictos nom="identite" taille={18} /><span>Nommer le voyageur avant le {fmtInstantCourt(echeance)}. À l’échéance, le détenteur est nommé voyageur par défaut.</span></li>
+        <li><Pictos nom="etiquette" taille={18} /><span>Revente possible jusqu’à J-1 ; prix de revente encadré (règle à valider).</span></li>
+        <li><Pictos nom="bouclier-ok" taille={18} /><span>{o.type === 'revente' ? 'Détenteur vérifié. ' : ''}Le changement de détenteur est inscrit au registre interne.</span></li>
+      </ul>
+    </aside>
+  {/if}
+  </div>
 
-  {#snippet pied()}
-    {#if res.ok && !etatForce && o && vol}
-      <div role="status" aria-live="polite" class="vivant">
-        {#if alerteOn}<p class="statut"><Pictos nom="cloche" taille={18} trait={2} />Alerte créée : vous serez prévenu si le prix change.</p>
-        {:else if annonce}<p class="statut"><Pictos nom="info" taille={18} trait={2} />{annonce}</p>{/if}
-      </div>
-      {#if res.laMienne}
-        <p class="mienne" role="note"><Pictos nom="info" taille={18} />C’est votre annonce : gérez-la depuis votre portefeuille.</p>
-      {:else if !ouvert}
-        <p class="mienne err" role="alert"><Pictos nom="alerte" taille={18} />L’échéance de ce vol est passée : plus aucune transaction n’est possible.</p>
-      {/if}
-      <div class="achat">
-        {#if res.laMienne || !ouvert}
-          <button type="button" class="btn go" aria-disabled="true" onclick={(e) => e.preventDefault()}>Acheter · <span class="mono">{dollars(o.prix)}</span></button>
-        {:else}
-          <a class="btn go" href={paiement} onclick={(e) => va(e, paiement)}>Acheter · <span class="mono">{dollars(o.prix)}</span></a>
-        {/if}
-        <button type="button" class="cloche" class:on={alerteOn} aria-label="Créer une alerte" aria-pressed={alerteOn} onclick={alerte}><Pictos nom="cloche" taille={22} /></button>
-      </div>
-    {/if}
-  {/snippet}
 </Ecran>
 
 <style>
@@ -180,4 +209,23 @@
   .achat { display: flex; gap: 10px; } .go { flex: 1; gap: 8px; width: auto; } .cloche { flex: none; width: 52px; height: 52px; padding: 0; border-radius: 14px; background: var(--surface); border: 1px solid var(--line-strong); color: var(--ink); display: grid; place-items: center; cursor: pointer; } .cloche.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
   .erreur-bloc { display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); } .alerte { display: flex; gap: 10px; align-items: flex-start; padding: 12px; border-radius: 12px; background: var(--err-soft); color: var(--err); font: 500 14px/20px 'Barlow', sans-serif; } .alerte strong { font-weight: 700; }
   .squelette { display: flex; flex-direction: column; gap: 14px; } .s1, .s2 { display: block; border-radius: 20px; background: var(--surface2); animation: nx-pulse 1.4s ease-in-out infinite; } .s1 { height: 300px; } .s2 { height: 120px; }
+
+  .col-main, .grille-pc, .duo { display: contents; } .retour-pc-x { display: none; }
+  /* PC (≥ 900 px) : planche WebOffre. Billet horizontal (itinéraire à gauche, prix à droite), cours, courbe, droits, vendeur et conditions côte à côte ; panneau « Acheter ce billet » collant à droite. */
+  @media (min-width: 900px) {
+    .retour-res { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px 0 6px; margin-left: -6px; border-radius: 12px; color: var(--accent); font: 700 15px/1 'Barlow', sans-serif; }
+    .tete-pc { display: flex; flex-direction: column; gap: 6px; margin-top: -6px; } .tete-pc h1 { margin: 0; font: 600 44px/44px 'Barlow Condensed', 'Arial Narrow', sans-serif; text-transform: uppercase; letter-spacing: 0.01em; } .sous-pc { margin: 0; font: 600 13px/18px 'Barlow', sans-serif; color: var(--ink2); }
+    .grille-pc { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px; } .col-main { display: flex; flex-direction: column; gap: 18px; flex: 999 1 560px; min-width: 0; }
+    .duo { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 18px; } .duo > * { flex: 1 1 320px; min-width: 0; }
+    .ticket { display: flex; align-items: stretch; } .haut { flex: 1 1 auto; min-width: 0; padding: 20px 24px; gap: 14px; } .gros { font-size: 72px; line-height: 72px; } .h { font-size: 20px; line-height: 24px; } .v { font-size: 14px; }
+    .perfo { flex: none; width: 0; height: auto; margin: 22px 0; border-left: 2px dashed var(--line); } .trait { display: none; } .perfo .rond { left: -12px; right: auto; } .perfo .rond.g { top: -33px; } .perfo .rond.d { top: auto; bottom: -33px; }
+    .bas { flex: 0 0 280px; padding: 20px 22px; justify-content: center; gap: 8px; } .prixl { flex-direction: column; align-items: flex-start; gap: 8px; } .ecart { background: var(--bg); }
+    .achat-pc { position: sticky; top: 16px; flex: 1 1 320px; max-width: 420px; min-width: 0; display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); }
+    .achat-pc h2 { margin: 0; font: 600 22px/26px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; } .intro-achat { margin: 0; font: 400 14px/20px 'Barlow', sans-serif; color: var(--ink2); }
+    .achat-pc .btn.go { min-height: 52px; } .alerte-pc { min-height: 48px; } .alerte-pc.on { background: var(--accent-soft); border-color: var(--accent); }
+    .statut-pc { margin: 0; display: flex; align-items: center; gap: 8px; font: 400 13px/18px 'Barlow', sans-serif; }
+    .rappels { display: flex; flex-direction: column; gap: 10px; padding: 12px 0 0; border-top: 1px solid var(--line); font: 400 13px/18px 'Barlow', sans-serif; color: var(--ink2); } .rappels li { display: flex; gap: 8px; } .rappels :global(svg) { flex: none; margin-top: 0; color: var(--ink); }
+    .droits { padding: 0 16px; }
+    .vendeur { padding: 18px; }
+  }
 </style>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { largeur } from './largeur.svelte.ts';
   import { tick } from 'svelte';
   import Ecran from '../../ui/Ecran.svelte';
   import { dollars } from './montants.ts';
@@ -43,11 +44,12 @@
   }
 </script>
 
-<Ecran titre="Vitrine agence" face="jour">
+<Ecran titre={largeur.pc ? undefined : 'Vitrine agence'} onglet={largeur.pc ? 'rechercher' : undefined} large face="jour">
   {#if !agence}
     <section class="bloc"><p class="alerte" role="alert"><Pictos nom="alerte" taille={20} /><span><strong>Agence introuvable</strong><br />Cette vitrine n’existe pas ou n’est plus publiée.</span></p>
       <a class="btn" href="/rechercher" onclick={(e) => va(e, '/rechercher')}>Rechercher un vol</a></section>
   {:else}
+    <div class="pc-cols">
     <section aria-labelledby="ag-name" class="bloc entete">
       <div class="id">
         <span role="img" aria-label="Monogramme {monogramme(agence.nom)}, emplacement du logo" class="mono-g">{monogramme(agence.nom)}</span>
@@ -69,6 +71,7 @@
       <div role="status" aria-live="polite">{#if envoye}<p class="ok"><Pictos nom="ok" taille={18} trait={2.25} />Message envoyé (démo). La réponse arrivera dans vos notifications NexG-TT.</p>{/if}</div>
     </section>
 
+    <div class="pc-d">
     <div role="tablist" aria-label="Contenu de la vitrine" class="onglets" tabindex="-1" onkeydown={toucheOnglet}>
       {#each ONGLETS as o (o.id)}
         <button type="button" role="tab" id="tab-{o.id}" aria-selected={onglet === o.id} aria-controls="panel-{o.id}" tabindex={onglet === o.id ? 0 : -1} class:on={onglet === o.id} onclick={() => (onglet = o.id)}>{o.lib()}</button>
@@ -108,6 +111,8 @@
           <span class="col g4"><span class="v1">Ce que « vérifiée » veut dire</span><span class="v2">NexG-TT contrôle l’identité de l’entreprise et son permis avant d’ouvrir une vitrine. Processus à définir.</span></span></div>
       </div>
     {/if}
+    </div>
+    </div>
   {/if}
 </Ecran>
 
@@ -138,4 +143,10 @@
   dt { font: 400 14px/20px 'Barlow', sans-serif; color: var(--ink2); } dd { margin: 0; font: 600 14px/20px 'Barlow', sans-serif; text-align: right; } dd.mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
   .verif { display: flex; gap: 12px; padding: 16px; border-radius: 16px; background: var(--ink); color: #fff; } .verif :global(svg) { flex: none; } .v1 { font: 700 15px/20px 'Barlow', sans-serif; } .v2 { font: 400 14px/20px 'Barlow', sans-serif; color: #c9d3df; }
   .alerte { display: flex; gap: 10px; align-items: flex-start; padding: 12px; border-radius: 12px; background: var(--err-soft); color: var(--err); font: 500 14px/20px 'Barlow', sans-serif; } .alerte strong { font-weight: 700; }
+  .pc-cols, .pc-d { display: contents; }
+  /* PC (≥ 900 px) : la carte de l'agence à gauche (collante), les offres et « À propos » à droite. */
+  @media (min-width: 900px) {
+    .pc-cols { display: grid; grid-template-columns: minmax(300px, 360px) minmax(0, 1fr); gap: 24px; align-items: start; } .pc-cols > .entete { position: sticky; top: 16px; }
+    .pc-d { display: flex; flex-direction: column; gap: 14px; min-width: 0; } .offres { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+  }
 </style>

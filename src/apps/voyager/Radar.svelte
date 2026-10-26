@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { largeur as ecran } from '../recherche/largeur.svelte.ts';
   import Ecran from '../../ui/Ecran.svelte';
   import Icone from '../../ui/Icone.svelte';
   import { app } from '../../data/store.svelte.ts';
@@ -29,7 +30,7 @@
   const classeKind = $derived(sel?.estDrop ? 'signal' : kind === 'Revente' ? 'info' : '');
 </script>
 
-<Ecran titre="Explorer" face="jour" retour={compte ? '/' : '/explorer'}>
+<Ecran titre={ecran.pc ? undefined : 'Explorer'} onglet={ecran.pc ? 'accueil' : undefined} large face="jour" retour={compte ? '/' : '/explorer'}>
   {#snippet droite()}<a class="rond" href="/rechercher" aria-label="Recherche détaillée" onclick={(e) => va(e, '/rechercher')}><Picto nom="filtres" taille={22} trait={1.75} /></a>{/snippet}
 
   <div class="cadre">
@@ -44,6 +45,7 @@
     {#each types as t (t.id)}<button type="button" class="chip" aria-pressed={t.actif} onclick={() => basculer(t.id)}><Icone nom={t.icone} taille={16} trait={2} />{t.libelle}</button>{/each}
   </div>
 
+  <div class="pc-cols"><div class="pc-g">
   <section class="radar" bind:clientWidth={largeur} role="group" aria-label="Radar des destinations depuis Montréal : cercles de 3, 6, 9 et 12 heures et plus de vol">
     <span class="disque" aria-hidden="true"></span>
     {#each [...ANNEAUX].reverse().slice(1) as a (a.h)}<span class="anneau" class:centre={a.h === 3} aria-hidden="true" style="left:{pct(CENTRE - a.rayon)};top:{pct(CENTRE - a.rayon)};width:{pct(2 * a.rayon)};height:{pct(2 * a.rayon)}"></span>{/each}
@@ -65,6 +67,7 @@
     <span><span class="ex neuf"></span>Neuf ou revente</span><span><span class="ex dropx"></span>Drop membres</span><span>Taille du point = aubaine</span>
   </div>
 
+  </div><div class="pc-d">
   <div class="budget">
     <div class="budget-ligne"><label for="budget-max">Budget max</label><span class="valeur" aria-hidden="true">{nb(texteBudget(budget))}</span></div>
     <input id="budget-max" type="range" min={BUDGET_MIN} max={BUDGET_MAX} step={BUDGET_PAS} bind:value={budget} aria-valuetext={nb(texteBudget(budget))} />
@@ -97,6 +100,7 @@
       <div class="vide" role="status"><span class="v">Rien sur le radar pour l’instant</span><span class="s">{nb(messageVide(filtres))}</span></div>
     {/if}
   </section>
+  </div></div>
 
   <p class="note">Durées et prix indicatifs, aller simple. Directions approximatives depuis Montréal, positions ajustées pour la lisibilité.</p>
   </div>
@@ -167,4 +171,11 @@
   a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
   @keyframes nx-sweep { 0% { transform: rotate(0deg); opacity: 0.9; } 80% { opacity: 0.6; } 100% { transform: rotate(360deg); opacity: 0; } }
   @media (prefers-reduced-motion: reduce) { .balayage { animation: none; display: none; } .dot, .etq { transition: none; } }
+  .pc-cols, .pc-g, .pc-d { display: contents; }
+  /* PC (≥ 900 px) : le radar à gauche (collant), le budget, la fiche de la destination et la liste à droite. */
+  @media (min-width: 900px) {
+    .cadre { contain: none; gap: 18px; } .pc-cols { display: grid; grid-template-columns: minmax(360px, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+    .pc-g { display: flex; flex-direction: column; gap: 14px; position: sticky; top: 16px; } .pc-d { display: flex; flex-direction: column; gap: 18px; min-width: 0; } .radar { width: min(460px, 100%); }
+    .h1 { font-size: 44px; line-height: 44px; text-transform: uppercase; }
+  }
 </style>

@@ -14,6 +14,8 @@
   import Pictos from './Pictos.svelte';
   import { FLEX_JOURS, PARTOUT, lireParams, versFormulaire, versUrl } from './params.ts';
   import { reseau } from './reseau.svelte.ts';
+  import { largeur } from './largeur.svelte.ts';
+  import ResultatsPc from './ResultatsPc.svelte';
 
   /** Résultats d'une recherche : en-tête de trajet, onglets avec compteurs, baromètre du marché, cartes d'offres (un vol après l'autre), tris, état vide utile, intention d'achat. */
   const lu = $derived(lireParams(routeur.recherche, app.monde.aeroports.map((a) => a.code)));
@@ -38,6 +40,9 @@
   const cacher = (pos: number) => (pos < 12 ? 0 : pos > 88 ? 100 : 50);
 </script>
 
+{#if largeur.pc}
+  <ResultatsPc {r} {lignes} {invalide} {etatForce} meilleure={meilleure} {retourForm} />
+{:else}
 <Ecran titre={invalide.length ? 'Recherche incomplète' : titre} etape={invalide.length ? undefined : sous} face="jour" retour={retourForm}>
   <h1 class="sr">{invalide.length ? 'Recherche incomplète' : `Résultats ${titre}`}</h1>
   {#snippet droite()}<a class="rond" href={retourForm} aria-label="Modifier la recherche" onclick={(e) => va(e, retourForm)}><Pictos nom="reglages" taille={20} /></a>{/snippet}
@@ -132,6 +137,7 @@
     </div>
   </Feuille>
 </Ecran>
+{/if}
 
 <style>
   .col { display: flex; flex-direction: column; } .g2 { gap: 2px; min-width: 0; } .g8 { gap: 8px; }

@@ -61,9 +61,11 @@
   const paxLabel = $derived(fmtAdultes(n));
 </script>
 
-<Ecran onglet="rechercher" face="jour">
-  <h1 class="titre">Rechercher</h1>
+<Ecran onglet="rechercher" face="jour" large>
+  <header class="tete"><div class="tete-g"><h1 class="titre">Rechercher</h1><p class="sous-pc">Voyager · neuf, revente, agences et drops</p></div><p class="intro-pc">Comparez, pour un même trajet, les billets neufs des compagnies, les reventes entre détenteurs et les offres d’agences partenaires.</p></header>
+  <div class="grille-pc">
   <form id="form-recherche" class="form" novalidate onsubmit={soumettre} aria-label="Rechercher un vol">
+    <h2 class="titre-pc">Votre trajet</h2>
     <section aria-label="Trajet" class="ticket">
       <div class="moitie haut"><ChampAeroport id="from" label="Départ" bind:valeur={de} bind:brut={brutDe} {aeroports} exclure={vers === PARTOUT ? '' : vers} erreur={erreurs.de} /></div>
       <div class="perfo" aria-hidden="true"><span class="trait"></span><span class="rond g"></span><span class="rond d"></span></div>
@@ -127,6 +129,7 @@
     <a class="intention" href="/intention/nouvelle" onclick={(e) => va(e, '/intention/nouvelle')}><Pictos nom="etiquette" taille={18} trait={2} />Ou publiez une intention d’achat à votre prix</a>
   </form>
 
+  <div class="lateral">
   {#if liste.length}
     <section aria-labelledby="recent-title" class="recentes">
       <div class="rt"><h2 id="recent-title">Recherches récentes</h2><button type="button" class="effacer" onclick={() => { oublierRecentes(); montrer('Recherches récentes effacées.'); }}>Effacer</button></div>
@@ -140,6 +143,10 @@
 
   <aside class="note"><span class="note-i" aria-hidden="true"><Pictos nom="etiquette" taille={18} /></span>
     <p><strong>Un billet revendable garde sa valeur si vos plans changent.</strong> Le prix obtenu à la revente dépend du marché.</p></aside>
+  </div>
+
+  <div class="barre"><div class="barre-in"><p class="note-prix">Prix indicatifs, par voyageur. Les prix des drops ne sont visibles qu’aux membres.</p><button type="submit" form="form-recherche" class="btn go"><Pictos nom="chercher" taille={20} trait={2} />Rechercher</button></div></div>
+  </div>
 
   <Feuille ouvert={calendrier !== null} titre={calendrier === 'retour' ? 'Date de retour' : 'Date de départ'} sous={calendrier === 'retour' ? 'Choisissez le jour du vol retour.' : 'Choisissez le jour du départ.'} surfermer={() => (calendrier = null)}>
     {#if calendrier}
@@ -147,8 +154,6 @@
     {/if}
     {#snippet pied()}{#if calendrier === 'depart'}<button type="button" class="btn sec" onclick={effacerJour}>Toutes les dates</button>{:else}<button type="button" class="btn sec" onclick={() => { retour = ''; calendrier = null; }}>Effacer la date de retour</button>{/if}{/snippet}
   </Feuille>
-
-  <div class="barre"><button type="submit" form="form-recherche" class="btn go"><Pictos nom="chercher" taille={20} trait={2} />Rechercher</button></div>
 </Ecran>
 
 <style>
@@ -180,7 +185,7 @@
   .intention { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; margin-top: -4px; padding: 0 12px; border-radius: 12px; color: var(--accent); font: 600 15px/20px 'Barlow', sans-serif; text-align: center; }
   /* Barre d'action collée au-dessus de la barre d'onglets (56 px) : l'action principale reste visible, jamais recouverte. */
   .barre { position: sticky; bottom: calc(56px + env(safe-area-inset-bottom)); z-index: 5; margin: 0 -20px -24px; padding: 14px 20px 12px; background: linear-gradient(180deg, transparent, var(--bg) 30%); }
-  .go { gap: 8px; }
+  .go { gap: 8px; } .barre-in { display: contents; } .tete, .tete-g { display: contents; } .sous-pc, .intro-pc, .titre-pc, .note-prix { display: none; } .grille-pc, .lateral { display: contents; }
   .recentes { display: flex; flex-direction: column; gap: 10px; padding-top: 4px; } .rt { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   h2 { margin: 0; font: 600 22px/26px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; }
   .effacer { min-height: 44px; padding: 0 8px; border: 0; background: none; color: var(--accent); font: 600 14px/1 'Barlow', sans-serif; cursor: pointer; }
@@ -189,4 +194,37 @@
   .rc { font: 700 26px/30px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.04em; } .recente .t1 { color: var(--ink); }
   .note { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); } .note p { font: 400 14px/20px 'Barlow', sans-serif; color: var(--ink2); } .note strong { color: var(--ink); font-weight: 600; }
   .note-i { flex: none; width: 36px; height: 36px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; }
+
+  /* PC (≥ 900 px) : planche WebRecherche. Titre 44 px, carte « Votre trajet » à gauche (réglages, trajet, dates, sources, interrupteur, action), recherches récentes et rappel à droite. */
+  @media (min-width: 900px) {
+    .tete { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 32px; }
+    .tete-g { display: flex; flex-direction: column; gap: 6px; min-width: 0; } .tete .titre { font-size: 44px; line-height: 44px; }
+    .sous-pc { display: block; font: 600 13px/18px 'Barlow', sans-serif; color: var(--ink2); }
+    .intro-pc { display: block; flex: 0 1 560px; font: 400 15px/22px 'Barlow', sans-serif; color: var(--ink2); }
+    .grille-pc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 340px); grid-template-areas: 'form lateral' 'barre lateral'; column-gap: 24px; align-items: start; }
+    .form { grid-area: form; display: flex; flex-flow: row wrap; align-items: flex-start; gap: 18px 24px; padding: 22px; border-radius: 20px 20px 0 0; background: var(--surface); border: 1px solid var(--line); border-bottom: 0; }
+    .form > * { order: 5; }
+    .titre-pc { display: block; order: 0; flex: 1 1 100%; font: 600 24px/28px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; }
+    .seg { order: 1; flex: 1 1 300px; max-width: 420px; background: var(--surface2); } .pax { order: 2; flex: 1 1 300px; max-width: 420px; min-height: 60px; padding: 8px 8px 8px 14px; border-color: var(--line-strong); }
+    .pax-b { gap: 8px; } .rond-b { border-radius: 999px; background: var(--surface); }
+    .ticket { order: 3; flex: 1 1 100%; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px; background: none; box-shadow: none; border-radius: 0; }
+    .ticket .moitie { flex: 1 1 260px; min-width: 0; padding: 0; } .ticket .perfo { display: none; }
+    .inverser { position: static; flex: none; margin-top: 22px; width: 44px; height: 52px; border-radius: 12px; background: var(--surface); color: var(--ink); border: 1px solid var(--line-strong); box-shadow: none; }
+    .form > .col { order: 4; flex: 1 1 300px; min-width: 0; } .form > .col + .col { order: 4; }
+    .lib { font: 500 13px/18px 'Barlow', sans-serif; color: var(--ink2); }
+    .sources { order: 6; flex: 1 1 100%; } legend { font: 500 13px/18px 'Barlow', sans-serif; letter-spacing: 0; text-transform: none; }
+    .grille { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; } .tuile { min-height: 64px; padding: 10px 14px; gap: 12px; } .tuile.on { background: var(--accent-soft); border-color: var(--accent); }
+    .tuile .t1 { font-weight: 700; color: var(--ink); } .tuile .t2 { font-size: 13px; line-height: 17px; }
+    input[type='checkbox'] { width: 22px; height: 22px; }
+    .interrupteur { order: 7; flex: 1 1 100%; width: auto; border-color: var(--line-strong); } .intention { order: 8; flex: 1 1 100%; justify-content: flex-start; margin-top: 0; }
+    .barre { grid-area: barre; position: static; z-index: auto; margin: 0; padding: 0 22px 22px; background: var(--surface); border: 1px solid var(--line); border-top: 0; border-radius: 0 0 20px 20px; }
+    .barre-in { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding-top: 14px; border-top: 1px solid var(--line); }
+    .note-prix { display: block; flex: 1 1 260px; font: 400 13px/18px 'Barlow', sans-serif; color: var(--ink2); }
+    .barre .go { width: auto; min-height: 52px; padding: 0 26px; }
+    .lateral { grid-area: lateral; display: flex; flex-direction: column; gap: 18px; }
+    .recentes { padding: 18px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); gap: 8px; } h2 { font-size: 24px; line-height: 28px; }
+    .recentes ul { border: 0; border-radius: 0; background: none; } .recente { min-height: 56px; padding: 0 2px; }
+    .recente .t3 { line-height: 17px; padding-block: 2px; }
+    .note { background: var(--accent-soft); border-color: var(--accent); }
+  }
 </style>

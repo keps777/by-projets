@@ -5,8 +5,8 @@
   import { PARTOUT, grosCode, resoudreSaisie, suggerer, texteDe, type Suggestion } from './params.ts';
 
   /** Champ d'aéroport avec autocomplétion (combobox ARIA 1.2) : on tape une ville, un pays ou un code ; flèches, Entrée, Échap ; « Partout » en option pour l'arrivée. */
-  let { id, label, valeur = $bindable(''), brut = $bindable(''), aeroports, partout = false, exclure = '', erreur = '', placeholder = 'Ville ou aéroport', onchoisir }:
-    { id: string; label: string; valeur?: string; /** Texte tel qu'il est écrit dans le champ (même s'il ne désigne aucun aéroport). */ brut?: string; aeroports: Aeroport[]; partout?: boolean; exclure?: string; erreur?: string; placeholder?: string; onchoisir?: (v: string) => void } = $props();
+  let { id, label, valeur = $bindable(''), brut = $bindable(''), aeroports, partout = false, exclure = '', erreur = '', placeholder = 'Ville ou aéroport', onchoisir, compact = false }:
+    { id: string; label: string; valeur?: string; /** Texte tel qu'il est écrit dans le champ (même s'il ne désigne aucun aéroport). */ brut?: string; aeroports: Aeroport[]; partout?: boolean; exclure?: string; erreur?: string; placeholder?: string; onchoisir?: (v: string) => void; /** Barre de recherche PC : sans grand code à droite. */ compact?: boolean } = $props();
 
   let texte = $state(untrack(() => texteDe(aeroports, valeur))), ouvert = $state(false), actif = $state(0), saisi = $state(false);
   // Le texte suit la valeur quand elle change de l'extérieur (inversion départ ↔ arrivée, préremplissage).
@@ -33,7 +33,7 @@
   $effect(() => { if (ouvert && liste.length) document.getElementById(idOption(Math.min(actif, liste.length - 1)))?.scrollIntoView({ block: 'nearest' }); });
 </script>
 
-<div class="champ-aero" data-erreur={erreur ? '' : undefined}>
+<div class="champ-aero" class:compact data-erreur={erreur ? '' : undefined}>
   <div class="ligne">
     <div class="saisie">
       <label for={id}>{label}</label>
@@ -61,10 +61,20 @@
   input::placeholder { color: var(--ink3); font-weight: 500; }
   input[aria-invalid='true'] { border-bottom-color: var(--err); box-shadow: 0 1px 0 var(--err); }
   .gros { flex: none; min-width: 64px; text-align: right; font: 700 44px/44px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.02em; }
+  .compact .gros { display: none; } .compact input { font-size: 17px; border-bottom-color: var(--soulignement, #7a8597); }
   .erreur { display: flex; gap: 6px; align-items: flex-start; margin-top: 4px; font: 500 13px/18px 'Barlow', sans-serif; color: var(--err); }
   .options { position: absolute; z-index: 30; left: -6px; right: -6px; top: 100%; margin: 0; padding: 6px; list-style: none; max-height: 232px; overflow-y: auto; border-radius: 14px; background: var(--surface); border: 1px solid var(--line-strong); box-shadow: 0 12px 32px rgba(11, 27, 46, 0.2); }
   .options[hidden] { display: none; }
   li { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; min-height: 44px; padding: 8px 12px; border-radius: 10px; cursor: pointer; align-items: center; }
   li.actif { background: var(--accent-soft); } .v { font: 600 16px/20px 'Barlow', sans-serif; } .p { font: 400 13px/16px 'Barlow', sans-serif; color: var(--ink3); text-align: right; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); margin: 0; }
+  /* PC (≥ 900 px) : champ encadré, étiquette discrète au-dessus, code d'aéroport à droite dans le champ (planche WebRecherche). */
+  @media (min-width: 900px) {
+    .champ-aero:not(.compact) .ligne { position: relative; display: block; }
+    .champ-aero:not(.compact) label { font: 500 13px/18px 'Barlow', sans-serif; letter-spacing: 0; text-transform: none; color: var(--ink2); }
+    .champ-aero:not(.compact) .saisie { gap: 6px; }
+    .champ-aero:not(.compact) input { height: 52px; padding: 0 64px 0 14px; border: 1px solid #7a8597; border-radius: 12px; background: var(--surface); font: 400 16px/22px 'Barlow', sans-serif; }
+    .champ-aero:not(.compact) input[aria-invalid='true'] { border-color: var(--err); box-shadow: 0 0 0 1px var(--err); }
+    .champ-aero:not(.compact) .gros { position: absolute; right: 14px; bottom: 0; height: 52px; min-width: 0; display: flex; align-items: center; font: 700 20px/1 'Barlow', sans-serif; letter-spacing: 0.04em; pointer-events: none; }
+  }
 </style>
