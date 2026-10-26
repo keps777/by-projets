@@ -66,11 +66,22 @@
   const restants = $derived(essais.restants);
 </script>
 
-<Ecran titre="Vérification" face="jour" retour="/inscription">
+{#snippet droite()}
+  <span class="fantome" aria-hidden="true"></span>
+  <nav class="haut-pc" aria-label="Accès au compte"><a href="/explorer" onclick={(e) => va(e, '/explorer')}>Explorer sans compte</a><a href="/connexion" onclick={(e) => va(e, '/connexion')}>J’ai déjà un compte</a></nav>
+{/snippet}
+
+{#snippet suite()}
+  {#if statut === 'ok'}<button type="button" class="btn" onclick={() => { clearTimeout(suivant); continuer(); }}>Continuer<Pictos nom="fleche" /></button>
+  {:else}<button type="button" class="btn inactif" aria-disabled="true">Continuer · entrez les 6 chiffres</button>{/if}
+{/snippet}
+
+<Ecran titre="Vérification" face="jour" retour="/inscription" large {droite}>
   {#if horsLigne}
     <div class="bandeau" role="status"><Icone nom="hors_ligne" /><div><b>Hors ligne</b><span>La vérification du code demande le réseau : la saisie est suspendue et rien n’a été envoyé. Elle reprend au retour de la connexion.</span></div></div>
   {/if}
 
+  <div class="mise"><div class="gauche">
   {#if mode === 'creation'}
     <div class="etapes" role="progressbar" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1" aria-valuetext="Étape 1 sur 4 : vérifier votre {id?.type === 'tel' ? 'téléphone' : 'courriel'}" aria-label="Création du compte">
       <div class="entete-etapes"><b>Étape 1 sur 4</b><span>Ensuite : profil, alertes, clé d’accès</span></div>
@@ -114,20 +125,23 @@
     <div role="status" aria-live="polite">{#if renvoye}<p class="renvoye">Nouveau code envoyé (démo). L’ancien ne fonctionne plus.</p>{/if}</div>
   </section>
 
+  <div class="suite-pc">{@render suite()}</div>
+  </div>
+
   <section class="demo" aria-labelledby="demo-titre">
     <p id="demo-titre" class="demo-titre">MODE DÉMO — aucun code réel n’est envoyé</p>
-    <p class="demo-code">Mode démo : le code est <span class="mono">{CODE_DEMO}</span></p>
+    <p class="demo-code mob-t">Mode démo : le code est <span class="mono">{CODE_DEMO}</span></p>
+    <p class="demo-code pc-t">Code de démonstration : <span class="mono">{CODE_DEMO}</span></p>
     <div class="deux">
       <button type="button" onclick={() => simuler(CODE_ERRONE)} disabled={gele}>Simuler un code erroné</button>
       <button type="button" onclick={() => simuler(CODE_DEMO)} disabled={gele}>Simuler le bon code</button>
     </div>
+    <p class="hyp-pc"><span class="pastille-h">[H]</span><span>Longueur du code (6 chiffres), nombre d’essais (3) et délai de renvoi (0:42) : valeurs de démonstration à valider.</span></p>
   </section>
+  </div>
 
   {#snippet pied()}
-    <div class="barre">
-      {#if statut === 'ok'}<button type="button" class="btn" onclick={() => { clearTimeout(suivant); continuer(); }}>Continuer<Pictos nom="fleche" /></button>
-      {:else}<button type="button" class="btn inactif" aria-disabled="true">Continuer · entrez les 6 chiffres</button>{/if}
-    </div>
+    <div class="barre">{@render suite()}</div>
   {/snippet}
 </Ecran>
 
@@ -172,4 +186,26 @@
   @media (prefers-reduced-motion: reduce) { .s0, .s1, .tourne, .coche, .curseur { animation: none; } .curseur { opacity: 1; } }
   @media (max-width: 899px) { :global(.pied:has(.barre)) { background: #fff; border-top: 1px solid var(--line); } }
   @media (max-width: 340px) { .cases { gap: 5px; } .case { height: 52px; font-size: 24px; } .curseur { top: 14px; } .entete-etapes { flex-direction: column; } .entete-etapes span { text-align: left; } .deux { grid-template-columns: 1fr; } }
+  /* PC (≥ 900 px) : étapes, saisie et suite à gauche ; carte de démonstration en pointillés, collante, à droite. Planche WebCode. */
+  .fantome { display: block; width: 44px; height: 44px; } .haut-pc, .suite-pc, .hyp-pc, .pc-t { display: none; } .mise, .gauche { display: contents; }
+  @media (min-width: 900px) {
+    .fantome, .mob-t { display: none; } .pc-t { display: block; }
+    .haut-pc { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+    .haut-pc a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 12px; font: 700 15px/1 'Barlow', sans-serif; }
+    .mise { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px; }
+    .gauche { display: flex; flex: 999 1 560px; min-width: 0; max-width: 760px; flex-direction: column; gap: 22px; }
+    .entete-etapes span, .etiquette, .aide { color: #3E4F66; } .segments span { background: #D3DCE6; } .segments .actuel { background: var(--accent); } .segments .actuel.fait { background: var(--ok); }
+    .envoye { font-size: 17px; line-height: 26px; color: #3E4F66; } .modifier { margin: 0 0 0 -4px; padding: 0 4px; }
+    .saisie, .messages { max-width: 520px; } .case { height: 64px; font-size: 30px; } .curseur { top: 20px; }
+    .msg-err { padding: 12px 14px; background: var(--err-soft); border: 1px solid var(--err); font-size: 15px; line-height: 21px; color: var(--ink); } .msg-err :global(svg) { color: var(--err); }
+    .succes { border: 1px solid var(--ok); } .renvoye { font-size: 14px; font-weight: 700; }
+    .relancer { margin-left: -4px; padding: 0 4px; }
+    .suite-pc { display: flex; } .suite-pc :global(.btn) { width: auto; min-width: 280px; min-height: 56px; padding: 8px 22px; font-size: 17px; align-self: flex-start; } .suite-pc :global(.btn.inactif) { background: #E3EAF2; color: #3E4F66; border-color: #7A8597; }
+    .demo { position: sticky; top: 16px; flex: 1 1 320px; max-width: 460px; min-width: 0; gap: 12px; padding: 18px; border-radius: 20px; background: #fff; border: 1px dashed #7A8597; }
+    .demo-titre { padding: 10px 12px; color: #124C9C; font-size: 14px; } .demo-code { font-size: 15px; color: #3E4F66; } .demo-code .mono { letter-spacing: 0; }
+    .deux { display: flex; flex-wrap: wrap; gap: 8px; } .deux button { flex: 1 1 200px; min-width: 0; min-height: 52px; border-radius: 14px; border-color: #7A8597; font-size: 15px; line-height: 20px; }
+    .hyp-pc { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; line-height: 20px; color: #3E4F66; }
+    .pastille-h { flex: none; display: inline-flex; align-items: center; height: 20px; padding: 0 6px; border-radius: 6px; background: rgba(255, 210, 63, 0.30); color: #5C4600; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; }
+    :global(.pied:has(.barre)) { display: none; }
+  }
 </style>

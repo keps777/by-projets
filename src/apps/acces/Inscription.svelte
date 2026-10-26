@@ -48,7 +48,14 @@
   function sousSelection(nom: string) { sso = nom; }
 </script>
 
-<Ecran titre="Créer un compte" face="jour">
+{#snippet droite()}
+  <span class="fantome" aria-hidden="true"></span>
+  <nav class="haut-pc" aria-label="Accès au compte"><a href="/explorer" onclick={(e) => va(e, '/explorer')}>Explorer sans compte</a><a href="/connexion" onclick={(e) => va(e, '/connexion')}>J’ai déjà un compte</a></nav>
+{/snippet}
+
+{#snippet bouton()}{#if envoi === 'charge'}<span class="tourne" aria-hidden="true"></span>Envoi du code en cours…{:else}Recevoir mon code<Pictos nom="fleche" />{/if}{/snippet}
+
+<Ecran titre="Créer un compte" face="jour" large {droite}>
   {#if horsLigne}
     <div class="bandeau" role="status"><Icone nom="hors_ligne" /><div><b>Hors ligne</b><span>Vous pouvez remplir le formulaire. L’envoi du code et la connexion avec Apple ou Google demandent le réseau : rien n’a été envoyé.</span></div></div>
   {/if}
@@ -56,7 +63,8 @@
     <div class="bandeau err" role="alert"><Icone nom="info" /><div><b>Le code n’a pas pu être envoyé</b><span>Nous n’avons pas pu envoyer le code à l’adresse indiquée. Aucun compte n’a été créé. Vérifiez l’adresse puis réessayez.</span></div><button type="button" class="btn sm sec" onclick={reessayer}>Réessayer</button></div>
   {/if}
 
-  <section class="col g8">
+  <div class="mise"><div class="gauche">
+  <section class="col g8 titre-s">
     <h1 class="t-h1">Créez votre compte en 1 minute</h1>
     <p class="intro">Un code suffit. Vous compléterez le reste seulement quand ce sera utile.</p>
   </section>
@@ -67,6 +75,8 @@
     <li><span class="rond" aria-hidden="true"><Icone nom="piece" taille={20} /></span><span>Identité vérifiée seulement pour revendre</span></li>
   </ul>
 
+  <div class="carte-pc">
+  <h2 class="pc-t">Où recevoir votre code ?</h2>
   <section class="col g12">
     <div class="onglets" role="tablist" aria-label="Recevoir le code par">
       <button type="button" role="tab" id="onglet-courriel" aria-controls="panneau" aria-selected={onglet === 'email'} tabindex={onglet === 'email' ? 0 : -1} onclick={() => choisir('email')} onkeydown={toucheOnglet}><Icone nom="courriel" taille={18} />Courriel</button>
@@ -83,13 +93,16 @@
 
   <div class="ou" aria-hidden="true"><span></span>ou<span></span></div>
 
-  <div class="col g8">
+  <div class="col g8 sso">
     <button type="button" class="btn sec" onclick={() => sousSelection('Apple')}><Icone nom="cle" taille={20} />Continuer avec Apple</button>
     <button type="button" class="btn sec" onclick={() => sousSelection('Google')}><Icone nom="moi" taille={20} />Continuer avec Google</button>
     <div role="status" aria-live="polite">{#if sso}<p class="info"><Icone nom="info" taille={16} /><span>Démo : la connexion avec {sso} n’est pas encore branchée (fournisseur à valider). Utilisez le courriel ou le téléphone.</span></p>{/if}</div>
   </div>
+  <p class="hyp-pc"><span class="pastille-h">[H]</span><span>Apple et Google : fournisseurs d’identité à valider.</span></p>
+  </div>
 
-  <section class="col g8" aria-label="Consentements">
+  <section class="col g8 consents" aria-label="Consentements">
+      <h2 class="pc-t">Vos consentements</h2>
       <div class="consent" class:erreur={erreurConsentement} class:s0={erreurConsentement && secousse % 2 === 0} class:s1={erreurConsentement && secousse % 2 === 1}>
         <label class="case" for="consent"><input id="consent" type="checkbox" bind:checked={consentement} onchange={() => (erreurConsentement = false)} aria-invalid={erreurConsentement ? 'true' : undefined} aria-describedby={erreurConsentement ? 'consent-err' : undefined} /><span class="gras">J’accepte les conditions d’utilisation et la politique de confidentialité <span class="leger">(obligatoire)</span></span></label>
         <button type="button" class="lire" aria-expanded={conditions} aria-controls="conditions" onclick={() => (conditions = !conditions)}>Lire les conditions en bref<span class="chev" class:ouvert={conditions}><Icone nom="suivant" taille={16} trait={2} /></span></button>
@@ -99,10 +112,30 @@
     <label class="case carte-case" for="infolettre"><input id="infolettre" type="checkbox" bind:checked={infolettre} /><span class="col g4"><span class="gras">M’écrire au sujet des drops et nouveautés</span><span class="t-sec">Facultatif · désactivé par défaut · modifiable dans Compte</span></span></label>
   </section>
 
+  <div class="cta-pc">
+    <div role="alert">{#if resume}<p class="resume-pc"><Icone nom="info" taille={20} trait={2} /><span>{resume}</span></p>{/if}</div>
+    <div class="ligne-cta">
+      <button type="button" class="btn grand" aria-disabled={envoi === 'charge' || horsLigne} onclick={envoyer}>{@render bouton()}</button>
+      <div class="liens-cta"><a href="/explorer" onclick={(e) => va(e, '/explorer')}>Explorer sans compte</a><a href="/connexion" onclick={(e) => va(e, '/connexion')}>J’ai déjà un compte</a></div>
+    </div>
+  </div>
+  </div>
+
+  <aside class="panneau-pc" aria-labelledby="promesses-titre">
+    <h2 id="promesses-titre">Ce que nous ne vous demandons pas</h2>
+    <ul aria-labelledby="promesses-titre">
+      <li><span class="ic" aria-hidden="true"><Icone nom="carte" taille={22} /></span><span>Aucune carte demandée</span></li>
+      <li><span class="ic" aria-hidden="true"><Pictos nom="boussole" taille={22} trait={1.75} /></span><span>Explorer sans compte possible</span></li>
+      <li><span class="ic" aria-hidden="true"><Icone nom="piece" taille={22} /></span><span>Identité vérifiée seulement pour revendre</span></li>
+    </ul>
+    <p class="hyp-sombre"><span class="pastille-h sombre">[H]</span><span>Moment de la vérification d’identité : à valider. La règle exacte dépend des obligations réglementaires sur les versements.</span></p>
+  </aside>
+  </div>
+
   {#snippet pied()}
     <div class="barre">
       {#if resume}<p class="resume-err" aria-hidden="true"><Icone nom="info" taille={16} trait={2} /><span>{resume}</span></p>{/if}
-      <button type="button" class="btn" aria-disabled={envoi === 'charge' || horsLigne} onclick={envoyer}>{#if envoi === 'charge'}<span class="tourne" aria-hidden="true"></span>Envoi du code en cours…{:else}Recevoir mon code<Pictos nom="fleche" />{/if}</button>
+      <button type="button" class="btn" aria-disabled={envoi === 'charge' || horsLigne} onclick={envoyer}>{@render bouton()}</button>
       <div class="liens"><a href="/explorer" onclick={(e) => va(e, '/explorer')}>Explorer sans compte</a><a href="/connexion" onclick={(e) => va(e, '/connexion')}>J’ai déjà un compte</a></div>
     </div>
   {/snippet}
@@ -148,4 +181,36 @@
   .btn[aria-disabled='true'] { opacity: 0.6; cursor: progress; }
   @media (max-width: 899px) { :global(.pied:has(.barre)) { background: #fff; border-top: 1px solid var(--line); } }
   @media (max-width: 340px) { .puces { gap: 6px; } .puces li { padding: 10px 8px; font-size: 12px; } }
+  /* PC (≥ 900 px) : deux cartes à gauche (où recevoir le code, consentements), panneau sombre collant à droite. Planche WebInscription. */
+  .fantome { display: block; width: 44px; height: 44px; } .haut-pc, .pc-t, .hyp-pc, .cta-pc, .panneau-pc { display: none; } .mise, .gauche, .carte-pc { display: contents; }
+  @media (min-width: 900px) {
+    .fantome, .puces { display: none; }
+    .haut-pc { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+    .haut-pc a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 12px; font: 700 15px/1 'Barlow', sans-serif; }
+    .mise { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px; }
+    .gauche { display: flex; flex: 999 1 560px; min-width: 0; max-width: 760px; flex-direction: column; gap: 20px; }
+    .titre-s { gap: 8px; } .intro { font-size: 17px; line-height: 26px; color: #3E4F66; }
+    .carte-pc, .consents { display: flex; flex-direction: column; gap: 14px; padding: 22px; border-radius: 20px; background: #fff; border: 1px solid #D3DCE6; }
+    .pc-t { display: block; font: 600 22px/26px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; color: #0B1B2E; }
+    .onglets { gap: 4px; padding: 4px; border: 1px solid #7A8597; } .onglets button { font-weight: 700; }
+    .ou { font-size: 14px; color: #3E4F66; } .ou span { border-top-color: #D3DCE6; }
+    .sso { flex-direction: row; flex-wrap: wrap; gap: 10px; } .sso .btn { flex: 1 1 240px; width: auto; min-width: 0; } .sso > div { flex: 0 0 100%; } .sso > div:empty { display: none; }
+    .info { font-size: 14px; line-height: 20px; }
+    .hyp-pc { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; line-height: 20px; color: #3E4F66; }
+    .pastille-h { flex: none; display: inline-flex; align-items: center; height: 20px; padding: 0 6px; border-radius: 6px; background: rgba(255, 210, 63, 0.30); color: #5C4600; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; } .pastille-h.sombre { background: rgba(255, 210, 63, 0.16); color: #FFD23F; }
+    .consents { gap: 14px; } .consents .consent { padding: 0; border: 0; background: none; } .consent.erreur { padding: 0; border: 0; } .consent.erreur > .case { border: 2px solid var(--err); padding: 13px; }
+    .consent > .case, .carte-case { padding: 14px; border: 1px solid #7A8597; border-radius: 14px; background: #fff; } .case input { width: 22px; height: 22px; margin-top: 2px; }
+    .consent .gras { font-weight: 400; } .lire { margin-left: 0; padding: 0 4px; text-decoration: none; font-weight: 700; } .resume { margin: 0; padding: 0 0 0 20px; background: none; font-size: 14px; line-height: 20px; gap: 6px; }
+    .cta-pc { display: flex; flex-direction: column; gap: 14px; } .cta-pc [role='alert']:empty { display: none; }
+    .resume-pc { margin: 0; display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-radius: 14px; background: var(--err-soft); border: 1px solid var(--err); font-size: 15px; font-weight: 600; color: var(--ink); } .resume-pc :global(svg) { color: var(--err); flex: none; }
+    .ligne-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; } .btn.grand { width: auto; min-width: 280px; min-height: 56px; padding: 8px 22px; font-size: 17px; }
+    .liens-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; } .liens-cta a { display: inline-flex; align-items: center; min-height: 48px; padding: 0 12px; font: 700 15px/1 'Barlow', sans-serif; }
+    .panneau-pc { display: flex; flex-direction: column; gap: 14px; flex: 1 1 320px; max-width: 560px; min-width: 0; position: sticky; top: 16px; padding: 22px; border-radius: 20px; background: #0B1B2E; color: #fff; }
+    .panneau-pc h2 { font: 600 22px/26px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; }
+    .panneau-pc ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+    .panneau-pc li { display: flex; align-items: center; gap: 14px; min-height: 64px; padding: 10px 0; border-top: 1px solid rgba(255, 255, 255, 0.14); font-size: 17px; line-height: 22px; font-weight: 600; }
+    .ic { flex: none; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(255, 255, 255, 0.12); }
+    .hyp-sombre { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; line-height: 20px; color: #C9D3DF; }
+    :global(.pied:has(.barre)) { display: none; }
+  }
 </style>

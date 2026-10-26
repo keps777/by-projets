@@ -5,6 +5,8 @@
   import { aller, retour } from '../../router.svelte.ts';
   import { NB, PROMESSES, annonce, apresTouche, compteARebours, decompteSuivant, indexDepuisDefilement, libellePoint } from './promesses.ts';
   import { marquerTutoVu } from './etat.ts';
+  import PcEntete from './PcEntete.svelte';
+  import PcPied from './PcPied.svelte';
 
   /** Trois promesses : carrousel à défilement CSS (scroll-snap). Balayage, flèches du clavier, points cliquables, aria-live. */
   const reduit = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -40,6 +42,12 @@
 </script>
 
 <div class="nx racine" data-face="jour">
+  <PcEntete>
+    {#snippet liens()}
+      <a href="/explorer" onclick={(e) => va(e, '/explorer')}>Explorer sans compte</a>
+      <a href="/connexion" onclick={(e) => va(e, '/connexion')}>J’ai déjà un compte</a>
+    {/snippet}
+  </PcEntete>
   <header class="entete">
     <button type="button" class="rond" aria-label="Retour" onclick={() => retour('/langue')}><Icone nom="retour" /></button>
     <div class="logo" aria-hidden="true"><Logo taille={20} /></div>
@@ -123,7 +131,60 @@
         {/if}
       </div>
     </section>
+    <!-- PC (≥ 900 px) : les trois promesses côte à côte, sans carrousel (planche WebPromesse). -->
+    <div class="pc-contenu">
+      <div class="pc-haut"><button type="button" class="retour-pc" onclick={() => retour('/langue')}><Icone nom="retour" taille={18} />Retour</button><a class="passer-pc" href="/inscription" onclick={(e) => va(e, '/inscription')}>Passer</a></div>
+      <h1 class="pc-h1">Ce que vous pouvez faire</h1>
+      <div class="pc-cartes">
+        <article class="pc-promesse" aria-labelledby="pr1-titre">
+          <div class="pc-visuel clair" aria-hidden="true">
+            <span class="puce-r pc-puce"><Icone nom="chercher" taille={14} trait={2} />Montréal → Paris</span>
+            <span class="pc-vol"><span class="trajet"><span class="iata">YUL</span><span class="pointille"></span><span class="avion"><Icone nom="avion" taille={22} trait={2} /></span><span class="pointille"></span><span class="iata">CDG</span></span><span class="date">Lun. 14 déc. · 1 voyageur</span></span>
+            <span class="pc-offres">
+              <span class="offre"><span class="etq">Neuf</span><span class="of-t">Aérolys · 18:05</span><span class="prix">1 120 $</span></span>
+              <span class="offre sel"><span class="etq bleu">Revente</span><span class="of-t">Aérolys · 18:05</span><span class="prix">980 $</span></span>
+            </span>
+            <span class="fictifs pc-fictifs">Prix fictifs</span>
+          </div>
+          <div class="pc-texte"><p class="sur">{PROMESSES[0].kicker}</p><h2 id="pr1-titre">{PROMESSES[0].titre}</h2><p class="para">{PROMESSES[0].texte}</p></div>
+        </article>
+        <article class="pc-promesse" aria-labelledby="pr2-titre">
+          <div class="pc-visuel sombre" role="img" aria-label="Un billet passe de votre main à celle d’un autre voyageur">
+            <span class="pc-puce-n"><Icone nom="echange" taille={16} trait={2} />Revente encadrée</span>
+            <span class="pc-billet"><span class="pc-b-corps"><span class="pc-b-trajet">YUL → CDG</span><span class="pc-b-date">14 DÉC. · 18:05</span><span class="pc-b-etat">En revente</span></span><span class="pc-b-talon"></span></span>
+            <span class="pc-rail"></span>
+            <span class="pc-passe">
+              <span class="pc-qui"><span class="pc-rond bleu"><Icone nom="moi" taille={22} /></span><span class="pc-q"><span class="q1">Vous</span><span class="q2">Plans changés</span></span></span>
+              <span class="pc-fleche"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span>
+              <span class="pc-qui d"><span class="pc-rond jaune"><Icone nom="moi" taille={22} /></span><span class="pc-q d"><span class="q1">Paul B.</span><span class="q2">Part à votre place</span></span></span>
+            </span>
+          </div>
+          <div class="pc-texte"><p class="sur">{PROMESSES[1].kicker}</p><h2 id="pr2-titre">{PROMESSES[1].titre}</h2><p class="para">{PROMESSES[1].texte}</p></div>
+        </article>
+        <article class="pc-promesse" aria-labelledby="pr3-titre">
+          <div class="pc-visuel clair" aria-hidden="true">
+            <span class="echeance">
+              <span class="e-tete"><span>Échéance de nommage</span><span class="e-etat"><span class="pc-pt"></span>En cours</span></span>
+              <span class="e-corps">
+                <span class="cases"><span class="cel">J<span class="charn"></span></span><span class="cel">-<span class="charn"></span></span><span class="cel">1<span class="charn"></span></span></span>
+                <span class="e-txt"><span class="decompte">{compteARebours(reste)}</span><span class="e-sous">avant l’envoi du nom</span></span>
+              </span>
+            </span>
+            <span class="b3"><span class="b3-h"><span class="b3-t">YUL → CDG</span><span class="b3-d">14 déc. · 18:05</span></span><span class="tiret"></span>
+              <span class="b3-v"><span class="b3-l">Voyageur</span><span class="champ-v pc-champ">Vous ou un proche</span></span></span>
+            <span class="pastille"><Icone nom="horloge" taille={14} trait={2} />Nommer avant le 13 déc. 18:05</span>
+          </div>
+          <div class="pc-texte"><p class="sur">{PROMESSES[2].kicker}</p><h2 id="pr3-titre">{PROMESSES[2].titre}</h2><p class="para">{PROMESSES[2].texte}</p>
+            <p class="pc-hyp"><span class="pastille-h">[H]</span><span>Échéance de nommage : la veille du départ (J-1) est une hypothèse à valider.</span></p></div>
+        </article>
+      </div>
+      <div class="pc-cta">
+        <a class="principal-b pc-creer" href="/inscription" onclick={(e) => va(e, '/inscription')}>Créer mon compte<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a>
+        <a class="lien pc-explorer" href="/explorer" onclick={(e) => va(e, '/explorer')}>Explorer sans compte</a>
+      </div>
+    </div>
   </main>
+  <PcPied />
 </div>
 
 <style>
@@ -189,5 +250,51 @@
   @keyframes nx-pass { 0%, 8% { transform: translateX(-80px) rotate(-7deg); } 46%, 54% { transform: translateX(0) translateY(-22px) rotate(0deg); } 92%, 100% { transform: translateX(80px) rotate(6deg); } }
   @keyframes nx-caret { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
   @media (max-width: 359px) { .cel { width: 30px; height: 46px; font-size: 26px; } .charn { top: 22px; } .cel { box-shadow: inset 0 -23px 0 #15263C; } .decompte { font-size: 18px; } .iata { font-size: 32px; } }
-  @media (prefers-reduced-motion: reduce) { .passe.vif, .pt.bat, .curseur.vif { animation: none; } .piste { scroll-behavior: auto; } .point span { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .passe.vif, .pt.bat, .pc-pt, .curseur.vif { animation: none; } .piste { scroll-behavior: auto; } .point span { transition: none; } }
+  /* PC (≥ 900 px) : les trois promesses côte à côte, sans carrousel ni points. Planche WebPromesse. */
+  .pc-contenu { display: none; }
+  @media (min-width: 900px) {
+    .racine { width: 100%; max-width: none; height: auto; min-height: 100dvh; overflow: visible; }
+    .entete, .carrousel { display: none; }
+    .principal { flex: 1; padding: 16px max(32px, calc((100% - 1120px) / 2)) 28px; }
+    .pc-contenu { display: flex; flex-direction: column; gap: 18px; }
+    .pc-haut { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+    .retour-pc, .passer-pc { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px; border: 0; border-radius: 12px; background: none; color: var(--accent); font: 700 15px/1 'Barlow', sans-serif; cursor: pointer; } .retour-pc { padding-left: 6px; margin-left: -6px; }
+    .pc-h1 { font: 600 40px/40px 'Barlow Condensed', 'Arial Narrow', sans-serif; text-wrap: balance; }
+    .pc-cartes { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px; }
+    .pc-promesse { flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+    .pc-visuel { box-sizing: border-box; min-height: 344px; padding: 18px 20px; border-radius: 24px; display: flex; flex-direction: column; gap: 14px; } .pc-visuel.clair { background: #E3EAF2; } .pc-visuel.sombre { background: #0B1B2E; color: #fff; }
+    .pc-texte { display: flex; flex-direction: column; gap: 8px; } .pc-texte h2 { font: 600 34px/36px 'Barlow Condensed', 'Arial Narrow', sans-serif; text-wrap: balance; } .pc-texte .sur { color: #3E4F66; } .pc-texte .para { color: #3E4F66; }
+    /* 1 */
+    .pc-puce { position: static; align-self: flex-start; } .pc-vol { display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 18px; background: #fff; box-shadow: 0 1px 0 #D3DCE6, 0 12px 32px rgba(11, 27, 46, 0.10); }
+    .pc-visuel .pointille { border-top-color: #7A8597; } .pc-visuel .date { color: #3E4F66; }
+    .pc-offres { display: flex; flex-direction: column; gap: 8px; } .pc-visuel .offre { min-height: 48px; } .pc-visuel .etq { height: 24px; font-size: 12px; border: 1px solid #7A8597; } .pc-visuel .etq.bleu { border: 0; color: #124C9C; }
+    .pc-fictifs { position: static; align-self: flex-end; color: #3E4F66; }
+    /* 2 */
+    .pc-puce-n { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.12); color: #C9D3DF; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+    .pc-billet { align-self: center; display: flex; border-radius: 12px; overflow: hidden; background: #fff; color: #0B1B2E; }
+    .pc-b-corps { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; } .pc-b-trajet { font: 700 28px/28px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.02em; white-space: nowrap; } .pc-b-date { font-size: 12px; font-weight: 600; color: #3E4F66; }
+    .pc-b-etat { align-self: flex-start; display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; background: rgba(26, 100, 200, 0.10); color: #124C9C; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .pc-b-talon { width: 28px; border-left: 2px dashed #B9C5D3; background: repeating-linear-gradient(0deg, #0B1B2E 0 2px, transparent 2px 5px) 8px 12px / 12px calc(100% - 24px) no-repeat; }
+    .pc-rail { border-top: 2px dashed rgba(255, 255, 255, 0.18); margin: 6px 0; }
+    .pc-passe { display: flex; align-items: flex-start; gap: 12px; } .pc-qui { flex: 1; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; } .pc-qui.d { align-items: flex-end; text-align: right; }
+    .pc-q { display: flex; flex-direction: column; gap: 2px; } .pc-q.d { align-items: flex-end; } .pc-q .q2 { font-size: 15px; }
+    .pc-rond { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 999px; } .pc-rond.bleu { background: #1A64C8; color: #fff; } .pc-rond.jaune { background: #FFD23F; color: #0B1B2E; }
+    .pc-fleche { flex: none; display: flex; color: #C9D3DF; padding-top: 10px; }
+    /* 3 */
+    .pc-visuel.clair .echeance { gap: 10px; } .pc-visuel .e-sous { font-size: 13px; } .pc-champ { min-height: 32px; border-color: #7A8597; color: #3E4F66; }
+    .pc-visuel .b3-d { font-size: 13px; color: #3E4F66; } .pc-visuel .b3-l { color: #3E4F66; } .pc-visuel .tiret { border-top-color: #B9C5D3; } .pc-visuel .pastille { min-height: 32px; background: rgba(255, 210, 63, 0.30); color: #5C4600; }
+    .pc-pt { width: 6px; height: 6px; border-radius: 999px; background: #FFD23F; animation: nx-pulse 1.4s ease-in-out infinite; }
+    .pc-hyp { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; line-height: 20px; color: #3E4F66; }
+    .pastille-h { flex: none; display: inline-flex; align-items: center; height: 20px; padding: 0 6px; border-radius: 6px; background: rgba(255, 210, 63, 0.30); color: #5C4600; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; }
+    .pc-visuel > *, .pc-visuel .b3-h { min-width: 0; } .pc-visuel .b3-h { flex-wrap: wrap; gap: 2px 8px; } .pc-visuel .b3-t, .pc-visuel .b3-d { white-space: normal; } .pc-visuel .pastille { white-space: normal; } .pc-visuel .e-corps { flex-wrap: wrap; }
+    .pc-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 8px; }
+    .pc-creer { flex: none; min-width: 280px; height: auto; min-height: 56px; padding: 8px 22px; font-size: 17px; }
+    .pc-explorer { min-height: 48px; font-size: 16px; font-weight: 700; color: var(--accent); }
+  }
+  @media (min-width: 900px) and (max-width: 1199px) {
+    .pc-visuel { padding: 16px 14px; } .pc-visuel .iata { font-size: 32px; line-height: 32px; } .pc-visuel .offre { gap: 8px; padding: 0 10px; } .pc-visuel .offre.sel { padding: 0 9px; } .pc-visuel .prix { font-size: 15px; }
+    .pc-visuel .cel { width: 34px; height: 48px; font-size: 28px; box-shadow: inset 0 -24px 0 #15263C; } .pc-visuel .charn { top: 23px; } .pc-visuel .decompte { font-size: 20px; }
+    .pc-b-trajet { font-size: 24px; line-height: 24px; } .pc-q .q2 { font-size: 14px; }
+  }
 </style>
