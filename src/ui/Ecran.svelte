@@ -5,6 +5,7 @@
   import Icone from './Icone.svelte';
   import Logo from './Logo.svelte';
   import NavBas, { type Onglet } from './NavBas.svelte';
+  import EntetePc from './EntetePc.svelte';
   /** Cadre commun des écrans. Mobile : colonne de 390 à 520 px ; PC (≥ 900 px) : contenu centré jusqu'à 1120 px, navigation en haut.
    *  - `onglet` : écran de l'application (en-tête logo + cloche + avatar, barre d'onglets) ; sans `onglet` : écran « plein » (onboarding, détail) avec bouton retour et titre.
    *  - `face` : jour (recto) ou nuit (verso). `retour` : chemin de repli du bouton retour (par défaut, l'historique). */
@@ -18,8 +19,9 @@
 <div class="nx ecran" data-face={face} class:large class:avecnav={!!onglet}>
   <header class="entete">
     {#if onglet}
-      <a class="marque" href="/" onclick={(e) => { e.preventDefault(); aller('/'); }} aria-label="NexG-TT, accueil"><Logo /></a>
-      <div class="actions">
+      <div class="pc-barre pc"><EntetePc {face} /></div>
+      <a class="marque mob" href="/" onclick={(e) => { e.preventDefault(); aller('/'); }} aria-label="NexG-TT, accueil"><Logo /></a>
+      <div class="actions mob">
         <a class="rond" href="/notifications" aria-label={nonLues ? `Notifications, ${nonLues} non lues` : 'Notifications'} onclick={(e) => { e.preventDefault(); aller('/notifications'); }}><Icone nom="cloche" />{#if nonLues}<span class="pastille" aria-hidden="true"></span>{/if}</a>
         <a class="rond av" href="/compte" aria-label="Mon compte" onclick={(e) => { e.preventDefault(); aller('/compte'); }}>{initiales || '·'}</a>
       </div>
@@ -32,14 +34,14 @@
   </header>
   <main id="contenu" class="contenu"><div class="interieur">{#if !onglet && !sansRetour}<button type="button" class="retour-pc" onclick={() => (retour ? aller(retour) : reculer('/'))}><Icone nom="retour" taille={18} />Retour</button>{/if}{#if onglet && titre}<h1 class="sr">{titre}</h1>{/if}{#if sous}<p class="t-sec sous">{sous}</p>{/if}{@render children()}</div></main>
   {#if pied}<div class="pied"><div class="interieur">{@render pied()}</div></div>{/if}
-  {#if onglet}<NavBas actif={onglet} />{/if}
+  {#if onglet}<div class="mob nav-mob"><NavBas actif={onglet} /></div>{/if}
   <footer class="pied-pc"><span class="puce info">Mode démo</span><span class="t-aide">Compagnies (Aérolys, Nordelle), agences, détenteurs, prix et références inventés. Aucun paiement réel. Un droit de voyage est une inscription au registre interne de NexG-TT, pas un placement financier.</span></footer>
 </div>
 
 <style>
   .ecran { min-height: 100dvh; display: grid; grid-template-rows: auto 1fr auto auto; grid-template-areas: 'entete' 'contenu' 'pied' 'nav'; width: min(100%, 520px); margin: 0 auto; position: relative; }
   .entete { grid-area: entete; display: grid; grid-template-columns: 44px 1fr auto; align-items: center; gap: 8px; padding: max(24px, env(safe-area-inset-top)) 12px 8px; }
-  .entete:has(.marque:not(.pc)) { grid-template-columns: 1fr auto; padding: max(24px, env(safe-area-inset-top)) 20px 8px; }
+  .entete:has(.marque.mob) { grid-template-columns: 1fr auto; padding: max(24px, env(safe-area-inset-top)) 20px 8px; }
   .titre { text-align: center; display: flex; flex-direction: column; } .t-ecran-c { font: 600 20px/24px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; margin: 0; }
   .actions { display: flex; gap: 8px; align-items: center; } .vide { width: 44px; height: 44px; }
   .rond { position: relative; width: 44px; height: 44px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); display: grid; place-items: center; cursor: pointer; text-decoration: none; }
@@ -49,18 +51,17 @@
   .contenu { grid-area: contenu; min-height: 0; padding: 8px 20px 24px; } .interieur { display: flex; flex-direction: column; gap: 20px; } .sous { margin-top: -8px; }
   .avecnav .pied { bottom: calc(56px + env(safe-area-inset-bottom)); } /* une barre d'action au-dessus de la barre d'onglets, jamais superposée */
   .pied { grid-area: pied; position: sticky; bottom: 0; padding: 12px 20px calc(12px + env(safe-area-inset-bottom)); background: linear-gradient(180deg, transparent, var(--bg) 28%); } .pied .interieur { gap: 8px; }
-  .ecran > :global(.nav) { grid-area: nav; position: sticky; bottom: 0; z-index: 20; }
+  .nav-mob { grid-area: nav; position: sticky; bottom: 0; z-index: 20; }
   .pc, .retour-pc, .pied-pc { display: none; }
   .retour-pc { align-self: flex-start; align-items: center; gap: 6px; min-height: 44px; padding: 0; border: 0; background: none; color: var(--accent); font: 700 15px/1 'Barlow', sans-serif; cursor: pointer; }
+  /* PC (≥ 900 px) : écrans « plein » = logo à gauche et liens du haut à droite, lien « Retour » dans le contenu ; écrans d'application = en-tête complet (logo, face, recherche, cloche, avatar) puis navigation de la face. */
   @media (min-width: 900px) {
-    .pc { display: inline-flex; } .retour-pc { display: inline-flex; } .mob { display: none !important; }
-    .entete:not(:has(.mob)):not(:has(.marque:not(.pc))) { grid-template-columns: 1fr auto; }
-    .entete:has(.marque.pc) { grid-template-columns: 1fr auto; border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 8px; }
-    .pied-pc { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; grid-column: 1 / -1; padding: 16px max(32px, calc((100% - 1120px) / 2)) 24px; border-top: 1px solid var(--line); }
-    .ecran { width: 100%; grid-template-rows: auto auto 1fr auto; grid-template-areas: 'entete' 'nav' 'contenu' 'pied' 'bas'; grid-template-rows: auto auto 1fr auto auto; } .pied-pc { grid-area: bas; }
-    .entete { padding: 20px max(32px, calc((100% - 1120px) / 2)) 8px; } .entete:has(.marque) { padding-inline: max(32px, calc((100% - 1120px) / 2)); }
-    .ecran > :global(.nav) { position: static; padding: 0 max(32px, calc((100% - 1120px) / 2)); }
+    .pc { display: inline-flex; } .pc-barre.pc { display: block; } .retour-pc { display: inline-flex; } .mob { display: none !important; }
+    .ecran { width: 100%; grid-template-rows: auto 1fr auto auto; grid-template-areas: 'entete' 'contenu' 'pied' 'bas'; }
+    .entete { grid-template-columns: 1fr auto; padding: 20px max(32px, calc((100% - 1120px) / 2)) 16px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+    .entete:has(.pc-barre) { grid-template-columns: 1fr; padding-bottom: 8px; }
     .contenu, .pied { padding-inline: max(32px, calc((100% - 1120px) / 2)); } .ecran:not(.large) .interieur { max-width: 640px; }
     .pied { position: static; background: none; } .pied .interieur { max-width: 640px; }
+    .pied-pc { display: flex; grid-area: bas; align-items: center; gap: 12px; flex-wrap: wrap; padding: 16px max(32px, calc((100% - 1120px) / 2)) 24px; border-top: 1px solid var(--line); }
   }
 </style>
