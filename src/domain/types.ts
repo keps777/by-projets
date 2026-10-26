@@ -24,6 +24,7 @@ export interface Droit {
   id: string; /** « NXG-7Q2M » */ ref: string; volId: string; detenteurId: string; statut: StatutDroit; prixPaye: number; origine: OrigineDroit;
   chaine: Maillon[]; /** Annonce de revente en cours. */ annonce?: { prix: number; depuis: number }; voyageur?: Voyageur;
   /** Nombre de bagages en soute inclus et siège choisi, une fois nommé. */ bagagesInclus: number; siege?: string; dropId?: string; agenceId?: string;
+  /** Référence de la réservation chez la compagnie (PNR), attribuée à l'achat. */ pnr?: string;
   /** Raison du gel administratif. */ gelRaison?: string;
 }
 export interface OffreAgence { id: string; agenceId: string; volId: string; prix: number; note?: string }

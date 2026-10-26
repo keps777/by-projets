@@ -22,8 +22,33 @@ Face **jour** (recto · Voyager, ciel `#EEF3F8`) pour l'accès, l'accueil et le 
 
 Parcours : `/ouverture` → `/langue` → `/promesses` → `/inscription` → `/code` → `/profil` (2/4) → `/partage` (3/4) → `/bienvenue-notifications` (4/4) → `/pret` → `/` (accueil). `/carte` et `/identite` sont aussi des détours (`?retour=…`) que les achats et rereventes emprunteront. `/connexion` : le retour d'un compte existant (clé d'accès simulée, repli par code).
 
-## Phase 2 — Recto · Voyager (jour)
-Accueil double face (`mobile-3/00`), radar (`mobile-3/01`), billets qui cherchent un voyageur (`mobile-3/02`), rechercher (`03`), résultats neuf/revente/agences (`04`), détail de l'offre (`05`), paiement démo (`06`), confirmation (`07`), vitrine agence (`08`), mon voyage J-63 (`09`), nommer le voyageur (`10`), prêt à voyager (`11`), bagages (`12`–`14`), versions web (`15`–`22`), intentions d'achat (`23`–`27`).
+## Phase 2 — Recto · Voyager (jour) — mobile d'abord
+Planches : `design/mobile-3/NN.dc.html` (texte : `design/digest/m3-NN.txt`) ; rendu : équivalent de `design/maquettes/` (Main, VoyageRadar, Spontane, Recherche, Resultats, Offre, Paiement, Confirmation, Agence, Voyage, Finaliser, Embarquement, Bagages, BagageAcheter, BagageTransfert, + intentions : voir digests m3-23…27).
+
+| Écran | Planche | Route | Agent |
+|---|---|---|---|
+| Accueil double face (Voyager ⇄ Mes actifs) | m3-00 (+ `mobile-2/00` face nuit) | `/` (et `/explorer` sans compte) | accueil |
+| Explorer — radar des destinations | m3-01 | `/radar` | accueil |
+| Ces billets cherchent un voyageur | m3-02 | `/revente` | accueil |
+| Rechercher | m3-03 | `/rechercher` | recherche |
+| Résultats — neuf, revente, agences | m3-04 | `/resultats?de=YUL&vers=CDG&jour=2026-12-18&n=1` | recherche |
+| Détail de l'offre | m3-05 | `/offre/:offreId` (ex. `revente:d-r816`, `neuf:v-ae816`) | recherche |
+| Vitrine agence partenaire | m3-08 | `/agence/:agenceId` | recherche |
+| Paiement (démo) | m3-06 | `/paiement/:offreId` | achat |
+| Confirmation | m3-07 | `/confirmation/:droitId` | achat |
+| Mon voyage — J-63 | m3-09 | `/voyage/:droitId` | achat |
+| Nommer le voyageur (J-1) | m3-10 | `/nommer/:droitId` | achat |
+| Prêt à voyager | m3-11 | `/pret-a-voyager/:droitId` | achat |
+| Mes bagages — étiquettes et franchise | m3-12 | `/bagages` | bagages |
+| Ajouter des bagages (même vol) | m3-13 | `/bagages/ajouter?droit=:droitId` | bagages |
+| Bagage transféré | m3-14 | `/bagages/transfere` | bagages |
+| Publier une intention d'achat | m3-23 | `/intention/nouvelle` | bagages |
+| Réserver les fonds | m3-24 | `/intention/fonds` | bagages |
+| Mes intentions et propositions | m3-25 | `/intentions` | bagages |
+| Une proposition reçue | m3-26 | `/intentions/:id/proposition/:pid` | bagages |
+| Accord conclu | m3-27 | `/intentions/:id/accord` | bagages |
+
+Les planches Web (`m3-15…22`) sont reportées. **Routes du verso réservées** (page « Bientôt » tient la place, voir `apps/_socle/routes.ts`) : `/portefeuille`, `/droit/:id`, `/cours/:id`, `/revendre/:id`, `/transferer/:id`, `/echeances`, `/solde`, `/drops`, `/pass`, `/compte`, `/notifications`, `/alertes`, `/aide`. Les écrans du recto y renvoient par de simples liens.
 
 ## Phase 3 — Verso · Mes actifs (nuit)
 `mobile-2/00`–`37` : accueil Mes actifs, cours et carnet d'ordres, ordre à cours limité, indices, vendre ou attendre, solde et grand livre, portefeuille, droit de voyage, revendre, échéances, import, compte, drops, alertes, Pass, soute, transferts (`21`–`26`), notifications (`27`–`28`), aide (`29`–`30`), administration (`31`–`34`), intentions (`35`–`37`).

@@ -12,6 +12,8 @@ import './ui/nexg.css';
 import { mount } from 'svelte';
 import App from './App.svelte';
 import { demarrer } from './data/store.svelte.ts';
+import { avancerMonde } from './domain/marche.ts';
 
 demarrer();
+avancerMonde(); // à J-1 : annonces retirées et voyageurs nommés par défaut ; après le départ : droits voyagés
 mount(App, { target: document.getElementById('app')! });

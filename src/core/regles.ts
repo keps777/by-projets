@@ -6,6 +6,8 @@ export const TAUX_COMMISSION = 0.125;
 export const TAUX_COMMISSION_PASS = 0.10;
 /** Abonnement Pass NexG, par mois (hypothèse). */
 export const PRIX_PASS = 9.99;
+/** Frais de service à l'achat (hypothèse : offerts dans la démo). */
+export const FRAIS_SERVICE = 0;
 export const FRAIS_TRANSFERT = 0;
 export const FRAIS_VERSEMENT = 0;
 const H = 3_600_000, J = 24 * H;
