@@ -163,9 +163,9 @@ for (const [l, h] of [[390, 844], [390, 700], [390, 640], [360, 640]] as const) 
     await page.setViewportSize({ width: l, height: h }); await ouvrir(page, '/ouverture'); await page.waitForTimeout(2400);
     await expect(page.getByText('Nommez le voyageur avant le départ.')).toBeVisible();
     const boite = async (sel: string) => (await page.locator(sel).first().boundingBox())!;
-    const para = await boite('.titre p'), feuille = await boite('.feuille'), demo = await boite('.demo'), cta = await boite('.commencer');
+    const para = await boite('.titre p'), feuille = await boite('.feuille'), liens = await boite('.liens'), cta = await boite('.commencer');
     expect(para.y + para.height, 'le texte ne passe pas sous la feuille').toBeLessThanOrEqual(feuille.y + 1);
-    expect(demo.y + demo.height, 'la mention de démo est dans l’écran').toBeLessThanOrEqual(h);
+    expect(liens.y + liens.height, 'les liens du bas sont dans l’écran').toBeLessThanOrEqual(h);
     expect(cta.y + cta.height).toBeLessThanOrEqual(h); expect(cta.height).toBeGreaterThanOrEqual(44);
     expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(h + 1);
   });

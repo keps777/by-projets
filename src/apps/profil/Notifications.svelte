@@ -43,7 +43,6 @@
           <span class="col g4 grow"><span class="meta"><b>NEXG·TT</b><span>{e.quand}</span></span><span class="txt">{e.texte}</span></span></div>
       {/each}
     </div>
-    <figcaption>Exemples de notifications · données fictives</figcaption>
   </figure>
 
   <section class="col g8"><h1 class="t-titre">Être prévenu au bon moment</h1><p class="intro">Les drops membres ont peu de places, et nommer le voyageur a une date limite. Une notification vous évite de les manquer.</p></section>
@@ -94,7 +93,6 @@
   .pic { flex: none; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
   .meta { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--ink3); } .meta b { letter-spacing: 0.04em; }
   .txt { font: 700 15px/20px 'Barlow', sans-serif; overflow-wrap: anywhere; }
-  figcaption { font-size: 13px; color: var(--ink3); }
   .t-titre { font: 600 38px/40px 'Barlow Condensed', 'Arial Narrow', sans-serif; text-wrap: balance; overflow-wrap: anywhere; }
   .intro { color: var(--ink2); font-size: 15px; line-height: 22px; }
   .points { display: flex; flex-direction: column; gap: 12px; } .points li { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; line-height: 20px; color: var(--ink2); } .points strong { color: var(--ink); font-weight: 600; }

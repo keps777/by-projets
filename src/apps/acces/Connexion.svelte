@@ -95,7 +95,6 @@
     <span class="col g4"><span id="sec-titre" class="sec-titre">Nous ne vous demanderons jamais votre code par téléphone.</span><span class="t-sec">Ne le communiquez à personne, même à quelqu’un qui se présente comme NexG-TT.</span>
       <span class="hyp"><b class="puce-h">[H]</b>Connexion par clé d’accès : hypothèse à valider avec la double authentification (EF-01). Aucune règle de sécurité n’est décidée ici.</span></span>
   </aside>
-  <p class="proto">Prototype · données fictives</p>
 </Ecran>
 
 <Feuille bind:ouvert={feuille} titre="Clé d’accès" surfermer={annulerCle}>
@@ -126,7 +125,6 @@
   .bouclier { flex: none; width: 36px; height: 36px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; }
   .sec-titre { font-size: 15px; line-height: 20px; font-weight: 700; }
   .hyp { margin-top: 6px; font-size: 12px; line-height: 17px; color: var(--ink3); } .puce-h { display: inline-block; margin-right: 6px; padding: 0 6px; border-radius: 4px; background: var(--signal-soft); color: var(--signal-ink); font-size: 11px; }
-  .proto { margin: -6px 0 0; text-align: center; font-size: 12px; color: var(--ink3); }
   .bandeau { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: 14px; background: var(--surface2); border: 1px solid #7A8597; font-size: 14px; line-height: 20px; color: var(--ink2); flex-wrap: wrap; }
   .bandeau > div { flex: 1 1 200px; display: flex; flex-direction: column; gap: 2px; min-width: 0; } .bandeau b { font-size: 15px; color: var(--ink); }
   .bandeau.err { background: var(--err-soft); border-color: var(--err); } .bandeau.err b, .bandeau.err > :global(svg) { color: var(--err); }

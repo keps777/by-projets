@@ -70,7 +70,6 @@
       {:else}<a class="lien" href="/connexion" onclick={(e) => va(e, '/connexion')}>J’ai déjà un compte</a>{/if}
       <a class="lien" href="/explorer" onclick={(e) => va(e, '/explorer')}>Explorer sans compte</a>
     </div>
-    <p class="demo">Prototype · données fictives · aucun paiement réel</p>
   </section>
 </div>
 {/if}
@@ -105,7 +104,6 @@
   .commencer { display: flex; align-items: center; justify-content: center; gap: 8px; height: clamp(48px, 6.6dvh, 56px); border-radius: 14px; background: var(--signal); color: #0B1B2E; font-weight: 700; font-size: 17px; } .commencer:hover { background: var(--signal-2); color: #0B1B2E; }
   .liens { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 16px; margin-top: -2px; }
   .lien { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 4px; font-size: 16px; font-weight: 600; cursor: pointer; } .inactif { color: var(--ink2); cursor: not-allowed; }
-  .demo { margin-top: -2px; text-align: center; font-size: 12px; line-height: 16px; color: var(--ink3); }
   @keyframes nx-fade { 0% { opacity: 0; transform: translateY(12px); } 100% { opacity: 1; transform: translateY(0); } }
   @keyframes nx-rise { 0% { transform: translateY(100%); } 100% { transform: translateY(0); } }
   @media (max-height: 700px) {
