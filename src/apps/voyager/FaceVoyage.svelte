@@ -11,6 +11,10 @@
   import { dansJours, departDans, heureDe, jourCourt, jourLong, jourSemaine, nb } from './format.ts';
   import { va } from './lien.ts';
   import { reventesDeLaSemaine } from './reventes.ts';
+  import BarreRecherche from '../recherche/BarreRecherche.svelte';
+  import { largeur } from '../recherche/largeur.svelte.ts';
+  import { recentes, rechercheInitiale } from '../recherche/actions.ts';
+  import { ligneRecente } from '../recherche/params.ts';
 
   /** Face Voyager (jour) de l'accueil. Sans compte (`compte` absent) : version réduite, avec l'invitation à créer un compte. */
   let { compte, now }: { compte?: Compte; now: number } = $props();
@@ -19,6 +23,7 @@
   const intention = $derived(compte ? intentionAffichee(app.monde, compte.id) : undefined);
   const reventes = $derived(reventesDeLaSemaine(app.monde, now, compte?.id));
   const nommeA = $derived(pv?.droit.voyageur?.prenom);
+  const recents = $derived(recentes().map((r) => ligneRecente(r, app.monde.aeroports)));
   const ville = (code: string) => app.monde.aeroports.find((a) => a.code === code)?.ville ?? code;
 </script>
 
@@ -28,6 +33,10 @@
     <h1 class="grand">Le monde, à partir de <span class="bleu">Montréal</span></h1>
   </section>
 
+  {#if largeur.pc}<BarreRecherche init={rechercheInitiale(compte?.id)} ou="acc" />{/if}
+
+  <div class="cols" class:sans-droite={!reventes.length}>
+  <div class="gauche">
   {#if !compte}
     <section class="carte invite" aria-labelledby="inv-titre">
       <h2 id="inv-titre" class="t-section">Créez votre compte en une minute</h2>
@@ -49,7 +58,7 @@
       <div class="bas">
         {#if pv.droit.statut === 'nomme'}<span class="statut ok"><Icone nom="ok" taille={16} trait={2} />Voyageur nommé{nommeA ? ` : ${nommeA}` : ''}</span>
         {:else}<span class="statut"><Icone nom="horloge" taille={16} trait={2} />Nommer le voyageur avant le {jourCourt(pv.echeanceMs)}</span>{/if}
-        <span class="rond" aria-hidden="true"><Picto nom="fleche" /></span>
+        <span class="suite"><span class="voir">Voir mon voyage</span><span class="rond" aria-hidden="true"><Picto nom="fleche" /></span></span>
       </div>
     </a>
   {:else if compte}
@@ -88,11 +97,24 @@
     <span class="pied-radar"><span class="grow">10 destinations sur le radar, placées selon la direction et la durée de vol</span><span class="rond noir" aria-hidden="true"><Picto nom="fleche" taille={20} /></span></span>
   </a>
 
+  {#if largeur.pc && recents.length}
+    <section class="recents" aria-labelledby="rc-titre">
+      <h2 id="rc-titre" class="titre-rc">Recherches récentes</h2>
+      <ul class="liste-plain rc-liste">
+        {#each recents as r (r.url)}
+          <li><a class="rc" href={r.url} onclick={(e) => va(e, r.url)}><span class="rc-code">{r.code}</span><span class="texte"><span class="t1">{r.titre}</span><span class="rc-sous">{r.sous}</span></span><Picto nom="chevron" taille={20} /></a></li>
+        {/each}
+      </ul>
+    </section>
+  {/if}
+  </div>
+
   {#if reventes.length}
+    <aside class="droite">
     <section class="reventes" aria-labelledby="lm-titre">
       <div class="col g4"><h2 id="lm-titre" class="titre-section">Ces billets cherchent un voyageur</h2><p class="intro">Leurs détenteurs ne partent plus. Départs cette semaine, en revente.</p></div>
       <div class="defile" role="group" aria-label="Billets en revente cette semaine">
-        {#each reventes as r (r.droitId)}
+        {#each (largeur.pc ? reventes.slice(0, 3) : reventes) as r (r.droitId)}
           <a class="mini" href="/revente" onclick={(e) => va(e, '/revente')}>
             <span class="puce signal">{departDans(r.joursAvantDepart)}</span>
             <span class="col g2"><span class="ville">{r.ville}</span><span class="route">YUL → {r.code} · {jourSemaine(r.departMs)} · {r.heureDepart}</span></span>
@@ -102,9 +124,12 @@
           </a>
         {/each}
       </div>
+      {#if largeur.pc && reventes.length > 3}<a class="toutes" href="/revente" onclick={(e) => va(e, '/revente')}>Voir toutes les reventes de la semaine<Picto nom="fleche" taille={16} /></a>{/if}
       <p class="note">Prix fixés par les détenteurs, dans le plafond de revente (règle à confirmer).</p>
     </section>
+    </aside>
   {/if}
+  </div>
 </main>
 
 <style>
@@ -172,6 +197,31 @@
   .prix-ligne { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; }
   .prix { font: 600 24px/28px 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; } .equiv { font-size: 12px; line-height: 16px; color: var(--ink2); }
   .note { font-size: 13px; line-height: 18px; color: var(--ink3); }
+  .cols, .gauche, .droite { display: contents; } .suite { display: contents; } .voir { display: none; }
+  /* PC (≥ 900 px) : planche WebAccueil. Titre 44 px, barre de recherche, colonne principale (billet horizontal, bandes, radar, recherches récentes) et reventes de la semaine à droite. */
+  @media (min-width: 900px) {
+    .face { gap: 18px; }
+    .hello { flex-direction: column-reverse; } .salut { font-size: 13px; line-height: 18px; font-weight: 600; }
+    .grand { font-size: 44px; line-height: 44px; text-transform: uppercase; letter-spacing: 0.01em; }
+    .cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 340px); gap: 24px; align-items: start; } .cols.sans-droite { grid-template-columns: minmax(0, 1fr); }
+    .gauche { display: flex; flex-direction: column; gap: 18px; min-width: 0; } .droite { display: block; min-width: 0; }
+    .gauche .bande.serre { margin-top: 0; } .ou { display: none; }
+    .billet { display: flex; align-items: stretch; } .haut { flex: 1 1 auto; min-width: 0; padding: 20px 24px; gap: 12px; } .code { font-size: 64px; line-height: 64px; } .heures { font-size: 14px; } .quand { font-size: 15px; }
+    .billet .perfore { flex: none; width: 0; height: auto; margin: 22px 0; border-top: 0; border-left: 2px dashed var(--line); }
+    .billet .perfore::before { left: -12px; top: -33px; } .billet .perfore::after { left: -12px; right: auto; top: auto; bottom: -33px; }
+    .bas { flex: 0 0 270px; flex-direction: column; justify-content: center; align-items: stretch; gap: 16px; padding: 20px 22px; }
+    .statut { flex: none; border-radius: 14px; padding: 8px 12px; align-items: flex-start; } .statut :global(svg) { margin-top: 1px; }
+    .suite { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--accent); font-size: 15px; font-weight: 700; } .voir { display: inline; }
+    .reventes { gap: 12px; } .titre-section { font-size: 28px; line-height: 30px; }
+    .defile { flex-direction: column; overflow: visible; margin: 0; padding: 0; scroll-snap-type: none; gap: 12px; } .mini { width: 100%; gap: 10px; }
+    .ville { font-size: 36px; line-height: 38px; }
+    .toutes { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--accent); font-size: 15px; font-weight: 700; }
+    .recents { display: flex; flex-direction: column; gap: 12px; } .titre-rc { font: 600 24px/28px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; }
+    .rc-liste { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+    .rc { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 8px 14px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); } .rc :global(svg) { flex: none; color: var(--ink2); }
+    .rc-code { flex: none; min-width: 48px; height: 40px; padding: 0 8px; border-radius: 10px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font: 700 18px/1 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.04em; }
+    .rc-sous { font-size: 13px; line-height: 18px; color: var(--ink2); }
+  }
   a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
   @media (prefers-reduced-motion: reduce) { .face { animation: nx-fondu 250ms ease backwards !important; animation-duration: 250ms !important; } .defile { scroll-snap-type: none; } }
   @keyframes nx-fondu { from { opacity: 0; } to { opacity: 1; } }

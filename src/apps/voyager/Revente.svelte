@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { largeur as ecran } from '../recherche/largeur.svelte.ts';
   import Ecran from '../../ui/Ecran.svelte';
   import Icone from '../../ui/Icone.svelte';
   import { app } from '../../data/store.svelte.ts';
@@ -48,7 +49,17 @@
   const signe = (pct: number) => fmtPct(pct);
 </script>
 
-<Ecran titre="Partir ce week-end" face="jour" retour="/">
+{#snippet pied()}
+  {#if courant}
+    <div class="actions">
+      <button type="button" class="passer" onclick={passer} disabled={n < 2}><Picto nom="croix" />Passer</button>
+      <a class="prendre" href="/offre/{courant.offreId}" aria-label="Je le prends : {courant.ville}, {fmt(courant.prix)}" onclick={(e) => va(e, `/offre/${courant.offreId}`)}>Je le prends<Picto nom="fleche" /></a>
+    </div>
+    <p class="nomme"><Picto nom="identite" taille={16} trait={1.75} /><span>Vous serez le voyageur nommé : vos informations seront transmises à la compagnie à la finalisation.</span></p>
+  {/if}
+{/snippet}
+
+<Ecran titre="Partir ce week-end" onglet={ecran.pc ? 'accueil' : undefined} large face="jour" retour="/" pied={ecran.pc ? undefined : pied}>
   {#snippet droite()}<span class="compteur" aria-hidden="true">{n ? `${(idx % n) + 1}/${n}` : ''}</span>{/snippet}
 
   <div class="cadre">
@@ -65,6 +76,7 @@
       <a class="btn" href="/radar" onclick={(e) => va(e, '/radar')}>Explorer le radar</a>
     </section>
   {:else}
+    <div class="pc-cols"><div class="pc-g">
     <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
     <div class="pile" role="region" aria-label="Pile de billets en revente. Flèches gauche et droite : passer ou revenir." tabindex="0" onkeydown={touche} onpointerdown={bas} onpointermove={bouge} onpointerup={lache} onpointercancel={lache}>
       {#each cartes as c, i (c.droitId)}
@@ -93,6 +105,8 @@
     </div>
     <p class="aide">Prix indicatifs · revente entre détenteurs</p>
     <p class="sr" aria-live="polite">{phrase}</p>
+    {#if ecran.pc}<div class="actions-pc">{@render pied()}</div>{/if}
+    </div>
 
     <section class="toutes" aria-labelledby="toutes-titre">
       <div class="toutes-tete"><h3 id="toutes-titre" class="h3">Toutes les reventes de la semaine</h3>
@@ -107,18 +121,10 @@
         {/each}
       </ul>
     </section>
+    </div>
   {/if}
   </div>
 
-  {#snippet pied()}
-    {#if courant}
-      <div class="actions">
-        <button type="button" class="passer" onclick={passer} disabled={n < 2}><Picto nom="croix" />Passer</button>
-        <a class="prendre" href="/offre/{courant.offreId}" aria-label="Je le prends : {courant.ville}, {fmt(courant.prix)}" onclick={(e) => va(e, `/offre/${courant.offreId}`)}>Je le prends<Picto nom="fleche" /></a>
-      </div>
-      <p class="nomme"><Picto nom="identite" taille={16} trait={1.75} /><span>Vous serez le voyageur nommé : vos informations seront transmises à la compagnie à la finalisation.</span></p>
-    {/if}
-  {/snippet}
 </Ecran>
 
 <style>
@@ -182,4 +188,12 @@
   .ligne :global(svg) { color: var(--accent); }
   a:focus-visible, button:focus-visible, select:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
   @media (prefers-reduced-motion: reduce) { .billet { transition: opacity 250ms ease; } .pouls { animation: none; } }
+  .pc-cols, .pc-g, .actions-pc { display: contents; }
+  /* PC (≥ 900 px) : la pile de billets à gauche avec ses actions, toutes les reventes de la semaine à droite. */
+  @media (min-width: 900px) {
+    .cadre { contain: none; gap: 18px; } .h2 { font-size: 44px; line-height: 44px; text-transform: uppercase; }
+    .pc-cols { display: grid; grid-template-columns: minmax(340px, 460px) minmax(0, 1fr); gap: 32px; align-items: start; }
+    .pc-g { display: flex; flex-direction: column; gap: 14px; position: sticky; top: 16px; } .actions-pc { display: flex; flex-direction: column; gap: 8px; }
+    .pile { height: 460px; margin-top: 44px; }
+  }
 </style>
