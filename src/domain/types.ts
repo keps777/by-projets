@@ -28,7 +28,7 @@ export interface Droit {
   /** Raison du gel administratif. */ gelRaison?: string;
 }
 export interface OffreAgence { id: string; agenceId: string; volId: string; prix: number; note?: string }
-export interface Agence { id: string; nom: string; ville: string; permisVerifie: boolean; depuis: number; description: string; offresForfait?: string }
+export interface Agence { id: string; nom: string; ville: string; permisVerifie: boolean; depuis: number; description: string; offresForfait?: string; /** Suspendue par l'administration : ses offres ne sont plus proposées (voir `offresDuVol`). */ suspendue?: boolean }
 
 export interface Drop { id: string; /** N° affiché (128). */ n: number; volId: string; prixMembre: number; prixEquivalent: number; places: number; restantes: number; ouvre: number; fin: number; /** Membres déjà servis. */ servis: string[] }
 export interface DropAVenir { id: string; ouvre: number; zone: Zone | 'Monde'; /** Destination masquée jusqu'à l'ouverture. */ volId?: string; alerteIds: string[] }
