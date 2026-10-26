@@ -1,0 +1,35 @@
+Agence Horizon — NexG-TT
+Agence Horizon — NexG-TT
+Vitrine agence
+AH
+Agence Horizon
+(exemple)
+Agence partenaire vérifiée
+Vendu par Agence Horizon via NexG-TT
+Écrire à un conseiller
+Votre message à Agence Horizon
+Écrivez votre message avant de l'envoyer.
+Ne partagez ni numéro de carte ni mot de passe.
+Annuler
+Envoyer (démo)
+Message envoyé (démo). La réponse arrivera dans vos notifications NexG-TT.
+Offres · 3
+À propos
+{{o.kind}}
+YUL → {{o.code}}
+{{o.city}}
+Depuis Montréal · {{o.detail}}
+{{o.date}}
+Vendu par Agence Horizon
+{{o.price}}
+par personne
+Prix indicatifs. Les billets achetés ici rejoignent votre portefeuille NexG-TT.
+Agence de voyages fictive, créée pour illustrer les vitrines partenaires. Elle publie ses offres sur NexG-TT ; la réservation, le paiement et le portefeuille de billets passent par NexG-TT.
+Spécialités
+Caraïbes, Europe, courts séjours
+Basée à
+Montréal
+Permis d'agent de voyages
+n° 000000 (exemple)
+Ce que « vérifiée » veut dire
+NexG-TT contrôle l'identité de l'entreprise et son permis avant d'ouvrir une vitrine. Processus à définir.

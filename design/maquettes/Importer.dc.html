@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Importer un billet — NexG-TT</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Barlow:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#0D0E11}
+a{color:#FFD23F}a:hover{color:#FFE27A}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #FFD23F;outline-offset:2px}
+input::placeholder{color:#8C93A3}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0D0E11; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="padding: 52px 12px 8px; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 8px">
+<a href="Portefeuille.dc.html" aria-label="Retour" style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 999px; background: #15171C; border: 1px solid #2C303A; display: flex; align-items: center; justify-content: center; color: #F3F4F6; text-decoration: none">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+</a>
+<h1 style="margin: 0; text-align: center; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 20px; letter-spacing: 0.04em; text-transform: uppercase">Importer un billet</h1>
+<span aria-hidden="true" style="width: 44px; height: 44px"></span>
+</header>
+
+<main style="flex: 1; overflow-y: auto; padding: 12px 20px 150px; display: flex; flex-direction: column; gap: 22px">
+
+<section style="display: flex; flex-direction: column; gap: 10px">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 32px; line-height: 32px; letter-spacing: 0.01em; text-transform: uppercase; text-wrap: balance">Confiez un billet acheté ailleurs</h2>
+<p style="margin: 0; font-size: 15px; line-height: 22px; color: #B9BEC9">NexG-TT prend la gestion de la réservation auprès de la compagnie. Le billet rejoint votre portefeuille et peut devenir revendable et transférable, si la compagnie et le tarif le permettent.</p>
+<span style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(98,199,255,0.12); color: #62C7FF; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+Phase pilote · hypothèse
+</span>
+</section>
+
+<ol aria-label="Étapes de l'import" style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+<li aria-current="{{s1.cur}}" style="display: flex; flex-direction: column; gap: 8px">
+<span aria-hidden="true" style="height: 4px; border-radius: 999px; background: {{s1.bar}}"></span>
+<span style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: {{s1.fg}}">
+<span aria-hidden="true" style="width: 22px; height: 22px; flex: none; box-sizing: border-box; border-radius: 999px; background: {{s1.dotBg}}; border: 2px solid {{s1.dotBorder}}; color: {{s1.dotFg}}; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px">
+<sc-if value="{{s1.done}}" hint-placeholder-val="{{ true }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></sc-if>
+<sc-if value="{{s1.todo}}" hint-placeholder-val="{{ false }}">1</sc-if>
+</span>
+Compagnie
+<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0">, {{s1.sr}}</span>
+</span>
+</li>
+<li aria-current="{{s2.cur}}" style="display: flex; flex-direction: column; gap: 8px">
+<span aria-hidden="true" style="height: 4px; border-radius: 999px; background: {{s2.bar}}"></span>
+<span style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: {{s2.fg}}">
+<span aria-hidden="true" style="width: 22px; height: 22px; flex: none; box-sizing: border-box; border-radius: 999px; background: {{s2.dotBg}}; border: 2px solid {{s2.dotBorder}}; color: {{s2.dotFg}}; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px">
+<sc-if value="{{s2.done}}" hint-placeholder-val="{{ true }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></sc-if>
+<sc-if value="{{s2.todo}}" hint-placeholder-val="{{ false }}">2</sc-if>
+</span>
+Référence
+<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0">, {{s2.sr}}</span>
+</span>
+</li>
+<li aria-current="{{s3.cur}}" style="display: flex; flex-direction: column; gap: 8px">
+<span aria-hidden="true" style="height: 4px; border-radius: 999px; background: {{s3.bar}}"></span>
+<span style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: {{s3.fg}}">
+<span aria-hidden="true" style="width: 22px; height: 22px; flex: none; box-sizing: border-box; border-radius: 999px; background: {{s3.dotBg}}; border: 2px solid {{s3.dotBorder}}; color: {{s3.dotFg}}; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px">
+<sc-if value="{{s3.done}}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></sc-if>
+<sc-if value="{{s3.todo}}" hint-placeholder-val="{{ true }}">3</sc-if>
+</span>
+Vérification
+<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0">, {{s3.sr}}</span>
+</span>
+</li>
+</ol>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="cie" style="font-size: 13px; font-weight: 500; color: #B9BEC9">1 · Compagnie</label>
+<span style="position: relative; display: block">
+<select id="cie" value="{{cie}}" onChange="{{ onCie }}" aria-invalid="{{cieInvalid}}" style="appearance: none; -webkit-appearance: none; width: 100%; height: 52px; box-sizing: border-box; padding: 0 40px 0 14px; border-radius: 12px; background: #1D2027; border: 1px solid {{cieBorder}}; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; font-size: 16px; cursor: pointer">
+<option value="">Choisir une compagnie</option>
+<option value="aerolys">Aérolys</option>
+<option value="nordelle">Nordelle</option>
+<option value="autre">Autre compagnie</option>
+</select>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B9BEC9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 17px; pointer-events: none"><path d="m5 9 7 7 7-7"></path></svg>
+</span>
+<sc-if value="{{cieError}}" hint-placeholder-val="{{ false }}">
+<span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #FF7B7B"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>Choisissez la compagnie qui a émis le billet.</span>
+</sc-if>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="pnr" style="font-size: 13px; font-weight: 500; color: #B9BEC9">2 · Référence de réservation (6 caractères)</label>
+<input id="pnr" type="text" value="{{pnr}}" onChange="{{ onPnr }}" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Q7RT2M" aria-describedby="pnr-help" aria-invalid="{{pnrInvalid}}" style="height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #1D2027; border: 1px solid {{pnrBorder}}; color: #F3F4F6; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 18px; letter-spacing: 0.18em; text-transform: uppercase">
+<span id="pnr-help" style="font-size: 13px; color: #8C93A3">Sur la confirmation de la compagnie. Exemple : Q7RT2M</span>
+<sc-if value="{{pnrError}}" hint-placeholder-val="{{ false }}">
+<span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #FF7B7B"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>La référence compte 6 lettres ou chiffres.</span>
+</sc-if>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="nomf" style="font-size: 13px; font-weight: 500; color: #B9BEC9">Nom de famille du passager</label>
+<input id="nomf" type="text" value="{{nom}}" onChange="{{ onNom }}" autocomplete="family-name" placeholder="EXEMPLE" aria-invalid="{{nomInvalid}}" style="height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #1D2027; border: 1px solid {{nomBorder}}; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; font-size: 16px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase">
+<sc-if value="{{nomError}}" hint-placeholder-val="{{ false }}">
+<span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #FF7B7B"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>Indiquez le nom tel qu'il figure sur la réservation.</span>
+</sc-if>
+</div>
+</div>
+
+<section aria-labelledby="ver-h" style="display: flex; flex-direction: column; gap: 12px">
+<h2 id="ver-h" style="margin: 0; font-size: 13px; font-weight: 500; color: #B9BEC9">3 · Vérification</h2>
+
+<sc-if value="{{notVerified}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<button type="button" onClick="{{ verify }}" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #FFD23F; color: #0D0E11; font-family: 'Barlow', system-ui, sans-serif; font-weight: 700; font-size: 16px; border: 0; cursor: pointer">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"></path></svg>
+Vérifier l'éligibilité
+</button>
+<p style="margin: 0; text-align: center; font-size: 12px; color: #8C93A3">Démo : aucune donnée n'est transmise à la compagnie.</p>
+</div>
+</sc-if>
+
+<sc-if value="{{isEligible}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: #15171C; border: 1px solid rgba(124,227,181,0.45)">
+<div style="display: flex; align-items: flex-start; gap: 12px">
+<span style="width: 40px; height: 40px; flex: none; border-radius: 12px; background: rgba(124,227,181,0.12); color: #7CE3B5; display: flex; align-items: center; justify-content: center">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 17px; font-weight: 700; color: #7CE3B5">Éligible sous réserve d'accord</span>
+<span style="font-size: 14px; color: #B9BEC9">Aérolys, partenaire pilote (hypothèse)</span>
+</span>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px; border-radius: 12px; background: #FFFFFF; color: #121418">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #555C6B">Réservation</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; letter-spacing: 0.08em">{{pnr}} · {{nomUp}}</span>
+</div>
+<h3 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Ce qui change</h3>
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px">
+<li style="display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 20px; color: #B9BEC9">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F3F4F6" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><path d="M4 9l1.5-5h13L20 9M4 9v11h16V9M4 9h16M9 20v-6h6v6"></path></svg>
+<span><strong style="color: #F3F4F6">NexG-TT devient gestionnaire de la réservation</strong> auprès d'Aérolys.</span>
+</li>
+<li style="display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 20px; color: #B9BEC9">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F3F4F6" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg>
+<span><strong style="color: #F3F4F6">Vous restez détenteur</strong> : le billet s'inscrit au registre NexG-TT, dans votre portefeuille.</span>
+</li>
+<li style="display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 20px; color: #B9BEC9">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F3F4F6" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><path d="M3 12V4h8l10 10-8 8z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg>
+<span><strong style="color: #F3F4F6">Frais d'import</strong> : montant à définir (hypothèse).</span>
+</li>
+</ul>
+</div>
+</sc-if>
+
+<sc-if value="{{isNotPartner}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; align-items: flex-start; gap: 12px; padding: 18px; border-radius: 20px; background: #15171C; border: 1px solid rgba(98,199,255,0.4)">
+<span style="width: 40px; height: 40px; flex: none; border-radius: 12px; background: rgba(98,199,255,0.12); color: #62C7FF; display: flex; align-items: center; justify-content: center">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16v-5a6 6 0 1 1 12 0v5l2 2H4z"></path><path d="M10 21h4"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 17px; font-weight: 700; color: #62C7FF">Compagnie pas encore partenaire</span>
+<span style="font-size: 14px; line-height: 20px; color: #B9BEC9">On vous prévient dès que l'import est possible. Votre billet reste géré par la compagnie, sans changement.</span>
+</span>
+</div>
+</sc-if>
+
+<sc-if value="{{isVerified}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 8px; padding-top: 4px">
+<p style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8C93A3">Autres issues possibles</p>
+<sc-if value="{{isEligible}}" hint-placeholder-val="{{ false }}">
+<p style="margin: 0; display: flex; align-items: flex-start; gap: 8px; font-size: 13px; line-height: 18px; color: #B9BEC9">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8C93A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><path d="M6 16v-5a6 6 0 1 1 12 0v5l2 2H4z"></path><path d="M10 21h4"></path></svg>
+<span><strong style="color: #F3F4F6; font-weight: 600">Compagnie pas encore partenaire</strong> — on vous prévient.</span>
+</p>
+</sc-if>
+<sc-if value="{{isNotPartner}}" hint-placeholder-val="{{ false }}">
+<p style="margin: 0; display: flex; align-items: flex-start; gap: 8px; font-size: 13px; line-height: 18px; color: #B9BEC9">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8C93A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><path d="m5 12 5 5 9-10"></path></svg>
+<span><strong style="color: #F3F4F6; font-weight: 600">Éligible sous réserve d'accord</strong> — avec une compagnie partenaire pilote.</span>
+</p>
+</sc-if>
+<p style="margin: 0; display: flex; align-items: flex-start; gap: 8px; font-size: 13px; line-height: 18px; color: #B9BEC9">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8C93A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+<span><strong style="color: #F3F4F6; font-weight: 600">Tarif non transférable</strong> — certaines conditions tarifaires interdisent toute cession ; le billet reste chez la compagnie.</span>
+</p>
+<button type="button" onClick="{{ edit }}" style="align-self: flex-start; min-height: 44px; padding: 0; border: 0; background: transparent; color: #FFD23F; font-family: 'Barlow', system-ui, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer">Modifier la saisie</button>
+</div>
+</sc-if>
+</section>
+
+<p style="margin: 0; text-align: center; font-size: 12px; line-height: 17px; color: #8C93A3">Un droit de voyage n'est pas un placement financier.</p>
+
+</main>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 20px 28px; background: #0D0E11; border-top: 1px solid #2C303A; display: flex; flex-direction: column; gap: 8px">
+<sc-if value="{{isEligible}}" hint-placeholder-val="{{ false }}">
+<a href="Portefeuille.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #FFD23F; color: #0D0E11; font-weight: 700; font-size: 16px; text-decoration: none; border: 0">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"></path></svg>
+Confier mon billet à NexG-TT
+</a>
+<p style="margin: 0; text-align: center; font-size: 12px; color: #8C93A3">Démo : aucun billet réel n'est transféré.</p>
+</sc-if>
+<sc-if value="{{notEligible}}" hint-placeholder-val="{{ true }}">
+<button type="button" aria-disabled="true" aria-describedby="hint-imp" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #1D2027; color: #8C93A3; font-family: 'Barlow', system-ui, sans-serif; font-weight: 700; font-size: 16px; border: 1px solid #2C303A; cursor: not-allowed">Confier mon billet à NexG-TT</button>
+<p id="hint-imp" style="margin: 0; text-align: center; font-size: 12px; color: #8C93A3">
+<sc-if value="{{notVerified}}" hint-placeholder-val="{{ true }}">Vérifiez d'abord l'éligibilité (étape 3).</sc-if>
+<sc-if value="{{isNotPartner}}" hint-placeholder-val="{{ false }}">Import impossible pour l'instant avec cette compagnie.</sc-if>
+</p>
+</sc-if>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const cie = s.cie ?? 'aerolys';
+    const pnr = s.pnr ?? 'Q7RT2M';
+    const nom = s.nom ?? 'EXEMPLE';
+    const tried = s.tried ?? false;
+    const verified = s.verified ?? false;
+
+    const cieOk = cie !== '';
+    const pnrOk = /^[A-Z0-9]{6}$/.test(pnr);
+    const nomOk = String(nom).trim() !== '';
+    const eligible = verified ? cie === 'aerolys' : false;
+    const notPartner = verified ? cie !== 'aerolys' : false;
+
+    const d1 = cieOk;
+    const d2 = pnrOk ? nomOk : false;
+    const d3 = verified;
+    const current = !d1 ? 1 : (!d2 ? 2 : (!d3 ? 3 : 0));
+    const step = (n, done) => {
+      const st = done ? 'done' : (current === n ? 'cur' : 'todo');
+      return {
+        done: done,
+        todo: !done,
+        cur: st === 'cur' ? 'step' : 'false',
+        bar: st === 'done' ? '#7CE3B5' : (st === 'cur' ? '#FFD23F' : '#2C303A'),
+        fg: st === 'done' ? '#F3F4F6' : (st === 'cur' ? '#FFD23F' : '#8C93A3'),
+        dotBg: st === 'done' ? '#7CE3B5' : 'transparent',
+        dotFg: st === 'done' ? '#0D0E11' : (st === 'cur' ? '#FFD23F' : '#8C93A3'),
+        dotBorder: st === 'done' ? '#7CE3B5' : (st === 'cur' ? '#FFD23F' : '#3A3F4B'),
+        sr: st === 'done' ? 'terminée' : (st === 'cur' ? 'en cours' : 'à venir')
+      };
+    };
+
+    const cieError = tried ? !cieOk : false;
+    const pnrError = tried ? !pnrOk : false;
+    const nomError = tried ? !nomOk : false;
+
+    return {
+      cie: cie,
+      pnr: pnr,
+      nom: nom,
+      nomUp: String(nom).toUpperCase(),
+      s1: step(1, d1),
+      s2: step(2, d2),
+      s3: step(3, d3),
+      cieError: cieError,
+      pnrError: pnrError,
+      nomError: nomError,
+      cieInvalid: cieError ? 'true' : 'false',
+      pnrInvalid: pnrError ? 'true' : 'false',
+      nomInvalid: nomError ? 'true' : 'false',
+      cieBorder: cieError ? '#FF7B7B' : '#6B7282',
+      pnrBorder: pnrError ? '#FF7B7B' : '#6B7282',
+      nomBorder: nomError ? '#FF7B7B' : '#6B7282',
+      isVerified: verified,
+      notVerified: !verified,
+      isEligible: eligible,
+      notEligible: !eligible,
+      isNotPartner: notPartner,
+      onCie: (e) => this.setState({ cie: e.target.value, verified: false }),
+      onPnr: (e) => this.setState({ pnr: String(e.target.value).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6), verified: false }),
+      onNom: (e) => this.setState({ nom: e.target.value, verified: false }),
+      verify: () => {
+        if (!cieOk || !pnrOk || !nomOk) {
+          this.setState({ tried: true, verified: false });
+          return;
+        }
+        this.setState({ tried: true, verified: true });
+      },
+      edit: () => this.setState({ verified: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

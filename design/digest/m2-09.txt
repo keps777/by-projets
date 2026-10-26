@@ -1,0 +1,60 @@
+Échéances — NexG-TT
+Échéances — NexG-TT
+Mes actifs · Échéances
+Calendrier des échéances
+Chaque droit de voyage doit être finalisé, voyageur nommé, au plus tard 24 h avant le départ. Passé ce délai, plus aucune revente ni aucun transfert.
+Prochaine échéance
+Détenu
+YUL → CDG
+Finaliser avant le
+dim. 13 déc. 2026 · 18:05
+Départ lun. 14 déc. · Aérolys · vol 812
+{{d0}}
+{{d1}}
+Jours
+{{h0}}
+{{h1}}
+H
+{{m0}}
+{{m1}}
+Min
+{{s0}}
+{{s1}}
+S
+Nommer le voyageur
+Ou le revendre avant l'échéance
+Rappels
+Une notification avant chaque échéance, pour tous vos droits de voyage.
+J-30
+{{st30}}
+J-7
+{{st7}}
+J-2
+{{st2}}
+{{nextRappel}}
+Échelle des échéances
+Oct. 2026 → mai 2027 · 4 droits de voyage
+Proche · ≤ 90 j
+Moyenne · 91–120 j
+Lointaine · > 120 j
+{{m.label}}
+{{m.year}}
+{{m.summary}}
+{{e.day}}
+Aujourd'hui · lun. 12 oct.
+{{e.day}}
+{{e.text}}
+{{e.day}}
+{{e.route}}
+{{e.city}}
+Échéance
+{{e.when}}
+{{e.status}}
+{{e.urg}}
+Règle retenue
+Si personne n'est nommé avant l'échéance
+Le détenteur est nommé voyageur par défaut à l'échéance. Le droit reste utilisable : c'est vous qui voyagez.
+Après l'échéance, plus aucune revente ni aucun transfert. Solutions de repli à l'étude, selon les accords avec les transporteurs :
+rachat par NexG-TT à un prix annoncé d'avance ;
+expiration du droit, avec ou sans remboursement partiel.
+Droits, dates et heures fictifs de démonstration. Échéance = 24 h avant le départ. Pour YUL → HAV et YUL → PPT, l'heure dépend de celle du vol.

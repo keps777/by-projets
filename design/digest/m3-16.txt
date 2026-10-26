@@ -1,0 +1,77 @@
+Web — Rechercher
+Rechercher (web) — NexG-TT
+NEXG
+·TT
+Voyager
+Mes actifs
+Rechercher une ville, un code d’aéroport ou une référence
+AT
+Accueil
+Rechercher
+Mon voyage
+Agences
+Recherche en cours…
+Hors ligne
+Vous pouvez préparer votre recherche : le bouton Rechercher se réactive au retour du réseau.
+Rechercher
+Voyager · neuf, revente, agences et drops
+Comparez, pour un même trajet, les billets neufs des compagnies, les reventes entre détenteurs et les offres d’agences partenaires.
+Votre trajet
+Corrigez 2 champs avant de lancer la recherche
+Destination manquante et date de départ passée.
+Aller simple
+Aller-retour
+Voyageurs
+{{paxLabel}}
+Départ
+{{fromCode}}
+Arrivée
+{{toCode}}
+Indiquez une destination.
+Date de départ
+±3 jours
+La date de départ est passée : choisissez une date à partir du lun. 12 oct. 2026.
+Date de retour
+Choisir la date de retour
+Sources
+Billets neufs
+Compagnies
+Revente
+Marché NexG
+Agences
+Partenaires
+Drops
+Membres
+Seulement les billets revendables
+Revendables jusqu’à 24 h avant le départ
+Prix indicatifs, par voyageur. Les prix des drops ne sont visibles qu’aux membres.
+Rechercher
+Recherche en cours…
+Rechercher
+Recherches récentes
+PUJ
+Montréal → Punta Cana
+févr. 2027 · 2 voyageurs
+PPT
+Montréal → Papeete
+mai 2027 · 1 voyageur · ±3 jours
+PUJ
+Montréal → Punta Cana
+févr. 2027 · 2 voyageurs
+PPT
+Montréal → Papeete
+mai 2027 · 1 voyageur · ±3 jours
+Ouvrir une recherche demande le réseau.
+Aucune recherche récente
+Vos dernières recherches apparaîtront ici.
+Un billet revendable garde sa valeur si vos plans changent.
+Le prix obtenu à la revente dépend du marché.
+Prototype — données fictives
+Compagnies (Aérolys, Nordelle), agence, détenteurs, prix et références inventés. Aucun paiement réel.
+Un droit de voyage est une inscription au registre interne de NexG-TT, pas un placement financier.
+Aperçu des états
+Normal
+Chargement
+Vide
+Erreur
+Hors ligne

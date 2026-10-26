@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<title>Réserver les fonds (démo) — NexG-TT</title>
+<script src="26e0d5ff-760a-4a35-8506-5379ac85c505"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+<style>
+body{margin:0;background:#EEF3F8}
+a{color:#1A64C8}a:hover{color:#124C9C}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #1A64C8;outline-offset:2px}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #EEF3F8; color: #0B1B2E; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="padding: 52px 12px 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<a href="IntentionCreer.dc.html" aria-label="Retour" style="flex: none; width: 44px; height: 44px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; border: 1px solid #D3DCE6; display: flex; align-items: center; justify-content: center; color: #0B1B2E; text-decoration: none">
+<svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+</a>
+<h1 style="margin: 0; flex: 1; text-align: center; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 20px; letter-spacing: 0.04em; text-transform: uppercase">Réserver les fonds</h1>
+<span aria-hidden="true" style="flex: none; width: 44px; height: 44px"></span>
+</header>
+
+<div role="note" style="flex: none; margin: 0 20px 8px; display: flex; align-items: center; gap: 8px; background: rgba(26,100,200,0.10); border: 1px solid rgba(26,100,200,0.4); color: #124C9C; border-radius: 12px; padding: 10px 12px; font-size: 13px; font-weight: 600">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+MODE DÉMO — aucun paiement réel
+</div>
+
+<main style="flex: 1; overflow-y: auto; padding: 8px 20px 124px; display: flex; flex-direction: column; gap: 20px">
+
+<section aria-label="Fonds réservés" style="flex: none; position: relative; display: flex; flex-direction: column; gap: 14px; padding: 20px 18px 18px; border-radius: 20px; background: #FFFFFF; box-shadow: 0 1px 0 #D3DCE6, 0 12px 32px rgba(11,27,46,0.10)">
+<div style="display: flex; align-items: center; gap: 14px">
+<span aria-hidden="true" style="flex: none; width: 56px; height: 56px; border-radius: 16px; background: rgba(26,100,200,0.10); color: #1A64C8; display: flex; align-items: center; justify-content: center">
+<svg width="30" height="30" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path><path d="M12 15v2"></path></svg>
+</span>
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Montant réservé</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 40px; line-height: 44px; font-variant-numeric: tabular-nums">1 300 $</span>
+</div>
+</div>
+<p style="margin: 0; font-size: 15px; line-height: 22px"><strong style="font-weight: 600">Non débité.</strong> <span style="color: #3E4F66">Libéré automatiquement le 21 nov. 2026 si aucun accord.</span></p>
+<ol aria-label="Ce qui peut arriver" style="list-style: none; margin: 0; padding: 12px 0 0; border-top: 1px dashed #B9C5D3; display: grid; grid-template-columns: 1fr 1fr; gap: 10px">
+<li style="display: flex; flex-direction: column; gap: 6px; padding: 12px; border-radius: 14px; background: rgba(11,122,85,0.10)">
+<span style="display: flex; align-items: center; gap: 6px; color: #0B7A55; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>
+Accord
+</span>
+<span style="font-size: 13px; line-height: 18px; color: #0B1B2E">Le prix convenu est pris sur la réserve. Le reste est libéré.</span>
+</li>
+<li style="display: flex; flex-direction: column; gap: 6px; padding: 12px; border-radius: 14px; background: #EEF3F8">
+<span style="display: flex; align-items: center; gap: 6px; color: #3E4F66; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+Expiration
+</span>
+<span style="font-size: 13px; line-height: 18px; color: #0B1B2E">Tout est libéré le 21 nov. Rien n'est prélevé, aucun frais.</span>
+</li>
+</ol>
+</section>
+
+<fieldset style="flex: none; margin: 0; padding: 0; border: 0; min-width: 0">
+<legend style="padding: 0; margin: 0 0 10px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Source des fonds</legend>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label for="src-card" style="display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 14px; box-sizing: border-box; border-radius: 14px; background: #FFFFFF; border: {{cardBorder}}; cursor: pointer">
+<input id="src-card" type="radio" name="src" value="card" checked="{{isCard}}" sc-camel-on-click="{{chooseCard}}" style="width: 20px; height: 20px; margin: 0; accent-color: #1A64C8; flex: none; cursor: pointer">
+<svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; color: #3E4F66"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18M7 15h4"></path></svg>
+<span style="display: flex; flex-direction: column; gap: 1px; min-width: 0">
+<span style="font-size: 15px; font-weight: 600">Carte <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums">•••• 4242</span> (test)</span>
+<span style="font-size: 13px; color: #5E6E84">Pré-autorisation, non débitée. Durée limitée selon l'émetteur.</span>
+</span>
+</label>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 14px; box-sizing: border-box; border-radius: 14px; background: #E3EAF2; border: 1px solid #D3DCE6">
+<input id="src-balance" type="radio" name="src" value="balance" disabled="true" aria-disabled="true" aria-describedby="src-balance-why" style="width: 20px; height: 20px; margin: 0; accent-color: #1A64C8; flex: none">
+<svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; color: #5E6E84"><path d="M3 7a2 2 0 0 1 2-2h12v4"></path><rect x="3" y="9" width="18" height="11" rx="2"></rect><path d="M16 14.5h1.5"></path></svg>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<label for="src-balance" style="font-size: 15px; font-weight: 600; color: #3E4F66">Solde NexG · <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums">1 152 $</span> disponibles</label>
+<span id="src-balance-why" style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #3E4F66">
+<svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+Insuffisant : il manque <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-variant-numeric: tabular-nums">148 $</span>
+</span>
+</span>
+</div>
+<label for="src-wallet" style="display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 14px; box-sizing: border-box; border-radius: 14px; background: #FFFFFF; border: {{walletBorder}}; cursor: pointer">
+<input id="src-wallet" type="radio" name="src" value="wallet" checked="{{isWallet}}" sc-camel-on-click="{{chooseWallet}}" style="width: 20px; height: 20px; margin: 0; accent-color: #1A64C8; flex: none; cursor: pointer">
+<svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; color: #3E4F66"><rect x="7" y="2" width="10" height="20" rx="2"></rect><path d="M11 18h2"></path></svg>
+<span style="display: flex; flex-direction: column; gap: 1px; min-width: 0">
+<span style="font-size: 15px; font-weight: 600">Wallet du téléphone</span>
+<span style="font-size: 13px; color: #5E6E84">Une carte déjà enregistrée dans le wallet de votre téléphone</span>
+</span>
+</label>
+</div>
+<p style="margin: 10px 0 0; font-size: 13px; line-height: 18px; color: #5E6E84">{{sourceHelp}}</p>
+</fieldset>
+
+<section aria-labelledby="recap-title" style="flex: none; display: flex; flex-direction: column; gap: 10px">
+<h2 id="recap-title" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Votre intention</h2>
+<div style="border-radius: 20px; background: #FFFFFF; border: 1px solid #D3DCE6; overflow: hidden">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #D3DCE6">
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 28px; line-height: 30px; letter-spacing: 0.02em">YUL → CDG</span>
+<span style="font-size: 13px; color: #3E4F66">Montréal → Paris · aller simple · 1 voyageur</span>
+</div>
+<span style="flex: none; display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(26,100,200,0.10); color: #1A64C8; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">Intention</span>
+</div>
+<dl style="margin: 0; padding: 14px 18px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<dt style="font-size: 15px; color: #3E4F66">Fenêtre de départ</dt>
+<dd style="margin: 0; font-size: 15px; font-weight: 600">Du 15 au 20 déc. · flexible</dd>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<dt style="font-size: 15px; color: #3E4F66">Prix maximum</dt>
+<dd style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums">1 300 $</dd>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<dt style="font-size: 15px; color: #3E4F66">Validité</dt>
+<dd style="margin: 0; font-size: 15px; font-weight: 600">30 jours · jusqu'au 21 nov.</dd>
+</div>
+<div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+<dt style="font-size: 15px; color: #3E4F66; flex: none">Options</dt>
+<dd style="margin: 0; font-size: 14px; line-height: 20px; text-align: right; color: #0B1B2E">Accord automatique ≤ 1 300 $ · propositions au-dessus acceptées · anonyme « A. »</dd>
+</div>
+</dl>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px 16px; border-top: 1px dashed #B9C5D3">
+<span style="font-size: 16px; font-weight: 700">Réservé aujourd'hui</span>
+<span style="display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 26px; line-height: 30px; font-variant-numeric: tabular-nums">1 300 $</span>
+<span style="font-size: 13px; font-weight: 600; color: #0B7A55">Débité aujourd'hui : 0 $</span>
+</span>
+</div>
+</div>
+</section>
+
+<div style="flex: none; display: flex; flex-direction: column; gap: 8px">
+<label for="consent" style="display: flex; align-items: flex-start; gap: 12px; min-height: 44px; padding: 14px; box-sizing: border-box; border-radius: 14px; background: #FFFFFF; border: {{consentBorder}}; cursor: pointer">
+<input id="consent" type="checkbox" checked="{{consent}}" sc-camel-on-click="{{toggleConsent}}" aria-describedby="consent-help" style="width: 22px; height: 22px; margin: 1px 0 0; accent-color: #1A64C8; flex: none; cursor: pointer">
+<span style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 15px; font-weight: 600; line-height: 20px">Je comprends que les fonds sont réservés jusqu'à l'accord ou l'expiration</span>
+<span id="consent-help" style="font-size: 13px; line-height: 18px; color: #3E4F66">Vous pouvez retirer votre intention à tout moment avant un accord : les fonds sont alors libérés.</span>
+</span>
+</label>
+<sc-if value="{{consentError}}" hint-placeholder-val="{{ false }}">
+<p role="alert" style="margin: 0; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #C2362F">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+Cochez cette case pour réserver les fonds.
+</p>
+</sc-if>
+</div>
+
+<p style="flex: none; margin: 0; display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 18px; color: #3E4F66">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="#0B7A55" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"></path></svg>
+Réservation traitée par un prestataire de paiement certifié. NexG-TT ne conserve pas votre carte. <span style="display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 999px; background: #E3EAF2; color: #3E4F66; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; vertical-align: middle">Hypothèse</span> cadre de la réservation de fonds à valider.
+</p>
+
+</main>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 20px 28px; background: rgba(255,255,255,0.96); border-top: 1px solid #D3DCE6">
+<a href="IntentionSuivi.dc.html" sc-camel-on-click="{{confirm}}" aria-describedby="cta-help" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #FFD23F; color: #0B1B2E; font-weight: 700; font-size: 16px; text-decoration: none; border: 0">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+Confirmer la réservation (démo)
+</a>
+<p id="cta-help" style="margin: 8px 0 0; text-align: center; font-size: 12px; color: #5E6E84">Aucun débit tant qu'aucun billet n'est accepté.</p>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844}}">
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const set = (patch) => this.setState(Object.assign({}, this.state || {}, patch));
+    const source = s.source ?? 'card';
+    const isCard = source === 'card';
+    const isWallet = source === 'wallet';
+    const consent = s.consent ?? false;
+    const consentError = s.consentError ?? false;
+    return {
+      isCard,
+      isWallet,
+      cardBorder: isCard ? '2px solid #1A64C8' : '1px solid #D3DCE6',
+      walletBorder: isWallet ? '2px solid #1A64C8' : '1px solid #D3DCE6',
+      chooseCard: () => set({ source: 'card' }),
+      chooseWallet: () => set({ source: 'wallet' }),
+      sourceHelp: isCard
+        ? 'Une pré-autorisation de 1 300 $ apparaît sur votre carte sans être débitée. Si elle arrive à échéance avant la fin de votre intention, nous vous demanderons de la renouveler.'
+        : 'Vous confirmerez la réservation sur votre appareil. En démo, aucune fenêtre réelle ne s’ouvre.',
+      consent,
+      consentError,
+      consentBorder: consentError ? '2px solid #C2362F' : '1px solid #D3DCE6',
+      toggleConsent: () => set({ consent: !consent, consentError: false }),
+      confirm: (e) => {
+        if (!consent) {
+          if (e && typeof e.preventDefault === 'function') e.preventDefault();
+          set({ consentError: true });
+        }
+      }
+    };
+  }
+}
+</script>
+
+
+</body></html>

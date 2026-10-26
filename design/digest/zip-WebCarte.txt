@@ -1,0 +1,49 @@
+Carte facultative (web) — NexG-TT
+Carte facultative (web) — NexG-TT
+NEXG
+·TT
+MODE DÉMO — aucun paiement réel
+Hors ligne
+Ajouter une carte demande le réseau (prestataire de paiement) : la carte de test ne peut pas être enregistrée pour l’instant. Rien n’a été envoyé.
+La carte de test n’a pas été enregistrée
+Le prestataire de démonstration n’a pas répondu. Aucun montant n’a été débité et vos informations sont conservées : réessayez.
+Réessayer
+Retour
+Facultatif
+Ajouter une carte ?
+Pas obligatoire.
+CARTE DE TEST
+•••• •••• •••• 4242
+ALEX T.
+12/28
+Vous ne payez rien maintenant.
+Une carte n’est demandée qu’au moment d’acheter. Vous pourrez aussi l’ajouter plus tard dans Compte › Paiement.
+Ajouter une carte
+Numéro de carte (carte de test)
+Indiquez le numéro de la carte de test.
+Expiration (MM/AA)
+Indiquez une date d’expiration valide (MM/AA).
+Code de sécurité
+Indiquez le code de sécurité.
+Nom sur la carte
+Indiquez le nom inscrit sur la carte.
+Paiement traité par un prestataire certifié ; NexG-TT ne conserve pas votre numéro de carte. Rien n’est débité à l’enregistrement.
+Enregistrer la carte de test
+Enregistrement de la carte de test…
+Annuler
+Carte de test enregistrée. Aucun montant débité.
+Retirer
+Ajouter une carte maintenant
+Ajouter une carte maintenant
+Plus tard
+Continuer
+Prototype — données fictives
+Compagnies (Aérolys, Nordelle), agence, détenteurs, prix et références inventés. Aucun paiement réel.
+Un droit de voyage est une inscription au registre interne de NexG-TT, pas un placement financier.
+Aperçu des états
+Aucune carte
+Formulaire
+Enregistrée
+Chargement
+Erreur
+Hors ligne

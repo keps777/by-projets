@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<title>Mes intentions — NexG-TT</title>
+<script src="479051ef-f599-44b9-83ed-09f2bf482d0c"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+<style>
+body{margin:0;background:#EEF3F8}
+a{color:#1A64C8}a:hover{color:#124C9C}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #1A64C8;outline-offset:2px}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@media (prefers-reduced-motion: reduce){[data-pulse]{animation:none!important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #EEF3F8; color: #0B1B2E; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="padding: 52px 12px 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<a href="Main.dc.html" aria-label="Retour" style="flex: none; width: 44px; height: 44px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; border: 1px solid #D3DCE6; display: flex; align-items: center; justify-content: center; color: #0B1B2E; text-decoration: none">
+<svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+</a>
+<h1 style="margin: 0; flex: 1; text-align: center; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 20px; letter-spacing: 0.04em; text-transform: uppercase">Mes intentions</h1>
+<a href="IntentionCreer.dc.html" aria-label="Nouvelle intention" style="flex: none; width: 44px; height: 44px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; border: 1px solid #D3DCE6; display: flex; align-items: center; justify-content: center; color: #0B1B2E; text-decoration: none">
+<svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+</a>
+</header>
+
+<div role="tablist" aria-label="Intentions par état" style="flex: none; margin: 4px 20px 0; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; padding: 4px; border-radius: 14px; background: #E3EAF2">
+<button type="button" role="tab" id="tab-active" aria-selected="{{tActive.sel}}" aria-controls="panel-active" sc-camel-on-click="{{showActive}}" style="height: 44px; border: 0; border-radius: 10px; background: {{tActive.bg}}; color: {{tActive.fg}}; box-shadow: {{tActive.shadow}}; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Actives · 1</button>
+<button type="button" role="tab" id="tab-done" aria-selected="{{tDone.sel}}" aria-controls="panel-done" sc-camel-on-click="{{showDone}}" style="height: 44px; border: 0; border-radius: 10px; background: {{tDone.bg}}; color: {{tDone.fg}}; box-shadow: {{tDone.shadow}}; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Conclues · 1</button>
+<button type="button" role="tab" id="tab-expired" aria-selected="{{tExpired.sel}}" aria-controls="panel-expired" sc-camel-on-click="{{showExpired}}" style="height: 44px; border: 0; border-radius: 10px; background: {{tExpired.bg}}; color: {{tExpired.fg}}; box-shadow: {{tExpired.shadow}}; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Expirées · 0</button>
+</div>
+
+<main style="flex: 1; overflow-y: auto; padding: 16px 20px 124px; display: flex; flex-direction: column; gap: 20px">
+
+<sc-if value="{{isActive}}" hint-placeholder-val="{{ true }}">
+<div id="panel-active" role="tabpanel" aria-labelledby="tab-active" style="display: flex; flex-direction: column; gap: 20px">
+
+<section aria-label="Intention INT-4F7K, le billet que vous cherchez" style="position: relative; flex: none; border-radius: 18px; border: 2px dashed #5E6E84; background: rgba(255,255,255,0.55)">
+<div style="padding: 14px 18px 12px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Le billet que vous cherchez</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #5E6E84">INT-4F7K</span>
+</div>
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 48px; line-height: 48px; letter-spacing: 0.02em; color: #0B1B2E">YUL</span>
+<span aria-hidden="true" style="flex: 1; display: flex; align-items: center; gap: 6px; color: #5E6E84">
+<span style="flex: 1; border-top: 2px dotted #B9C5D3"></span>
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h6l4 7h2l-2-7h5l2 2h2l-1-3 1-3h-2l-2 2h-5l2-7h-2l-4 7H3z"></path></svg>
+<span style="flex: 1; border-top: 2px dotted #B9C5D3"></span>
+</span>
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 48px; line-height: 48px; letter-spacing: 0.02em; color: #0B1B2E">CDG</span>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; color: #3E4F66">
+<span>Montréal</span>
+<span style="font-weight: 600; color: #0B1B2E">15–20 déc. 2026 · aller simple · 1 voyageur</span>
+<span>Paris</span>
+</div>
+</div>
+<div aria-hidden="true" style="position: relative; height: 22px">
+<span style="position: absolute; left: 18px; right: 18px; top: 10px; border-top: 2px dashed #B9C5D3"></span>
+<span style="position: absolute; left: -12px; top: 0; width: 22px; height: 22px; box-sizing: border-box; border-radius: 999px; background: #EEF3F8; border-right: 2px dashed #5E6E84"></span>
+<span style="position: absolute; right: -12px; top: 0; width: 22px; height: 22px; box-sizing: border-box; border-radius: 999px; background: #EEF3F8; border-left: 2px dashed #5E6E84"></span>
+</div>
+<div style="padding: 2px 18px 16px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<span style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Prix maximum</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 32px; line-height: 36px; font-variant-numeric: tabular-nums">1 300 $</span>
+</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 999px; background: #0B1B2E; color: #FFFFFF; font-size: 13px; font-weight: 700">
+<span data-pulse="true" aria-hidden="true" style="width: 8px; height: 8px; border-radius: 999px; background: #FFD23F; animation: nx-pulse 1.6s ease-in-out infinite"></span>
+3 propositions
+</span>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(11,122,85,0.10); color: #0B7A55; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">
+<svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>
+Fonds réservés
+</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: #E3EAF2; color: #3E4F66; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">
+<svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+Expire dans 30 j
+</span>
+<span style="display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 999px; background: #E3EAF2; color: #3E4F66; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">Accord auto ≤ 1 300 $</span>
+</div>
+</div>
+</section>
+
+<section aria-labelledby="props-title" style="flex: none; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px">
+<h2 id="props-title" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Propositions reçues</h2>
+<span style="font-size: 13px; color: #5E6E84">4 vendeurs compatibles</span>
+</div>
+<div style="border-radius: 20px; background: #FFFFFF; border: 1px solid #D3DCE6; overflow: hidden">
+<sc-for list="{{proposals}}" as="p" hint-placeholder-count="3">
+<a href="IntentionProposition.dc.html" aria-label="{{p.aria}}" style="display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; min-height: 84px; padding: 12px 14px; border-top: {{p.border}}; color: #0B1B2E; text-decoration: none">
+<span style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-width: 84px">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 22px; line-height: 26px; font-variant-numeric: tabular-nums">{{p.price}}</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 600; color: {{p.deltaColor}}; font-variant-numeric: tabular-nums">{{p.delta}}</span>
+</span>
+<span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+<span style="font-size: 15px; font-weight: 600">{{p.title}}</span>
+<span style="font-size: 13px; color: #3E4F66">{{p.sub}}</span>
+<span style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 8px; border-radius: 999px; background: {{p.badgeBg}}; color: {{p.badgeFg}}; font-size: 12px; font-weight: 700; letter-spacing: 0.04em">{{p.badge}}</span>
+</span>
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: #5E6E84"><path d="m9 5 7 7-7 7"></path></svg>
+</a>
+</sc-for>
+</div>
+<p style="margin: 0; font-size: 13px; line-height: 18px; color: #5E6E84">Les propositions au-dessus de votre prix sont facultatives : accepter, refuser ou contre-proposer, c'est vous qui décidez.</p>
+</section>
+
+<aside aria-label="Ce que voient les vendeurs" style="flex: none; display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-radius: 16px; background: #FFFFFF; border: 1px solid #D3DCE6">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Ce que voient les vendeurs</span>
+<div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: #0B1B2E; color: #FFFFFF">
+<span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 999px; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px">A.</span>
+<span style="flex: 1; min-width: 0; font-size: 13px; line-height: 18px">YUL → CDG · 15–20 déc. · max <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-variant-numeric: tabular-nums">1 300 $</span></span>
+<span style="flex: none; display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px; border-radius: 999px; background: rgba(124,227,181,0.18); color: #7CE3B5; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">
+<svg width="12" height="12" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>
+Fonds réservés
+</span>
+</div>
+<p style="margin: 0; font-size: 13px; line-height: 18px; color: #3E4F66">Votre initiale, votre trajet et votre prix max. Jamais votre nom complet ni le détail de votre carte.</p>
+</aside>
+
+<button type="button" sc-camel-on-click="{{toggleWithdraw}}" aria-expanded="{{withdrawExpanded}}" style="flex: none; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 8px; border: 0; background: transparent; color: #1A64C8; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Retirer cette intention</button>
+<sc-if value="{{withdrawOpen}}" hint-placeholder-val="{{ false }}">
+<div role="region" aria-label="Retirer l'intention" style="flex: none; display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-radius: 16px; background: #FFFFFF; border: 1px solid #D3DCE6">
+<p style="margin: 0; font-size: 14px; line-height: 20px; color: #3E4F66">Les 3 propositions seront déclinées et les <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #0B1B2E; font-variant-numeric: tabular-nums">1 300 $</span> réservés seront libérés immédiatement. En démo, rien ne change.</p>
+<div style="display: flex; gap: 8px">
+<button type="button" sc-camel-on-click="{{toggleWithdraw}}" style="flex: 1; height: 44px; border-radius: 12px; background: #FFFFFF; border: 1px solid #B9C5D3; color: #0B1B2E; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Garder</button>
+<button type="button" sc-camel-on-click="{{toggleWithdraw}}" style="flex: 1; height: 44px; border-radius: 12px; background: #FFFFFF; border: 1px solid #C2362F; color: #C2362F; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Retirer (démo)</button>
+</div>
+</div>
+</sc-if>
+
+</div>
+</sc-if>
+
+<sc-if value="{{isDone}}" hint-placeholder-val="{{ false }}">
+<div id="panel-done" role="tabpanel" aria-labelledby="tab-done" style="display: flex; flex-direction: column; gap: 12px">
+<a href="Billet.dc.html" aria-label="Accord conclu YUL vers HAV à 350 $, voir le billet" style="position: relative; display: block; background: #FFFFFF; color: #0B1B2E; border-radius: 18px; text-decoration: none; box-shadow: 0 1px 0 #D3DCE6, 0 12px 32px rgba(11,27,46,0.10)">
+<div style="padding: 14px 18px 12px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Nordelle · accord du 2 oct. 2026</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #5E6E84">INT-2B9X</span>
+</div>
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 44px; line-height: 44px; letter-spacing: 0.02em">YUL</span>
+<span aria-hidden="true" style="flex: 1; display: flex; align-items: center; gap: 6px; color: #1A64C8">
+<span style="flex: 1; border-top: 2px dotted #B9C5D3"></span>
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h6l4 7h2l-2-7h5l2 2h2l-1-3 1-3h-2l-2 2h-5l2-7h-2l-4 7H3z"></path></svg>
+<span style="flex: 1; border-top: 2px dotted #B9C5D3"></span>
+</span>
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 44px; line-height: 44px; letter-spacing: 0.02em">HAV</span>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; color: #3E4F66">
+<span>Montréal</span>
+<span style="font-weight: 600; color: #0B1B2E">30 janv. 2027 · direct</span>
+<span>La Havane</span>
+</div>
+</div>
+<div aria-hidden="true" style="position: relative; height: 22px">
+<span style="position: absolute; left: 18px; right: 18px; top: 10px; border-top: 2px dashed #D3DCE6"></span>
+<span style="position: absolute; left: -11px; top: 0; width: 22px; height: 22px; border-radius: 999px; background: #EEF3F8"></span>
+<span style="position: absolute; right: -11px; top: 0; width: 22px; height: 22px; border-radius: 999px; background: #EEF3F8"></span>
+</div>
+<div style="padding: 2px 18px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<span style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Accord conclu à</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 28px; line-height: 32px; font-variant-numeric: tabular-nums">350 $</span>
+<span style="font-size: 13px; color: #3E4F66">Prix max demandé : <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums">350 $</span> · 0 $ de plus</span>
+</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: #E3EAF2; color: #3E4F66; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">Détenu</span>
+</div>
+</a>
+<p style="margin: 0; font-size: 13px; line-height: 18px; color: #5E6E84">Ce droit de voyage est dans votre portefeuille. À nommer avant le 29 janv. 2027.</p>
+</div>
+</sc-if>
+
+<sc-if value="{{isExpired}}" hint-placeholder-val="{{ false }}">
+<div id="panel-expired" role="tabpanel" aria-labelledby="tab-expired" style="display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 36px 24px; border-radius: 20px; background: #FFFFFF; border: 1px solid #D3DCE6; text-align: center">
+<span aria-hidden="true" style="position: relative; width: 120px; height: 72px; border-radius: 12px; border: 2px dashed #B9C5D3; display: flex; align-items: center; justify-content: center; color: #5E6E84">
+<svg width="28" height="28" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+<span style="position: absolute; left: -11px; top: 25px; width: 22px; height: 22px; border-radius: 999px; background: #FFFFFF"></span>
+<span style="position: absolute; right: -11px; top: 25px; width: 22px; height: 22px; border-radius: 999px; background: #FFFFFF"></span>
+</span>
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Aucune intention expirée</span>
+<p style="margin: 0; font-size: 14px; line-height: 20px; color: #3E4F66">Quand une intention arrive au bout de sa validité sans accord, les fonds sont libérés automatiquement et elle apparaît ici. Vous pourrez la republier en un geste.</p>
+</div>
+</sc-if>
+
+</main>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 20px 28px; background: rgba(255,255,255,0.96); border-top: 1px solid #D3DCE6">
+<a href="IntentionCreer.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #FFD23F; color: #0B1B2E; font-weight: 700; font-size: 16px; text-decoration: none; border: 0">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+Nouvelle intention
+</a>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844}}">
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const set = (patch) => this.setState(Object.assign({}, this.state || {}, patch));
+    const tab = s.tab ?? 'active';
+    const withdrawOpen = s.withdrawOpen ?? false;
+
+    const segShadow = '0 1px 2px rgba(11,27,46,0.16)';
+    const t = (on) => ({
+      sel: String(on),
+      bg: on ? '#FFFFFF' : 'transparent',
+      fg: on ? '#0B1B2E' : '#3E4F66',
+      shadow: on ? segShadow : 'none'
+    });
+
+    const rows = [
+      {
+        price: '1 450 $', delta: '+150 $', deltaColor: '#3E4F66',
+        title: 'Nordelle · 1 escale (KEF)', sub: 'mer. 16 déc. · détenteur vérifié',
+        badge: 'Au-dessus de votre prix', badgeBg: '#E3EAF2', badgeFg: '#3E4F66',
+        aria: 'Proposition à 1 450 $, Nordelle, 1 escale, 16 décembre, 150 $ au-dessus de votre prix'
+      },
+      {
+        price: '1 380 $', delta: '+80 $', deltaColor: '#3E4F66',
+        title: 'Aérolys 816 · direct', sub: 'ven. 18 déc. · 2e détenteur, vérifié',
+        badge: 'Au-dessus de votre prix', badgeBg: '#E3EAF2', badgeFg: '#3E4F66',
+        aria: 'Proposition à 1 380 $, Aérolys 816 direct, 18 décembre, 80 $ au-dessus de votre prix'
+      },
+      {
+        price: '1 300 $', delta: '= votre prix', deltaColor: '#0B7A55',
+        title: 'Aérolys 816 · direct', sub: 'sam. 19 déc. · détenteur vérifié',
+        badge: 'Au prix : accord automatique en cours', badgeBg: 'rgba(11,122,85,0.10)', badgeFg: '#0B7A55',
+        aria: 'Proposition à 1 300 $, Aérolys 816, 19 décembre, au prix, accord automatique en cours'
+      }
+    ];
+    const proposals = rows.map((r, i) => Object.assign({}, r, { border: i === 0 ? 'none' : '1px solid #D3DCE6' }));
+
+    return {
+      isActive: tab === 'active',
+      isDone: tab === 'done',
+      isExpired: tab === 'expired',
+      tActive: t(tab === 'active'),
+      tDone: t(tab === 'done'),
+      tExpired: t(tab === 'expired'),
+      showActive: () => set({ tab: 'active' }),
+      showDone: () => set({ tab: 'done' }),
+      showExpired: () => set({ tab: 'expired' }),
+      proposals,
+      withdrawOpen,
+      withdrawExpanded: String(withdrawOpen),
+      toggleWithdraw: () => set({ withdrawOpen: !withdrawOpen })
+    };
+  }
+}
+</script>
+
+
+</body></html>

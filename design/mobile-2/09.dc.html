@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<title>Échéances — NexG-TT</title>
+<script src="1e17e324-c563-4902-b69c-f64a33c8fac7"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+<style>
+body{margin:0;background:#0D0E11}
+a{color:#FFD23F}a:hover{color:#FFE27A}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #FFD23F;outline-offset:2px}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@media (prefers-reduced-motion: reduce){[data-nx-motion]{animation:none !important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0D0E11; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="padding: 52px 12px 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<a href="Portefeuille.dc.html" aria-label="Retour" style="width: 44px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 999px; color: #F3F4F6; text-decoration: none">
+<svg width="24" height="24" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+</a>
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 20px; letter-spacing: 0.04em; text-transform: uppercase">Mes actifs · Échéances</span>
+<span aria-hidden="true" style="width: 44px; height: 44px; flex: none"></span>
+</header>
+
+<main style="flex: 1; overflow-y: auto; padding: 4px 20px 40px; display: flex; flex-direction: column; gap: 22px">
+
+<section style="display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 34px; line-height: 34px; text-transform: uppercase; letter-spacing: 0.01em; text-wrap: balance">Calendrier des échéances</h1>
+<p style="margin: 0; font-size: 15px; line-height: 22px; color: #B9BEC9">Chaque droit de voyage doit être finalisé, voyageur nommé, au plus tard 24 h avant le départ. Passé ce délai, plus aucune revente ni aucun transfert.</p>
+</section>
+
+<section aria-labelledby="next-title" style="display: flex; flex-direction: column; gap: 16px; padding: 18px; border-radius: 20px; background: #060708; border: 1px solid #2C303A">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<h2 id="next-title" style="margin: 0; display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #FFD23F">
+<span data-nx-motion="1" style="width: 8px; height: 8px; border-radius: 999px; background: #FFD23F; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+Prochaine échéance
+</h2>
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; background: #262A33; color: #B9BEC9">Détenu</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 48px; line-height: 44px; letter-spacing: 0.02em">YUL → CDG</span>
+<span style="font-size: 14px; line-height: 20px; color: #B9BEC9">Finaliser avant le <strong style="color: #F3F4F6">dim. 13 déc. 2026 · 18:05</strong><br>Départ lun. 14 déc. · Aérolys · vol 812</span>
+</div>
+<div role="timer" aria-label="{{cdLabel}}" style="display: flex; align-items: flex-start; gap: 12px">
+<span aria-hidden="true" style="display: flex; flex-direction: column; align-items: center; gap: 6px">
+<span style="display: flex; gap: 3px">
+<span style="width: 30px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: #1C1F25; box-shadow: inset 0 -21px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 24px; color: #FFD23F">{{d0}}</span>
+<span style="width: 30px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: #1C1F25; box-shadow: inset 0 -21px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 24px; color: #FFD23F">{{d1}}</span>
+</span>
+<span style="font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8C93A3">Jours</span>
+</span>
+<span aria-hidden="true" style="display: flex; flex-direction: column; align-items: center; gap: 6px">
+<span style="display: flex; gap: 3px">
+<span style="width: 30px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: #1C1F25; box-shadow: inset 0 -21px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 24px; color: #F3F4F6">{{h0}}</span>
+<span style="width: 30px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: #1C1F25; box-shadow: inset 0 -21px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 24px; color: #F3F4F6">{{h1}}</span>
+</span>
+<span style="font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8C93A3">H</span>
+</span>
+<span aria-hidden="true" style="display: flex; flex-direction: column; align-items: center; gap: 6px">
+<span style="display: flex; gap: 3px">
+<span style="width: 30px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: #1C1F25; box-shadow: inset 0 -21px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 24px; color: #F3F4F6">{{m0}}</span>
+<span style="width: 30px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: #1C1F25; box-shadow: inset 0 -21px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 24px; color: #F3F4F6">{{m1}}</span>
+</span>
+<span style="font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8C93A3">Min</span>
+</span>
+<span aria-hidden="true" style="display: flex; flex-direction: column; align-items: center; gap: 6px">
+<span style="display: flex; gap: 3px">
+<span style="width: 30px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: #1C1F25; box-shadow: inset 0 -21px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 24px; color: #8C93A3">{{s0}}</span>
+<span style="width: 30px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: #1C1F25; box-shadow: inset 0 -21px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 24px; color: #8C93A3">{{s1}}</span>
+</span>
+<span style="font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8C93A3">S</span>
+</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<a href="Finaliser.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; box-sizing: border-box; border-radius: 14px; background: #FFD23F; color: #0D0E11; font-weight: 700; font-size: 16px; text-decoration: none">
+Nommer le voyageur
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+</a>
+<a href="Liquidite.dc.html" style="display: flex; align-items: center; justify-content: center; min-height: 44px; font-size: 14px; font-weight: 600; color: #FFD23F; text-decoration: none">Ou le revendre avant l'échéance</a>
+</div>
+</section>
+
+<section aria-labelledby="rap-title" style="display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<h2 id="rap-title" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Rappels</h2>
+<p style="margin: 0; font-size: 13px; line-height: 18px; color: #B9BEC9">Une notification avant chaque échéance, pour tous vos droits de voyage.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<button type="button" role="switch" aria-checked="{{c30}}" aria-label="Rappel J-30, 30 jours avant chaque échéance" sc-camel-on-click="{{ toggle30 }}" style="display: flex; align-items: center; gap: 8px; min-height: 60px; padding: 8px; box-sizing: border-box; border-radius: 14px; background: {{bg30}}; border: 1px solid {{bd30}}; color: #F3F4F6; font: inherit; text-align: left; cursor: pointer">
+<span aria-hidden="true" style="position: relative; flex: none; width: 28px; height: 18px; border-radius: 999px; background: {{tr30}}"><span style="position: absolute; top: 3px; left: {{kx30}}; width: 12px; height: 12px; border-radius: 999px; background: {{kb30}}"></span></span>
+<span style="display: flex; flex-direction: column; gap: 1px; min-width: 0">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px">J-30</span>
+<span style="font-size: 12px; color: {{st30c}}">{{st30}}</span>
+</span>
+</button>
+<button type="button" role="switch" aria-checked="{{c7}}" aria-label="Rappel J-7, 7 jours avant chaque échéance" sc-camel-on-click="{{ toggle7 }}" style="display: flex; align-items: center; gap: 8px; min-height: 60px; padding: 8px; box-sizing: border-box; border-radius: 14px; background: {{bg7}}; border: 1px solid {{bd7}}; color: #F3F4F6; font: inherit; text-align: left; cursor: pointer">
+<span aria-hidden="true" style="position: relative; flex: none; width: 28px; height: 18px; border-radius: 999px; background: {{tr7}}"><span style="position: absolute; top: 3px; left: {{kx7}}; width: 12px; height: 12px; border-radius: 999px; background: {{kb7}}"></span></span>
+<span style="display: flex; flex-direction: column; gap: 1px; min-width: 0">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px">J-7</span>
+<span style="font-size: 12px; color: {{st7c}}">{{st7}}</span>
+</span>
+</button>
+<button type="button" role="switch" aria-checked="{{c2}}" aria-label="Rappel J-2, 2 jours avant chaque échéance" sc-camel-on-click="{{ toggle2 }}" style="display: flex; align-items: center; gap: 8px; min-height: 60px; padding: 8px; box-sizing: border-box; border-radius: 14px; background: {{bg2}}; border: 1px solid {{bd2}}; color: #F3F4F6; font: inherit; text-align: left; cursor: pointer">
+<span aria-hidden="true" style="position: relative; flex: none; width: 28px; height: 18px; border-radius: 999px; background: {{tr2}}"><span style="position: absolute; top: 3px; left: {{kx2}}; width: 12px; height: 12px; border-radius: 999px; background: {{kb2}}"></span></span>
+<span style="display: flex; flex-direction: column; gap: 1px; min-width: 0">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px">J-2</span>
+<span style="font-size: 12px; color: {{st2c}}">{{st2}}</span>
+</span>
+</button>
+</div>
+<p style="margin: 0; display: flex; align-items: center; gap: 8px; font-size: 13px; line-height: 18px; color: #B9BEC9">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M6 16v-5a6 6 0 1 1 12 0v5l2 2H4z"></path><path d="M10 21h4"></path></svg>
+<span>{{nextRappel}}</span>
+</p>
+</section>
+
+<section aria-labelledby="lad-title" style="display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<h2 id="lad-title" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Échelle des échéances</h2>
+<p style="margin: 0; font-size: 13px; color: #B9BEC9">Oct. 2026 → mai 2027 · 4 droits de voyage</p>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 12px; font-weight: 600; color: #B9BEC9">
+<span style="display: inline-flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 999px; background: #FFD23F"></span>Proche · ≤ 90 j</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 12px; height: 12px; box-sizing: border-box; border-radius: 999px; border: 2px solid #FFD23F"></span>Moyenne · 91–120 j</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 12px; height: 12px; box-sizing: border-box; border-radius: 999px; border: 2px solid #8C93A3"></span>Lointaine · &gt; 120 j</span>
+</div>
+
+<div style="position: relative; display: flex; flex-direction: column; padding: 4px 0">
+<span aria-hidden="true" style="position: absolute; left: 71px; top: 16px; bottom: 16px; width: 2px; background: #2C303A"></span>
+<sc-for list="{{months}}" as="m" hint-placeholder-count="8">
+<div style="display: grid; grid-template-columns: 52px 20px minmax(0, 1fr); column-gap: 10px; align-items: center; min-height: 40px; padding-top: 6px">
+<span style="display: flex; flex-direction: column; align-items: flex-end; line-height: 1">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 18px; letter-spacing: 0.04em; text-transform: uppercase">{{m.label}}</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #8C93A3">{{m.year}}</span>
+</span>
+<span aria-hidden="true" style="position: relative; display: flex; justify-content: center"><span style="width: 12px; height: 2px; background: #3A3F4B"></span></span>
+<span style="font-size: 12px; color: #8C93A3">{{m.summary}}</span>
+</div>
+<sc-for list="{{m.entries}}" as="e" hint-placeholder-count="2">
+<sc-if value="{{e.isToday}}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: 52px 20px minmax(0, 1fr); column-gap: 10px; align-items: center; min-height: 36px">
+<span style="text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 13px; color: #FFD23F">{{e.day}}</span>
+<span aria-hidden="true" style="position: relative; display: flex; justify-content: center"><span style="width: 10px; height: 10px; transform: rotate(45deg); background: #FFD23F"></span></span>
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #FFD23F">Aujourd'hui · lun. 12 oct.</span>
+</div>
+</sc-if>
+<sc-if value="{{e.isRappel}}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: 52px 20px minmax(0, 1fr); column-gap: 10px; align-items: center; min-height: 30px">
+<span style="text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; color: #8C93A3">{{e.day}}</span>
+<span aria-hidden="true" style="position: relative; display: flex; justify-content: center"><span style="width: 6px; height: 6px; border-radius: 999px; background: #8C93A3"></span></span>
+<span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #B9BEC9">
+<svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M6 16v-5a6 6 0 1 1 12 0v5l2 2H4z"></path><path d="M10 21h4"></path></svg>
+{{e.text}}
+</span>
+</div>
+</sc-if>
+<sc-if value="{{e.isItem}}" hint-placeholder-val="{{ true }}">
+<div style="display: grid; grid-template-columns: 52px 20px minmax(0, 1fr); column-gap: 10px; align-items: start; padding: 4px 0 8px">
+<span style="padding-top: 14px; text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 16px; font-variant-numeric: tabular-nums; color: {{e.dayColor}}">{{e.day}}</span>
+<span aria-hidden="true" style="position: relative; display: flex; justify-content: center; padding-top: 17px"><span style="width: 14px; height: 14px; box-sizing: border-box; border-radius: 999px; background: {{e.dotBg}}; border: {{e.dotBorder}}; box-shadow: {{e.dotShadow}}"></span></span>
+<a href="{{e.href}}" style="display: flex; flex-direction: column; gap: 8px; min-width: 0; padding: 12px 12px 12px 14px; border-radius: 16px; background: #15171C; border: 1px solid {{e.cardBorder}}; color: #F3F4F6; text-decoration: none">
+<span style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<span style="display: flex; align-items: baseline; gap: 8px; min-width: 0">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 24px; line-height: 26px; letter-spacing: 0.03em; white-space: nowrap">{{e.route}}</span>
+<span style="font-size: 13px; color: #8C93A3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{e.city}}</span>
+</span>
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="#B9BEC9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="m9 5 7 7-7 7"></path></svg>
+</span>
+<span style="font-size: 13px; line-height: 18px; color: #B9BEC9">Échéance <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; color: #F3F4F6">{{e.when}}</span></span>
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px">
+<span style="display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; background: {{e.chipBg}}; color: {{e.chipFg}}">{{e.status}}</span>
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: {{e.urgColor}}">{{e.urg}}</span>
+</span>
+</a>
+</div>
+</sc-if>
+</sc-for>
+</sc-for>
+</div>
+</section>
+
+<section aria-labelledby="q-title" style="display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 16px; background: #15171C; border: 1px solid #2C303A">
+<span style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(124,227,181,0.12); color: #7CE3B5">
+<svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>
+Règle retenue
+</span>
+<h2 id="q-title" style="margin: 0; font-size: 17px; line-height: 23px; font-weight: 700">Si personne n'est nommé avant l'échéance</h2>
+<p style="margin: 0; display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: 12px; background: rgba(255,210,63,0.12); border: 1px solid rgba(255,210,63,0.45); font-size: 15px; line-height: 21px; font-weight: 600; color: #F3F4F6">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="#FFD23F" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg>
+<span>Le détenteur est nommé voyageur par défaut à l'échéance. Le droit reste utilisable&nbsp;: c'est vous qui voyagez.</span>
+</p>
+<p style="margin: 0; font-size: 14px; line-height: 20px; color: #B9BEC9">Après l'échéance, plus aucune revente ni aucun transfert. Solutions de repli à l'étude, selon les accords avec les transporteurs&nbsp;:</p>
+<ul style="margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; line-height: 20px; color: #B9BEC9">
+<li>rachat par NexG-TT à un prix annoncé d'avance&nbsp;;</li>
+<li>expiration du droit, avec ou sans remboursement partiel.</li>
+</ul>
+</section>
+
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #8C93A3">Droits, dates et heures fictifs de démonstration. Échéance = 24 h avant le départ. Pour YUL → HAV et YUL → PPT, l'heure dépend de celle du vol.</p>
+
+</main>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844}}">
+class Component extends DCLogic {
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      const s = this.state || {};
+      const left = (s.left ?? 5377277) - 1;
+      this.setState({ left: left > 0 ? left : 0 });
+    }, 1000);
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+  renderVals() {
+    const s = this.state || {};
+    const left = s.left ?? 5377277;
+    const r30 = s.r30 ?? true;
+    const r7 = s.r7 ?? true;
+    const r2 = s.r2 ?? false;
+    const sp = " ";
+    const MOIS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
+    const JOURS = ["dim.", "lun.", "mar.", "mer.", "jeu.", "ven.", "sam."];
+    const pad = (n) => String(n).padStart(2, "0");
+
+    const dd = Math.floor(left / 86400);
+    const hh = Math.floor((left % 86400) / 3600);
+    const mm = Math.floor((left % 3600) / 60);
+    const ss = left % 60;
+    const D = pad(dd), H = pad(hh), M = pad(mm), S = pad(ss);
+
+    const TODAY = new Date(2026, 9, 12);
+    const dayDiff = (d) => Math.round((d - TODAY) / 86400000);
+    const fmt = (d) => JOURS[d.getDay()] + sp + d.getDate() + sp + MOIS[d.getMonth()];
+
+    const rights = [
+      { route: "YUL → CDG", city: "Paris", date: new Date(2026, 11, 13), time: "18:05", status: "Détenu", chipBg: "#262A33", chipFg: "#B9BEC9", href: "Finaliser.dc.html" },
+      { route: "YUL → HAV", city: "La Havane", date: new Date(2027, 0, 29), time: "", status: "En revente · 620" + sp + "$", chipBg: "rgba(98,199,255,0.12)", chipFg: "#62C7FF", href: "Billet.dc.html" },
+      { route: "YUL → PUJ", city: "Punta Cana", date: new Date(2027, 1, 20), time: "07:30", status: "Détenu", chipBg: "#262A33", chipFg: "#B9BEC9", href: "Billet.dc.html" },
+      { route: "YUL → PPT", city: "Papeete", date: new Date(2027, 4, 8), time: "", status: "Détenu", chipBg: "#262A33", chipFg: "#B9BEC9", href: "Billet.dc.html" }
+    ];
+
+    const entries = [{ kind: "today", date: TODAY }];
+    rights.forEach((r) => {
+      const n = dayDiff(r.date);
+      const u = n <= 90 ? 3 : (n <= 120 ? 2 : 1);
+      entries.push({
+        kind: "item", date: r.date, isItem: true, isToday: false, isRappel: false,
+        route: r.route, city: r.city, href: r.href, status: r.status, chipBg: r.chipBg, chipFg: r.chipFg,
+        when: fmt(r.date) + (r.time ? " · " + r.time : " · heure du vol"),
+        urg: (u === 3 ? "Proche" : (u === 2 ? "Moyenne" : "Lointaine")) + " · dans " + n + sp + "j",
+        urgColor: u === 3 ? "#FFD23F" : (u === 2 ? "#F3F4F6" : "#8C93A3"),
+        dayColor: u === 3 ? "#FFD23F" : "#F3F4F6",
+        dotBg: u === 3 ? "#FFD23F" : "#0D0E11",
+        dotBorder: u === 3 ? "0" : (u === 2 ? "2px solid #FFD23F" : "2px solid #8C93A3"),
+        dotShadow: u === 3 ? "0 0 0 4px rgba(255,210,63,0.22)" : "none",
+        cardBorder: u === 3 ? "rgba(255,210,63,0.5)" : "#2C303A"
+      });
+      [[30, r30], [7, r7], [2, r2]].forEach(([k, on]) => {
+        if (!on) return;
+        const d = new Date(r.date.getFullYear(), r.date.getMonth(), r.date.getDate() - k);
+        if (d > TODAY) entries.push({ kind: "rappel", date: d, k, route: r.route, isRappel: true, isItem: false, isToday: false, text: "Rappel J-" + k + " · " + r.route });
+      });
+    });
+    entries.sort((a, b) => (a.date - b.date) || (a.kind === "item" ? 1 : -1));
+
+    const months = [];
+    for (let i = 0; i < 8; i++) {
+      const first = new Date(2026, 9 + i, 1);
+      const list = entries
+        .filter((e) => e.date.getFullYear() === first.getFullYear() && e.date.getMonth() === first.getMonth())
+        .map((e) => e.kind === "today" ? { isToday: true, isItem: false, isRappel: false, day: String(e.date.getDate()) } : { ...e, day: String(e.date.getDate()) });
+      const ni = list.filter((e) => e.isItem).length;
+      const nr = list.filter((e) => e.isRappel).length;
+      const parts = [];
+      if (ni) parts.push(ni + " échéance" + (ni > 1 ? "s" : ""));
+      if (nr) parts.push(nr + " rappel" + (nr > 1 ? "s" : ""));
+      months.push({
+        label: MOIS[first.getMonth()],
+        year: String(first.getFullYear()),
+        summary: parts.length ? parts.join(" · ") : "Aucune échéance",
+        entries: list
+      });
+    }
+
+    const nextR = entries.find((e) => e.kind === "rappel");
+    const nextRappel = nextR
+      ? "Prochain rappel : " + fmt(nextR.date) + " · " + nextR.route + " (J-" + nextR.k + ")"
+      : "Aucun rappel programmé : vous ne serez pas prévenu avant les échéances.";
+
+    const sw = (on) => ({
+      c: on ? "true" : "false",
+      bg: on ? "rgba(255,210,63,0.08)" : "#15171C",
+      bd: on ? "rgba(255,210,63,0.45)" : "#2C303A",
+      tr: on ? "#FFD23F" : "#3A3F4B",
+      kx: on ? "13px" : "3px",
+      kb: on ? "#0D0E11" : "#B9BEC9",
+      st: on ? "Activé" : "Désactivé",
+      stc: on ? "#FFD23F" : "#8C93A3"
+    });
+    const a = sw(r30), b = sw(r7), c = sw(r2);
+
+    return {
+      d0: D.charAt(D.length - 2), d1: D.charAt(D.length - 1),
+      h0: H.charAt(0), h1: H.charAt(1),
+      m0: M.charAt(0), m1: M.charAt(1),
+      s0: S.charAt(0), s1: S.charAt(1),
+      cdLabel: "Temps restant avant l'échéance : " + dd + " jours, " + hh + " heures, " + mm + " minutes",
+      months,
+      nextRappel,
+      c30: a.c, bg30: a.bg, bd30: a.bd, tr30: a.tr, kx30: a.kx, kb30: a.kb, st30: a.st, st30c: a.stc,
+      c7: b.c, bg7: b.bg, bd7: b.bd, tr7: b.tr, kx7: b.kx, kb7: b.kb, st7: b.st, st7c: b.stc,
+      c2: c.c, bg2: c.bg, bd2: c.bd, tr2: c.tr, kx2: c.kx, kb2: c.kb, st2: c.st, st2c: c.stc,
+      toggle30: () => this.setState({ r30: !r30 }),
+      toggle7: () => this.setState({ r7: !r7 }),
+      toggle2: () => this.setState({ r2: !r2 })
+    };
+  }
+}
+</script>
+
+
+</body></html>

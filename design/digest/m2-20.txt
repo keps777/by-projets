@@ -1,0 +1,157 @@
+Portefeuille (web) — NexG-TT
+Portefeuille (web) — NexG-TT
+NEXG
+·TT
+Voyager
+Mes actifs
+Rechercher une ville, un code d’aéroport ou une référence
+AT
+Marché
+Drops
+Portefeuille
+Agences
+Portefeuille
+Alex T. · 3 droits de voyage détenus · 1 en vente
+Importer un billet
+Voir le marché
+YUL → CDG : nommez le voyageur avant le dim. 13 déc. 2026, 18:05 (dans 62 jours). Après, plus aucune revente ni transfert.
+Nommer le voyageur
+Prix équivalent aujourd’hui
+4 730 $
+Payé
+3 050 $
+Écart
++1 680 $
+Indicatif
+Prix d’un billet neuf équivalent aujourd’hui, pour les 3 droits détenus (hors billet en vente). Ni prix de revente garanti, ni gain.
+Depuis le premier achat · 12 janv. → 12 oct. 2026
+Prix équivalent
+Montant payé
+5 000 $
+4 000 $
+3 000 $
+2 000 $
+1 000 $
+janv.
+mars
+mai
+juil.
+sept.
+12 oct.
+Paliers : achats du 12 janv. (YUL → CDG), du 3 août (YUL → PPT, revente) et du 3 sept. (YUL → PUJ, Drop). Courbe indicative, données fictives.
+Mes droits de voyage
+Sélectionnez une ligne pour voir le billet et sa chaîne de détention.
+Droits de voyage d’Alex T. : prix payé, prix équivalent aujourd’hui, écart, statut et échéance de finalisation.
+Trajet
+Date
+Compagnie
+Payé
+Prix équivalent
+Écart
+Statut
+Échéance de finalisation
+Actions
+YUL → CDG
+Paris
+14 déc. 2026
+lun. · 18:05
+Aérolys
+1 000 $
+2 000 $
++1 000 $
++100 %
+À nommer
+13 déc. · 18:05
+dans 62 jours
+Revendre
+Nommer
+Transférer
+YUL → PUJ
+Punta Cana
+21 févr. 2027
+dim. · 07:30
+Nordelle
+200 $
+940 $
++740 $
++370 %
+Détenu
+20 févr. · 07:30
+dans 131 jours
+Revendre
+Nommer
+Transférer
+YUL → PPT
+Papeete · via LAX
+9 mai 2027
+dim. · 10:20
+Aérolys
+1 850 $
+1 790 $
+−60 $
+−3 %
+Détenu
+8 mai · 10:20
+dans 208 jours
+Revendre
+Nommer
+Transférer
+YUL → HAV
+La Havane
+30 janv. 2027
+sam. · 08:15
+Nordelle
+480 $
+650 $
++170 $
++35 %
+En vente
+à 620 $
+29 janv. · 08:15
+dans 109 jours
+Gérer l’annonce
+Écart = prix équivalent aujourd’hui − prix payé. Échéance de finalisation : 24 h avant le départ ; ensuite, plus aucune transaction sur ce droit.
+Droit sélectionné
+{{sel.route}}
+{{sel.cities}}
+{{sel.from}}
+{{sel.to}}
+{{sel.dep}}
+{{sel.fromCity}}
+{{sel.duration}}
+{{sel.arr}}
+{{sel.toCity}}
+Date
+{{sel.date}}
+Vol
+{{sel.flight}}
+Détenteur
+Alex T. (vous)
+Voyageur
+À nommer
+{{sel.status}}
+Réf.
+{{sel.ref}}
+Prix équivalent · payé {{sel.paid}}
+{{sel.equiv}}
+Chaîne de détention
+{{c.label}}
+{{c.amount}}
+{{c.meta}}
+Chaque transaction est inscrite au registre interne de NexG-TT, qui reste titulaire de la réservation auprès de la compagnie jusqu’à la finalisation.
+Nommer le voyageur
+Revendre
+Transférer à un autre compte
+Revente : prix plafonné (règle à définir) et commission de 10 à 20 % — hypothèses.
+En vente à 620 $ depuis le 2 oct. Retirez l’annonce pour nommer un voyageur ou transférer ce droit.
+Gérer l’annonce
+Transférer {{sel.route}}
+Compte du destinataire (courriel)
+Le destinataire devient détenteur et nommera le voyageur avant l’échéance. Démo — aucun envoi réel.
+Annuler
+Préparer (démo)
+Demande de transfert préparée (démo). Le droit reste à vous tant que le destinataire n’a pas accepté.
+Fermer
+Prototype — données fictives
+Compagnies (Aérolys, Nordelle), détenteurs, prix et références inventés. Aucun paiement réel.
+Un droit de voyage est une inscription au registre interne de NexG-TT, pas un placement financier.

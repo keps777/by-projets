@@ -1,0 +1,27 @@
+Langue et région
+Langue et région — NexG-TT
+NEXG
+·TT
+Bienvenue ·
+Welcome
+Choisissez votre langue
+Choose your language
+FR
+Français
+« Votre vol pour Paris part à 18 h 05. »
+EN
+English
+“Your flight to Paris departs at 6:05 PM.”
+D'autres langues bientôt. Vous pourrez changer de langue dans Compte.
+Région et départs
+Pour afficher les prix dans votre devise et préremplir vos recherches.
+Région et devise
+Canada · $ CA
+États-Unis · $ US
+France · €
+Détectée automatiquement · modifiable
+Aéroport habituel
+{{airportCode}}
+Point de départ proposé par défaut. Facultatif.
+Continuer
+Continue

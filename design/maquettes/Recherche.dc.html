@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Rechercher — NexG-TT</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Barlow:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#EEF3F8}
+a{color:#1A64C8}a:hover{color:#124C9C}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #1A64C8;outline-offset:2px}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #EEF3F8; color: #0B1B2E; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="padding: 52px 20px 8px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px">
+<div role="group" aria-label="Face de l'application" style="display: flex; gap: 2px; padding: 3px; border-radius: 999px; background: #E3EAF2">
+<a href="Main.dc.html" aria-current="true" style="min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 999px; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; background: #0B1B2E; color: #FFFFFF">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+Voyager
+</a>
+<a href="Marche.dc.html" style="min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 999px; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; color: #3E4F66">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg>
+Mes actifs
+</a>
+</div>
+<h1 style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 34px; line-height: 38px; text-transform: uppercase; letter-spacing: 0.01em">Rechercher</h1>
+</header>
+
+<main style="flex: 1; overflow-y: auto; padding: 8px 20px 112px; display: flex; flex-direction: column; gap: 16px">
+
+<section aria-label="Trajet" style="position: relative; flex: none; background: #FFFFFF; color: #0B1B2E; border-radius: 18px; box-shadow: 0 1px 0 #D3DCE6, 0 12px 32px rgba(11,27,46,0.10)">
+<div style="display: flex; align-items: center; gap: 12px; padding: 14px 18px 6px">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<label for="from" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Départ</label>
+<input id="from" type="text" value="{{depCity}}" autocomplete="off" style="width: 100%; min-width: 0; height: 44px; box-sizing: border-box; padding: 0; border: 0; border-bottom: 1px solid #7A8597; border-radius: 6px; background: transparent; color: #0B1B2E; font: inherit; font-size: 18px; font-weight: 600">
+</div>
+<span aria-hidden="true" style="flex: none; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 44px; line-height: 44px; letter-spacing: 0.02em">{{depCode}}</span>
+</div>
+<div style="position: relative; height: 22px">
+<span aria-hidden="true" style="position: absolute; left: 18px; right: 18px; top: 10px; border-top: 2px dashed #D3DCE6"></span>
+<span aria-hidden="true" style="position: absolute; left: -11px; top: 0; width: 22px; height: 22px; border-radius: 999px; background: #EEF3F8"></span>
+<span aria-hidden="true" style="position: absolute; right: -11px; top: 0; width: 22px; height: 22px; border-radius: 999px; background: #EEF3F8"></span>
+<button type="button" aria-label="Inverser départ et arrivée" onClick="{{swap}}" style="position: absolute; right: 30px; top: -11px; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 999px; background: #0B1B2E; color: #FFFFFF; box-shadow: 0 0 0 4px #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{swapDeg}}); transition: transform 0.25s ease"><path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"></path></svg>
+</button>
+</div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 6px 18px 14px">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<label for="to" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Arrivée</label>
+<input id="to" type="text" value="{{arrCity}}" autocomplete="off" style="width: 100%; min-width: 0; height: 44px; box-sizing: border-box; padding: 0; border: 0; border-bottom: 1px solid #7A8597; border-radius: 6px; background: transparent; color: #0B1B2E; font: inherit; font-size: 18px; font-weight: 600">
+</div>
+<span aria-hidden="true" style="flex: none; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 44px; line-height: 44px; letter-spacing: 0.02em">{{arrCode}}</span>
+</div>
+</section>
+
+<div role="group" aria-label="Type de trajet" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 14px; background: #E3EAF2">
+<button type="button" aria-pressed="{{onePressed}}" onClick="{{setOne}}" style="height: 44px; border: 0; border-radius: 10px; background: {{oneBg}}; color: {{oneFg}}; box-shadow: {{oneShadow}}; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Aller simple</button>
+<button type="button" aria-pressed="{{roundPressed}}" onClick="{{setRound}}" style="height: 44px; border: 0; border-radius: 10px; background: {{roundBg}}; color: {{roundFg}}; box-shadow: {{roundShadow}}; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Aller-retour</button>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="date-out" style="font-size: 13px; font-weight: 500; color: #3E4F66">Date de départ</label>
+<div style="display: flex; gap: 8px">
+<div style="position: relative; flex: 1; min-width: 0">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 14px; top: 16px; color: #3E4F66; pointer-events: none"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+<input id="date-out" type="text" value="ven. 18 déc. 2026" autocomplete="off" style="width: 100%; height: 52px; box-sizing: border-box; padding: 0 14px 0 44px; border-radius: 12px; background: #FFFFFF; border: 1px solid #7A8597; color: #0B1B2E; font: inherit; font-size: 16px">
+</div>
+<label for="flex3" style="flex: none; display: flex; align-items: center; gap: 8px; height: 52px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; background: {{flexBg}}; border: 1px solid {{flexBorder}}; color: #0B1B2E; font-size: 15px; font-weight: 600; cursor: pointer">
+<input id="flex3" type="checkbox" checked="{{flex}}" onClick="{{toggleFlex}}" style="width: 20px; height: 20px; margin: 0; accent-color: #1A64C8; cursor: pointer">
+±3 jours
+</label>
+</div>
+</div>
+
+<sc-if value="{{isRound}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 13px; font-weight: 500; color: #3E4F66">Date de retour</span>
+<button type="button" style="display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; background: #FFFFFF; border: 1px dashed #B9C5D3; color: #1A64C8; font-family: inherit; font-size: 16px; font-weight: 600; text-align: left; cursor: pointer">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+Choisir la date de retour
+</button>
+</div>
+</sc-if>
+
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 4px 6px 4px 14px; box-sizing: border-box; border-radius: 12px; background: #FFFFFF; border: 1px solid #B9C5D3">
+<div style="display: flex; align-items: center; gap: 10px; min-width: 0">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: #3E4F66; flex: none"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c1-3.5 3.5-5 6.5-5s5.5 1.5 6.5 5"></path><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 15c2 .5 3.2 2 3.5 5"></path></svg>
+<div style="display: flex; flex-direction: column">
+<span id="pax-label" style="font-size: 13px; font-weight: 500; color: #3E4F66">Voyageurs</span>
+<span aria-live="polite" style="font-size: 16px; font-weight: 600">{{paxLabel}}</span>
+</div>
+</div>
+<div role="group" aria-labelledby="pax-label" style="display: flex; align-items: center; gap: 6px">
+<button type="button" aria-label="Retirer un adulte" onClick="{{paxMinus}}" style="width: 44px; height: 44px; padding: 0; border-radius: 12px; background: #EEF3F8; border: 1px solid #B9C5D3; color: {{minusColor}}; display: flex; align-items: center; justify-content: center; cursor: pointer">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path></svg>
+</button>
+<button type="button" aria-label="Ajouter un adulte" onClick="{{paxPlus}}" style="width: 44px; height: 44px; padding: 0; border-radius: 12px; background: #EEF3F8; border: 1px solid #B9C5D3; color: #0B1B2E; display: flex; align-items: center; justify-content: center; cursor: pointer">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+</button>
+</div>
+</div>
+
+<fieldset style="margin: 0; padding: 0; border: 0; min-width: 0">
+<legend style="padding: 0; margin: 0 0 10px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Sources</legend>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+<label for="src-new" style="display: flex; align-items: center; gap: 10px; min-height: 58px; padding: 8px 12px; box-sizing: border-box; border-radius: 14px; background: {{srcNewBg}}; border: 1px solid {{srcNewBorder}}; cursor: pointer">
+<input id="src-new" type="checkbox" checked="{{srcNew}}" onClick="{{toggleNew}}" style="width: 20px; height: 20px; margin: 0; accent-color: #1A64C8; flex: none; cursor: pointer">
+<span style="display: flex; flex-direction: column; gap: 1px; min-width: 0">
+<span style="font-size: 15px; font-weight: 600; color: {{srcNewText}}">Billets neufs</span>
+<span style="font-size: 12px; color: #3E4F66">Compagnies</span>
+</span>
+</label>
+<label for="src-resale" style="display: flex; align-items: center; gap: 10px; min-height: 58px; padding: 8px 12px; box-sizing: border-box; border-radius: 14px; background: {{srcResaleBg}}; border: 1px solid {{srcResaleBorder}}; cursor: pointer">
+<input id="src-resale" type="checkbox" checked="{{srcResale}}" onClick="{{toggleResale}}" style="width: 20px; height: 20px; margin: 0; accent-color: #1A64C8; flex: none; cursor: pointer">
+<span style="display: flex; flex-direction: column; gap: 1px; min-width: 0">
+<span style="font-size: 15px; font-weight: 600; color: {{srcResaleText}}">Revente</span>
+<span style="font-size: 12px; color: #3E4F66">Marché NexG</span>
+</span>
+</label>
+<label for="src-agency" style="display: flex; align-items: center; gap: 10px; min-height: 58px; padding: 8px 12px; box-sizing: border-box; border-radius: 14px; background: {{srcAgencyBg}}; border: 1px solid {{srcAgencyBorder}}; cursor: pointer">
+<input id="src-agency" type="checkbox" checked="{{srcAgency}}" onClick="{{toggleAgency}}" style="width: 20px; height: 20px; margin: 0; accent-color: #1A64C8; flex: none; cursor: pointer">
+<span style="display: flex; flex-direction: column; gap: 1px; min-width: 0">
+<span style="font-size: 15px; font-weight: 600; color: {{srcAgencyText}}">Agences</span>
+<span style="font-size: 12px; color: #3E4F66">Partenaires</span>
+</span>
+</label>
+<label for="src-drops" style="display: flex; align-items: center; gap: 10px; min-height: 58px; padding: 8px 12px; box-sizing: border-box; border-radius: 14px; background: {{srcDropsBg}}; border: 1px solid {{srcDropsBorder}}; cursor: pointer">
+<input id="src-drops" type="checkbox" checked="{{srcDrops}}" onClick="{{toggleDrops}}" style="width: 20px; height: 20px; margin: 0; accent-color: #1A64C8; flex: none; cursor: pointer">
+<span style="display: flex; flex-direction: column; gap: 1px; min-width: 0">
+<span style="font-size: 15px; font-weight: 600; color: {{srcDropsText}}">Drops</span>
+<span style="font-size: 12px; color: #3E4F66">Membres</span>
+</span>
+</label>
+</div>
+</fieldset>
+
+<button type="button" role="switch" aria-checked="{{resaleOnlyStr}}" onClick="{{toggleResaleOnly}}" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 60px; padding: 8px 14px; box-sizing: border-box; border-radius: 14px; background: #FFFFFF; border: 1px solid #D3DCE6; color: #0B1B2E; font-family: inherit; text-align: left; cursor: pointer">
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 15px; font-weight: 600">Seulement les billets revendables</span>
+<span style="font-size: 13px; color: #5A6A80">Revendables jusqu'à 24 h avant le départ</span>
+</span>
+<span aria-hidden="true" style="position: relative; flex: none; width: 48px; height: 28px; box-sizing: border-box; border-radius: 999px; background: {{trackBg}}; border: 1px solid {{trackBorder}}">
+<span style="position: absolute; top: 3px; left: {{thumbLeft}}; width: 20px; height: 20px; border-radius: 999px; background: {{thumbBg}}; transition: left 0.2s ease"></span>
+</span>
+</button>
+
+<a href="Resultats.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; flex: none; border-radius: 14px; background: #FFD23F; color: #0B1B2E; font-weight: 700; font-size: 16px; text-decoration: none; border: 0">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+Rechercher
+</a>
+
+<section aria-labelledby="recent-title" style="display: flex; flex-direction: column; gap: 10px; padding-top: 4px">
+<h2 id="recent-title" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Recherches récentes</h2>
+<div style="border-radius: 16px; background: #FFFFFF; border: 1px solid #D3DCE6; overflow: hidden">
+<sc-for list="{{recent}}" as="r" hint-placeholder-count="2">
+<a href="Resultats.dc.html" style="display: grid; grid-template-columns: 52px 1fr auto; align-items: center; gap: 12px; min-height: 64px; padding: 0 14px; border-top: {{r.border}}; color: #0B1B2E; text-decoration: none">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: 0.04em; color: #0B1B2E">{{r.code}}</span>
+<span style="display: flex; flex-direction: column; min-width: 0">
+<span style="font-size: 15px; font-weight: 600">{{r.title}}</span>
+<span style="font-size: 13px; color: #5A6A80">{{r.sub}}</span>
+</span>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: #5A6A80"><path d="m9 5 7 7-7 7"></path></svg>
+</a>
+</sc-for>
+</div>
+</section>
+
+<aside style="display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-radius: 16px; background: #FFFFFF; border: 1px solid #D3DCE6">
+<span aria-hidden="true" style="flex: none; width: 36px; height: 36px; border-radius: 10px; background: rgba(26,100,200,0.10); color: #1A64C8; display: flex; align-items: center; justify-content: center">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg>
+</span>
+<p style="margin: 0; font-size: 14px; line-height: 20px; color: #3E4F66"><strong style="color: #0B1B2E; font-weight: 600">Un billet revendable garde sa valeur si vos plans changent.</strong> Le prix obtenu à la revente dépend du marché.</p>
+</aside>
+
+</main>
+
+<nav aria-label="Navigation principale" style="position: absolute; left: 0; right: 0; bottom: 0; height: 84px; box-sizing: border-box; padding: 6px 8px 22px; background: rgba(255,255,255,0.94); backdrop-filter: blur(12px); border-top: 1px solid #D3DCE6; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr))">
+<a href="Main.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 48px; color: #5A6A80; text-decoration: none; font-size: 12px; font-weight: 600">
+<span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 999px; background: transparent"></span>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"></path></svg>
+Accueil
+</a>
+<a href="Recherche.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 48px; color: #0B1B2E; text-decoration: none; font-size: 12px; font-weight: 700">
+<span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 999px; background: #FFD23F"></span>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+Rechercher
+</a>
+<a href="Drop.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 48px; color: #5A6A80; text-decoration: none; font-size: 12px; font-weight: 600">
+<span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 999px; background: transparent"></span>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"></path></svg>
+Drops
+</a>
+<a href="Portefeuille.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 48px; color: #5A6A80; text-decoration: none; font-size: 12px; font-weight: 600">
+<span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 999px; background: transparent"></span>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h12v4"></path><rect x="3" y="9" width="18" height="11" rx="2"></rect><path d="M16 14.5h1.5"></path></svg>
+Portefeuille
+</a>
+<a href="Compte.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 48px; color: #5A6A80; text-decoration: none; font-size: 12px; font-weight: 600">
+<span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 999px; background: transparent"></span>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg>
+Compte
+</a>
+</nav>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const set = (patch) => this.setState(Object.assign({}, this.state || {}, patch));
+    const swapped = s.swapped ?? false;
+    const trip = s.trip ?? 'oneway';
+    const flex = s.flex ?? false;
+    const pax = s.pax ?? 1;
+    const srcNew = s.srcNew ?? true;
+    const srcResale = s.srcResale ?? true;
+    const srcAgency = s.srcAgency ?? true;
+    const srcDrops = s.srcDrops ?? true;
+    const resaleOnly = s.resaleOnly ?? false;
+
+    const yul = { city: 'Montréal (YUL)', code: 'YUL' };
+    const cdg = { city: 'Paris (CDG)', code: 'CDG' };
+    const from = swapped ? cdg : yul;
+    const to = swapped ? yul : cdg;
+
+    const isOne = trip === 'oneway';
+    const segShadow = '0 1px 2px rgba(11,27,46,0.16)';
+    const tile = (on) => ({
+      bg: on ? '#FFFFFF' : '#EEF3F8',
+      border: on ? '#B9C5D3' : '#D3DCE6',
+      text: on ? '#0B1B2E' : '#3E4F66'
+    });
+    const tNew = tile(srcNew);
+    const tResale = tile(srcResale);
+    const tAgency = tile(srcAgency);
+    const tDrops = tile(srcDrops);
+
+    const rows = [
+      { code: 'PUJ', title: 'Montréal → Punta Cana', sub: 'févr. 2027 · 2 voyageurs' },
+      { code: 'PPT', title: 'Montréal → Papeete', sub: 'mai 2027 · 1 voyageur · ±3 jours' }
+    ];
+    const recent = rows.map((r, i) => ({
+      ...r,
+      border: i === 0 ? 'none' : '1px solid #D3DCE6'
+    }));
+
+    return {
+      depCity: from.city,
+      depCode: from.code,
+      arrCity: to.city,
+      arrCode: to.code,
+      swapDeg: swapped ? '270deg' : '90deg',
+      swap: () => set({ swapped: !swapped }),
+
+      onePressed: String(isOne),
+      roundPressed: String(!isOne),
+      oneBg: isOne ? '#FFFFFF' : 'transparent',
+      oneFg: isOne ? '#0B1B2E' : '#3E4F66',
+      oneShadow: isOne ? segShadow : 'none',
+      roundBg: isOne ? 'transparent' : '#FFFFFF',
+      roundFg: isOne ? '#3E4F66' : '#0B1B2E',
+      roundShadow: isOne ? 'none' : segShadow,
+      isRound: !isOne,
+      setOne: () => set({ trip: 'oneway' }),
+      setRound: () => set({ trip: 'round' }),
+
+      flex,
+      flexBg: flex ? 'rgba(26,100,200,0.10)' : '#FFFFFF',
+      flexBorder: flex ? '#1A64C8' : '#B9C5D3',
+      toggleFlex: () => set({ flex: !flex }),
+
+      paxLabel: pax + (pax > 1 ? ' adultes' : ' adulte'),
+      minusColor: pax > 1 ? '#0B1B2E' : '#5A6A80',
+      paxMinus: () => set({ pax: Math.max(1, pax - 1) }),
+      paxPlus: () => set({ pax: Math.min(9, pax + 1) }),
+
+      srcNew,
+      srcNewBg: tNew.bg,
+      srcNewBorder: tNew.border,
+      srcNewText: tNew.text,
+      toggleNew: () => set({ srcNew: !srcNew }),
+      srcResale,
+      srcResaleBg: tResale.bg,
+      srcResaleBorder: tResale.border,
+      srcResaleText: tResale.text,
+      toggleResale: () => set({ srcResale: !srcResale }),
+      srcAgency,
+      srcAgencyBg: tAgency.bg,
+      srcAgencyBorder: tAgency.border,
+      srcAgencyText: tAgency.text,
+      toggleAgency: () => set({ srcAgency: !srcAgency }),
+      srcDrops,
+      srcDropsBg: tDrops.bg,
+      srcDropsBorder: tDrops.border,
+      srcDropsText: tDrops.text,
+      toggleDrops: () => set({ srcDrops: !srcDrops }),
+
+      resaleOnlyStr: String(resaleOnly),
+      trackBg: resaleOnly ? '#1A64C8' : '#E3EAF2',
+      trackBorder: resaleOnly ? '#1A64C8' : '#B9C5D3',
+      thumbBg: resaleOnly ? '#FFFFFF' : '#5A6A80',
+      thumbLeft: resaleOnly ? '23px' : '3px',
+      toggleResaleOnly: () => set({ resaleOnly: !resaleOnly }),
+
+      recent
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+Vos choix de partage (web) — NexG-TT
+Vos choix de partage (web) — NexG-TT
+NEXG
+·TT
+Hors ligne
+Vous pouvez régler vos choix : l’enregistrement demande le réseau. Rien n’a été envoyé.
+Vos choix n’ont pas été enregistrés
+Nous n’avons pas pu enregistrer vos choix. Ils sont conservés sur cette page : réessayez. Vous pourrez les modifier à tout moment dans Compte.
+Réessayer
+Retour
+Étape 3 sur 4
+Ensuite : notifications
+Vous choisissez ce que vous partagez
+Cinq réglages, une ligne d’explication chacun. Seul le premier est nécessaire au fonctionnement du compte.
+Nécessaire au service
+Compte, connexion sécurisée, achats et registre de vos billets.
+Toujours actif
+Pourquoi est-ce verrouillé ?
+Sans ces données, impossible de créer votre compte ni de garder la trace des billets que vous détenez. Le détail figure dans la politique de confidentialité.
+Alertes de prix et de drops
+Utilise vos intérêts et votre aéroport pour vous signaler des départs.
+Rappels d’échéance J-1
+Recommandé
+Vous prévient avant la date limite pour nommer le voyageur d’un billet.
+Offres partenaires
+Offres d’agences et de partenaires de voyage. Désactivé par défaut.
+Mesure d’audience anonyme
+Statistiques d’usage regroupées, sans votre nom, pour améliorer l’app.
+{{summary}}
+Lire la politique de confidentialité
+Maquette : le texte de la politique sera rédigé et validé par un juriste avant le lancement. Ici, aucun engagement n’est pris au-delà des réglages ci-dessus.
+Enregistrer mes choix
+Enregistrement de vos choix…
+Enregistrer mes choix
+Votre récapitulatif
+Nécessaire au service
+Toujours actif
+Alertes de prix et de drops
+{{alerts.recap}}
+Rappels d’échéance J-1
+{{deadline.recap}}
+Offres partenaires
+{{partners.recap}}
+Mesure d’audience anonyme
+{{audience.recap}}
+Vous pouvez tout changer dans Compte › Données et consentements.
+Retirer un consentement est aussi simple que de le donner.
+[H]
+Liste et textes des consentements : à valider avec un juriste. Consentements séparés (conditions, marketing) selon EF-01.
+Prototype — données fictives
+Compagnies (Aérolys, Nordelle), agence, détenteurs, prix et références inventés. Aucun paiement réel.
+Un droit de voyage est une inscription au registre interne de NexG-TT, pas un placement financier.
+Aperçu des états
+Normal
+Chargement
+Erreur
+Hors ligne

@@ -1,0 +1,93 @@
+Compte (web) — NexG-TT
+Compte (web) — NexG-TT
+NEXG
+·TT
+Voyager
+Mes actifs
+Rechercher une ville, un code d’aéroport ou une référence
+AT
+Marché
+Drops
+Portefeuille
+Agences
+Chargement du compte…
+Hors ligne
+Vous consultez les données enregistrées en lecture seule. Ajouter un proche, les versements, l’import, le Pass et les consentements demandent le réseau : rien n’a été modifié.
+Votre compte n’a pas pu être chargé
+Vos informations n’ont pas pu être lues. Aucune donnée n’a été modifiée : réessayez.
+Réessayer
+Compte
+Alex T. · espace Mes actifs
+AT
+Alex T.
+Pass Pro (exemple)
+Identité vérifiée
+Requise pour revendre un billet et recevoir vos versements.
+Vérifiée le 14 janv. 2026
+Identité : plus tard
+Demandée seulement pour revendre un billet ou recevoir de l’argent.
+Vérifier
+Voyageurs enregistrés
+AT
+Alex T.
+{{alexSub}}
+Ajouter un proche
+Pour le nommer voyageur sur un billet
+Ajouter un proche
+Pour le nommer voyageur sur un billet
+Réseau requis
+Billets et argent
+Versements
+{{payoutSub}}
+Versements
+{{payoutSub}}
+Réseau requis
+Importer un billet acheté ailleurs
+Le confier à NexG-TT pour le revendre
+Importer un billet acheté ailleurs
+Le confier à NexG-TT pour le revendre
+Réseau requis
+Mes alertes
+{{alertsRight}}
+Pass NexG
+{{passSub1}}
+9,99 $ / mois · indicatif
+[H]
+Le prix du Pass est une hypothèse à valider.
+Actif
+Pass NexG
+{{passSub1}}
+9,99 $ / mois · indicatif
+[H]
+Le prix du Pass est une hypothèse à valider.
+Actif
+Réseau requis
+Sécurité et préférences
+Sécurité
+{{mfaSub}}
+[H]
+hypothèse à valider
+Notifications
+Niveau : Tout
+Langue
+Français
+English
+La version anglaise n’est pas incluse dans ce prototype.
+Données et consentements
+Ce que nous conservons, vos choix
+Données et consentements
+Ce que nous conservons, vos choix
+Réseau requis
+Aide
+Se déconnecter
+NexG-TT 4.0 · prototype — toutes les données sont fictives
+{{toast}}
+Prototype — données fictives
+Compagnies (Aérolys, Nordelle), détenteurs, prix et références inventés. Aucun paiement réel.
+Un droit de voyage est une inscription au registre interne de NexG-TT, pas un placement financier.
+Aperçu des états
+Normal
+Chargement
+Vide
+Erreur
+Hors ligne

@@ -1,0 +1,58 @@
+Langue et région (web) — NexG-TT
+Langue et région (web) — NexG-TT
+NEXG
+·TT
+Explorer sans compte
+J’ai déjà un compte
+Chargement de la région détectée…
+Hors ligne
+Cette étape fonctionne sans réseau : vos choix sont gardés sur cet appareil. La détection de la région attend le retour de la connexion.
+Région non détectée
+Nous n’avons pas pu détecter votre région. Choisissez-la dans la liste : le Canada est proposé par défaut.
+Réessayer
+Retour
+Bienvenue ·
+Welcome
+Choisissez votre langue
+Choose your language
+FR
+Français
+« Votre vol pour Paris part à 18 h 05. »
+EN
+English
+“Your flight to Paris departs at 6:05 PM.”
+D’autres langues bientôt. Vous pourrez changer de langue dans Compte.
+Région et départs
+Pour afficher les prix dans votre devise et préremplir vos recherches.
+Région et devise
+Canada · $ CA
+États-Unis · $ US
+France · €
+{{regionHelp}}
+Aéroport habituel
+{{airportCode}}
+Point de départ proposé par défaut. Facultatif.
+Continuer
+Continue
+Aperçu
+18:05
+C
+D
+G
+Paris
+À l’heure
+{{sample}}
+Région
+{{regionLabel}}
+Départ
+{{airport}}
+[H]
+Régions et devises proposées : à valider. Le marché pilote est Montréal, en dollars canadiens, en français.
+Prototype — données fictives
+Compagnies (Aérolys, Nordelle), agence, détenteurs, prix et références inventés. Aucun paiement réel.
+Un droit de voyage est une inscription au registre interne de NexG-TT, pas un placement financier.
+Aperçu des états
+Normal
+Chargement
+Erreur
+Hors ligne

@@ -1,0 +1,48 @@
+Réserver les fonds
+Réserver les fonds (démo) — NexG-TT
+Réserver les fonds
+MODE DÉMO — aucun paiement réel
+Montant réservé
+1 300 $
+Non débité.
+Libéré automatiquement le 21 nov. 2026 si aucun accord.
+Accord
+Le prix convenu est pris sur la réserve. Le reste est libéré.
+Expiration
+Tout est libéré le 21 nov. Rien n'est prélevé, aucun frais.
+Source des fonds
+Carte
+•••• 4242
+(test)
+Pré-autorisation, non débitée. Durée limitée selon l'émetteur.
+Solde NexG ·
+1 152 $
+disponibles
+Insuffisant : il manque
+148 $
+Wallet du téléphone
+Une carte déjà enregistrée dans le wallet de votre téléphone
+{{sourceHelp}}
+Votre intention
+YUL → CDG
+Montréal → Paris · aller simple · 1 voyageur
+Intention
+Fenêtre de départ
+Du 15 au 20 déc. · flexible
+Prix maximum
+1 300 $
+Validité
+30 jours · jusqu'au 21 nov.
+Options
+Accord automatique ≤ 1 300 $ · propositions au-dessus acceptées · anonyme « A. »
+Réservé aujourd'hui
+1 300 $
+Débité aujourd'hui : 0 $
+Je comprends que les fonds sont réservés jusqu'à l'accord ou l'expiration
+Vous pouvez retirer votre intention à tout moment avant un accord : les fonds sont alors libérés.
+Cochez cette case pour réserver les fonds.
+Réservation traitée par un prestataire de paiement certifié. NexG-TT ne conserve pas votre carte.
+Hypothèse
+cadre de la réservation de fonds à valider.
+Confirmer la réservation (démo)
+Aucun débit tant qu'aucun billet n'est accepté.

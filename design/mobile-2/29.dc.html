@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<title>Aide — NexG-TT</title>
+<script src="fcc3284e-e6c9-41c2-9e1f-2a70721a96e6"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+<style>
+body{margin:0;background:#0D0E11}
+a{color:#FFD23F}a:hover{color:#FFE27A}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #FFD23F;outline-offset:2px}
+input::placeholder{color:#8C93A3;opacity:1}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@media (prefers-reduced-motion: reduce){[data-nx-motion]{animation:none !important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0D0E11; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="flex: none; padding: 52px 12px 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<a href="Compte.dc.html" aria-label="Retour" style="width: 44px; height: 44px; flex: none; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: #F3F4F6; text-decoration: none">
+<svg width="24" height="24" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+</a>
+<h1 style="margin: 0; flex: 1; text-align: center; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 20px; letter-spacing: 0.04em; text-transform: uppercase">Aide</h1>
+<span aria-hidden="true" style="width: 44px; height: 44px; flex: none"></span>
+</header>
+
+<main style="flex: 1; overflow-y: auto; padding: 8px 20px 116px; display: flex; flex-direction: column; gap: 22px">
+
+<section aria-label="Aperçu des états (démo)" style="flex: none; display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border-radius: 16px; border: 1px dashed #3A3F4B">
+<p style="margin: 0; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8C93A3">Aperçu des états · démo</p>
+<div role="group" aria-label="État affiché" style="display: flex; flex-wrap: wrap; gap: 8px">
+<button type="button" aria-pressed="{{dNormal.pressed}}" sc-camel-on-click="{{ voirNormal }}" style="flex: none; min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; background: {{dNormal.bg}}; border: 1px solid {{dNormal.border}}; color: {{dNormal.color}}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Normal</button>
+<button type="button" aria-pressed="{{dChargement.pressed}}" sc-camel-on-click="{{ voirChargement }}" style="flex: none; min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; background: {{dChargement.bg}}; border: 1px solid {{dChargement.border}}; color: {{dChargement.color}}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Chargement</button>
+<button type="button" aria-pressed="{{dSans.pressed}}" sc-camel-on-click="{{ voirSans }}" style="flex: none; min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; background: {{dSans.bg}}; border: 1px solid {{dSans.border}}; color: {{dSans.color}}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Sans résultat</button>
+<button type="button" aria-pressed="{{dErreur.pressed}}" sc-camel-on-click="{{ voirErreur }}" style="flex: none; min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; background: {{dErreur.bg}}; border: 1px solid {{dErreur.border}}; color: {{dErreur.color}}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Erreur</button>
+<button type="button" aria-pressed="{{dHorsLigne.pressed}}" sc-camel-on-click="{{ voirHorsLigne }}" style="flex: none; min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; background: {{dHorsLigne.bg}}; border: 1px solid {{dHorsLigne.border}}; color: {{dHorsLigne.color}}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Hors ligne</button>
+</div>
+</section>
+
+<sc-if value="{{isHorsLigne}}" hint-placeholder-val="{{ false }}">
+<div data-etat="hors-ligne" role="status" style="flex: none; display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: 12px; background: rgba(98,199,255,0.12); border: 1px solid rgba(98,199,255,0.4)">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="#62C7FF" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+<span style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; line-height: 20px; font-weight: 700; color: #62C7FF">Hors ligne : les réponses déjà chargées restent lisibles.</span>
+<span style="font-size: 13px; line-height: 18px; color: #B9BEC9">Reconnectez-vous pour écrire à l'assistance.</span>
+</span>
+</div>
+</sc-if>
+
+<sc-if value="{{showContenu}}" hint-placeholder-val="{{ true }}">
+<div style="flex: none; display: flex; flex-direction: column; gap: 6px">
+<label for="aide-q" style="font-size: 13px; font-weight: 500; color: #B9BEC9">Rechercher dans l'aide</label>
+<div style="position: relative; display: flex; align-items: center">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="#8C93A3" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 14px; pointer-events: none"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+<input id="aide-q" type="search" autocomplete="off" value="{{q}}" sc-camel-on-change="{{ chercher }}" placeholder="Ex. échéance, commission" style="width: 100%; height: 52px; box-sizing: border-box; padding: 0 48px 0 44px; border-radius: 12px; background: #1D2027; border: 1px solid #6B7282; color: #F3F4F6; font: inherit; font-size: 16px">
+<sc-if value="{{aQuery}}" hint-placeholder-val="{{ false }}">
+<button type="button" aria-label="Vider le champ de recherche" sc-camel-on-click="{{ vider }}" style="position: absolute; right: 4px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; padding: 0; border: 0; background: transparent; color: #B9BEC9; cursor: pointer">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+</button>
+</sc-if>
+</div>
+</div>
+
+<sc-if value="{{t1.visible}}" hint-placeholder-val="{{ true }}">
+<section aria-labelledby="th-t1" style="flex: none; display: flex; flex-direction: column; gap: 8px">
+<h2 id="th-t1" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Droits de voyage</h2>
+<div style="border-radius: 20px; background: #15171C; border: 1px solid #2C303A; overflow: hidden">
+<sc-if value="{{q1.visible}}" hint-placeholder-val="{{ true }}">
+<div data-question-bloc="q1" style="border-top: {{q1.sep}}">
+<h3 style="margin: 0; font-size: 15px">
+<button type="button" id="q-q1" data-question="q1" aria-expanded="{{q1.ouvert}}" aria-controls="r-q1" sc-camel-on-click="{{ ouvrirQ1 }}" style="width: 100%; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 12px 16px; box-sizing: border-box; background: none; border: 0; color: #F3F4F6; font-family: inherit; font-size: 15px; line-height: 21px; font-weight: 600; text-align: left; cursor: pointer">
+<span style="flex: 1; min-width: 0">Qu'est-ce qu'un droit de voyage ?</span>
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="#8C93A3" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; transform: rotate({{q1.angle}}); transition: transform 0.2s ease"><path d="m9 5 7 7-7 7"></path></svg>
+</button>
+</h3>
+<sc-if value="{{q1.estOuvert}}" hint-placeholder-val="{{ false }}">
+<div id="r-q1" role="region" aria-labelledby="q-q1" style="display: flex; flex-direction: column; gap: 4px; padding: 0 16px 8px; font-size: 14px; line-height: 21px; color: #B9BEC9">
+<p style="margin: 0">{{q1.reponse}}</p>
+</div>
+</sc-if>
+</div>
+</sc-if>
+<sc-if value="{{q2.visible}}" hint-placeholder-val="{{ true }}">
+<div data-question-bloc="q2" style="border-top: {{q2.sep}}">
+<h3 style="margin: 0; font-size: 15px">
+<button type="button" id="q-q2" data-question="q2" aria-expanded="{{q2.ouvert}}" aria-controls="r-q2" sc-camel-on-click="{{ ouvrirQ2 }}" style="width: 100%; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 12px 16px; box-sizing: border-box; background: none; border: 0; color: #F3F4F6; font-family: inherit; font-size: 15px; line-height: 21px; font-weight: 600; text-align: left; cursor: pointer">
+<span style="flex: 1; min-width: 0">Que se passe-t-il si je ne nomme personne ?</span>
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="#8C93A3" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; transform: rotate({{q2.angle}}); transition: transform 0.2s ease"><path d="m9 5 7 7-7 7"></path></svg>
+</button>
+</h3>
+<sc-if value="{{q2.estOuvert}}" hint-placeholder-val="{{ false }}">
+<div id="r-q2" role="region" aria-labelledby="q-q2" style="display: flex; flex-direction: column; gap: 4px; padding: 0 16px 8px; font-size: 14px; line-height: 21px; color: #B9BEC9">
+<p style="margin: 0">{{q2.reponse}}</p>
+</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{t2.visible}}" hint-placeholder-val="{{ true }}">
+<section aria-labelledby="th-t2" style="flex: none; display: flex; flex-direction: column; gap: 8px">
+<h2 id="th-t2" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Revendre et argent</h2>
+<div style="border-radius: 20px; background: #15171C; border: 1px solid #2C303A; overflow: hidden">
+<sc-if value="{{q3.visible}}" hint-placeholder-val="{{ true }}">
+<div data-question-bloc="q3" style="border-top: {{q3.sep}}">
+<h3 style="margin: 0; font-size: 15px">
+<button type="button" id="q-q3" data-question="q3" aria-expanded="{{q3.ouvert}}" aria-controls="r-q3" sc-camel-on-click="{{ ouvrirQ3 }}" style="width: 100%; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 12px 16px; box-sizing: border-box; background: none; border: 0; color: #F3F4F6; font-family: inherit; font-size: 15px; line-height: 21px; font-weight: 600; text-align: left; cursor: pointer">
+<span style="flex: 1; min-width: 0">Combien coûte une revente ?</span>
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="#8C93A3" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; transform: rotate({{q3.angle}}); transition: transform 0.2s ease"><path d="m9 5 7 7-7 7"></path></svg>
+</button>
+</h3>
+<sc-if value="{{q3.estOuvert}}" hint-placeholder-val="{{ false }}">
+<div id="r-q3" role="region" aria-labelledby="q-q3" style="display: flex; flex-direction: column; gap: 4px; padding: 0 16px 8px; font-size: 14px; line-height: 21px; color: #B9BEC9">
+<p style="margin: 0">{{q3.reponse}}</p>
+</div>
+</sc-if>
+</div>
+</sc-if>
+<sc-if value="{{q4.visible}}" hint-placeholder-val="{{ true }}">
+<div data-question-bloc="q4" style="border-top: {{q4.sep}}">
+<h3 style="margin: 0; font-size: 15px">
+<button type="button" id="q-q4" data-question="q4" aria-expanded="{{q4.ouvert}}" aria-controls="r-q4" sc-camel-on-click="{{ ouvrirQ4 }}" style="width: 100%; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 12px 16px; box-sizing: border-box; background: none; border: 0; color: #F3F4F6; font-family: inherit; font-size: 15px; line-height: 21px; font-weight: 600; text-align: left; cursor: pointer">
+<span style="flex: 1; min-width: 0">À quoi sert la vérification d'identité ?</span>
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="#8C93A3" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; transform: rotate({{q4.angle}}); transition: transform 0.2s ease"><path d="m9 5 7 7-7 7"></path></svg>
+</button>
+</h3>
+<sc-if value="{{q4.estOuvert}}" hint-placeholder-val="{{ false }}">
+<div id="r-q4" role="region" aria-labelledby="q-q4" style="display: flex; flex-direction: column; gap: 4px; padding: 0 16px 8px; font-size: 14px; line-height: 21px; color: #B9BEC9">
+<p style="margin: 0">{{q4.reponse}}</p>
+</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{t3.visible}}" hint-placeholder-val="{{ true }}">
+<section aria-labelledby="th-t3" style="flex: none; display: flex; flex-direction: column; gap: 8px">
+<h2 id="th-t3" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Bagages</h2>
+<div style="border-radius: 20px; background: #15171C; border: 1px solid #2C303A; overflow: hidden">
+<sc-if value="{{q5.visible}}" hint-placeholder-val="{{ true }}">
+<div data-question-bloc="q5" style="border-top: {{q5.sep}}">
+<h3 style="margin: 0; font-size: 15px">
+<button type="button" id="q-q5" data-question="q5" aria-expanded="{{q5.ouvert}}" aria-controls="r-q5" sc-camel-on-click="{{ ouvrirQ5 }}" style="width: 100%; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 12px 16px; box-sizing: border-box; background: none; border: 0; color: #F3F4F6; font-family: inherit; font-size: 15px; line-height: 21px; font-weight: 600; text-align: left; cursor: pointer">
+<span style="flex: 1; min-width: 0">Mon bagage acheté est-il garanti ?</span>
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="#8C93A3" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; transform: rotate({{q5.angle}}); transition: transform 0.2s ease"><path d="m9 5 7 7-7 7"></path></svg>
+</button>
+</h3>
+<sc-if value="{{q5.estOuvert}}" hint-placeholder-val="{{ false }}">
+<div id="r-q5" role="region" aria-labelledby="q-q5" style="display: flex; flex-direction: column; gap: 4px; padding: 0 16px 8px; font-size: 14px; line-height: 21px; color: #B9BEC9">
+<p style="margin: 0">{{q5.reponse}}</p>
+</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{t4.visible}}" hint-placeholder-val="{{ true }}">
+<section aria-labelledby="th-t4" style="flex: none; display: flex; flex-direction: column; gap: 8px">
+<h2 id="th-t4" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Notifications et compte</h2>
+<div style="border-radius: 20px; background: #15171C; border: 1px solid #2C303A; overflow: hidden">
+<sc-if value="{{q6.visible}}" hint-placeholder-val="{{ true }}">
+<div data-question-bloc="q6" style="border-top: {{q6.sep}}">
+<h3 style="margin: 0; font-size: 15px">
+<button type="button" id="q-q6" data-question="q6" aria-expanded="{{q6.ouvert}}" aria-controls="r-q6" sc-camel-on-click="{{ ouvrirQ6 }}" style="width: 100%; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 12px 16px; box-sizing: border-box; background: none; border: 0; color: #F3F4F6; font-family: inherit; font-size: 15px; line-height: 21px; font-weight: 600; text-align: left; cursor: pointer">
+<span style="flex: 1; min-width: 0">Comment régler mes notifications ?</span>
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="#8C93A3" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; transform: rotate({{q6.angle}}); transition: transform 0.2s ease"><path d="m9 5 7 7-7 7"></path></svg>
+</button>
+</h3>
+<sc-if value="{{q6.estOuvert}}" hint-placeholder-val="{{ false }}">
+<div id="r-q6" role="region" aria-labelledby="q-q6" style="display: flex; flex-direction: column; gap: 4px; padding: 0 16px 8px; font-size: 14px; line-height: 21px; color: #B9BEC9">
+<p style="margin: 0">{{q6.reponse}}</p>
+<a href="PrefsNotifications.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; color: #FFD23F; font-size: 14px; font-weight: 600; text-decoration: none">Ouvrir les préférences</a>
+</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{sansResultat}}" hint-placeholder-val="{{ false }}">
+<section data-etat="sans-resultat" role="status" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 24px 8px 8px; text-align: center">
+<span aria-hidden="true" style="width: 72px; height: 72px; border-radius: 999px; background: #1D2027; color: #B9BEC9; display: flex; align-items: center; justify-content: center">
+<svg width="32" height="32" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+</span>
+<p style="margin: 0; font-size: 18px; line-height: 24px; font-weight: 700; overflow-wrap: anywhere">Aucun résultat pour « {{q}} »</p>
+<p style="margin: 0; max-width: 300px; font-size: 15px; line-height: 22px; color: #B9BEC9">Essayez un autre mot, ou écrivez-nous.</p>
+<button type="button" sc-camel-on-click="{{ vider }}" style="display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border-radius: 12px; background: #1D2027; border: 1px solid #3A3F4B; color: #F3F4F6; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer">Effacer la recherche</button>
+</section>
+</sc-if>
+
+</sc-if>
+
+<sc-if value="{{isChargement}}" hint-placeholder-val="{{ false }}">
+<div data-etat="chargement" aria-busy="true" style="flex: none; display: flex; flex-direction: column; gap: 10px">
+<span role="status" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap">Chargement de l'aide…</span>
+<div aria-hidden="true" style="display: flex; flex-direction: column; gap: 10px">
+<div data-squelette="1" data-nx-motion="1" style="height: 52px; border-radius: 12px; background: #1D2027; animation: nx-pulse 1.4s ease-in-out infinite"></div>
+<div data-squelette="1" data-nx-motion="1" style="height: 24px; border-radius: 12px; background: #15171C; animation: nx-pulse 1.4s ease-in-out infinite"></div>
+<div data-squelette="1" data-nx-motion="1" style="height: 56px; border-radius: 12px; background: #15171C; animation: nx-pulse 1.4s ease-in-out infinite"></div>
+<div data-squelette="1" data-nx-motion="1" style="height: 56px; border-radius: 12px; background: #15171C; animation: nx-pulse 1.4s ease-in-out infinite"></div>
+<div data-squelette="1" data-nx-motion="1" style="height: 24px; border-radius: 12px; background: #15171C; animation: nx-pulse 1.4s ease-in-out infinite"></div>
+<div data-squelette="1" data-nx-motion="1" style="height: 56px; border-radius: 12px; background: #15171C; animation: nx-pulse 1.4s ease-in-out infinite"></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isErreur}}" hint-placeholder-val="{{ false }}">
+<section data-etat="erreur" role="alert" aria-labelledby="err-titre" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 28px 18px 18px; border-radius: 20px; background: rgba(255,123,123,0.12); border: 1px solid rgba(255,123,123,0.4); text-align: center">
+<span aria-hidden="true" style="width: 56px; height: 56px; border-radius: 999px; background: rgba(255,123,123,0.16); color: #FF7B7B; display: flex; align-items: center; justify-content: center">
+<svg width="28" height="28" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5h.01"></path></svg>
+</span>
+<h2 id="err-titre" style="margin: 0; font-size: 18px; line-height: 24px; font-weight: 700; color: #F3F4F6">Impossible de charger l'aide</h2>
+<p style="margin: 0; font-size: 15px; line-height: 22px; color: #F3F4F6">Vérifiez votre connexion, puis réessayez. Vous pouvez aussi écrire à l'assistance.</p>
+<button type="button" sc-camel-on-click="{{ reessayer }}" style="align-self: stretch; display: flex; align-items: center; justify-content: center; height: 52px; border-radius: 14px; background: #1D2027; border: 1px solid #3A3F4B; color: #F3F4F6; font-family: inherit; font-weight: 700; font-size: 16px; cursor: pointer">Réessayer</button>
+</section>
+</sc-if>
+
+</main>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 20px 28px; background: #0D0E11; border-top: 1px solid #2C303A; display: flex; flex-direction: column; gap: 8px">
+<sc-if value="{{enLigne}}" hint-placeholder-val="{{ true }}">
+<a href="AideContact.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #FFD23F; color: #0D0E11; font-weight: 700; font-size: 16px; text-decoration: none">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"></path></svg>
+Écrire à l'assistance
+</a>
+</sc-if>
+<sc-if value="{{isHorsLigne}}" hint-placeholder-val="{{ false }}">
+<p id="ecrire-aide" style="margin: 0; font-size: 13px; line-height: 18px; text-align: center; color: #B9BEC9">Hors ligne : écrire à l'assistance demande une connexion.</p>
+<button type="button" aria-disabled="true" aria-describedby="ecrire-aide" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 52px; border-radius: 14px; background: #262A33; color: #8C93A3; border: 0; font-family: inherit; font-weight: 700; font-size: 16px; cursor: not-allowed">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"></path></svg>
+Écrire à l'assistance
+</button>
+</sc-if>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844}}">
+class Component extends DCLogic {
+  componentWillUnmount() {
+    clearTimeout(this.minuterie);
+  }
+  renderVals() {
+    const s = this.state || {};
+    const vue = s.vue ?? 'normal';
+    const ouverte = s.ouverte ?? null;
+    const q = s.q ?? '';
+    const lisse = (txt) => String(txt).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const recherche = lisse(q.trim());
+    // Réponses : règles confirmées seulement (EF-12, EF-22/23, commission 12,5 % / 10 % confirmée le 12 oct. 2026).
+    const FAQ = [
+      { theme: 't1', id: 'q1', q: "Qu'est-ce qu'un droit de voyage ?", a: "C'est le droit de voyager sur un vol. Vous le détenez, vous pouvez le revendre à prix encadré ou le transférer, puis vous nommez le voyageur avant l'échéance." },
+      { theme: 't1', id: 'q2', q: 'Que se passe-t-il si je ne nomme personne ?', a: "À l'échéance de nommage, vous êtes nommé voyageur par défaut. Le droit reste utilisable : c'est vous qui voyagez. Après l'échéance, plus aucune revente ni aucun transfert." },
+      { theme: 't2', id: 'q3', q: 'Combien coûte une revente ?', a: "La commission est de 12,5\u00a0% sans le Pass et de 10\u00a0% avec le Pass. Elle est affichée avec votre net avant toute confirmation." },
+      { theme: 't2', id: 'q4', q: "À quoi sert la vérification d'identité ?", a: "Elle n'est demandée que lorsqu'elle est nécessaire : pour revendre un billet et recevoir vos versements (à valider)." },
+      { theme: 't3', id: 'q5', q: 'Mon bagage acheté est-il garanti ?', a: "Pas avant la confirmation de la compagnie : l'achat est « sous réserve d'acceptation par la compagnie ». En cas de refus, vous n'êtes pas débité ou vous êtes remboursé intégralement." },
+      { theme: 't4', id: 'q6', q: 'Comment régler mes notifications ?', a: "Dans Compte › Notifications, choisissez Tout, L'essentiel ou Rien, puis les canaux. Si rien n'arrive, vérifiez aussi l'autorisation de votre téléphone." }
+    ];
+    const bouton = (actif) => ({
+      pressed: actif ? 'true' : 'false',
+      bg: actif ? 'rgba(255,210,63,0.12)' : '#1D2027',
+      border: actif ? '#FFD23F' : '#3A3F4B',
+      color: actif ? '#F3F4F6' : '#B9BEC9'
+    });
+    const voir = (id, requete) => () => {
+      clearTimeout(this.minuterie);
+      this.setState({ vue: id, q: requete, ouverte: null });
+    };
+    const correspond = (f) => recherche === '' || lisse(f.q + ' ' + f.a).includes(recherche);
+    const sansResultat = vue !== 'chargement' && vue !== 'erreur' && recherche !== '' && !FAQ.some(correspond);
+    const vals = {
+      dNormal: bouton(vue === 'normal' && !sansResultat),
+      dChargement: bouton(vue === 'chargement'),
+      dSans: bouton(vue === 'normal' && sansResultat),
+      dErreur: bouton(vue === 'erreur'),
+      dHorsLigne: bouton(vue === 'hors-ligne'),
+      voirNormal: voir('normal', ''),
+      voirChargement: voir('chargement', ''),
+      voirSans: voir('normal', 'xyzzy'),
+      voirErreur: voir('erreur', ''),
+      voirHorsLigne: voir('hors-ligne', ''),
+      reessayer: () => {
+        this.setState({ vue: 'chargement' });
+        this.minuterie = setTimeout(() => this.setState({ vue: 'normal' }), 1200);
+      },
+      isChargement: vue === 'chargement',
+      isErreur: vue === 'erreur',
+      isHorsLigne: vue === 'hors-ligne',
+      enLigne: vue !== 'hors-ligne',
+      showContenu: vue === 'normal' || vue === 'hors-ligne',
+      q,
+      aQuery: q !== '',
+      sansResultat,
+      vider: () => this.setState({ q: '', ouverte: null }),
+      chercher: (e) => this.setState({ q: e && e.target ? e.target.value : '', ouverte: null })
+    };
+    ['t1', 't2', 't3', 't4'].forEach((t) => {
+      const items = FAQ.filter((f) => f.theme === t && correspond(f));
+      vals[t] = { visible: items.length > 0 };
+    });
+    FAQ.forEach((f) => {
+      const frere = FAQ.filter((g) => g.theme === f.theme && correspond(g));
+      const ouvert = ouverte === f.id;
+      vals[f.id] = {
+        visible: correspond(f),
+        sep: frere.length && frere[0].id === f.id ? '0' : '1px solid #2C303A',
+        ouvert: ouvert ? 'true' : 'false',
+        estOuvert: ouvert,
+        angle: ouvert ? '90deg' : '0deg',
+        reponse: f.a
+      };
+    });
+    const ouvrir = (id) => () => this.setState({ ouverte: ouverte === id ? null : id });
+    return {
+      ...vals,
+      ouvrirQ1: ouvrir('q1'),
+      ouvrirQ2: ouvrir('q2'),
+      ouvrirQ3: ouvrir('q3'),
+      ouvrirQ4: ouvrir('q4'),
+      ouvrirQ5: ouvrir('q5'),
+      ouvrirQ6: ouvrir('q6')
+    };
+  }
+}
+</script>
+
+
+</body></html>

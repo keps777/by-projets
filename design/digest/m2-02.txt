@@ -1,0 +1,63 @@
+Ordre à cours limité — NexG-TT
+Ordre à cours limité — NexG-TT
+Ordre à cours limité
+YUL → CDG
+Aérolys 816 · ven. 18 déc.
+Achetez automatiquement si le prix descend à votre seuil
+Votre seuil d'achat
+{{seuilLabel}}
+{{diff.text}}
+Ajuster le seuil (pas de 10 $)
+1 000 $
+2 050 $ · plafond
+Où se place votre seuil
+{{scale.lo}}
+{{scale.hi}}
+Votre seuil
+{{seuilLabel}}
+Meilleure offre de vente actuelle
+1 500 $
+Meilleure demande d'achat
+1 420 $
+{{zone.text}}
+Validité de l'ordre
+24 h
+13 oct.
+7 jours
+19 oct.
+Jusqu'à J-2
+16 déc.
+{{gauge.value}}
+Probabilité d'exécution (estimation)
+{{gauge.level}}
+Calcul simplifié selon l'écart avec la meilleure offre et la durée de validité. Aucune garantie.
+Quantité et paiement
+Quantité
+1 billet
+Carte de test
+•••• 4242
+Fictive · pré-autorisée, débitée seulement si l'ordre est exécuté
+Test
+MODE DÉMO — aucun paiement réel
+Récapitulatif de l'ordre
+Achat · cours limité
+YUL
+CDG
+Vol
+Aérolys 816 · ven. 18 déc.
+Seuil maximal
+{{seuilLabel}}
+Quantité
+1
+Validité
+{{validityRecap}}
+Paiement
+Carte de test •••• 4242
+Commission
+10 % sur les reventes (hypothèse, plage 10–20 %)
+Si une offre ≤ seuil apparaît, nous achetons pour vous et vous devenez détenteur. Annulable à tout moment avant exécution.
+Vous payez le prix de l'offre trouvée, jamais plus que votre seuil. Le droit de voyage est inscrit à votre nom dans le registre NexG-TT ; le voyageur se nomme au plus tard à J-1.
+Prix indicatifs. Un droit de voyage n'est pas un placement financier. Données de démonstration.
+Placer l'ordre à
+{{seuilLabel}}
+Ou publiez une intention visible des vendeurs, avec fonds réservés

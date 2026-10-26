@@ -1,0 +1,41 @@
+Indices NexG — NexG-TT
+Indices NexG — NexG-TT
+Indices NexG
+24 h
+{{k.route}}
+{{k.price}}
+{{k.chg}}
+{{k.route}}
+{{k.price}}
+{{k.chg}}
+Au départ de Montréal (YUL)
+Le prix du voyage, région par région
+Base 100 = 1er janv. 2026. Un indice de 112,4 signifie un prix équivalent neuf 12,4 % plus élevé qu'au 1er janvier. Valeurs fictives.
+7 j
+30 j
+90 j
+{{l.ch}}
+{{c.name}}
+{{c.routes}}
+{{c.value}}
+{{c.chg}}
+{{c.period}}
+Depuis le 1er janv.
+{{c.ytd}}
+Carte de chaleur des routes
+Variation {{periodLong}} · touchez une route pour voir son cours
+Plus forte hausse
+{{best.code}}
+{{best.chg}}
+Plus forte baisse
+{{worst.code}}
+{{worst.chg}}
+{{r.name}}
+{{t.code}}
+{{t.city}}
+{{t.chg}}
+Baisse ≤ −15 %
+0
+Hausse ≥ +15 %
+Plus la tuile est claire, plus la variation est forte. Le signe indique le sens.
+Indices calculés sur le prix équivalent neuf. Données de démonstration. Un droit de voyage n'est pas un placement financier.

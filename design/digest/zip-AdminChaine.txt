@@ -1,0 +1,183 @@
+Administration · Chaîne de détention — NexG-TT
+Administration · Chaîne de détention — NexG-TT
+NEXG
+·TT
+Administration
+Droits de voyage
+Drops et agences
+Journal d’audit
+Démo · données fictives
+MFA vérifiée
+adm-01
+(vous)
+Maquette · état affiché
+Normal
+Gel demandé
+Gelé
+Dégel demandé
+Chargement
+Vide
+Erreur
+Hors ligne
+Hors produit : sert à montrer les états de l’écran.
+Droits de voyage
+NXG-9PL3
+NXG-9PL3
+· YUL → PPT
+Fiche d’un droit de voyage · registre interne · données du 12 oct. 2026, 14:02 (UTC−4)
+Hors ligne. Dernières données reçues le 12 oct. 2026 à 14:02 (UTC−4). Lecture seule : consultation seulement ; les actions d’administration sont indisponibles.
+Aucun droit ne porte cette référence
+La référence NXG-9PL3 n’existe pas dans le registre, ou vous n’avez pas accès à ce droit. Aucune donnée n’a été modifiée.
+Retour à la liste
+Impossible de charger ce droit.
+Le serveur n’a pas répondu. Aucune donnée n’a été modifiée.
+Code de corrélation :
+ERR-DEMO-7C91
+Réessayer
+Retour à la liste
+Chargement de la fiche du droit…
+Ce droit est gelé depuis le 12 oct. 2026, 14:07 (UTC−4). Aucune vente, aucun transfert ni nommage n’est possible tant qu’il n’est pas dégelé
+[H]
+.
+Résumé du droit
+Vol
+Aérolys 471
+Montréal (YUL) → Papeete (PPT) · 1 escale (LAX)
+Départ
+dim. 9 mai 2027
+10:20 · UTC−4
+Détenteur actuel
+ACC-0412
+depuis le 3 août 2026
+Voyageur
+À nommer
+Identité masquée après nommage
+Échéance de nommage
+8 mai 2027 · 10:20
+UTC−4 · dans 208 jours
+Statut
+Détenu
+Gelé
+Version de projection
+5
+égale au dernier n° d’événement
+Réservation
+PNR K3MD8Z
+Fournisseur : bac à sable (démo) · canal primaire
+À l’échéance, si aucun voyageur n’est nommé, le détenteur est nommé voyageur par défaut
+[C]
+. Données de démo : échéance J-1, à revoir si J-3 est retenu.
+Chaîne de détention
+Ajout seul
+Chaîne vérifiée · 5 événements · 12 oct. 02:00
+Événements du registre pour le droit NXG-9PL3, du plus ancien au plus récent : numéro, événement, date, de vers à, montant, empreinte et empreinte précédente.
+N°
+Événement
+Date
+De → à
+Montant
+Empreinte
+Empreinte précédente
+1
+Émission
+Achat neuf
+14 févr. 2026
+11:42 · UTC−5
+NexG-TT
+→
+ACC-0561
+1 700 $
+e23f203bf99b…
+000000000000…
+origine
+2
+Mise en vente
+20 mai 2026
+09:15 · UTC−4
+ACC-0561
+1 780 $
+prix demandé
+04b8704dfea4…
+e23f203bf99b…
+= n° 1
+3
+Vente
+29 mai 2026
+16:03 · UTC−4
+ACC-0561
+→
+ACC-0275
+1 780 $
+bc8bd6065fab…
+04b8704dfea4…
+= n° 2
+4
+Mise en vente
+20 juil. 2026
+10:30 · UTC−4
+ACC-0275
+1 850 $
+prix demandé
+b11614a6bab7…
+bc8bd6065fab…
+= n° 3
+5
+Vente
+3 août 2026
+13:47 · UTC−4
+ACC-0275
+→
+ACC-0412
+1 850 $
+190f8245b6a5…
+b11614a6bab7…
+= n° 4
+Chaque empreinte est calculée à partir de l’événement et de l’empreinte précédente : toute modification casserait la chaîne. Aucun événement n’est modifié ni supprimé ; une erreur se corrige par une écriture compensatoire.
+Prochain événement attendu : nommage du voyageur avant le 8 mai 2027, 10:20 (UTC−4). Montants en dollars canadiens, enregistrés en unités mineures. Le gel est un indicateur distinct des événements
+[H]
+.
+Actions d’administration
+Droit dégelé (démo). Action journalisée : demandée par adm-01 (vous), approuvée par adm-02.
+Geler un droit bloque toute transaction (vente, transfert, nommage) jusqu’au dégel
+[H]
+. Action sensible : double validation requise, journalisée.
+Geler ce droit
+Motif du gel
+Conservé dans le journal d’audit. N’y inscrivez aucune donnée de voyageur.
+Indiquez le motif du gel.
+Annuler
+Demander le gel
+Hors ligne : les actions d’administration sont indisponibles.
+{{requestChip}}
+{{requestLabel}}
+adm-01 (vous) · 12 oct. 2026, {{requestTime}} (UTC−4)
+Motif
+{{motifShown}}
+Vous ne pouvez pas approuver votre propre demande : un autre administrateur doit l’approuver.
+Approuver
+Annuler la demande
+Démo, hors produit
+Simuler l’approbation par adm-02
+Gelé (2/2)
+Demandé par
+adm-01 (vous) · 12 oct. 2026, 14:05 (UTC−4)
+Approuvé par
+adm-02 · 12 oct. 2026, 14:07 (UTC−4)
+Motif
+{{motifShown}}
+Aucune transaction n’est possible sur ce droit : vente, transfert et nommage sont bloqués
+[H]
+.
+Demander le dégel
+Le dégel suit la même double validation et est journalisé
+[R]
+.
+Journal d’audit de ce droit
+Les actions d’administration sur NXG-9PL3 sont journalisées avec leur auteur, leur résultat et leur motif.
+Voir le journal d’audit
+Rapprochement quotidien
+Registre, grand livre, paiements et fournisseur concordent au 12 oct. 2026, 02:00 (UTC−4).
+Tout écart déclenche une alerte et le gel du droit concerné.
+Prototype — données fictives
+Comptes pseudonymisés (ACC-…, adm-…), agences et références inventées. Aucun nom, courriel ni identité de voyageur.
+Un droit de voyage est une inscription au registre interne de NexG-TT.

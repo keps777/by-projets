@@ -1,0 +1,241 @@
+Design system — NexG-TT
+Design system — NexG-TT
+NexG-TT 4.0 · Fondations · proposition à valider
+Design system — Tableau des départs
+Nuit d'aéroport, jaune signalétique réservé à l'action et à l'échéance, billet papier perforé, volets à palettes. Mobile d'abord, même grammaire sur PC.
+01
+Couleurs
+Hex écrits en ligne · un seul jaune · contraste AA : 4,5:1 pour le texte, 3:1 dès 24 px
+Fonds et surfaces
+ground
+#0D0E11
+fond de l'app
+surface-1
+#15171C
+cartes
+surface-2
+#1D2027
+champs, cartes imbriquées
+surface-3
+#262A33
+puces neutres, survol
+board
+#060708
+fond tableau des départs
+Filets et texte
+line
+#2C303A
+filets, bordures
+line-strong
+#3A3F4B
+champs, boutons secondaires
+text
+#F3F4F6
+texte principal
+text-2
+#B9BEC9
+texte secondaire
+text-3
+#8C93A3
+tertiaire, jamais plus pâle
+Signal et données
+Aa
+signal
+#FFD23F
+action, échéance
+up
+#62C7FF
+hausse (+), info, argent
+down
+#FF9E5E
+baisse (−)
+ready
+#7CE3B5
+nommé — prêt, succès
+danger
+#FF7B7B
+erreur, avec icône + texte
+Fonds doux (12 %)
+Aa
+signal-soft
+#FFD23F 12 %
+puce À nommer, rappel J-1
+Aa
+up-soft
+#62C7FF 12 %
+puce En vente, bandeau démo
+Aa
+down-soft
+#FF9E5E 12 %
+fond de baisse
+Aa
+ready-soft
+#7CE3B5 12 %
+puce Nommé — prêt
+Aa
+danger-soft
+#FF7B7B 12 %
+fond d'erreur
+Papier
+Aa
+paper
+#FFFFFF
+billet, recherche principale
+paper-2
+#F1F2F4
+zones sur papier
+paper-ink
+#121418
+texte sur papier
+paper-ink-2
+#555C6B
+texte secondaire sur papier
+paper-line
+#E2E4E9
+perforation, filets papier
+02
+Typographie
+Barlow Condensed · Barlow · IBM Plex Mono
+Display
+Barlow Condensed 700 · 52/48
+YUL → CDG
+Titre d'écran
+Barlow Condensed 600 · 36/36
+Mon droit de voyage
+Titre de section
+Barlow Condensed 600 · 22/26
+Départs qui montent
+Corps
+Barlow 400 · 15/22
+Nommez le voyageur au plus tard 24 h avant le départ.
+Secondaire
+Barlow 500 · 13/18
+Payé 1 000 $ le 12 janv. · Aérolys · vol 812
+Sur-titre
+Barlow 700 · 12/16 · .12em
+Mon portefeuille · 3 droits de voyage
+Chiffres
+IBM Plex Mono 600 · 34 / 15
+2 000 $
++100 %
+00:04:31
+03
+Espacement et rayons
+Espacement · grille 4/8
+4
+icône et texte serrés
+8
+entre puces, entre icônes d'en-tête
+12
+entre éléments d'une carte
+16
+padding de cellule et de billet
+20
+marge d'écran mobile, écart entre blocs
+24
+écart entre groupes
+32
+marge de page PC (indicatif)
+48
+écart entre sections PC (indicatif)
+Rayons et cible tactile
+12
+champs
+14
+boutons
+18
+billet
+20
+cartes
+999
+puces
+44
+cible min.
+04
+Composants et états
+Repris de l'écran Accueil · cibles tactiles ≥ 44 px
+Boutons
+Revendre
+Défaut
+Revendre
+Appuyé
+Revendre
+Désactivé
+Revendre
+Focus visible
+Transférer
+Secondaire
+Tout voir
+Texte
+Champ
+Ville de départ
+Défaut
+Destination
+Focus
+Nom de famille du voyageur
+Erreur
+Requis : nom tel qu'il figure sur la pièce d'identité.
+Billet papier perforé
+YUL
+CDG
+18:05
+Montréal
+Paris
+07:10 +1
+À nommer
+avant le 13 déc. 18:05
+2 000 $
+prix équivalent
+Encoches de 22 px, couleur du fond porteur.
+Puces de statut
+Détenu
+À nommer
+En vente
+Nommé — prêt
+Vendu
+Voyagé
+Écart de prix
+YUL → CDG
+2 000 $
++100 %
+YUL → PPT
+1 790 $
+−3 %
++1 000 $
+−60 $
+Mono 600 · signe et flèche, puis couleur.
+Volets à palettes
+C
+D
+G
+Paris
+Direct · 7 h 05
++4 %
+Cellule 22 × 30 · mono 600 17 · jaune
+Barre de navigation
+Accueil
+Rechercher
+Drops
+Portefeuille
+Compte
+Onglet courant en jaune
+aria-current="page"
+Cibles ≥ 48 px de haut
+Libellés toujours visibles
+Bandeau démo
+MODE DÉMO — aucun paiement réel
+Sur tout paiement simulé. Données fictives.
+05
+Principes
+01
+Le jaune signale une action ou une échéance, jamais une décoration.
+02
+Un écart de prix porte toujours un signe, pas seulement une couleur.
+03
+On dit prix équivalent, jamais gain garanti.
+04
+Tout ce qui est définitif est annoncé avant.
+05
+Le passager est nommé le plus tard possible.
+06
+Chaque écran a ses états : chargement, vide, erreur.

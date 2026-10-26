@@ -1,0 +1,39 @@
+Connexion (web) — NexG-TT
+Connexion (web) — NexG-TT
+NEXG
+·TT
+Explorer sans compte
+Créer un compte
+Hors ligne
+La connexion demande le réseau : la clé d’accès et le code par courriel sont suspendus. Rien n’a été envoyé.
+Clé d’accès non reconnue
+Votre appareil n’a pas confirmé la clé d’accès (confirmation annulée ou clé non reconnue). Aucune connexion n’a eu lieu. Réessayez, ou recevez un code par courriel.
+Réessayer
+Retour
+AT
+Bon retour, Alex
+alex.exemple@courriel.test
+Se connecter avec une clé d’accès
+Empreinte, visage ou code de votre appareil
+Confirmation sur votre appareil en cours…
+Empreinte, visage ou code : suivez la demande de votre appareil.
+Se connecter avec une clé d’accès
+Empreinte, visage ou code de votre appareil
+Aucun mot de passe : votre téléphone confirme que c’est bien vous.
+ou
+Recevoir un code par courriel
+Recevoir un code par courriel
+Ce n’est pas moi
+Prototype · données fictives
+Nous ne vous demanderons jamais votre code par téléphone.
+Ne le communiquez à personne, même à quelqu’un qui se présente comme NexG-TT.
+[H]
+Connexion par clé d’accès : hypothèse à valider avec la double authentification (EF-01). Aucune règle de sécurité n’est décidée ici.
+Prototype — données fictives
+Compagnies (Aérolys, Nordelle), agence, détenteurs, prix et références inventés. Aucun paiement réel.
+Un droit de voyage est une inscription au registre interne de NexG-TT, pas un placement financier.
+Aperçu des états
+Normal
+Chargement
+Erreur
+Hors ligne

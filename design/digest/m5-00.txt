@@ -1,0 +1,91 @@
+Manifeste — un billet, deux faces
+Manifeste — NexG-TT
+Recto · TravelTech
+Voyager
+Le billet reste un voyage : on le trouve, on le réserve neuf ou en revente, on le prépare, puis on nomme le voyageur et on embarque.
+7 capacités
+01
+Explorer par radar
+02
+Billets qui cherchent un voyageur
+03
+Réserver neuf, revente ou agence
+04
+Préparer son voyage
+05
+Acheter un bagage dans la soute de son vol
+06
+Nommer le voyageur et embarquer
+07
+Dire son prix, fonds réservés
+intention d'achat
+Palette jour
+Ciel
+#EEF3F8
+Papier
+#FFFFFF
+Encre
+#0B1B2E
+Bleu ciel
+#1A64C8
+Signal
+#FFD23F
+Registre typographique
+Punta Cana
+Destinations en Barlow Condensed, casse normale, grandes et aérées · texte en Barlow
+Verso · FinTech
+Mes actifs
+Avant d'être nommé, le billet est un droit inscrit au registre NexG-TT : on le détient, on le revend à prix encadré ou on le fait racheter.
+7 capacités
+01
+Portefeuille de droits de voyage
+02
+Cours et carnet d'ordres par vol
+03
+Revendre avec plafond
+04
+Liquidité : rachat ou annonce
+05
+Drops membres et Pass
+06
+Revendre un bagage inutilisé
+même vol uniquement
+07
+Vendre à un acheteur qui attend
+fonds réservés
+Palette nuit
+Nuit
+#0D0E11
+Surface
+#15171C
+Hausse +
+#62C7FF
+Baisse −
+#FF9E5E
+Signal
+#FFD23F
+Registre typographique
+YUL → CDG
+2 000 $
++100 %
+Majuscules de tableau des départs · chiffres en IBM Plex Mono, toujours signés
+Un billet,
+deux faces
+Recto
+YUL
+Montréal
+18:05
+14 déc. 2026
+Aérolys 812 · direct
+Voyageur
+À nommer avant le 13 déc.
+Verso
+CDG
+Paris
+07:10 (+1)
+N° NXG-7Q2M
+Payé 1 000 $
+Prix équivalent
+2 000 $
++100 %
+Mêmes typographies · même jaune pour l'action · même billet.

@@ -1,0 +1,18 @@
+Étape 2 — faisons connaissance
+Faisons connaissance — Étape 2 sur 4 — NexG-TT
+Étape 2 sur 4
+Plus tard
+Faisons connaissance
+Trois réponses rapides, toutes facultatives. Elles servent à vous proposer les bons départs.
+Prénom
+{{greetLine}}
+Aéroport habituel
+YUL
+Point de départ proposé par défaut. Vous pourrez toujours en choisir un autre.
+Ce qui vous intéresse
+Plusieurs choix possibles
+{{i.label}}
+{{countLine}}
+Vos choix servent à vos alertes ; modifiables à tout moment.
+Le nom du voyageur se donne plus tard, billet par billet.
+Continuer

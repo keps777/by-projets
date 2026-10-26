@@ -1,0 +1,37 @@
+Contacter l'assistance — NexG-TT
+Contacter l'assistance — NexG-TT
+Contacter l'assistance
+Aperçu des états · démo
+Normal
+Erreur de saisie
+Envoi en cours
+Envoyé
+Échec d'envoi
+Hors ligne
+MODE DÉMO — aucun message n'est réellement envoyé
+Ne partagez jamais votre mot de passe, un code de vérification ou un numéro de carte, même si on vous le demande.
+Hors ligne : votre brouillon est conservé sur cet appareil.
+Vous pourrez l'envoyer dès que la connexion reviendra.
+Le message n'a pas pu être envoyé.
+Votre brouillon est conservé.
+Réessayer
+Sujet
+Billet
+Paiement ou versement
+Bagage
+Compte
+Autre
+Référence (facultatif)
+Elle figure sur le billet ou le reçu (exemple fictif).
+Votre message
+Écrivez votre message.
+Décrivez ce qui s'est passé, avec les dates utiles.
+Envoi du message…
+La réponse sera envoyée à alex.exemple@courriel.test.
+Message envoyé (démo)
+Demande
+AS-4F9K
+(fictive). La réponse sera envoyée à alex.exemple@courriel.test.
+Retour à l'aide
+Écrire un autre message
+{{envoiTexte}}

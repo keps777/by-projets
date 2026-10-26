@@ -1,0 +1,49 @@
+Préférences de notifications — NexG-TT
+Préférences de notifications — NexG-TT
+Notifications
+Aperçu des états · démo
+Normal
+Chargement
+Permission refusée
+Erreur
+Hors ligne
+Choisissez ce que NexG-TT vous envoie.
+{{messageEnregistre}}
+Votre choix n'a pas été enregistré.
+Votre réglage précédent est conservé.
+Réessayer
+Hors ligne : les préférences ne peuvent pas être modifiées.
+Reconnectez-vous pour changer vos réglages.
+Chargement des préférences…
+Fréquence
+Tout
+Échéances, ventes, drops, prix et soute.
+L'essentiel
+Échéances et ventes. Pas de drops, de prix ni de soute.
+Rien
+Aucune notification facultative.
+Contenu des niveaux : proposition à valider.
+Sans rappel, vous serez nommé voyageur à l'échéance sans avoir été prévenu.
+Régler les rappels d'échéance
+Ce que vous recevez
+{{a.libelle}}
+{{a.statut}}
+Vos alertes de prix et de drops sont suspendues (hypothèse à valider).
+Où les recevoir
+Dans l'application
+Toujours actif · Centre de notifications
+Notifications de l'appareil
+{{appareil.sous}}
+Comment l'activer
+Ouvrez les réglages de votre téléphone.
+Choisissez NexG-TT dans la liste des applications.
+Autorisez les notifications.
+Courriel
+alex.exemple@courriel.test
+Toujours envoyés
+Quel que soit le niveau
+Code de vérification
+Reçus d'achat et de vente
+Sécurité du compte
+Changement ou annulation de votre vol
+Messages nécessaires au service : proposition à valider.

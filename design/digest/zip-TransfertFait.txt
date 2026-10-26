@@ -1,0 +1,50 @@
+Transférer à un proche : transfert effectué — NexG-TT
+Transférer à un proche : transfert effectué — NexG-TT
+Transfert
+MODE DÉMO — aucun paiement réel
+Transfert effectué
+Droit transféré à Léa A.
+Ce droit est maintenant dans le portefeuille de Léa A. Pour vous, son statut est « Cédé ».
+Aérolys · Vol 812
+Lun. 14 déc. 2026
+YUL
+CDG
+18:05
+Montréal
+Direct · 7 h 05
+07:10
+(+1)
+Paris
+Cédé
+Cédé à Léa A.
+Registre NXG-7Q2M
+Frais de transfert (hypothèse)
+{{fraisLabel}}
+Ce que reçoit Léa A.
+Aperçu de démo : aucun message réel n'est envoyé.
+Courriel
+Alex T. vous a transféré un droit de voyage
+YUL → CDG · lun. 14 déc. 2026 · Aérolys 812
+Statut : Détenu. À nommer avant le 13 déc. 18:05.
+Notification
+Droit de voyage reçu
+Alex T. vous a transféré YUL → CDG. Nommez le voyageur avant le 13 déc. 18:05.
+Si un message tarde, le droit est déjà dans le portefeuille de Léa A. : le transfert ne dépend pas de l'envoi.
+Chaîne de détention
+Registre NexG-TT
+12 janv.
+Achat neuf
+Alex T. · 1 000 $
+12 oct.
+18:42
+Transfert (sans vente)
+Alex T. → Léa A.
+13 déc.
+18:05
+Échéance de finalisation
+Léa A. nomme le voyageur ; ensuite, plus aucune transaction.
+14 déc.
+18:05
+Départ YUL → CDG
+Aérolys 812
+Retour au portefeuille

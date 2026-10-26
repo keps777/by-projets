@@ -1,0 +1,64 @@
+Solde NexG — NexG-TT
+Solde NexG — NexG-TT
+Mes actifs · Solde NexG
+Solde disponible
+$ CA
+{{availTxt}}
+{{c.ch}}
+En attente
+0,00 $
+Versement en cours · •••• 4821
+1 152,00 $
+Verser vers mon compte
+•••• 4821
+Utiliser pour un achat
+Confirmer le versement
+Montant
+1 152,00 $
+Vers
+Compte
+•••• 4821
+(fictif)
+Frais de versement
+0,00 $
+(hypothèse)
+Délai estimé
+1 à 3 jours ouvrables (hypothèse)
+MODE DÉMO — aucun paiement réel
+Annuler
+Confirmer
+Versement simulé lancé : 1 152,00 $ vers •••• 4821. Il apparaît dans le grand livre.
+Réinitialiser la démo
+Identité vérifiée
+Requise pour les versements · vérifiée le 28 août 2026
+Gérer
+Grand livre
+1er août → 12 oct. 2026
+Tout
+Entrées
+Sorties
+Entrées
+{{totIn}}
+Sorties
+{{totOut}}
+Date
+Mouvement
+Montant · solde
+1 août
+Solde d'ouverture
+0,00 $
+{{g.name}}
+{{r.day}}
+{{r.mon}}
+{{r.label}}
+Hypothèse
+{{r.sub}}
+{{r.amount}}
+{{r.balance}}
+12 oct.
+Solde de clôture
+{{availTxt}}
+Filtre actif : chaque solde affiché reste celui du grand livre complet après le mouvement.
+Chaque commission de revente est une ligne distincte, placée sous la revente qui l'a déclenchée. Taux : hypothèse 10 %, dans une plage de 10 à 20 % à valider.
+Montants fictifs de démonstration.
+Aucun paiement réel. Compte •••• 4821 fictif. Un droit de voyage n'est pas un placement financier.

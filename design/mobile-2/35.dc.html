@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<title>Intentions d'achat — NexG-TT</title>
+<script src="977b96a1-6190-4665-bb72-c1d018af8c69"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+<style>
+body{margin:0;background:#0D0E11}
+a{color:#FFD23F}a:hover{color:#FFE27A}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #FFD23F;outline-offset:2px}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@media (prefers-reduced-motion: reduce){[data-nx-motion]{animation:none !important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0D0E11; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="padding: 52px 12px 8px; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 8px">
+<a href="Marche.dc.html" aria-label="Retour" style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 999px; background: #15171C; border: 1px solid #2C303A; display: flex; align-items: center; justify-content: center; color: #F3F4F6; text-decoration: none">
+<svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+</a>
+<h1 style="margin: 0; text-align: center; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 20px; letter-spacing: 0.04em; text-transform: uppercase">Intentions d'achat</h1>
+<a href="Ordre.dc.html" aria-label="Publier ma propre intention d'achat" style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 999px; background: #15171C; border: 1px solid #2C303A; display: flex; align-items: center; justify-content: center; color: #FFD23F; text-decoration: none">
+<svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+</a>
+</header>
+
+<main style="flex: 1; overflow-y: auto; padding: 8px 20px 40px; display: flex; flex-direction: column; gap: 18px">
+
+<section aria-label="Résumé des intentions" style="display: flex; flex-direction: column; gap: 10px; padding: 16px 18px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A">
+<p style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Tableau de la demande · fonds déjà réservés</p>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 34px; line-height: 36px; font-variant-numeric: tabular-nums">{{totalCount}}</span>
+<span style="font-size: 13px; line-height: 17px; color: #B9BEC9">intentions actives, dont <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #F3F4F6">{{mineCount}}</span> sur vos vols</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px; padding-left: 12px; border-left: 1px solid #2C303A">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 34px; line-height: 36px; font-variant-numeric: tabular-nums; white-space: nowrap">{{totalFunds}}</span>
+<span style="font-size: 13px; line-height: 17px; color: #B9BEC9">de fonds réservés au total</span>
+</div>
+</div>
+<p style="margin: 0; display: flex; align-items: center; gap: 8px; font-size: 12px; line-height: 17px; color: #8C93A3">
+<svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M3 13h6l4 7h2l-2-7h5l2 2h2l-1-3 1-3h-2l-2 2h-5l2-7h-2l-4 7H3z"></path></svg>
+Vols au départ de Montréal (YUL). Acheteurs anonymisés : initiale seulement.
+</p>
+</section>
+
+<section aria-label="Filtres" style="display: flex; flex-direction: column; gap: 10px">
+<div role="group" aria-label="Filtrer les intentions" style="display: flex; gap: 8px; overflow-x: auto; margin: 0 -20px; padding: 0 20px; scrollbar-width: none">
+<button type="button" sc-camel-on-click="{{ pickMine }}" aria-pressed="{{fMine.pressed}}" style="flex: none; display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 14px; border-radius: 999px; font-family: 'Barlow', system-ui, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; background: {{fMine.bg}}; color: {{fMine.fg}}; border: 1px solid {{fMine.border}}">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h12v4"></path><rect x="3" y="9" width="18" height="11" rx="2"></rect><path d="M16 14.5h1.5"></path></svg>
+Mes vols
+</button>
+<button type="button" sc-camel-on-click="{{ pickAll }}" aria-pressed="{{fAll.pressed}}" style="flex: none; display: inline-flex; align-items: center; height: 44px; padding: 0 14px; border-radius: 999px; font-family: 'Barlow', system-ui, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; background: {{fAll.bg}}; color: {{fAll.fg}}; border: 1px solid {{fAll.border}}">Tous</button>
+<button type="button" sc-camel-on-click="{{ pickCar }}" aria-pressed="{{fCar.pressed}}" style="flex: none; display: inline-flex; align-items: center; height: 44px; padding: 0 14px; border-radius: 999px; font-family: 'Barlow', system-ui, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; background: {{fCar.bg}}; color: {{fCar.fg}}; border: 1px solid {{fCar.border}}">Caraïbes</button>
+<button type="button" sc-camel-on-click="{{ pickEur }}" aria-pressed="{{fEur.pressed}}" style="flex: none; display: inline-flex; align-items: center; height: 44px; padding: 0 14px; border-radius: 999px; font-family: 'Barlow', system-ui, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; background: {{fEur.bg}}; color: {{fEur.fg}}; border: 1px solid {{fEur.border}}">Europe</button>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<p role="status" style="margin: 0; font-size: 13px; color: #B9BEC9"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #F3F4F6; font-variant-numeric: tabular-nums">{{shownCount}}</span> {{shownLabel}} · <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #F3F4F6; font-variant-numeric: tabular-nums; white-space: nowrap">{{shownFunds}}</span> réservés</p>
+<div role="group" aria-label="Trier les intentions" style="display: flex; gap: 2px; padding: 2px; border-radius: 12px; background: #15171C; border: 1px solid #2C303A">
+<button type="button" sc-camel-on-click="{{ sortByPrice }}" aria-pressed="{{sortP.pressed}}" style="min-height: 40px; padding: 0 10px; border: 0; border-radius: 10px; cursor: pointer; font-family: 'Barlow', system-ui, sans-serif; font-weight: 700; font-size: 13px; background: {{sortP.bg}}; color: {{sortP.fg}}">Prix max</button>
+<button type="button" sc-camel-on-click="{{ sortByExpiry }}" aria-pressed="{{sortE.pressed}}" style="min-height: 40px; padding: 0 10px; border: 0; border-radius: 10px; cursor: pointer; font-family: 'Barlow', system-ui, sans-serif; font-weight: 700; font-size: 13px; background: {{sortE.bg}}; color: {{sortE.fg}}">Expiration</button>
+</div>
+</div>
+</section>
+
+<section aria-label="Tableau des intentions d'achat" style="flex: none; border-radius: 16px; background: #060708; border: 1px solid #2C303A; overflow: hidden">
+<div aria-hidden="true" style="display: grid; grid-template-columns: 72px 1fr auto; gap: 12px; padding: 10px 14px 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #8C93A3">
+<span>Dest.</span><span>Acheteur · fenêtre</span><span style="text-align: right">Prix max</span>
+</div>
+<ul style="list-style: none; margin: 0; padding: 0">
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="3">
+<li style="border-top: 1px solid #1A1C21">
+<sc-if value="{{r.isLink}}" hint-placeholder-val="{{ true }}">
+<a href="DemandeDetail.dc.html" style="display: flex; flex-direction: column; gap: 10px; min-height: 60px; padding: 12px 14px; box-sizing: border-box; color: #F3F4F6; text-decoration: none; background: {{r.bg}}">
+<span style="display: grid; grid-template-columns: 72px 1fr auto; gap: 12px; align-items: center">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8C93A3">De YUL</span>
+<span style="display: flex; gap: 3px">
+<sc-for list="{{r.letters}}" as="c" hint-placeholder-count="3">
+<span style="width: 22px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: #1C1F25; box-shadow: inset 0 -15px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: #FFD23F">{{c.ch}}</span>
+</sc-for>
+</span>
+</span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 15px; font-weight: 600">{{r.title}}</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; line-height: 16px; font-variant-numeric: tabular-nums; color: #B9BEC9">{{r.window}}</span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3">{{r.meta}}</span>
+</span>
+<span style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 22px; line-height: 24px; font-variant-numeric: tabular-nums; white-space: nowrap">{{r.max}}</span>
+<span style="display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; white-space: nowrap; color: {{r.expColor}}">
+<svg width="12" height="12" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+{{r.expiry}}
+</span>
+</span>
+</span>
+<span style="display: flex; flex-wrap: wrap; gap: 6px">
+<span style="display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(124,227,181,0.12); color: #7CE3B5">
+<svg width="13" height="13" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>
+Fonds réservés
+</span>
+<sc-if value="{{r.hasMark}}" hint-placeholder-val="{{ true }}">
+<span style="display: inline-flex; align-items: center; gap: 5px; min-height: 26px; padding: 3px 10px; box-sizing: border-box; border-radius: 999px; font-size: 12px; font-weight: 600; line-height: 14px; background: {{r.markBg}}; color: {{r.markFg}}">
+<svg width="13" height="13" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M3 12V4h8l10 10-8 8z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg>
+{{r.mark}}
+</span>
+</sc-if>
+</span>
+</a>
+</sc-if>
+<sc-if value="{{r.isDemo}}" hint-placeholder-val="{{ false }}">
+<button type="button" sc-camel-on-click="{{ demoRow }}" style="width: 100%; display: flex; flex-direction: column; gap: 10px; min-height: 60px; padding: 12px 14px; box-sizing: border-box; border: 0; text-align: left; cursor: pointer; font-family: 'Barlow', system-ui, sans-serif; color: #F3F4F6; background: {{r.bg}}">
+<span style="display: grid; grid-template-columns: 72px 1fr auto; gap: 12px; align-items: center">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8C93A3">De YUL</span>
+<span style="display: flex; gap: 3px">
+<sc-for list="{{r.letters}}" as="c" hint-placeholder-count="3">
+<span style="width: 22px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: #1C1F25; box-shadow: inset 0 -15px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: #FFD23F">{{c.ch}}</span>
+</sc-for>
+</span>
+</span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 15px; font-weight: 600">{{r.title}}</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; line-height: 16px; font-variant-numeric: tabular-nums; color: #B9BEC9">{{r.window}}</span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3">{{r.meta}}</span>
+</span>
+<span style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 22px; line-height: 24px; font-variant-numeric: tabular-nums; white-space: nowrap">{{r.max}}</span>
+<span style="display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; white-space: nowrap; color: {{r.expColor}}">
+<svg width="12" height="12" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+{{r.expiry}}
+</span>
+</span>
+</span>
+<span style="display: flex; flex-wrap: wrap; gap: 6px">
+<span style="display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(124,227,181,0.12); color: #7CE3B5">
+<svg width="13" height="13" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>
+Fonds réservés
+</span>
+<sc-if value="{{r.hasMark}}" hint-placeholder-val="{{ false }}">
+<span style="display: inline-flex; align-items: center; gap: 5px; min-height: 26px; padding: 3px 10px; box-sizing: border-box; border-radius: 999px; font-size: 12px; font-weight: 600; line-height: 14px; background: {{r.markBg}}; color: {{r.markFg}}">
+<svg width="13" height="13" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M3 12V4h8l10 10-8 8z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg>
+{{r.mark}}
+</span>
+</sc-if>
+</span>
+</button>
+</sc-if>
+</li>
+</sc-for>
+</ul>
+<sc-if value="{{noteOn}}" hint-placeholder-val="{{ false }}">
+<p role="status" style="margin: 0; display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-top: 1px solid #1A1C21; background: rgba(98,199,255,0.12); color: #62C7FF; font-size: 13px; font-weight: 600; line-height: 18px">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+<span>Démo : seule l'intention de l'acheteur M. (YUL → PUJ) est détaillée dans ce prototype.</span>
+</p>
+</sc-if>
+</section>
+
+<section aria-label="Comment ça marche" style="display: flex; gap: 12px; padding: 14px 16px; border-radius: 16px; background: #15171C; border: 1px solid #2C303A">
+<span style="width: 36px; height: 36px; flex: none; border-radius: 10px; background: rgba(124,227,181,0.12); color: #7CE3B5; display: flex; align-items: center; justify-content: center">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+</span>
+<p style="margin: 0; font-size: 14px; line-height: 20px; color: #B9BEC9"><span style="font-weight: 700; color: #F3F4F6">Une intention = un acheteur qui a déjà réservé les fonds.</span> Si vous acceptez son prix, la vente est immédiate. Vous pouvez aussi proposer plus cher : il accepte, refuse ou contre-propose.</p>
+</section>
+
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #8C93A3">Fonds réservés : non débités tant qu'aucun accord, libérés à l'expiration de l'intention. Un droit de voyage n'est pas un placement financier. Démo.</p>
+
+</main>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844}}">
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const filter = s.filter || 'mine';
+    const sort = s.sort || 'expiry';
+    const noteOn = !!s.noteOn;
+    const set = (patch) => this.setState({ ...(this.state || {}), ...patch });
+    const group = (v) => String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    const money = (v) => group(v) + ' $';
+
+    const all = [
+      { id: 'm', dest: 'PUJ', city: 'Punta Cana', buyer: 'Acheteur M.', window: '15–28 févr. 2027', pax: '1 voyageur · aller simple', region: 'Caraïbes', max: 400, days: 12, mine: true, compat: 'ok', mark: 'Compatible avec votre billet YUL → PUJ 21 févr.' },
+      { id: 'a', dest: 'CDG', city: 'Paris', buyer: 'Acheteur A.', window: '15–20 déc. 2026', pax: '1 voyageur · aller simple', region: 'Europe', max: 1300, days: 30, mine: true, compat: 'route', mark: 'Même trajet · votre billet du 14 déc. est hors fenêtre' },
+      { id: 'r', dest: 'HAV', city: 'La Havane', buyer: 'Acheteur R.', window: '5–31 janv. 2027', pax: '1 voyageur · aller simple', region: 'Caraïbes', max: 350, days: 14, mine: true, compat: 'ok', mark: 'Compatible avec votre billet YUL → HAV 30 janv. (en vente à 620 $)' },
+      { id: 's', dest: 'LIS', city: 'Lisbonne', buyer: 'Acheteur S.', window: '1–31 mars 2027', pax: '2 voyageurs · aller simple', region: 'Europe', max: 600, days: 21, mine: false, compat: '', mark: '' },
+      { id: 'l', dest: 'MBJ', city: 'Montego Bay', buyer: 'Acheteur L.', window: '10–24 janv. 2027', pax: '1 voyageur · aller simple', region: 'Caraïbes', max: 450, days: 5, mine: false, compat: '', mark: '' },
+      { id: 'k', dest: 'BCN', city: 'Barcelone', buyer: 'Acheteur K.', window: '3–17 avr. 2027', pax: '1 voyageur · aller simple', region: 'Europe', max: 720, days: 30, mine: false, compat: '', mark: '' },
+      { id: 'n', dest: 'FCO', city: 'Rome', buyer: 'Acheteur N.', window: '2–16 mai 2027', pax: '1 voyageur · aller-retour', region: 'Europe', max: 810, days: 18, mine: false, compat: '', mark: '' }
+    ];
+
+    const totalFunds = all.reduce((acc, r) => acc + r.max, 0);
+    const mineCount = all.filter((r) => r.mine).length;
+
+    let shown = all.filter((r) => {
+      if (filter === 'mine') return r.mine;
+      if (filter === 'car') return r.region === 'Caraïbes';
+      if (filter === 'eur') return r.region === 'Europe';
+      return true;
+    });
+    shown = shown.slice().sort((a, b) => sort === 'price' ? (b.max - a.max) || (a.days - b.days) : (a.days - b.days) || (b.max - a.max));
+    const shownFunds = shown.reduce((acc, r) => acc + r.max, 0);
+
+    const rows = shown.map((r) => ({
+      isLink: r.id === 'm',
+      isDemo: r.id !== 'm',
+      letters: r.dest.split('').map((ch) => ({ ch })),
+      title: r.buyer,
+      window: 'YUL → ' + r.dest + ' · ' + r.window,
+      meta: r.city + ' · ' + r.pax,
+      max: money(r.max),
+      expiry: 'expire dans ' + r.days + ' j',
+      expColor: r.days <= 7 ? '#FFD23F' : '#8C93A3',
+      bg: r.compat === 'ok' ? 'rgba(255,210,63,0.05)' : 'transparent',
+      hasMark: r.mark !== '',
+      mark: r.mark,
+      markBg: r.compat === 'ok' ? 'rgba(255,210,63,0.12)' : '#262A33',
+      markFg: r.compat === 'ok' ? '#FFD23F' : '#B9BEC9'
+    }));
+
+    const chip = (key) => ({
+      pressed: filter === key ? 'true' : 'false',
+      bg: filter === key ? '#F3F4F6' : '#15171C',
+      fg: filter === key ? '#0D0E11' : '#B9BEC9',
+      border: filter === key ? '#F3F4F6' : '#2C303A'
+    });
+    const tab = (key) => ({
+      pressed: sort === key ? 'true' : 'false',
+      bg: sort === key ? '#F3F4F6' : 'transparent',
+      fg: sort === key ? '#0D0E11' : '#B9BEC9'
+    });
+    const shownLabel = (shown.length > 1 ? 'intentions' : 'intention')
+      + (filter === 'mine' ? ' sur vos vols' : filter === 'car' ? ' vers les Caraïbes' : filter === 'eur' ? ' vers l’Europe' : ' au total');
+
+    return {
+      totalCount: String(all.length),
+      mineCount: String(mineCount),
+      totalFunds: money(totalFunds),
+      shownCount: String(shown.length),
+      shownLabel: shownLabel,
+      shownFunds: money(shownFunds),
+      rows: rows,
+      noteOn: noteOn,
+      fMine: chip('mine'),
+      fAll: chip('all'),
+      fCar: chip('car'),
+      fEur: chip('eur'),
+      sortP: tab('price'),
+      sortE: tab('expiry'),
+      pickMine: () => set({ filter: 'mine', noteOn: false }),
+      pickAll: () => set({ filter: 'all', noteOn: false }),
+      pickCar: () => set({ filter: 'car', noteOn: false }),
+      pickEur: () => set({ filter: 'eur', noteOn: false }),
+      sortByPrice: () => set({ sort: 'price' }),
+      sortByExpiry: () => set({ sort: 'expiry' }),
+      demoRow: () => set({ noteOn: true })
+    };
+  }
+}
+</script>
+
+
+</body></html>

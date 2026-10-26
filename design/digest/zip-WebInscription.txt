@@ -1,0 +1,63 @@
+Créer un compte (web) — NexG-TT
+Créer un compte (web) — NexG-TT
+NEXG
+·TT
+Explorer sans compte
+J’ai déjà un compte
+Envoi du code en cours…
+Hors ligne
+Vous pouvez remplir le formulaire. L’envoi du code et la connexion avec Apple ou Google demandent le réseau : rien n’a été envoyé.
+Le code n’a pas pu être envoyé
+Nous n’avons pas pu envoyer le code à l’adresse indiquée. Aucun compte n’a été créé. Vérifiez l’adresse puis réessayez.
+Réessayer
+Retour
+Créez votre compte en 1 minute
+Un code suffit. Vous compléterez le reste seulement quand ce sera utile.
+Où recevoir votre code ?
+Courriel
+Téléphone
+Adresse courriel
+Nous y enverrons un code à 6 chiffres.
+Numéro de téléphone mobile
+Nous y enverrons un code à 6 chiffres par texto.
+Ce champ est vide : indiquez où recevoir le code.
+ou
+Continuer avec Apple
+Continuer avec Apple
+Continuer avec Google
+Continuer avec Google
+Démo : la connexion avec {{ssoName}} n’est pas encore branchée (fournisseur à valider). Utilisez le courriel ou le téléphone.
+[H]
+Apple et Google : fournisseurs d’identité à valider.
+Vos consentements
+J’accepte les conditions d’utilisation et la politique de confidentialité
+(obligatoire)
+Lire les conditions en bref
+Créer un compte et explorer ne demande aucune carte.
+Votre identité est vérifiée seulement pour revendre, recevoir un paiement ou nommer un voyageur.
+Vous choisissez ce que vous partagez ; vous pouvez fermer votre compte.
+Texte complet en cours de rédaction avec un juriste (prototype).
+Cochez cette case pour recevoir votre code.
+M’écrire au sujet des drops et nouveautés
+Facultatif · désactivé par défaut · modifiable dans Compte
+{{errorSummary}}
+Recevoir mon code
+Envoi du code en cours…
+Recevoir mon code
+Explorer sans compte
+J’ai déjà un compte
+Ce que nous ne vous demandons pas
+Aucune carte demandée
+Explorer sans compte possible
+Identité vérifiée seulement pour revendre
+[H]
+Moment de la vérification d’identité : à valider. La règle exacte dépend des obligations réglementaires sur les versements.
+Prototype — données fictives
+Compagnies (Aérolys, Nordelle), agence, détenteurs, prix et références inventés. Aucun paiement réel.
+Un droit de voyage est une inscription au registre interne de NexG-TT, pas un placement financier.
+Aperçu des états
+Normal
+Chargement
+Erreur de saisie
+Échec d’envoi
+Hors ligne

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<title>Code de vérification — NexG-TT</title>
+<script src="1ff92dcc-b774-419a-a72d-d86906a60ce9"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+<style>
+body{margin:0;background:#EEF3F8}
+a{color:#1A64C8}a:hover{color:#124C9C}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #1A64C8;outline-offset:2px}
+@keyframes nx-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+@keyframes nx-pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes nx-caret{0%,49%{opacity:1}50%,100%{opacity:0}}
+@media (prefers-reduced-motion: reduce){[data-nx-motion]{animation:none !important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #EEF3F8; color: #0B1B2E; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="padding: 52px 12px 8px; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 8px">
+<a href="Inscription.dc.html" aria-label="Retour" style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; border: 1px solid #D3DCE6; display: flex; align-items: center; justify-content: center; color: #0B1B2E; text-decoration: none">
+<svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+</a>
+<p style="margin: 0; text-align: center; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 20px; letter-spacing: 0.04em; text-transform: uppercase">Vérification</p>
+<span aria-hidden="true" style="width: 44px; height: 44px"></span>
+</header>
+
+<main style="flex: 1; overflow-y: auto; padding: 8px 20px 112px; display: flex; flex-direction: column; gap: 22px">
+
+<div role="progressbar" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1" aria-valuetext="Étape 1 sur 4 : vérifier votre courriel" aria-label="Création du compte" style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; gap: 8px; font-size: 13px">
+<span style="font-weight: 700">Étape 1 sur 4</span>
+<span style="color: #3E4F66">Ensuite : profil, alertes, clé d'accès</span>
+</div>
+<div aria-hidden="true" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px">
+<span style="height: 6px; border-radius: 999px; background: {{seg1}}; transition: background-color 300ms ease"></span>
+<span style="height: 6px; border-radius: 999px; background: #D3DCE6"></span>
+<span style="height: 6px; border-radius: 999px; background: #D3DCE6"></span>
+<span style="height: 6px; border-radius: 999px; background: #D3DCE6"></span>
+</div>
+</div>
+
+<section style="display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 40px; line-height: 40px">Entrez le code reçu</h1>
+<p style="margin: 0; font-size: 15px; line-height: 22px; color: #3E4F66">Envoyé à <strong style="font-weight: 700; color: #0B1B2E">alex.exemple@courriel.test</strong></p>
+<a href="Inscription.dc.html" style="align-self: flex-start; display: flex; align-items: center; min-height: 44px; margin-top: -8px; font-size: 15px; font-weight: 600">Modifier l'adresse</a>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 10px">
+<label for="otp" style="font-size: 13px; font-weight: 500; color: #3E4F66">Code à 6 chiffres</label>
+<div data-nx-motion="1" style="position: relative; animation: {{shakeAnim}}">
+<div aria-hidden="true" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px">
+<sc-for list="{{boxes}}" as="b" hint-placeholder-count="6">
+<span style="position: relative; height: 60px; box-sizing: border-box; border-radius: 12px; background: {{b.bg}}; border: {{b.border}}; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 28px; font-variant-numeric: tabular-nums; color: {{b.fg}}; transition: border-color 160ms ease, background-color 160ms ease">{{b.ch}}<span data-nx-motion="1" style="position: absolute; left: calc(50% - 1px); top: 18px; width: 2px; height: 24px; background: #1A64C8; opacity: {{b.caret}}; animation: nx-caret 1s steps(1) infinite"></span></span>
+</sc-for>
+</div>
+<input id="otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*" value="{{code}}" sc-camel-on-change="{{ onCode }}" aria-invalid="{{codeInvalid}}" aria-describedby="otp-msg" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; box-sizing: border-box; margin: 0; padding: 0; border: 0; border-radius: 12px; background: transparent; color: transparent; caret-color: transparent; font-size: 16px; letter-spacing: 40px; cursor: text">
+</div>
+
+<div id="otp-msg" role="status" aria-live="polite" style="min-height: 22px">
+<sc-if value="{{isError}}" hint-placeholder-val="{{ false }}">
+<p style="margin: 0; display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 12px; background: rgba(176,44,39,0.08); color: #B02C27; font-size: 14px; font-weight: 600; line-height: 20px">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+<span>Ce code ne correspond pas. Il vous reste {{attemptsLabel}}.</span>
+</p>
+</sc-if>
+<sc-if value="{{isLocked}}" hint-placeholder-val="{{ false }}">
+<p style="margin: 0; display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 12px; background: rgba(176,44,39,0.08); color: #B02C27; font-size: 14px; font-weight: 600; line-height: 20px">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+<span>Trop d'essais. Demandez un nouveau code pour continuer.</span>
+</p>
+</sc-if>
+<sc-if value="{{isOk}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 16px; background: rgba(9,106,73,0.10)">
+<span data-nx-motion="1" aria-hidden="true" style="flex: none; width: 48px; height: 48px; border-radius: 999px; background: #096A49; color: #FFFFFF; display: flex; align-items: center; justify-content: center; animation: nx-pop 420ms cubic-bezier(.2,.8,.2,1) both">
+<svg width="26" height="26" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 16px; font-weight: 700; color: #096A49">Courriel vérifié</span>
+<span style="font-size: 14px; line-height: 20px; color: #0B1B2E">Votre compte est créé. Encore trois petites étapes, toutes facultatives.</span>
+</span>
+</div>
+</sc-if>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 2px">
+<sc-if value="{{waiting}}" hint-placeholder-val="{{ true }}">
+<p style="margin: 0; display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: 15px; color: #3E4F66">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+<span>Renvoyer le code dans <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-variant-numeric: tabular-nums; color: #0B1B2E">{{timer}}</span></span>
+</p>
+</sc-if>
+<sc-if value="{{canResend}}" hint-placeholder-val="{{ false }}">
+<button type="button" sc-camel-on-click="{{ resend }}" style="align-self: flex-start; display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0; border: 0; background: transparent; color: #1A64C8; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path></svg>
+Renvoyer le code
+</button>
+</sc-if>
+<p style="margin: 0; font-size: 13px; color: #5A6A80">Rien reçu ? Vérifiez le dossier des indésirables.</p>
+</div>
+<sc-if value="{{resent}}" hint-placeholder-val="{{ false }}">
+<p role="status" style="margin: -6px 0 0; font-size: 13px; color: #096A49; font-weight: 600">Nouveau code envoyé (démo). L'ancien ne fonctionne plus.</p>
+</sc-if>
+</section>
+
+<section aria-labelledby="demo-title" style="display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 16px; background: #FFFFFF; border: 1px dashed #B9C5D3">
+<p id="demo-title" style="margin: 0; padding: 8px 10px; border-radius: 10px; background: rgba(26,100,200,0.10); color: #1A64C8; font-size: 13px; font-weight: 700">MODE DÉMO — aucun code réel n'est envoyé</p>
+<p style="margin: 0; font-size: 14px; color: #3E4F66">Code de démonstration : <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #0B1B2E">482 913</span></p>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+<button type="button" sc-camel-on-click="{{ simWrong }}" style="min-height: 48px; padding: 6px 10px; border-radius: 12px; background: #FFFFFF; border: 1px solid #B9C5D3; color: #0B1B2E; font-family: inherit; font-size: 14px; font-weight: 700; line-height: 18px; cursor: pointer">Simuler un code erroné</button>
+<button type="button" sc-camel-on-click="{{ simRight }}" style="min-height: 48px; padding: 6px 10px; border-radius: 12px; background: #FFFFFF; border: 1px solid #B9C5D3; color: #0B1B2E; font-family: inherit; font-size: 14px; font-weight: 700; line-height: 18px; cursor: pointer">Simuler le bon code</button>
+</div>
+</section>
+
+</main>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 20px 28px; background: #FFFFFF; border-top: 1px solid #D3DCE6">
+<sc-if value="{{isOk}}" hint-placeholder-val="{{ false }}">
+<a href="Profil.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #FFD23F; color: #0B1B2E; font-weight: 700; font-size: 16px; text-decoration: none; border: 0">
+Continuer
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+</a>
+</sc-if>
+<sc-if value="{{notOk}}" hint-placeholder-val="{{ true }}">
+<button type="button" aria-disabled="true" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #E3EAF2; color: #5A6A80; font-family: inherit; font-weight: 700; font-size: 16px; border: 0; cursor: not-allowed">Continuer · entrez les 6 chiffres</button>
+</sc-if>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844}}">
+class Component extends DCLogic {
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      const s = this.state || {};
+      const left = s.left ?? 42;
+      if (left > 0) this.setState({ left: left - 1 });
+    }, 1000);
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+  renderVals() {
+    const s = this.state || {};
+    const GOOD = '482913';
+    const code = s.code ?? '';
+    const status = s.status ?? 'idle';
+    const wrong = s.wrong ?? 0;
+    const left = s.left ?? 42;
+    const resent = s.resent ?? false;
+    const fail = (digits) => {
+      const w = wrong + 1;
+      this.setState({ code: digits, wrong: w, status: w >= 3 ? 'locked' : 'error', resent: false });
+    };
+    const check = (digits) => {
+      if (status === 'locked' || status === 'ok') return;
+      if (digits.length < 6) {
+        this.setState({ code: digits, status: 'idle' });
+      } else if (digits === GOOD) {
+        this.setState({ code: digits, status: 'ok', resent: false });
+      } else {
+        fail(digits);
+      }
+    };
+    const isOk = status === 'ok';
+    const isError = status === 'error';
+    const isLocked = status === 'locked';
+    const bad = isError || isLocked;
+    const boxes = [0, 1, 2, 3, 4, 5].map((i) => {
+      const ch = code.charAt(i);
+      const active = !isOk && !bad && i === code.length;
+      return {
+        ch,
+        fg: isOk ? '#096A49' : '#0B1B2E',
+        bg: isOk ? 'rgba(9,106,73,0.10)' : '#FFFFFF',
+        border: isOk ? '2px solid #096A49' : bad ? '2px solid #B02C27' : active ? '2px solid #1A64C8' : '1px solid #7A8597',
+        caret: active ? '1' : '0'
+      };
+    });
+    const remaining = Math.max(0, 3 - wrong);
+    return {
+      code,
+      boxes,
+      onCode: (e) => check(String(e && e.target ? e.target.value : '').replace(/\D/g, '').slice(0, 6)),
+      codeInvalid: bad ? 'true' : 'false',
+      isOk,
+      notOk: !isOk,
+      isError,
+      isLocked,
+      attemptsLabel: remaining + (remaining > 1 ? ' essais' : ' essai'),
+      shakeAnim: bad ? 'nx-shake 420ms ease-out 1' : 'none',
+      seg1: isOk ? '#096A49' : '#1A64C8',
+      waiting: left > 0,
+      canResend: left <= 0,
+      timer: Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0'),
+      resent,
+      resend: () => this.setState({ left: 42, code: '', status: 'idle', wrong: 0, resent: true }),
+      simWrong: () => {
+        if (status === 'locked' || status === 'ok') return;
+        fail('381920');
+      },
+      simRight: () => this.setState({ code: GOOD, status: 'ok', resent: false })
+    };
+  }
+}
+</script>
+
+
+</body></html>

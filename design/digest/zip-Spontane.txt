@@ -1,0 +1,30 @@
+Partir ce week-end — NexG-TT
+Partir ce week-end — NexG-TT
+Partir ce week-end
+{{counter}}
+Revente de dernière minute · départs de Montréal
+Ces billets cherchent un voyageur
+{{c.route}} · {{c.dateUp}}
+{{c.flight}}
+{{c.code}}
+Décolle dans
+{{c.countdown}}
+{{c.city}}
+{{c.country}} · {{c.date}}
+YUL
+{{c.code}}
+{{c.dep}}
+{{c.arr}}
+Le détenteur ne part plus
+{{c.was}}
+→
+{{c.price}}
+{{c.delta}}
+vs prix équivalent neuf
+Revente
+Nommer avant {{c.nameBy}}
+Prix indicatifs · revente entre détenteurs · données fictives
+{{live}}
+Passer
+Je le prends
+Vous serez le voyageur nommé : vos informations seront transmises à la compagnie à la finalisation.

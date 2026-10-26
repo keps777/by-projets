@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<title>Ordre à cours limité — NexG-TT</title>
+<script src="477f7bd6-b399-4eaf-902a-acaa5918a797"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+<style>
+body{margin:0;background:#0D0E11}
+a{color:#FFD23F}a:hover{color:#FFE27A}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #FFD23F;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0D0E11; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="padding: 52px 12px 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<a href="Cours.dc.html" aria-label="Retour" style="width: 44px; height: 44px; flex: none; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: #F3F4F6; text-decoration: none">
+<svg width="24" height="24" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+</a>
+<h1 style="margin: 0; flex: 1; text-align: center; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 20px; letter-spacing: 0.04em; text-transform: uppercase">Ordre à cours limité</h1>
+<span style="width: 44px; height: 44px; flex: none"></span>
+</header>
+
+<main style="flex: 1; overflow-y: auto; padding: 4px 20px 156px; display: flex; flex-direction: column; gap: 20px">
+
+<section style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<span style="display: inline-flex; align-items: center; gap: 6px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 14px; color: #FFD23F; letter-spacing: 0.04em">YUL → CDG</span>
+<span style="font-size: 13px; color: #B9BEC9">Aérolys 816 · ven. 18 déc.</span>
+</div>
+<h2 style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 32px; line-height: 32px; text-transform: uppercase; letter-spacing: 0.01em; text-wrap: balance">Achetez automatiquement si le prix descend à votre seuil</h2>
+</section>
+
+<section aria-labelledby="seuil-title" style="display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: #060708; border: 1px solid #2C303A">
+<p id="seuil-title" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Votre seuil d'achat</p>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<button type="button" sc-camel-on-click="{{ dec }}" aria-label="Baisser le seuil de 10 $" aria-disabled="{{bounds.minDisabled}}" style="width: 56px; height: 56px; flex: none; box-sizing: border-box; border-radius: 14px; background: #1D2027; border: 1px solid #3A3F4B; color: #F3F4F6; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: {{bounds.minOpacity}}">
+<svg width="24" height="24" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path></svg>
+</button>
+<output aria-live="polite" style="flex: 1; text-align: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 40px; line-height: 56px; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; white-space: nowrap; color: #FFD23F">{{seuilLabel}}</output>
+<button type="button" sc-camel-on-click="{{ inc }}" aria-label="Monter le seuil de 10 $" aria-disabled="{{bounds.maxDisabled}}" style="width: 56px; height: 56px; flex: none; box-sizing: border-box; border-radius: 14px; background: #1D2027; border: 1px solid #3A3F4B; color: #F3F4F6; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: {{bounds.maxOpacity}}">
+<svg width="24" height="24" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+</button>
+</div>
+<p style="margin: 0; text-align: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 14px; font-variant-numeric: tabular-nums; color: {{diff.color}}">{{diff.text}}</p>
+
+<div style="display: flex; flex-direction: column; gap: 2px">
+<label for="seuil-range" style="font-size: 13px; font-weight: 500; color: #B9BEC9">Ajuster le seuil (pas de 10 $)</label>
+<input id="seuil-range" type="range" min="1000" max="2050" step="10" value="{{seuil}}" sc-camel-on-input="{{ onSlide }}" sc-camel-on-change="{{ onSlide }}" style="width: 100%; height: 44px; margin: 0; accent-color: #FFD23F; cursor: pointer">
+<div aria-hidden="true" style="display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #8C93A3">
+<span>1 000 $</span><span>2 050 $ · plafond</span>
+</div>
+</div>
+</section>
+
+<section aria-labelledby="rep-title" style="display: flex; flex-direction: column; gap: 12px">
+<h3 id="rep-title" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Où se place votre seuil</h3>
+<div aria-hidden="true" style="position: relative; height: 40px">
+<span style="position: absolute; left: 0; right: 0; top: 17px; height: 6px; border-radius: 3px; background: #262A33"></span>
+<span style="position: absolute; top: 17px; height: 6px; background: #4A505E; left: {{scale.gapLeft}}; width: {{scale.gapWidth}}"></span>
+<span style="position: absolute; top: 15px; width: 10px; height: 10px; background: #62C7FF; transform: rotate(45deg); left: {{scale.bidLeft}}"></span>
+<span style="position: absolute; top: 15px; width: 10px; height: 10px; border-radius: 999px; background: #FF9E5E; left: {{scale.askLeft}}"></span>
+<span style="position: absolute; top: 2px; width: 2px; height: 36px; background: #FFD23F; left: {{scale.seuilLine}}"></span>
+<span style="position: absolute; top: 0; width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 9px solid #FFD23F; left: {{scale.seuilPin}}"></span>
+</div>
+<div aria-hidden="true" style="display: flex; justify-content: space-between; margin-top: -6px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #8C93A3">
+<span>{{scale.lo}}</span><span>{{scale.hi}}</span>
+</div>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 14px">
+<li style="display: flex; align-items: center; gap: 10px">
+<span aria-hidden="true" style="width: 0; height: 0; margin: 0 1px; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 9px solid #FFD23F"></span>
+<span style="flex: 1; color: #B9BEC9">Votre seuil</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-variant-numeric: tabular-nums; color: #FFD23F">{{seuilLabel}}</span>
+</li>
+<li style="display: flex; align-items: center; gap: 10px">
+<span aria-hidden="true" style="width: 10px; height: 10px; margin: 0 2px; border-radius: 999px; background: #FF9E5E"></span>
+<span style="flex: 1; color: #B9BEC9">Meilleure offre de vente actuelle</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-variant-numeric: tabular-nums">1 500 $</span>
+</li>
+<li style="display: flex; align-items: center; gap: 10px">
+<span aria-hidden="true" style="width: 9px; height: 9px; margin: 0 2px; background: #62C7FF; transform: rotate(45deg)"></span>
+<span style="flex: 1; color: #B9BEC9">Meilleure demande d'achat</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-variant-numeric: tabular-nums">1 420 $</span>
+</li>
+</ul>
+<p role="status" style="margin: 0; display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 12px; font-size: 13px; font-weight: 600; line-height: 18px; background: {{zone.bg}}; color: {{zone.fg}}">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+<span>{{zone.text}}</span>
+</p>
+</section>
+
+<section aria-labelledby="val-title" style="display: flex; flex-direction: column; gap: 10px">
+<h3 id="val-title" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Validité de l'ordre</h3>
+<div role="group" aria-labelledby="val-title" style="display: grid; grid-template-columns: 1fr 1fr 1.35fr; gap: 8px">
+<button type="button" sc-camel-on-click="{{ pick24 }}" aria-pressed="{{v24.pressed}}" style="min-height: 58px; padding: 6px 8px; box-sizing: border-box; border-radius: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-family: inherit; background: {{v24.bg}}; color: {{v24.fg}}; border: 1px solid {{v24.border}}">
+<span style="font-size: 15px; font-weight: 700">24 h</span>
+<span style="font-size: 12px; font-weight: 500; color: {{v24.sub}}">13 oct.</span>
+</button>
+<button type="button" sc-camel-on-click="{{ pick7 }}" aria-pressed="{{v7.pressed}}" style="min-height: 58px; padding: 6px 8px; box-sizing: border-box; border-radius: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-family: inherit; background: {{v7.bg}}; color: {{v7.fg}}; border: 1px solid {{v7.border}}">
+<span style="font-size: 15px; font-weight: 700">7 jours</span>
+<span style="font-size: 12px; font-weight: 500; color: {{v7.sub}}">19 oct.</span>
+</button>
+<button type="button" sc-camel-on-click="{{ pickJ2 }}" aria-pressed="{{vJ2.pressed}}" style="min-height: 58px; padding: 6px 8px; box-sizing: border-box; border-radius: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-family: inherit; background: {{vJ2.bg}}; color: {{vJ2.fg}}; border: 1px solid {{vJ2.border}}">
+<span style="font-size: 15px; font-weight: 700">Jusqu'à J-2</span>
+<span style="font-size: 12px; font-weight: 500; color: {{vJ2.sub}}">16 déc.</span>
+</button>
+</div>
+</section>
+
+<section aria-labelledby="prob-title" style="display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A">
+<div style="position: relative; width: 150px; height: 88px; flex: none">
+<svg role="img" aria-label="{{gauge.aria}}" width="150" height="88" sc-camel-view-box="0 0 150 88">
+<path d="M 13 80 A 62 62 0 0 1 137 80" fill="none" stroke="#262A33" stroke-width="12" stroke-linecap="round"></path>
+<path d="M 13 80 A 62 62 0 0 1 137 80" fill="none" stroke="#62C7FF" stroke-width="12" stroke-linecap="round" stroke-dasharray="{{gauge.dash}}"></path>
+</svg>
+<span aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 4px; text-align: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 26px; font-variant-numeric: tabular-nums; white-space: nowrap">{{gauge.value}}</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+<h3 id="prob-title" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #B9BEC9">Probabilité d'exécution (estimation)</h3>
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 24px; letter-spacing: 0.04em; text-transform: uppercase; color: #62C7FF">{{gauge.level}}</span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3">Calcul simplifié selon l'écart avec la meilleure offre et la durée de validité. Aucune garantie.</span>
+</div>
+</section>
+
+<section aria-labelledby="pay-title" style="display: flex; flex-direction: column; gap: 10px">
+<h3 id="pay-title" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Quantité et paiement</h3>
+<div style="display: flex; flex-direction: column; border-radius: 16px; background: #15171C; border: 1px solid #2C303A">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 0 16px; border-bottom: 1px solid #2C303A">
+<span style="font-size: 15px; color: #B9BEC9">Quantité</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px">1 billet</span>
+</div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 16px; box-sizing: border-box">
+<span style="width: 40px; height: 40px; flex: none; border-radius: 10px; background: #1D2027; border: 1px solid #3A3F4B; box-sizing: border-box; display: flex; align-items: center; justify-content: center; color: #B9BEC9">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18M7 15h4"></path></svg>
+</span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 15px; font-weight: 600">Carte de test <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">•••• 4242</span></span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3">Fictive · pré-autorisée, débitée seulement si l'ordre est exécuté</span>
+</span>
+<span style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border-radius: 999px; background: #262A33; color: #B9BEC9; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase">Test</span>
+</div>
+</div>
+<p style="margin: 0; background: rgba(98,199,255,0.12); border: 1px solid rgba(98,199,255,0.4); color: #62C7FF; border-radius: 12px; padding: 10px 12px; font-size: 13px; font-weight: 600">MODE DÉMO — aucun paiement réel</p>
+</section>
+
+<section aria-labelledby="rec-title" style="position: relative; border-radius: 18px; background: #FFFFFF; color: #121418; overflow: visible">
+<div style="padding: 18px 18px 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px">
+<h3 id="rec-title" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #555C6B">Récapitulatif de l'ordre</h3>
+<span style="font-size: 12px; font-weight: 600; color: #555C6B">Achat · cours limité</span>
+</div>
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 40px; line-height: 40px; letter-spacing: 0.02em">YUL</span>
+<span style="flex: 1; border-top: 2px dotted #C9CDD5"></span>
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h6l4 7h2l-2-7h5l2 2h2l-1-3 1-3h-2l-2 2h-5l2-7h-2l-4 7H3z"></path></svg>
+<span style="flex: 1; border-top: 2px dotted #C9CDD5"></span>
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 40px; line-height: 40px; letter-spacing: 0.02em">CDG</span>
+</div>
+<dl style="margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 8px 12px; font-size: 14px">
+<dt style="color: #555C6B">Vol</dt><dd style="margin: 0; text-align: right; font-weight: 600">Aérolys 816 · ven. 18 déc.</dd>
+<dt style="color: #555C6B">Seuil maximal</dt><dd style="margin: 0; text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-variant-numeric: tabular-nums">{{seuilLabel}}</dd>
+<dt style="color: #555C6B">Quantité</dt><dd style="margin: 0; text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600">1</dd>
+<dt style="color: #555C6B">Validité</dt><dd style="margin: 0; text-align: right; font-weight: 600">{{validityRecap}}</dd>
+<dt style="color: #555C6B">Paiement</dt><dd style="margin: 0; text-align: right; font-weight: 600">Carte de test •••• 4242</dd>
+<dt style="color: #555C6B">Commission</dt><dd style="margin: 0; text-align: right; font-weight: 600">10 % sur les reventes (hypothèse, plage 10–20 %)</dd>
+</dl>
+</div>
+<div style="position: relative; border-top: 2px dashed #E2E4E9">
+<span style="position: absolute; left: -11px; top: -12px; width: 22px; height: 22px; border-radius: 999px; background: #0D0E11"></span>
+<span style="position: absolute; right: -11px; top: -12px; width: 22px; height: 22px; border-radius: 999px; background: #0D0E11"></span>
+</div>
+<div style="padding: 14px 18px 18px; display: flex; flex-direction: column; gap: 10px">
+<p style="margin: 0; font-size: 14px; line-height: 20px; font-weight: 500">Si une offre ≤ seuil apparaît, nous achetons pour vous et vous devenez détenteur. Annulable à tout moment avant exécution.</p>
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #555C6B">Vous payez le prix de l'offre trouvée, jamais plus que votre seuil. Le droit de voyage est inscrit à votre nom dans le registre NexG-TT ; le voyageur se nomme au plus tard à J-1.</p>
+</div>
+</section>
+
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #8C93A3">Prix indicatifs. Un droit de voyage n'est pas un placement financier. Données de démonstration.</p>
+
+</main>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 20px 24px; background: #0D0E11; border-top: 1px solid #2C303A; display: flex; flex-direction: column; gap: 2px">
+<a href="Portefeuille.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #FFD23F; color: #0D0E11; font-weight: 700; font-size: 16px; text-decoration: none; border: 0; white-space: nowrap">Placer l'ordre à <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-variant-numeric: tabular-nums">{{seuilLabel}}</span></a>
+<a href="IntentionCreer.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 0 8px; border-radius: 12px; color: #FFD23F; font-size: 14px; font-weight: 600; text-align: center; text-decoration: none">
+Ou publiez une intention visible des vendeurs, avec fonds réservés
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="m9 5 7 7-7 7"></path></svg>
+</a>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844}}">
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const MIN = 1000;
+    const MAX = 2050;
+    const STEP = 10;
+    const ASK = 1500;
+    const BID = 1420;
+    const seuil = Math.min(MAX, Math.max(MIN, s.seuil ?? 1450));
+    const validity = s.validity || '7j';
+    const set = (patch) => this.setState({ ...(this.state || {}), ...patch });
+    const group = (v) => String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    const money = (v) => group(v) + ' $';
+    const sign = (v) => (v > 0 ? '+' : v < 0 ? '−' : '');
+    const pct1 = (v) => Math.abs(v).toFixed(1).replace('.', ',') + ' %';
+
+    const d = seuil - ASK;
+    let diff;
+    if (d < 0) {
+      diff = { text: sign(d) + money(Math.abs(d)) + ' (' + sign(d) + pct1(d / ASK * 100) + ') sous la meilleure offre', color: '#FF9E5E' };
+    } else if (d === 0) {
+      diff = { text: '= meilleure offre actuelle', color: '#B9BEC9' };
+    } else {
+      diff = { text: '+' + money(d) + ' au-dessus de la meilleure offre', color: '#62C7FF' };
+    }
+
+    let zone;
+    if (seuil >= ASK) {
+      zone = { text: 'Votre seuil atteint la meilleure offre : l’achat serait exécuté tout de suite, au prix de l’offre (1 500 $).', bg: 'rgba(255,210,63,0.12)', fg: '#FFD23F' };
+    } else if (seuil > BID) {
+      zone = { text: 'Votre seuil devient la meilleure demande du carnet, devant 1 420 $.', bg: 'rgba(98,199,255,0.12)', fg: '#62C7FF' };
+    } else {
+      zone = { text: 'D’autres demandes sont mieux placées (1 420 $). Votre ordre attend son tour.', bg: '#1D2027', fg: '#B9BEC9' };
+    }
+
+    const lo = Math.floor(Math.min(1300, seuil - 60) / 50) * 50;
+    const hi = Math.ceil(Math.max(1600, seuil + 60) / 50) * 50;
+    const pos = (v) => (v - lo) / (hi - lo) * 100;
+    const scale = {
+      lo: money(lo),
+      hi: money(hi),
+      gapLeft: pos(BID).toFixed(2) + '%',
+      gapWidth: (pos(ASK) - pos(BID)).toFixed(2) + '%',
+      bidLeft: 'calc(' + pos(BID).toFixed(2) + '% - 5px)',
+      askLeft: 'calc(' + pos(ASK).toFixed(2) + '% - 5px)',
+      seuilLine: 'calc(' + pos(seuil).toFixed(2) + '% - 1px)',
+      seuilPin: 'calc(' + pos(seuil).toFixed(2) + '% - 7px)'
+    };
+
+    const k = { '24h': 2.5, '7j': 5, 'J2': 10 }[validity] || 5;
+    const gap = Math.max(0, (ASK - seuil) / ASK * 100);
+    const prob = seuil >= ASK ? 100 : Math.max(2, Math.round(94 * Math.exp(-gap / k)));
+    const level = seuil >= ASK ? 'Immédiate' : prob >= 60 ? 'Élevée' : prob >= 30 ? 'Moyenne' : 'Faible';
+    const arc = Math.PI * 62;
+    const gauge = {
+      dash: (prob / 100 * arc).toFixed(1) + ' 400',
+      value: prob + ' %',
+      level: level,
+      aria: 'Probabilité d’exécution estimée : ' + prob + ' %, ' + level.toLowerCase()
+    };
+
+    const seg = (key) => {
+      const on = validity === key;
+      return {
+        pressed: on ? 'true' : 'false',
+        bg: on ? '#F3F4F6' : '#1D2027',
+        fg: on ? '#0D0E11' : '#F3F4F6',
+        sub: on ? '#555C6B' : '#8C93A3',
+        border: on ? '#F3F4F6' : '#3A3F4B'
+      };
+    };
+    const validityRecap = {
+      '24h': '24 h · jusqu’au 13 oct. 16:45',
+      '7j': '7 jours · jusqu’au 19 oct. 16:45',
+      'J2': 'Jusqu’à J-2 · 16 déc. 18:05'
+    }[validity];
+
+    return {
+      seuil: seuil,
+      seuilLabel: money(seuil),
+      dec: () => { if (seuil > MIN) set({ seuil: Math.max(MIN, seuil - STEP) }); },
+      inc: () => { if (seuil < MAX) set({ seuil: Math.min(MAX, seuil + STEP) }); },
+      onSlide: (e) => {
+        const v = Number(e && e.target ? e.target.value : NaN);
+        if (Number.isFinite(v)) set({ seuil: Math.min(MAX, Math.max(MIN, Math.round(v / STEP) * STEP)) });
+      },
+      bounds: {
+        minDisabled: seuil <= MIN ? 'true' : 'false',
+        maxDisabled: seuil >= MAX ? 'true' : 'false',
+        minOpacity: seuil <= MIN ? '0.4' : '1',
+        maxOpacity: seuil >= MAX ? '0.4' : '1'
+      },
+      diff: diff,
+      zone: zone,
+      scale: scale,
+      gauge: gauge,
+      pick24: () => set({ validity: '24h' }),
+      pick7: () => set({ validity: '7j' }),
+      pickJ2: () => set({ validity: 'J2' }),
+      v24: seg('24h'),
+      v7: seg('7j'),
+      vJ2: seg('J2'),
+      validityRecap: validityRecap
+    };
+  }
+}
+</script>
+
+
+</body></html>

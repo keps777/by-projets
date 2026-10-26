@@ -1,0 +1,42 @@
+Ouverture (web) — NexG-TT
+Ouverture (web) — NexG-TT
+NEXG
+·TT
+Explorer sans compte
+J’ai déjà un compte
+Chargement du tableau des départs…
+Hors ligne
+Vous pouvez parcourir cette présentation et choisir votre langue. Se connecter ou créer un compte demande le réseau : rien n’a été envoyé.
+Départs · Departures
+YUL · 12 oct.
+Heure
+Dest.
+Ville
+Statut
+{{c.ch}}
+Next Generation Travel Ticket
+{{r.time}}
+{{k.ch}}
+{{r.city}}
+{{r.status}}
+Un billet,
+deux faces.
+Réservez votre vol. Revendez-le si vos plans changent. Nommez le voyageur avant le départ.
+Par où commencer ?
+Recto
+Voyager
+Chercher, réserver, partir
+Verso
+Gérer
+Revendre, transférer, nommer
+Commencer
+J’ai déjà un compte
+J’ai déjà un compte
+Prototype · données fictives · aucun paiement réel
+Prototype — données fictives
+Compagnies (Aérolys, Nordelle), agence, détenteurs, prix et références inventés. Aucun paiement réel.
+Un droit de voyage est une inscription au registre interne de NexG-TT, pas un placement financier.
+Aperçu des états
+Normal
+Chargement
+Hors ligne

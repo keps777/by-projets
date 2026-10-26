@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Transférer à un proche : choisir — NexG-TT</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Barlow:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#0D0E11}
+a{color:#FFD23F}a:hover{color:#FFE27A}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #FFD23F;outline-offset:2px}
+main:focus-visible{outline:2px solid #FFD23F;outline-offset:-2px}
+input::placeholder{color:#8C93A3;opacity:1}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0D0E11; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="padding: 52px 12px 8px; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 8px">
+<a href="Billet.dc.html" aria-label="Retour" style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 999px; background: #15171C; border: 1px solid #2C303A; display: flex; align-items: center; justify-content: center; color: #F3F4F6; text-decoration: none">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+</a>
+<h1 style="margin: 0; text-align: center; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 20px; letter-spacing: 0.04em; text-transform: uppercase">Transférer</h1>
+<span aria-hidden="true" style="width: 44px; height: 44px"></span>
+</header>
+
+<main style="flex: 1; overflow-y: auto; padding: 12px 20px 164px; scroll-padding-bottom: 148px; display: flex; flex-direction: column; gap: 20px">
+
+<div style="flex: none; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: #FFFFFF; color: #121418">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 26px; line-height: 26px; letter-spacing: 0.02em; white-space: nowrap">YUL → CDG</span>
+<span style="flex: 1; min-width: 0; font-size: 12px; line-height: 16px; color: #555C6B">Lun. 14 déc. 2026<br>Aérolys 812 · 18:05</span>
+<span style="display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-size: 11px; font-weight: 600; color: #555C6B">Statut</span>
+<span style="font-size: 15px; font-weight: 700">Détenu</span>
+</span>
+</div>
+
+<div style="flex: none; display: flex; flex-direction: column; gap: 8px">
+<p style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Étape 1 sur 3 · Choisir le proche</p>
+<div aria-hidden="true" style="display: flex; gap: 6px">
+<span style="flex: 1; height: 4px; border-radius: 999px; background: #FFD23F"></span>
+<span style="flex: 1; height: 4px; border-radius: 999px; background: #2C303A"></span>
+<span style="flex: 1; height: 4px; border-radius: 999px; background: #2C303A"></span>
+</div>
+</div>
+
+<div style="flex: none; display: flex; flex-direction: column; gap: 10px">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 34px; line-height: 36px; letter-spacing: 0.02em; text-transform: uppercase">À qui le transférer&#8239;?</h2>
+<p style="margin: 0; font-size: 15px; line-height: 22px; color: #B9BEC9">Sans vente : votre proche reçoit ce droit sur son compte NexG-TT. Il doit déjà en avoir un.</p>
+</div>
+
+<sc-if value="{{showOffline}}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="flex: none; display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #1D2027; border: 1px solid #3A3F4B">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+<span style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 15px; font-weight: 700">Vous êtes hors ligne</span>
+<span style="font-size: 13px; line-height: 18px; color: #B9BEC9">Le transfert exige une connexion. Rien n'est modifié ; reprenez ici une fois reconnecté.</span>
+</span>
+</div>
+</sc-if>
+
+<section aria-labelledby="rech-h" style="flex: none; display: flex; flex-direction: column; gap: 8px">
+<h2 id="rech-h" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Chercher un proche</h2>
+<label for="recherche" style="font-size: 13px; font-weight: 500; color: #B9BEC9">Identifiant NexG-TT ou courriel</label>
+<div style="display: flex; gap: 8px">
+<input id="recherche" type="text" value="{{query}}" onChange="{{ onQuery }}" disabled="{{rechDisabled}}" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@identifiant" aria-describedby="{{rechDesc}}" aria-invalid="{{rechInvalid}}" style="flex: 1; min-width: 0; height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #1D2027; border: 1px solid {{rechBorder}}; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; font-size: 16px">
+<button type="button" onClick="{{ doSearch }}" aria-disabled="{{rechAriaDisabled}}" style="flex: none; height: 52px; padding: 0 18px; box-sizing: border-box; border-radius: 14px; background: #1D2027; border: 1px solid #3A3F4B; color: {{chercherFg}}; font-family: 'Barlow', system-ui, sans-serif; font-size: 16px; font-weight: 700; cursor: pointer">Chercher</button>
+</div>
+<p id="rech-aide" style="margin: 0; font-size: 12px; line-height: 17px; color: #8C93A3">Recherche exacte. Nous ne montrons que le prénom et l'initiale du nom.</p>
+<sc-if value="{{rechSelf}}" hint-placeholder-val="{{ false }}">
+<p id="rech-erreur" role="alert" style="margin: 0; display: flex; align-items: flex-start; gap: 8px; font-size: 13px; line-height: 18px; font-weight: 600; color: #FF7B7B">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+<span>Vous ne pouvez pas vous transférer ce droit à vous-même.</span>
+</p>
+</sc-if>
+</section>
+
+<div role="status" style="flex: none; display: flex; flex-direction: column; gap: 12px">
+<sc-if value="{{foundNew}}" hint-placeholder-val="{{ false }}">
+<section aria-labelledby="res-h" style="display: flex; flex-direction: column; gap: 10px">
+<h2 id="res-h" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Résultat de la recherche</h2>
+<fieldset aria-labelledby="res-h" style="margin: 0; padding: 0; border: 0; min-width: 0">
+<label for="r-found" style="display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 14px; box-sizing: border-box; border-radius: 14px; background: {{found.bg}}; border: 2px solid {{found.border}}; cursor: pointer">
+<input id="r-found" type="radio" name="proche-resultat" value="{{found.id}}" checked="{{found.on}}" onChange="{{ found.pick }}" style="width: 22px; height: 22px; margin: 0; flex: none; accent-color: #FFD23F; cursor: pointer">
+<span aria-hidden="true" style="width: 32px; height: 32px; flex: none; border-radius: 999px; background: #F3F4F6; color: #0D0E11; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700">{{found.ini}}</span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 15px; font-weight: 700">{{found.name}}</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #B9BEC9">{{found.ident}}</span>
+</span>
+</label>
+</fieldset>
+</section>
+</sc-if>
+<sc-if value="{{foundListed}}" hint-placeholder-val="{{ false }}">
+<p style="margin: 0; display: flex; align-items: flex-start; gap: 8px; font-size: 13px; line-height: 18px; color: #B9BEC9">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><path d="m5 12 5 5 9-10"></path></svg>
+<span>{{foundListedLabel}}</span>
+</p>
+</sc-if>
+<sc-if value="{{notFound}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 14px; border-radius: 14px; background: #1D2027; border: 1px solid #3A3F4B">
+<span style="display: flex; align-items: flex-start; gap: 8px; font-size: 15px; font-weight: 700">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+<span>Aucun compte trouvé pour « {{searched}} »</span>
+</span>
+<span style="font-size: 13px; line-height: 18px; color: #B9BEC9">Vérifiez l'identifiant, ou invitez ce proche à créer un compte NexG-TT.</span>
+<a href="TransfertSansCompte.dc.html" style="display: inline-flex; align-items: center; gap: 4px; align-self: flex-start; min-height: 44px; font-size: 14px; font-weight: 600; color: #FFD23F; text-decoration: none">
+Inviter ce proche
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg>
+</a>
+</div>
+</sc-if>
+</div>
+
+<section aria-labelledby="proches-h" style="flex: none; display: flex; flex-direction: column; gap: 10px">
+<h2 id="proches-h" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Proches enregistrés</h2>
+
+<sc-if value="{{showList}}" hint-placeholder-val="{{ true }}">
+<fieldset aria-labelledby="proches-h" style="margin: 0; padding: 0; border: 0; min-width: 0">
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{rows}}" as="row" hint-placeholder-count="3">
+<li style="display: flex; flex-direction: column">
+<sc-if value="{{row.avecCompte}}" hint-placeholder-val="{{ true }}">
+<label for="{{row.domId}}" style="display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 14px; box-sizing: border-box; border-radius: 14px; background: {{row.bg}}; border: 2px solid {{row.border}}; cursor: pointer">
+<input id="{{row.domId}}" type="radio" name="proche" value="{{row.id}}" checked="{{row.on}}" disabled="{{row.disabled}}" onChange="{{ row.pick }}" style="width: 22px; height: 22px; margin: 0; flex: none; accent-color: #FFD23F; cursor: pointer">
+<span aria-hidden="true" style="width: 32px; height: 32px; flex: none; border-radius: 999px; background: #F3F4F6; color: #0D0E11; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700">{{row.ini}}</span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 15px; font-weight: 700">{{row.name}}</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #B9BEC9">{{row.ident}}</span>
+</span>
+</label>
+</sc-if>
+<sc-if value="{{row.sansCompte}}" hint-placeholder-val="{{ false }}">
+<a href="TransfertSansCompte.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 14px; box-sizing: border-box; border-radius: 14px; background: #15171C; border: 2px dashed #3A3F4B; color: #F3F4F6; text-decoration: none">
+<span aria-hidden="true" style="width: 22px; flex: none"></span>
+<span aria-hidden="true" style="width: 32px; height: 32px; flex: none; box-sizing: border-box; border-radius: 999px; border: 1.5px dashed #8C93A3; color: #B9BEC9; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700">{{row.ini}}</span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 15px; font-weight: 700">{{row.name}}</span>
+<span style="font-size: 13px; color: #B9BEC9">Sans compte NexG-TT</span>
+</span>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B9BEC9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="m9 5 7 7-7 7"></path></svg>
+</a>
+</sc-if>
+</li>
+</sc-for>
+</ul>
+</fieldset>
+</sc-if>
+
+<sc-if value="{{showEmpty}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 18px; border-radius: 16px; border: 1.5px dashed #3A3F4B; background: #15171C">
+<span style="font-size: 15px; font-weight: 700">Aucun proche enregistré pour l'instant</span>
+<span style="font-size: 13px; line-height: 18px; color: #B9BEC9">Les voyageurs que vous nommez pourront être enregistrés ici. Pour l'instant, cherchez un proche par son identifiant.</span>
+</div>
+</sc-if>
+
+<sc-if value="{{showLoading}}" hint-placeholder-val="{{ false }}">
+<div aria-busy="true" style="display: flex; flex-direction: column; gap: 8px">
+<p role="status" style="margin: 0; font-size: 13px; color: #B9BEC9">Chargement de vos proches…</p>
+<span aria-hidden="true" style="height: 64px; border-radius: 14px; background: #1D2027; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+<span aria-hidden="true" style="height: 64px; border-radius: 14px; background: #1D2027; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+<span aria-hidden="true" style="height: 64px; border-radius: 14px; background: #1D2027; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+</div>
+</sc-if>
+</section>
+
+<section aria-labelledby="demo-h" style="flex: none; display: flex; flex-direction: column; gap: 10px; padding: 14px; box-sizing: border-box; border-radius: 16px; border: 1px dashed #3A3F4B">
+<div style="display: flex; align-items: center; gap: 8px">
+<span style="display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; background: #262A33; color: #B9BEC9; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">Démo</span>
+<h2 id="demo-h" style="margin: 0; font-size: 13px; font-weight: 600; color: #B9BEC9">Voir la liste des proches dans l'état&#8239;:</h2>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{vues}}" as="v" hint-placeholder-count="4">
+<button type="button" onClick="{{ v.pick }}" aria-pressed="{{v.pressed}}" style="min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; background: {{v.bg}}; border: 1px solid {{v.border}}; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer">{{v.label}}</button>
+</sc-for>
+</div>
+</section>
+
+</main>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 20px 28px; background: #0D0E11; border-top: 1px solid #2C303A; display: flex; flex-direction: column; gap: 10px">
+<sc-if value="{{canContinue}}" hint-placeholder-val="{{ true }}">
+<a href="TransfertConfirmer.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #FFD23F; color: #0D0E11; font-weight: 700; font-size: 16px; text-decoration: none; border: 0">
+Continuer avec {{selName}}
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+</a>
+</sc-if>
+<sc-if value="{{cannotContinue}}" hint-placeholder-val="{{ false }}">
+<button type="button" aria-disabled="true" aria-describedby="hint-continuer" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #262A33; color: #B9BEC9; font-family: 'Barlow', system-ui, sans-serif; font-weight: 700; font-size: 16px; border: 1px solid #3A3F4B; cursor: not-allowed">Continuer</button>
+<p id="hint-continuer" style="margin: 0; text-align: center; font-size: 13px; color: #B9BEC9">{{hint}}</p>
+</sc-if>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const set = (patch) => this.setState(Object.assign({}, this.state || {}, patch));
+    const vue = s.vue || 'liste';
+    const query = s.query || '';
+    const searched = s.searched || '';
+    const picked = s.selected === undefined ? 'lea' : s.selected;
+
+    // Données de démonstration (fictives). Seuls prénom, initiale du nom et identifiant public sont montrés.
+    const ANNUAIRE = [
+      { id: 'lea', name: 'Léa A.', ident: '@lea.ailleurs', ini: 'LA' },
+      { id: 'nina', name: 'Nina R.', ident: '@nina.r', ini: 'NR' },
+      { id: 'hugo', name: 'Hugo P.', ident: '@hugo.p', ini: 'HP' }
+    ];
+    const LISTE = ['lea', 'nina'];
+    const MOI = '@alex.t';
+
+    // Recherche exacte : identifiant public avec ou sans « @ ».
+    const q = searched.trim().toLowerCase();
+    const isSelf = q !== '' && (q === MOI || q === MOI.slice(1));
+    const hit = q === '' || isSelf ? null : ANNUAIRE.find((p) => p.ident === q || p.ident.slice(1) === q) || null;
+    const online = vue !== 'horsligne';
+    const hitListed = !!hit && LISTE.indexOf(hit.id) >= 0 && vue === 'liste';
+    const hitNew = !!hit && !hitListed;
+    const notFound = q !== '' && !isSelf && !hit;
+
+    // Qui peut être sélectionné dans l'état courant.
+    const available = [];
+    if (vue === 'liste') LISTE.forEach((id) => available.push(id));
+    if (hitNew && online) available.push(hit.id);
+    const selId = online && available.indexOf(picked) >= 0 ? picked : null;
+    const sel = ANNUAIRE.find((p) => p.id === selId) || null;
+
+    const style = (p) => ({
+      id: p.id,
+      domId: 'r-' + p.id,
+      name: p.name,
+      ident: p.ident,
+      ini: p.ini,
+      avecCompte: true,
+      sansCompte: false,
+      disabled: !online,
+      on: p.id === selId,
+      bg: p.id === selId ? 'rgba(255,210,63,0.12)' : '#15171C',
+      border: p.id === selId ? '#FFD23F' : '#2C303A',
+      pick: () => set({ selected: p.id })
+    });
+    const rows = LISTE.map((id) => style(ANNUAIRE.find((p) => p.id === id)));
+    rows.push({ id: 'marc', name: 'Marc T.', ini: 'MT', avecCompte: false, sansCompte: true });
+
+    const vues = [
+      { key: 'liste', label: 'Liste' },
+      { key: 'vide', label: 'Vide' },
+      { key: 'chargement', label: 'Chargement' },
+      { key: 'horsligne', label: 'Hors ligne' }
+    ].map((v) => ({
+      label: v.label,
+      pressed: v.key === vue ? 'true' : 'false',
+      bg: v.key === vue ? 'rgba(255,210,63,0.12)' : '#15171C',
+      border: v.key === vue ? '#FFD23F' : '#3A3F4B',
+      pick: () => set({ vue: v.key })
+    }));
+
+    let hint = 'Choisissez un proche pour continuer.';
+    if (vue === 'vide') hint = 'Cherchez un proche pour continuer.';
+    if (vue === 'chargement') hint = 'Chargement en cours…';
+    if (vue === 'horsligne') hint = 'Reconnectez-vous pour continuer.';
+
+    return {
+      query: query,
+      searched: searched,
+      showOffline: !online,
+      rechDisabled: !online,
+      rechAriaDisabled: online ? 'false' : 'true',
+      chercherFg: online ? '#F3F4F6' : '#B9BEC9',
+      rechInvalid: isSelf ? 'true' : 'false',
+      rechBorder: isSelf ? '#FF7B7B' : '#6B7282',
+      rechDesc: isSelf ? 'rech-aide rech-erreur' : 'rech-aide',
+      rechSelf: isSelf,
+      foundNew: hitNew && online,
+      found: hit ? style(hit) : {},
+      foundListed: hitListed,
+      foundListedLabel: hit ? hit.name + ' est dans vos proches enregistrés : sélectionnée.' : '',
+      notFound: notFound && online,
+      rows: rows,
+      showList: vue === 'liste' || vue === 'horsligne',
+      showEmpty: vue === 'vide',
+      showLoading: vue === 'chargement',
+      vues: vues,
+      canContinue: !!sel,
+      cannotContinue: !sel,
+      selName: sel ? sel.name : '',
+      hint: hint,
+      onQuery: (e) => set({ query: e.target.value }),
+      doSearch: () => {
+        if (!online) return;
+        const typed = (this.state || {}).query || '';
+        const t = typed.trim().toLowerCase();
+        const found = ANNUAIRE.find((p) => p.ident === t || p.ident.slice(1) === t);
+        const patch = { searched: typed };
+        if (found) patch.selected = found.id;
+        set(patch);
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

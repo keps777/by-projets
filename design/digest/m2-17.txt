@@ -1,0 +1,64 @@
+Revendre un bagage — NexG-TT
+Revendre un bagage — NexG-TT
+Revendre mon bagage inutilisé
+Droit de bagage · soute
+NXG-7Q2M
+CDG
+Paris
+YUL → CDG
+AE 812 · 14 DÉC
+23 KG
+1 pièce · 158 cm
+NXG 812 1412 B2
+$
+Votre franchise : 2 bagages inclus
+1
+utilisé ·
+1
+inutilisé, à revendre (hypothèse démo)
+Votre prix de vente
+{{priceLabel}}
+{{gapToCap}}
+sous le prix compagnie d'un bagage supplémentaire (150 $)
+Au plafond : égal au prix compagnie
+50 $
+Plafond 150 $
+Plafond = prix de la compagnie pour un bagage supplémentaire sur ce vol (150 $, exemple). Règle provisoire, à valider.
+En direct · demande sur ce vol
+3
+passagers cherchent un bagage · meilleure demande
+95 $
+50 $
+100 $
+150 $
+Bagages proposés
+Demandes
+Vous
+Plafond
+Position dans le carnet
+{{rankLabel}}
+Une demande à 95 $ correspond à votre prix : appariement possible dès la mise en vente, à confirmer par la compagnie.
+{{gapToBid}}
+au-dessus de la meilleure demande : votre bagage attend un acheteur. Aucune vente n'est garantie.
+Ce que vous recevez
+Prix de vente
+{{priceLabel}}
+Commission NexG-TT (hypothèse)
+10 % (Pass) · 12,5 % sans Pass
+{{commissionLabel}}
+Vous recevez
+{{netLabel}}
+Sans Pass (commission 12,5 %), vous recevriez
+{{netMaxLabel}}
+Taux hypothétiques, prélevés seulement si la vente a lieu. Alex T. est membre Pass : le taux membre s'applique.
+Transfert possible jusqu'au
+13 déc. 18:05
+(à valider). Même vol uniquement : AE 812 du 14 déc.
+Une fois vendu, ce bagage est retiré de votre réservation.
+Il vous restera 1 bagage inclus (23 kg) sur ce vol. L'acheteur l'ajoute à sa réservation après confirmation de la compagnie.
+Prix indicatifs. Un droit de bagage n'est pas un placement financier. Sous réserve d'accord avec la compagnie. Données de démonstration.
+Vous recevez
+{{netLabel}}
+Commission 10 % (Pass) · 12,5 % sans Pass
+Mettre en vente à
+{{priceLabel}}

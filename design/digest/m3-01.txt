@@ -1,0 +1,42 @@
+Explorer — radar des destinations
+Explorer — radar des destinations — NexG-TT
+Explorer
+Depuis Montréal · YUL
+Jusqu'où, pour combien ?
+Chaque cercle ajoute 3 heures de vol. Plus le point est gros, plus l'aubaine est forte.
+Neuf
+Revente
+Drops
+3 h
+6 h
+9 h
+12 h+
+N
+YUL
+{{p.code}}
+{{p.priceText}}
+Neuf ou revente
+Drop membres
+Taille du point = aubaine
+Budget max
+{{budgetText}}
+200 $
+2 500 $
+{{selCode}}
+{{selMeta}}
+{{selCity}}
+{{selCountry}}
+{{selPrice}}
+{{selKind}}
+Au-dessus de votre budget max ({{budgetText}}).
+Drop réservé aux membres du Pass NexG (nom provisoire), places limitées.
+Voir les billets pour {{selCity}}
+Dans votre budget
+{{countText}}
+{{v.code}}
+{{v.city}}
+{{v.sub}}
+{{v.priceText}}
+Rien sur le radar pour l'instant
+{{emptyMsg}}
+Durées et prix indicatifs, aller simple, données fictives. Directions approximatives depuis Montréal, positions ajustées pour la lisibilité.

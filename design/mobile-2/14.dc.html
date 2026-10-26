@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<title>Alertes — NexG-TT</title>
+<script src="f53c2c22-edd7-4bbc-b6d9-0d0e17ced039"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+<style>
+body{margin:0;background:#0D0E11}
+a{color:#FFD23F}a:hover{color:#FFE27A}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #FFD23F;outline-offset:2px}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0D0E11; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="padding: 52px 12px 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<a href="Main.dc.html" aria-label="Retour" style="width: 44px; height: 44px; flex: none; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: #F3F4F6; text-decoration: none">
+<svg width="24" height="24" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+</a>
+<h1 style="margin: 0; flex: 1; text-align: center; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 20px; letter-spacing: 0.04em; text-transform: uppercase">Alertes</h1>
+<span aria-hidden="true" style="width: 44px; height: 44px; flex: none"></span>
+</header>
+
+<main style="flex: 1; overflow-y: auto; padding: 8px 20px 116px; display: flex; flex-direction: column; gap: 28px">
+
+<section aria-labelledby="mine-title" style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<h2 id="mine-title" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Mes alertes</h2>
+<span style="display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 999px; background: #262A33; color: #B9BEC9; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">{{activeLabel}}</span>
+</div>
+<div style="border-radius: 20px; background: #15171C; border: 1px solid #2C303A; overflow: hidden">
+
+<label style="display: flex; align-items: center; gap: 12px; min-height: 72px; padding: 12px 16px; box-sizing: border-box; cursor: pointer">
+<span style="width: 40px; height: 40px; flex: none; border-radius: 12px; background: #1D2027; color: #F3F4F6; display: flex; align-items: center; justify-content: center">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h6l4 7h2l-2-7h5l2 2h2l-1-3 1-3h-2l-2 2h-5l2-7h-2l-4 7H3z"></path></svg>
+</span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 16px; font-weight: 600">YUL → PUJ</span>
+<span style="font-size: 13px; color: #B9BEC9">Tous types d'offres · ≤ <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums">400 $</span></span>
+</span>
+<span style="position: relative; width: 52px; height: 32px; flex: none">
+<input type="checkbox" role="switch" checked="{{a1}}" sc-camel-on-change="{{ toggleA1 }}" style="appearance: none; -webkit-appearance: none; display: block; margin: 0; width: 52px; height: 32px; box-sizing: border-box; border-radius: 999px; background: {{sw1.track}}; border: 1px solid {{sw1.border}}; cursor: pointer">
+<span aria-hidden="true" style="position: absolute; top: 4px; left: {{sw1.left}}; width: 24px; height: 24px; border-radius: 999px; background: {{sw1.knob}}; pointer-events: none; transition: left 0.15s ease"></span>
+</span>
+</label>
+
+<label style="display: flex; align-items: center; gap: 12px; min-height: 72px; padding: 12px 16px; box-sizing: border-box; border-top: 1px solid #2C303A; cursor: pointer">
+<span style="width: 40px; height: 40px; flex: none; border-radius: 12px; background: #1D2027; color: #F3F4F6; display: flex; align-items: center; justify-content: center">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"></path></svg>
+</span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 16px; font-weight: 600">Drops Europe</span>
+<span style="font-size: 13px; color: #B9BEC9">Au départ de Montréal · à l'ouverture</span>
+</span>
+<span style="position: relative; width: 52px; height: 32px; flex: none">
+<input type="checkbox" role="switch" checked="{{a2}}" sc-camel-on-change="{{ toggleA2 }}" style="appearance: none; -webkit-appearance: none; display: block; margin: 0; width: 52px; height: 32px; box-sizing: border-box; border-radius: 999px; background: {{sw2.track}}; border: 1px solid {{sw2.border}}; cursor: pointer">
+<span aria-hidden="true" style="position: absolute; top: 4px; left: {{sw2.left}}; width: 24px; height: 24px; border-radius: 999px; background: {{sw2.knob}}; pointer-events: none; transition: left 0.15s ease"></span>
+</span>
+</label>
+
+<label style="display: flex; align-items: center; gap: 12px; min-height: 72px; padding: 12px 16px; box-sizing: border-box; border-top: 1px solid #2C303A; cursor: pointer">
+<span style="width: 40px; height: 40px; flex: none; border-radius: 12px; background: #1D2027; color: #F3F4F6; display: flex; align-items: center; justify-content: center">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg>
+</span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 16px; font-weight: 600">YUL → CDG</span>
+<span style="font-size: 13px; color: #B9BEC9">En revente · ≤ <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums">1 600 $</span></span>
+</span>
+<span style="position: relative; width: 52px; height: 32px; flex: none">
+<input type="checkbox" role="switch" checked="{{a3}}" sc-camel-on-change="{{ toggleA3 }}" style="appearance: none; -webkit-appearance: none; display: block; margin: 0; width: 52px; height: 32px; box-sizing: border-box; border-radius: 999px; background: {{sw3.track}}; border: 1px solid {{sw3.border}}; cursor: pointer">
+<span aria-hidden="true" style="position: absolute; top: 4px; left: {{sw3.left}}; width: 24px; height: 24px; border-radius: 999px; background: {{sw3.knob}}; pointer-events: none; transition: left 0.15s ease"></span>
+</span>
+</label>
+
+<label style="display: flex; align-items: center; gap: 12px; min-height: 72px; padding: 12px 16px; box-sizing: border-box; border-top: 1px solid #2C303A; cursor: pointer">
+<span style="width: 40px; height: 40px; flex: none; border-radius: 12px; background: rgba(124,227,181,0.12); color: #7CE3B5; display: flex; align-items: center; justify-content: center">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c1-3.5 3.5-5 6.5-5s5.5 1.5 6.5 5"></path><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 15c2 .5 3.2 2 3.5 5"></path></svg>
+</span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 16px; font-weight: 600">Nouvelle intention sur mes vols</span>
+<span style="font-size: 13px; color: #B9BEC9">Acheteurs à fonds réservés · mes 3 droits détenus</span>
+</span>
+<span style="position: relative; width: 52px; height: 32px; flex: none">
+<input type="checkbox" role="switch" checked="{{a4}}" sc-camel-on-change="{{ toggleA4 }}" style="appearance: none; -webkit-appearance: none; display: block; margin: 0; width: 52px; height: 32px; box-sizing: border-box; border-radius: 999px; background: {{sw4.track}}; border: 1px solid {{sw4.border}}; cursor: pointer">
+<span aria-hidden="true" style="position: absolute; top: 4px; left: {{sw4.left}}; width: 24px; height: 24px; border-radius: 999px; background: {{sw4.knob}}; pointer-events: none; transition: left 0.15s ease"></span>
+</span>
+</label>
+
+</div>
+<p style="margin: 0; font-size: 12px; color: #8C93A3">Les alertes de drops sont réservées aux membres du Pass NexG.</p>
+</section>
+
+<section aria-labelledby="new-title" style="display: flex; flex-direction: column; gap: 18px">
+<h2 id="new-title" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Nouvelle alerte</h2>
+
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border-radius: 16px; background: #060708; border: 1px solid #2C303A">
+<span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #8C93A3">Aperçu</span>
+<span style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px">
+<span style="min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 26px; letter-spacing: 0.04em; text-transform: uppercase">{{sumRoute}}</span>
+<span style="flex: none; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 20px; font-variant-numeric: tabular-nums; color: #FFD23F">≤ {{budgetLabel}}</span>
+</span>
+<span style="font-size: 13px; color: #B9BEC9">{{sumTypes}} · {{sumDates}} · {{sumChannels}}</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="al-dep" style="font-size: 13px; font-weight: 500; color: #B9BEC9">Départ</label>
+<input id="al-dep" type="text" autocomplete="off" value="{{dep}}" sc-camel-on-change="{{ onDep }}" style="height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #1D2027; border: 1px solid #6B7282; color: #F3F4F6; font: inherit; font-size: 16px">
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="al-dest" style="font-size: 13px; font-weight: 500; color: #B9BEC9">Destination</label>
+<div style="display: flex; gap: 8px">
+<input id="al-dest" type="text" autocomplete="off" value="{{dest}}" sc-camel-on-change="{{ onDest }}" aria-describedby="al-dest-help" style="flex: 1; min-width: 0; height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #1D2027; border: 1px solid #6B7282; color: #F3F4F6; font: inherit; font-size: 16px">
+<button type="button" aria-pressed="{{anyPressed}}" sc-camel-on-click="{{ setAnywhere }}" style="flex: none; height: 52px; padding: 0 14px; border-radius: 12px; background: {{any.bg}}; border: 1px solid {{any.border}}; color: #F3F4F6; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Partout</button>
+</div>
+<span id="al-dest-help" style="font-size: 12px; color: #8C93A3">« Partout » : toutes les destinations au départ de cet aéroport.</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px">
+<label for="al-budget" style="font-size: 13px; font-weight: 500; color: #B9BEC9">Budget maximum par billet</label>
+<output for="al-budget" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 22px; font-variant-numeric: tabular-nums; color: #F3F4F6">{{budgetLabel}}</output>
+</div>
+<input id="al-budget" type="range" min="100" max="2000" step="10" value="{{budget}}" aria-valuetext="{{budgetText}}" sc-camel-on-change="{{ onBudget }}" style="width: 100%; height: 44px; margin: 0; accent-color: #FFD23F; cursor: pointer">
+<div aria-hidden="true" style="display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #8C93A3">
+<span>100 $</span><span>2 000 $</span>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<label style="display: flex; align-items: center; gap: 12px; min-height: 56px; cursor: pointer">
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 15px; font-weight: 600">Dates flexibles</span>
+<span style="font-size: 13px; color: #B9BEC9">Tout départ d'ici octobre 2027</span>
+</span>
+<span style="position: relative; width: 52px; height: 32px; flex: none">
+<input type="checkbox" role="switch" checked="{{flex}}" sc-camel-on-change="{{ toggleFlex }}" style="appearance: none; -webkit-appearance: none; display: block; margin: 0; width: 52px; height: 32px; box-sizing: border-box; border-radius: 999px; background: {{swFlex.track}}; border: 1px solid {{swFlex.border}}; cursor: pointer">
+<span aria-hidden="true" style="position: absolute; top: 4px; left: {{swFlex.left}}; width: 24px; height: 24px; border-radius: 999px; background: {{swFlex.knob}}; pointer-events: none; transition: left 0.15s ease"></span>
+</span>
+</label>
+<sc-if value="{{fixedDates}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="al-date" style="font-size: 13px; font-weight: 500; color: #B9BEC9">Date de départ</label>
+<input id="al-date" type="date" value="{{date}}" sc-camel-on-change="{{ onDate }}" style="height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #1D2027; border: 1px solid #6B7282; color: #F3F4F6; font: inherit; font-size: 16px; color-scheme: dark">
+</div>
+</sc-if>
+</div>
+
+<fieldset style="margin: 0; padding: 0; border: 0; min-width: 0">
+<legend style="padding: 0; font-size: 13px; font-weight: 500; color: #B9BEC9">Types d'offres</legend>
+<div style="margin-top: 8px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<label style="display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; background: {{bxDrops.bg}}; border: 1px solid {{bxDrops.border}}; font-size: 15px; font-weight: 600; cursor: pointer">
+<span style="position: relative; width: 22px; height: 22px; flex: none">
+<input type="checkbox" checked="{{tDrops}}" sc-camel-on-change="{{ toggleTDrops }}" aria-invalid="{{typesInvalid}}" aria-describedby="types-err" style="appearance: none; -webkit-appearance: none; display: block; margin: 0; width: 22px; height: 22px; box-sizing: border-box; border-radius: 6px; border: 2px solid {{bxDrops.box}}; background: {{bxDrops.fill}}; cursor: pointer">
+<sc-if value="{{tDrops}}" hint-placeholder-val="{{ true }}"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="#0D0E11" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 3px; top: 3px; pointer-events: none"><path d="m5 12 5 5 9-10"></path></svg></sc-if>
+</span>
+Drops
+</label>
+<label style="display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; background: {{bxResale.bg}}; border: 1px solid {{bxResale.border}}; font-size: 15px; font-weight: 600; cursor: pointer">
+<span style="position: relative; width: 22px; height: 22px; flex: none">
+<input type="checkbox" checked="{{tResale}}" sc-camel-on-change="{{ toggleTResale }}" aria-invalid="{{typesInvalid}}" aria-describedby="types-err" style="appearance: none; -webkit-appearance: none; display: block; margin: 0; width: 22px; height: 22px; box-sizing: border-box; border-radius: 6px; border: 2px solid {{bxResale.box}}; background: {{bxResale.fill}}; cursor: pointer">
+<sc-if value="{{tResale}}" hint-placeholder-val="{{ true }}"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="#0D0E11" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 3px; top: 3px; pointer-events: none"><path d="m5 12 5 5 9-10"></path></svg></sc-if>
+</span>
+Revente
+</label>
+<label style="display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; background: {{bxNew.bg}}; border: 1px solid {{bxNew.border}}; font-size: 15px; font-weight: 600; cursor: pointer">
+<span style="position: relative; width: 22px; height: 22px; flex: none">
+<input type="checkbox" checked="{{tNew}}" sc-camel-on-change="{{ toggleTNew }}" aria-invalid="{{typesInvalid}}" aria-describedby="types-err" style="appearance: none; -webkit-appearance: none; display: block; margin: 0; width: 22px; height: 22px; box-sizing: border-box; border-radius: 6px; border: 2px solid {{bxNew.box}}; background: {{bxNew.fill}}; cursor: pointer">
+<sc-if value="{{tNew}}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="#0D0E11" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 3px; top: 3px; pointer-events: none"><path d="m5 12 5 5 9-10"></path></svg></sc-if>
+</span>
+Neuf
+</label>
+</div>
+<sc-if value="{{noType}}" hint-placeholder-val="{{ false }}">
+<p id="types-err" role="alert" style="margin: 8px 0 0; display: flex; align-items: center; gap: 6px; font-size: 13px; color: #FF7B7B">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+Choisissez au moins un type d'offre.
+</p>
+</sc-if>
+</fieldset>
+
+<fieldset style="margin: 0; padding: 0; border: 0; min-width: 0">
+<legend style="padding: 0; font-size: 13px; font-weight: 500; color: #B9BEC9">Me prévenir par</legend>
+<div style="margin-top: 8px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<label style="display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; background: {{bxPush.bg}}; border: 1px solid {{bxPush.border}}; font-size: 15px; font-weight: 600; cursor: pointer">
+<span style="position: relative; width: 22px; height: 22px; flex: none">
+<input type="checkbox" checked="{{cPush}}" sc-camel-on-change="{{ toggleCPush }}" aria-invalid="{{chansInvalid}}" aria-describedby="chans-err" style="appearance: none; -webkit-appearance: none; display: block; margin: 0; width: 22px; height: 22px; box-sizing: border-box; border-radius: 6px; border: 2px solid {{bxPush.box}}; background: {{bxPush.fill}}; cursor: pointer">
+<sc-if value="{{cPush}}" hint-placeholder-val="{{ true }}"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="#0D0E11" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 3px; top: 3px; pointer-events: none"><path d="m5 12 5 5 9-10"></path></svg></sc-if>
+</span>
+Notification
+</label>
+<label style="display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; background: {{bxMail.bg}}; border: 1px solid {{bxMail.border}}; font-size: 15px; font-weight: 600; cursor: pointer">
+<span style="position: relative; width: 22px; height: 22px; flex: none">
+<input type="checkbox" checked="{{cMail}}" sc-camel-on-change="{{ toggleCMail }}" aria-invalid="{{chansInvalid}}" aria-describedby="chans-err" style="appearance: none; -webkit-appearance: none; display: block; margin: 0; width: 22px; height: 22px; box-sizing: border-box; border-radius: 6px; border: 2px solid {{bxMail.box}}; background: {{bxMail.fill}}; cursor: pointer">
+<sc-if value="{{cMail}}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="#0D0E11" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 3px; top: 3px; pointer-events: none"><path d="m5 12 5 5 9-10"></path></svg></sc-if>
+</span>
+Courriel
+</label>
+</div>
+<sc-if value="{{noChannel}}" hint-placeholder-val="{{ false }}">
+<p id="chans-err" role="alert" style="margin: 8px 0 0; display: flex; align-items: center; gap: 6px; font-size: 13px; color: #FF7B7B">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+Choisissez au moins un canal.
+</p>
+</sc-if>
+</fieldset>
+
+<p style="margin: 0; font-size: 12px; color: #8C93A3">Une alerte signale une offre ; elle ne réserve pas de place.</p>
+</section>
+
+</main>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 20px 28px; background: #0D0E11; border-top: 1px solid #2C303A">
+<a href="Main.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #FFD23F; color: #0D0E11; font-weight: 700; font-size: 16px; text-decoration: none; border: 0">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>
+Enregistrer l'alerte
+</a>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844}}">
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const a1 = s.a1 ?? true;
+    const a2 = s.a2 ?? true;
+    const a3 = s.a3 ?? true;
+    const a4 = s.a4 ?? true;
+    const dep = s.dep ?? 'Montréal (YUL)';
+    const dest = s.dest ?? 'Partout';
+    const budget = s.budget ?? 600;
+    const flex = s.flex ?? true;
+    const date = s.date ?? '2027-02-21';
+    const tDrops = s.tDrops ?? true;
+    const tResale = s.tResale ?? true;
+    const tNew = s.tNew ?? false;
+    const cPush = s.cPush ?? true;
+    const cMail = s.cMail ?? false;
+
+    const money = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' $';
+    const sw = (on) => ({
+      track: on ? '#FFD23F' : '#262A33',
+      border: on ? '#FFD23F' : '#6B7282',
+      knob: on ? '#0D0E11' : '#B9BEC9',
+      left: on ? '24px' : '4px'
+    });
+    const bx = (on) => ({
+      bg: on ? 'rgba(255,210,63,0.12)' : '#1D2027',
+      border: on ? '#FFD23F' : '#3A3F4B',
+      box: on ? '#FFD23F' : '#8C93A3',
+      fill: on ? '#FFD23F' : 'transparent'
+    });
+    const code = (txt) => {
+      const t = String(txt || '').trim();
+      const m = /\(([A-Za-z]{3})\)/.exec(t);
+      if (m) return m[1].toUpperCase();
+      return t ? t.toUpperCase() : '…';
+    };
+    const months = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+    const fmtDate = (iso) => {
+      const p = String(iso || '').split('-');
+      if (p.length !== 3) return 'date à choisir';
+      return Number(p[2]) + ' ' + months[Number(p[1]) - 1] + ' ' + p[0];
+    };
+    const flip = (key, cur) => () => this.setState({ [key]: !cur });
+    const val = (key) => (e) => this.setState({ [key]: e && e.target ? e.target.value : '' });
+
+    const active = [a1, a2, a3, a4].filter(Boolean).length;
+    const types = [tDrops ? 'Drops' : '', tResale ? 'Revente' : '', tNew ? 'Neuf' : ''].filter(Boolean);
+    const chans = [cPush ? 'Notification' : '', cMail ? 'Courriel' : ''].filter(Boolean);
+    const isAny = String(dest).trim().toLowerCase() === 'partout';
+
+    return {
+      activeLabel: active === 0 ? 'Aucune active' : active === 1 ? '1 active' : active + ' actives',
+      a1, a2, a3, a4,
+      sw1: sw(a1), sw2: sw(a2), sw3: sw(a3), sw4: sw(a4),
+      toggleA1: flip('a1', a1),
+      toggleA2: flip('a2', a2),
+      toggleA3: flip('a3', a3),
+      toggleA4: flip('a4', a4),
+      dep, dest, date, flex, budget,
+      onDep: val('dep'),
+      onDest: val('dest'),
+      onDate: val('date'),
+      onBudget: (e) => this.setState({ budget: e && e.target ? Number(e.target.value) : 600 }),
+      setAnywhere: () => this.setState({ dest: 'Partout' }),
+      anyPressed: isAny ? 'true' : 'false',
+      any: { bg: isAny ? 'rgba(255,210,63,0.12)' : '#1D2027', border: isAny ? '#FFD23F' : '#3A3F4B' },
+      budgetLabel: money(budget),
+      budgetText: money(budget).replace(' $', ' dollars'),
+      swFlex: sw(flex),
+      toggleFlex: flip('flex', flex),
+      fixedDates: !flex,
+      tDrops, tResale, tNew, cPush, cMail,
+      bxDrops: bx(tDrops), bxResale: bx(tResale), bxNew: bx(tNew),
+      bxPush: bx(cPush), bxMail: bx(cMail),
+      toggleTDrops: flip('tDrops', tDrops),
+      toggleTResale: flip('tResale', tResale),
+      toggleTNew: flip('tNew', tNew),
+      toggleCPush: flip('cPush', cPush),
+      toggleCMail: flip('cMail', cMail),
+      noType: types.length === 0,
+      noChannel: chans.length === 0,
+      typesInvalid: types.length === 0 ? 'true' : 'false',
+      chansInvalid: chans.length === 0 ? 'true' : 'false',
+      sumRoute: code(dep) + ' → ' + code(dest),
+      sumTypes: types.length ? types.join(', ') : 'Aucun type',
+      sumDates: flex ? 'Dates flexibles' : fmtDate(date),
+      sumChannels: chans.length ? chans.join(', ') : 'Aucun canal'
+    };
+  }
+}
+</script>
+
+
+</body></html>

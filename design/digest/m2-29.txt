@@ -1,0 +1,39 @@
+Aide — NexG-TT
+Aide — NexG-TT
+Aide
+Aperçu des états · démo
+Normal
+Chargement
+Sans résultat
+Erreur
+Hors ligne
+Hors ligne : les réponses déjà chargées restent lisibles.
+Reconnectez-vous pour écrire à l'assistance.
+Rechercher dans l'aide
+Droits de voyage
+Qu'est-ce qu'un droit de voyage ?
+{{q1.reponse}}
+Que se passe-t-il si je ne nomme personne ?
+{{q2.reponse}}
+Revendre et argent
+Combien coûte une revente ?
+{{q3.reponse}}
+À quoi sert la vérification d'identité ?
+{{q4.reponse}}
+Bagages
+Mon bagage acheté est-il garanti ?
+{{q5.reponse}}
+Notifications et compte
+Comment régler mes notifications ?
+{{q6.reponse}}
+Ouvrir les préférences
+Aucun résultat pour « {{q}} »
+Essayez un autre mot, ou écrivez-nous.
+Effacer la recherche
+Chargement de l'aide…
+Impossible de charger l'aide
+Vérifiez votre connexion, puis réessayez. Vous pouvez aussi écrire à l'assistance.
+Réessayer
+Écrire à l'assistance
+Hors ligne : écrire à l'assistance demande une connexion.
+Écrire à l'assistance

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<title>Agence Horizon — NexG-TT</title>
+<script src="1e1259b7-a3ac-4bea-a269-7b82059f10ac"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+<style>
+body{margin:0;background:#EEF3F8}
+a{color:#1A64C8}a:hover{color:#124C9C}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid #1A64C8;outline-offset:2px}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #EEF3F8; color: #0B1B2E; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="padding: 52px 12px 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<a href="Resultats.dc.html" aria-label="Retour" style="width: 44px; height: 44px; flex: none; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: #0B1B2E; text-decoration: none">
+<svg width="24" height="24" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+</a>
+<p style="margin: 0; flex: 1; text-align: center; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 20px; letter-spacing: 0.04em; text-transform: uppercase">Vitrine agence</p>
+<span aria-hidden="true" style="width: 44px; height: 44px; flex: none"></span>
+</header>
+
+<main style="flex: 1; overflow-y: auto; padding: 8px 20px 32px; display: flex; flex-direction: column; gap: 20px">
+
+<section aria-labelledby="ag-name" style="display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: #FFFFFF; border: 1px solid #D3DCE6">
+<div style="display: flex; align-items: center; gap: 14px">
+<span role="img" aria-label="Monogramme AH, emplacement du logo" style="width: 68px; height: 68px; flex: none; border-radius: 18px; background: #0B1B2E; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: 0.04em">AH</span>
+<div style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+<h1 id="ag-name" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 32px; line-height: 30px">Agence Horizon <span style="font-family: 'Barlow', system-ui, sans-serif; font-weight: 500; font-size: 15px; color: #3E4F66">(exemple)</span></h1>
+<span style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(9,106,73,0.10); color: #096A49; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">
+<svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"></path></svg>
+Agence partenaire vérifiée
+</span>
+</div>
+</div>
+<p style="margin: 0; display: flex; align-items: center; gap: 8px; padding-top: 12px; border-top: 1px solid #D3DCE6; font-size: 14px; color: #3E4F66">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M4 9l1.5-5h13L20 9M4 9v11h16V9M4 9h16M9 20v-6h6v6"></path></svg>
+Vendu par Agence Horizon via NexG-TT
+</p>
+<button type="button" aria-expanded="{{composeExpanded}}" sc-camel-on-click="{{ toggleCompose }}" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #FFFFFF; color: #0B1B2E; border: 1px solid #B9C5D3; font: inherit; font-weight: 700; font-size: 16px; cursor: pointer">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"></path></svg>
+Écrire à un conseiller
+</button>
+<sc-if value="{{composeOpen}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label for="ag-msg" style="font-size: 13px; font-weight: 500; color: #3E4F66">Votre message à Agence Horizon</label>
+<textarea id="ag-msg" rows="4" value="{{msg}}" sc-camel-on-change="{{ onMsg }}" placeholder="Bonjour, je cherche un séjour en mars pour deux personnes…" aria-invalid="{{msgInvalid}}" aria-describedby="ag-msg-help" style="min-height: 104px; box-sizing: border-box; padding: 12px 14px; border-radius: 12px; background: #FFFFFF; border: 1px solid {{msgBorder}}; color: #0B1B2E; font: inherit; font-size: 16px; line-height: 22px; resize: none"></textarea>
+<sc-if value="{{msgError}}" hint-placeholder-val="{{ false }}">
+<span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #B02C27">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+Écrivez votre message avant de l'envoyer.
+</span>
+</sc-if>
+<span id="ag-msg-help" style="font-size: 13px; color: #5A6A80">Ne partagez ni numéro de carte ni mot de passe.</span>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+<button type="button" sc-camel-on-click="{{ cancelCompose }}" style="height: 48px; border-radius: 14px; background: #FFFFFF; color: #0B1B2E; border: 1px solid #B9C5D3; font: inherit; font-weight: 700; font-size: 15px; cursor: pointer">Annuler</button>
+<button type="button" sc-camel-on-click="{{ send }}" style="height: 48px; border-radius: 14px; background: #FFD23F; color: #0B1B2E; border: 0; font: inherit; font-weight: 700; font-size: 15px; cursor: pointer">Envoyer (démo)</button>
+</div>
+</div>
+</sc-if>
+<div role="status">
+<sc-if value="{{sent}}" hint-placeholder-val="{{ false }}">
+<p style="margin: 0; display: flex; align-items: flex-start; gap: 8px; padding: 10px 12px; border-radius: 12px; background: rgba(9,106,73,0.10); color: #096A49; font-size: 14px; font-weight: 600">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><path d="m5 12 5 5 9-10"></path></svg>
+Message envoyé (démo). La réponse arrivera dans vos notifications NexG-TT.
+</p>
+</sc-if>
+</div>
+</section>
+
+<div role="tablist" aria-label="Contenu de la vitrine" style="display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid #D3DCE6">
+<button type="button" role="tab" id="tab-offres" aria-selected="{{offresSelected}}" aria-controls="panel-offres" sc-camel-on-click="{{ showOffres }}" style="min-height: 48px; margin-bottom: -1px; background: none; border: 0; border-bottom: 3px solid {{tabOffres.line}}; color: {{tabOffres.color}}; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer">Offres · 3</button>
+<button type="button" role="tab" id="tab-about" aria-selected="{{aboutSelected}}" aria-controls="panel-about" sc-camel-on-click="{{ showAbout }}" style="min-height: 48px; margin-bottom: -1px; background: none; border: 0; border-bottom: 3px solid {{tabAbout.line}}; color: {{tabAbout.color}}; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer">À propos</button>
+</div>
+
+<sc-if value="{{isOffres}}" hint-placeholder-val="{{ true }}">
+<div role="tabpanel" id="panel-offres" aria-labelledby="tab-offres" style="display: flex; flex-direction: column; gap: 16px">
+<sc-for list="{{offers}}" as="o" hint-placeholder-count="3">
+<a href="Offre.dc.html" style="display: block; position: relative; border-radius: 18px; background: #FFFFFF; color: #0B1B2E; text-decoration: none; box-shadow: 0 1px 0 #D3DCE6, 0 12px 32px rgba(11,27,46,0.10)">
+<span style="display: flex; flex-direction: column; gap: 10px; padding: 16px 18px 14px">
+<span style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<span style="display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(26,100,200,0.10); color: #1A64C8; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">{{o.kind}}</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; color: #3E4F66">YUL → {{o.code}}</span>
+</span>
+<span style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 44px; line-height: 44px">{{o.city}}</span>
+<span style="font-size: 14px; color: #3E4F66">Depuis Montréal · {{o.detail}}</span>
+</span>
+<span style="font-size: 13px; color: #5A6A80">{{o.date}}</span>
+</span>
+<span style="display: block; position: relative; margin: 0 18px; border-top: 2px dashed #E2E4E9">
+<span aria-hidden="true" style="position: absolute; left: -29px; top: -12px; width: 22px; height: 22px; border-radius: 999px; background: #EEF3F8"></span>
+<span aria-hidden="true" style="position: absolute; right: -29px; top: -12px; width: 22px; height: 22px; border-radius: 999px; background: #EEF3F8"></span>
+</span>
+<span style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px 16px">
+<span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border: 1.5px solid #3E4F66; border-radius: 6px; transform: rotate(-3deg); color: #3E4F66; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase">
+<svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9l1.5-5h13L20 9M4 9v11h16V9M4 9h16M9 20v-6h6v6"></path></svg>
+Vendu par Agence Horizon
+</span>
+<span style="display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 24px; line-height: 28px; font-variant-numeric: tabular-nums">{{o.price}}</span>
+<span style="font-size: 13px; color: #5A6A80">par personne</span>
+</span>
+</span>
+</a>
+</sc-for>
+<p style="margin: 0; font-size: 13px; color: #5A6A80">Prix indicatifs. Les billets achetés ici rejoignent votre portefeuille NexG-TT.</p>
+</div>
+</sc-if>
+
+<sc-if value="{{isAbout}}" hint-placeholder-val="{{ false }}">
+<div role="tabpanel" id="panel-about" aria-labelledby="tab-about" style="display: flex; flex-direction: column; gap: 16px">
+<p style="margin: 0; font-size: 15px; line-height: 22px">Agence de voyages fictive, créée pour illustrer les vitrines partenaires. Elle publie ses offres sur NexG-TT ; la réservation, le paiement et le portefeuille de billets passent par NexG-TT.</p>
+<dl style="margin: 0; border-radius: 20px; background: #FFFFFF; border: 1px solid #D3DCE6; overflow: hidden">
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 14px 16px">
+<dt style="font-size: 14px; color: #3E4F66">Spécialités</dt>
+<dd style="margin: 0; font-size: 14px; font-weight: 600; text-align: right">Caraïbes, Europe, courts séjours</dd>
+</div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 14px 16px; border-top: 1px solid #D3DCE6">
+<dt style="font-size: 14px; color: #3E4F66">Basée à</dt>
+<dd style="margin: 0; font-size: 14px; font-weight: 600; text-align: right">Montréal</dd>
+</div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 14px 16px; border-top: 1px solid #D3DCE6">
+<dt style="font-size: 14px; color: #3E4F66">Permis d'agent de voyages</dt>
+<dd style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 14px; font-weight: 600; text-align: right">n° 000000 (exemple)</dd>
+</div>
+</dl>
+<div style="display: flex; gap: 12px; padding: 16px; border-radius: 16px; background: #0B1B2E; color: #FFFFFF">
+<svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"></path></svg>
+<span style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 15px; font-weight: 700">Ce que « vérifiée » veut dire</span>
+<span style="font-size: 14px; line-height: 20px; color: #C9D3DF">NexG-TT contrôle l'identité de l'entreprise et son permis avant d'ouvrir une vitrine. Processus à définir.</span>
+</span>
+</div>
+</div>
+</sc-if>
+
+</main>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844}}">
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const tab = s.tab ?? 'offres';
+    const composeOpen = s.composeOpen ?? false;
+    const sent = s.sent ?? false;
+    const msg = s.msg ?? '';
+    const msgError = s.msgError ?? false;
+    const isOffres = tab === 'offres';
+    const tabStyle = (on) => ({ line: on ? '#0B1B2E' : 'transparent', color: on ? '#0B1B2E' : '#5A6A80' });
+    const offers = [
+      { kind: 'Vol + 3 nuits', code: 'KEF', city: 'Reykjavik', detail: 'hôtel 3 nuits inclus', date: 'jeu. 4 mars 2027 · Aérolys', price: '1 290 $' },
+      { kind: 'Vol seul', code: 'LIS', city: 'Lisbonne', detail: 'aller simple', date: 'ven. 16 avr. 2027 · Aérolys', price: '860 $' },
+      { kind: 'Tout compris', code: 'PUJ', city: 'Punta Cana', detail: '7 nuits tout compris', date: 'sam. 13 mars 2027 · Nordelle', price: '1 640 $' }
+    ];
+    return {
+      offers,
+      isOffres,
+      isAbout: !isOffres,
+      offresSelected: isOffres ? 'true' : 'false',
+      aboutSelected: isOffres ? 'false' : 'true',
+      tabOffres: tabStyle(isOffres),
+      tabAbout: tabStyle(!isOffres),
+      showOffres: () => this.setState({ tab: 'offres' }),
+      showAbout: () => this.setState({ tab: 'about' }),
+      composeOpen,
+      composeExpanded: composeOpen ? 'true' : 'false',
+      toggleCompose: () => this.setState({ composeOpen: !composeOpen, sent: false, msgError: false }),
+      cancelCompose: () => this.setState({ composeOpen: false, msgError: false }),
+      msg,
+      onMsg: (e) => this.setState({ msg: e && e.target ? e.target.value : '', msgError: false }),
+      msgError,
+      msgInvalid: msgError ? 'true' : 'false',
+      msgBorder: msgError ? '#B02C27' : '#7A8597',
+      send: () => {
+        if (!String(msg).trim()) {
+          this.setState({ msgError: true });
+          return;
+        }
+        this.setState({ composeOpen: false, sent: true, msg: '', msgError: false });
+      },
+      sent
+    };
+  }
+}
+</script>
+
+
+</body></html>

@@ -1,0 +1,27 @@
+Code de vérification — NexG-TT
+Code de vérification — NexG-TT
+Vérification
+Étape 1 sur 4
+Ensuite : profil, alertes, clé d'accès
+Entrez le code reçu
+Envoyé à
+alex.exemple@courriel.test
+Modifier l'adresse
+Code à 6 chiffres
+{{b.ch}}
+Ce code ne correspond pas. Il vous reste {{attemptsLabel}}.
+Trop d'essais. Demandez un nouveau code pour continuer.
+Courriel vérifié
+Votre compte est créé. Encore trois petites étapes, toutes facultatives.
+Renvoyer le code dans
+{{timer}}
+Renvoyer le code
+Rien reçu ? Vérifiez le dossier des indésirables.
+Nouveau code envoyé (démo). L'ancien ne fonctionne plus.
+MODE DÉMO — aucun code réel n'est envoyé
+Code de démonstration :
+482 913
+Simuler un code erroné
+Simuler le bon code
+Continuer
+Continuer · entrez les 6 chiffres

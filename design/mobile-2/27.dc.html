@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<title>Centre de notifications — NexG-TT</title>
+<script src="6a92c182-653b-4ad3-a55b-76d9f21b89a2"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+<style>
+body{margin:0;background:#0D0E11}
+a{color:#FFD23F}a:hover{color:#FFE27A}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #FFD23F;outline-offset:2px}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@media (prefers-reduced-motion: reduce){[data-nx-motion]{animation:none !important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0D0E11; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="flex: none; padding: 52px 12px 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<a href="Main.dc.html" aria-label="Retour" style="width: 44px; height: 44px; flex: none; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: #F3F4F6; text-decoration: none">
+<svg width="24" height="24" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+</a>
+<h1 style="margin: 0; flex: 1; text-align: center; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 20px; letter-spacing: 0.04em; text-transform: uppercase">Notifications</h1>
+<a href="PrefsNotifications.dc.html" aria-label="Préférences de notifications" style="width: 44px; height: 44px; flex: none; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: #F3F4F6; text-decoration: none">
+<svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg>
+</a>
+</header>
+
+<main style="flex: 1; overflow-y: auto; padding: 8px 20px 40px; display: flex; flex-direction: column; gap: 22px">
+
+<section aria-label="Aperçu des états (démo)" style="flex: none; display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border-radius: 16px; border: 1px dashed #3A3F4B">
+<p style="margin: 0; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8C93A3">Aperçu des états · démo</p>
+<div role="group" aria-label="État affiché" style="display: flex; flex-wrap: wrap; gap: 8px">
+<button type="button" aria-pressed="{{dNormal.pressed}}" sc-camel-on-click="{{ voirNormal }}" style="flex: none; min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; background: {{dNormal.bg}}; border: 1px solid {{dNormal.border}}; color: {{dNormal.color}}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Normal</button>
+<button type="button" aria-pressed="{{dChargement.pressed}}" sc-camel-on-click="{{ voirChargement }}" style="flex: none; min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; background: {{dChargement.bg}}; border: 1px solid {{dChargement.border}}; color: {{dChargement.color}}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Chargement</button>
+<button type="button" aria-pressed="{{dVide.pressed}}" sc-camel-on-click="{{ voirVide }}" style="flex: none; min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; background: {{dVide.bg}}; border: 1px solid {{dVide.border}}; color: {{dVide.color}}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Vide</button>
+<button type="button" aria-pressed="{{dVideFiltre.pressed}}" sc-camel-on-click="{{ voirVideFiltre }}" style="flex: none; min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; background: {{dVideFiltre.bg}}; border: 1px solid {{dVideFiltre.border}}; color: {{dVideFiltre.color}}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Filtre vide</button>
+<button type="button" aria-pressed="{{dErreur.pressed}}" sc-camel-on-click="{{ voirErreur }}" style="flex: none; min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; background: {{dErreur.bg}}; border: 1px solid {{dErreur.border}}; color: {{dErreur.color}}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Erreur</button>
+<button type="button" aria-pressed="{{dHorsLigne.pressed}}" sc-camel-on-click="{{ voirHorsLigne }}" style="flex: none; min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; background: {{dHorsLigne.bg}}; border: 1px solid {{dHorsLigne.border}}; color: {{dHorsLigne.color}}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Hors ligne</button>
+</div>
+</section>
+
+<sc-if value="{{showControles}}" hint-placeholder-val="{{ true }}">
+<div style="flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<p id="compteur" role="status" aria-live="polite" style="margin: 0; font-size: 15px; font-weight: 600">{{compteurTexte}}</p>
+<button type="button" aria-disabled="{{toutAria}}" sc-camel-on-click="{{ toutMarquer }}" style="min-height: 44px; padding: 0 0 0 12px; border: 0; background: transparent; color: {{toutCouleur}}; font-family: inherit; font-size: 14px; font-weight: 600; cursor: {{toutCurseur}}">Tout marquer comme lu</button>
+</div>
+
+<div role="group" aria-label="Filtrer par type" style="flex: none; display: flex; gap: 8px; margin: 0 -20px; padding: 0 20px; overflow-x: auto; scrollbar-width: none">
+<button type="button" aria-pressed="{{fToutes.pressed}}" sc-camel-on-click="{{ filtrerToutes }}" style="flex: none; min-height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{fToutes.bg}}; border: 1px solid {{fToutes.border}}; color: {{fToutes.color}}; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Toutes</button>
+<button type="button" aria-pressed="{{fEcheances.pressed}}" sc-camel-on-click="{{ filtrerEcheances }}" style="flex: none; min-height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{fEcheances.bg}}; border: 1px solid {{fEcheances.border}}; color: {{fEcheances.color}}; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Échéances</button>
+<button type="button" aria-pressed="{{fDrops.pressed}}" sc-camel-on-click="{{ filtrerDrops }}" style="flex: none; min-height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{fDrops.bg}}; border: 1px solid {{fDrops.border}}; color: {{fDrops.color}}; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Drops</button>
+<button type="button" aria-pressed="{{fSoute.pressed}}" sc-camel-on-click="{{ filtrerSoute }}" style="flex: none; min-height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{fSoute.bg}}; border: 1px solid {{fSoute.border}}; color: {{fSoute.color}}; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Soute</button>
+<button type="button" aria-pressed="{{fVentes.pressed}}" sc-camel-on-click="{{ filtrerVentes }}" style="flex: none; min-height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{fVentes.bg}}; border: 1px solid {{fVentes.border}}; color: {{fVentes.color}}; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Ventes</button>
+</div>
+</sc-if>
+
+<sc-if value="{{showListe}}" hint-placeholder-val="{{ true }}">
+<div data-etat="{{etatListe}}" style="flex: none; display: flex; flex-direction: column; gap: 22px">
+<sc-if value="{{isHorsLigne}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: 12px; background: rgba(98,199,255,0.12); border: 1px solid rgba(98,199,255,0.4)">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="#62C7FF" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+<span style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; line-height: 20px; font-weight: 700; color: #62C7FF">Hors ligne : dernières notifications reçues</span>
+<span style="font-size: 13px; line-height: 18px; color: #B9BEC9">Reconnectez-vous pour actualiser la liste.</span>
+</span>
+</div>
+</sc-if>
+<sc-for list="{{groupes}}" as="g" hint-placeholder-count="3">
+<section aria-labelledby="g-{{g.id}}" data-groupe="{{g.id}}" style="display: flex; flex-direction: column; gap: 8px">
+<h2 id="g-{{g.id}}" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">{{g.titre}}</h2>
+<ul style="list-style: none; margin: 0; padding: 0; border-radius: 20px; background: #15171C; border: 1px solid #2C303A; overflow: hidden">
+<sc-for list="{{g.items}}" as="n" hint-placeholder-count="3">
+<li style="border-top: {{n.sep}}">
+<a href="{{n.href}}" data-notification="{{n.id}}" data-type="{{n.type}}" style="display: flex; align-items: flex-start; gap: 12px; min-height: 72px; padding: 14px 16px; box-sizing: border-box; position: relative; background: {{n.bg}}; color: #F3F4F6; text-decoration: none">
+<sc-if value="{{n.nonLue}}" hint-placeholder-val="{{ false }}"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap">Non lue.</span></sc-if>
+<span aria-hidden="true" style="width: 40px; height: 40px; flex: none; border-radius: 12px; background: {{n.iconBg}}; color: {{n.iconFg}}; display: flex; align-items: center; justify-content: center">
+<sc-if value="{{n.isEcheance}}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></sc-if>
+<sc-if value="{{n.isDrop}}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"></path></svg></sc-if>
+<sc-if value="{{n.isPrix}}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg></sc-if>
+<sc-if value="{{n.isSoute}}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="7" width="14" height="13" rx="2"></rect><path d="M9 7V4h6v3M9 11v5M15 11v5"></path></svg></sc-if>
+<sc-if value="{{n.isVente}}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h12v4"></path><rect x="3" y="9" width="18" height="11" rx="2"></rect><path d="M16 14.5h1.5"></path></svg></sc-if>
+</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+<span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px">
+<span data-libelle-type="1" style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: {{n.typeColor}}">{{n.libelle}}</span>
+<span data-heure="1" style="flex: none; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-variant-numeric: tabular-nums; color: #8C93A3">{{n.heure}}</span>
+</span>
+<span data-titre="1" style="font-size: 15px; line-height: 20px; font-weight: {{n.poids}}; color: {{n.titreColor}}">{{n.titre}}</span>
+<span style="font-size: 13px; line-height: 18px; color: {{n.extraitColor}}">{{n.extrait}}</span>
+</span>
+<sc-if value="{{n.nonLue}}" hint-placeholder-val="{{ false }}"><span data-repere="non-lue" aria-hidden="true" style="flex: none; width: 8px; height: 8px; margin-top: 6px; border-radius: 999px; background: #FFD23F"></span></sc-if>
+</a>
+</li>
+</sc-for>
+</ul>
+</section>
+</sc-for>
+<a href="Alertes.dc.html" style="display: flex; align-items: center; gap: 14px; min-height: 60px; padding: 8px 16px; box-sizing: border-box; border-radius: 20px; background: #15171C; border: 1px solid #2C303A; color: #F3F4F6; text-decoration: none">
+<svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="#B9BEC9" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M6 16v-5a6 6 0 1 1 12 0v5l2 2H4z"></path><path d="M10 21h4"></path></svg>
+<span style="flex: 1; font-size: 15px; font-weight: 600">Gérer mes alertes de prix et de drops</span>
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="#8C93A3" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="m9 5 7 7-7 7"></path></svg>
+</a>
+<p style="margin: 0; text-align: center; font-size: 12px; color: #8C93A3">Données de démonstration : toutes les notifications sont fictives.</p>
+</div>
+</sc-if>
+
+<sc-if value="{{isVide}}" hint-placeholder-val="{{ false }}">
+<section data-etat="vide" aria-labelledby="vide-titre" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 36px 8px 8px; text-align: center">
+<span aria-hidden="true" style="width: 72px; height: 72px; border-radius: 999px; background: #1D2027; color: #B9BEC9; display: flex; align-items: center; justify-content: center">
+<svg width="32" height="32" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16v-5a6 6 0 1 1 12 0v5l2 2H4z"></path><path d="M10 21h4"></path></svg>
+</span>
+<h2 id="vide-titre" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 28px; line-height: 30px; letter-spacing: 0.04em; text-transform: uppercase">Rien de nouveau</h2>
+<p style="margin: 0; max-width: 300px; font-size: 15px; line-height: 22px; color: #B9BEC9">Vos échéances, ventes et offres apparaîtront ici dès qu'il y aura du nouveau.</p>
+<a href="PrefsNotifications.dc.html" style="align-self: stretch; display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; margin-top: 8px; border-radius: 14px; background: #FFD23F; color: #0D0E11; font-weight: 700; font-size: 16px; text-decoration: none">Régler mes notifications</a>
+</section>
+</sc-if>
+
+<sc-if value="{{isVideFiltre}}" hint-placeholder-val="{{ false }}">
+<section data-etat="vide-filtre" aria-labelledby="vf-titre" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 28px 8px 8px; text-align: center">
+<span aria-hidden="true" style="width: 72px; height: 72px; border-radius: 999px; background: #1D2027; color: #B9BEC9; display: flex; align-items: center; justify-content: center">
+<svg width="32" height="32" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg>
+</span>
+<h2 id="vf-titre" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 28px; line-height: 30px; letter-spacing: 0.04em; text-transform: uppercase">Aucune notification de ce type</h2>
+<p style="margin: 0; max-width: 300px; font-size: 15px; line-height: 22px; color: #B9BEC9">Essayez un autre filtre ou affichez toutes vos notifications.</p>
+<button type="button" sc-camel-on-click="{{ voirNormal }}" style="align-self: stretch; display: flex; align-items: center; justify-content: center; height: 52px; margin-top: 8px; border-radius: 14px; background: #1D2027; border: 1px solid #3A3F4B; color: #F3F4F6; font-family: inherit; font-weight: 700; font-size: 16px; cursor: pointer">Voir toutes</button>
+</section>
+</sc-if>
+
+<sc-if value="{{isErreur}}" hint-placeholder-val="{{ false }}">
+<section data-etat="erreur" role="alert" aria-labelledby="err-titre" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 28px 18px 18px; border-radius: 20px; background: rgba(255,123,123,0.12); border: 1px solid rgba(255,123,123,0.4); text-align: center">
+<span aria-hidden="true" style="width: 56px; height: 56px; border-radius: 999px; background: rgba(255,123,123,0.16); color: #FF7B7B; display: flex; align-items: center; justify-content: center">
+<svg width="28" height="28" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5h.01"></path></svg>
+</span>
+<h2 id="err-titre" style="margin: 0; font-size: 18px; line-height: 24px; font-weight: 700; color: #F3F4F6">Impossible de charger vos notifications</h2>
+<p style="margin: 0; font-size: 15px; line-height: 22px; color: #F3F4F6">Vérifiez votre connexion, puis réessayez.</p>
+<button type="button" sc-camel-on-click="{{ reessayer }}" style="align-self: stretch; display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #FFD23F; color: #0D0E11; border: 0; font-family: inherit; font-weight: 700; font-size: 16px; cursor: pointer">Réessayer</button>
+<a href="AideContact.dc.html" style="display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 12px; color: #FFD23F; font-size: 15px; font-weight: 600; text-decoration: none">Contacter l'assistance</a>
+</section>
+</sc-if>
+
+<sc-if value="{{isChargement}}" hint-placeholder-val="{{ false }}">
+<div data-etat="chargement" aria-busy="true" style="flex: none; display: flex; flex-direction: column; gap: 8px">
+<span role="status" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap">Chargement des notifications…</span>
+<div style="border-radius: 20px; background: #15171C; border: 1px solid #2C303A; overflow: hidden">
+<div data-squelette="1" aria-hidden="true" style="display: flex; align-items: flex-start; gap: 12px; min-height: 72px; padding: 14px 16px; box-sizing: border-box; border-top: 0">
+<span data-nx-motion="1" style="width: 40px; height: 40px; flex: none; border-radius: 12px; background: #1D2027; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 8px; padding-top: 2px">
+<span data-nx-motion="1" style="height: 10px; width: 38%; border-radius: 999px; background: #1D2027; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+<span data-nx-motion="1" style="height: 14px; width: 92%; border-radius: 999px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+<span data-nx-motion="1" style="height: 10px; width: 64%; border-radius: 999px; background: #1D2027; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+</span>
+</div>
+<div data-squelette="1" aria-hidden="true" style="display: flex; align-items: flex-start; gap: 12px; min-height: 72px; padding: 14px 16px; box-sizing: border-box; border-top: 1px solid #2C303A">
+<span data-nx-motion="1" style="width: 40px; height: 40px; flex: none; border-radius: 12px; background: #1D2027; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 8px; padding-top: 2px">
+<span data-nx-motion="1" style="height: 10px; width: 38%; border-radius: 999px; background: #1D2027; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+<span data-nx-motion="1" style="height: 14px; width: 92%; border-radius: 999px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+<span data-nx-motion="1" style="height: 10px; width: 64%; border-radius: 999px; background: #1D2027; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+</span>
+</div>
+<div data-squelette="1" aria-hidden="true" style="display: flex; align-items: flex-start; gap: 12px; min-height: 72px; padding: 14px 16px; box-sizing: border-box; border-top: 1px solid #2C303A">
+<span data-nx-motion="1" style="width: 40px; height: 40px; flex: none; border-radius: 12px; background: #1D2027; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 8px; padding-top: 2px">
+<span data-nx-motion="1" style="height: 10px; width: 38%; border-radius: 999px; background: #1D2027; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+<span data-nx-motion="1" style="height: 14px; width: 92%; border-radius: 999px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+<span data-nx-motion="1" style="height: 10px; width: 64%; border-radius: 999px; background: #1D2027; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+</span>
+</div>
+<div data-squelette="1" aria-hidden="true" style="display: flex; align-items: flex-start; gap: 12px; min-height: 72px; padding: 14px 16px; box-sizing: border-box; border-top: 1px solid #2C303A">
+<span data-nx-motion="1" style="width: 40px; height: 40px; flex: none; border-radius: 12px; background: #1D2027; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 8px; padding-top: 2px">
+<span data-nx-motion="1" style="height: 10px; width: 38%; border-radius: 999px; background: #1D2027; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+<span data-nx-motion="1" style="height: 14px; width: 92%; border-radius: 999px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+<span data-nx-motion="1" style="height: 10px; width: 64%; border-radius: 999px; background: #1D2027; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+</span>
+</div>
+<div data-squelette="1" aria-hidden="true" style="display: flex; align-items: flex-start; gap: 12px; min-height: 72px; padding: 14px 16px; box-sizing: border-box; border-top: 1px solid #2C303A">
+<span data-nx-motion="1" style="width: 40px; height: 40px; flex: none; border-radius: 12px; background: #1D2027; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 8px; padding-top: 2px">
+<span data-nx-motion="1" style="height: 10px; width: 38%; border-radius: 999px; background: #1D2027; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+<span data-nx-motion="1" style="height: 14px; width: 92%; border-radius: 999px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+<span data-nx-motion="1" style="height: 10px; width: 64%; border-radius: 999px; background: #1D2027; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+</span>
+</div>
+</div>
+</div>
+</sc-if>
+
+</main>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844}}">
+class Component extends DCLogic {
+  componentWillUnmount() {
+    clearTimeout(this.minuterie);
+  }
+  renderVals() {
+    const s = this.state || {};
+    const toutLu = s.toutLu ?? false;
+    const vue = s.vue ?? 'normal';
+    const filtre = vue === 'vide-filtre' ? 'echeances' : (s.filtre ?? 'toutes');
+    const FILTRES = { toutes: null, echeances: ['echeance'], drops: ['drop', 'prix'], soute: ['soute'], ventes: ['vente'] };
+    const puce = (id) => ({
+      pressed: filtre === id ? 'true' : 'false',
+      bg: filtre === id ? 'rgba(255,210,63,0.12)' : '#1D2027',
+      border: filtre === id ? '#FFD23F' : '#3A3F4B',
+      color: filtre === id ? '#F3F4F6' : '#B9BEC9'
+    });
+    const TYPES = {
+      echeance: { libelle: 'Échéance', iconBg: 'rgba(255,210,63,0.12)', iconFg: '#FFD23F', typeColor: '#FFD23F' },
+      drop: { libelle: 'Drop', iconBg: 'rgba(98,199,255,0.12)', iconFg: '#62C7FF', typeColor: '#62C7FF' },
+      prix: { libelle: 'Prix', iconBg: 'rgba(98,199,255,0.12)', iconFg: '#62C7FF', typeColor: '#62C7FF' },
+      soute: { libelle: 'Soute', iconBg: '#262A33', iconFg: '#B9BEC9', typeColor: '#B9BEC9' },
+      vente: { libelle: 'Vente', iconBg: 'rgba(124,227,181,0.12)', iconFg: '#7CE3B5', typeColor: '#7CE3B5' }
+    };
+    // Données de démonstration fictives. Aujourd'hui = lun. 12 oct. 2026 (comme Echeances.dc.html).
+    const NOTIFS = [
+      { id: 'n1', nonLue: true, jour: 'auj', type: 'drop', heure: 'maintenant', href: 'Drop.dc.html', titre: 'Drop membres : YUL → PUJ à 200 $ · 3 places', extrait: 'Réservé aux membres du Pass NexG.' },
+      { id: 'n2', nonLue: true, jour: 'auj', type: 'echeance', heure: 'il y a 2 h', href: 'Finaliser.dc.html', titre: 'YUL → CDG : nommez le voyageur avant le 13 déc. 18:05', extrait: "À l'échéance, vous serez nommé voyageur." },
+      { id: 'n3', jour: 'auj', type: 'vente', heure: 'il y a 5 h', href: 'Solde.dc.html', titre: 'Versement en cours : 1 152,00 $ vers •••• 4821', extrait: 'Démo : aucun paiement réel.' },
+      { id: 'n4', jour: 'hier', type: 'soute', heure: 'hier · 18:20', href: 'SouteVol.dc.html', titre: 'Soute du vol 812 : un bagage à 95 $', extrait: "Sous réserve d'acceptation par la compagnie." },
+      { id: 'n5', jour: 'hier', type: 'vente', heure: 'hier · 09:15', href: 'Solde.dc.html', titre: 'Revente conclue : YUL → LIS à 1 260 $', extrait: 'Commission 10 % avec le Pass : 126 $. Net : 1 134 $.' },
+      { id: 'n6', jour: 'tot', type: 'prix', heure: 'ven. 9 oct.', href: 'Resultats.dc.html', titre: 'YUL → CDG : une revente à 1 540 $', extrait: "Sous votre plafond d'alerte de 1 600 $." },
+      { id: 'n7', jour: 'tot', type: 'soute', heure: 'jeu. 8 oct.', href: 'BagageTransfert.dc.html', titre: 'Bagage ajouté par la compagnie', extrait: 'Le transfert est confirmé sur la réservation.' }
+    ];
+    const JOURS = [
+      { id: 'auj', titre: "Aujourd'hui" },
+      { id: 'hier', titre: 'Hier' },
+      { id: 'tot', titre: 'Plus tôt' }
+    ];
+    const ligne = (n, i) => {
+      const t = TYPES[n.type];
+      const nonLue = !!n.nonLue && !toutLu;
+      return {
+        id: n.id,
+        type: n.type,
+        libelle: t.libelle,
+        typeColor: t.typeColor,
+        iconBg: t.iconBg,
+        iconFg: t.iconFg,
+        isEcheance: n.type === 'echeance',
+        isDrop: n.type === 'drop',
+        isPrix: n.type === 'prix',
+        isSoute: n.type === 'soute',
+        isVente: n.type === 'vente',
+        heure: n.heure,
+        href: n.href,
+        titre: n.titre,
+        extrait: n.extrait,
+        nonLue,
+        bg: nonLue ? '#1D2027' : 'transparent',
+        poids: nonLue ? '700' : '500',
+        titreColor: nonLue ? '#F3F4F6' : '#B9BEC9',
+        extraitColor: nonLue ? '#B9BEC9' : '#8C93A3',
+        sep: i === 0 ? '0' : '1px solid #2C303A'
+      };
+    };
+    const nonLues = toutLu ? 0 : NOTIFS.filter((n) => n.nonLue).length;
+    const marquable = nonLues > 0 && vue !== 'hors-ligne';
+    const bouton = (id) => ({
+      pressed: vue === id ? 'true' : 'false',
+      bg: vue === id ? 'rgba(255,210,63,0.12)' : '#1D2027',
+      border: vue === id ? '#FFD23F' : '#3A3F4B',
+      color: vue === id ? '#F3F4F6' : '#B9BEC9'
+    });
+    const voir = (id) => () => {
+      clearTimeout(this.minuterie);
+      this.setState({ vue: id, filtre: 'toutes' });
+    };
+    const reessayer = () => {
+      this.setState({ vue: 'chargement' });
+      this.minuterie = setTimeout(() => this.setState({ vue: 'normal' }), 1200);
+    };
+    const choisir = (id) => () => this.setState({ filtre: id, vue: 'normal' });
+    return {
+      dNormal: bouton('normal'),
+      dChargement: bouton('chargement'),
+      dVide: bouton('vide'),
+      dVideFiltre: bouton('vide-filtre'),
+      dErreur: bouton('erreur'),
+      dHorsLigne: bouton('hors-ligne'),
+      reessayer,
+      voirNormal: voir('normal'),
+      voirChargement: voir('chargement'),
+      voirVide: voir('vide'),
+      voirVideFiltre: voir('vide-filtre'),
+      voirErreur: voir('erreur'),
+      voirHorsLigne: voir('hors-ligne'),
+      showControles: vue === 'normal' || vue === 'vide-filtre' || vue === 'hors-ligne',
+      showListe: vue === 'normal' || vue === 'hors-ligne',
+      etatListe: vue,
+      isVide: vue === 'vide',
+      isErreur: vue === 'erreur',
+      isHorsLigne: vue === 'hors-ligne',
+      isChargement: vue === 'chargement',
+      isVideFiltre: vue === 'vide-filtre',
+      compteurTexte: nonLues === 0 ? 'Tout est lu' : nonLues + ' non lues',
+      toutAria: marquable ? 'false' : 'true',
+      toutCouleur: marquable ? '#FFD23F' : '#8C93A3',
+      toutCurseur: marquable ? 'pointer' : 'default',
+      toutMarquer: () => {
+        if (marquable) this.setState({ toutLu: true });
+      },
+      groupes: JOURS.map((j) => ({
+        id: j.id,
+        titre: j.titre,
+        items: NOTIFS.filter((n) => n.jour === j.id && (FILTRES[filtre] === null || FILTRES[filtre].includes(n.type))).map(ligne)
+      })).filter((g) => g.items.length > 0),
+      fToutes: puce('toutes'),
+      fEcheances: puce('echeances'),
+      fDrops: puce('drops'),
+      fSoute: puce('soute'),
+      fVentes: puce('ventes'),
+      filtrerToutes: choisir('toutes'),
+      filtrerEcheances: choisir('echeances'),
+      filtrerDrops: choisir('drops'),
+      filtrerSoute: choisir('soute'),
+      filtrerVentes: choisir('ventes')
+    };
+  }
+}
+</script>
+
+
+</body></html>

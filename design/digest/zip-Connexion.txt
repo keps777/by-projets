@@ -1,0 +1,16 @@
+Connexion — NexG-TT
+Connexion — NexG-TT
+NEXG
+·TT
+AT
+Bon retour, Alex
+alex.exemple@courriel.test
+Se connecter avec une clé d'accès
+Empreinte, visage ou code de votre appareil
+Aucun mot de passe : votre téléphone confirme que c'est bien vous.
+ou
+Recevoir un code par courriel
+Ce n'est pas moi
+Nous ne vous demanderons jamais votre code par téléphone.
+Ne le communiquez à personne, même à quelqu'un qui se présente comme NexG-TT.
+Prototype · données fictives

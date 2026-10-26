@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<title>Nommer le voyageur (web) — NexG-TT</title>
+<script src="09c37b8f-4cb6-4789-8a12-e9a8c16518af"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+<style>
+body{margin:0;background:#EEF3F8}
+a{color:#1A64C8}a:hover{color:#124C9C}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #1A64C8;outline-offset:2px}
+[data-surface="panel"] a:focus-visible,[data-surface="panel"] button:focus-visible{outline-color:#FFD23F}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes nx-skel{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes nx-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){[data-nx-motion]{animation:none !important}}
+</style>
+</helmet>
+<div style="min-height: 1204px; background: #EEF3F8; color: #0B1B2E; font-family: 'Barlow', system-ui, sans-serif; color-scheme: light; display: flex; flex-direction: column">
+
+<header style="border-bottom: 1px solid #D3DCE6">
+<div style="max-width: 1440px; margin: 0 auto; padding: 12px clamp(16px, 4vw, 48px); box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px">
+<a href="WebAccueil.dc.html" style="display: flex; align-items: center; min-height: 44px; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: 0.06em; color: #0B1B2E; text-decoration: none">
+<span>NEXG</span><span style="color: #1A64C8">·TT</span>
+</a>
+<nav aria-label="Espaces" style="flex: 1 1 auto; min-width: 0; display: flex">
+<div role="group" aria-label="Espace de l’application" style="display: flex; gap: 2px; padding: 3px; border-radius: 999px; background: #E3EAF2; border: 1px solid #E3EAF2">
+<a href="WebAccueil.dc.html" aria-current="true" style="display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: #0B1B2E; color: #FFFFFF; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+Voyager
+</a>
+<a href="WebMarche.dc.html" style="display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; color: #3E4F66; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg>
+Mes actifs
+</a>
+</div>
+</nav>
+<div style="flex: 1 1 300px; max-width: 440px; display: flex; align-items: center; gap: 8px">
+<div role="search" style="position: relative; flex: 1; min-width: 0">
+<label for="top-q" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Rechercher une ville, un code d’aéroport ou une référence</label>
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 14px; top: 13px; color: #5E6E84; pointer-events: none"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+<input id="top-q" type="search" placeholder="Ville, code ou réf. NXG" autocomplete="off" style="width: 100%; height: 44px; box-sizing: border-box; padding: 0 14px 0 42px; border-radius: 12px; background: #FFFFFF; border: 1px solid #7A8597; color: #0B1B2E; font: inherit; font-size: 15px">
+</div>
+<a href="Alertes.dc.html" aria-label="Alertes, 2 nouvelles" style="position: relative; flex: none; width: 44px; height: 44px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; border: 1px solid #D3DCE6; display: flex; align-items: center; justify-content: center; color: #0B1B2E">
+<svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16v-5a6 6 0 1 1 12 0v5l2 2H4z"></path><path d="M10 21h4"></path></svg>
+<span style="position: absolute; top: 9px; right: 10px; width: 9px; height: 9px; box-sizing: border-box; border-radius: 999px; background: #1A64C8; border: 2px solid #FFFFFF"></span>
+</a>
+<a href="Compte.dc.html" aria-label="AT, mon compte (Alex T.)" style="flex: none; width: 44px; height: 44px; border-radius: 999px; background: #0B1B2E; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; letter-spacing: 0.04em; text-decoration: none">AT</a>
+</div>
+</div>
+<nav aria-label="Voyager" style="max-width: 1440px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 8px; box-sizing: border-box">
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px">
+<li>
+<a href="WebAccueil.dc.html" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; color: #3E4F66; font-size: 15px; font-weight: 600; text-decoration: none">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"></path></svg>
+Accueil
+</a>
+</li>
+<li>
+<a href="WebRecherche.dc.html" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; color: #3E4F66; font-size: 15px; font-weight: 600; text-decoration: none">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+Rechercher
+</a>
+</li>
+<li>
+<a href="WebVoyage.dc.html" aria-current="true" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; background: #FFFFFF; box-shadow: inset 0 -2px 0 #1A64C8; color: #0B1B2E; font-size: 15px; font-weight: 600; text-decoration: none">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h6l4 7h2l-2-7h5l2 2h2l-1-3 1-3h-2l-2 2h-5l2-7h-2l-4 7H3z"></path></svg>
+Mon voyage
+</a>
+</li>
+<li>
+<a href="Agence.dc.html" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; color: #3E4F66; font-size: 15px; font-weight: 600; text-decoration: none">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9l1.5-5h13L20 9M4 9v11h16V9M4 9h16M9 20v-6h6v6"></path></svg>
+Agences
+</a>
+</li>
+</ul>
+</nav>
+</header>
+
+<main style="flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 16px clamp(16px, 4vw, 48px) 28px; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px">
+<sc-if value="{{isBusy}}" hint-placeholder-val="{{ false }}"><p role="status" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Transmission à Aérolys en cours…</p></sc-if><sc-if value="{{isOffline}}" hint-placeholder-val="{{ false }}"><div id="msg-hors-ligne" role="status" style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 16px; border-radius: 14px; background: #E3EAF2; border: 1px solid #7A8597; box-sizing: border-box; color: #0B1B2E"><span style="flex: none; display: flex; color: #0B1B2E"><svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></span><span style="display: flex; flex-direction: column; gap: 2px; flex: 1 1 280px; min-width: 0"><span style="font-size: 15px; font-weight: 700; color: #0B1B2E">Hors ligne</span><span style="font-size: 14px; line-height: 20px; color: #3E4F66">Vous pouvez préparer la saisie : la transmission à Aérolys demande le réseau. Rien n’a été transmis.</span></span></div></sc-if><a href="WebVoyage.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px 0 6px; margin-left: -6px; box-sizing: border-box; border-radius: 12px; color: #1A64C8; font-size: 15px; font-weight: 700; text-decoration: none"><svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>Mon voyage</a><section aria-labelledby="page-title" style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 32px"><div style="display: flex; flex-direction: column; gap: 6px; min-width: 0"><h1 id="page-title" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 44px; line-height: 44px; text-transform: uppercase; letter-spacing: 0.01em; text-wrap: balance">Nommer le voyageur</h1><p style="margin: 0; font-size: 13px; font-weight: 600; color: #3E4F66">Voyager · YUL → CDG · lun. 14 déc. 2026</p></div></section><div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px"><div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 18px"><sc-if value="{{late}}" hint-placeholder-val="{{ false }}"><section role="status" aria-labelledby="late-h" style="display: flex; flex-direction: column; gap: 12px; padding: 22px; border-radius: 20px; background: #FFFFFF; border: 1px solid #7A8597; box-sizing: border-box"><span style="color: #3E4F66"><svg width="32" height="32" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></span><h2 id="late-h" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 30px; line-height: 32px">L’échéance du 13 déc. 18:05 est passée</h2><p style="margin: 0; font-size: 15px; line-height: 22px; color: #3E4F66">Le détenteur (Alex T.) a été nommé voyageur par défaut. Plus aucune transaction n’est possible sur ce billet : toute modification relève désormais des règles d’Aérolys.</p><a href="WebVoyage.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; padding: 0 22px; box-sizing: border-box; border-radius: 14px; background: #FFD23F; color: #0B1B2E; font: inherit; font-weight: 700; font-size: 16px; text-decoration: none; border: 0; cursor: pointer">Voir mon voyage<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a></section></sc-if><sc-if value="{{formOn}}" hint-placeholder-val="{{ true }}"><sc-if value="{{errAny}}" hint-placeholder-val="{{ false }}"><div role="alert" style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 16px; border-radius: 14px; background: rgba(194,54,47,0.08); border: 1px solid #C2362F; box-sizing: border-box; color: #0B1B2E"><span style="flex: none; display: flex; color: #C2362F"><svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5h.01"></path></svg></span><span style="display: flex; flex-direction: column; gap: 2px; flex: 1 1 280px; min-width: 0"><span style="font-size: 15px; font-weight: 700; color: #0B1B2E">{{errTitle}}</span><span style="font-size: 14px; line-height: 20px; color: #3E4F66">Rien n’a été transmis à Aérolys. Complétez les champs signalés puis confirmez à nouveau.</span></span></div></sc-if><fieldset style="margin: 0; min-width: 0; display: flex; flex-direction: column; gap: 12px; padding: 18px; border-radius: 20px; background: #FFFFFF; border: 1px solid #D3DCE6; box-sizing: border-box"><legend style="padding: 0 6px; margin-left: -6px; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Qui voyage ?</legend><div style="display: flex; flex-wrap: wrap; gap: 10px"><label for="who-moi" style="flex: 1 1 220px; min-width: 0; display: flex; align-items: center; gap: 12px; min-height: 72px; padding: 12px 14px; box-sizing: border-box; border-radius: 14px; background: #FFFFFF; border: {{w_moiBorder}}; cursor: pointer"><input id="who-moi" type="radio" name="voyageur" value="moi" checked="{{w_moi}}" sc-camel-on-change="{{pick_moi}}" disabled="{{locked}}" style="flex: none; width: 22px; height: 22px; margin: 0; accent-color: #1A64C8"><span style="flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 15px; font-weight: 700">Moi (Alex T.)</span><span style="font-size: 13px; line-height: 18px; color: #3E4F66">Données de votre profil, à vérifier</span></span><span aria-hidden="true" style="flex: none; width: 36px; height: 36px; border-radius: 999px; background: #0B1B2E; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">AT</span></label><label for="who-proche" style="flex: 1 1 220px; min-width: 0; display: flex; align-items: center; gap: 12px; min-height: 72px; padding: 12px 14px; box-sizing: border-box; border-radius: 14px; background: #FFFFFF; border: {{w_procheBorder}}; cursor: pointer"><input id="who-proche" type="radio" name="voyageur" value="proche" checked="{{w_proche}}" sc-camel-on-change="{{pick_proche}}" disabled="{{locked}}" style="flex: none; width: 22px; height: 22px; margin: 0; accent-color: #1A64C8"><span style="flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 15px; font-weight: 700">Un proche enregistré</span><span style="font-size: 13px; line-height: 18px; color: #3E4F66">Choisir parmi vos voyageurs</span></span><span aria-hidden="true" style="flex: none; color: #3E4F66"><svg width="24" height="24" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c1-3.5 3.5-5 6.5-5s5.5 1.5 6.5 5"></path><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 15c2 .5 3.2 2 3.5 5"></path></svg></span></label><label for="who-nouveau" style="flex: 1 1 220px; min-width: 0; display: flex; align-items: center; gap: 12px; min-height: 72px; padding: 12px 14px; box-sizing: border-box; border-radius: 14px; background: #FFFFFF; border: {{w_nouveauBorder}}; cursor: pointer"><input id="who-nouveau" type="radio" name="voyageur" value="nouveau" checked="{{w_nouveau}}" sc-camel-on-change="{{pick_nouveau}}" disabled="{{locked}}" style="flex: none; width: 22px; height: 22px; margin: 0; accent-color: #1A64C8"><span style="flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 15px; font-weight: 700">Nouveau voyageur</span><span style="font-size: 13px; line-height: 18px; color: #3E4F66">Saisir ses informations</span></span><span aria-hidden="true" style="flex: none; color: #3E4F66"><svg width="24" height="24" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg></span></label></div></fieldset><section aria-labelledby="pp-h" style="display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: #FFFFFF; border: 1px solid #D3DCE6; box-sizing: border-box"><div style="display: flex; flex-direction: column; gap: 4px"><h2 id="pp-h" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Tel qu’inscrit sur le passeport</h2><p style="margin: 0; font-size: 14px; line-height: 20px; color: #3E4F66">Transmis à Aérolys tel quel. Vérifiez l’orthographe et l’ordre des prénoms.</p></div><sc-if value="{{isProche}}" hint-placeholder-val="{{ false }}"><div style="display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 18px; border-radius: 14px; border: 1px dashed #7A8597"><span style="font-size: 15px; font-weight: 700">Aucun proche enregistré pour l’instant</span><span style="font-size: 13px; line-height: 18px; color: #3E4F66">Les voyageurs que vous nommez pourront être enregistrés ici pour la prochaine fois.</span><button type="button" sc-camel-on-click="{{pick_nouveau_btn}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 18px; box-sizing: border-box; border-radius: 14px; background: #FFFFFF; color: #0B1B2E; border: 1px solid #7A8597; font: inherit; font-size: 15px; font-weight: 700; text-decoration: none; cursor: pointer"><svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Saisir un nouveau voyageur</button></div></sc-if><sc-if value="{{showForm}}" hint-placeholder-val="{{ true }}"><div style="display: flex; flex-wrap: wrap; gap: 14px"><div style="flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 6px"><label for="f-nom" style="font-size: 13px; font-weight: 500; color: #3E4F66">Nom</label><input id="f-nom" name="nom" type="text" value="{{nom}}" sc-camel-on-change="{{onField}}" autocomplete="family-name" disabled="{{locked}}" aria-invalid="{{errNomStr}}" aria-describedby="{{errNomDesc}}" style="width: 100%; height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #FFFFFF; color: #0B1B2E; font: inherit; font-size: 16px; border: {{errNomBorder}}"><sc-if value="{{errNom}}" hint-placeholder-val="{{ false }}"><p id="f-nom-err" data-erreur="1" style="margin: 0; display: flex; align-items: center; gap: 6px; font-size: 13px; line-height: 18px; font-weight: 600; color: #C2362F"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5h.01"></path></svg>Indiquez le nom tel qu’inscrit sur le passeport.</p></sc-if></div><div style="flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 6px"><label for="f-prenom" style="font-size: 13px; font-weight: 500; color: #3E4F66">Prénom(s)</label><input id="f-prenom" name="prenom" type="text" value="{{prenom}}" sc-camel-on-change="{{onField}}" autocomplete="given-name" disabled="{{locked}}" aria-invalid="{{errPrenomStr}}" aria-describedby="{{errPrenomDesc}}" style="width: 100%; height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #FFFFFF; color: #0B1B2E; font: inherit; font-size: 16px; border: {{errPrenomBorder}}"><sc-if value="{{errPrenom}}" hint-placeholder-val="{{ false }}"><p id="f-prenom-err" data-erreur="1" style="margin: 0; display: flex; align-items: center; gap: 6px; font-size: 13px; line-height: 18px; font-weight: 600; color: #C2362F"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5h.01"></path></svg>Indiquez le ou les prénoms tels qu’inscrits sur le passeport.</p></sc-if></div><div style="flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 6px"><label for="f-naissance" style="font-size: 13px; font-weight: 500; color: #3E4F66">Date de naissance</label><input id="f-naissance" name="naissance" type="date" value="{{naissance}}" sc-camel-on-change="{{onField}}" autocomplete="bday" disabled="{{locked}}" aria-invalid="{{errNaissanceStr}}" aria-describedby="{{errNaissanceDesc}}" style="width: 100%; height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #FFFFFF; color: #0B1B2E; font: inherit; font-size: 16px; border: {{errNaissanceBorder}}"><sc-if value="{{errNaissance}}" hint-placeholder-val="{{ false }}"><p id="f-naissance-err" data-erreur="1" style="margin: 0; display: flex; align-items: center; gap: 6px; font-size: 13px; line-height: 18px; font-weight: 600; color: #C2362F"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5h.01"></path></svg>Indiquez la date de naissance.</p></sc-if></div><div style="flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 6px"><label for="f-genre" style="font-size: 13px; font-weight: 500; color: #3E4F66">Genre (selon la compagnie)</label><span style="position: relative; display: block"><sc-raw-select id="f-genre" name="genre" value="{{genre}}" sc-camel-on-change="{{onField}}" disabled="{{locked}}" style="width: 100%; height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #FFFFFF; color: #0B1B2E; font: inherit; font-size: 16px; border: 1px solid #7A8597; appearance: none; padding-right: 40px; cursor: pointer"><option value="">Choisir</option><option value="F">Féminin</option><option value="M">Masculin</option><option value="X">X — si accepté</option></sc-raw-select><span aria-hidden="true" style="position: absolute; right: 12px; top: 16px; pointer-events: none"><svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 9 7 7 7-7"></path></svg></span></span></div><div style="flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 6px"><label for="f-doc" style="font-size: 13px; font-weight: 500; color: #3E4F66">Numéro de document (si exigé)</label><input id="f-doc" name="doc" type="text" value="{{doc}}" sc-camel-on-change="{{onField}}" autocomplete="off" disabled="{{locked}}" aria-describedby="f-doc-help" style="width: 100%; height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #FFFFFF; color: #0B1B2E; font: inherit; font-size: 16px; border: 1px solid #7A8597"><span id="f-doc-help" style="font-size: 13px; color: #3E4F66">Selon les exigences d’Aérolys et de la destination.</span></div></div></sc-if></section><div role="note" style="display: flex; gap: 12px; padding: 16px; border-radius: 16px; background: rgba(255,210,63,0.30); color: #0B1B2E"><svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; color: #5C4600"><path d="M12 3 2 20h20z"></path><path d="M12 10v4M12 17h.01"></path></svg><span style="display: flex; flex-direction: column; gap: 4px; font-size: 14px; line-height: 20px"><span><strong>Action définitive :</strong> une fois le voyageur nommé, ce billet ne peut plus être revendu ni transféré.</span><span style="color: #3E4F66">Toute modification ensuite relève des règles d’Aérolys.</span></span></div><label for="consent" style="display: flex; align-items: flex-start; gap: 12px; padding: 14px; box-sizing: border-box; border-radius: 14px; background: #FFFFFF; border: 1px solid #7A8597; cursor: pointer"><input id="consent" type="checkbox" checked="{{consent}}" sc-camel-on-change="{{onConsent}}" disabled="{{locked}}" style="flex: none; width: 22px; height: 22px; margin: 2px 0 0; accent-color: #1A64C8"><span style="font-size: 15px; line-height: 21px">Je confirme que ces informations correspondent au passeport du voyageur et j’accepte que ce billet ne puisse plus être revendu ni transféré.</span></label></sc-if></div><div style="position: sticky; top: 16px; flex: 1 1 320px; max-width: 420px; min-width: 0; display: flex; flex-direction: column; gap: 18px"><section aria-labelledby="cd-h" data-surface="panel" style="display: flex; flex-direction: column; gap: 12px; padding: 18px; box-sizing: border-box; border-radius: 20px; background: #0B1B2E; color: #FFFFFF"><h2 id="cd-h" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #C9D3DF">Échéance de finalisation</h2><span aria-hidden="true" style="display: flex; gap: 3px"><span style="width: 26px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 5px; background: #1C2A3D; box-shadow: inset 0 -18px 0 #16233A; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 22px; color: #FFD23F">{{fd0}}</span><span style="width: 26px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 5px; background: #1C2A3D; box-shadow: inset 0 -18px 0 #16233A; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 22px; color: #FFD23F">{{fd1}}</span><span style="width: 26px; height: 36px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 18px; color: #C9D3DF">J</span><span style="width: 26px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 5px; background: #1C2A3D; box-shadow: inset 0 -18px 0 #16233A; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 22px; color: #FFD23F">{{fh0}}</span><span style="width: 26px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 5px; background: #1C2A3D; box-shadow: inset 0 -18px 0 #16233A; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 22px; color: #FFD23F">{{fh1}}</span><span style="width: 26px; height: 36px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 18px; color: #C9D3DF">H</span></span><p role="timer" style="margin: 0; font-size: 15px; font-weight: 600">{{deadlineText}}</p><p style="margin: 0; font-size: 13px; line-height: 18px; color: #C9D3DF">Après l’échéance, plus aucune transaction n’est possible sur ce billet. À l’échéance, sans action de votre part, le détenteur est nommé voyageur par défaut.</p></section><sc-if value="{{summaryOn}}" hint-placeholder-val="{{ true }}"><section aria-labelledby="sum-h" style="display: flex; flex-direction: column; gap: 14px; padding: 18px; box-sizing: border-box; border-radius: 20px; background: #FFFFFF; border: 1px solid #D3DCE6"><h2 id="sum-h" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Récapitulatif du billet</h2><div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 10px"><div style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 28px; line-height: 30px; letter-spacing: 0.02em">YUL → CDG</span><span style="font-size: 13px; line-height: 18px; color: #3E4F66">Lun. 14 déc. 2026 · 18:05<br>Aérolys 812 · direct</span></div><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; box-sizing: border-box; border-radius: 999px; background: rgba(255,210,63,0.30); color: #5C4600; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap">À nommer</span></div><div style="display: flex; flex-direction: column; gap: 2px; padding-top: 12px; border-top: 1px solid #D3DCE6"><span style="font-size: 13px; color: #3E4F66">Voyageur transmis</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; overflow-wrap: anywhere">{{travelerLine}}</span></div><sc-if value="{{ctaReady}}" hint-placeholder-val="{{ true }}"><a href="Embarquement.dc.html" sc-camel-on-click="{{confirm}}" data-action="reseau" style="display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 8px 18px; box-sizing: border-box; border-radius: 14px; font: inherit; font-size: 16px; font-weight: 700; text-align: center; text-decoration: none; border: 0; background: #FFD23F; color: #0B1B2E; cursor: pointer"><svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>Confirmer et transmettre à Aérolys</a></sc-if><sc-if value="{{ctaBlocked}}" hint-placeholder-val="{{ false }}"><span role="link" aria-disabled="true" data-action="reseau" aria-describedby="hint-consent" style="display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 8px 18px; box-sizing: border-box; border-radius: 14px; font: inherit; font-size: 16px; font-weight: 700; text-align: center; text-decoration: none; border: 0; background: #E3EAF2; color: #3E4F66; border: 1px solid #7A8597; cursor: not-allowed"><svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>Confirmer et transmettre à Aérolys</span></sc-if><sc-if value="{{ctaBusy}}" hint-placeholder-val="{{ false }}"><span role="status" aria-busy="true" style="display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 8px 18px; box-sizing: border-box; border-radius: 14px; font: inherit; font-size: 16px; font-weight: 700; text-align: center; text-decoration: none; border: 0; background: #E3EAF2; color: #0B1B2E; border: 1px solid #7A8597"><span aria-hidden="true" data-nx-motion="1" style="display: flex; animation: nx-spin 1s linear infinite"><svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"></path><path d="M3 21v-5h5"></path></svg></span>Transmission à Aérolys en cours…</span></sc-if><sc-if value="{{ctaOff}}" hint-placeholder-val="{{ false }}"><span role="link" aria-disabled="true" data-action="reseau" aria-describedby="msg-hors-ligne" style="display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 8px 18px; box-sizing: border-box; border-radius: 14px; font: inherit; font-size: 16px; font-weight: 700; text-align: center; text-decoration: none; border: 0; background: #E3EAF2; color: #3E4F66; border: 1px solid #7A8597; cursor: not-allowed"><svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>Confirmer et transmettre à Aérolys</span></sc-if><sc-if value="{{hintOn}}" hint-placeholder-val="{{ false }}"><p id="hint-consent" style="margin: 0; font-size: 13px; line-height: 18px; color: #3E4F66; text-align: center">{{hintText}}</p></sc-if></section></sc-if></div></div>
+</main>
+
+<footer style="border-top: 1px solid #D3DCE6">
+<div style="max-width: 1440px; margin: 0 auto; padding: 18px clamp(16px, 4vw, 48px); box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; font-size: 13px; line-height: 18px; color: #5E6E84">
+<p style="margin: 0"><span style="display: inline-flex; align-items: center; height: 22px; padding: 0 8px; margin-right: 8px; border-radius: 999px; background: rgba(26,100,200,0.10); color: #1558B0; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase">Prototype — données fictives</span>Compagnies (Aérolys, Nordelle), agence, détenteurs, prix et références inventés. Aucun paiement réel.</p>
+<p style="margin: 0">Un droit de voyage est une inscription au registre interne de NexG-TT, pas un placement financier.</p>
+<div role="group" aria-label="Aperçu des états de l’écran (prototype)" style="flex: 1 1 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-top: 12px; margin-top: 4px; border-top: 1px dashed #7A8597">
+<span style="margin-right: 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Aperçu des états</span>
+<button type="button" aria-pressed="{{e0.pressed}}" sc-camel-on-click="{{e0.set}}" style="min-height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{e0.border}}; background: {{e0.bg}}; color: {{e0.fg}}; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Normal</button>
+<button type="button" aria-pressed="{{e1.pressed}}" sc-camel-on-click="{{e1.set}}" style="min-height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{e1.border}}; background: {{e1.bg}}; color: {{e1.fg}}; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Chargement</button>
+<button type="button" aria-pressed="{{e2.pressed}}" sc-camel-on-click="{{e2.set}}" style="min-height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{e2.border}}; background: {{e2.bg}}; color: {{e2.fg}}; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Erreur</button>
+<button type="button" aria-pressed="{{e3.pressed}}" sc-camel-on-click="{{e3.set}}" style="min-height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{e3.border}}; background: {{e3.bg}}; color: {{e3.fg}}; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Échéance passée</button>
+<button type="button" aria-pressed="{{e4.pressed}}" sc-camel-on-click="{{e4.set}}" style="min-height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{e4.border}}; background: {{e4.bg}}; color: {{e4.fg}}; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Hors ligne</button>
+</div>
+</div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1204}}">
+class Component extends DCLogic {
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      const s = this.state || {};
+      this.setState(Object.assign({}, s, { tick: (s.tick ?? 0) + 1 }));
+    }, 1000);
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+  renderVals() {
+    const s = this.state || {};
+    const set = (patch) => this.setState(Object.assign({}, this.state || {}, patch));
+    const etat = s.etat ?? 'normal';
+    const eb = (key) => ({
+      pressed: String(etat === key),
+      bg: etat === key ? '#0B1B2E' : '#FFFFFF',
+      fg: etat === key ? '#FFFFFF' : '#0B1B2E',
+      border: etat === key ? '#0B1B2E' : '#7A8597',
+      set: () => set({ etat: key })
+    });
+    const ETATS = ['normal', 'chargement', 'erreur', 'echeance', 'hors'];
+    const etatVals = {};
+    ETATS.forEach((k, i) => { etatVals['e' + i] = eb(k); });
+
+    const tick = s.tick ?? 0;
+    const SAINE = { who: 'moi', nom: 'EXEMPLE', prenom: 'Alex', naissance: '1990-03-14', genre: '', doc: '', consent: false, submitted: false };
+    const who = s.who ?? SAINE.who;
+    const nom = s.nom ?? SAINE.nom;
+    const prenom = s.prenom ?? SAINE.prenom;
+    const naissance = s.naissance ?? SAINE.naissance;
+    const genre = s.genre ?? '';
+    const doc = s.doc ?? '';
+    const consent = s.consent ?? false;
+    const submitted = s.submitted ?? false;
+    const busy = etat === 'chargement';
+    const ho = etat === 'hors';
+    const late = etat === 'echeance';
+    const locked = busy || late;
+    const withForm = who !== 'proche';
+    const showErr = submitted || etat === 'erreur';
+    const empty = (v) => String(v).trim() === '';
+    const errNom = showErr && withForm && empty(nom);
+    const errPrenom = showErr && withForm && empty(prenom);
+    const errNaissance = showErr && withForm && empty(naissance);
+    const nErr = (errNom ? 1 : 0) + (errPrenom ? 1 : 0) + (errNaissance ? 1 : 0);
+    const preset = (k) => (k === 'erreur' ? { who: 'nouveau', nom: '', prenom: '', naissance: '', genre: '', doc: '', consent: true, submitted: true }
+      : (k === 'chargement' ? Object.assign({}, SAINE, { consent: true }) : Object.assign({}, SAINE)));
+    ETATS.forEach((k, i) => { etatVals['e' + i].set = () => set(Object.assign({ etat: k }, preset(k))); });
+    const full = (String(prenom) + ' ' + String(nom)).trim();
+    let travelerLine = full === '' ? 'À compléter' : full.toUpperCase();
+    if (who === 'proche') travelerLine = 'À choisir';
+    const opt = (on) => ({ on, border: on ? '2px solid #1A64C8' : '1px solid #7A8597' });
+    const pickMoi = () => set({ who: 'moi', nom: 'EXEMPLE', prenom: 'Alex', naissance: '1990-03-14', genre: '', doc: '', submitted: false });
+    const pickProche = () => set({ who: 'proche', submitted: false });
+    const pickNouveau = () => set({ who: 'nouveau', nom: '', prenom: '', naissance: '', genre: '', doc: '', submitted: false });
+    const err = (on, id) => ({ on, str: String(on), desc: on ? id : '', border: on ? '2px solid #C2362F' : '1px solid #7A8597' });
+    const eN = err(errNom, 'f-nom-err');
+    const eP = err(errPrenom, 'f-prenom-err');
+    const eB = err(errNaissance, 'f-naissance-err');
+    const left = Math.max(5358900 - tick, 0);
+    const dd = Math.floor(left / 86400);
+    const hh = Math.floor((left % 86400) / 3600);
+    const D = pad2(late ? 0 : dd);
+    const H = pad2(late ? 0 : hh);
+    function pad2(n) { return String(n).padStart(2, '0'); }
+    const ready = !busy && !ho && !late && consent && withForm;
+    const blocked = !busy && !ho && !late && !ready;
+    return {
+      ...etatVals,
+      isBusy: busy,
+      isOffline: ho,
+      locked,
+      late,
+      formOn: !late,
+      summaryOn: !late,
+      w_moi: who === 'moi', w_proche: who === 'proche', w_nouveau: who === 'nouveau',
+      w_moiBorder: opt(who === 'moi').border, w_procheBorder: opt(who === 'proche').border, w_nouveauBorder: opt(who === 'nouveau').border,
+      pick_moi: pickMoi, pick_proche: pickProche, pick_nouveau: pickNouveau, pick_nouveau_btn: pickNouveau,
+      isProche: !withForm,
+      showForm: withForm,
+      nom, prenom, naissance, genre, doc,
+      onField: (e) => { const t = e.target; set({ [t.name]: t.value }); },
+      errNom: eN.on, errNomStr: eN.str, errNomDesc: eN.desc, errNomBorder: eN.border,
+      errPrenom: eP.on, errPrenomStr: eP.str, errPrenomDesc: eP.desc, errPrenomBorder: eP.border,
+      errNaissance: eB.on, errNaissanceStr: eB.str, errNaissanceDesc: eB.desc, errNaissanceBorder: eB.border,
+      errAny: nErr > 0 && !late,
+      errTitle: nErr === 1 ? 'Corrigez 1 champ avant de transmettre' : 'Corrigez ' + nErr + ' champs avant de transmettre',
+      consent,
+      onConsent: (e) => set({ consent: !!e.target.checked }),
+      travelerLine,
+      deadlineText: late ? 'Échéance du 13 déc. 18:05 dépassée' : 'Il reste ' + dd + ' j ' + hh + ' h · échéance 13 déc. 18:05',
+      fd0: D.charAt(0), fd1: D.charAt(1), fh0: H.charAt(0), fh1: H.charAt(1),
+      ctaReady: ready,
+      ctaBlocked: blocked,
+      ctaBusy: busy,
+      ctaOff: ho,
+      hintOn: blocked,
+      hintText: !withForm ? 'Choisissez ou saisissez un voyageur pour continuer.' : 'Cochez la confirmation pour continuer.',
+      confirm: (e) => {
+        if (withForm && (empty(nom) || empty(prenom) || empty(naissance))) {
+          if (e && typeof e.preventDefault === 'function') e.preventDefault();
+          set({ submitted: true });
+        }
+      }
+    };
+  }
+}
+</script>
+
+
+</body></html>

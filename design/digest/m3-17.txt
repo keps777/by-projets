@@ -1,0 +1,253 @@
+Web — Résultats
+Résultats (web) — NexG-TT
+NEXG
+·TT
+Voyager
+Mes actifs
+Rechercher une ville, un code d’aéroport ou une référence
+AT
+Accueil
+Rechercher
+Mon voyage
+Agences
+Chargement des résultats…
+Hors ligne
+Vous voyez les résultats enregistrés à 18:30. Les prix ont pu changer : l’achat est indisponible hors ligne.
+Résultats
+Voyager · YUL → CDG · ven. 18 déc. 2026 · 1 voyageur
+Neuf, revente, agences et drops, comparés au prix d’un billet neuf équivalent. Prix indicatifs, par voyageur.
+De
+À
+Départ
+Voyageurs
+1 voyageur
+2 voyageurs
+3 voyageurs
+4 voyageurs
+Sources
+Neuf · Revente · Agences · Drops
+Rechercher
+Rechercher
+Filtres
+Réinitialiser
+Sources
+Revente
+2
+Neuf
+1
+Agences partenaires
+1
+Drops membres
+1
+Escales
+Toutes
+Direct seulement
+Revente
+Revendable seulement
+Masque les offres non revendables
+Prix maximum
+{{prixLabel}}
+1 300 $
+2 200 $
+Les drops restent affichés : leur prix n’est visible qu’aux membres.
+Offres
+{{countLabel}}
+Trier par
+Prix
+{{sortPrix.arrow}}
+{{sortPrix.dirText}}
+Heure de départ
+{{sortHeure.arrow}}
+{{sortHeure.dirText}}
+Impossible de charger les offres neuves des compagnies
+Les reventes, les offres d’agences et les drops restent affichés. Sans prix neuf de référence, les écarts ne sont pas calculés.
+Réessayer
+Meilleure affaire
+Prix le plus bas en direct
+{{s0.srcLabel}}
+{{s0.dep}}
+YUL
+{{s0.dur}}
+{{s0.via}}
+{{s0.arr}}
+{{s0.plus}}
+CDG
+Revendable
+Nominatif à J-1
+Non revendable
+Réservé aux membres du Pass NexG
+Prix et horaires visibles avec le Pass.
+{{s0.cie}}
+{{s0.sub}}
+{{s0.price}}
+{{s0.delta}} · {{s0.pct}}
+{{s0.delta}} · {{s0.pct}}
+±0 $ · prix neuf
+—
+écart indisponible
+Prix neuf de référence
+• • • $
+Prix masqué
+Voir l’offre
+Voir l’offre
+Voir l’offre de l’agence
+Voir l’offre de l’agence
+Découvrir le Pass NexG
+Découvrir le Pass NexG
+Meilleure affaire
+Prix le plus bas en direct
+{{s1.srcLabel}}
+{{s1.dep}}
+YUL
+{{s1.dur}}
+{{s1.via}}
+{{s1.arr}}
+{{s1.plus}}
+CDG
+Revendable
+Nominatif à J-1
+Non revendable
+Réservé aux membres du Pass NexG
+Prix et horaires visibles avec le Pass.
+{{s1.cie}}
+{{s1.sub}}
+{{s1.price}}
+{{s1.delta}} · {{s1.pct}}
+{{s1.delta}} · {{s1.pct}}
+±0 $ · prix neuf
+—
+écart indisponible
+Prix neuf de référence
+• • • $
+Prix masqué
+Voir l’offre
+Voir l’offre
+Voir l’offre de l’agence
+Voir l’offre de l’agence
+Découvrir le Pass NexG
+Découvrir le Pass NexG
+Meilleure affaire
+Prix le plus bas en direct
+{{s2.srcLabel}}
+{{s2.dep}}
+YUL
+{{s2.dur}}
+{{s2.via}}
+{{s2.arr}}
+{{s2.plus}}
+CDG
+Revendable
+Nominatif à J-1
+Non revendable
+Réservé aux membres du Pass NexG
+Prix et horaires visibles avec le Pass.
+{{s2.cie}}
+{{s2.sub}}
+{{s2.price}}
+{{s2.delta}} · {{s2.pct}}
+{{s2.delta}} · {{s2.pct}}
+±0 $ · prix neuf
+—
+écart indisponible
+Prix neuf de référence
+• • • $
+Prix masqué
+Voir l’offre
+Voir l’offre
+Voir l’offre de l’agence
+Voir l’offre de l’agence
+Découvrir le Pass NexG
+Découvrir le Pass NexG
+Meilleure affaire
+Prix le plus bas en direct
+{{s3.srcLabel}}
+{{s3.dep}}
+YUL
+{{s3.dur}}
+{{s3.via}}
+{{s3.arr}}
+{{s3.plus}}
+CDG
+Revendable
+Nominatif à J-1
+Non revendable
+Réservé aux membres du Pass NexG
+Prix et horaires visibles avec le Pass.
+{{s3.cie}}
+{{s3.sub}}
+{{s3.price}}
+{{s3.delta}} · {{s3.pct}}
+{{s3.delta}} · {{s3.pct}}
+±0 $ · prix neuf
+—
+écart indisponible
+Prix neuf de référence
+• • • $
+Prix masqué
+Voir l’offre
+Voir l’offre
+Voir l’offre de l’agence
+Voir l’offre de l’agence
+Découvrir le Pass NexG
+Découvrir le Pass NexG
+Meilleure affaire
+Prix le plus bas en direct
+{{s4.srcLabel}}
+{{s4.dep}}
+YUL
+{{s4.dur}}
+{{s4.via}}
+{{s4.arr}}
+{{s4.plus}}
+CDG
+Revendable
+Nominatif à J-1
+Non revendable
+Réservé aux membres du Pass NexG
+Prix et horaires visibles avec le Pass.
+{{s4.cie}}
+{{s4.sub}}
+{{s4.price}}
+{{s4.delta}} · {{s4.pct}}
+{{s4.delta}} · {{s4.pct}}
+±0 $ · prix neuf
+—
+écart indisponible
+Prix neuf de référence
+• • • $
+Prix masqué
+Voir l’offre
+Voir l’offre
+Voir l’offre de l’agence
+Voir l’offre de l’agence
+Découvrir le Pass NexG
+Découvrir le Pass NexG
+Aucune offre ne correspond à ces filtres.
+Élargissez le prix maximum ou réactivez une source. Vous pouvez aussi chercher à ±3 jours.
+Réinitialiser les filtres
+Chercher à ±3 jours
+Écart = prix de l’offre − prix équivalent neuf. Prix indicatifs. Reventes : prix plafonné (règle à définir). Les droits revendus restent soumis aux règles de finalisation.
+Baromètre du marché
+Prix indicatifs
+{{baro.sentence}}
+Neuf 2 050 $
+{{baro.bestLabel}}
+1 300 $
+1 500 $
+1 700 $
+1 900 $
+2 100 $
++ 1 drop membres non affiché : prix visible avec le Pass NexG
+Alerte de prix
+Soyez prévenu si le prix d’un billet de ce trajet change.
+{{alertLabel}}
+Alerte créée : vous serez prévenu si le prix change.
+Prototype — données fictives
+Compagnies (Aérolys, Nordelle), agence, détenteurs, prix et références inventés. Aucun paiement réel.
+Un droit de voyage est une inscription au registre interne de NexG-TT, pas un placement financier.
+Aperçu des états
+Normal
+Chargement
+Vide
+Erreur
+Hors ligne

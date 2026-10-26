@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Portefeuille — NexG-TT</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Barlow:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#0D0E11}
+a{color:#FFD23F}a:hover{color:#FFE27A}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #FFD23F;outline-offset:2px}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0D0E11; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="padding: 52px 20px 12px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<div role="group" aria-label="Face de l'application" style="display: flex; gap: 2px; padding: 3px; border-radius: 999px; background: #1D2027; border: 1px solid #2C303A">
+<a href="Main.dc.html" style="min-height: 44px; padding: 0 14px; border-radius: 999px; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; color: #B9BEC9">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+Voyager
+</a>
+<a href="Marche.dc.html" aria-current="page" style="min-height: 44px; padding: 0 14px; border-radius: 999px; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; background: #FFD23F; color: #0D0E11">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg>
+Mes actifs
+</a>
+</div>
+<a href="Compte.dc.html" aria-label="Mon compte" style="width: 44px; height: 44px; flex: none; border-radius: 999px; background: #F3F4F6; color: #0D0E11; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; letter-spacing: 0.04em; text-decoration: none">AT</a>
+</div>
+<h1 style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 34px; line-height: 36px; letter-spacing: 0.02em; text-transform: uppercase">Portefeuille</h1>
+</header>
+
+<main style="flex: 1; overflow-y: auto; padding: 4px 20px 112px; display: flex; flex-direction: column; gap: 20px">
+
+<section aria-labelledby="pf-title" style="display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 28px">
+<h2 id="pf-title" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">3 droits de voyage actifs</h2>
+<span style="display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px; border-radius: 999px; background: #262A33; color: #B9BEC9; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+Indicatif
+</span>
+</div>
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 13px; color: #B9BEC9">Prix équivalent aujourd'hui</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 30px; line-height: 34px; font-variant-numeric: tabular-nums">4&#160;730&#160;$</span>
+<span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #B9BEC9">Payé 3&#160;050&#160;$ · écart
+<span style="display: inline-flex; align-items: center; gap: 3px; color: #62C7FF; font-weight: 600; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 16 6-6 4 4 6-7"></path><path d="M15 7h5v5"></path></svg>
++1&#160;680&#160;$</span>
+</span>
+</div>
+<svg width="112" height="48" viewBox="0 0 112 48" aria-hidden="true" style="flex: none">
+<polyline points="2,42 15,40 28,41 41,33 54,35 67,25 80,21 93,14 110,6" fill="none" stroke="#62C7FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+<circle cx="110" cy="6" r="3.5" fill="#62C7FF"></circle>
+</svg>
+</div>
+<p style="margin: 0; padding-top: 12px; border-top: 1px solid #2C303A; font-size: 12px; line-height: 17px; color: #8C93A3">Somme des prix d'un billet neuf équivalent, pour vos droits actifs. Indicatif : ce n'est ni une offre de rachat ni un gain garanti.</p>
+</section>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: -8px">
+<a href="Echeances.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 8px 12px; box-sizing: border-box; border-radius: 14px; background: #15171C; border: 1px solid #2C303A; color: #F3F4F6; text-decoration: none; font-size: 14px; font-weight: 600; line-height: 18px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFD23F" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+Calendrier des échéances
+</a>
+<a href="Solde.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 8px 12px; box-sizing: border-box; border-radius: 14px; background: #15171C; border: 1px solid #2C303A; color: #F3F4F6; text-decoration: none; font-size: 14px; font-weight: 600; line-height: 18px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B9BEC9" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M3 7a2 2 0 0 1 2-2h12v4"></path><rect x="3" y="9" width="18" height="11" rx="2"></rect><path d="M16 14.5h1.5"></path></svg>
+Solde et versements
+</a>
+</div>
+
+<div role="group" aria-label="Afficher mes droits de voyage" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 14px; background: #15171C; border: 1px solid #2C303A">
+<button type="button" aria-pressed="{{tabA.pressed}}" onClick="{{ showActifs }}" style="display: flex; align-items: center; justify-content: center; gap: 5px; height: 44px; border: 0; border-radius: 10px; background: {{tabA.bg}}; color: {{tabA.fg}}; font-family: 'Barlow', system-ui, sans-serif; font-size: 14px; font-weight: 700; cursor: pointer">Actifs<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; font-size: 13px; font-variant-numeric: tabular-nums">(3)</span></button>
+<button type="button" aria-pressed="{{tabV.pressed}}" onClick="{{ showVente }}" style="display: flex; align-items: center; justify-content: center; gap: 5px; height: 44px; border: 0; border-radius: 10px; background: {{tabV.bg}}; color: {{tabV.fg}}; font-family: 'Barlow', system-ui, sans-serif; font-size: 14px; font-weight: 700; cursor: pointer">En revente<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; font-size: 13px; font-variant-numeric: tabular-nums">(2)</span></button>
+<button type="button" aria-pressed="{{tabH.pressed}}" onClick="{{ showHisto }}" style="display: flex; align-items: center; justify-content: center; gap: 5px; height: 44px; border: 0; border-radius: 10px; background: {{tabH.bg}}; color: {{tabH.fg}}; font-family: 'Barlow', system-ui, sans-serif; font-size: 14px; font-weight: 700; cursor: pointer">Historique</button>
+</div>
+
+<sc-if value="{{isActifs}}" hint-placeholder-val="{{ true }}">
+<section aria-label="Droits actifs, triés par date de départ" style="display: flex; flex-direction: column; gap: 18px; padding-top: 4px">
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<a href="Billet.dc.html" style="position: relative; display: flex; min-height: 136px; border-radius: 18px; background: #FFFFFF; color: #121418; text-decoration: none">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 14px 12px 14px 16px">
+<span style="font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #555C6B">Aérolys · Vol 812</span>
+<span style="display: flex; align-items: center; gap: 8px; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 38px; line-height: 36px; letter-spacing: 0.02em">YUL<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0"> vers </span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555C6B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h6l4 7h2l-2-7h5l2 2h2l-1-3 1-3h-2l-2 2h-5l2-7h-2l-4 7H3z"></path></svg>CDG</span>
+<span style="font-size: 13px; font-weight: 500; color: #555C6B">Paris · lun. 14 déc. 2026</span>
+<span style="display: flex; flex-wrap: wrap; gap: 6px; padding-top: 2px">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: #FFD23F; color: #121418; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+À nommer
+</span>
+</span>
+</span>
+<span style="position: relative; width: 118px; flex: none; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 14px 12px 14px 14px; border-left: 2px dashed #E2E4E9; border-radius: 0 18px 18px 0; background: #F1F2F4">
+<span aria-hidden="true" style="position: absolute; top: -11px; left: -12px; width: 22px; height: 22px; border-radius: 999px; background: #0D0E11"></span>
+<span aria-hidden="true" style="position: absolute; bottom: -11px; left: -12px; width: 22px; height: 22px; border-radius: 999px; background: #0D0E11"></span>
+<span style="display: flex; flex-direction: column; gap: 1px">
+<span style="font-size: 11px; font-weight: 600; color: #555C6B">Payé</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; font-size: 14px; font-variant-numeric: tabular-nums">1&#160;000&#160;$</span>
+</span>
+<span style="display: flex; flex-direction: column; gap: 1px">
+<span style="font-size: 11px; font-weight: 600; color: #555C6B">Prix équivalent</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 18px; font-variant-numeric: tabular-nums">2&#160;000&#160;$</span>
+</span>
+<span style="display: inline-flex; align-items: center; gap: 3px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 13px; font-variant-numeric: tabular-nums; color: #0B6FA4">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 16 6-6 4 4 6-7"></path><path d="M15 7h5v5"></path></svg>
++100&#160;%</span>
+</span>
+</a>
+<a href="Finaliser.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 12px; box-sizing: border-box; border-radius: 12px; background: rgba(255,210,63,0.12); color: #FFD23F; font-size: 14px; font-weight: 600; text-decoration: none">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+<span style="flex: 1">Nommez le voyageur avant le 13 déc. 18:05</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 13px; font-variant-numeric: tabular-nums">J-62</span>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="m9 5 7 7-7 7"></path></svg>
+</a>
+</div>
+
+<article aria-label="YUL vers PUJ, Punta Cana, dimanche 21 février 2027, détenu" style="position: relative; display: flex; min-height: 136px; border-radius: 18px; background: #FFFFFF; color: #121418">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 14px 12px 14px 16px">
+<span style="font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #555C6B">Nordelle · Direct</span>
+<span style="display: flex; align-items: center; gap: 8px; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 38px; line-height: 36px; letter-spacing: 0.02em">YUL<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555C6B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h6l4 7h2l-2-7h5l2 2h2l-1-3 1-3h-2l-2 2h-5l2-7h-2l-4 7H3z"></path></svg>PUJ</span>
+<span style="font-size: 13px; font-weight: 500; color: #555C6B">Punta Cana · dim. 21 févr. 2027</span>
+<span style="display: flex; flex-wrap: wrap; gap: 6px; padding-top: 2px">
+<span style="display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 999px; background: #EEF0F3; color: #555C6B; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">Détenu</span>
+<span style="display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px; box-sizing: border-box; border-radius: 999px; border: 1px solid #E2E4E9; color: #555C6B; font-size: 12px; font-weight: 600">
+<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"></path></svg>
+Obtenu via Drop
+</span>
+</span>
+</div>
+<div style="position: relative; width: 118px; flex: none; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 14px 12px 14px 14px; border-left: 2px dashed #E2E4E9; border-radius: 0 18px 18px 0; background: #F1F2F4">
+<span aria-hidden="true" style="position: absolute; top: -11px; left: -12px; width: 22px; height: 22px; border-radius: 999px; background: #0D0E11"></span>
+<span aria-hidden="true" style="position: absolute; bottom: -11px; left: -12px; width: 22px; height: 22px; border-radius: 999px; background: #0D0E11"></span>
+<span style="display: flex; flex-direction: column; gap: 1px">
+<span style="font-size: 11px; font-weight: 600; color: #555C6B">Payé</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; font-size: 14px; font-variant-numeric: tabular-nums">200&#160;$</span>
+</span>
+<span style="display: flex; flex-direction: column; gap: 1px">
+<span style="font-size: 11px; font-weight: 600; color: #555C6B">Prix équivalent</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 18px; font-variant-numeric: tabular-nums">940&#160;$</span>
+</span>
+<span style="display: inline-flex; align-items: center; gap: 3px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 13px; font-variant-numeric: tabular-nums; color: #0B6FA4">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 16 6-6 4 4 6-7"></path><path d="M15 7h5v5"></path></svg>
++370&#160;%</span>
+</div>
+</article>
+
+<article aria-label="YUL vers PPT, Papeete, dimanche 9 mai 2027, détenu" style="position: relative; display: flex; min-height: 136px; border-radius: 18px; background: #FFFFFF; color: #121418">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 14px 12px 14px 16px">
+<span style="font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #555C6B">Aérolys · 1 escale LAX</span>
+<span style="display: flex; align-items: center; gap: 8px; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 38px; line-height: 36px; letter-spacing: 0.02em">YUL<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555C6B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h6l4 7h2l-2-7h5l2 2h2l-1-3 1-3h-2l-2 2h-5l2-7h-2l-4 7H3z"></path></svg>PPT</span>
+<span style="font-size: 13px; font-weight: 500; color: #555C6B">Papeete · dim. 9 mai 2027</span>
+<span style="display: flex; flex-wrap: wrap; gap: 6px; padding-top: 2px">
+<span style="display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 999px; background: #EEF0F3; color: #555C6B; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">Détenu</span>
+<span style="display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px; box-sizing: border-box; border-radius: 999px; border: 1px solid #E2E4E9; color: #555C6B; font-size: 12px; font-weight: 600">
+<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"></path></svg>
+Revente · 3e détenteur
+</span>
+</span>
+</div>
+<div style="position: relative; width: 118px; flex: none; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 14px 12px 14px 14px; border-left: 2px dashed #E2E4E9; border-radius: 0 18px 18px 0; background: #F1F2F4">
+<span aria-hidden="true" style="position: absolute; top: -11px; left: -12px; width: 22px; height: 22px; border-radius: 999px; background: #0D0E11"></span>
+<span aria-hidden="true" style="position: absolute; bottom: -11px; left: -12px; width: 22px; height: 22px; border-radius: 999px; background: #0D0E11"></span>
+<span style="display: flex; flex-direction: column; gap: 1px">
+<span style="font-size: 11px; font-weight: 600; color: #555C6B">Payé</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; font-size: 14px; font-variant-numeric: tabular-nums">1&#160;850&#160;$</span>
+</span>
+<span style="display: flex; flex-direction: column; gap: 1px">
+<span style="font-size: 11px; font-weight: 600; color: #555C6B">Prix équivalent</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 18px; font-variant-numeric: tabular-nums">1&#160;790&#160;$</span>
+</span>
+<span style="display: inline-flex; align-items: center; gap: 3px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 13px; font-variant-numeric: tabular-nums; color: #A84A0E">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 8 6 6 4-4 6 7"></path><path d="M15 17h5v-5"></path></svg>
+−3&#160;%</span>
+</div>
+</article>
+
+</section>
+</sc-if>
+
+<sc-if value="{{isVente}}" hint-placeholder-val="{{ false }}">
+<section aria-label="Droits en revente" style="display: flex; flex-direction: column; gap: 12px; padding-top: 4px">
+<article aria-label="YUL vers HAV, La Havane, samedi 30 janvier 2027, en revente à 620 dollars" style="position: relative; display: flex; min-height: 136px; border-radius: 18px; background: #FFFFFF; color: #121418">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 14px 12px 14px 16px">
+<span style="font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #555C6B">Nordelle</span>
+<span style="display: flex; align-items: center; gap: 8px; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 38px; line-height: 36px; letter-spacing: 0.02em">YUL<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555C6B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h6l4 7h2l-2-7h5l2 2h2l-1-3 1-3h-2l-2 2h-5l2-7h-2l-4 7H3z"></path></svg>HAV</span>
+<span style="font-size: 13px; font-weight: 500; color: #555C6B">La Havane · sam. 30 janv. 2027</span>
+<span style="display: flex; flex-wrap: wrap; gap: 6px; padding-top: 2px">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: #E3F1FA; color: #0B6FA4; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg>
+En revente
+</span>
+</span>
+</div>
+<div style="position: relative; width: 118px; flex: none; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 14px 12px 14px 14px; border-left: 2px dashed #E2E4E9; border-radius: 0 18px 18px 0; background: #F1F2F4">
+<span aria-hidden="true" style="position: absolute; top: -11px; left: -12px; width: 22px; height: 22px; border-radius: 999px; background: #0D0E11"></span>
+<span aria-hidden="true" style="position: absolute; bottom: -11px; left: -12px; width: 22px; height: 22px; border-radius: 999px; background: #0D0E11"></span>
+<span style="display: flex; flex-direction: column; gap: 1px">
+<span style="font-size: 11px; font-weight: 600; color: #555C6B">Votre prix</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 18px; font-variant-numeric: tabular-nums">620&#160;$</span>
+</span>
+<span style="display: flex; flex-direction: column; gap: 1px">
+<span style="font-size: 11px; font-weight: 600; color: #555C6B">Prix équivalent</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; font-size: 14px; font-variant-numeric: tabular-nums">650&#160;$</span>
+</span>
+<span style="display: flex; flex-direction: column; gap: 1px">
+<span style="font-size: 11px; font-weight: 600; color: #555C6B">Payé</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; font-size: 14px; font-variant-numeric: tabular-nums">480&#160;$</span>
+</span>
+</div>
+</article>
+<p style="margin: 0; display: flex; align-items: flex-start; gap: 8px; font-size: 13px; line-height: 18px; color: #B9BEC9">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+<span>Retrait automatique de l'annonce à J-1 (29 janv. 2027). Commission prélevée seulement si la vente a lieu — taux en hypothèse.</span>
+</p>
+
+<div style="display: flex; flex-direction: column; gap: 10px; padding-top: 8px">
+<h2 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Droit de bagage · même vol</h2>
+<a href="BagageVendre.dc.html" style="position: relative; display: block; margin-left: 14px; border-radius: 12px; color: #121418; text-decoration: none">
+<span style="position: relative; display: flex; min-height: 108px; border-radius: 0 16px 16px 0; background: #FFFFFF; clip-path: polygon(20px 0, 100% 0, 100% 100%, 20px 100%, 0 calc(100% - 20px), 0 20px)">
+<span aria-hidden="true" style="position: relative; width: 44px; flex: none; background: #F1F2F4; border-right: 2px dashed #E2E4E9">
+<span style="position: absolute; left: 13px; top: calc(50% - 8px); width: 16px; height: 16px; box-sizing: border-box; border-radius: 999px; background: #0D0E11; border: 3px solid #C9CDD5"></span>
+</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 12px 10px 12px 14px">
+<span style="font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #555C6B">Bagage en soute · 14 déc.</span>
+<span style="display: flex; align-items: baseline; gap: 10px">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 40px; line-height: 38px; letter-spacing: 0.02em">CDG</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 13px; font-variant-numeric: tabular-nums">AE 812 · 23&#160;kg</span>
+</span>
+<span style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: #E3F1FA; color: #0B6FA4; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg>
+En vente <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; letter-spacing: 0; font-variant-numeric: tabular-nums">100&#160;$</span>
+</span>
+</span>
+<span aria-hidden="true" style="width: 22px; flex: none; margin: 14px 14px 14px 0; background: repeating-linear-gradient(0deg, #121418 0 2px, transparent 2px 4px, #121418 4px 5px, transparent 5px 8px)"></span>
+</span>
+<span aria-hidden="true" style="position: absolute; left: -14px; top: calc(50% - 7px); width: 35px; height: 14px; box-sizing: border-box; border: 2px solid #8C93A3; border-right: 0; border-radius: 7px 0 0 7px"></span>
+</a>
+<p style="margin: 0; display: flex; align-items: flex-start; gap: 8px; font-size: 13px; line-height: 18px; color: #B9BEC9">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+<span>Votre 2e bagage inclus, non utilisé. Seuls les passagers du vol AE 812 du 14 déc. peuvent l'acheter. Plafond : prix compagnie 150&#160;$ (règle provisoire). Transfert sous réserve d'accord d'Aérolys — hypothèse.</span>
+</p>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{isHisto}}" hint-placeholder-val="{{ false }}">
+<section aria-label="Historique des transactions" style="display: flex; flex-direction: column; gap: 12px; padding-top: 4px">
+<ol style="list-style: none; margin: 0; padding: 0 16px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A">
+<li style="display: grid; grid-template-columns: 56px 1fr auto; align-items: center; gap: 12px; min-height: 64px">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #B9BEC9; font-variant-numeric: tabular-nums">3 sept.</span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 15px; font-weight: 600">Drop membre obtenu</span><span style="font-size: 13px; color: #8C93A3">YUL → PUJ · Nordelle</span></span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums">200&#160;$</span>
+</li>
+<li style="display: grid; grid-template-columns: 56px 1fr auto; align-items: center; gap: 12px; min-height: 64px; border-top: 1px solid #2C303A">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #B9BEC9; font-variant-numeric: tabular-nums">3 août</span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 15px; font-weight: 600">Achat en revente</span><span style="font-size: 13px; color: #8C93A3">YUL → PPT · 2 détenteurs avant vous</span></span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums">1&#160;850&#160;$</span>
+</li>
+<li style="display: grid; grid-template-columns: 56px 1fr auto; align-items: center; gap: 12px; min-height: 64px; border-top: 1px solid #2C303A">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #B9BEC9; font-variant-numeric: tabular-nums">12 janv.</span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 15px; font-weight: 600">Achat neuf</span><span style="font-size: 13px; color: #8C93A3">YUL → CDG · Aérolys</span></span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums">1&#160;000&#160;$</span>
+</li>
+</ol>
+<div style="display: flex; align-items: flex-start; gap: 12px; padding: 16px; border-radius: 16px; border: 1px dashed #3A3F4B">
+<span style="width: 40px; height: 40px; flex: none; border-radius: 12px; background: #1D2027; color: #B9BEC9; display: flex; align-items: center; justify-content: center">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5M12 7v5l3 2"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 15px; font-weight: 600">Aucun billet cédé ni voyagé pour l'instant</span>
+<span style="font-size: 13px; line-height: 18px; color: #B9BEC9">Vos billets cédés et voyagés apparaîtront ici, avec leur chaîne de détention.</span>
+</span>
+</div>
+</section>
+</sc-if>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<a href="Importer.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #1D2027; color: #F3F4F6; border: 1px solid #3A3F4B; font-weight: 700; font-size: 16px; text-decoration: none">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"></path></svg>
+Importer un billet acheté ailleurs
+</a>
+<p style="margin: 0; text-align: center; font-size: 12px; line-height: 17px; color: #8C93A3">Acheté directement chez une compagnie&#8239;? Confiez-le à NexG-TT, selon les compagnies partenaires.</p>
+</div>
+
+<p style="margin: 0; text-align: center; font-size: 12px; line-height: 17px; color: #8C93A3">Prix indicatifs. Un droit de voyage n'est pas un placement financier.</p>
+
+</main>
+
+<nav aria-label="Navigation principale" style="position: absolute; left: 0; right: 0; bottom: 0; height: 84px; box-sizing: border-box; padding: 6px 8px 22px; background: rgba(13,14,17,0.94); backdrop-filter: blur(12px); border-top: 1px solid #2C303A; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr))">
+<a href="Main.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 48px; color: #8C93A3; text-decoration: none; font-size: 12px; font-weight: 600">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"></path></svg>
+Accueil
+</a>
+<a href="Recherche.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 48px; color: #8C93A3; text-decoration: none; font-size: 12px; font-weight: 600">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+Rechercher
+</a>
+<a href="Drop.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 48px; color: #8C93A3; text-decoration: none; font-size: 12px; font-weight: 600">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"></path></svg>
+Drops
+</a>
+<a href="Portefeuille.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 48px; color: #FFD23F; text-decoration: none; font-size: 12px; font-weight: 600">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h12v4"></path><rect x="3" y="9" width="18" height="11" rx="2"></rect><path d="M16 14.5h1.5"></path></svg>
+Portefeuille
+</a>
+<a href="Compte.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 48px; color: #8C93A3; text-decoration: none; font-size: 12px; font-weight: 600">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg>
+Compte
+</a>
+</nav>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const tab = s.tab || 'actifs';
+    const seg = (on) => ({
+      pressed: on ? 'true' : 'false',
+      bg: on ? '#F3F4F6' : 'transparent',
+      fg: on ? '#0D0E11' : '#B9BEC9'
+    });
+    return {
+      tabA: seg(tab === 'actifs'),
+      tabV: seg(tab === 'vente'),
+      tabH: seg(tab === 'histo'),
+      isActifs: tab === 'actifs',
+      isVente: tab === 'vente',
+      isHisto: tab === 'histo',
+      showActifs: () => this.setState({ tab: 'actifs' }),
+      showVente: () => this.setState({ tab: 'vente' }),
+      showHisto: () => this.setState({ tab: 'histo' })
+    };
+  }
+}
+</script>
+</body>
+</html>

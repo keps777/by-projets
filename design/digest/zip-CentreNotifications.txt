@@ -1,0 +1,38 @@
+Centre de notifications — NexG-TT
+Centre de notifications — NexG-TT
+Notifications
+Aperçu des états · démo
+Normal
+Chargement
+Vide
+Filtre vide
+Erreur
+Hors ligne
+{{compteurTexte}}
+Tout marquer comme lu
+Toutes
+Échéances
+Drops
+Soute
+Ventes
+Hors ligne : dernières notifications reçues
+Reconnectez-vous pour actualiser la liste.
+{{g.titre}}
+Non lue.
+{{n.libelle}}
+{{n.heure}}
+{{n.titre}}
+{{n.extrait}}
+Gérer mes alertes de prix et de drops
+Données de démonstration : toutes les notifications sont fictives.
+Rien de nouveau
+Vos échéances, ventes et offres apparaîtront ici dès qu'il y aura du nouveau.
+Régler mes notifications
+Aucune notification de ce type
+Essayez un autre filtre ou affichez toutes vos notifications.
+Voir toutes
+Impossible de charger vos notifications
+Vérifiez votre connexion, puis réessayez.
+Réessayer
+Contacter l'assistance
+Chargement des notifications…

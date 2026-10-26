@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Solde NexG — NexG-TT</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Barlow:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#0D0E11}
+a{color:#FFD23F}a:hover{color:#FFE27A}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #FFD23F;outline-offset:2px}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0D0E11; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="padding: 52px 12px 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<a href="Portefeuille.dc.html" aria-label="Retour" style="width: 44px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 999px; color: #F3F4F6; text-decoration: none">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+</a>
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 20px; letter-spacing: 0.04em; text-transform: uppercase">Mes actifs · Solde NexG</span>
+<span aria-hidden="true" style="width: 44px; height: 44px; flex: none"></span>
+</header>
+
+<main style="flex: 1; overflow-y: auto; padding: 4px 20px 40px; display: flex; flex-direction: column; gap: 20px">
+
+<section aria-labelledby="bal-title" style="display: flex; flex-direction: column; gap: 16px; padding: 18px; border-radius: 20px; background: #060708; border: 1px solid #2C303A">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<h1 id="bal-title" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Solde disponible</h1>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #8C93A3">$ CA</span>
+</div>
+<p style="margin: 0; position: relative">
+<span style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0">{{availTxt}}</span>
+<span aria-hidden="true" style="display: flex; align-items: center; gap: 3px">
+<sc-for list="{{balChars}}" as="c" hint-placeholder-count="10">
+<span style="display: inline-flex; align-items: center; justify-content: center; width: {{c.w}}; height: 48px; border-radius: 6px; background: {{c.bg}}; box-shadow: {{c.shadow}}; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 30px; font-variant-numeric: tabular-nums; color: #F3F4F6">{{c.ch}}</span>
+</sc-for>
+</span>
+</p>
+<div style="display: flex; flex-direction: column; gap: 8px; padding-top: 12px; border-top: 1px solid #1A1C21; font-size: 13px; color: #B9BEC9">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<span style="display: inline-flex; align-items: center; gap: 6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>En attente</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-variant-numeric: tabular-nums; color: #F3F4F6">0,00 $</span>
+</div>
+<sc-if value="{{isDone}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<span style="display: inline-flex; align-items: center; gap: 6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>Versement en cours · •••• 4821</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-variant-numeric: tabular-nums; color: #F3F4F6">1 152,00 $</span>
+</div>
+</sc-if>
+</div>
+
+<sc-if value="{{isIdle}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<button type="button" onClick="{{ askPayout }}" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; box-sizing: border-box; border-radius: 14px; background: #FFD23F; color: #0D0E11; border: 0; font: inherit; font-weight: 700; font-size: 16px; cursor: pointer">Verser vers mon compte <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600">•••• 4821</span></button>
+<a href="Recherche.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; box-sizing: border-box; border-radius: 14px; background: #1D2027; color: #F3F4F6; border: 1px solid #3A3F4B; font-weight: 700; font-size: 16px; text-decoration: none">Utiliser pour un achat</a>
+</div>
+</sc-if>
+
+<sc-if value="{{isConfirm}}" hint-placeholder-val="{{ false }}">
+<div role="group" aria-labelledby="cf-title" style="display: flex; flex-direction: column; gap: 12px; padding: 14px; border-radius: 16px; background: #15171C; border: 1px solid #3A3F4B">
+<p id="cf-title" style="margin: 0; font-size: 16px; font-weight: 700">Confirmer le versement</p>
+<dl style="margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 8px 12px; font-size: 14px">
+<dt style="color: #B9BEC9">Montant</dt><dd style="margin: 0; text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-variant-numeric: tabular-nums">1 152,00 $</dd>
+<dt style="color: #B9BEC9">Vers</dt><dd style="margin: 0; text-align: right">Compte <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">•••• 4821</span> (fictif)</dd>
+<dt style="color: #B9BEC9">Frais de versement</dt><dd style="margin: 0; text-align: right"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums">0,00 $</span> (hypothèse)</dd>
+<dt style="color: #B9BEC9">Délai estimé</dt><dd style="margin: 0; text-align: right">1 à 3 jours ouvrables (hypothèse)</dd>
+</dl>
+<p style="margin: 0; background: rgba(98,199,255,0.12); border: 1px solid rgba(98,199,255,0.4); color: #62C7FF; border-radius: 12px; padding: 10px 12px; font-size: 13px; font-weight: 600">MODE DÉMO — aucun paiement réel</p>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<button type="button" onClick="{{ cancelPayout }}" style="display: flex; align-items: center; justify-content: center; height: 52px; box-sizing: border-box; border-radius: 14px; background: #1D2027; color: #F3F4F6; border: 1px solid #3A3F4B; font: inherit; font-weight: 700; font-size: 16px; cursor: pointer">Annuler</button>
+<button type="button" onClick="{{ confirmPayout }}" style="display: flex; align-items: center; justify-content: center; height: 52px; box-sizing: border-box; border-radius: 14px; background: #FFD23F; color: #0D0E11; border: 0; font: inherit; font-weight: 700; font-size: 16px; cursor: pointer">Confirmer</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isDone}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<p role="status" style="margin: 0; display: flex; align-items: flex-start; gap: 10px; padding: 12px; border-radius: 12px; background: rgba(124,227,181,0.12); border: 1px solid rgba(124,227,181,0.35); color: #7CE3B5; font-size: 14px; line-height: 20px; font-weight: 600">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="m5 12 5 5 9-10"></path></svg>
+<span>Versement simulé lancé&#160;: 1 152,00 $ vers •••• 4821. Il apparaît dans le grand livre.</span>
+</p>
+<button type="button" onClick="{{ resetDemo }}" style="align-self: flex-start; min-height: 44px; padding: 0 4px; background: transparent; border: 0; color: #FFD23F; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Réinitialiser la démo</button>
+</div>
+</sc-if>
+</section>
+
+<section aria-labelledby="kyc-title" style="display: flex; align-items: center; gap: 12px; padding: 14px 12px 14px 16px; border-radius: 16px; background: rgba(124,227,181,0.12); border: 1px solid rgba(124,227,181,0.35)">
+<span style="flex: none; width: 40px; height: 40px; border-radius: 999px; background: rgba(124,227,181,0.16); color: #7CE3B5; display: flex; align-items: center; justify-content: center">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"></path><path d="m9 12 2 2 4-4"></path></svg>
+</span>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<h2 id="kyc-title" style="margin: 0; font-size: 15px; font-weight: 700; color: #7CE3B5">Identité vérifiée</h2>
+<span style="font-size: 13px; line-height: 18px; color: #B9BEC9">Requise pour les versements · vérifiée le 28 août 2026</span>
+</div>
+<a href="Compte.dc.html" style="flex: none; display: flex; align-items: center; min-height: 44px; padding: 0 6px; font-size: 14px; font-weight: 600; color: #7CE3B5">Gérer</a>
+</section>
+
+<section aria-labelledby="gl-title" style="display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px">
+<h2 id="gl-title" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Grand livre</h2>
+<span style="font-size: 12px; color: #8C93A3">1er août → 12 oct. 2026</span>
+</div>
+
+<div role="group" aria-label="Filtrer les mouvements" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; padding: 3px; border-radius: 14px; background: #1D2027; border: 1px solid #2C303A">
+<button type="button" aria-pressed="{{pAll}}" onClick="{{ showAll }}" style="min-height: 44px; border-radius: 11px; border: 0; background: {{bgAll}}; color: {{fgAll}}; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Tout</button>
+<button type="button" aria-pressed="{{pIn}}" onClick="{{ showIn }}" style="min-height: 44px; border-radius: 11px; border: 0; background: {{bgIn}}; color: {{fgIn}}; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Entrées</button>
+<button type="button" aria-pressed="{{pOut}}" onClick="{{ showOut }}" style="min-height: 44px; border-radius: 11px; border: 0; background: {{bgOut}}; color: {{fgOut}}; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Sorties</button>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 14px; background: #15171C; border: 1px solid #2C303A">
+<span style="font-size: 12px; font-weight: 600; color: #B9BEC9">Entrées</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; font-variant-numeric: tabular-nums; color: #62C7FF">{{totIn}}</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 14px; background: #15171C; border: 1px solid #2C303A">
+<span style="font-size: 12px; font-weight: 600; color: #B9BEC9">Sorties</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; font-variant-numeric: tabular-nums; color: #FF9E5E">{{totOut}}</span>
+</div>
+</div>
+
+<div style="border-radius: 16px; background: #060708; border: 1px solid #2C303A; overflow: hidden">
+<div style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 10px; padding: 10px 14px 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #8C93A3">
+<span>Date</span><span>Mouvement</span><span style="text-align: right">Montant · solde</span>
+</div>
+<div style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 14px; border-top: 1px solid #1A1C21; font-size: 13px; color: #8C93A3">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px">1 août</span>
+<span>Solde d'ouverture</span>
+<span style="text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums">0,00 $</span>
+</div>
+<sc-for list="{{groups}}" as="g" hint-placeholder-count="3">
+<div style="padding: 12px 14px 6px; border-top: 1px solid #1A1C21; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #B9BEC9">{{g.name}}</div>
+<sc-for list="{{g.rows}}" as="r" hint-placeholder-count="2">
+<div style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 10px; align-items: start; padding: 10px 14px 12px; border-top: 1px solid #1A1C21; background: {{r.rowBg}}">
+<span style="display: flex; flex-direction: column; line-height: 1.15">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 16px; font-variant-numeric: tabular-nums">{{r.day}}</span>
+<span style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #8C93A3">{{r.mon}}</span>
+</span>
+<span style="display: flex; flex-direction: column; gap: 3px; min-width: 0">
+<span style="display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 14px; font-weight: 600; line-height: 19px">
+<sc-if value="{{r.isChild}}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8C93A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M6 4v9h12"></path><path d="m14 9 4 4-4 4"></path></svg></sc-if>
+{{r.label}}
+<sc-if value="{{r.isHyp}}" hint-placeholder-val="{{ false }}"><span style="display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 999px; background: #262A33; color: #B9BEC9; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase">Hypothèse</span></sc-if>
+</span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3">{{r.sub}}</span>
+</span>
+<span style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums">
+<span style="font-weight: 600; font-size: 15px; color: {{r.color}}">{{r.amount}}</span>
+<span style="font-size: 11px; color: #8C93A3">{{r.balance}}</span>
+</span>
+</div>
+</sc-for>
+</sc-for>
+<div style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 12px 14px; border-top: 1px solid #2C303A; background: #15171C">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #B9BEC9">12 oct.</span>
+<span style="font-size: 14px; font-weight: 700">Solde de clôture</span>
+<span style="text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums">{{availTxt}}</span>
+</div>
+</div>
+
+<sc-if value="{{isFiltered}}" hint-placeholder-val="{{ false }}">
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #8C93A3">Filtre actif&#160;: chaque solde affiché reste celui du grand livre complet après le mouvement.</p>
+</sc-if>
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #8C93A3">Chaque commission de revente est une ligne distincte, placée sous la revente qui l'a déclenchée. Taux&#160;: hypothèse 10 %, dans une plage de 10 à 20 % à valider.</p>
+</section>
+
+<div style="display: flex; flex-direction: column; gap: 4px; font-size: 12px; line-height: 17px; color: #8C93A3">
+<p style="margin: 0; font-weight: 600; color: #B9BEC9">Montants fictifs de démonstration.</p>
+<p style="margin: 0">Aucun paiement réel. Compte •••• 4821 fictif. Un droit de voyage n'est pas un placement financier.</p>
+</div>
+
+</main>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const f = s.f || "all";
+    const step = s.step || "idle";
+    const sp = " ";
+    const money = (c, signed) => {
+      const a = Math.abs(c);
+      const ent = String(Math.floor(a / 100)).replace(/\B(?=(\d{3})+(?!\d))/g, sp);
+      const dec = String(a % 100).padStart(2, "0");
+      const sign = signed ? (c < 0 ? "−" : "+") : "";
+      return sign + ent + "," + dec + sp + "$";
+    };
+
+    const moves = [
+      { day: "28", mon: "août", month: "Août 2026", label: "Revente YUL → LIS", sub: "Droit cédé · Lisbonne · acheteur fictif · NXG-8LWA", c: 126000 },
+      { day: "28", mon: "août", month: "Août 2026", label: "Commission NexG-TT", sub: "10 % de 1 260,00 $ · plage 10–20 %", c: -12600, child: true },
+      { day: "3", mon: "sept.", month: "Septembre 2026", label: "Achat Drop YUL → PUJ", sub: "Punta Cana · 21 févr. 2027 · NXG-3HPD", c: -20000 },
+      { day: "2", mon: "oct.", month: "Octobre 2026", label: "Pass NexG · octobre", sub: "Abonnement mensuel · prix indicatif", c: -999 },
+      { day: "9", mon: "oct.", month: "Octobre 2026", label: "Remboursement", sub: "Ordre d'achat annulé · NXG-4K8P", c: 22799 }
+    ];
+    if (step === "done") {
+      moves.push({ day: "12", mon: "oct.", month: "Octobre 2026", label: "Versement · •••• 4821", sub: "En cours · démo, aucun paiement réel", c: -115200 });
+    }
+
+    let bal = 0, tin = 0, tout = 0;
+    const rows = moves.map((m) => {
+      bal += m.c;
+      if (m.c > 0) tin += m.c; else tout += m.c;
+      return {
+        day: m.day, mon: m.mon, month: m.month, label: m.label, sub: m.sub, c: m.c,
+        amount: money(m.c, true),
+        balance: "solde " + money(bal, false),
+        color: m.c > 0 ? "#62C7FF" : "#FF9E5E",
+        rowBg: m.child ? "#0E0F12" : "transparent",
+        isChild: !!m.child,
+        isHyp: !!m.child
+      };
+    });
+    const avail = bal;
+
+    const kept = rows.filter((r) => f === "all" || (f === "in" ? r.c > 0 : r.c < 0));
+    const groups = [];
+    kept.forEach((r) => {
+      let g = groups[groups.length - 1];
+      if (!g || g.name !== r.month) { g = { name: r.month, rows: [] }; groups.push(g); }
+      g.rows.push(r);
+    });
+
+    const availTxt = money(avail, false);
+    const balChars = availTxt.split("").map((ch) => {
+      if (/\d/.test(ch)) return { ch, w: "30px", bg: "#1C1F25", shadow: "inset 0 -24px 0 #15171B" };
+      if (ch === sp) return { ch: "", w: "4px", bg: "transparent", shadow: "none" };
+      return { ch, w: ch === "$" ? "22px" : "12px", bg: "transparent", shadow: "none" };
+    });
+
+    const seg = (on) => ({ p: on ? "true" : "false", bg: on ? "#F3F4F6" : "transparent", fg: on ? "#0D0E11" : "#B9BEC9" });
+    const sa = seg(f === "all"), si = seg(f === "in"), so = seg(f === "out");
+
+    return {
+      availTxt,
+      balChars,
+      isIdle: step === "idle",
+      isConfirm: step === "confirm",
+      isDone: step === "done",
+      groups,
+      isFiltered: f !== "all",
+      totIn: money(tin, true),
+      totOut: money(tout, true),
+      pAll: sa.p, bgAll: sa.bg, fgAll: sa.fg,
+      pIn: si.p, bgIn: si.bg, fgIn: si.fg,
+      pOut: so.p, bgOut: so.bg, fgOut: so.fg,
+      showAll: () => this.setState({ f: "all" }),
+      showIn: () => this.setState({ f: "in" }),
+      showOut: () => this.setState({ f: "out" }),
+      askPayout: () => this.setState({ step: "confirm" }),
+      cancelPayout: () => this.setState({ step: "idle" }),
+      confirmPayout: () => this.setState({ step: "done" }),
+      resetDemo: () => this.setState({ step: "idle" })
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+Proposer mon billet — NexG-TT
+Proposer mon billet — NexG-TT
+Proposer mon billet
+Ce que cherche l'acheteur M.
+INT-2K8M
+YUL
+PUJ
+15–28 févr. 2027
+1 voyageur · aller simple · Montréal → Punta Cana
+Prix max
+400 $
+Fonds réservés
+expire dans 12 j
+accepte automatiquement ≤ 400 $
+Votre billet compatible
+Dans la fenêtre
+Nordelle · direct
+Dim. 21 févr. 2027
+YUL
+PUJ
+07:30
+Montréal
+Direct · 4 h 45
+12:15
+Punta Cana
+Détenu
+Payé (Drop, 3 sept.)
+200 $
+Prix équivalent
+940 $
+Votre prix
+Accepter 400 $
+vente immédiate
+fonds déjà réservés
+400 $
+net 360 $
+Proposer
+450 $
+net 405 $ · réponse sous 48 h
+Proposer
+500 $
+net 450 $ · réponse sous 48 h
+Ou un autre prix
+{{priceLabel}}
+400 $ = son prix
+Plafond 940 $
+Plafond = prix équivalent d'un billet neuf sur ce vol. Règle provisoire, à valider.
+À ce prix
+{{priceRowLabel}}
+{{priceLabel}}
+Commission NexG-TT (hypothèse)
+10 % membre Pass · 12,5 % sans Pass
+{{commissionLabel}}
+Net reçu sur votre solde
+{{netLabel}}
+Écart par rapport au prix payé (200 $)
+{{diffLabel}}
+Chances d'acceptation
+{{odds.label}}
+{{odds.why}}
+À l'accord, ce droit est cédé à l'acheteur. L'annonce en cours sur le marché (le cas échéant) est retirée. L'acheteur nomme ensuite le voyageur avant l'échéance.
+Montants fictifs. Un droit de voyage n'est pas un placement financier.
+Net reçu
+{{netLabel}}
+{{oddsShort}}
+{{ctaLabel}}

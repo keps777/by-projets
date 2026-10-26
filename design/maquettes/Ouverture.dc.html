@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Ouverture — NexG-TT</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Barlow:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#0D0E11}
+a{color:#FFD23F}a:hover{color:#FFE27A}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #FFD23F;outline-offset:2px}
+[data-face="voyage"] a{color:#1A64C8}[data-face="voyage"] a:hover{color:#124C9C}
+[data-face="voyage"] a:focus-visible,[data-face="voyage"] button:focus-visible{outline:2px solid #1A64C8;outline-offset:2px}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes nx-fade{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes nx-rise{0%{transform:translateY(100%)}100%{transform:translateY(0)}}
+@media (prefers-reduced-motion: reduce){[data-nx-motion]{animation:none !important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0D0E11; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<main style="flex: 1; display: flex; flex-direction: column; gap: 16px; padding: 52px 20px 0">
+
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 24px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">
+<span style="display: inline-flex; align-items: center; gap: 8px">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h6l4 7h2l-2-7h5l2 2h2l-1-3 1-3h-2l-2 2h-5l2-7h-2l-4 7H3z"></path></svg>
+Départs · Departures
+</span>
+<span>YUL · 12 oct.</span>
+</div>
+
+<section role="img" aria-label="Tableau des départs qui s'arrête sur NEXG·TT, Next Generation Travel Ticket" style="flex: none; border-radius: 18px; background: #060708; border: 1px solid #2C303A; overflow: hidden">
+<div style="display: grid; grid-template-columns: 52px 66px 1fr auto; gap: 10px; padding: 10px 14px 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #8C93A3">
+<span>Heure</span><span>Dest.</span><span>Ville</span><span>Statut</span>
+</div>
+
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 12px 14px 14px; border-top: 1px solid #1A1C21">
+<div style="display: flex; gap: 5px">
+<sc-for list="{{brand}}" as="c" hint-placeholder-count="7">
+<span style="position: relative; width: 40px; height: 58px; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: #1C1F25; box-shadow: inset 0 -29px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 34px; color: {{c.color}}; transition: color 160ms ease">{{c.ch}}<span style="position: absolute; left: 0; right: 0; top: 28px; height: 2px; background: #060708"></span></span>
+</sc-for>
+</div>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: #8C93A3">Next Generation Travel Ticket</span>
+</div>
+
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="3">
+<div style="display: grid; grid-template-columns: 52px 66px 1fr auto; align-items: center; gap: 10px; min-height: 42px; padding: 0 14px; border-top: 1px solid #1A1C21">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; font-size: 14px; font-variant-numeric: tabular-nums; color: #F3F4F6">{{r.time}}</span>
+<span style="display: flex; gap: 3px">
+<sc-for list="{{r.cells}}" as="k" hint-placeholder-count="3">
+<span style="width: 20px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: #1C1F25; box-shadow: inset 0 -14px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; color: {{k.color}}">{{k.ch}}</span>
+</sc-for>
+</span>
+<span style="font-size: 14px; font-weight: 500; color: #B9BEC9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.city}}</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: {{r.statusColor}}">
+<span data-nx-motion="1" style="width: 6px; height: 6px; border-radius: 999px; background: {{r.statusColor}}; animation: nx-pulse 1.4s ease-in-out infinite; animation-play-state: {{r.pulse}}"></span>
+{{r.status}}
+</span>
+</div>
+</sc-for>
+</section>
+
+<div data-nx-motion="1" style="display: flex; flex-direction: column; gap: 10px; animation: nx-fade 520ms cubic-bezier(.2,.7,.2,1) 1500ms both">
+<h1 style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 46px; line-height: 44px; letter-spacing: 0.005em">Un billet,<br><span style="color: #FFD23F">deux faces.</span></h1>
+<p style="margin: 0; font-size: 15px; line-height: 22px; color: #B9BEC9">Réservez votre vol. Revendez-le si vos plans changent. Nommez le voyageur avant le départ.</p>
+</div>
+
+</main>
+
+<section data-face="voyage" aria-label="Commencer" data-nx-motion="1" style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; gap: 12px; padding: 20px 20px 26px; border-radius: 28px 28px 0 0; background: #EEF3F8; color: #0B1B2E; animation: nx-rise 640ms cubic-bezier(.2,.8,.2,1) 1700ms both">
+
+<div aria-hidden="true" style="position: relative; display: grid; grid-template-columns: 1fr 1fr; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 0 #D3DCE6, 0 12px 32px rgba(11,27,46,0.10)">
+<span style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px 12px 16px; background: #FFFFFF; color: #0B1B2E">
+<span style="display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #3E4F66">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+Recto
+</span>
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 24px; line-height: 26px">Voyager</span>
+<span style="font-size: 12px; line-height: 16px; color: #3E4F66">Chercher, réserver, partir</span>
+</span>
+<span style="display: flex; flex-direction: column; gap: 2px; padding: 12px 16px 12px 18px; background: #0B1B2E; color: #FFFFFF">
+<span style="display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #C9D3DF">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg>
+Verso
+</span>
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 24px; line-height: 26px">Gérer</span>
+<span style="font-size: 12px; line-height: 16px; color: #C9D3DF">Revendre, transférer, nommer</span>
+</span>
+<span style="position: absolute; left: 50%; top: 10px; bottom: 10px; border-left: 2px dashed #B9C5D3"></span>
+<span style="position: absolute; left: calc(50% - 10px); top: -10px; width: 20px; height: 20px; border-radius: 999px; background: #EEF3F8"></span>
+<span style="position: absolute; left: calc(50% - 10px); bottom: -10px; width: 20px; height: 20px; border-radius: 999px; background: #EEF3F8"></span>
+</div>
+
+<a href="Langue.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 56px; border-radius: 14px; background: #FFD23F; color: #0B1B2E; font-weight: 700; font-size: 17px; text-decoration: none; border: 0">
+Commencer
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+</a>
+<a href="Connexion.dc.html" style="display: flex; align-items: center; justify-content: center; min-height: 44px; margin-top: -4px; font-size: 16px; font-weight: 600; text-decoration: none">J'ai déjà un compte</a>
+<p style="margin: -4px 0 0; text-align: center; font-size: 12px; color: #5A6A80">Prototype · données fictives · aucun paiement réel</p>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  componentDidMount() {
+    let reduce = false;
+    try {
+      reduce = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (e) {
+      reduce = false;
+    }
+    if (reduce) return;
+    this.setState({ tick: 0 });
+    this.timer = setInterval(() => {
+      const s = this.state || {};
+      const t = (s.tick ?? 0) + 1;
+      if (t >= 32) {
+        clearInterval(this.timer);
+        this.timer = null;
+      }
+      this.setState({ tick: t });
+    }, 55);
+  }
+  componentWillUnmount() {
+    if (this.timer) clearInterval(this.timer);
+    this.timer = null;
+  }
+  renderVals() {
+    const s = this.state || {};
+    const tick = s.tick ?? 99;
+    const pool = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const flap = (target, seed, settleAt) => {
+      const done = tick >= settleAt;
+      return {
+        ch: done ? target : pool.charAt((tick * 7 + seed * 11 + 3) % pool.length),
+        color: done ? '#FFD23F' : '#8C93A3'
+      };
+    };
+    const brand = 'NEXG·TT'.split('').map((ch, i) => flap(ch, i + 5, 10 + i * 3));
+    const raw = [
+      { time: '18:05', code: 'CDG', city: 'Paris', status: "À l'heure", statusColor: '#7CE3B5', pulse: 'paused' },
+      { time: '19:30', code: 'PUJ', city: 'Punta Cana', status: 'Revente', statusColor: '#62C7FF', pulse: 'paused' },
+      { time: '21:15', code: 'LIS', city: 'Lisbonne', status: 'Embarq.', statusColor: '#FFD23F', pulse: 'running' }
+    ];
+    const rows = raw.map((r, ri) => ({
+      ...r,
+      cells: r.code.split('').map((ch, j) => flap(ch, ri * 3 + j, 6 + ri * 4 + j * 2))
+    }));
+    return { brand, rows };
+  }
+}
+</script>
+</body>
+</html>

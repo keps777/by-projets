@@ -1,0 +1,64 @@
+Publier une intention d'achat
+Dites votre prix — NexG-TT
+Dites votre prix
+Intention d'achat
+Vous dites votre prix et réservez les fonds. Les détenteurs d'un billet compatible viennent à vous.
+Départ
+{{depCode}}
+Arrivée
+{{arrCode}}
+Aller simple
+Aller-retour
+Fenêtre de départ
+Du
+Au
+Flexible
+{{windowHelp}}
+Fenêtre de retour
+Choisir les dates de retour
+Voyageurs
+{{paxLabel}}
+Prix maximum
+par voyageur
+{{prixLabel}}
+{{prixVsNew}}
+Ajuster le prix maximum (pas de 10 $)
+600 $
+2 050 $
+Repères aujourd'hui
+Vous :
+{{prixLabel}}
+· Meilleure revente actuelle
+1 500 $
+· Neuf
+2 050 $
+{{sellersLabel}}
+Chances d'accord : {{chanceLabel}}
+{{chanceHelp}} Estimation à partir des billets en vente aujourd'hui, pas une garantie.
+Validité de l'intention
+7 jours
+30 jours
+Jusqu'à J-3
+{{validityHelp}}
+Options
+Accepter automatiquement toute proposition ≤ mon prix
+{{autoHelp}}
+Recevoir les propositions au-dessus de mon prix
+{{aboveHelp}}
+Rester anonyme (initiale seulement)
+{{anonHelp}}
+Comment ça marche
+1
+Vous réservez les fonds, sans débit.
+Ils restent sur votre carte ou votre solde, simplement mis de côté.
+2
+Les vendeurs de ce trajet voient votre intention et proposent.
+À votre prix, ou au-dessus si vous l'autorisez.
+3
+Vous acceptez ou non.
+L'argent n'est pris qu'à l'accord. Sans accord, il est libéré à l'expiration.
+Hypothèse
+Modalités de réservation des fonds à valider (cadre juridique).
+Réserver
+{{prixLabel}}
+et publier

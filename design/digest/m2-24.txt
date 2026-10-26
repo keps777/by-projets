@@ -1,0 +1,58 @@
+Transférer à un proche : échéance proche — NexG-TT
+Transférer à un proche : échéance proche — NexG-TT
+Confirmer
+MODE DÉMO — aucun paiement réel
+Étape 2 sur 3 · Confirmer
+Vérifiez avant de transférer
+Échéance de finalisation
+0
+6
+H
+4
+5
+MIN
+Il reste 6 h 45 · échéance 13 déc. 18:05
+Après l'échéance, plus aucune transaction n'est possible sur ce billet.
+Échéance proche : Léa A. aura peu de temps
+Léa A. doit nommer le voyageur avant ce moment, sinon elle sera nommée voyageur par défaut.
+Seuil de l'avertissement : hypothèse à valider [H].
+Je comprends que Léa A. n'aura que 6 h 45 pour nommer le voyageur.
+De
+AT
+Alex T.
+Vous, détenteur
+À
+LA
+Léa A.
+@lea.ailleurs
+Modifier le proche
+YUL → CDG
+Lun. 14 déc. 2026
+Aérolys 812 · 18:05
+Statut
+Détenu
+Ce qui va se passer
+1
+Léa A. devient détenteur de ce droit tout de suite.
+2
+Votre statut passe à « Cédé ». Le droit reste dans votre historique.
+3
+Léa A. dispose de 6 h 45 pour nommer le voyageur, avant le 13 déc. 18:05. Sans nom à cette échéance, elle est nommée voyageur par défaut.
+4
+Aucune vente : aucun paiement ne passe entre vous.
+Coût du transfert
+Frais de transfert
+Hypothèse à valider
+{{fraisLabel}}
+Total à payer
+{{fraisLabel}}
+Montant fictif de la maquette : les frais ne sont pas décidés.
+Action définitive :
+une fois le transfert fait, seule Léa A. peut agir sur ce droit.
+Hypothèse [H] : ni refus ni annulation n'est prévu.
+Je confirme transférer ce droit à Léa A. (@lea.ailleurs) et je comprends que c'est définitif.
+Démo
+Simuler un échec du transfert
+Transférer à Léa A.
+Transférer à Léa A.
+Cochez les deux confirmations pour continuer.

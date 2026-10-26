@@ -1,0 +1,55 @@
+Revendre — NexG-TT
+Revendre — NexG-TT
+Revendre
+YUL → CDG
+Lun. 14 déc. 2026
+Aérolys 812 · 18:05
+Payé
+1 000 $
+Votre prix de vente
+{{priceLabel}}
+{{gapToCap}}
+sous le prix équivalent neuf (2 000 $)
+Au plafond : égal au prix équivalent neuf
+500 $
+Plafond 2 000 $
+Plafond = prix équivalent d'un billet neuf sur ce vol. Règle provisoire anti-spéculation, à valider.
+Suggestion IA · estimation
+Appliquer
+Appliquée
+1 650 $
+vente estimée sous 6 jours
+D'après les annonces et la demande sur ce vol. Estimation, non garantie.
+Annonces sur ce vol
+{{rankLabel}}
+500 $
+Annonces
+Vous
+Estimation
+2 000 $
+{{m.label}}
+{{m.price}}
+Ce que vous recevez
+Prix de vente
+{{priceLabel}}
+Commission NexG-TT (hypothèse)
+{{rateLabel}} · membre Pass
+{{commissionLabel}}
+Vous recevez
+{{netLabel}}
+Par rapport au prix payé (1 000 $), si la vente a lieu
+{{diffLabel}}
+Commission
+{{rateLabel}}
+Membre Pass · vous
+{{noPassRateLabel}}
+Sans Pass
+Taux hypothétiques (10 à 20 %), prélevés seulement si la vente a lieu. Alex T. est membre Pass : le taux membre s'applique.
+Accepter une offre de rachat NexG-TT
+Liquidité immédiate : NexG-TT peut vous proposer un prix ferme. Il vous est soumis avant toute vente — règle à valider.
+Retrait automatique de l'annonce à J-1 (13 déc. 18:05).
+Prix indicatifs. Un droit de voyage n'est pas un placement financier.
+Vous recevez
+{{netLabel}}
+Commission {{rateLabel}} (hypothèse)
+Mettre en vente à {{priceLabel}}

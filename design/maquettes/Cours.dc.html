@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Cours du vol — NexG-TT</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Barlow:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#0D0E11}
+a{color:#FFD23F}a:hover{color:#FFE27A}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #FFD23F;outline-offset:2px}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@media (prefers-reduced-motion: reduce){[data-pulse]{animation:none!important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0D0E11; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="padding: 52px 12px 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<a href="Marche.dc.html" aria-label="Retour" style="width: 44px; height: 44px; flex: none; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: #F3F4F6; text-decoration: none">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+</a>
+<h1 style="margin: 0; flex: 1; text-align: center; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 20px; letter-spacing: 0.04em; text-transform: uppercase">Cours du vol</h1>
+<button type="button" onClick="{{ toggleAlert }}" aria-pressed="{{alert.pressed}}" aria-label="Alerte de prix sur ce vol" style="width: 44px; height: 44px; flex: none; box-sizing: border-box; border-radius: 999px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: {{alert.bg}}; color: {{alert.fg}}; border: 1px solid {{alert.border}}">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16v-5a6 6 0 1 1 12 0v5l2 2H4z"></path><path d="M10 21h4"></path></svg>
+</button>
+</header>
+
+<main style="flex: 1; overflow-y: auto; padding: 4px 20px 120px; display: flex; flex-direction: column; gap: 20px">
+
+<section aria-label="Vol" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px; border-radius: 16px; background: #060708; border: 1px solid #2C303A">
+<div style="display: flex; align-items: center; gap: 8px" aria-label="Montréal YUL vers Paris CDG" role="img">
+<span style="display: flex; gap: 3px">
+<span style="width: 22px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: #1C1F25; box-shadow: inset 0 -15px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: #FFD23F">Y</span>
+<span style="width: 22px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: #1C1F25; box-shadow: inset 0 -15px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: #FFD23F">U</span>
+<span style="width: 22px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: #1C1F25; box-shadow: inset 0 -15px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: #FFD23F">L</span>
+</span>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8C93A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+<span style="display: flex; gap: 3px">
+<span style="width: 22px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: #1C1F25; box-shadow: inset 0 -15px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: #FFD23F">C</span>
+<span style="width: 22px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: #1C1F25; box-shadow: inset 0 -15px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: #FFD23F">D</span>
+<span style="width: 22px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: #1C1F25; box-shadow: inset 0 -15px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: #FFD23F">G</span>
+</span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px; text-align: right">
+<span style="font-size: 14px; font-weight: 600">Aérolys 816</span>
+<span style="font-size: 13px; color: #B9BEC9">ven. 18 déc.</span>
+</div>
+</section>
+
+<section aria-labelledby="px-title" style="display: flex; flex-direction: column; gap: 8px">
+<p id="px-title" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Meilleure offre de revente</p>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 60px; line-height: 60px; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; white-space: nowrap">1 500 $</span>
+<div style="display: flex; align-items: center; flex-wrap: wrap; gap: 10px">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 10px; border-radius: 999px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums; white-space: nowrap; background: {{chg.soft}}; color: {{chg.color}}">
+<sc-if value="{{chg.isDown}}" hint-placeholder-val="{{ true }}">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 8 6 6 4-4 6 7"></path><path d="M15 17h5v-5"></path></svg>
+</sc-if>
+<sc-if value="{{chg.isUp}}" hint-placeholder-val="{{ false }}">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 16 6-6 4 4 6-7"></path><path d="M15 7h5v5"></path></svg>
+</sc-if>
+{{chg.text}}
+</span>
+<span style="font-size: 13px; font-weight: 500; color: #B9BEC9">{{chg.period}}</span>
+<span style="font-size: 13px; color: #8C93A3">· mis à jour à 16:42</span>
+</div>
+<sc-if value="{{alert.on}}" hint-placeholder-val="{{ false }}">
+<p role="status" style="margin: 0; display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 12px; background: rgba(255,210,63,0.12); color: #FFD23F; font-size: 13px; font-weight: 600">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="m5 12 5 5 9-10"></path></svg>
+Alerte activée : vous serez prévenu si la meilleure offre change.
+</p>
+</sc-if>
+</section>
+
+<section aria-label="Repères de prix" style="display: grid; grid-template-columns: 1fr 1fr; border-radius: 16px; background: #15171C; border: 1px solid #2C303A">
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 14px 14px 14px 16px; border-right: 1px solid #2C303A">
+<span style="font-size: 13px; font-weight: 500; color: #B9BEC9">Prix équivalent neuf</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 20px; font-variant-numeric: tabular-nums; white-space: nowrap">2 050 $</span>
+<span style="font-size: 12px; color: #8C93A3">Offre 26,8 % sous le neuf</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 14px 16px 14px 14px">
+<span style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #B9BEC9">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+Plafond de revente</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 20px; font-variant-numeric: tabular-nums; white-space: nowrap">2 050 $</span>
+<span style="font-size: 12px; color: #8C93A3">Règle provisoire</span>
+</div>
+</section>
+
+<section aria-labelledby="ch-title" style="display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<h2 id="ch-title" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Historique</h2>
+<div role="group" aria-label="Période du graphique" style="display: flex; gap: 2px; padding: 2px; border-radius: 12px; background: #15171C; border: 1px solid #2C303A">
+<button type="button" onClick="{{ pick1S }}" aria-pressed="{{tab1S.pressed}}" style="min-width: 44px; min-height: 44px; padding: 0 8px; border: 0; border-radius: 10px; cursor: pointer; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 14px; background: {{tab1S.bg}}; color: {{tab1S.fg}}">1S</button>
+<button type="button" onClick="{{ pick1M }}" aria-pressed="{{tab1M.pressed}}" style="min-width: 44px; min-height: 44px; padding: 0 8px; border: 0; border-radius: 10px; cursor: pointer; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 14px; background: {{tab1M.bg}}; color: {{tab1M.fg}}">1M</button>
+<button type="button" onClick="{{ pick3M }}" aria-pressed="{{tab3M.pressed}}" style="min-width: 44px; min-height: 44px; padding: 0 8px; border: 0; border-radius: 10px; cursor: pointer; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 14px; background: {{tab3M.bg}}; color: {{tab3M.fg}}">3M</button>
+<button type="button" onClick="{{ pickAll }}" aria-pressed="{{tabAll.pressed}}" style="min-width: 44px; min-height: 44px; padding: 0 8px; border: 0; border-radius: 10px; cursor: pointer; font-family: 'Barlow', system-ui, sans-serif; font-weight: 700; font-size: 14px; background: {{tabAll.bg}}; color: {{tabAll.fg}}">Tout</button>
+</div>
+</div>
+
+<div style="border-radius: 16px; background: #060708; border: 1px solid #2C303A; padding: 10px 0 8px; overflow: hidden">
+<div style="position: relative; width: 348px; height: 200px">
+<svg role="img" aria-label="{{chart.label}}" width="348" height="200" viewBox="0 0 348 200">
+<path d="{{chart.grid}}" fill="none" stroke="#1A1D23" stroke-width="1"></path>
+<path d="{{chart.area}}" fill="{{chart.color}}" fill-opacity="0.10" stroke="none"></path>
+<path d="{{chart.neuf}}" fill="none" stroke="#B9BEC9" stroke-width="1.5" stroke-dasharray="5 5"></path>
+<path d="{{chart.line}}" fill="none" stroke="{{chart.color}}" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="{{chart.vol}}" fill="#3A3F4B" stroke="none"></path>
+<path d="{{chart.volLast}}" fill="#8C93A3" stroke="none"></path>
+<circle cx="{{chart.lastX}}" cy="{{chart.lastY}}" r="9" fill="{{chart.color}}" fill-opacity="0.25" data-pulse="1" style="animation: nx-pulse 1.6s ease-in-out infinite"></circle>
+<circle cx="{{chart.lastX}}" cy="{{chart.lastY}}" r="4" fill="{{chart.color}}"></circle>
+</svg>
+<sc-for list="{{chart.yLabels}}" as="g" hint-placeholder-count="4">
+<span aria-hidden="true" style="position: absolute; right: 6px; top: {{g.top}}; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; font-variant-numeric: tabular-nums; color: #8C93A3; white-space: nowrap">{{g.text}}</span>
+</sc-for>
+<span aria-hidden="true" style="position: absolute; right: 62px; top: {{chart.neufTop}}; padding: 1px 6px; border-radius: 4px; background: #060708; font-size: 11px; font-weight: 600; color: #B9BEC9; white-space: nowrap">Neuf = plafond</span>
+</div>
+<div aria-hidden="true" style="display: flex; justify-content: space-between; padding: 4px 62px 0 8px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #8C93A3; white-space: nowrap">
+<span>{{chart.x0}}</span><span>{{chart.x1}}</span><span>{{chart.x2}}</span>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: #B9BEC9">
+<span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 16px; height: 0; border-top: 2px solid {{chart.color}}"></span>Meilleure offre</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 16px; height: 0; border-top: 2px dashed #B9BEC9"></span>Prix neuf = plafond</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 8px; height: 12px; background: #3A3F4B; border-radius: 1px"></span>Transactions</span>
+</div>
+</section>
+
+<section aria-labelledby="ob-title" style="display: flex; flex-direction: column; gap: 12px; padding: 18px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px">
+<h2 id="ob-title" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Carnet d'ordres</h2>
+<span style="font-size: 12px; color: #8C93A3">Billets · cumul</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 2px">
+<p id="asks-title" style="margin: 0 0 4px; display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #FF9E5E">
+<span style="width: 8px; height: 8px; border-radius: 2px; background: #FF9E5E"></span>Offres de vente</p>
+<ul aria-labelledby="asks-title" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 2px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 15px">
+<li style="position: relative; display: grid; grid-template-columns: 1fr 44px 44px; align-items: center; height: 32px; padding: 0 8px; border-radius: 6px; overflow: hidden">
+<span aria-hidden="true" style="position: absolute; right: 0; top: 0; bottom: 0; width: 56%; background: #FF9E5E; opacity: 0.18"></span>
+<span style="position: relative; color: #FF9E5E; font-weight: 600">1 700 $</span><span style="position: relative; text-align: right">×1</span><span style="position: relative; text-align: right; color: #B9BEC9">5</span>
+</li>
+<li style="position: relative; display: grid; grid-template-columns: 1fr 44px 44px; align-items: center; height: 32px; padding: 0 8px; border-radius: 6px; overflow: hidden">
+<span aria-hidden="true" style="position: absolute; right: 0; top: 0; bottom: 0; width: 44%; background: #FF9E5E; opacity: 0.18"></span>
+<span style="position: relative; color: #FF9E5E; font-weight: 600">1 610 $</span><span style="position: relative; text-align: right">×1</span><span style="position: relative; text-align: right; color: #B9BEC9">4</span>
+</li>
+<li style="position: relative; display: grid; grid-template-columns: 1fr 44px 44px; align-items: center; height: 32px; padding: 0 8px; border-radius: 6px; overflow: hidden">
+<span aria-hidden="true" style="position: absolute; right: 0; top: 0; bottom: 0; width: 33%; background: #FF9E5E; opacity: 0.18"></span>
+<span style="position: relative; color: #FF9E5E; font-weight: 600">1 520 $</span><span style="position: relative; text-align: right">×2</span><span style="position: relative; text-align: right; color: #B9BEC9">3</span>
+</li>
+<li style="position: relative; display: grid; grid-template-columns: 1fr 44px 44px; align-items: center; height: 32px; padding: 0 8px; border-radius: 6px; overflow: hidden; box-shadow: inset 0 0 0 1px rgba(255,158,94,0.45)">
+<span aria-hidden="true" style="position: absolute; right: 0; top: 0; bottom: 0; width: 11%; background: #FF9E5E; opacity: 0.18"></span>
+<span style="position: relative; display: flex; align-items: center; gap: 8px; color: #FF9E5E; font-weight: 600">1 500 $<span style="font-family: 'Barlow', system-ui, sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #F3F4F6">Meilleure</span></span><span style="position: relative; text-align: right">×1</span><span style="position: relative; text-align: right; color: #B9BEC9">1</span>
+</li>
+</ul>
+</div>
+
+<div style="display: flex; align-items: center; gap: 10px; padding: 2px 0">
+<span style="flex: 1; border-top: 1px dashed #3A3F4B"></span>
+<span style="font-size: 13px; font-weight: 600; color: #B9BEC9; white-space: nowrap">Écart <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #F3F4F6; font-variant-numeric: tabular-nums">80 $ · 5,3 %</span></span>
+<span style="flex: 1; border-top: 1px dashed #3A3F4B"></span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 2px">
+<p id="bids-title" style="margin: 0 0 4px; display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #62C7FF">
+<span style="width: 8px; height: 8px; border-radius: 2px; background: #62C7FF"></span>Demandes d'achat</p>
+<ul aria-labelledby="bids-title" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 2px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 15px">
+<li style="position: relative; display: grid; grid-template-columns: 1fr 44px 44px; align-items: center; height: 32px; padding: 0 8px; border-radius: 6px; overflow: hidden; box-shadow: inset 0 0 0 1px rgba(98,199,255,0.45)">
+<span aria-hidden="true" style="position: absolute; right: 0; top: 0; bottom: 0; width: 33%; background: #62C7FF; opacity: 0.18"></span>
+<span style="position: relative; display: flex; align-items: center; gap: 8px; color: #62C7FF; font-weight: 600">1 420 $<span style="font-family: 'Barlow', system-ui, sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #F3F4F6">Meilleure</span></span><span style="position: relative; text-align: right">×3</span><span style="position: relative; text-align: right; color: #B9BEC9">3</span>
+</li>
+<li style="position: relative; display: grid; grid-template-columns: 1fr 44px 44px; align-items: center; height: 32px; padding: 0 8px; border-radius: 6px; overflow: hidden">
+<span aria-hidden="true" style="position: absolute; right: 0; top: 0; bottom: 0; width: 56%; background: #62C7FF; opacity: 0.18"></span>
+<span style="position: relative; color: #62C7FF; font-weight: 600">1 400 $</span><span style="position: relative; text-align: right">×2</span><span style="position: relative; text-align: right; color: #B9BEC9">5</span>
+</li>
+<li style="position: relative; display: grid; grid-template-columns: 1fr 44px 44px; align-items: center; height: 32px; padding: 0 8px; border-radius: 6px; overflow: hidden">
+<span aria-hidden="true" style="position: absolute; right: 0; top: 0; bottom: 0; width: 100%; background: #62C7FF; opacity: 0.18"></span>
+<span style="position: relative; color: #62C7FF; font-weight: 600">1 350 $</span><span style="position: relative; text-align: right">×4</span><span style="position: relative; text-align: right; color: #B9BEC9">9</span>
+</li>
+</ul>
+</div>
+<p style="margin: 0; display: flex; align-items: center; gap: 8px; font-size: 12px; color: #8C93A3">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+Aucune offre ne peut dépasser le plafond de 2 050 $.</p>
+</section>
+
+<section aria-labelledby="tx-title" style="display: flex; flex-direction: column; gap: 10px">
+<h2 id="tx-title" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Dernières transactions</h2>
+<table style="width: 100%; border-collapse: collapse; border-radius: 16px; overflow: hidden; background: #060708; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px">
+<thead>
+<tr style="font-family: 'Barlow', system-ui, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #8C93A3">
+<th scope="col" style="text-align: left; padding: 10px 14px 6px; font-weight: 700">Heure</th>
+<th scope="col" style="text-align: right; padding: 10px 8px 6px; font-weight: 700">Prix</th>
+<th scope="col" style="text-align: right; padding: 10px 8px 6px; font-weight: 700">Qté</th>
+<th scope="col" style="text-align: right; padding: 10px 14px 6px; font-weight: 700">Var.</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-top: 1px solid #1A1C21">
+<td style="padding: 12px 14px; color: #B9BEC9">16:42</td>
+<td style="padding: 12px 8px; text-align: right; font-weight: 600; white-space: nowrap">1 510 $</td>
+<td style="padding: 12px 8px; text-align: right">×1</td>
+<td style="padding: 12px 14px; text-align: right; color: #FF9E5E; font-weight: 600; white-space: nowrap">−15 $</td>
+</tr>
+<tr style="border-top: 1px solid #1A1C21">
+<td style="padding: 12px 14px; color: #B9BEC9">14:05</td>
+<td style="padding: 12px 8px; text-align: right; font-weight: 600; white-space: nowrap">1 525 $</td>
+<td style="padding: 12px 8px; text-align: right">×1</td>
+<td style="padding: 12px 14px; text-align: right; color: #FF9E5E; font-weight: 600; white-space: nowrap">−15 $</td>
+</tr>
+<tr style="border-top: 1px solid #1A1C21">
+<td style="padding: 12px 14px; color: #B9BEC9">11:18</td>
+<td style="padding: 12px 8px; text-align: right; font-weight: 600; white-space: nowrap">1 540 $</td>
+<td style="padding: 12px 8px; text-align: right">×2</td>
+<td style="padding: 12px 14px; text-align: right; color: #62C7FF; font-weight: 600; white-space: nowrap">+5 $</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<p style="margin: 0; display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(255,210,63,0.12); color: #FFD23F; font-size: 13px; font-weight: 600; line-height: 18px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+<span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">J-67</span> avant le départ : les échanges s'arrêtent le 17 déc. à 18:05, à la finalisation nominative.</span>
+</p>
+
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #8C93A3">Prix indicatifs. Un droit de voyage n'est pas un placement financier. Données de démonstration.</p>
+
+</main>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 20px 28px; background: #0D0E11; border-top: 1px solid #2C303A; display: flex; gap: 10px">
+<a href="Ordre.dc.html" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; box-sizing: border-box; border-radius: 14px; background: #1D2027; color: #F3F4F6; border: 1px solid #3A3F4B; font-weight: 700; font-size: 16px; text-decoration: none">Placer un ordre</a>
+<a href="Paiement.dc.html" style="flex: 1.25; display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #FFD23F; color: #0D0E11; font-weight: 700; font-size: 16px; text-decoration: none; border: 0; white-space: nowrap">Acheter <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-variant-numeric: tabular-nums">1 500 $</span></a>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const range = s.range || '1S';
+    const alertOn = !!s.alert;
+    const set = (patch) => this.setState({ ...(this.state || {}), ...patch });
+    const UP = '#62C7FF';
+    const DOWN = '#FF9E5E';
+    const group = (v) => String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    const money = (v) => group(v) + ' $';
+    const pct = (v) => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1).replace('.', ',') + ' %';
+    const f = (v) => v.toFixed(1);
+
+    const data = {
+      '1S': {
+        offer: [1566, 1602, 1571, 1585, 1548, 1532, 1519, 1500],
+        neuf: [2012, 2015, 2020, 2026, 2030, 2038, 2044, 2050],
+        vol: [2, 1, 3, 1, 2, 4, 2, 3],
+        ticks: ['5 oct.', '8 oct.', '12 oct.'],
+        period: 'sur 7 jours'
+      },
+      '1M': {
+        offer: [1420, 1432, 1428, 1450, 1466, 1458, 1480, 1502, 1518, 1534, 1546, 1558, 1602, 1585, 1532, 1500],
+        neuf: [1969, 1972, 1978, 1981, 1990, 1994, 1999, 2003, 2008, 2010, 2006, 2011, 2015, 2026, 2038, 2050],
+        vol: [1, 2, 1, 3, 2, 2, 4, 3, 2, 5, 3, 4, 6, 3, 4, 3],
+        ticks: ['12 sept.', '27 sept.', '12 oct.'],
+        period: 'sur 1 mois'
+      },
+      '3M': {
+        offer: [1310, 1295, 1330, 1352, 1342, 1380, 1405, 1398, 1415, 1432, 1470, 1525, 1566, 1500],
+        neuf: [1876, 1880, 1889, 1897, 1905, 1912, 1925, 1938, 1950, 1972, 1990, 2008, 2012, 2050],
+        vol: [4, 6, 5, 8, 7, 9, 11, 10, 12, 14, 13, 17, 19, 18],
+        ticks: ['13 juil.', '27 août', '12 oct.'],
+        period: 'sur 3 mois'
+      },
+      'Tout': {
+        offer: [1180, 1150, 1210, 1262, 1240, 1300, 1310, 1398, 1420, 1500],
+        neuf: [1620, 1640, 1690, 1735, 1760, 1810, 1876, 1938, 1969, 2050],
+        vol: [8, 12, 15, 22, 26, 31, 38, 44, 52, 61],
+        ticks: ['12 janv.', 'mai', '12 oct.'],
+        period: 'depuis le 12 janv.'
+      }
+    };
+    const d = data[range] || data['1S'];
+    const n = d.offer.length;
+    const first = d.offer[0];
+    const last = d.offer[n - 1];
+    const change = (last - first) / first * 100;
+    const isDown = change < 0;
+    const color = isDown ? DOWN : UP;
+
+    const X0 = 8;
+    const X1 = 286;
+    const TOP = 14;
+    const BOT = 136;
+    const VBASE = 196;
+    const VH = 40;
+    const lo = Math.floor((Math.min(...d.offer) - 40) / 100) * 100;
+    const hi = Math.ceil((Math.max(...d.neuf) + 30) / 100) * 100;
+    const xs = d.offer.map((_, i) => X0 + (X1 - X0) * i / (n - 1));
+    const y = (v) => TOP + (hi - v) / (hi - lo) * (BOT - TOP);
+    const toPath = (arr) => arr.map((v, i) => (i ? 'L' : 'M') + f(xs[i]) + ',' + f(y(v))).join(' ');
+
+    const line = toPath(d.offer);
+    const neuf = toPath(d.neuf);
+    const area = line + ' L' + f(X1) + ',' + BOT + ' L' + f(X0) + ',' + BOT + ' Z';
+
+    let grid = '';
+    for (let i = 0; i <= 8; i++) {
+      const gx = X0 + (X1 - X0) * i / 8;
+      grid += 'M' + f(gx) + ',' + TOP + ' V' + VBASE + ' ';
+    }
+    const gridVals = [];
+    for (let v = Math.ceil(lo / 200) * 200; v <= hi; v += 200) gridVals.push(v);
+    gridVals.forEach((v) => { grid += 'M' + X0 + ',' + f(y(v)) + ' H' + X1 + ' '; });
+    grid += 'M' + X0 + ',' + (VBASE - VH - 4) + ' H' + X1 + ' M' + X0 + ',' + VBASE + ' H' + X1;
+
+    const maxVol = Math.max(...d.vol);
+    const bw = Math.min(12, (X1 - X0) / n * 0.55);
+    const bar = (v, i) => {
+      const h = Math.max(2, v / maxVol * VH);
+      return 'M' + f(xs[i] - bw / 2) + ',' + VBASE + ' v' + f(-h) + ' h' + f(bw) + ' v' + f(h) + ' Z';
+    };
+    const vol = d.vol.slice(0, n - 1).map(bar).join(' ');
+    const volLast = bar(d.vol[n - 1], n - 1);
+    const totalVol = d.vol.reduce((a, b) => a + b, 0);
+
+    const yLabels = gridVals.map((v) => ({ text: group(v), top: f(y(v) - 8) + 'px' }));
+    const neufTop = f(Math.max(0, y(d.neuf[n - 1]) - 22)) + 'px';
+
+    const label = 'Meilleure offre ' + d.period + ' : de ' + money(first) + ' à ' + money(last) + ' (' + pct(change) + '). '
+      + 'Prix neuf, égal au plafond de revente : de ' + money(d.neuf[0]) + ' à ' + money(d.neuf[n - 1]) + '. '
+      + totalVol + ' transactions sur la période.';
+
+    const tab = (key) => ({
+      pressed: range === key ? 'true' : 'false',
+      bg: range === key ? '#F3F4F6' : 'transparent',
+      fg: range === key ? '#0D0E11' : '#B9BEC9'
+    });
+
+    return {
+      toggleAlert: () => set({ alert: !alertOn }),
+      alert: {
+        on: alertOn,
+        pressed: alertOn ? 'true' : 'false',
+        bg: alertOn ? 'rgba(255,210,63,0.12)' : '#15171C',
+        fg: alertOn ? '#FFD23F' : '#F3F4F6',
+        border: alertOn ? 'rgba(255,210,63,0.5)' : '#2C303A'
+      },
+      pick1S: () => set({ range: '1S' }),
+      pick1M: () => set({ range: '1M' }),
+      pick3M: () => set({ range: '3M' }),
+      pickAll: () => set({ range: 'Tout' }),
+      tab1S: tab('1S'),
+      tab1M: tab('1M'),
+      tab3M: tab('3M'),
+      tabAll: tab('Tout'),
+      chg: {
+        text: pct(change),
+        period: d.period,
+        isDown: isDown,
+        isUp: !isDown,
+        color: color,
+        soft: isDown ? 'rgba(255,158,94,0.12)' : 'rgba(98,199,255,0.12)'
+      },
+      chart: {
+        label: label,
+        color: color,
+        grid: grid,
+        line: line,
+        neuf: neuf,
+        area: area,
+        vol: vol,
+        volLast: volLast,
+        lastX: f(xs[n - 1]),
+        lastY: f(y(last)),
+        yLabels: yLabels,
+        neufTop: neufTop,
+        x0: d.ticks[0],
+        x1: d.ticks[1],
+        x2: d.ticks[2]
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

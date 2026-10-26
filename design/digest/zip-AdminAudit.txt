@@ -1,0 +1,146 @@
+Administration · Journal d’audit — NexG-TT
+Administration · Journal d’audit — NexG-TT
+NEXG
+·TT
+Administration
+Droits de voyage
+Drops et agences
+Journal d’audit
+Démo · données fictives
+MFA vérifiée
+adm-01
+(vous)
+Maquette · état affiché
+Normal
+Chargement
+Vide
+Erreur
+Hors ligne
+Hors produit : sert à montrer les états de l’écran.
+Journal d’audit
+Administration · données du 12 oct. 2026, 14:02 (UTC−4) · heures de Montréal et UTC
+Exporter (CSV)
+L’export est journalisé.
+Ajout seul
+: aucune modification ni suppression (le rôle applicatif ne peut pas écrire dans ce journal). Il ne contient aucune donnée passager et aucun secret.
+{{notice}}
+Hors ligne. Dernières données reçues le 12 oct. 2026 à 14:02 (UTC−4). Lecture seule : le journal affiché est daté ; l’export est indisponible.
+Aucune entrée ne correspond à ces filtres
+Élargissez la période ou retirez un filtre.
+Réinitialiser les filtres
+Impossible de charger le journal d’audit.
+Le serveur n’a pas répondu. Aucune donnée n’a été modifiée.
+Code de corrélation :
+ERR-DEMO-5E17
+Réessayer
+Chargement du journal d’audit…
+Période
+7 derniers jours
+24 dernières heures
+Dernière heure
+Acteur (adm-01, système)
+Action
+Toutes les actions
+Gel d’un droit
+Drops
+Agences
+Connexions
+Exports
+Rapprochement
+Objet (NXG-…, Drop N° …)
+Réinitialiser
+{{countLabel}}
+Tri : du plus récent au plus ancien.
+Journal d’audit : horodatage en heure de Montréal et UTC, acteur, action, objet, résultat et détail.
+Horodatage
+Acteur
+Action
+Objet
+Résultat
+Détail
+14:01:00 UTC−4
+18:01:00 UTC
+12 oct. 2026
+système
+Injection de drop
+Drop N° 128
+Accepté
+Injection 2 : 2 places · algorithme v0 (démo)
+14:00:00 UTC−4
+18:00:00 UTC
+12 oct. 2026
+système
+Injection de drop
+Drop N° 128
+Accepté
+Injection 1 : 4 places · algorithme v0 (démo)
+13:59:58 UTC−4
+17:59:58 UTC
+12 oct. 2026
+adm-02
+Ouverture de drop
+Drop N° 128
+Accepté
+Ouverture planifiée à 14:00
+13:58:12 UTC−4
+17:58:12 UTC
+12 oct. 2026
+adm-02
+Approbation de gel
+NXG-1DN5
+Accepté
+Gel 2/2 · demandé par adm-01
+13:56:10 UTC−4
+17:56:10 UTC
+12 oct. 2026
+adm-01
+Approbation de gel
+NXG-1DN5
+Refusé
+Refusée : le demandeur ne peut pas approuver sa propre demande
+13:55:40 UTC−4
+17:55:40 UTC
+12 oct. 2026
+adm-01
+Demande de gel
+NXG-1DN5
+En attente
+1/2 · motif : écart de rapprochement (démo)
+13:41:03 UTC−4
+17:41:03 UTC
+12 oct. 2026
+adm-01
+Connexion administrateur
+—
+Accepté
+MFA vérifiée
+11:15:22 UTC−4
+15:15:22 UTC
+12 oct. 2026
+adm-02
+Vérification d’agence
+Agence Horizon (exemple)
+Accepté
+Permis n° 000000 (exemple) vérifié
+02:00:03 UTC−4
+06:00:03 UTC
+12 oct. 2026
+système
+Rapprochement quotidien
+Registre, grand livre, PSP, fournisseur
+Accepté
+0 écart
+17:30:12 UTC−4
+21:30:12 UTC
+11 oct. 2026
+adm-01
+Export du journal
+Journal d’audit
+Accepté
+CSV · 7 jours · journalisé
+Page 1 sur 1 · démonstration : le journal fictif compte 10 entrées.
+Précédent
+Suivant
+Prototype — données fictives
+Comptes pseudonymisés (ACC-…, adm-…), agences et références inventées. Aucun nom, courriel ni identité de voyageur.
+Un droit de voyage est une inscription au registre interne de NexG-TT.

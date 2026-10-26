@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<title>Revendre — NexG-TT</title>
+<script src="84aba276-69d2-44c5-a8bc-b3a62773662c"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+<style>
+body{margin:0;background:#0D0E11}
+a{color:#FFD23F}a:hover{color:#FFE27A}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #FFD23F;outline-offset:2px}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0D0E11; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="padding: 52px 12px 8px; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 8px">
+<a href="Billet.dc.html" aria-label="Retour" style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 999px; background: #15171C; border: 1px solid #2C303A; display: flex; align-items: center; justify-content: center; color: #F3F4F6; text-decoration: none">
+<svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+</a>
+<h1 style="margin: 0; text-align: center; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 20px; letter-spacing: 0.04em; text-transform: uppercase">Revendre</h1>
+<span aria-hidden="true" style="width: 44px; height: 44px"></span>
+</header>
+
+<main style="flex: 1; overflow-y: auto; padding: 12px 20px 156px; display: flex; flex-direction: column; gap: 20px">
+
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: #FFFFFF; color: #121418">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 26px; line-height: 26px; letter-spacing: 0.02em; white-space: nowrap">YUL → CDG</span>
+<span style="flex: 1; min-width: 0; font-size: 12px; line-height: 16px; color: #555C6B">Lun. 14 déc. 2026<br>Aérolys 812 · 18:05</span>
+<span style="display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-size: 11px; font-weight: 600; color: #555C6B">Payé</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums">1&nbsp;000&nbsp;$</span>
+</span>
+</div>
+
+<section style="display: flex; flex-direction: column; gap: 8px; padding: 18px; border-radius: 20px; background: #060708; border: 1px solid #2C303A">
+<label for="prix" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Votre prix de vente</label>
+<p style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 64px; line-height: 68px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">{{priceLabel}}</p>
+<sc-if value="{{belowCap}}" hint-placeholder-val="{{ true }}">
+<p style="margin: 0; font-size: 13px; color: #B9BEC9"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #F3F4F6">{{gapToCap}}</span> sous le prix équivalent neuf (2&nbsp;000&nbsp;$)</p>
+</sc-if>
+<sc-if value="{{atCap}}" hint-placeholder-val="{{ false }}">
+<p style="margin: 0; font-size: 13px; color: #FFD23F">Au plafond : égal au prix équivalent neuf</p>
+</sc-if>
+<input id="prix" type="range" min="500" max="2000" step="10" value="{{price}}" sc-camel-on-change="{{ onPrice }}" aria-valuetext="{{priceLabel}}" aria-describedby="prix-regle" style="width: 100%; height: 44px; margin: 4px 0 0; accent-color: #FFD23F; cursor: pointer">
+<div aria-hidden="true" style="display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #8C93A3">
+<span>500&nbsp;$</span><span>Plafond 2&nbsp;000&nbsp;$</span>
+</div>
+<p id="prix-regle" style="margin: 4px 0 0; padding-top: 10px; border-top: 1px solid #1A1C21; font-size: 12px; line-height: 17px; color: #8C93A3">Plafond = prix équivalent d'un billet neuf sur ce vol. Règle provisoire anti-spéculation, à valider.</p>
+</section>
+
+<section aria-labelledby="ia-h" style="display: flex; flex-direction: column; gap: 10px; padding: 16px 18px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A">
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="width: 36px; height: 36px; flex: none; border-radius: 10px; background: rgba(98,199,255,0.12); color: #62C7FF; display: flex; align-items: center; justify-content: center">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"></path></svg>
+</span>
+<h2 id="ia-h" style="flex: 1; margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Suggestion IA · estimation</h2>
+<sc-if value="{{aiNotApplied}}" hint-placeholder-val="{{ true }}">
+<button type="button" sc-camel-on-click="{{ applyAi }}" style="height: 44px; padding: 0 16px; border-radius: 12px; background: #1D2027; border: 1px solid #3A3F4B; color: #FFD23F; font-family: 'Barlow', system-ui, sans-serif; font-size: 14px; font-weight: 700; cursor: pointer">Appliquer</button>
+</sc-if>
+<sc-if value="{{aiApplied}}" hint-placeholder-val="{{ false }}">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 44px; font-size: 14px; font-weight: 700; color: #7CE3B5">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>
+Appliquée
+</span>
+</sc-if>
+</div>
+<div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 26px; font-variant-numeric: tabular-nums">1&nbsp;650&nbsp;$</span>
+<span style="font-size: 14px; color: #B9BEC9">vente estimée sous 6 jours</span>
+</div>
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #8C93A3">D'après les annonces et la demande sur ce vol. Estimation, non garantie.</p>
+</section>
+
+<section aria-labelledby="mk-h" style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px">
+<h2 id="mk-h" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Annonces sur ce vol</h2>
+<span style="font-size: 13px; font-weight: 600; color: #FFD23F">{{rankLabel}}</span>
+</div>
+<div style="border-radius: 16px; background: #060708; border: 1px solid #2C303A; overflow: hidden">
+<div aria-hidden="true" style="padding: 14px 14px 10px">
+<div style="position: relative; height: 22px">
+<span style="position: absolute; left: 0; right: 0; top: 10px; height: 2px; background: #2C303A"></span>
+<sc-for list="{{dots}}" as="d" hint-placeholder-count="3">
+<span style="position: absolute; top: 6px; left: {{d.left}}; width: 10px; height: 10px; border-radius: 999px; background: #B9BEC9"></span>
+</sc-for>
+<span style="position: absolute; top: 2px; left: {{aiLeft}}; width: 2px; height: 18px; background: #62C7FF"></span>
+<span style="position: absolute; top: 2px; left: {{youLeft}}; width: 18px; height: 18px; box-sizing: border-box; border-radius: 999px; background: #FFD23F; border: 3px solid #060708"></span>
+</div>
+<div style="display: flex; justify-content: space-between; gap: 8px; margin-top: 6px; font-size: 11px; color: #8C93A3">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">500&nbsp;$</span>
+<span style="display: flex; gap: 10px">
+<span style="display: inline-flex; align-items: center; gap: 4px"><span style="width: 8px; height: 8px; border-radius: 999px; background: #B9BEC9"></span>Annonces</span>
+<span style="display: inline-flex; align-items: center; gap: 4px"><span style="width: 8px; height: 8px; border-radius: 999px; background: #FFD23F"></span>Vous</span>
+<span style="display: inline-flex; align-items: center; gap: 4px"><span style="width: 2px; height: 10px; background: #62C7FF"></span>Estimation</span>
+</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">2&nbsp;000&nbsp;$</span>
+</div>
+</div>
+<ul style="list-style: none; margin: 0; padding: 0">
+<sc-for list="{{market}}" as="m" hint-placeholder-count="4">
+<li style="display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; min-height: 44px; padding: 0 14px; border-top: 1px solid #1A1C21; background: {{m.bg}}">
+<span style="font-size: 14px; font-weight: {{m.weight}}; color: {{m.fg}}">{{m.label}}</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums; color: {{m.fg}}">{{m.price}}</span>
+</li>
+</sc-for>
+</ul>
+</div>
+</section>
+
+<section aria-labelledby="calc-h" style="display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A">
+<h2 id="calc-h" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Ce que vous recevez</h2>
+<dl style="margin: 0; display: flex; flex-direction: column">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 40px; border-bottom: 1px solid #2C303A">
+<dt style="font-size: 14px; color: #B9BEC9">Prix de vente</dt>
+<dd style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums">{{priceLabel}}</dd>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; border-bottom: 1px solid #2C303A">
+<dt style="display: flex; flex-direction: column; font-size: 14px; color: #B9BEC9">Commission NexG-TT (hypothèse)<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #8C93A3">{{rateLabel}} · membre Pass</span></dt>
+<dd style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums">{{commissionLabel}}</dd>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px">
+<dt style="font-size: 16px; font-weight: 700">Vous recevez</dt>
+<dd style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 28px; font-variant-numeric: tabular-nums">{{netLabel}}</dd>
+</div>
+</dl>
+<p style="margin: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border-radius: 12px; background: #1D2027; font-size: 13px; color: #B9BEC9">
+<span>Par rapport au prix payé (1&nbsp;000&nbsp;$), si la vente a lieu</span>
+<span style="flex: none; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums; color: {{diffColor}}">{{diffLabel}}</span>
+</p>
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; box-sizing: border-box; border-radius: 14px; background: #1D2027; border: 1px solid #3A3F4B">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Commission</span>
+<div style="display: flex; align-items: stretch; gap: 8px">
+<span aria-current="true" style="flex: 1; min-height: 44px; padding: 6px 10px; box-sizing: border-box; border-radius: 12px; background: rgba(255,210,63,0.12); border: 1px solid #FFD23F; display: flex; flex-direction: column; justify-content: center; gap: 2px">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 16px; font-variant-numeric: tabular-nums; color: #FFD23F">{{rateLabel}}</span>
+<span style="font-size: 12px; font-weight: 600; color: #F3F4F6">Membre Pass · vous</span>
+</span>
+<span style="flex: 1; min-height: 44px; padding: 6px 10px; box-sizing: border-box; border-radius: 12px; background: #15171C; border: 1px solid #2C303A; display: flex; flex-direction: column; justify-content: center; gap: 2px">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 16px; font-variant-numeric: tabular-nums; color: #B9BEC9">{{noPassRateLabel}}</span>
+<span style="font-size: 12px; font-weight: 600; color: #8C93A3">Sans Pass</span>
+</span>
+</div>
+</div>
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #8C93A3">Taux hypothétiques (10 à 20 %), prélevés seulement si la vente a lieu. Alex T. est membre Pass : le taux membre s'applique.</p>
+</section>
+
+<label for="rachat" style="display: flex; align-items: flex-start; gap: 12px; min-height: 44px; padding: 14px; box-sizing: border-box; border-radius: 16px; border: 1px solid #2C303A; cursor: pointer">
+<input id="rachat" type="checkbox" checked="{{rachatOn}}" sc-camel-on-change="{{ onRachat }}" style="width: 22px; height: 22px; margin: 0; flex: none; accent-color: #FFD23F; cursor: pointer">
+<span style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 15px; font-weight: 600">Accepter une offre de rachat NexG-TT</span>
+<span style="font-size: 13px; line-height: 18px; color: #B9BEC9">Liquidité immédiate : NexG-TT peut vous proposer un prix ferme. Il vous est soumis avant toute vente — règle à valider.</span>
+</span>
+</label>
+
+<p style="margin: 0; display: flex; align-items: flex-start; gap: 8px; font-size: 13px; line-height: 18px; color: #B9BEC9">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+<span>Retrait automatique de l'annonce à J-1 (13 déc. 18:05).</span>
+</p>
+
+<p style="margin: 0; text-align: center; font-size: 12px; line-height: 17px; color: #8C93A3">Prix indicatifs. Un droit de voyage n'est pas un placement financier.</p>
+
+</main>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 20px 28px; background: #0D0E11; border-top: 1px solid #2C303A; display: flex; flex-direction: column; gap: 10px">
+<p style="margin: 0; display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; color: #B9BEC9">
+<span>Vous recevez <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #F3F4F6; font-variant-numeric: tabular-nums">{{netLabel}}</span></span>
+<span>Commission {{rateLabel}} (hypothèse)</span>
+</p>
+<a href="Portefeuille.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #FFD23F; color: #0D0E11; font-weight: 700; font-size: 16px; text-decoration: none; border: 0">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg>
+Mettre en vente à {{priceLabel}}
+</a>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844},&quot;commissionRate&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:10,&quot;min&quot;:0,&quot;max&quot;:25,&quot;unit&quot;:&quot;%&quot;,&quot;section&quot;:&quot;Hypothèses&quot;,&quot;description&quot;:&quot;Commission membre Pass — hypothèse 10–20 % (sans Pass : +2,5 points)&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const p = this.props || {};
+    const raw = p.commissionRate;
+    let rate = 10;
+    if (typeof raw === 'number') {
+      rate = raw;
+    } else if (raw != null) {
+      const n = Number(typeof raw === 'object' ? raw.default : raw);
+      if (isFinite(n)) rate = n;
+    }
+    rate = Math.min(25, Math.max(0, Math.round(rate)));
+
+    const PAID = 1000;
+    const CAP = 2000;
+    const AI = 1650;
+    const MIN = 500;
+    const SPAN = 1500;
+    const price = s.price ?? 1500;
+    const rachatOn = s.rachatOn ?? false;
+    const effRate = rate;
+    const noPassRate = rate + 2.5;
+    const commission = Math.round(price * effRate / 100);
+    const net = price - commission;
+    const diff = net - PAID;
+
+    const fmt = (n) => String(Math.abs(Math.round(n))).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' $';
+    const signed = (n) => (n > 0 ? '+' : (n === 0 ? '' : '−')) + fmt(n);
+    const pct = (v) => ((v - MIN) / SPAN * 100).toFixed(2) + '%';
+
+    const others = [1380, 1520, 1700];
+    const rows = others.map((v) => ({ v: v, you: false }));
+    rows.push({ v: price, you: true });
+    rows.sort((a, b) => (a.v - b.v) || (a.you ? -1 : 1));
+    const market = rows.map((r) => ({
+      label: r.you ? 'Votre annonce' : 'Autre détenteur',
+      price: fmt(r.v),
+      bg: r.you ? '#1D2027' : 'transparent',
+      fg: r.you ? '#FFD23F' : '#F3F4F6',
+      weight: r.you ? '700' : '500'
+    }));
+    const cheaper = others.filter((v) => price > v).length;
+    const rankLabel = cheaper === 0 ? 'La moins chère des 4' : (cheaper + 1) + 'e moins chère sur 4';
+
+    return {
+      price: price,
+      priceLabel: fmt(price),
+      belowCap: CAP > price,
+      atCap: price >= CAP,
+      gapToCap: fmt(CAP - price),
+      rateLabel: effRate + ' %',
+      noPassRateLabel: String(noPassRate).replace('.', ',') + ' %',
+      commissionLabel: commission === 0 ? '0 $' : '−' + fmt(commission),
+      netLabel: fmt(net),
+      diffLabel: signed(diff),
+      diffColor: diff > 0 ? '#62C7FF' : (diff === 0 ? '#B9BEC9' : '#FF9E5E'),
+      aiApplied: price === AI,
+      aiNotApplied: price !== AI,
+      rankLabel: rankLabel,
+      market: market,
+      dots: others.map((v) => ({ left: 'calc(' + pct(v) + ' - 5px)' })),
+      youLeft: 'calc(' + pct(price) + ' - 9px)',
+      aiLeft: 'calc(' + pct(AI) + ' - 1px)',
+      rachatOn: rachatOn,
+      onPrice: (e) => this.setState({ price: Number(e.target.value) }),
+      applyAi: () => this.setState({ price: AI }),
+      onRachat: (e) => this.setState({ rachatOn: !!e.target.checked })
+    };
+  }
+}
+</script>
+
+
+</body></html>

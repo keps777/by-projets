@@ -1,0 +1,75 @@
+Web — Paiement (démo)
+Paiement démo (web) — NexG-TT
+NEXG
+·TT
+Voyager
+Mes actifs
+Rechercher une ville, un code d’aéroport ou une référence
+AT
+Accueil
+Rechercher
+Mon voyage
+Agences
+Paiement en cours…
+Hors ligne
+Le paiement demande le réseau : le bouton Payer se réactive à son retour. Rien n’a été débité.
+MODE DÉMO — aucun paiement réel
+Offre
+Paiement
+Voyager · YUL → CDG · ven. 18 déc. 2026
+{{errTitle}}
+{{errText}}
+Paiement refusé (démo)
+Le prestataire a refusé la transaction de démonstration. Aucun débit n’a eu lieu. Vos informations sont conservées : essayez un autre moyen de paiement.
+Choisir un autre moyen
+Moyen de paiement
+Carte
+Crédit ou débit
+Wallet du téléphone
+Choisissez une carte déjà enregistrée dans le wallet de votre téléphone
+Mobile money (selon la région)
+Numéro de téléphone, confirmation par code — selon votre pays
+Carte de test
+Numéro de carte
+TEST
+4242 4242 4242 4242 — carte de test
+Expiration (MM/AA)
+Mois invalide : de 01 à 12.
+Code de sécurité
+Nom sur la carte
+Vous choisirez une carte déjà enregistrée dans le wallet de votre téléphone, puis confirmerez sur l’appareil. En démo, aucune fenêtre réelle ne s’ouvre.
+Mobile money
+Numéro de téléphone (mobile money)
+Numéro fictif. Le compte mobile money doit être à votre nom.
+Un code de confirmation vous sera envoyé par message sur ce numéro. Disponible selon votre pays et votre opérateur. En démo, aucun code réel n’est envoyé.
+J’accepte les règles de revente et de finalisation (J-1)
+Vous devrez nommer le voyageur au plus tard le jeu. 17 déc. à 18:05. À l’échéance, le détenteur est nommé voyageur par défaut.
+Cochez cette case pour continuer.
+Récapitulatif
+YUL → CDG
+ven. 18 déc. · 18:05 · Aérolys 816
+Revente
+Billet (droit de voyage)
+1 500 $
+Frais de service
+hypothèse
+{{feeLabel}}
+Total
+{{totalLabel}}
+Payer
+{{totalLabel}}
+(démo)
+Paiement en cours…
+Payer
+{{totalLabel}}
+(démo)
+Paiement traité par un prestataire certifié. NexG-TT ne conserve pas votre carte.
+Prototype — données fictives
+Compagnies (Aérolys, Nordelle), agence, détenteurs, prix et références inventés. Aucun paiement réel.
+Un droit de voyage est une inscription au registre interne de NexG-TT, pas un placement financier.
+Aperçu des états
+Normal
+Chargement
+Erreur de saisie
+Refusé
+Hors ligne

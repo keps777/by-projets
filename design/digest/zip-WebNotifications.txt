@@ -1,0 +1,50 @@
+Notifications en contexte (web) — NexG-TT
+Notifications en contexte (web) — NexG-TT
+NEXG
+·TT
+Hors ligne
+La demande d’autorisation passe par le réseau : « Activer les notifications » est suspendu. Vous pouvez continuer : l’activation reste possible plus tard.
+Notifications bloquées par l’appareil
+Vous avez refusé la demande de l’appareil : aucune notification ne sera envoyée. Comment l’activer plus tard : dans les réglages de l’appareil, puis dans Compte › Notifications. Votre inscription continue.
+Retour
+Étape 4 sur 4
+Dernière étape
+Être prévenu au bon moment
+Les drops membres ont peu de places, et nommer le voyageur a une date limite. Une notification vous évite de les manquer.
+Échéances :
+un rappel avant chaque date limite pour nommer un voyageur.
+Drops et prix :
+seulement pour les intérêts que vous avez choisis.
+Fréquence réglable
+à tout moment dans Compte › Notifications : tout, l’essentiel ou rien.
+Votre appareil affichera ensuite sa propre demande d’autorisation.
+Activer les notifications
+Demande à l’appareil en cours…
+Activer les notifications
+Plus tard
+Notifications activées
+Démo : la demande de l’appareil apparaîtrait ici.
+Continuer
+Annuler (démo)
+Continuer
+NEXG·TT
+maintenant
+Drop membres : YUL → PUJ à 200 $ · 3 places
+NEXG·TT
+il y a 2 h
+YUL → CDG : nommez le voyageur avant demain 18:05
+NEXG·TT
+hier
+Soute du vol 812 : un bagage à 95 $
+[H]
+Canal des notifications sur PC (navigateur ou application) : à valider. Les exemples sont fictifs.
+Exemples de notifications · données fictives
+Prototype — données fictives
+Compagnies (Aérolys, Nordelle), agence, détenteurs, prix et références inventés. Aucun paiement réel.
+Un droit de voyage est une inscription au registre interne de NexG-TT, pas un placement financier.
+Aperçu des états
+Désactivées
+Activées
+Chargement
+Refusée
+Hors ligne

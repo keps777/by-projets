@@ -1,0 +1,56 @@
+Importer un billet — NexG-TT
+Importer un billet — NexG-TT
+Importer un billet
+Confiez un billet acheté ailleurs
+NexG-TT prend la gestion de la réservation auprès de la compagnie. Le billet rejoint votre portefeuille et peut devenir revendable et transférable, si la compagnie et le tarif le permettent.
+Phase pilote · hypothèse
+1
+Compagnie
+, {{s1.sr}}
+2
+Référence
+, {{s2.sr}}
+3
+Vérification
+, {{s3.sr}}
+1 · Compagnie
+Choisir une compagnie
+Aérolys
+Nordelle
+Autre compagnie
+Choisissez la compagnie qui a émis le billet.
+2 · Référence de réservation (6 caractères)
+Sur la confirmation de la compagnie. Exemple : Q7RT2M
+La référence compte 6 lettres ou chiffres.
+Nom de famille du passager
+Indiquez le nom tel qu'il figure sur la réservation.
+3 · Vérification
+Vérifier l'éligibilité
+Démo : aucune donnée n'est transmise à la compagnie.
+Éligible sous réserve d'accord
+Aérolys, partenaire pilote (hypothèse)
+Réservation
+{{pnr}} · {{nomUp}}
+Ce qui change
+NexG-TT devient gestionnaire de la réservation
+auprès d'Aérolys.
+Vous restez détenteur
+: le billet s'inscrit au registre NexG-TT, dans votre portefeuille.
+Frais d'import
+: montant à définir (hypothèse).
+Compagnie pas encore partenaire
+On vous prévient dès que l'import est possible. Votre billet reste géré par la compagnie, sans changement.
+Autres issues possibles
+Compagnie pas encore partenaire
+— on vous prévient.
+Éligible sous réserve d'accord
+— avec une compagnie partenaire pilote.
+Tarif non transférable
+— certaines conditions tarifaires interdisent toute cession ; le billet reste chez la compagnie.
+Modifier la saisie
+Un droit de voyage n'est pas un placement financier.
+Confier mon billet à NexG-TT
+Démo : aucun billet réel n'est transféré.
+Confier mon billet à NexG-TT
+Vérifiez d'abord l'éligibilité (étape 3).
+Import impossible pour l'instant avec cette compagnie.

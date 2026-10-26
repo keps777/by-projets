@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Vos choix de partage — Étape 3 sur 4 — NexG-TT</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Barlow:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#EEF3F8}
+a{color:#1A64C8}a:hover{color:#124C9C}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #1A64C8;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #EEF3F8; color: #0B1B2E; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="flex: none; padding: 52px 12px 8px; display: grid; grid-template-columns: 88px 1fr 88px; align-items: center; gap: 4px">
+<a href="Profil.dc.html" aria-label="Retour" style="width: 44px; height: 44px; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: #0B1B2E; text-decoration: none">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+</a>
+<div role="progressbar" aria-label="Progression de l'inscription" aria-valuemin="1" aria-valuemax="4" aria-valuenow="3" aria-valuetext="Étape 3 sur 4" style="display: flex; flex-direction: column; align-items: center; gap: 6px">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Étape 3 sur 4</span>
+<span aria-hidden="true" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; width: 128px">
+<span style="height: 4px; border-radius: 999px; background: #0B1B2E"></span>
+<span style="height: 4px; border-radius: 999px; background: #0B1B2E"></span>
+<span style="height: 4px; border-radius: 999px; background: #0B1B2E"></span>
+<span style="height: 4px; border-radius: 999px; background: #B9C5D3"></span>
+</span>
+</div>
+<span aria-hidden="true"></span>
+</header>
+
+<main style="flex: 1; overflow-y: auto; padding: 12px 20px 124px; display: flex; flex-direction: column; gap: 18px">
+
+<section style="display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 40px; line-height: 42px; letter-spacing: -0.005em; color: #0B1B2E; text-wrap: balance">Vous choisissez ce que vous partagez</h1>
+<p style="margin: 0; font-size: 15px; line-height: 22px; color: #3E4F66">Cinq réglages, une ligne d'explication chacun. Seul le premier est nécessaire au fonctionnement du compte.</p>
+</section>
+
+<section aria-label="Réglages de partage" style="display: flex; flex-direction: column; border-radius: 20px; background: #FFFFFF; border: 1px solid #D3DCE6; overflow: hidden">
+
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; background: #F5F8FB">
+<div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 15px; font-weight: 700">Nécessaire au service</span>
+<span style="font-size: 13px; line-height: 18px; color: #3E4F66">Compte, connexion sécurisée, achats et registre de vos billets.</span>
+</span>
+<span style="flex: none; display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 999px; background: #E3EAF2; color: #3E4F66; font-size: 12px; font-weight: 700; letter-spacing: 0.04em">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+Toujours actif
+</span>
+</div>
+<button type="button" aria-expanded="{{whyExpanded}}" aria-controls="why-needed" onClick="{{toggleWhy}}" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; min-height: 44px; margin: -8px 0 -8px -2px; padding: 0 2px; border: 0; background: transparent; color: #1A64C8; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">
+Pourquoi est-ce verrouillé ?
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{whyDeg}}); transition: transform 0.2s ease"><path d="m9 5 7 7-7 7"></path></svg>
+</button>
+<sc-if value="{{showWhy}}" hint-placeholder-val="{{ false }}">
+<p id="why-needed" style="margin: 0; font-size: 13px; line-height: 19px; color: #3E4F66">Sans ces données, impossible de créer votre compte ni de garder la trace des billets que vous détenez. Le détail figure dans la politique de confidentialité.</p>
+</sc-if>
+</div>
+
+<button type="button" role="switch" aria-checked="{{alerts.checked}}" onClick="{{toggleAlerts}}" style="display: flex; align-items: center; justify-content: space-between; gap: 14px; width: 100%; min-height: 72px; padding: 12px 16px; box-sizing: border-box; border: 0; border-top: 1px solid #D3DCE6; background: #FFFFFF; color: #0B1B2E; font-family: inherit; text-align: left; cursor: pointer">
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 15px; font-weight: 700">Alertes de prix et de drops</span>
+<span style="font-size: 13px; line-height: 18px; color: #3E4F66">Utilise vos intérêts et votre aéroport pour vous signaler des départs.</span>
+</span>
+<span aria-hidden="true" style="position: relative; flex: none; width: 52px; height: 32px; box-sizing: border-box; border-radius: 999px; background: {{alerts.track}}; border: 1px solid {{alerts.border}}; transition: background-color 0.2s ease">
+<span style="position: absolute; top: 3px; left: {{alerts.left}}; width: 24px; height: 24px; border-radius: 999px; background: {{alerts.thumb}}; display: flex; align-items: center; justify-content: center; color: #1A64C8; transition: left 0.2s ease">
+<sc-if value="{{alerts.on}}" hint-placeholder-val="{{ true }}">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"></path></svg>
+</sc-if>
+</span>
+</span>
+</button>
+
+<button type="button" role="switch" aria-checked="{{deadline.checked}}" onClick="{{toggleDeadline}}" style="display: flex; align-items: center; justify-content: space-between; gap: 14px; width: 100%; min-height: 72px; padding: 12px 16px; box-sizing: border-box; border: 0; border-top: 1px solid #D3DCE6; background: #FFFFFF; color: #0B1B2E; font-family: inherit; text-align: left; cursor: pointer">
+<span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+<span style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px">
+<span style="font-size: 15px; font-weight: 700">Rappels d'échéance J-1</span>
+<span style="display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; background: rgba(26,100,200,0.10); color: #1A64C8; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">Recommandé</span>
+</span>
+<span style="font-size: 13px; line-height: 18px; color: #3E4F66">Vous prévient avant la date limite pour nommer le voyageur d'un billet.</span>
+</span>
+<span aria-hidden="true" style="position: relative; flex: none; width: 52px; height: 32px; box-sizing: border-box; border-radius: 999px; background: {{deadline.track}}; border: 1px solid {{deadline.border}}; transition: background-color 0.2s ease">
+<span style="position: absolute; top: 3px; left: {{deadline.left}}; width: 24px; height: 24px; border-radius: 999px; background: {{deadline.thumb}}; display: flex; align-items: center; justify-content: center; color: #1A64C8; transition: left 0.2s ease">
+<sc-if value="{{deadline.on}}" hint-placeholder-val="{{ true }}">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"></path></svg>
+</sc-if>
+</span>
+</span>
+</button>
+
+<button type="button" role="switch" aria-checked="{{partners.checked}}" onClick="{{togglePartners}}" style="display: flex; align-items: center; justify-content: space-between; gap: 14px; width: 100%; min-height: 72px; padding: 12px 16px; box-sizing: border-box; border: 0; border-top: 1px solid #D3DCE6; background: #FFFFFF; color: #0B1B2E; font-family: inherit; text-align: left; cursor: pointer">
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 15px; font-weight: 700">Offres partenaires</span>
+<span style="font-size: 13px; line-height: 18px; color: #3E4F66">Offres d'agences et de partenaires de voyage. Désactivé par défaut.</span>
+</span>
+<span aria-hidden="true" style="position: relative; flex: none; width: 52px; height: 32px; box-sizing: border-box; border-radius: 999px; background: {{partners.track}}; border: 1px solid {{partners.border}}; transition: background-color 0.2s ease">
+<span style="position: absolute; top: 3px; left: {{partners.left}}; width: 24px; height: 24px; border-radius: 999px; background: {{partners.thumb}}; display: flex; align-items: center; justify-content: center; color: #1A64C8; transition: left 0.2s ease">
+<sc-if value="{{partners.on}}" hint-placeholder-val="{{ false }}">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"></path></svg>
+</sc-if>
+</span>
+</span>
+</button>
+
+<button type="button" role="switch" aria-checked="{{audience.checked}}" onClick="{{toggleAudience}}" style="display: flex; align-items: center; justify-content: space-between; gap: 14px; width: 100%; min-height: 72px; padding: 12px 16px; box-sizing: border-box; border: 0; border-top: 1px solid #D3DCE6; background: #FFFFFF; color: #0B1B2E; font-family: inherit; text-align: left; cursor: pointer">
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 15px; font-weight: 700">Mesure d'audience anonyme</span>
+<span style="font-size: 13px; line-height: 18px; color: #3E4F66">Statistiques d'usage regroupées, sans votre nom, pour améliorer l'app.</span>
+</span>
+<span aria-hidden="true" style="position: relative; flex: none; width: 52px; height: 32px; box-sizing: border-box; border-radius: 999px; background: {{audience.track}}; border: 1px solid {{audience.border}}; transition: background-color 0.2s ease">
+<span style="position: absolute; top: 3px; left: {{audience.left}}; width: 24px; height: 24px; border-radius: 999px; background: {{audience.thumb}}; display: flex; align-items: center; justify-content: center; color: #1A64C8; transition: left 0.2s ease">
+<sc-if value="{{audience.on}}" hint-placeholder-val="{{ false }}">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"></path></svg>
+</sc-if>
+</span>
+</span>
+</button>
+
+</section>
+
+<p aria-live="polite" style="margin: -6px 0 0; font-size: 13px; font-weight: 600; color: #3E4F66">{{summary}}</p>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<button type="button" aria-expanded="{{policyExpanded}}" aria-controls="policy-panel" onClick="{{togglePolicy}}" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 52px; padding: 0 14px; box-sizing: border-box; border-radius: 14px; background: #FFFFFF; border: 1px solid #B9C5D3; color: #1A64C8; font-family: inherit; font-size: 15px; font-weight: 600; text-align: left; cursor: pointer">
+<span style="display: flex; align-items: center; gap: 10px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"></path></svg>
+Lire la politique de confidentialité
+</span>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{policyDeg}}); transition: transform 0.2s ease"><path d="m9 5 7 7-7 7"></path></svg>
+</button>
+<sc-if value="{{showPolicy}}" hint-placeholder-val="{{ false }}">
+<div id="policy-panel" style="padding: 12px 14px; border-radius: 12px; background: #E3EAF2; font-size: 13px; line-height: 19px; color: #3E4F66">Maquette : le texte de la politique sera rédigé et validé par un juriste avant le lancement. Ici, aucun engagement n'est pris au-delà des réglages ci-dessus.</div>
+</sc-if>
+</div>
+
+<aside style="display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-radius: 16px; background: #0B1B2E; color: #FFFFFF">
+<span aria-hidden="true" style="flex: none; width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,0.10); color: #FFFFFF; display: flex; align-items: center; justify-content: center">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg>
+</span>
+<p style="margin: 0; font-size: 14px; line-height: 20px; color: #C9D3DF"><strong style="color: #FFFFFF; font-weight: 600">Vous pouvez tout changer dans Compte › Données et consentements.</strong> Retirer un consentement est aussi simple que de le donner.</p>
+</aside>
+
+</main>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 20px 28px; background: #EEF3F8; border-top: 1px solid #D3DCE6">
+<a href="Notifications.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #FFD23F; color: #0B1B2E; font-weight: 700; font-size: 16px; text-decoration: none; border: 0">
+Enregistrer mes choix
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+</a>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const set = (patch) => this.setState(Object.assign({}, this.state || {}, patch));
+    const alertsOn = s.alerts ?? true;
+    const deadlineOn = s.deadline ?? true;
+    const partnersOn = s.partners ?? false;
+    const audienceOn = s.audience ?? false;
+    const showWhy = s.showWhy ?? false;
+    const showPolicy = s.showPolicy ?? false;
+    const sw = (on) => ({
+      on,
+      checked: String(on),
+      track: on ? '#1A64C8' : '#E3EAF2',
+      border: on ? '#1A64C8' : '#8494A9',
+      thumb: on ? '#FFFFFF' : '#5A6A80',
+      left: on ? '23px' : '3px'
+    });
+    const optional = [alertsOn, deadlineOn, partnersOn, audienceOn].filter(Boolean).length;
+    return {
+      alerts: sw(alertsOn),
+      deadline: sw(deadlineOn),
+      partners: sw(partnersOn),
+      audience: sw(audienceOn),
+      toggleAlerts: () => set({ alerts: !alertsOn }),
+      toggleDeadline: () => set({ deadline: !deadlineOn }),
+      togglePartners: () => set({ partners: !partnersOn }),
+      toggleAudience: () => set({ audience: !audienceOn }),
+      summary: 'Activés : le nécessaire, plus ' + optional + ' réglage' + (optional > 1 ? 's' : '') + ' facultatif' + (optional > 1 ? 's' : '') + ' sur 4.',
+      showWhy,
+      whyExpanded: String(showWhy),
+      whyDeg: showWhy ? '90deg' : '0deg',
+      toggleWhy: () => set({ showWhy: !showWhy }),
+      showPolicy,
+      policyExpanded: String(showPolicy),
+      policyDeg: showPolicy ? '90deg' : '0deg',
+      togglePolicy: () => set({ showPolicy: !showPolicy })
+    };
+  }
+}
+</script>
+</body>
+</html>

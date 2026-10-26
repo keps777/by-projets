@@ -1,0 +1,225 @@
+Marché des billets (web) — NexG-TT
+Marché des billets (web) — NexG-TT
+NEXG
+·TT
+Voyager
+Mes actifs
+Rechercher une ville, un code d’aéroport ou une référence
+AT
+Marché
+Drops
+Portefeuille
+Agences
+Marché des billets
+Mes actifs · marché secondaire contrôlé
+Billets neufs, reventes entre détenteurs et offres d’agences, comparés au prix d’un billet neuf équivalent. Le nom du voyageur se donne au plus tard 24 h avant le départ.
+De
+À
+Départ
+Voyageurs
+1 voyageur
+2 voyageurs
+3 voyageurs
+4 voyageurs
+Sources
+{{sourcesLabel}}
+Rechercher
+Filtres
+Réinitialiser
+Sources
+Neuf
+2
+Revente
+3
+Agences partenaires
+1
+Drops membres
+1
+Escales
+Toutes
+Direct seulement
+Revente
+Revendable seulement
+Masque les offres non revendables
+Prix maximum
+{{prixLabel}}
+1 400 $
+2 200 $
+Les offres Drop verrouillées restent affichées : leur prix n’est visible qu’aux membres.
+Tableau des départs
+{{countLabel}} · YUL → CDG · ven. 18 déc. 2026
+· résultats actualisés
+Trier par
+Prix
+{{sortPrix.arrow}}
+{{sortPrix.dirText}}
+Heure de départ
+{{sortHeure.arrow}}
+{{sortHeure.dirText}}
+Départs · Montréal YUL
+Prix équivalent neuf :
+2 050 $
+· indicatif
+Offres Montréal (YUL) vers Paris (CDG), vendredi 18 décembre 2026. Écart calculé par rapport au prix équivalent d’un billet neuf, 2 050 $.
+Départ
+{{sortHeure.arrow}}
+Vers
+Compagnie
+Source
+Prix
+{{sortPrix.arrow}}
+Écart vs neuf
+Sélection
+{{s0.depSr}}
+{{c.ch}}
+{{s0.arrLabel}}
+Paris CDG,
+{{c.ch}}
+{{s0.via}}
+{{s0.cie}}
+{{s0.vol}}
+{{s0.srcLabel}}
+{{s0.srcSub}}
+· non revendable
+{{s0.price}}
+Membres
+{{s0.delta}}
+{{s0.pct}}
+—
+non affiché
+{{s1.depSr}}
+{{c.ch}}
+{{s1.arrLabel}}
+Paris CDG,
+{{c.ch}}
+{{s1.via}}
+{{s1.cie}}
+{{s1.vol}}
+{{s1.srcLabel}}
+{{s1.srcSub}}
+· non revendable
+{{s1.price}}
+Membres
+{{s1.delta}}
+{{s1.pct}}
+—
+non affiché
+{{s2.depSr}}
+{{c.ch}}
+{{s2.arrLabel}}
+Paris CDG,
+{{c.ch}}
+{{s2.via}}
+{{s2.cie}}
+{{s2.vol}}
+{{s2.srcLabel}}
+{{s2.srcSub}}
+· non revendable
+{{s2.price}}
+Membres
+{{s2.delta}}
+{{s2.pct}}
+—
+non affiché
+{{s3.depSr}}
+{{c.ch}}
+{{s3.arrLabel}}
+Paris CDG,
+{{c.ch}}
+{{s3.via}}
+{{s3.cie}}
+{{s3.vol}}
+{{s3.srcLabel}}
+{{s3.srcSub}}
+· non revendable
+{{s3.price}}
+Membres
+{{s3.delta}}
+{{s3.pct}}
+—
+non affiché
+{{s4.depSr}}
+{{c.ch}}
+{{s4.arrLabel}}
+Paris CDG,
+{{c.ch}}
+{{s4.via}}
+{{s4.cie}}
+{{s4.vol}}
+{{s4.srcLabel}}
+{{s4.srcSub}}
+· non revendable
+{{s4.price}}
+Membres
+{{s4.delta}}
+{{s4.pct}}
+—
+non affiché
+{{s5.depSr}}
+{{c.ch}}
+{{s5.arrLabel}}
+Paris CDG,
+{{c.ch}}
+{{s5.via}}
+{{s5.cie}}
+{{s5.vol}}
+{{s5.srcLabel}}
+{{s5.srcSub}}
+· non revendable
+{{s5.price}}
+Membres
+{{s5.delta}}
+{{s5.pct}}
+—
+non affiché
+{{s6.depSr}}
+{{c.ch}}
+{{s6.arrLabel}}
+Paris CDG,
+{{c.ch}}
+{{s6.via}}
+{{s6.cie}}
+{{s6.vol}}
+{{s6.srcLabel}}
+{{s6.srcSub}}
+· non revendable
+{{s6.price}}
+Membres
+{{s6.delta}}
+{{s6.pct}}
+—
+non affiché
+Aucune offre ne correspond à ces filtres.
+Élargissez le prix maximum ou réactivez une source.
+Réinitialiser les filtres
+Offre sélectionnée
+{{sel.title}} · {{sel.route}}
+{{sel.line}} · nom du voyageur à donner au plus tard le jeu. 17 déc. à {{sel.dep}}
+{{sel.price}}
+Voir l’offre
+Voir l’offre de l’agence
+Débloquer avec le Pass NexG
+Sélectionnez une offre dans le tableau pour voir son détail.
+Écart = prix de l’offre − prix équivalent neuf (2 050 $). Prix indicatifs. Reventes : prix plafonné (règle à définir) et commission de 10 à 20 % — hypothèses.
+Drop membres en direct
+Se termine dans
+{{countdown}}
+YUL → PUJ
+Punta Cana · dim. 21 févr. 2027 · Nordelle
+200 $
+Prix équivalent ≈
+1 000 $
+3 places
+Voir le Drop
+Réservé aux membres du Pass NexG (nom provisoire), 9,99 $/mois, indicatif. Quantités limitées, sans garantie d’obtenir une place.
+Devenir membre
+Votre portefeuille · 3 droits
+Prix équivalent aujourd’hui
+4 730 $
+Payé 3 050 $
++1 680 $
+1 à nommer : YUL → CDG avant le 13 déc. 18:05
+Indicatif : prix d’un billet neuf équivalent aujourd’hui. Ce n’est ni un prix de revente garanti, ni un gain.
+Prototype — données fictives
+Compagnies (Aérolys, Nordelle), agence, détenteurs, prix et références inventés. Aucun paiement réel.
+Un droit de voyage est une inscription au registre interne de NexG-TT, pas un placement financier.

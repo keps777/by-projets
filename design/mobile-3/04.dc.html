@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<title>Résultats YUL → CDG — NexG-TT</title>
+<script src="70c22711-c64e-46fa-9c87-cb44114ce1e3"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+<style>
+body{margin:0;background:#EEF3F8}
+a{color:#1A64C8}a:hover{color:#124C9C}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #1A64C8;outline-offset:2px}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #EEF3F8; color: #0B1B2E; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="padding: 52px 12px 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<a href="Recherche.dc.html" aria-label="Retour" style="flex: none; width: 44px; height: 44px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; border: 1px solid #D3DCE6; display: flex; align-items: center; justify-content: center; color: #0B1B2E; text-decoration: none">
+<svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+</a>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 0">
+<h1 style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 20px; line-height: 24px; letter-spacing: 0.04em; text-transform: uppercase">YUL → CDG</h1>
+<p style="margin: 0; font-size: 13px; font-weight: 500; color: #3E4F66">ven. 18 déc. · 1 voyageur</p>
+</div>
+<a href="Recherche.dc.html" aria-label="Modifier la recherche" style="flex: none; width: 44px; height: 44px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; border: 1px solid #D3DCE6; display: flex; align-items: center; justify-content: center; color: #0B1B2E; text-decoration: none">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg>
+</a>
+</header>
+
+<div role="group" aria-label="Filtrer par source" style="flex: none; display: flex; gap: 8px; padding: 4px 20px 12px; overflow-x: auto">
+<button type="button" aria-pressed="{{fAllPressed}}" sc-camel-on-click="{{setAll}}" style="flex: none; display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{fAllBg}}; border: 1px solid {{fAllBorder}}; color: {{fAllFg}}; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Tous <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-variant-numeric: tabular-nums">5</span></button>
+<button type="button" aria-pressed="{{fResalePressed}}" sc-camel-on-click="{{setResale}}" style="flex: none; display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{fResaleBg}}; border: 1px solid {{fResaleBorder}}; color: {{fResaleFg}}; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Revente <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-variant-numeric: tabular-nums">2</span></button>
+<button type="button" aria-pressed="{{fNewPressed}}" sc-camel-on-click="{{setNew}}" style="flex: none; display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{fNewBg}}; border: 1px solid {{fNewBorder}}; color: {{fNewFg}}; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Neuf <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-variant-numeric: tabular-nums">1</span></button>
+<button type="button" aria-pressed="{{fAgencyPressed}}" sc-camel-on-click="{{setAgency}}" style="flex: none; display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{fAgencyBg}}; border: 1px solid {{fAgencyBorder}}; color: {{fAgencyFg}}; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Agences <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-variant-numeric: tabular-nums">1</span></button>
+<button type="button" aria-pressed="{{fDropPressed}}" sc-camel-on-click="{{setDrop}}" style="flex: none; display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{fDropBg}}; border: 1px solid {{fDropBorder}}; color: {{fDropFg}}; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Drops <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-variant-numeric: tabular-nums">1</span></button>
+</div>
+
+<main style="flex: 1; overflow-y: auto; padding: 4px 20px 32px; display: flex; flex-direction: column; gap: 14px">
+
+<section aria-labelledby="baro-title" style="flex: none; display: flex; flex-direction: column; gap: 12px; padding: 16px 16px 14px; border-radius: 20px; background: #0B1B2E; color: #FFFFFF">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<h2 id="baro-title" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #C9D3DF">Baromètre du marché</h2>
+<span style="font-size: 12px; font-weight: 500; color: #C9D3DF">Prix indicatifs</span>
+</div>
+<p style="margin: 0; font-size: 15px; line-height: 21px; color: #FFFFFF"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-variant-numeric: tabular-nums">3</span> offres sous le prix équivalent neuf, dès <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-variant-numeric: tabular-nums">1 380 $</span>.</p>
+<div role="img" aria-label="Échelle de 1 300 $ à 2 100 $. Offres : 1 380 $, 1 500 $ (meilleure affaire), 1 690 $, 2 050 $. Prix équivalent neuf : 2 050 $." style="position: relative; height: 66px; margin: 0 12px">
+<span style="position: absolute; left: 0; right: 0; top: 47px; height: 2px; background: rgba(255,255,255,0.18)"></span>
+<span style="position: absolute; left: 10%; width: 83.75%; top: 45px; height: 6px; border-radius: 999px; background: rgba(255,255,255,0.22)"></span>
+<span style="position: absolute; left: 93.75%; top: 4px; height: 52px; border-left: 2px dashed #C9D3DF"></span>
+<span style="position: absolute; right: 6.25%; top: 2px; margin-right: 8px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #C9D3DF; white-space: nowrap">Neuf 2 050 $</span>
+<span style="position: absolute; left: 10%; top: 42px; width: 12px; height: 12px; box-sizing: border-box; border-radius: 999px; background: #C9D3DF; border: 2px solid #0B1B2E; transform: translateX(-50%); opacity: {{opE}}"></span>
+<span style="position: absolute; left: 48.75%; top: 42px; width: 12px; height: 12px; box-sizing: border-box; border-radius: 999px; background: #C9D3DF; border: 2px solid #0B1B2E; transform: translateX(-50%); opacity: {{opC}}"></span>
+<span style="position: absolute; left: 93.75%; top: 42px; width: 12px; height: 12px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; border: 2px solid #0B1B2E; transform: translateX(-50%); opacity: {{opB}}"></span>
+<span style="position: absolute; left: 25%; top: 0; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; opacity: {{opA}}">
+<span style="height: 24px; padding: 0 8px; display: flex; align-items: center; border-radius: 6px; background: #FFD23F; color: #0B1B2E; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums">1 500 $</span>
+<span style="width: 2px; height: 14px; background: #FFD23F"></span>
+<span style="width: 18px; height: 18px; box-sizing: border-box; border-radius: 999px; background: #FFD23F; border: 3px solid #0B1B2E"></span>
+</span>
+</div>
+<div aria-hidden="true" style="position: relative; height: 16px; margin: 0 12px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #C9D3DF; font-variant-numeric: tabular-nums">
+<span style="position: absolute; left: 0; transform: translateX(-50%); white-space: nowrap">1 300 $</span>
+<span style="position: absolute; left: 25%; transform: translateX(-50%); white-space: nowrap">1 500 $</span>
+<span style="position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap">1 700 $</span>
+<span style="position: absolute; left: 75%; transform: translateX(-50%); white-space: nowrap">1 900 $</span>
+<span style="position: absolute; left: 100%; transform: translateX(-50%); white-space: nowrap">2 100 $</span>
+</div>
+<p style="margin: 0; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; gap: 8px; font-size: 13px; color: #C9D3DF">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="#FFD23F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
++ 1 drop membres non affiché : prix visible avec le Pass NexG
+</p>
+</section>
+
+<p style="margin: 4px 0 0; font-size: 13px; color: #5A6A80">{{countLabel}} · prix par voyageur</p>
+
+<sc-if value="{{showA}}" hint-placeholder-val="{{ true }}">
+<a href="Offre.dc.html" style="flex: none; display: flex; flex-direction: column; border-radius: 20px; background: #FFFFFF; border: 2px solid #0B1B2E; color: #0B1B2E; text-decoration: none; overflow: hidden; box-shadow: 0 12px 32px rgba(11,27,46,0.10)">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 16px; background: #0B1B2E; color: #FFFFFF">
+<span style="display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase">
+<span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 999px; background: #FFD23F"></span>
+Meilleure affaire
+</span>
+<span style="font-size: 12px; font-weight: 500; color: #C9D3DF">Prix le plus bas en direct</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 14px 16px 16px">
+<span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #3E4F66">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="#096A49" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"></path><path d="m9 12 2 2 4-4"></path></svg>
+Revente · détenteur vérifié
+</span>
+<div style="display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 20px; line-height: 24px; font-variant-numeric: tabular-nums">18:05</span>
+<span style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; color: #3E4F66">YUL</span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0">
+<span style="font-size: 13px; font-weight: 500; color: #3E4F66">7 h 05</span>
+<span aria-hidden="true" style="display: flex; align-items: center; gap: 4px; width: 100%; color: #1A64C8"><span style="flex: 1; border-top: 2px dotted #B9C5D3"></span><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h6l4 7h2l-2-7h5l2 2h2l-1-3 1-3h-2l-2 2h-5l2-7h-2l-4 7H3z"></path></svg><span style="flex: 1; border-top: 2px dotted #B9C5D3"></span></span>
+<span style="font-size: 13px; font-weight: 600; color: #3E4F66">Direct</span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px">
+<span style="display: flex; align-items: flex-start; gap: 2px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 20px; line-height: 24px; font-variant-numeric: tabular-nums">07:10</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 600; color: #3E4F66">+1</span></span>
+<span style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; color: #3E4F66">CDG</span>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(26,100,200,0.10); color: #1A64C8; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">
+<svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg>
+Revendable
+</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: #E3EAF2; color: #3E4F66; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">
+<svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><circle cx="9" cy="11" r="2"></circle><path d="M6 16c.8-1.3 1.8-2 3-2s2.2.7 3 2M14 10h4M14 13h3"></path></svg>
+Nominatif à J-1
+</span>
+</div>
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding-top: 12px; border-top: 1px solid #D3DCE6">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 15px; font-weight: 600">Aérolys</span>
+<span style="font-size: 13px; color: #5A6A80">Vol 816 · Économie</span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 26px; line-height: 30px; font-variant-numeric: tabular-nums">1 500 $</span>
+<span style="display: inline-flex; align-items: center; gap: 3px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600; color: #A84A0E; font-variant-numeric: tabular-nums">
+<svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 8 6 6 4-4 6 7"></path><path d="M15 17h5v-5"></path></svg>
+−27 % vs neuf
+</span>
+</div>
+</div>
+</div>
+</a>
+</sc-if>
+
+<sc-if value="{{showB}}" hint-placeholder-val="{{ true }}">
+<article style="flex: none; display: flex; flex-direction: column; gap: 14px; padding: 16px; border-radius: 20px; background: #FFFFFF; border: 1px solid #D3DCE6; color: #0B1B2E">
+<span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #3E4F66">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h6l4 7h2l-2-7h5l2 2h2l-1-3 1-3h-2l-2 2h-5l2-7h-2l-4 7H3z"></path></svg>
+Neuf · émis via NexG-TT
+</span>
+<div style="display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 20px; line-height: 24px; font-variant-numeric: tabular-nums">18:05</span>
+<span style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; color: #3E4F66">YUL</span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0">
+<span style="font-size: 13px; font-weight: 500; color: #3E4F66">7 h 05</span>
+<span aria-hidden="true" style="display: flex; align-items: center; gap: 4px; width: 100%; color: #1A64C8"><span style="flex: 1; border-top: 2px dotted #B9C5D3"></span><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h6l4 7h2l-2-7h5l2 2h2l-1-3 1-3h-2l-2 2h-5l2-7h-2l-4 7H3z"></path></svg><span style="flex: 1; border-top: 2px dotted #B9C5D3"></span></span>
+<span style="font-size: 13px; font-weight: 600; color: #3E4F66">Direct</span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px">
+<span style="display: flex; align-items: flex-start; gap: 2px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 20px; line-height: 24px; font-variant-numeric: tabular-nums">07:10</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 600; color: #3E4F66">+1</span></span>
+<span style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; color: #3E4F66">CDG</span>
+</div>
+</div>
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding-top: 12px; border-top: 1px solid #D3DCE6">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 15px; font-weight: 600">Aérolys</span>
+<span style="font-size: 13px; color: #5A6A80">Vol 816 · Économie</span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 22px; line-height: 26px; font-variant-numeric: tabular-nums">2 050 $</span>
+<span style="font-size: 13px; color: #5A6A80">Prix neuf de référence</span>
+</div>
+</div>
+</article>
+</sc-if>
+
+<sc-if value="{{showC}}" hint-placeholder-val="{{ true }}">
+<a href="Agence.dc.html" style="flex: none; display: flex; flex-direction: column; gap: 14px; padding: 16px; border-radius: 20px; background: #FFFFFF; border: 1px solid #D3DCE6; color: #0B1B2E; text-decoration: none">
+<span style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #3E4F66">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9l1.5-5h13L20 9M4 9v11h16V9M4 9h16M9 20v-6h6v6"></path></svg>
+Vendu par Agence Horizon (exemple)
+</span>
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: #5A6A80; flex: none"><path d="m9 5 7 7-7 7"></path></svg>
+</span>
+<div style="display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 20px; line-height: 24px; font-variant-numeric: tabular-nums">16:40</span>
+<span style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; color: #3E4F66">YUL</span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0">
+<span style="font-size: 13px; font-weight: 500; color: #3E4F66">11 h 15</span>
+<span aria-hidden="true" style="display: flex; align-items: center; gap: 4px; width: 100%"><span style="flex: 1; border-top: 2px dotted #B9C5D3"></span><span style="flex: none; width: 9px; height: 9px; box-sizing: border-box; border-radius: 999px; border: 2px solid #A84A0E; background: #FFFFFF"></span><span style="flex: 1; border-top: 2px dotted #B9C5D3"></span></span>
+<span style="font-size: 13px; font-weight: 600; color: #3E4F66">1 escale · KEF</span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px">
+<span style="display: flex; align-items: flex-start; gap: 2px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 20px; line-height: 24px; font-variant-numeric: tabular-nums">09:55</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 600; color: #3E4F66">+1</span></span>
+<span style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; color: #3E4F66">CDG</span>
+</div>
+</div>
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding-top: 12px; border-top: 1px solid #D3DCE6">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 15px; font-weight: 600">Nordelle</span>
+<span style="font-size: 13px; color: #5A6A80">Offre d'agence partenaire</span>
+</div>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 22px; line-height: 26px; font-variant-numeric: tabular-nums">1 690 $</span>
+</div>
+</a>
+</sc-if>
+
+<sc-if value="{{showD}}" hint-placeholder-val="{{ true }}">
+<a href="Abonnement.dc.html" style="flex: none; display: flex; flex-direction: column; gap: 14px; padding: 16px; border-radius: 20px; background: #FFFFFF; border: 1px dashed #B9C5D3; color: #0B1B2E; text-decoration: none">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #0B1B2E">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"></path></svg>
+Drop membres
+</span>
+<span style="display: flex; align-items: center; gap: 3px">
+<span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Prix masqué</span>
+<span aria-hidden="true" style="width: 14px; height: 22px; border-radius: 4px; background: #E3EAF2"></span>
+<span aria-hidden="true" style="width: 14px; height: 22px; border-radius: 4px; background: #E3EAF2"></span>
+<span aria-hidden="true" style="width: 14px; height: 22px; border-radius: 4px; background: #E3EAF2"></span>
+<span aria-hidden="true" style="margin-left: 4px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 20px; color: #5A6A80">$</span>
+</span>
+</div>
+<div style="display: flex; align-items: center; gap: 14px">
+<span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 12px; background: #0B1B2E; color: #FFD23F; display: flex; align-items: center; justify-content: center">
+<svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+</span>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 15px; font-weight: 600">Réservé aux membres du Pass NexG</span>
+<span style="font-size: 13px; color: #5A6A80">Prix et horaires visibles avec le Pass.</span>
+</div>
+</div>
+<span style="display: flex; align-items: center; justify-content: space-between; min-height: 44px; padding: 0 14px; border-radius: 12px; background: rgba(26,100,200,0.10); color: #1A64C8; font-size: 14px; font-weight: 600">
+Découvrir le Pass NexG
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg>
+</span>
+</a>
+</sc-if>
+
+<sc-if value="{{showE}}" hint-placeholder-val="{{ true }}">
+<article style="flex: none; display: flex; flex-direction: column; gap: 14px; padding: 16px; border-radius: 20px; background: #FFFFFF; border: 1px solid #D3DCE6; color: #0B1B2E">
+<span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #3E4F66">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg>
+Revente
+</span>
+<div style="display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 20px; line-height: 24px; font-variant-numeric: tabular-nums">21:40</span>
+<span style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; color: #3E4F66">YUL</span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0">
+<span style="font-size: 13px; font-weight: 500; color: #3E4F66">10 h 15</span>
+<span aria-hidden="true" style="display: flex; align-items: center; gap: 4px; width: 100%"><span style="flex: 1; border-top: 2px dotted #B9C5D3"></span><span style="flex: none; width: 9px; height: 9px; box-sizing: border-box; border-radius: 999px; border: 2px solid #A84A0E; background: #FFFFFF"></span><span style="flex: 1; border-top: 2px dotted #B9C5D3"></span></span>
+<span style="font-size: 13px; font-weight: 600; color: #3E4F66">1 escale · KEF</span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px">
+<span style="display: flex; align-items: flex-start; gap: 2px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 20px; line-height: 24px; font-variant-numeric: tabular-nums">13:55</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 600; color: #3E4F66">+1</span></span>
+<span style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; color: #3E4F66">CDG</span>
+</div>
+</div>
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding-top: 12px; border-top: 1px solid #D3DCE6">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 15px; font-weight: 600">Nordelle</span>
+<span style="font-size: 13px; color: #5A6A80">Économie</span>
+</div>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 22px; line-height: 26px; font-variant-numeric: tabular-nums">1 380 $</span>
+</div>
+</article>
+</sc-if>
+
+<a href="IntentionCreer.dc.html" style="flex: none; display: flex; flex-direction: column; gap: 14px; margin-top: 6px; padding: 16px; border-radius: 20px; background: #FFFFFF; border: 1px solid #D3DCE6; color: #0B1B2E; text-decoration: none; box-shadow: 0 1px 0 #D3DCE6, 0 12px 32px rgba(11,27,46,0.10)">
+<div style="display: flex; align-items: center; gap: 14px">
+<span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 12px; background: #0B1B2E; color: #FFD23F; display: flex; align-items: center; justify-content: center">
+<svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12V4h8l10 10-8 8z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg>
+</span>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; line-height: 24px; letter-spacing: 0.02em">Trop cher ? Dites votre prix</span>
+<span style="font-size: 13px; line-height: 18px; color: #3E4F66">Publiez une intention d'achat : les vendeurs de ce vol viennent à vous.</span>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(9,106,73,0.10); color: #096A49; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">
+<svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+Fonds réservés
+</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: #E3EAF2; color: #3E4F66; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">Aucun débit sans accord</span>
+</div>
+<span style="display: flex; align-items: center; justify-content: space-between; min-height: 44px; padding: 0 14px; border-radius: 12px; background: rgba(26,100,200,0.10); color: #1A64C8; font-size: 14px; font-weight: 600">
+Publier une intention d'achat
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg>
+</span>
+</a>
+
+</main>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844}}">
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const set = (patch) => this.setState(Object.assign({}, this.state || {}, patch));
+    const f = s.filter ?? 'all';
+    const chip = (key) => {
+      const on = f === key;
+      return {
+        pressed: String(on),
+        bg: on ? '#0B1B2E' : '#FFFFFF',
+        border: on ? '#0B1B2E' : '#D3DCE6',
+        fg: on ? '#FFFFFF' : '#3E4F66'
+      };
+    };
+    const cAll = chip('all');
+    const cResale = chip('resale');
+    const cNew = chip('new');
+    const cAgency = chip('agency');
+    const cDrop = chip('drop');
+    const vis = (kind) => f === 'all' || f === kind;
+    const showA = vis('resale');
+    const showB = vis('new');
+    const showC = vis('agency');
+    const showD = vis('drop');
+    const showE = vis('resale');
+    const count = [showA, showB, showC, showD, showE].filter(Boolean).length;
+    const dim = (on) => (on ? '1' : '0.6');
+
+    return {
+      fAllPressed: cAll.pressed, fAllBg: cAll.bg, fAllBorder: cAll.border, fAllFg: cAll.fg,
+      fResalePressed: cResale.pressed, fResaleBg: cResale.bg, fResaleBorder: cResale.border, fResaleFg: cResale.fg,
+      fNewPressed: cNew.pressed, fNewBg: cNew.bg, fNewBorder: cNew.border, fNewFg: cNew.fg,
+      fAgencyPressed: cAgency.pressed, fAgencyBg: cAgency.bg, fAgencyBorder: cAgency.border, fAgencyFg: cAgency.fg,
+      fDropPressed: cDrop.pressed, fDropBg: cDrop.bg, fDropBorder: cDrop.border, fDropFg: cDrop.fg,
+      setAll: () => set({ filter: 'all' }),
+      setResale: () => set({ filter: 'resale' }),
+      setNew: () => set({ filter: 'new' }),
+      setAgency: () => set({ filter: 'agency' }),
+      setDrop: () => set({ filter: 'drop' }),
+      showA, showB, showC, showD, showE,
+      countLabel: count + (count > 1 ? ' offres' : ' offre'),
+      opA: dim(showA),
+      opB: dim(showB),
+      opC: dim(showC),
+      opE: dim(showE)
+    };
+  }
+}
+</script>
+
+
+</body></html>

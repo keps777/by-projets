@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Transférer à un proche : échéance proche — NexG-TT</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Barlow:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#0D0E11}
+a{color:#FFD23F}a:hover{color:#FFE27A}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #FFD23F;outline-offset:2px}
+main:focus-visible{outline:2px solid #FFD23F;outline-offset:-2px}
+input::placeholder{color:#8C93A3;opacity:1}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0D0E11; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="padding: 52px 12px 8px; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 8px">
+<a href="Transfert.dc.html" aria-label="Retour" style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 999px; background: #15171C; border: 1px solid #2C303A; display: flex; align-items: center; justify-content: center; color: #F3F4F6; text-decoration: none">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+</a>
+<h1 style="margin: 0; text-align: center; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 20px; letter-spacing: 0.04em; text-transform: uppercase">Confirmer</h1>
+<span aria-hidden="true" style="width: 44px; height: 44px"></span>
+</header>
+
+<main style="flex: 1; overflow-y: auto; padding: 12px 20px 164px; scroll-padding-bottom: 148px; display: flex; flex-direction: column; gap: 20px">
+
+<sc-if value="{{showDemo}}" hint-placeholder-val="{{ false }}">
+<div role="note" style="flex: none; display: flex; align-items: center; gap: 8px; background: rgba(98,199,255,0.12); border: 1px solid rgba(98,199,255,0.4); color: #62C7FF; border-radius: 12px; padding: 10px 12px; font-size: 13px; font-weight: 600">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+MODE DÉMO — aucun paiement réel
+</div>
+</sc-if>
+
+<div style="flex: none; display: flex; flex-direction: column; gap: 8px">
+<p style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Étape 2 sur 3 · Confirmer</p>
+<div aria-hidden="true" style="display: flex; gap: 6px">
+<span style="flex: 1; height: 4px; border-radius: 999px; background: #B9BEC9"></span>
+<span style="flex: 1; height: 4px; border-radius: 999px; background: #FFD23F"></span>
+<span style="flex: 1; height: 4px; border-radius: 999px; background: #2C303A"></span>
+</div>
+</div>
+
+<h2 style="flex: none; margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 34px; line-height: 36px; letter-spacing: 0.02em; text-transform: uppercase">Vérifiez avant de transférer</h2>
+
+<section aria-labelledby="cd-h" style="flex: none; display: flex; flex-direction: column; gap: 12px; padding: 18px; border-radius: 20px; background: #060708; border: 1px solid #2C303A">
+<h2 id="cd-h" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Échéance de finalisation</h2>
+<div aria-hidden="true" style="display: flex; align-items: flex-end; gap: 4px">
+<span style="width: 34px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 5px; background: #1C1F25; box-shadow: inset 0 -24px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 30px; color: #FFD23F">0</span>
+<span style="width: 34px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 5px; background: #1C1F25; box-shadow: inset 0 -24px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 30px; color: #FFD23F">6</span>
+<span style="padding: 0 12px 4px 4px; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 20px; color: #B9BEC9">H</span>
+<span style="width: 34px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 5px; background: #1C1F25; box-shadow: inset 0 -24px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 30px; color: #FFD23F">4</span>
+<span style="width: 34px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 5px; background: #1C1F25; box-shadow: inset 0 -24px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 30px; color: #FFD23F">5</span>
+<span style="padding: 0 0 4px 4px; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 20px; color: #B9BEC9">MIN</span>
+</div>
+<p style="margin: 0; font-size: 15px; font-weight: 600">Il reste 6 h 45 · échéance 13 déc. 18:05</p>
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #B9BEC9">Après l'échéance, plus aucune transaction n'est possible sur ce billet.</p>
+</section>
+
+<div role="alert" style="flex: none; display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 14px; background: rgba(255,210,63,0.12); border: 1px solid rgba(255,210,63,0.4)">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFD23F" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+<span style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 15px; line-height: 21px; font-weight: 700; color: #FFD23F">Échéance proche : Léa A. aura peu de temps</span>
+<span style="font-size: 14px; line-height: 20px; color: #F3F4F6">Léa A. doit nommer le voyageur avant ce moment, sinon elle sera nommée voyageur par défaut.</span>
+<span style="font-size: 13px; line-height: 18px; color: #B9BEC9">Seuil de l'avertissement : hypothèse à valider [H].</span>
+</span>
+</div>
+
+<label for="echeance" style="flex: none; display: flex; align-items: flex-start; gap: 12px; min-height: 44px; padding: 14px; box-sizing: border-box; border-radius: 14px; background: #15171C; border: 1px solid #FFD23F; cursor: pointer">
+<input id="echeance" type="checkbox" checked="{{echeance}}" onChange="{{ onEcheance }}" style="width: 24px; height: 24px; margin: 0; flex: none; accent-color: #FFD23F; cursor: pointer">
+<span style="font-size: 14px; line-height: 20px">Je comprends que Léa A. n'aura que 6 h 45 pour nommer le voyageur.</span>
+</label>
+
+<section aria-label="De qui, à qui" style="flex: none; display: flex; flex-direction: column; gap: 2px">
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: stretch; gap: 8px">
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 14px; background: #1D2027">
+<span style="font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">De</span>
+<span style="display: flex; align-items: center; gap: 8px">
+<span aria-hidden="true" style="width: 32px; height: 32px; flex: none; border-radius: 999px; background: #F3F4F6; color: #0D0E11; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700">AT</span>
+<span style="font-size: 15px; font-weight: 700">Alex T.</span>
+</span>
+<span style="font-size: 12px; line-height: 16px; color: #B9BEC9">Vous, détenteur</span>
+</div>
+<span aria-hidden="true" style="align-self: center; color: #8C93A3; display: flex"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span>
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 14px; background: #1D2027; border: 1px solid #FFD23F">
+<span style="font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">À</span>
+<span style="display: flex; align-items: center; gap: 8px">
+<span aria-hidden="true" style="width: 32px; height: 32px; flex: none; border-radius: 999px; background: #F3F4F6; color: #0D0E11; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700">LA</span>
+<span style="font-size: 15px; font-weight: 700">Léa A.</span>
+</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; line-height: 16px; color: #B9BEC9">@lea.ailleurs</span>
+</div>
+</div>
+<a href="Transfert.dc.html" style="align-self: flex-end; display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 600; color: #FFD23F; text-decoration: none">Modifier le proche</a>
+</section>
+
+<div style="flex: none; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: #FFFFFF; color: #121418">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 26px; line-height: 26px; letter-spacing: 0.02em; white-space: nowrap">YUL → CDG</span>
+<span style="flex: 1; min-width: 0; font-size: 12px; line-height: 16px; color: #555C6B">Lun. 14 déc. 2026<br>Aérolys 812 · 18:05</span>
+<span style="display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-size: 11px; font-weight: 600; color: #555C6B">Statut</span>
+<span style="font-size: 15px; font-weight: 700">Détenu</span>
+</span>
+</div>
+
+<section aria-labelledby="suite-h" style="flex: none; display: flex; flex-direction: column; gap: 12px">
+<h2 id="suite-h" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Ce qui va se passer</h2>
+<ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px">
+<li style="display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: start">
+<span aria-hidden="true" style="width: 28px; height: 28px; border-radius: 999px; background: #262A33; color: #F3F4F6; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600">1</span>
+<span style="font-size: 15px; line-height: 22px">Léa A. devient détenteur de ce droit tout de suite.</span>
+</li>
+<li style="display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: start">
+<span aria-hidden="true" style="width: 28px; height: 28px; border-radius: 999px; background: #262A33; color: #F3F4F6; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600">2</span>
+<span style="font-size: 15px; line-height: 22px">Votre statut passe à « Cédé ». Le droit reste dans votre historique.</span>
+</li>
+<li style="display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: start">
+<span aria-hidden="true" style="width: 28px; height: 28px; border-radius: 999px; background: #262A33; color: #F3F4F6; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600">3</span>
+<span style="font-size: 15px; line-height: 22px">Léa A. dispose de 6 h 45 pour nommer le voyageur, avant le 13 déc. 18:05. Sans nom à cette échéance, elle est nommée voyageur par défaut.</span>
+</li>
+<li style="display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: start">
+<span aria-hidden="true" style="width: 28px; height: 28px; border-radius: 999px; background: #262A33; color: #F3F4F6; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600">4</span>
+<span style="font-size: 15px; line-height: 22px">Aucune vente : aucun paiement ne passe entre vous.</span>
+</li>
+</ol>
+</section>
+
+<section aria-labelledby="frais-h" style="flex: none; display: flex; flex-direction: column; gap: 12px; padding: 18px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A">
+<h2 id="frais-h" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Coût du transfert</h2>
+<dl style="margin: 0; display: flex; flex-direction: column">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; border-bottom: 1px solid #2C303A">
+<dt style="display: flex; flex-direction: column; font-size: 14px; color: #B9BEC9">Frais de transfert<span style="font-size: 12px; color: #8C93A3">Hypothèse à valider</span></dt>
+<dd style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums">{{fraisLabel}}</dd>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px">
+<dt style="font-size: 16px; font-weight: 700">Total à payer</dt>
+<dd style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 28px; font-variant-numeric: tabular-nums">{{fraisLabel}}</dd>
+</div>
+</dl>
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #8C93A3">Montant fictif de la maquette : les frais ne sont pas décidés.</p>
+</section>
+
+<div style="flex: none; display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 14px; background: rgba(255,210,63,0.12); border: 1px solid rgba(255,210,63,0.4)">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFD23F" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+<span style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 15px; line-height: 21px; color: #F3F4F6"><strong style="color: #FFD23F">Action définitive&#160;:</strong> une fois le transfert fait, seule Léa A. peut agir sur ce droit.</span>
+<span style="font-size: 13px; line-height: 18px; color: #B9BEC9">Hypothèse [H] : ni refus ni annulation n'est prévu.</span>
+</span>
+</div>
+
+<label for="confirmation" style="flex: none; display: flex; align-items: flex-start; gap: 12px; min-height: 44px; padding: 14px; box-sizing: border-box; border-radius: 14px; background: #15171C; border: 1px solid #2C303A; cursor: pointer">
+<input id="confirmation" type="checkbox" checked="{{consent}}" onChange="{{ onConsent }}" style="width: 24px; height: 24px; margin: 0; flex: none; accent-color: #FFD23F; cursor: pointer">
+<span style="font-size: 14px; line-height: 20px">Je confirme transférer ce droit à Léa A. (@lea.ailleurs) et je comprends que c'est définitif.</span>
+</label>
+
+<div style="flex: none; display: flex; align-items: center; gap: 10px; padding: 0 14px; box-sizing: border-box; border-radius: 16px; border: 1px dashed #3A3F4B">
+<span style="display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; background: #262A33; color: #B9BEC9; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">Démo</span>
+<a href="TransfertErreur.dc.html" style="flex: 1; display: flex; align-items: center; min-height: 48px; font-size: 14px; font-weight: 600; color: #FFD23F; text-decoration: none">Simuler un échec du transfert</a>
+</div>
+
+</main>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 20px 28px; background: #0D0E11; border-top: 1px solid #2C303A; display: flex; flex-direction: column; gap: 10px">
+<sc-if value="{{allChecked}}" hint-placeholder-val="{{ false }}">
+<a href="TransfertFait.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #FFD23F; color: #0D0E11; font-weight: 700; font-size: 16px; text-decoration: none; border: 0">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"></path></svg>
+Transférer à Léa A.
+</a>
+</sc-if>
+<sc-if value="{{notAllChecked}}" hint-placeholder-val="{{ true }}">
+<button type="button" aria-disabled="true" aria-describedby="hint-consent" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #262A33; color: #B9BEC9; font-family: 'Barlow', system-ui, sans-serif; font-weight: 700; font-size: 16px; border: 1px solid #3A3F4B; cursor: not-allowed">Transférer à Léa A.</button>
+<p id="hint-consent" style="margin: 0; text-align: center; font-size: 13px; color: #B9BEC9">Cochez les deux confirmations pour continuer.</p>
+</sc-if>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844},"frais":{"editor":"int","default":0,"min":0,"max":100,"unit":"$","section":"Hypothèses","description":"Frais de transfert : hypothèse à valider (EF-10). 0 = aucun frais retenu dans la maquette ; au-dessus de 0, le bandeau MODE DÉMO apparaît."}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const p = this.props || {};
+    const raw = p.frais;
+    let frais = 0;
+    if (typeof raw === 'number') {
+      frais = raw;
+    } else if (raw != null) {
+      const n = Number(typeof raw === 'object' ? raw.default : raw);
+      if (isFinite(n)) frais = n;
+    }
+    frais = Math.max(0, Math.round(frais));
+    const nbsp = ' ';
+    const fmt = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, nbsp) + nbsp + '$';
+    const consent = s.consent ?? false;
+    const echeance = s.echeance ?? false;
+    return {
+      consent: consent,
+      echeance: echeance,
+      allChecked: consent && echeance,
+      notAllChecked: !(consent && echeance),
+      onEcheance: (e) => this.setState(Object.assign({}, this.state || {}, { echeance: !!e.target.checked })),
+      showDemo: frais > 0,
+      fraisLabel: fmt(frais),
+      onConsent: (e) => this.setState(Object.assign({}, this.state || {}, { consent: !!e.target.checked }))
+    };
+  }
+}
+</script>
+</body>
+</html>

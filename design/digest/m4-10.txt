@@ -1,0 +1,37 @@
+Identité : seulement quand il le faut
+Vérification d'identité, facultative — NexG-TT
+Facultatif
+I
+D
+Pour l'espace Mes actifs
+Vérifier votre identité, seulement quand il le faut
+Pour explorer et acheter, rien à faire. La vérification arrive au moment de revendre ou de recevoir de l'argent.
+Quand est-ce demandé ?
+Ce que vous faites
+Vérification
+Explorer et acheter
+Non
+Revendre un billet ou un bagage
+Oui
+Recevoir de l'argent
+Oui
+Nommer un voyageur
+Informations du passeport du voyageur seulement
+Revendre et recevoir de l'argent : requis par la réglementation sur les versements (à confirmer).
+Si vous le faites maintenant
+Quelques minutes — estimation
+1
+Pièce d'identité
+Une photo de votre passeport ou permis de conduire.
+2
+Égoportrait
+Pour vérifier que la pièce est bien la vôtre.
+3
+Confirmation
+La réponse s'affiche dans l'app, avec la marche à suivre.
+Démo : étape 1 ouverte.
+L'appareil photo s'ouvrirait ici. Aucun document n'est envoyé dans cette maquette.
+Vous pourrez la faire plus tard depuis Mes actifs, au moment de revendre un billet.
+Vérifier maintenant
+Arrêter la vérification (démo)
+Plus tard

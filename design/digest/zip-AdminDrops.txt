@@ -1,0 +1,223 @@
+Administration · Drops et agences — NexG-TT
+Administration · Drops et agences — NexG-TT
+NEXG
+·TT
+Administration
+Droits de voyage
+Drops et agences
+Journal d’audit
+Démo · données fictives
+MFA vérifiée
+adm-01
+(vous)
+Maquette · état affiché
+Normal
+Chargement
+Vide
+Erreur
+Hors ligne
+Hors produit : sert à montrer les états de l’écran.
+Drops et agences
+Administration · drops (phase 2a) et agences partenaires (phase 2b) en démonstration · données fictives
+Hors ligne. Dernières données reçues le 12 oct. 2026 à 14:02 (UTC−4). Lecture seule : la planification, l’ouverture et la vérification sont indisponibles.
+Aucun drop planifié
+Aucun drop n’est planifié ni ouvert pour le moment.
+Planifier un drop
+Impossible de charger les drops et les agences.
+Le serveur n’a pas répondu. Aucune donnée n’a été modifiée.
+Code de corrélation :
+ERR-DEMO-91B0
+Réessayer
+Chargement des drops et des agences…
+Drops
+Phase 2a, démonstration. Heure de Montréal (UTC−4). Sélectionnez un drop pour voir ses règles et ses injections.
+Planifier un drop
+Planifier un drop
+Prix membre en dollars canadiens, nombre entier. Ouverture en heure de Montréal (UTC−4). Action journalisée.
+Lot d’inventaire
+Choisir un lot
+Lot Aérolys 590 · YUL → BCN · 6 avr. 2027 · 10 places
+Lot Nordelle 158 · YUL → SJU · 2 avr. 2027 · 6 places
+{{plErrLot}}
+Places à libérer
+{{plErrPlaces}}
+Prix membre ($)
+{{plErrPrix}}
+Date d’ouverture (AAAA-MM-JJ)
+{{plErrDate}}
+Heure d’ouverture (HH:MM, heure de Montréal)
+{{plErrHeure}}
+Annuler
+Planifier le drop
+Drops : numéro, trajet et vol, ouverture, places réclamées sur libérées, prix membre et statut.
+Drop
+Trajet et vol
+Ouverture
+Places
+Prix membre
+Statut
+N° 131
+Asie
+YUL → NRT
+Aérolys 880 · 12 mai 2027
+lun. 19 oct. 2026
+18:00 · UTC−4
+— sur 4
+prévues
+0 sur 0
+en attente de l’injection 1
+520 $
+Planifié
+Ouvert
+N° 130
+Caraïbes
+YUL → CUN
+Nordelle 410 · 27 mars 2027
+sam. 17 oct. 2026
+09:00 · UTC−4
+— sur 6
+prévues
+0 sur 0
+en attente de l’injection 1
+190 $
+Planifié
+Ouvert
+N° 129
+Europe
+YUL → LIS
+Aérolys 662 · 9 mars 2027
+jeu. 15 oct. 2026
+12:00 · UTC−4
+— sur 8
+prévues
+0 sur 0
+en attente de l’injection 1
+340 $
+Planifié
+Ouvert
+N° 128
+Caraïbes
+YUL → PUJ
+Nordelle 228 · 21 févr. 2027
+lun. 12 oct. 2026
+14:00 · UTC−4
+3 sur 6
+réclamées sur libérées
+200 $
+Ouvert
+N° 127
+Caraïbes
+YUL → PUJ
+Nordelle 228 · 21 févr. 2027
+jeu. 3 sept. 2026
+14:00 · UTC−4
+6 sur 6
+réclamées sur libérées
+200 $
+Épuisé
+Drop sélectionné
+Drop N° {{sel.num}}
+{{sel.zone}} · YUL → {{sel.to}} · {{sel.vol}} · {{sel.date}}
+{{sel.status}}
+{{sel.placesLine}}
+{{notice}}
+Ouvrir le drop N° {{sel.num}} maintenant ? L’ouverture est immédiate et journalisée. Les règles d’attribution publiées s’appliquent.
+Annuler
+Confirmer l’ouverture
+Ouvrir maintenant
+Action sensible, journalisée.
+Hors ligne : les actions d’administration sont indisponibles.
+Ouverture
+{{sel.open}}
+UTC−4
+Prix membre
+{{sel.price}}
+Règles d’attribution publiées
+Une place par membre et par drop.
+La place est attribuée à la fin du paiement, dans l’ordre d’arrivée.
+Même règle d’accès pour tous les membres, quel que soit le lieu de connexion.
+Règles provisoires, hypothèses à valider. Les quantités affichées sont les quantités réelles.
+Voir la page publique du drop
+Journal des injections
+Injection {{inj.n}}
+{{inj.time}}
+{{inj.places}}
+algorithme {{inj.algo}}
+Aucune injection : le drop n’est pas encore ouvert.
+Aucune injection pour l’instant : la première est déclenchée par l’algorithme et journalisée.
+Chaque injection est journalisée avec la version de l’algorithme et ses paramètres (ENF-10).
+Agences partenaires
+Phase 2b, démonstration. Agences fictives, suivies de « (exemple) ». Sélectionnez une agence pour la vérifier.
+Agences partenaires : agence, permis d’agent de voyages, vérification, offres publiées et dernière vérification.
+Agence
+Permis d’agent de voyages
+Vérification
+Offres publiées
+Dernière vérification
+Agence Horizon (exemple)
+Vitrine ouverte
+n° 000000 (exemple)
+Vérifiée
+Suspendue
+3
+{{arows.ag1.last}}
+Voyages du Fleuve (exemple)
+Dossier reçu le 9 oct. 2026
+n° 000001 (exemple)
+En vérification
+Vérifiée
+Refusée
+0
+{{arows.ag2.last}}
+Boréale Évasions (exemple)
+Vitrine retirée
+n° 000002 (exemple)
+Suspendue
+0
+{{arows.ag3.last}}
+Cap-Nord Voyages (exemple)
+Dossier clos
+n° 000003 (exemple)
+Refusée
+0
+{{arows.ag4.last}}
+Vérification de l’agence
+{{ag.name}}
+{{ag.status}}
+{{ag.notice}}
+Permis d’agent de voyages
+{{ag.permis}}
+Offres publiées
+{{ag.offres}}
+Dernière vérification
+{{ag.last}}
+Motif
+{{ag.motifText}}
+Contrôles
+Identité de l’entreprise vérifiée
+Permis d’agent de voyages vérifié auprès de l’OPC
+Cautionnement reçu
+{{c.label}}
+{{c.state}}
+Vérification d’une agence : processus à définir
+[H]
+. Trois contrôles proposés
+[R]
+; NexG-TT exige le permis des agences partenaires.
+{{ag.motifLabel}}
+Conservé dans le journal d’audit.
+Indiquez le motif.
+Annuler
+{{ag.motifSubmit}}
+Approuver la vitrine
+Cochez les trois contrôles pour approuver la vitrine.
+Refuser
+Suspendre la vitrine
+Aucune action disponible : la réinstallation ou le réexamen d’une agence est à définir
+[H]
+.
+Action sensible, journalisée.
+Hors ligne : les actions d’administration sont indisponibles.
+Prototype — données fictives
+Comptes pseudonymisés (ACC-…, adm-…), agences et références inventées. Aucun nom, courriel ni identité de voyageur.
+Un droit de voyage est une inscription au registre interne de NexG-TT.

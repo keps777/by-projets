@@ -1,0 +1,58 @@
+Web — Confirmation
+Confirmation (web) — NexG-TT
+NEXG
+·TT
+Voyager
+Mes actifs
+Rechercher une ville, un code d’aéroport ou une référence
+AT
+Accueil
+Rechercher
+Mon voyage
+Agences
+Inscription au registre interne en cours…
+Hors ligne
+Cette confirmation reste affichée. Nommer le voyageur demande le réseau.
+MODE DÉMO — aucun paiement réel
+{{heading}}
+Paiement de démonstration accepté — aucun débit réel.
+L’inscription du droit n’est pas terminée
+Le paiement de démonstration est accepté, mais le droit n’est pas encore inscrit à votre nom. Ne payez pas une seconde fois : réessayez l’inscription. Si l’erreur persiste, contactez l’assistance avec la référence
+NXG-7Q2M
+.
+Réessayer
+Votre billet
+YUL
+CDG
+ven. 18 déc. 2026 · 18:05 → 07:10 (+1) · Aérolys 816 · Économie
+À nommer avant le 17 déc. 18:05
+Référence
+NXG-7Q2M
+Payé (démo)
+1 500 $
+Et maintenant
+1
+Gardez-le, revendez-le ou transférez-le
+Depuis votre portefeuille, jusqu’au 17 déc. 18:05.
+2
+Nommez le voyageur au plus tard à J-1
+Vous ou un proche. À l’échéance, sans action de votre part, le détenteur est nommé voyageur par défaut.
+3
+La compagnie émet le billet nominatif
+Il apparaît dans votre portefeuille, prêt à voyager.
+Et ensuite
+Votre droit de voyage est dans votre portefeuille. L’échéance pour nommer le voyageur est le 17 déc. à 18:05.
+Voir mon portefeuille
+Nommer le voyageur maintenant
+Voir mon prochain voyage
+Voir mon portefeuille
+Nommer le voyageur maintenant
+Voir mon prochain voyage
+Prototype — données fictives
+Compagnies (Aérolys, Nordelle), agence, détenteurs, prix et références inventés. Aucun paiement réel.
+Un droit de voyage est une inscription au registre interne de NexG-TT, pas un placement financier.
+Aperçu des états
+Normal
+Chargement
+Erreur
+Hors ligne

@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Administration · Droits de voyage — NexG-TT</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Barlow:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#0D0E11}
+a{color:#FFD23F}a:hover{color:#FFE27A}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid #FFD23F;outline-offset:2px}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+</helmet>
+<div style="min-height: 1200px; background: #0D0E11; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; color-scheme: dark; display: flex; flex-direction: column">
+
+<header style="border-bottom: 1px solid #2C303A">
+<div style="max-width: 1440px; margin: 0 auto; padding: 12px clamp(16px, 4vw, 48px); box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px">
+<a href="AdminDroits.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; color: #F3F4F6; text-decoration: none">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: 0.06em"><span>NEXG</span><span style="color: #FFD23F">·TT</span></span>
+<span style="display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 6px; background: #262A33; color: #F3F4F6; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase">Administration</span>
+</a>
+<nav aria-label="Administration" style="flex: 1 1 auto; min-width: 0">
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px">
+<li><a href="AdminDroits.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; background: #1D2027; box-shadow: inset 0 -2px 0 #FFD23F; color: #F3F4F6; font-size: 15px; font-weight: 600; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h6l4 7h2l-2-7h5l2 2h2l-1-3 1-3h-2l-2 2h-5l2-7h-2l-4 7H3z"></path></svg>Droits de voyage</a></li>
+<li><a href="AdminDrops.dc.html" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; color: #B9BEC9; font-size: 15px; font-weight: 600; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"></path></svg>Drops et agences</a></li>
+<li><a href="AdminAudit.dc.html" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; color: #B9BEC9; font-size: 15px; font-weight: 600; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5M12 7v5l3 2"></path></svg>Journal d’audit</a></li>
+</ul>
+</nav>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(98,199,255,0.12); color: #62C7FF; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap">Démo · données fictives</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(124,227,181,0.12); color: #7CE3B5; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"></path></svg>MFA vérifiée</span>
+<span style="display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; font-weight: 600"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-weight: 500">adm-01</span><span style="color: #B9BEC9; font-weight: 500">(vous)</span></span>
+</div>
+</div>
+</header>
+
+<div role="group" aria-label="Maquette : état affiché" style="background: #060708; border-bottom: 1px dashed #6B7282">
+<div style="max-width: 1440px; margin: 0 auto; padding: 8px clamp(16px, 4vw, 48px); box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Maquette · état affiché</span>
+<span style="display: flex; flex-wrap: wrap; gap: 4px">
+<button id="st-normal" type="button" aria-pressed="{{st.normal.pressed}}" onClick="{{st.normal.set}}" style="min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 999px; border: 0; background: {{st.normal.bg}}; color: {{st.normal.color}}; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Normal</button>
+<button id="st-loading" type="button" aria-pressed="{{st.loading.pressed}}" onClick="{{st.loading.set}}" style="min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 999px; border: 0; background: {{st.loading.bg}}; color: {{st.loading.color}}; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Chargement</button>
+<button id="st-empty" type="button" aria-pressed="{{st.empty.pressed}}" onClick="{{st.empty.set}}" style="min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 999px; border: 0; background: {{st.empty.bg}}; color: {{st.empty.color}}; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Vide</button>
+<button id="st-error" type="button" aria-pressed="{{st.error.pressed}}" onClick="{{st.error.set}}" style="min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 999px; border: 0; background: {{st.error.bg}}; color: {{st.error.color}}; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Erreur</button>
+<button id="st-offline" type="button" aria-pressed="{{st.offline.pressed}}" onClick="{{st.offline.set}}" style="min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 999px; border: 0; background: {{st.offline.bg}}; color: {{st.offline.color}}; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Hors ligne</button>
+</span>
+<span style="font-size: 12px; color: #8C93A3">Hors produit : sert à montrer les états de l’écran.</span>
+</div>
+</div>
+
+<main style="flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 20px clamp(16px, 4vw, 48px) 32px; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px">
+<section aria-labelledby="page-title" style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px">
+<div style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
+<h1 id="page-title" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 44px; line-height: 44px; text-transform: uppercase; letter-spacing: 0.01em">Droits de voyage</h1>
+<p style="margin: 0; font-size: 13px; font-weight: 600; color: #B9BEC9">Administration · registre interne · 8 droits de démonstration · données du 12 oct. 2026, 14:02 (UTC−4)</p>
+</div>
+<div style="display: {{dataDisplay}}"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(124,227,181,0.12); color: #7CE3B5; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>Rapprochement du 12 oct. 02:00 · aucun écart</span></div>
+</section>
+
+<sc-if value="{{isOffline}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 14px; background: rgba(255,210,63,0.12); color: #FFD23F; font-size: 14px; line-height: 20px; font-weight: 600">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5h.01"></path></svg>
+<span>Hors ligne. Dernières données reçues le 12 oct. 2026 à 14:02 (UTC−4). Lecture seule : la recherche porte sur ces données et aucune action sensible n’est possible.</span>
+</div>
+</sc-if>
+<sc-if value="{{isError}}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="background: #15171C; border: 1px solid #2C303A; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; align-items: flex-start; gap: 12px">
+<div style="display: flex; align-items: center; gap: 10px; color: #FF7B7B">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 20h20z"></path><path d="M12 10v4M12 17h.01"></path></svg>
+<h2 style="margin: 0; font-size: 20px; font-weight: 700">Impossible de charger les droits de voyage.</h2>
+</div>
+<p style="margin: 0; font-size: 15px; line-height: 22px; color: #B9BEC9; max-width: 640px">Le serveur n’a pas répondu. Aucune donnée n’a été modifiée. Réessayez ; si l’erreur persiste, communiquez le code de corrélation à l’équipe technique.</p>
+<p style="margin: 0; font-size: 13px; color: #8C93A3">Code de corrélation : <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; color: #F3F4F6">ERR-DEMO-4F2A</span></p>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<button id="retry" type="button" onClick="{{retry}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 18px; box-sizing: border-box; border-radius: 14px; background: #FFD23F; color: #0D0E11; border: 0; font: inherit; font-size: 15px; font-weight: 700; text-decoration: none; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path></svg>Réessayer</button>
+
+</div>
+</div>
+</sc-if>
+<sc-if value="{{isLoading}}" hint-placeholder-val="{{ false }}">
+<div aria-busy="true" style="display: flex; flex-direction: column; gap: 14px">
+<p role="status" style="margin: 0; font-size: 14px; font-weight: 600; color: #B9BEC9">Chargement des droits de voyage…</p>
+<div style="background: #15171C; border: 1px solid #2C303A; border-radius: 20px; padding: 16px; display: flex; flex-wrap: wrap; gap: 12px 16px"><span aria-hidden="true" style="display: block; width: 34%; max-width: 100%; height: 48px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span><span aria-hidden="true" style="display: block; width: 22%; max-width: 100%; height: 48px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span><span aria-hidden="true" style="display: block; width: 22%; max-width: 100%; height: 48px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></div><div style="background: #15171C; border: 1px solid #2C303A; border-radius: 20px; overflow: hidden"><div style="display: flex; gap: 16px; padding: 18px 16px; border-top: 1px solid #2C303A"><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 16%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 10%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 10%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 14%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 14%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span></div><div style="display: flex; gap: 16px; padding: 18px 16px; border-top: 1px solid #2C303A"><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 16%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 10%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 10%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 14%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 14%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span></div><div style="display: flex; gap: 16px; padding: 18px 16px; border-top: 1px solid #2C303A"><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 16%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 10%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 10%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 14%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 14%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span></div><div style="display: flex; gap: 16px; padding: 18px 16px; border-top: 1px solid #2C303A"><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 16%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 10%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 10%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 14%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 14%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span></div><div style="display: flex; gap: 16px; padding: 18px 16px; border-top: 1px solid #2C303A"><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 16%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 10%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 10%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 14%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 14%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span></div><div style="display: flex; gap: 16px; padding: 18px 16px; border-top: 1px solid #2C303A"><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 16%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 10%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 10%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 14%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 14%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span></div></div>
+</div>
+</sc-if>
+
+<div style="display: {{dataDisplay}}; flex-direction: column; gap: 18px">
+
+<div role="search" aria-label="Rechercher un droit de voyage" style="background: #15171C; border: 1px solid #2C303A; border-radius: 20px; padding: 16px; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 16px">
+<div style="flex: 2 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<label for="q" style="font-size: 13px; font-weight: 500; color: #B9BEC9">Référence, PNR, compte ou vol</label>
+<div style="position: relative">
+<span aria-hidden="true" style="position: absolute; left: 14px; top: 15px; display: flex; color: #8C93A3; pointer-events: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg></span>
+<input id="q" name="q" type="search" value="{{q}}" onChange="{{onField}}" autocomplete="off" aria-describedby="q-aide" style="width: 100%; height: 48px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #1D2027; border: 1px solid #6B7282; color: #F3F4F6; font: inherit; font-size: 15px; padding-left: 42px">
+</div>
+<span id="q-aide" style="font-size: 12px; color: #8C93A3">Exemples : NXG-9PL3, Q7RT2M, ACC-0412, 812</span>
+</div>
+<div style="flex: 1 1 190px; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<label for="f-statut" style="font-size: 13px; font-weight: 500; color: #B9BEC9">Statut</label>
+<div style="position: relative">
+<select id="f-statut" name="statut" value="{{statut}}" onChange="{{onField}}" style="appearance: none; -webkit-appearance: none; width: 100%; height: 48px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #1D2027; border: 1px solid #6B7282; color: #F3F4F6; font: inherit; font-size: 15px; padding-right: 40px; cursor: pointer">
+<option value="all">Tous les statuts</option>
+<option value="anommer">À nommer</option>
+<option value="detenu">Détenu</option>
+<option value="envente">En vente</option>
+<option value="nomme">Nommé — prêt</option>
+<option value="gele">Gelé</option>
+</select>
+<span aria-hidden="true" style="position: absolute; right: 12px; top: 14px; display: flex; color: #B9BEC9; pointer-events: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 9 7 7 7-7"></path></svg></span>
+</div>
+</div>
+<div style="flex: 1 1 190px; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<label for="f-canal" style="font-size: 13px; font-weight: 500; color: #B9BEC9">Canal</label>
+<div style="position: relative">
+<select id="f-canal" name="canal" value="{{canal}}" onChange="{{onField}}" style="appearance: none; -webkit-appearance: none; width: 100%; height: 48px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #1D2027; border: 1px solid #6B7282; color: #F3F4F6; font: inherit; font-size: 15px; padding-right: 40px; cursor: pointer">
+<option value="all">Tous les canaux</option>
+<option value="primaire">Primaire</option>
+<option value="drop">Drop</option>
+<option value="agence">Agence</option>
+</select>
+<span aria-hidden="true" style="position: absolute; right: 12px; top: 14px; display: flex; color: #B9BEC9; pointer-events: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 9 7 7 7-7"></path></svg></span>
+</div>
+</div>
+<button id="reset-filters" type="button" onClick="{{reset}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 0 8px; background: transparent; border: 0; color: #FFD23F; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Réinitialiser</button>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px">
+<p id="count" role="status" aria-live="polite" style="margin: 0; font-size: 14px; font-weight: 600">{{countLabel}}</p>
+<p style="margin: 0; font-size: 13px; color: #B9BEC9">Tri : départ le plus proche. Fuseau de chaque départ indiqué (UTC−4 ou UTC−5).</p>
+</div>
+
+<sc-if value="{{isEmpty}}" hint-placeholder-val="{{ false }}">
+<div style="background: #15171C; border: 1px solid #2C303A; border-radius: 20px; padding: 40px 24px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center">
+<span style="color: #8C93A3; display: flex"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg></span>
+<h2 style="margin: 0; font-size: 20px; font-weight: 700">Aucun droit ne correspond à votre recherche</h2>
+<p style="margin: 0; font-size: 15px; line-height: 22px; color: #B9BEC9; max-width: 520px">Vérifiez la référence, le PNR, le compte ou le vol, ou retirez un filtre.</p>
+<button id="reset" type="button" onClick="{{reset}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 18px; box-sizing: border-box; border-radius: 14px; background: #1D2027; color: #F3F4F6; border: 1px solid #6B7282; font: inherit; font-size: 15px; font-weight: 700; text-decoration: none; cursor: pointer">Réinitialiser les filtres</button>
+</div>
+</sc-if>
+
+<div style="display: {{tableDisplay}}; overflow-x: auto; border-radius: 20px; background: #15171C; border: 1px solid #2C303A">
+<table style="width: 100%; min-width: 1180px; border-collapse: collapse; font-variant-numeric: tabular-nums">
+<caption style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Droits de voyage du registre : référence, trajet et vol, départ, détenteur, statut, canal, échéance de nommage et dernier événement.</caption>
+<thead>
+<tr>
+<th scope="col" style="padding: 12px 8px 10px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8C93A3; white-space: nowrap; padding-left: 16px">Référence</th>
+<th scope="col" style="padding: 12px 8px 10px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8C93A3; white-space: nowrap">Trajet et vol</th>
+<th scope="col" style="padding: 12px 8px 10px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8C93A3; white-space: nowrap">Départ</th>
+<th scope="col" style="padding: 12px 8px 10px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8C93A3; white-space: nowrap">Détenteur</th>
+<th scope="col" style="padding: 12px 8px 10px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8C93A3; white-space: nowrap">Statut</th>
+<th scope="col" style="padding: 12px 8px 10px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8C93A3; white-space: nowrap">Canal</th>
+<th scope="col" style="padding: 12px 8px 10px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8C93A3; white-space: nowrap">Échéance de nommage</th>
+<th scope="col" style="padding: 12px 8px 10px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8C93A3; white-space: nowrap">Dernier événement</th>
+</tr>
+</thead>
+<tbody>
+<tr style="display: {{rows.r1.display}}">
+<th scope="row" style="padding: 0; border-top: 1px solid #2C303A; text-align: left; font-weight: inherit; vertical-align: middle">
+<a href="AdminChaine.dc.html" aria-label="Ouvrir le droit NXG-7Q2M" style="display: flex; flex-direction: column; justify-content: center; gap: 2px; min-height: 64px; padding: 8px 8px 8px 16px; box-sizing: border-box; color: #FFD23F; text-decoration: none">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-weight: 600; font-size: 15px">NXG-7Q2M</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 12px; color: #8C93A3">PNR Q7RT2M</span>
+</a>
+</th>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: block; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 20px; line-height: 22px; letter-spacing: 0.04em; white-space: nowrap">YUL → CDG</span><span style="font-size: 13px; color: #B9BEC9; white-space: nowrap">Aérolys 812</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600">14 déc. 2026</span><span style="font-size: 12px; color: #8C93A3">lun. · 18:05 · UTC−5</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; white-space: nowrap">ACC-0412</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(255,210,63,0.12); color: #FFD23F; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap">À nommer</span></span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px">Primaire</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600; color: #FFD23F">13 déc. · 18:05</span><span style="font-size: 12px; color: #8C93A3">dans 62 jours · UTC−5</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: block; font-size: 14px; font-weight: 600; white-space: nowrap">#1 Émission</span><span style="font-size: 12px; color: #8C93A3">12 janv. 2026</span></td>
+</tr>
+<tr style="display: {{rows.r2.display}}">
+<th scope="row" style="padding: 0; border-top: 1px solid #2C303A; text-align: left; font-weight: inherit; vertical-align: middle">
+<a href="AdminChaine.dc.html" aria-label="Ouvrir le droit NXG-8WC2" style="display: flex; flex-direction: column; justify-content: center; gap: 2px; min-height: 64px; padding: 8px 8px 8px 16px; box-sizing: border-box; color: #FFD23F; text-decoration: none">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-weight: 600; font-size: 15px">NXG-8WC2</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 12px; color: #8C93A3">PNR H2N8DV</span>
+</a>
+</th>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: block; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 20px; line-height: 22px; letter-spacing: 0.04em; white-space: nowrap">YUL → CDG</span><span style="font-size: 13px; color: #B9BEC9; white-space: nowrap">Aérolys 812</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600">14 déc. 2026</span><span style="font-size: 12px; color: #8C93A3">lun. · 18:05 · UTC−5</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; white-space: nowrap">ACC-0187</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(124,227,181,0.12); color: #7CE3B5; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap">Nommé — prêt</span></span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px">Primaire</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600">—</span><span style="font-size: 12px; color: #8C93A3">Nommé le 2 oct. 2026</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: block; font-size: 14px; font-weight: 600; white-space: nowrap">#4 Nommage</span><span style="font-size: 12px; color: #8C93A3">2 oct. 2026</span></td>
+</tr>
+<tr style="display: {{rows.r3.display}}">
+<th scope="row" style="padding: 0; border-top: 1px solid #2C303A; text-align: left; font-weight: inherit; vertical-align: middle">
+<a href="AdminChaine.dc.html" aria-label="Ouvrir le droit NXG-2HV6" style="display: flex; flex-direction: column; justify-content: center; gap: 2px; min-height: 64px; padding: 8px 8px 8px 16px; box-sizing: border-box; color: #FFD23F; text-decoration: none">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-weight: 600; font-size: 15px">NXG-2HV6</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 12px; color: #8C93A3">PNR R5K7TA</span>
+</a>
+</th>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: block; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 20px; line-height: 22px; letter-spacing: 0.04em; white-space: nowrap">YUL → HAV</span><span style="font-size: 13px; color: #B9BEC9; white-space: nowrap">Nordelle 156</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600">30 janv. 2027</span><span style="font-size: 12px; color: #8C93A3">sam. · 08:15 · UTC−5</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; white-space: nowrap">ACC-0412</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(98,199,255,0.12); color: #62C7FF; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap">En vente</span></span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px">Primaire</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600; color: #F3F4F6">29 janv. · 08:15</span><span style="font-size: 12px; color: #8C93A3">dans 109 jours · UTC−5</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: block; font-size: 14px; font-weight: 600; white-space: nowrap">#2 Mise en vente</span><span style="font-size: 12px; color: #8C93A3">2 oct. 2026</span></td>
+</tr>
+<tr style="display: {{rows.r4.display}}">
+<th scope="row" style="padding: 0; border-top: 1px solid #2C303A; text-align: left; font-weight: inherit; vertical-align: middle">
+<a href="AdminChaine.dc.html" aria-label="Ouvrir le droit NXG-4KD8" style="display: flex; flex-direction: column; justify-content: center; gap: 2px; min-height: 64px; padding: 8px 8px 8px 16px; box-sizing: border-box; color: #FFD23F; text-decoration: none">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-weight: 600; font-size: 15px">NXG-4KD8</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 12px; color: #8C93A3">PNR B9C3LW</span>
+</a>
+</th>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: block; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 20px; line-height: 22px; letter-spacing: 0.04em; white-space: nowrap">YUL → PUJ</span><span style="font-size: 13px; color: #B9BEC9; white-space: nowrap">Nordelle 228</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600">21 févr. 2027</span><span style="font-size: 12px; color: #8C93A3">dim. · 07:30 · UTC−5</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; white-space: nowrap">ACC-0412</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: #262A33; color: #B9BEC9; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap">Détenu</span></span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px">Drop N° 127</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600; color: #F3F4F6">20 févr. · 07:30</span><span style="font-size: 12px; color: #8C93A3">dans 131 jours · UTC−5</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: block; font-size: 14px; font-weight: 600; white-space: nowrap">#1 Émission</span><span style="font-size: 12px; color: #8C93A3">3 sept. 2026</span></td>
+</tr>
+<tr style="display: {{rows.r5.display}}">
+<th scope="row" style="padding: 0; border-top: 1px solid #2C303A; text-align: left; font-weight: inherit; vertical-align: middle">
+<a href="AdminChaine.dc.html" aria-label="Ouvrir le droit NXG-9PL3" style="display: flex; flex-direction: column; justify-content: center; gap: 2px; min-height: 64px; padding: 8px 8px 8px 16px; box-sizing: border-box; color: #FFD23F; text-decoration: none">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-weight: 600; font-size: 15px">NXG-9PL3</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 12px; color: #8C93A3">PNR K3MD8Z</span>
+</a>
+</th>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: block; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 20px; line-height: 22px; letter-spacing: 0.04em; white-space: nowrap">YUL → PPT</span><span style="font-size: 13px; color: #B9BEC9; white-space: nowrap">Aérolys 471</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600">9 mai 2027</span><span style="font-size: 12px; color: #8C93A3">dim. · 10:20 · UTC−4</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; white-space: nowrap">ACC-0412</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: #262A33; color: #B9BEC9; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap">Détenu</span></span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px">Primaire</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600; color: #F3F4F6">8 mai · 10:20</span><span style="font-size: 12px; color: #8C93A3">dans 208 jours · UTC−4</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: block; font-size: 14px; font-weight: 600; white-space: nowrap">#5 Vente</span><span style="font-size: 12px; color: #8C93A3">3 août 2026</span></td>
+</tr>
+<tr style="display: {{rows.r6.display}}">
+<th scope="row" style="padding: 0; border-top: 1px solid #2C303A; text-align: left; font-weight: inherit; vertical-align: middle">
+<a href="AdminChaine.dc.html" aria-label="Ouvrir le droit NXG-6TB4" style="display: flex; flex-direction: column; justify-content: center; gap: 2px; min-height: 64px; padding: 8px 8px 8px 16px; box-sizing: border-box; color: #FFD23F; text-decoration: none">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-weight: 600; font-size: 15px">NXG-6TB4</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 12px; color: #8C93A3">PNR T6YP2J</span>
+</a>
+</th>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: block; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 20px; line-height: 22px; letter-spacing: 0.04em; white-space: nowrap">YUL → KEF</span><span style="font-size: 13px; color: #B9BEC9; white-space: nowrap">Aérolys 236</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600">4 mars 2027</span><span style="font-size: 12px; color: #8C93A3">jeu. · 21:15 · UTC−5</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; white-space: nowrap">ACC-0933</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: #262A33; color: #B9BEC9; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap">Détenu</span></span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px">Agence Horizon (exemple)</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600; color: #F3F4F6">3 mars · 21:15</span><span style="font-size: 12px; color: #8C93A3">dans 142 jours · UTC−5</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: block; font-size: 14px; font-weight: 600; white-space: nowrap">#1 Émission</span><span style="font-size: 12px; color: #8C93A3">21 sept. 2026</span></td>
+</tr>
+<tr style="display: {{rows.r7.display}}">
+<th scope="row" style="padding: 0; border-top: 1px solid #2C303A; text-align: left; font-weight: inherit; vertical-align: middle">
+<a href="AdminChaine.dc.html" aria-label="Ouvrir le droit NXG-3XZ9" style="display: flex; flex-direction: column; justify-content: center; gap: 2px; min-height: 64px; padding: 8px 8px 8px 16px; box-sizing: border-box; color: #FFD23F; text-decoration: none">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-weight: 600; font-size: 15px">NXG-3XZ9</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 12px; color: #8C93A3">PNR W8FN4C</span>
+</a>
+</th>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: block; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 20px; line-height: 22px; letter-spacing: 0.04em; white-space: nowrap">YUL → LIS</span><span style="font-size: 13px; color: #B9BEC9; white-space: nowrap">Aérolys 247</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600">16 avr. 2027</span><span style="font-size: 12px; color: #8C93A3">ven. · 18:40 · UTC−4</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; white-space: nowrap">ACC-0804</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: #262A33; color: #B9BEC9; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap">Détenu</span></span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px">Agence Horizon (exemple)</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600; color: #F3F4F6">15 avr. · 18:40</span><span style="font-size: 12px; color: #8C93A3">dans 185 jours · UTC−4</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: block; font-size: 14px; font-weight: 600; white-space: nowrap">#1 Émission</span><span style="font-size: 12px; color: #8C93A3">28 sept. 2026</span></td>
+</tr>
+<tr style="display: {{rows.r8.display}}">
+<th scope="row" style="padding: 0; border-top: 1px solid #2C303A; text-align: left; font-weight: inherit; vertical-align: middle">
+<a href="AdminChaine.dc.html" aria-label="Ouvrir le droit NXG-1DN5" style="display: flex; flex-direction: column; justify-content: center; gap: 2px; min-height: 64px; padding: 8px 8px 8px 16px; box-sizing: border-box; color: #FFD23F; text-decoration: none">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-weight: 600; font-size: 15px">NXG-1DN5</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 12px; color: #8C93A3">PNR V2QH7E</span>
+</a>
+</th>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: block; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 20px; line-height: 22px; letter-spacing: 0.04em; white-space: nowrap">YUL → HAV</span><span style="font-size: 13px; color: #B9BEC9; white-space: nowrap">Nordelle 156</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600">30 janv. 2027</span><span style="font-size: 12px; color: #8C93A3">sam. · 08:15 · UTC−5</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; white-space: nowrap">ACC-0275</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: #262A33; color: #B9BEC9; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap">Détenu</span><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(255,123,123,0.12); color: #FF7B7B; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>Gelé</span></span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px">Primaire</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600; color: #F3F4F6">29 janv. · 08:15</span><span style="font-size: 12px; color: #8C93A3">dans 109 jours · UTC−5</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: block; font-size: 14px; font-weight: 600; white-space: nowrap">#3 Vente</span><span style="font-size: 12px; color: #8C93A3">8 oct. 2026</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #8C93A3">Le statut « À nommer » est un statut d’affichage d’un droit détenu dont l’échéance approche. « Gelé » est un indicateur distinct du statut <span style="color: #B9BEC9">[H]</span>. Démo : chaque référence ouvre la même fiche d’exemple (NXG-9PL3).</p>
+
+</div>
+</main>
+
+<footer style="border-top: 1px solid #2C303A">
+<div style="max-width: 1440px; margin: 0 auto; padding: 18px clamp(16px, 4vw, 48px); box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; font-size: 13px; line-height: 18px; color: #8C93A3">
+<p style="margin: 0"><span style="display: inline-flex; align-items: center; height: 22px; padding: 0 8px; margin-right: 8px; border-radius: 999px; background: rgba(98,199,255,0.12); color: #62C7FF; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase">Prototype — données fictives</span>Comptes pseudonymisés (ACC-…, adm-…), agences et références inventées. Aucun nom, courriel ni identité de voyageur.</p>
+<p style="margin: 0">Un droit de voyage est une inscription au registre interne de NexG-TT.</p>
+</div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1200}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const STATES = ['normal', 'loading', 'empty', 'error', 'offline'];
+    const view = s.view ?? 'normal';
+    const st = {};
+    STATES.forEach((k) => {
+      const on = view === k;
+      st[k] = { pressed: on ? 'true' : 'false', bg: on ? '#F3F4F6' : 'transparent', color: on ? '#0D0E11' : '#B9BEC9', set: () => this.setState({ view: k }) };
+    });
+    const ROWS = [{ id: 'r1', ref: 'NXG-7Q2M', pnr: 'Q7RT2M', compte: 'ACC-0412', vol: 'Aérolys 812', statut: 'anommer', canal: 'primaire', gel: false }, { id: 'r2', ref: 'NXG-8WC2', pnr: 'H2N8DV', compte: 'ACC-0187', vol: 'Aérolys 812', statut: 'nomme', canal: 'primaire', gel: false }, { id: 'r3', ref: 'NXG-2HV6', pnr: 'R5K7TA', compte: 'ACC-0412', vol: 'Nordelle 156', statut: 'envente', canal: 'primaire', gel: false }, { id: 'r4', ref: 'NXG-4KD8', pnr: 'B9C3LW', compte: 'ACC-0412', vol: 'Nordelle 228', statut: 'detenu', canal: 'drop', gel: false }, { id: 'r5', ref: 'NXG-9PL3', pnr: 'K3MD8Z', compte: 'ACC-0412', vol: 'Aérolys 471', statut: 'detenu', canal: 'primaire', gel: false }, { id: 'r6', ref: 'NXG-6TB4', pnr: 'T6YP2J', compte: 'ACC-0933', vol: 'Aérolys 236', statut: 'detenu', canal: 'agence', gel: false }, { id: 'r7', ref: 'NXG-3XZ9', pnr: 'W8FN4C', compte: 'ACC-0804', vol: 'Aérolys 247', statut: 'detenu', canal: 'agence', gel: false }, { id: 'r8', ref: 'NXG-1DN5', pnr: 'V2QH7E', compte: 'ACC-0275', vol: 'Nordelle 156', statut: 'detenu', canal: 'primaire', gel: true }];
+    const q = (s.q ?? '').trim().toLowerCase();
+    const fStatut = s.statut ?? 'all';
+    const fCanal = s.canal ?? 'all';
+    let count = 0;
+    const rows = {};
+    ROWS.forEach((r) => {
+      const hay = (r.ref + ' ' + r.pnr + ' ' + r.compte + ' ' + r.vol).toLowerCase();
+      const okQ = !q || hay.includes(q);
+      const okS = fStatut === 'all' || (fStatut === 'gele' ? r.gel : r.statut === fStatut);
+      const okC = fCanal === 'all' || r.canal === fCanal;
+      const show = okQ && okS && okC;
+      if (show) count += 1;
+      rows[r.id] = { display: show ? 'table-row' : 'none' };
+    });
+    const isEmpty = view === 'empty' || ((view === 'normal' || view === 'offline') && count === 0);
+    const shown = isEmpty ? 0 : count;
+    return {
+      st,
+      rows,
+      q,
+      statut: fStatut,
+      canal: fCanal,
+      isLoading: view === 'loading',
+      isError: view === 'error',
+      isOffline: view === 'offline',
+      isEmpty,
+      dataDisplay: view === 'loading' || view === 'error' ? 'none' : 'flex',
+      tableDisplay: isEmpty ? 'none' : 'block',
+      countLabel: shown + (shown > 1 ? ' droits trouvés' : ' droit trouvé'),
+      onField: (e) => {
+        const t = e.target;
+        this.setState({ [t.name]: t.value });
+      },
+      reset: () => this.setState({ q: '', statut: 'all', canal: 'all', view: 'normal' }),
+      retry: () => this.setState({ view: 'normal' })
+    };
+  }
+}
+</script>
+</body>
+</html>

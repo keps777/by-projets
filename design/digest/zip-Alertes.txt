@@ -1,0 +1,41 @@
+Alertes — NexG-TT
+Alertes — NexG-TT
+Alertes
+Mes alertes
+{{activeLabel}}
+YUL → PUJ
+Tous types d'offres · ≤
+400 $
+Drops Europe
+Au départ de Montréal · à l'ouverture
+YUL → CDG
+En revente · ≤
+1 600 $
+Les alertes de drops sont réservées aux membres du Pass NexG.
+Nouvelle alerte
+Aperçu
+{{sumRoute}}
+≤ {{budgetLabel}}
+{{sumTypes}} · {{sumDates}} · {{sumChannels}}
+Départ
+Destination
+Partout
+« Partout » : toutes les destinations au départ de cet aéroport.
+Budget maximum par billet
+{{budgetLabel}}
+100 $
+2 000 $
+Dates flexibles
+Tout départ d'ici octobre 2027
+Date de départ
+Types d'offres
+Drops
+Revente
+Neuf
+Choisissez au moins un type d'offre.
+Me prévenir par
+Notification
+Courriel
+Choisissez au moins un canal.
+Une alerte signale une offre ; elle ne réserve pas de place.
+Enregistrer l'alerte

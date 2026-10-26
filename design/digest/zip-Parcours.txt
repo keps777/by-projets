@@ -1,0 +1,44 @@
+Cycle de vie — NexG-TT
+Cycle de vie — NexG-TT
+Acheter
+neuf · drop · revente · import
+Détenu
+Le détenteur possède le droit. Aucun voyageur n'est encore nommé.
+Nommer le voyageur
+≤ J-1 · le détenteur ou un proche
+Nommé — prêt à voyager
+billet nominatif de bout en bout
+Voyagé
+le droit est utilisé, fin du cycle
+Revente → nouveau détenteur
+prix encadré, plafond à définir
+Transfert à un proche
+donné à un autre compte
+Rachat par NexG-TT
+liquidité immédiate pour le vendeur
+NexG-TT réserve la place
+via fournisseur de contenu, GDS ou NDC
+Réservation conservée par NexG-TT
+inchangée, quel que soit le détenteur
+Identité du voyageur transmise
+à la compagnie, au plus tard à J-1
+Billet nominatif émis
+au nom du voyageur
+Embarquement
+pièce d'identité au nom du billet
+Cycle de vie d'un droit de voyage
+Le droit circule sur NexG-TT ; chez la compagnie, la réservation ne bouge pas jusqu'au nommage du voyageur.
+Sur NexG-TT — propriété économique
+Chez la compagnie — réservation
+mise en vente
+commission à chaque vente
+déclenche
+déclenche
+J-1 · 24 h avant le départ :
+fin des échanges
+Action du détenteur
+Changement d'état
+Flux d'argent
+Déclenche chez la compagnie
+Échéance J-1
+Schéma de principe · accords transporteurs à valider

@@ -1,0 +1,1391 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta charset="utf-8">
+<title>NexG-TT · Ce que chacun y gagne</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Une présentation qui se lit comme l’application : sections alternant la face Jour (Voyager) et la face Nuit (Mes actifs),
+   le billet papier perforé comme pont, le jaune signal réservé à l’action, les chiffres en mono. Thème unique, voulu. */
+:root{
+  --n-bg:#0D0E11; --n-surface:#15171C; --n-surface-2:#1D2027; --n-line:#2C303A; --n-text:#F3F4F6; --n-text-2:#B9BEC9; --n-text-3:#8C93A3; --n-board:#060708;
+  --j-bg:#EEF3F8; --j-surface:#FFFFFF; --j-surface-2:#E3EAF2; --j-line:#D3DCE6; --j-text:#0B1B2E; --j-text-2:#3E4F66; --j-text-3:#5E6E84;
+  --signal:#FFD23F; --signal-ink:#0D0E11; --signal-dark:#5C4600; --sky:#1A64C8; --up:#62C7FF; --down:#FF9E5E; --ready:#7CE3B5; --ready-day:#0B7A55;
+  --paper:#FFFFFF; --paper-ink:#121418; --paper-ink-2:#555C6B; --paper-line:#E2E4E9;
+  --display:'Barlow Condensed','Arial Narrow',sans-serif; --body:'Barlow',system-ui,sans-serif; --mono:'IBM Plex Mono','Courier New',monospace;
+  --gutter:max(16px,env(safe-area-inset-left,0px)); --gutter-r:max(16px,env(safe-area-inset-right,0px));
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--n-bg);color:var(--n-text);font-family:var(--body);font-size:17px;line-height:1.5;scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){body{scroll-behavior:auto}}
+h1,h2,h3{font-family:var(--display);line-height:1.02;margin:0;text-wrap:balance;font-weight:600}
+p{margin:0}
+a{color:var(--sky)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+section{padding-block:clamp(56px,9vw,120px);padding-left:var(--gutter);padding-right:var(--gutter-r);scroll-margin-top:64px}
+.wrap{max-width:1240px;margin:0 auto}
+.nuit{background:var(--n-bg);color:var(--n-text)}
+.nuit .eyebrow{color:var(--signal)}
+.nuit .lead{color:var(--n-text-2)}
+.nuit .muted{color:var(--n-text-3)}
+.jour{background:var(--j-bg);color:var(--j-text)}
+.jour .eyebrow{color:var(--sky)}
+.jour .lead{color:var(--j-text-2)}
+.jour .muted{color:var(--j-text-3)}
+.jour a{color:var(--sky)}
+.nuit a{color:var(--up)}
+.lead{font-size:clamp(18px,1.6vw,22px);max-width:62ch}
+.muted{font-size:14px}
+
+/* barre du haut : sélecteur de face + progression */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;display:flex;align-items:center;gap:14px;padding:10px var(--gutter-r) 10px var(--gutter);background:rgba(13,14,17,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--n-line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--n-bg)}
+.logo{font-family:var(--display);font-weight:700;font-size:24px;letter-spacing:.06em;color:var(--n-text);text-decoration:none}
+.logo b{color:var(--signal)}
+.faces{display:flex;gap:2px;padding:3px;border-radius:999px;background:var(--n-surface-2);border:1px solid var(--n-line)}
+.faces span{display:flex;align-items:center;min-height:32px;padding:0 12px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--n-text-2);transition:background .25s,color .25s}
+.faces span[data-on]{background:var(--signal);color:var(--signal-ink)}
+.top .faces.is-jour span[data-on]{background:#0B1B2E;color:#fff}
+.prog{flex:1;height:3px;background:var(--n-line);border-radius:3px;overflow:hidden;min-width:60px}
+.prog i{display:block;height:100%;width:0;background:var(--signal)}
+.top .count{font-family:var(--mono);font-size:12px;color:var(--n-text-3);white-space:nowrap}
+.top nav{display:none}
+@media (min-width:1100px){.top nav{display:flex;gap:4px}.top nav a{font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--n-text-2);text-decoration:none;padding:6px 10px;border-radius:999px}.top nav a:hover{background:var(--n-surface-2);color:var(--n-text)}}
+
+/* héros : tableau des départs */
+.hero{min-height:calc(100vh - 56px);display:flex;align-items:center;position:relative;overflow:hidden;background:var(--n-board)}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:48px;align-items:center;width:100%}
+.board{display:inline-flex;gap:4px;margin-bottom:28px}
+.board b{display:inline-flex;align-items:center;justify-content:center;width:34px;height:46px;border-radius:5px;background:#1C1F25;color:var(--signal);font-family:var(--mono);font-weight:600;font-size:26px;box-shadow:inset 0 -1px 0 #000}
+.board b.sep{color:var(--n-text-3)}
+.hero h1{font-size:clamp(44px,6vw,96px);font-weight:700;line-height:.95;letter-spacing:.005em}
+.hero h1 em{font-style:normal;color:var(--signal)}
+.hero .lead{margin-top:24px}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.chip{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:10px 14px;border-radius:999px;background:var(--n-surface-2);border:1px solid var(--n-line);color:var(--n-text-2)}
+.chip.on{background:var(--signal);color:var(--signal-ink);border-color:var(--signal)}
+.hero .phones{display:flex;gap:20px;justify-content:center;align-items:flex-end}
+.hero .phones .phone:first-child{transform:translateY(-28px)}
+.ticker{position:absolute;left:0;right:0;bottom:0;overflow:hidden;border-top:1px solid var(--n-line);background:rgba(13,14,17,.7);font-family:var(--mono);font-size:13px;color:var(--n-text-2);padding:10px 0;white-space:nowrap}
+.ticker div{display:inline-block;padding-left:100%;animation:tick 48s linear infinite}
+.ticker span{margin-right:40px}
+.ticker .up{color:var(--up)}.ticker .down{color:var(--down)}
+@keyframes tick{to{transform:translateX(-100%)}}
+@media (prefers-reduced-motion:reduce){.ticker div{animation:none;padding-left:16px}}
+
+/* cadres d’appareil : la maquette vit dedans */
+.phone{position:relative;width:min(100%,410px);aspect-ratio:410/864;flex:none}
+.phone .shell{position:absolute;inset:0;border-radius:40px;background:#000;box-shadow:0 30px 70px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.08)}
+.jour .phone .shell{box-shadow:0 1px 0 var(--j-line),0 24px 48px rgba(11,27,46,.18),0 0 0 1px rgba(11,27,46,.06)}
+.phone .screen{position:absolute;inset:10px;border-radius:30px;overflow:hidden;background:#0D0E11}
+.phone iframe{position:absolute;left:0;top:0;width:390px;height:844px;border:0;background:#0D0E11;transform-origin:0 0}
+@media (max-width:980px){#globe{opacity:.35}}
+.laptop{position:relative;width:100%;aspect-ratio:1440/900;border-radius:12px;overflow:hidden;background:#000;box-shadow:0 30px 70px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.08)}
+.jour .laptop{box-shadow:0 1px 0 var(--j-line),0 24px 48px rgba(11,27,46,.18)}
+.laptop iframe{position:absolute;left:0;top:0;width:1440px;height:900px;border:0;transform-origin:0 0;background:#0D0E11}
+.cap{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-top:12px;font-family:var(--mono);font-size:12px;letter-spacing:.04em}
+.cap a{font-weight:600;text-decoration:none;border-bottom:1px solid currentColor}
+.device{display:flex;flex-direction:column}
+.phones{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+.phones .device{flex:1 1 260px;max-width:410px;min-width:0}
+
+/* chiffres */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:40px}
+.stat{padding:24px 26px;border-radius:16px;border:1px solid var(--n-line);background:var(--n-surface)}
+.jour .stat{background:var(--j-surface);border-color:var(--j-line)}
+.stat .big{font-family:var(--mono);font-weight:600;font-size:clamp(40px,4.5vw,64px);line-height:1;letter-spacing:-.02em}
+.nuit .stat .big{color:var(--signal)}
+.jour .stat .big{color:var(--sky)}
+.stat .what{margin-top:10px;font-weight:600}
+.stat .how{margin-top:4px;font-size:14px}
+
+/* billet perforé Sans | Avec */
+.ticket{position:relative;display:grid;grid-template-columns:1fr 1fr;background:var(--paper);color:var(--paper-ink);border-radius:18px;overflow:hidden;box-shadow:0 1px 0 rgba(0,0,0,.08),0 18px 40px rgba(11,27,46,.12)}
+.nuit .ticket{box-shadow:0 1px 0 #000,0 24px 60px rgba(0,0,0,.5)}
+.ticket .col{padding:30px 32px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.ticket .col+.col{border-left:3px dashed var(--paper-line)}
+.ticket .col h3{font-family:var(--body);font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--paper-ink-2)}
+.ticket .col.avec h3{color:var(--sky)}
+.ticket .col p{font-size:16px;line-height:1.45;color:var(--paper-ink-2);padding-left:22px;position:relative}
+.ticket .col.avec p{color:var(--paper-ink)}
+.ticket .col p::before{content:"−";position:absolute;left:0;top:0;font-family:var(--mono);font-weight:600;color:var(--paper-ink-2)}
+.ticket .col.avec p::before{content:"+";color:var(--sky)}
+.ticket::before,.ticket::after{content:"";position:absolute;top:50%;width:22px;height:22px;border-radius:50%;transform:translateY(-50%);background:var(--n-bg)}
+.ticket::before{left:-11px}.ticket::after{right:-11px}
+.jour .ticket::before,.jour .ticket::after{background:var(--j-bg)}
+.ticket .stub{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px 24px;align-items:baseline;padding:14px 32px;border-top:3px dashed var(--paper-line);background:#F1F2F4;font-family:var(--mono);font-size:13px;color:var(--paper-ink-2)}
+.ticket .stub b{color:var(--paper-ink);font-weight:600;font-size:18px}
+
+/* sections parties prenantes */
+.part .wrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:48px;align-items:start}
+.part h2{font-size:clamp(36px,4.6vw,64px);margin-top:10px}
+.part .lead{margin-top:16px;margin-bottom:28px}
+.part .num{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.gain{display:flex;gap:16px;align-items:baseline;margin-top:22px;padding:18px 22px;border-radius:14px}
+.nuit .gain{background:var(--n-surface);border:1px solid var(--n-line)}
+.jour .gain{background:var(--j-surface);border:1px solid var(--j-line)}
+.gain .big{font-family:var(--mono);font-weight:600;font-size:clamp(30px,3.4vw,46px);line-height:1}
+.nuit .gain .big{color:var(--ready)}.jour .gain .big{color:var(--ready-day)}
+.gain .txt{font-size:15px}
+.hyp{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:999px;border:1px solid currentColor;margin-left:8px;vertical-align:middle}
+.c{color:var(--ready)}.jour .c{color:var(--ready-day)}
+.h{color:var(--down)}.jour .h{color:#B4520F}
+
+/* mécanique */
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:40px}
+.step{display:flex;flex-direction:column;gap:16px}
+.step .k{display:flex;gap:14px;align-items:baseline}
+.step .k b{font-family:var(--mono);font-size:40px;color:var(--signal);font-weight:600}
+.step .k h3{font-size:28px}
+.step p{color:var(--n-text-2)}
+
+/* calculateur */
+.calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:32px;margin-top:40px;align-items:start}
+.calc form{display:flex;flex-direction:column;gap:18px;padding:26px;border-radius:18px;background:var(--j-surface);border:1px solid var(--j-line)}
+.calc label{display:flex;flex-direction:column;gap:8px;font-size:13px;font-weight:600;color:var(--j-text-2)}
+.calc input[type=number]{min-height:52px;border-radius:12px;border:1px solid #7A8597;background:#fff;color:var(--j-text);font:600 20px var(--mono);padding:0 14px;width:100%}
+.calc input[type=range]{width:100%;accent-color:var(--sky)}
+.calc .row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.calc .toggle{display:flex;align-items:center;gap:12px;min-height:44px;cursor:pointer}
+.calc .toggle input{width:22px;height:22px;accent-color:var(--sky)}
+.calc .out{display:flex;flex-direction:column;gap:14px}
+.bar{display:grid;grid-template-columns:120px 1fr 120px;gap:14px;align-items:center;padding:16px 20px;border-radius:14px;background:var(--j-surface);border:1px solid var(--j-line)}
+.bar .lab{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--j-text-2)}
+.bar .track{height:22px;border-radius:999px;background:var(--j-surface-2);overflow:hidden}
+.bar .track i{display:block;height:100%;border-radius:999px;transition:width .35s ease}
+.bar.sans .track i{background:#B4520F}
+.bar.avec .track i{background:var(--ready-day)}
+.bar .val{font-family:var(--mono);font-weight:600;font-size:22px;text-align:right}
+.calc .detail{font-size:14px;color:var(--j-text-2);display:grid;grid-template-columns:1fr auto;gap:6px 16px;padding:16px 20px;border-radius:14px;background:var(--j-surface);border:1px solid var(--j-line)}
+.calc .detail b{font-family:var(--mono);font-weight:600;color:var(--j-text)}
+.calc .verdict{font-family:var(--display);font-size:clamp(26px,3vw,38px);color:var(--j-text)}
+.calc .verdict em{font-style:normal;color:var(--ready-day)}
+
+/* vies du billet */
+.lives{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:40px}
+.life{padding:20px;border-radius:14px;background:var(--n-surface);border:1px solid var(--n-line);display:flex;flex-direction:column;gap:6px;position:relative}
+.life .when{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--n-text-3)}
+.life .price{font-family:var(--mono);font-size:34px;font-weight:600}
+.life .fee{font-family:var(--mono);font-size:14px;color:var(--signal)}
+.life .who{font-size:14px;color:var(--n-text-2)}
+.life.end{background:#2B2816}
+.life.end .price{font-size:24px;color:var(--signal)}
+.total{margin-top:16px;display:flex;flex-wrap:wrap;gap:12px 28px;align-items:baseline;font-family:var(--mono);color:var(--n-text-2);font-size:14px}
+.total b{color:var(--signal);font-size:30px;font-weight:600}
+.rate{display:inline-flex;gap:2px;padding:3px;border-radius:999px;background:var(--n-surface-2);border:1px solid var(--n-line);margin-top:24px}
+.rate button{min-height:36px;padding:0 14px;border-radius:999px;border:0;background:transparent;color:var(--n-text-2);font:700 12px var(--body);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.rate button[aria-pressed=true]{background:var(--signal);color:var(--signal-ink)}
+
+/* tableau synthèse */
+.table{overflow-x:auto;margin-top:36px;border-radius:14px;border:1px solid var(--n-line)}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:15px}
+th,td{padding:14px 18px;text-align:left;vertical-align:top;border-bottom:1px solid var(--n-line)}
+th{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--n-text-3);background:var(--n-surface)}
+th:last-child{color:var(--signal)}
+td:first-child{font-weight:700;white-space:nowrap}
+td:nth-child(2){color:var(--n-text-2)}
+tbody tr:nth-child(even){background:#101216}
+tbody tr:last-child td{background:#2B2816;font-weight:600}
+tbody tr:last-child td:last-child{color:var(--signal)}
+
+/* règles */
+.band{background:var(--signal);color:var(--signal-ink)}
+.band .eyebrow{color:var(--signal-dark)}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:36px}
+.rule{background:#fff;border-radius:16px;padding:22px 24px}
+.rule h3{font-family:var(--body);font-size:18px;font-weight:700;color:var(--paper-ink)}
+.rule p{margin-top:8px;font-size:15px;color:var(--paper-ink-2)}
+
+/* fin */
+.people{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-top:36px}
+.person{padding:22px 24px;border-radius:16px;background:var(--n-surface);border:1px solid var(--n-line)}
+.person b{display:block;font-size:20px}
+.person span{color:var(--n-text-2);font-size:15px}
+.needs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:36px}
+.need{padding:22px 24px;border-radius:16px;background:var(--n-surface);border:1px solid var(--n-line)}
+.need .eyebrow{display:block;margin-bottom:8px}
+.need h3{font-size:24px}
+.need p{margin-top:8px;color:var(--n-text-2);font-size:15px}
+footer{padding:24px var(--gutter-r) 32px var(--gutter);font-size:13px;color:var(--n-text-3);border-top:1px solid var(--n-line);background:var(--n-board)}
+/* 3D : globe, billet qui se retourne, téléphones en perspective */
+#globe{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;opacity:.9}
+.hero .wrap{position:relative;z-index:1}
+.hero::after{content:"";position:absolute;inset:0;pointer-events:none;background:
+  radial-gradient(ellipse at 70% 45%,rgba(255,210,63,.10),transparent 55%),
+  repeating-linear-gradient(0deg,transparent 0 47px,rgba(255,255,255,.03) 47px 48px),
+  repeating-linear-gradient(90deg,transparent 0 47px,rgba(255,255,255,.03) 47px 48px)}
+.hero h1{position:relative}
+.hero h1::after{content:"";position:absolute;left:0;bottom:-18px;width:120px;height:4px;background:var(--signal);box-shadow:0 0 24px var(--signal)}
+.board b{transition:transform .08s}
+.board b.spin{transform:rotateX(90deg)}
+.phone{transform-style:flat;will-change:transform;transition:transform .12s linear}
+.jour .phone .shell::after,.nuit .phone .shell::after{content:"";position:absolute;inset:0;border-radius:40px;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,.14),transparent 40%,transparent 60%,rgba(255,255,255,.05))}
+.flip-wrap{perspective:2200px;margin-top:40px}
+.flip{position:relative;width:min(100%,920px);margin:0 auto;aspect-ratio:920/520;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.2,.7,.2,1);cursor:pointer}
+.flip:focus-visible{outline:3px solid var(--signal);outline-offset:8px}
+.face{position:absolute;inset:0;border-radius:24px;padding:clamp(18px,3vw,36px) clamp(20px,3.6vw,44px);backface-visibility:hidden;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 40px 90px rgba(0,0,0,.55)}
+.face.recto{background:#fff;color:var(--j-text)}
+.face.verso{background:var(--n-bg);color:var(--n-text);border:1px solid var(--n-line);transform:rotateY(180deg)}
+.face .hd{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.face .brand{font-family:var(--display);font-weight:700;font-size:clamp(18px,2.2vw,26px);letter-spacing:.08em}
+.face.recto .brand b{color:var(--sky)}.face.verso .brand b{color:var(--signal)}
+.face .tag{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:6px 12px;border-radius:999px}
+.face.recto .tag{background:var(--j-surface-2);color:var(--j-text-2)}.face.verso .tag{background:#2B2816;color:var(--signal)}
+.face .iata{display:flex;align-items:center;gap:clamp(12px,2vw,28px)}
+.face .iata b{font-family:var(--display);font-weight:700;font-size:clamp(48px,8vw,110px);line-height:1;letter-spacing:.01em}
+.face .iata i{flex:1;height:0;border-top:3px dotted currentColor;opacity:.35}
+.face .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px 24px;font-size:clamp(13px,1.4vw,16px)}
+.face .grid span{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;opacity:.6}
+.face .grid b{font-weight:600}
+.face .big{font-family:var(--mono);font-weight:600;font-size:clamp(26px,3.4vw,46px);line-height:1;white-space:nowrap}
+.face.verso .grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.face.verso .grid.two{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}
+.face .pill{font-size:clamp(13px,1.4vw,15px);font-weight:700;padding:12px 16px;border-radius:12px}
+.face.recto .pill{background:var(--signal);color:var(--signal-dark)}
+.face.verso .pill{background:#2B2816;color:var(--signal)}
+.flip-hint{text-align:center;margin-top:18px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.fs{margin-left:4px;min-height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--n-line);background:transparent;color:var(--n-text-2);font:600 12px var(--body);cursor:pointer;white-space:nowrap}
+.fs:hover{background:var(--n-surface-2);color:var(--n-text)}
+.reveal{opacity:1;transform:none}
+@media (prefers-reduced-motion:no-preference){
+  .reveal{transition:opacity .6s ease,transform .6s ease}
+  .reveal.pending{opacity:0;transform:translateY(18px)}
+}
+@media (max-width:980px){
+  .hero .wrap,.part .wrap,.calc{grid-template-columns:1fr}
+  .hero .phones .phone:first-child{transform:none}
+  .steps,.lives{grid-template-columns:1fr 1fr}
+  .ticket{grid-template-columns:1fr}
+  .ticket .col+.col{border-left:0;border-top:3px dashed var(--paper-line)}
+  .ticket::before,.ticket::after{display:none}
+}
+/* ---- thème sombre : aurore en fond, verre, halos. Voyager = bleu nuit, Mes actifs = noir et jaune ---- */
+body{background:#07080B}
+.aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.aurora i{position:absolute;border-radius:50%;filter:blur(90px);opacity:.55;will-change:transform}
+.aurora .a1{width:60vw;height:60vw;left:-15vw;top:-20vw;background:radial-gradient(closest-side,rgba(26,100,200,.55),transparent);animation:drift1 28s ease-in-out infinite alternate}
+.aurora .a2{width:50vw;height:50vw;right:-15vw;bottom:-20vw;background:radial-gradient(closest-side,rgba(255,210,63,.35),transparent);animation:drift2 34s ease-in-out infinite alternate}
+.aurora .a3{width:36vw;height:36vw;left:40vw;top:30vh;background:radial-gradient(closest-side,rgba(124,227,181,.22),transparent);animation:drift3 40s ease-in-out infinite alternate}
+@keyframes drift1{to{transform:translate(18vw,14vh) scale(1.15)}}
+@keyframes drift2{to{transform:translate(-16vw,-18vh) scale(1.1)}}
+@keyframes drift3{to{transform:translate(-22vw,10vh) scale(.9)}}
+@media (prefers-reduced-motion:reduce){.aurora i{animation:none}}
+.deck{z-index:1}
+.deck>section{position:relative;background-image:
+  repeating-linear-gradient(0deg,transparent 0 47px,rgba(255,255,255,.028) 47px 48px),
+  repeating-linear-gradient(90deg,transparent 0 47px,rgba(255,255,255,.028) 47px 48px)}
+.jour{background-color:rgba(9,17,30,.80);color:#F3F4F6}
+.jour .eyebrow{color:#62C7FF}.jour .lead{color:#C9D3DF}.jour .muted{color:#8C9BB0}.jour a{color:#62C7FF}
+.jour .stat .big{color:#62C7FF}.jour .gain .big,.jour .c{color:#7CE3B5}.jour .h{color:#FF9E5E}
+.nuit{background-color:rgba(13,14,17,.80)}
+.hero.nuit,.nuit[style*="n-board"]{background-color:rgba(6,7,8,.82)}
+.top .faces.is-jour span[data-on]{background:#1A64C8;color:#fff}
+.glass,.stat,.jour .stat,.gain,.jour .gain,.need,.person,.life,.rule,.step .k,.calc form,.bar,.calc .detail,.ticket{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 20px 50px rgba(0,0,0,.35);backdrop-filter:blur(14px);color:#F3F4F6}
+.step .k{padding:8px 14px;border-radius:12px}
+.life.end{background:linear-gradient(180deg,rgba(255,210,63,.22),rgba(255,210,63,.08));border-color:rgba(255,210,63,.35)}
+.life .who{color:#B9BEC9}
+.stat .how,.gain .txt,.need p,.rule p,.person span{color:#B9BEC9}
+.rule h3,.need h3,.person b{color:#F3F4F6}
+.ticket{border-radius:20px}
+.ticket::before,.ticket::after{display:none}
+.ticket .col+.col{border-left-color:rgba(255,255,255,.2)}
+.ticket .col h3{color:#8C93A3}
+.jour .ticket .col.avec h3{color:#62C7FF}.nuit .ticket .col.avec h3{color:var(--signal)}
+.ticket .col p{color:#9AA1B0}.ticket .col.avec p{color:#F3F4F6}
+.ticket .col p::before{color:#FF9E5E}.ticket .col.avec p::before{color:#7CE3B5}
+.ticket .stub{background:rgba(255,255,255,.04);border-top-color:rgba(255,255,255,.2);color:#B9BEC9}.ticket .stub b{color:#F3F4F6}
+.band{background-color:rgba(13,14,17,.80);color:#F3F4F6;background-image:radial-gradient(900px 500px at 80% 110%,rgba(255,210,63,.28),transparent 60%),repeating-linear-gradient(0deg,transparent 0 47px,rgba(255,255,255,.028) 47px 48px),repeating-linear-gradient(90deg,transparent 0 47px,rgba(255,255,255,.028) 47px 48px)}
+.band .eyebrow{color:var(--signal)}.band h2{color:var(--signal)}
+.band .muted{color:#B9BEC9!important}
+.calc label{color:#C9D3DF}
+.calc input[type=number]{background:rgba(255,255,255,.06);color:#F3F4F6;border-color:rgba(255,255,255,.22)}
+.calc input[type=range]{accent-color:#62C7FF}.calc .toggle input{accent-color:#62C7FF}
+.calc .ex{background:rgba(255,255,255,.06);color:#F3F4F6;border:1px solid rgba(255,255,255,.18);cursor:pointer;font-family:inherit}
+.calc .ex:hover{background:rgba(98,199,255,.18)}
+.bar .lab{color:#C9D3DF}.bar .track{background:rgba(255,255,255,.08)}
+.bar.sans .track i{background:#FF9E5E}.bar.avec .track i{background:#7CE3B5}
+.calc .detail b{color:#F3F4F6}.calc .verdict{color:#F3F4F6}.calc .verdict em{color:#7CE3B5}
+.device{position:relative}
+.device::before{content:"";position:absolute;left:10%;right:10%;top:12%;bottom:12%;border-radius:50%;filter:blur(40px);z-index:0;pointer-events:none;background:rgba(255,210,63,.22)}
+.jour .device::before{background:rgba(26,100,200,.35)}
+.device>*{position:relative;z-index:1}
+.phone .shell{box-shadow:0 30px 70px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.1),0 0 60px rgba(255,210,63,.08)}
+.jour .phone .shell{box-shadow:0 30px 70px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.1),0 0 60px rgba(26,100,200,.18)}
+.laptop,.jour .laptop{box-shadow:0 30px 70px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.1)}
+.hero::after{background:radial-gradient(ellipse at 70% 45%,rgba(255,210,63,.12),transparent 55%)}
+.deck h2{letter-spacing:-.01em}
+.hero h1 em,.band h2{text-shadow:0 0 40px rgba(255,210,63,.35)}
+.jour h2{text-shadow:0 0 40px rgba(26,100,200,.35)}
+th{background:rgba(255,255,255,.05)}
+tbody tr:nth-child(even){background:rgba(255,255,255,.03)}
+tbody tr:last-child td{background:rgba(255,210,63,.14)}
+.table{border-color:rgba(255,255,255,.12);backdrop-filter:blur(14px);background:rgba(255,255,255,.03)}
+
+/* ---- mode diapositives : une section = un écran, navigation horizontale ---- */
+html,body{height:100%;overflow:hidden}
+body{scroll-behavior:auto}
+.top{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;height:56px;z-index:20}
+.deck{position:fixed;left:0;right:0;top:calc(56px + env(safe-area-inset-top,0px));bottom:0;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
+.deck::-webkit-scrollbar{display:none}
+.deck>section{flex:0 0 100%;width:100%;height:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow:auto;display:flex;flex-direction:column;justify-content:center;padding:clamp(14px,2.6vh,32px) var(--gutter-r) clamp(14px,2.6vh,32px) var(--gutter);scroll-margin-top:0;min-height:0}
+.deck>section>.wrap{width:100%;max-width:1400px}
+.hero{min-height:0}
+.hero .wrap{gap:32px}
+.board{margin-bottom:16px}.board b{width:28px;height:38px;font-size:21px}
+.hero h1{font-size:clamp(32px,4.4vw,72px)}
+.hero h1::after{bottom:-12px;width:90px;height:3px}
+.hero .lead{margin-top:26px}
+.chips{margin-top:18px}.chip{padding:8px 12px;font-size:11px}
+.hero .phones .phone:first-child{transform:translateY(-16px)}
+.lead{font-size:clamp(14px,1.25vw,18px)}
+.deck h2{font-size:clamp(24px,3.1vw,48px)!important}
+.part h2{margin-top:6px}
+.part .lead{margin:10px 0 14px}
+.part .wrap{gap:32px;align-items:center}
+.stats{margin-top:20px;gap:12px}.stat{padding:14px 18px}.stat .big{font-size:clamp(28px,3.2vw,46px)}.stat .what{margin-top:6px;font-size:15px}.stat .how{font-size:13px}
+.steps{margin-top:18px;gap:18px}.step{gap:10px}.step .k b{font-size:28px}.step .k h3{font-size:20px}.step p{font-size:14px}
+.device{align-items:center}
+.phones .device{flex:0 1 auto;max-width:none}
+.phone{width:auto;height:min(56vh,580px);aspect-ratio:410/864}
+.hero .phones .phone{height:min(64vh,660px)}
+.step .phone{height:min(44vh,460px)}
+.cap{margin-top:8px;font-size:11px;width:100%;justify-content:center;gap:10px}
+.laptop{width:100%}
+.ticket .col{padding:16px 20px;gap:8px}.ticket .col h3{font-size:11px}.ticket .col p{font-size:clamp(12px,.95vw,15px);line-height:1.35;padding-left:18px}
+.ticket .stub{padding:8px 20px;font-size:12px;gap:6px 18px}.ticket .stub b{font-size:14px}
+.gain{margin-top:12px;padding:10px 16px;gap:12px}.gain .big{font-size:clamp(22px,2.2vw,34px)}.gain .txt{font-size:13px}
+.calc{margin-top:18px;gap:24px}.calc form{padding:16px 18px;gap:10px}.calc input[type=number]{min-height:42px;font-size:17px}
+.calc .out{gap:10px}.bar{padding:8px 14px;grid-template-columns:110px 1fr 110px}.bar .track{height:16px}.bar .val{font-size:18px}
+.calc .verdict{font-size:clamp(20px,2.2vw,30px)}.calc .detail{padding:10px 16px;font-size:13px;gap:4px 14px}
+.flip-wrap{margin-top:16px}.flip{width:min(100%,800px,calc((100vh - 330px) * 1.77))}
+.face{padding:clamp(14px,2vw,26px) clamp(16px,2.6vw,34px);border-radius:20px}
+.face .iata b{font-size:clamp(36px,5.6vw,80px)}.face .grid{font-size:clamp(12px,1.1vw,15px);gap:6px 18px}
+.face .pill{padding:9px 12px;font-size:13px}
+.flip-hint{margin-top:10px;font-size:11px}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;align-items:center;margin-top:18px}
+.rate{margin-top:14px}.rate button{min-height:30px;font-size:11px}
+.lives{grid-template-columns:1fr 1fr;margin-top:12px;gap:10px}.life{padding:12px 14px;gap:3px}.life .price{font-size:24px}.life .who,.life .fee{font-size:12px}
+.total{margin-top:10px;font-size:13px}.total b{font-size:24px}
+.table{margin-top:14px}table{font-size:13px;min-width:640px}th,td{padding:8px 14px}
+.rules{margin-top:18px;gap:12px}.rule{padding:14px 16px}.rule h3{font-size:16px}.rule p{font-size:13px;margin-top:5px}
+.needs{margin-top:18px;gap:12px}.need{padding:14px 16px}.need h3{font-size:19px}.need p{font-size:13px;margin-top:5px}
+.people{margin-top:18px;gap:14px}.person{padding:14px 18px}.person b{font-size:17px}.person span{font-size:13px}
+.legal{margin-top:16px;font-size:12px;color:var(--n-text-3);max-width:70ch}
+.arrow{position:fixed;top:50%;transform:translateY(-50%);z-index:25;width:46px;height:46px;border-radius:999px;border:1px solid var(--n-line);background:rgba(21,23,28,.85);color:var(--n-text);font:600 20px var(--body);cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.arrow:hover{background:var(--signal);color:var(--signal-ink)}
+.arrow:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+.arrow.prev{left:max(10px,env(safe-area-inset-left,0px))}.arrow.next{right:max(10px,env(safe-area-inset-right,0px))}
+.arrow[disabled]{opacity:.3;cursor:default}
+@media (min-width:981px){.deck>section{padding-left:max(76px,var(--gutter));padding-right:max(76px,var(--gutter-r))}}
+.calc .toggle{flex-direction:row;align-items:center;gap:12px}
+.phones.three{gap:16px;flex-wrap:nowrap}
+.phones.three .phone{height:min(46vh,470px)}
+.phones.three .cap{font-size:10px;flex-direction:column;gap:2px;align-items:center}
+@media (max-width:980px){.phones.three{flex-wrap:wrap}}
+.jour{background-color:rgba(9,17,30,.72)}
+.nuit{background-color:rgba(13,14,17,.74)}
+@media (max-width:980px){
+  .deck>section{justify-content:flex-start}
+  .two{grid-template-columns:1fr}
+  .phone{height:min(48vh,520px)}
+  .hero .phones .phone{height:min(50vh,520px)}
+  .arrow{width:38px;height:38px;top:auto;bottom:14px;transform:none}
+  .deck>section{padding-bottom:68px}
+}
+@media (max-width:600px){
+  .top{gap:8px;overflow:hidden}
+  .top .count{display:none}
+  .faces span{padding:0 9px;font-size:11px;min-height:30px}
+  .prog{min-width:24px}
+  .fs{padding:0 10px}
+  .logo{font-size:18px}.faces span{white-space:nowrap;padding:0 7px;font-size:10px;letter-spacing:.05em}.prog{flex:1 1 12px;min-width:0}.fs{flex:none;padding:0 9px;margin-left:0}
+  .steps,.lives{grid-template-columns:1fr}
+  .bar{grid-template-columns:1fr;gap:8px}
+  .bar .val{text-align:left}
+  .hero .phones{flex-direction:column;align-items:center}
+}
+
+[hidden]{display:none!important}
+/* ---- maquettes cliquables : navigation interne, vue agrandie, aucune sortie de la présentation ---- */
+.phone .shell,.phone .shell::after,.device::before,.hero::after,.aurora{pointer-events:none}
+.phone .screen,.phone iframe,.laptop iframe{pointer-events:auto}
+.cap{container-type:inline-size;flex-direction:column;align-items:center;justify-content:flex-start;gap:5px;margin-top:8px}
+.cap .nav{display:flex;gap:4px;justify-content:center;max-width:100%}
+.nb{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:28px;min-width:28px;padding:0 10px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:var(--n-text-2);font:600 11px/1 var(--mono);letter-spacing:.03em;cursor:pointer;white-space:nowrap;text-decoration:none}
+.nb svg{width:13px;height:13px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.nb:hover{background:rgba(255,255,255,.14);color:var(--n-text)}
+.nb:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+.nb[disabled]{opacity:.38;cursor:default;background:rgba(255,255,255,.03)}
+.nb[disabled]:hover{background:rgba(255,255,255,.03);color:var(--n-text-2)}
+.nb.expand{border-color:rgba(255,210,63,.45);color:var(--signal)}
+.nb.expand:hover{background:var(--signal);color:var(--signal-ink)}
+.cap .ttl{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;color:var(--n-text-3);font:500 11px/1.3 var(--mono);letter-spacing:.02em}
+.cap .ttl .t{color:var(--n-text-2);font-weight:600}
+.cap .ttl .o{opacity:.8}
+@container (max-width:260px){.cap .nb{padding:0 9px}.cap .nb .lbl,.cap .ttl .o{display:none}}
+.phones.three .cap{flex-direction:column;gap:5px;font-size:11px}
+.toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:140;max-width:min(92vw,520px);padding:10px 16px;border-radius:12px;background:#15171C;border:1px solid var(--signal);color:var(--n-text);font:500 13px/1.4 var(--body);box-shadow:0 12px 40px rgba(0,0,0,.6);text-align:center}
+.zoom{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;background:rgba(4,5,8,.92);backdrop-filter:blur(10px);padding:env(safe-area-inset-top,0px) var(--gutter-r) env(safe-area-inset-bottom,0px) var(--gutter)}
+.zoom-bar{flex:none;display:flex;align-items:center;gap:10px;min-height:56px;padding-block:8px}
+.zoom-bar .ttl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--n-text-3);font:500 12px/1.3 var(--mono)}
+.zoom-bar .ttl .t{color:var(--n-text);font-weight:600}
+.zoom-bar .nav{display:flex;gap:4px;flex:none}
+.zoom-bar .nb{min-height:36px}
+.nb.close{border-color:var(--signal);background:var(--signal);color:var(--signal-ink)}
+.nb.close:hover{background:#FFE27A;color:var(--signal-ink)}
+.nb.close kbd{font:600 10px var(--mono);padding:2px 5px;border-radius:4px;background:rgba(13,14,17,.15)}
+.zoom-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding-bottom:12px}
+.zdev{position:relative;flex:none}
+.zdev iframe{position:absolute;left:0;top:0;border:0;background:#0D0E11;transform-origin:0 0}
+.zphone .shell{position:absolute;inset:0;border-radius:40px;background:#000;box-shadow:0 30px 80px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.12),0 0 60px rgba(255,210,63,.08);pointer-events:none}
+.zphone .screen{position:absolute;left:10px;top:10px;overflow:hidden;border-radius:30px;background:#0D0E11}
+.zlaptop{border-radius:12px;overflow:hidden;background:#000;box-shadow:0 30px 80px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.12)}
+@media (max-width:600px){.zoom-bar .nav .lbl{display:none}.zoom-bar{gap:6px}.nb.close kbd{display:none}}
+@media (prefers-reduced-motion:no-preference){.zoom:not([hidden]){animation:zin .18s ease-out}@keyframes zin{from{opacity:0}to{opacity:1}}}
+</style>
+
+<div class="top">
+  <a class="logo" href="#haut">NEXG<b>·TT</b></a>
+  <div class="faces" id="faces" aria-label="Face de l’application affichée"><span id="fV">Voyager</span><span id="fM" data-on>Mes actifs</span></div>
+  <div class="prog" aria-hidden="true"><i id="prog"></i></div>
+  <nav aria-label="Sections">
+    <a href="#probleme">Problème</a><a href="#mecanique">Mécanique</a><a href="#calcul">Calcul</a><a href="#voyageur">Parties prenantes</a><a href="#nexg">NexG-TT</a><a href="#synthese">Synthèse</a><a href="#realiste">Réaliste</a>
+  </nav>
+  <span class="count" id="count">1 / 21</span>
+  <button type="button" class="fs" id="fs" title="Plein écran · flèches ← → pour changer de diapositive">Présenter</button>
+</div>
+<div class="aurora" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i></div>
+<button type="button" class="arrow prev" id="prev" aria-label="Diapositive précédente">‹</button>
+<button type="button" class="arrow next" id="next" aria-label="Diapositive suivante">›</button>
+
+<div class="deck" id="deck" aria-live="polite">
+<section class="hero nuit" id="haut" data-face="nuit">
+  <canvas id="globe" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div>
+      <div class="board" id="board1" aria-label="NEXG·TT" role="img"><b>N</b><b>E</b><b>X</b><b>G</b><b class="sep">·</b><b>T</b><b>T</b></div>
+      <p class="eyebrow">Next Generation Travel Ticket · sans / avec</p>
+      <h1 style="margin-top:14px">Depuis toujours, un billet d’avion se perd. <em>Désormais, il se garde.</em></h1>
+      <p class="lead" style="margin-top:40px">Le billet devient un droit de voyage : on l’achète, on le garde ou on le revend, on nomme le voyageur à la fin. Voici la vie sans NexG-TT et la vie avec, point par point, pour chaque partie prenante, écran à l’appui.</p>
+      <div class="chips"><span class="chip">Acheter</span><span class="chip">Détenir ou revendre</span><span class="chip on">Nommer le voyageur</span></div>
+      <p class="muted" style="margin-top:28px">Les téléphones sont de vraies maquettes : touchez, naviguez. MODE DÉMO — aucun paiement réel, données fictives.</p>
+    </div>
+    <div class="phones">
+      <div class="device"><div class="phone" data-src="Main"><div class="shell"></div></div><div class="cap"><span>Accueil · face Jour</span><button type="button" class="nb expand" data-open="Main">Agrandir</button></div></div>
+      <div class="device"><div class="phone" data-src="Marche"><div class="shell"></div></div><div class="cap"><span>Mes actifs · face Nuit</span><button type="button" class="nb expand" data-open="Marche">Agrandir</button></div></div>
+    </div>
+  </div>
+  <div class="ticker" aria-hidden="true"><div>
+    <span>YUL→CDG 1 480 $ <i class="up">+4 %</i></span><span>YUL→PUJ 910 $ <i class="down">−3 %</i></span><span>YUL→LIS 520 $ <i class="up">+2 %</i></span><span>YUL→NRT 1 190 $ <i class="down">−1 %</i></span><span>YUL→KEF 640 $ <i class="up">+6 %</i></span><span>Drop n° 128 · 3 places restantes</span><span>YUL→CDG 1 480 $ <i class="up">+4 %</i></span><span>YUL→PUJ 910 $ <i class="down">−3 %</i></span><span>YUL→LIS 520 $ <i class="up">+2 %</i></span><span>Prix indicatifs · un droit de voyage n’est pas un placement financier</span>
+  </div></div>
+</section>
+
+<section class="jour" id="probleme" data-face="jour">
+  <div class="wrap">
+    <p class="eyebrow">Le problème</p>
+    <h2 style="font-size:clamp(36px,5vw,72px);margin-top:10px">Un billet acheté est un billet perdu dès que les plans changent.</h2>
+    <p class="lead" style="margin-top:18px">Le prix ne garde aucune valeur après l’achat. Le billet est rigide, nominatif dès la réservation, et personne ne peut le reprendre.</p>
+    <div class="stats">
+      <div class="stat reveal"><p class="big" data-count="700" data-suffix=" €">0 €</p><p class="what">perdus par une voyageuse empêchée</p><p class="how muted">Billet non remboursable. Elle ne récupère rien. Exemple rapporté par le porteur.</p></div>
+      <div class="stat reveal"><p class="big" data-count="3000" data-suffix=" $">0 $</p><p class="what">perdus par un voyageur rencontré en colloque</p><p class="how muted">Ses plans ont changé. Le billet ne se cède pas : il est perdu.</p></div>
+      <div class="stat reveal"><p class="big">15 à 20 %</p><p class="what">du budget billets d’une entreprise en frais d’annulation</p><p class="how muted">Ordre de grandeur donné par le porteur, sur environ 1 M$ de billets par an.</p></div>
+      <div class="stat reveal"><p class="big" data-count="0" data-suffix="">0</p><p class="what">accès sûr à une place revendue moins cher que le neuf</p><p class="how muted">Côté acheteur, rien n’existe aujourd’hui pour le même vol.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="nuit" id="mecanique" data-face="nuit">
+  <div class="wrap">
+    <p class="eyebrow">La mécanique · en trois temps</p>
+    <h2 style="font-size:clamp(36px,5vw,72px);margin-top:10px">Le billet devient un droit de voyage</h2>
+    <p class="lead" style="margin-top:18px">Ce qui change par rapport à un billet classique : le nom du voyageur n’est fixé qu’à la fin, et la réservation reste au nom de NexG-TT jusque-là. Rien ne bouge côté compagnie.</p>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="k"><b>1</b><h3>Acheter</h3></div>
+        <p>Un droit de voyage sur un vol réel, inscrit à votre nom dans le registre interne de NexG-TT. Vous en êtes le détenteur.</p>
+        <div class="device"><div class="phone" data-src="Offre"><div class="shell"></div></div><div class="cap"><span>Offre</span><button type="button" class="nb expand" data-open="Offre">Agrandir</button></div></div>
+      </div>
+      <div class="step reveal">
+        <div class="k"><b>2</b><h3>Détenir ou revendre</h3></div>
+        <p>Gardez-le, revendez-le à prix encadré ou transférez-le à un proche. Il peut changer de mains plusieurs fois.</p>
+        <div class="device"><div class="phone" data-src="Portefeuille"><div class="shell"></div></div><div class="cap"><span>Portefeuille</span><button type="button" class="nb expand" data-open="Portefeuille">Agrandir</button></div></div>
+      </div>
+      <div class="step reveal">
+        <div class="k"><b>3</b><h3>Nommer le voyageur</h3></div>
+        <p>Avant l’échéance (J-1 visé, J-3 à l’étude), le détenteur nomme le passager : lui-même ou un proche. Le billet devient nominatif, plus aucune vente ensuite.</p>
+        <div class="device"><div class="phone" data-src="Finaliser"><div class="shell"></div></div><div class="cap"><span>Nommer</span><button type="button" class="nb expand" data-open="Finaliser">Agrandir</button></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="nuit" id="deuxfaces" data-face="nuit" style="background:var(--n-board);overflow:hidden">
+  <div class="wrap">
+    <p class="eyebrow">Le produit · une seule application</p>
+    <h2 style="font-size:clamp(36px,5vw,72px);margin-top:10px">Un billet, deux faces</h2>
+    <p class="lead" style="margin-top:18px">Recto, la face Jour : le voyage, trouver, préparer, embarquer. Verso, la face Nuit : le droit que l’on détient, son prix équivalent, sa revente. Même billet, même jaune réservé à l’action. Il se retourne quand vous défilez, ou d’un clic.</p>
+    <div class="flip-wrap">
+      <div class="flip" id="flip" tabindex="0" role="button" aria-label="Retourner le billet">
+        <div class="face recto">
+          <div class="hd"><span class="brand">NEXG<b>·TT</b></span><span class="tag">Recto · Voyager · carte d’embarquement</span></div>
+          <div class="iata"><b>YUL</b><i></i><span style="color:var(--sky)">✈</span><i></i><b>CDG</b></div>
+          <div class="grid"><div><span>Départ</span><b>Montréal · 18:05</b></div><div><span>Arrivée</span><b>Paris · 07:10 (+1)</b></div><div><span>Date</span><b>14 déc. 2026</b></div><div><span>Vol</span><b>Aérolys 812 · direct 7 h 05</b></div><div><span>Référence</span><b class="mono">NXG-7Q2M</b></div></div>
+          <p class="pill">Voyageur · à nommer avant le 13 déc. 18:05</p>
+        </div>
+        <div class="face verso">
+          <div class="hd"><span class="brand">NEXG<b>·TT</b></span><span class="tag">Verso · Mes actifs · droit de voyage</span></div>
+          <div class="grid"><div><span>Prix équivalent aujourd’hui</span><b class="big">2 000 $</b></div><div><span>Payé le 12 janv.</span><b class="big" style="color:var(--n-text-2)">1 000 $</b></div><div><span>Écart</span><b class="big" style="color:var(--up)">+100 %</b></div></div>
+          <div class="grid two"><div><span>Chaîne de détention · registre NexG-TT</span><b class="mono" style="font-size:13px">12 janv. · achat neuf · 1 000 $ → aujourd’hui · détenteur : Alex T.</b></div><div><span>Statut</span><b>Détenu · revendable · nominatif à J-1</b></div></div>
+          <p class="pill">Échéance J-1 · nommer avant le 13 déc. 18:05 · prix indicatif, pas un placement</p>
+        </div>
+      </div>
+    </div>
+    <p class="flip-hint muted">Cliquer ou défiler pour retourner le billet · le billet papier est le seul élément qui traverse les deux faces</p>
+  </div>
+</section>
+
+<section class="jour" id="calcul" data-face="jour">
+  <div class="wrap">
+    <p class="eyebrow">Les chiffres · combien récupérez-vous ?</p>
+    <h2 style="font-size:clamp(36px,5vw,72px);margin-top:10px">Réglez le prix payé et le prix de revente. Le résultat change en direct.</h2>
+    <div class="calc">
+      <form id="calc" autocomplete="off">
+        <label>Prix payé
+          <input type="number" id="paye" min="50" max="20000" step="10" value="700" inputmode="numeric">
+          <input type="range" id="payeR" min="100" max="5000" step="10" value="700" aria-label="Prix payé, curseur">
+        </label>
+        <label>Prix de revente
+          <input type="number" id="revente" min="0" max="20000" step="10" value="500" inputmode="numeric">
+          <input type="range" id="reventeR" min="0" max="5000" step="10" value="500" aria-label="Prix de revente, curseur">
+        </label>
+        <div class="row">
+          <label class="toggle"><input type="checkbox" id="pass"> Membre du Pass (commission 10 % au lieu de 12,5 %)</label>
+        </div>
+        <div class="row" style="flex-wrap:wrap;gap:8px">
+          <button type="button" class="chip ex" data-ex="700,500">Voyageuse empêchée</button>
+          <button type="button" class="chip ex" data-ex="2000,1500">Vendeur pressé</button>
+          <button type="button" class="chip ex" data-ex="1000,1500">Achat anticipé</button>
+        </div>
+        <p class="muted">Le prix de revente est plafonné (règle provisoire : le prix équivalent d’un billet neuf sur ce vol, à valider). Montants en dollars canadiens ou en euros selon l’exemple.</p>
+      </form>
+      <div class="out">
+        <p class="verdict" id="verdict">Avec NexG-TT, vous récupérez <em>438 $</em>, soit 63 % du prix payé.</p>
+        <div class="bar sans"><span class="lab">Sans NexG-TT</span><div class="track"><i id="bSans" style="width:100%"></i></div><span class="val" id="vSans">−700 $</span></div>
+        <div class="bar avec"><span class="lab">Avec NexG-TT</span><div class="track"><i id="bAvec" style="width:63%"></i></div><span class="val" id="vAvec">+438 $</span></div>
+        <div class="detail">
+          <span>Prix de revente</span><b id="dRev">500 $</b>
+          <span id="dComLab">Commission NexG-TT (12,5 %)</span><b id="dCom">−63 $</b>
+          <span>Net pour vous</span><b id="dNet">438 $</b>
+          <span>Écart avec le prix payé</span><b id="dEcart">−263 $</b>
+          <span>Sans revente</span><b id="dPerte">−700 $</b>
+        </div>
+        <p class="muted">Commission prélevée seulement si la vente a lieu. S’il n’y a pas d’acheteur, vous gardez votre billet. Aucun gain n’est garanti.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Parties prenantes -->
+<section class="jour part" id="voyageur" data-face="jour">
+  <div class="wrap">
+    <div>
+      <p class="num eyebrow">Partie prenante 01 · le voyageur qui achète</p>
+      <h2>Acheter moins cher que le neuf, pour le même vol</h2>
+      <p class="lead">Sans NexG-TT, il n’a accès qu’au neuf. Avec, les reventes du même vol apparaissent à côté du neuf, toujours comparées au prix équivalent du jour.</p>
+      <div class="ticket reveal">
+        <div class="col sans"><h3>Sans NexG-TT</h3><p>Un seul prix : le neuf, au tarif du jour.</p><p>Les billets des gens qui ne partent plus sont perdus, jamais remis en vente.</p><p>Le nom est figé à l’achat : impossible d’acheter pour un proche encore indécis.</p><p>Aucun moyen sûr de comparer une place revendue à un billet neuf.</p></div>
+        <div class="col avec"><h3>Avec NexG-TT</h3><p>Neuf, reventes et offres d’agences sur un seul écran, pour le même vol.</p><p>Chaque revente affichée sous le « prix équivalent neuf aujourd’hui ».</p><p>Achat en un geste ; le voyageur est nommé plus tard, avant l’échéance.</p><p>Statut clair : revendable, nominatif à J-1, vendu par qui.</p></div>
+        <div class="stub"><span>Démo YUL → CDG</span><span>Revente <b>1 500 $</b></span><span>Neuf équivalent <b>2 050 $</b></span><span>Écart <b class="c">−27 %</b></span></div>
+      </div>
+      <div class="gain"><span class="big">−550 $</span><span class="txt">sur le même vol, dans l’exemple de la démo. Prix fictifs ; aucune réduction n’est promise.</span></div>
+    </div>
+    <div class="phones">
+      <div class="device"><div class="phone" data-src="Resultats"><div class="shell"></div></div><div class="cap"><span>Résultats</span><button type="button" class="nb expand" data-open="Resultats">Agrandir</button></div></div>
+      <div class="device"><div class="phone" data-src="Offre"><div class="shell"></div></div><div class="cap"><span>Offre</span><button type="button" class="nb expand" data-open="Offre">Agrandir</button></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="nuit part" id="intentions" data-face="nuit">
+  <div class="wrap" style="grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)">
+    <div>
+      <p class="num eyebrow">Partie prenante 01 · suite · l’acheteur en attente</p>
+      <h2>Les intentions d’achat, recto et verso</h2>
+      <p class="lead">Avant qu’une offre n’existe, l’acheteur dit ce qu’il veut : où, quand et à quel budget au recto ; à quel prix il achète automatiquement au verso.</p>
+      <div class="ticket reveal">
+        <div class="col sans"><h3>Sans NexG-TT</h3><p>L’acheteur attend qu’une offre existe : il surveille, revient, et rate le bon moment.</p><p>Les alertes des comparateurs préviennent mais ne réservent rien.</p><p>Le vendeur ne sait pas combien d’acheteurs attendent, ni à quel prix.</p></div>
+        <div class="col avec"><h3>Avec NexG-TT</h3><p>Recto · le voyageur fixe un budget sur le radar, ou une alerte « YUL → Partout, ≤ 600 $ », et il est prévenu dès qu’un billet correspond.</p><p>Verso · l’ordre à cours limité achète automatiquement si une revente descend à son seuil : pas de 10 $, validité choisie, paiement pré-autorisé.</p><p>Les demandes d’achat s’affichent dans le carnet du vol : les vendeurs voient la demande réelle et ajustent leur prix sous le plafond. Même logique pour la soute.</p></div>
+        <div class="stub"><span>Vol 816</span><span>Offre <b>1 500 $</b></span><span>Demande <b>1 420 $ ×3</b></span><span>Ordre <b>1 450 $</b></span><span>Plafond <b>2 050 $</b></span></div>
+      </div>
+      <div class="gain"><span class="big">×3</span><span class="txt">acheteurs attendent déjà à 1 420 $ sur ce vol dans la démo : une demande que ni l’acheteur ni le vendeur ne voyaient avant. Ordre et alertes : maquettés, phase 2 ; probabilité estimée affichée à titre indicatif.</span></div>
+    </div>
+    <div class="phones three">
+      <div class="device"><div class="phone" data-src="VoyageRadar"><div class="shell"></div></div><div class="cap"><span>Recto · Radar et budget</span><button type="button" class="nb expand" data-open="VoyageRadar">Agrandir</button></div></div>
+      <div class="device"><div class="phone" data-src="Ordre"><div class="shell"></div></div><div class="cap"><span>Verso · Ordre à cours limité</span><button type="button" class="nb expand" data-open="Ordre">Agrandir</button></div></div>
+      <div class="device"><div class="phone" data-src="Cours"><div class="shell"></div></div><div class="cap"><span>Verso · Carnet du vol</span><button type="button" class="nb expand" data-open="Cours">Agrandir</button></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="nuit part" id="detenteur" data-face="nuit">
+  <div class="wrap">
+    <div>
+      <p class="num eyebrow">Partie prenante 02 · le détenteur qui ne part plus</p>
+      <h2>Récupérer une partie du prix au lieu de tout perdre</h2>
+      <p class="lead">Le cœur du problème. Avec NexG-TT, le détenteur revend son droit jusqu’à l’échéance ; la commission et le net reçu s’affichent avant de confirmer.</p>
+      <div class="ticket reveal">
+        <div class="col sans"><h3>Sans NexG-TT</h3><p>Billet non remboursable : 700 € perdus.</p><p>Changement de nom impossible ou payant, selon la compagnie.</p><p>Aucun marché pour céder sa place à quelqu’un qui partirait.</p><p>On espère un geste commercial, sans recours.</p></div>
+        <div class="col avec"><h3>Avec NexG-TT</h3><p>Il met son droit en vente jusqu’à l’échéance, au prix qu’il choisit, sous le plafond.</p><p>Commission prélevée seulement si la vente a lieu : 12,5 %, ou 10 % avec le Pass.</p><p>Prix équivalent du jour et estimation pour fixer le bon prix.</p><p>Argent versé sur son solde ; identité vérifiée à ce moment seulement.</p></div>
+        <div class="stub"><span>Cas 1</span><span>Payé <b>700 €</b></span><span>Revendu <b>500 €</b></span><span>Net après 12,5 % <b class="c">438 €</b></span><span>Sans revente <b class="h">0 €</b></span></div>
+      </div>
+      <div class="gain"><span class="big">63 %</span><span class="txt">du prix payé récupéré dans le cas 1, au lieu de rien. Avant commission : 500 €. Rien n’est garanti : sans acheteur, le billet est gardé.</span></div>
+    </div>
+    <div class="phones">
+      <div class="device"><div class="phone" data-src="Portefeuille"><div class="shell"></div></div><div class="cap"><span>Portefeuille</span><button type="button" class="nb expand" data-open="Portefeuille">Agrandir</button></div></div>
+      <div class="device"><div class="phone" data-src="Revendre"><div class="shell"></div></div><div class="cap"><span>Revendre</span><button type="button" class="nb expand" data-open="Revendre">Agrandir</button></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="nuit part" id="planificateur" data-face="nuit">
+  <div class="wrap">
+    <div>
+      <p class="num eyebrow">Partie prenante 03 · celui qui achète tôt</p>
+      <h2>Réserver six mois d’avance sans se bloquer</h2>
+      <p class="lead">Le cas 2 du porteur : acheté 1 000 $ en janvier, prix équivalent 2 000 $ en décembre. Le détenteur n’est plus prisonnier de sa décision.</p>
+      <div class="ticket reveal">
+        <div class="col sans"><h3>Sans NexG-TT</h3><p>Acheter tôt, c’est parier sur ses plans de dans six mois.</p><p>Si le prix monte, aucun avantage ; s’il faut renoncer, tout est perdu.</p><p>Le nom du passager est exigé le jour de l’achat.</p></div>
+        <div class="col avec"><h3>Avec NexG-TT</h3><p>Il détient le droit et suit le prix équivalent, avec son écart signé « + » ou « − ».</p><p>À l’échéance, il nomme le voyageur : lui-même ou un proche. S’il ne fait rien, il voyage par défaut.</p><p>Vendre maintenant ou attendre ? Rachat instantané, annonce au marché ou patience, comparés.</p><p>Calendrier des échéances et rappels J-30, J-7, J-2.</p></div>
+        <div class="stub"><span>Cas 2</span><span>Payé en janvier <b>1 000 $</b></span><span>Équivalent en décembre <b>2 000 $</b></span><span>Revendu <b>1 500 $</b></span><span>Net après 12,5 % <b class="c">1 313 $</b></span></div>
+      </div>
+      <div class="gain"><span class="big">+313 $</span><span class="txt">de plus que le prix payé, dans le cas 2, pour un détenteur qui ne part plus ; l’acheteur, lui, paie 500 $ sous le neuf. Prix fictifs.</span></div>
+    </div>
+    <div class="phones">
+      <div class="device"><div class="phone" data-src="Liquidite"><div class="shell"></div></div><div class="cap"><span>Vendre ou attendre</span><button type="button" class="nb expand" data-open="Liquidite">Agrandir</button></div></div>
+      <div class="device"><div class="phone" data-src="Echeances"><div class="shell"></div></div><div class="cap"><span>Échéances</span><button type="button" class="nb expand" data-open="Echeances">Agrandir</button></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="nuit part" id="proches" data-face="nuit">
+  <div class="wrap">
+    <div>
+      <p class="num eyebrow">Partie prenante 04 · la famille et les proches</p>
+      <h2>Un billet que l’on peut offrir ou confier</h2>
+      <p class="lead">Le transfert sans vente : le droit change de détenteur, pas d’argent. Six planches maquettées.</p>
+      <div class="ticket reveal">
+        <div class="col sans"><h3>Sans NexG-TT</h3><p>Offrir un billet d’avion suppose de connaître le nom exact et les dates à l’avance.</p><p>Un proche empêché ne peut ni rendre ni céder le billet reçu.</p><p>Pas de trace de qui détient quoi dans la famille.</p></div>
+        <div class="col avec"><h3>Avec NexG-TT</h3><p>Transfert vers le compte NexG-TT d’un proche, en trois étapes, avec double confirmation.</p><p>Le proche devient détenteur : c’est lui qui nomme le voyageur, ou qui revend.</p><p>Chaîne de détention inscrite au registre ; le proche est notifié.</p><p>Un avertissement bloque le transfert si l’échéance est trop proche.</p></div>
+        <div class="stub"><span>Frais de transfert</span><b>0 $ dans la démo</b><span class="hyp h">hypothèse</span><span>Le proche doit avoir un compte NexG-TT</span></div>
+      </div>
+    </div>
+    <div class="phones">
+      <div class="device"><div class="phone" data-src="Transfert"><div class="shell"></div></div><div class="cap"><span>Transférer</span><button type="button" class="nb expand" data-open="Transfert">Agrandir</button></div></div>
+      <div class="device"><div class="phone" data-src="TransfertFait"><div class="shell"></div></div><div class="cap"><span>Transfert effectué</span><button type="button" class="nb expand" data-open="TransfertFait">Agrandir</button></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="nuit part" id="abonne" data-face="nuit">
+  <div class="wrap">
+    <div>
+      <p class="num eyebrow">Partie prenante 05 · le membre du Pass</p>
+      <h2>Des aubaines réellement limitées, aux règles publiées</h2>
+      <p class="lead">NexG-TT achète des lots d’inventaire et les place en drops réservés aux membres, par petits lots, au premier arrivé. Le prix membre s’affiche à côté du prix équivalent, et c’est tout.</p>
+      <div class="ticket reveal">
+        <div class="col sans"><h3>Sans NexG-TT</h3><p>Les aubaines dépendent des alertes de prix et de la chance.</p><p>Aucun accès à un inventaire réservé, ni à un prix d’avance connu.</p><p>Les billets achetés en promotion sont encore moins flexibles.</p></div>
+        <div class="col avec"><h3>Avec NexG-TT</h3><p>Drops membres : des lots limités injectés progressivement, règles publiées.</p><p>Commission de revente réduite : 10 % au lieu de 12,5 %.</p><p>Alertes par zone, historique de prix, calendrier des échéances.</p><p>Un droit acheté en drop reste revendable et transférable comme les autres.</p></div>
+        <div class="stub"><span>Drop n° 128 · YUL → PUJ</span><span>Prix membre <b>200 $</b></span><span>Équivalent <b>≈ 1 000 $</b></span><span>Pass <b>9,99 $/mois</b><span class="hyp h">hypothèse</span></span></div>
+      </div>
+      <div class="gain"><span class="big">−2,5 pts</span><span class="txt">de commission à chaque revente pour un membre (10 % au lieu de 12,5 %). Aucun pourcentage de réduction n’est promis sans données réelles. Phase 2a.</span></div>
+    </div>
+    <div class="phones">
+      <div class="device"><div class="phone" data-src="Drop"><div class="shell"></div></div><div class="cap"><span>Drop</span><button type="button" class="nb expand" data-open="Drop">Agrandir</button></div></div>
+      <div class="device"><div class="phone" data-src="Abonnement"><div class="shell"></div></div><div class="cap"><span>Pass NexG</span><button type="button" class="nb expand" data-open="Abonnement">Agrandir</button></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="jour part" id="entreprise" data-face="jour">
+  <div class="wrap">
+    <div>
+      <p class="num eyebrow">Partie prenante 06 · l’entreprise</p>
+      <h2>Un déplacement annulé n’est plus une perte sèche</h2>
+      <p class="lead">Le cas 4 du porteur. Le compte entreprise avec rôles, politiques et facturation est prévu en phase 3 ; la revente et le rachat, eux, sont au cœur du produit dès le début.</p>
+      <div class="ticket reveal">
+        <div class="col sans"><h3>Sans NexG-TT</h3><p>15 à 20 % du budget billets partent en frais d’annulation (ordre de grandeur du porteur).</p><p>Billets nominatifs : un cadre remplacé, c’est un billet perdu.</p><p>Un suivi dispersé entre agences, cartes et relevés.</p></div>
+        <div class="col avec"><h3>Avec NexG-TT</h3><p>Les droits de voyage de l’entreprise dans un portefeuille partagé ; le voyageur est nommé au dernier moment.</p><p>Un déplacement annulé devient une revente, un transfert à un collègue ou un rachat.</p><p>Relevés, centres de coûts, politiques de voyage et factures : compte entreprise en phase 3.</p></div>
+        <div class="stub"><span>Exemple du porteur</span><span>Billets par an <b>≈ 1 M$</b></span><span>Frais d’annulation subis <b class="h">150 à 200 k$</b></span><span>Exposition à réduire par la revente ou le rachat</span></div>
+      </div>
+      <div class="gain"><span class="big">jusqu’à 200 k$</span><span class="txt">d’exposition annuelle à réduire, dans l’exemple du porteur. Montant indicatif, avant commission, rien n’est garanti.</span></div>
+    </div>
+    <div class="device"><div class="laptop" data-src="WebPortefeuille"></div><div class="cap"><span>Portefeuille · version web (PC) · face Nuit</span><button type="button" class="nb expand" data-open="WebPortefeuille">Agrandir</button></div></div>
+  </div>
+</section>
+
+<section class="jour part" id="agence" data-face="jour">
+  <div class="wrap">
+    <div>
+      <p class="num eyebrow">Partie prenante 07 · l’agence de voyage partenaire</p>
+      <h2>Vendre en ligne sans bâtir de plateforme</h2>
+      <p class="lead">Le cas 6. L’agence publie ses offres dans NexG-TT et apparaît dans les résultats sous l’onglet Agences, avec l’étiquette « Vendu par ». Elle n’a rien à construire.</p>
+      <div class="ticket reveal">
+        <div class="col sans"><h3>Sans NexG-TT</h3><p>Bâtir, financer et entretenir sa propre plateforme de vente en ligne.</p><p>Rester invisible à côté des grandes agences en ligne.</p><p>Des clients qui perdent leur billet au premier imprévu.</p></div>
+        <div class="col avec"><h3>Avec NexG-TT</h3><p>Une vitrine « Vendu par Agence Horizon » dans les résultats, sans plateforme à maintenir.</p><p>Permis vérifié, offres étiquetées, même plafond de prix que tout le monde.</p><p>Ses clients profitent de la revente et du nommage différé comme les autres.</p><p>Forfaits vol et hôtel possibles dans la même vitrine.</p></div>
+        <div class="stub"><span>Agence Horizon : exemple fictif</span><span>Phase 2b</span><span class="hyp h">aucun accord d’agence à ce jour</span></div>
+      </div>
+    </div>
+    <div class="phones">
+      <div class="device"><div class="phone" data-src="Resultats"><div class="shell"></div></div><div class="cap"><span>Résultats · onglet Agences</span><button type="button" class="nb expand" data-open="Resultats">Agrandir</button></div></div>
+      <div class="device"><div class="phone" data-src="Agence"><div class="shell"></div></div><div class="cap"><span>Vitrine agence</span><button type="button" class="nb expand" data-open="Agence">Agrandir</button></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="jour part" id="compagnie" data-face="jour">
+  <div class="wrap">
+    <div>
+      <p class="num eyebrow">Partie prenante 08 · la compagnie aérienne</p>
+      <h2>Un seul titulaire, un passager final conforme</h2>
+      <p class="lead">La compagnie n’est pas cliente, mais elle est la condition du modèle. Ce qu’on lui propose : un seul titulaire et un passager final nommé et vérifié avant le départ, plus un canal pour l’invendu.</p>
+      <div class="ticket reveal">
+        <div class="col sans"><h3>Sans NexG-TT</h3><p>Des sièges vides au départ : billets non remboursables jamais utilisés.</p><p>Des changements de nom par des voies détournées, un marché gris qu’elle ne voit pas.</p><p>Un passager connu tard, parfois mal.</p></div>
+        <div class="col avec"><h3>Avec NexG-TT</h3><p>Un seul titulaire de réservation, NexG-TT, et un passager final nommé et vérifié avant le départ.</p><p>Des sièges vendus plus tôt ; l’invendu peut être placé en drops.</p><p>Le billet nominatif et la carte d’embarquement restent émis par la compagnie.</p><p>Condition : un accord de nommage différé et de cession, à négocier.</p></div>
+        <div class="stub"><span class="hyp h">aucun accord transporteur à ce jour</span><span>Sans accord, les règles IATA sur les noms fictifs s’appliquent</span><span>Aérolys et Nordelle sont fictives</span></div>
+      </div>
+    </div>
+    <div class="phones">
+      <div class="device"><div class="phone" data-src="Pret"><div class="shell"></div></div><div class="cap"><span>Prêt à voyager</span><button type="button" class="nb expand" data-open="Pret">Agrandir</button></div></div>
+      <div class="device"><div class="phone" data-src="Embarquement"><div class="shell"></div></div><div class="cap"><span>Embarquement</span><button type="button" class="nb expand" data-open="Embarquement">Agrandir</button></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="jour part" id="soute" data-face="jour">
+  <div class="wrap">
+    <div>
+      <p class="num eyebrow">Partie prenante 09 · les passagers d’un même vol</p>
+      <h2>La soute partagée : un bagage en trop, un bagage qui manque</h2>
+      <p class="lead">Le cas 7 : revente de droits de bagage entre passagers du même vol, même numéro, même date. Le plafond est le prix compagnie.</p>
+      <div class="ticket reveal">
+        <div class="col sans"><h3>Sans NexG-TT</h3><p>Un deuxième bagage payé et jamais utilisé est perdu.</p><p>Un bagage supplémentaire au comptoir : 150 $ dans l’exemple du porteur.</p><p>Les familles et la diaspora qui voyagent chargées paient plein tarif.</p></div>
+        <div class="col avec"><h3>Avec NexG-TT</h3><p>Le droit de bagage inutilisé se revend à un passager du même vol, sous le prix compagnie.</p><p>L’acheteur peut publier une demande ; les passagers du vol ayant un bagage libre sont notifiés.</p><p>Chacun enregistre ses propres bagages : on vend un droit, jamais le transport du bagage d’autrui.</p></div>
+        <div class="stub"><span>Vol 812 · YUL → CDG</span><span>Comptoir <b>150 $</b></span><span>Soute partagée <b>100 $</b></span><span>Vendeur récupère <b class="c">100 $</b> (avant commission)</span><span class="hyp h">accord compagnie requis</span></div>
+      </div>
+      <div class="gain"><span class="big">−50 $</span><span class="txt">pour l’acheteur, 100 $ récupérés pour le vendeur, sur un bagage qui aurait été perdu. Idée du porteur ; aucune compagnie trouvée n’autorise ce transfert aujourd’hui.</span></div>
+    </div>
+    <div class="phones">
+      <div class="device"><div class="phone" data-src="Bagages"><div class="shell"></div></div><div class="cap"><span>Bagages · face Jour</span><button type="button" class="nb expand" data-open="Bagages">Agrandir</button></div></div>
+      <div class="device"><div class="phone" data-src="SouteVol"><div class="shell"></div></div><div class="cap"><span>Soute du vol · face Nuit</span><button type="button" class="nb expand" data-open="SouteVol">Agrandir</button></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="nuit" id="nexg" data-face="nuit">
+  <div class="wrap">
+    <p class="eyebrow">Partie prenante 10 · NexG-TT, nous-mêmes</p>
+    <h2 style="font-size:clamp(36px,5vw,72px);margin-top:10px">Un billet, quatre vies, quatre commissions</h2>
+    <p class="lead" style="margin-top:18px">La différence avec une agence en ligne : chaque changement de mains rapporte, pas seulement la première vente. La vie d’un seul billet, cas 2 du porteur, prix fictifs.</p>
+    <div class="two">
+    <div>
+    <div class="rate" role="group" aria-label="Taux de commission"><button type="button" data-rate="12.5" aria-pressed="true">12,5 % · sans Pass</button><button type="button" data-rate="10" aria-pressed="false">10 % · avec Pass</button></div>
+    <div class="lives">
+      <div class="life reveal"><span class="when">Janvier · achat neuf</span><span class="price mono">1 000 $</span><span class="who">Alex achète le droit. La compagnie a vendu son siège.</span><span class="fee" data-fee="1000">Commission primaire · 125 $</span></div>
+      <div class="life reveal"><span class="when">Mars · revente</span><span class="price mono">1 500 $</span><span class="who">Paul l’achète sous le prix équivalent (2 000 $).</span><span class="fee" data-fee="1500">Commission · 188 $</span></div>
+      <div class="life reveal"><span class="when">Décembre · revente</span><span class="price mono">2 000 $</span><span class="who">Paul revend, dans le plafond.</span><span class="fee" data-fee="2000">Commission · 250 $</span></div>
+      <div class="life end reveal"><span class="when">J-1 · nommage</span><span class="price mono">Fin des échanges</span><span class="who">Le détenteur final voyage. Le billet devient nominatif.</span><span class="fee">Plus aucune vente</span></div>
+    </div>
+    <p class="total">Un seul siège, trois ventes : <b id="totalFee">563 $</b> de commissions, contre <span class="mono" style="color:var(--n-text)">une seule</span> pour une agence classique. <span class="muted">Hypothèse : même taux sur la vente primaire, à fixer.</span></p>
+    <p class="muted" style="margin-top:10px">En plus : abonnements du Pass, vitrines d’agences, droits de bagage, rachat et revente. Un registre interne rend chaque gain traçable (chaîne de détention par empreinte, rapprochement quotidien). Projections financières : document séparé du porteur.</p>
+    </div>
+    <div class="device"><div class="laptop" data-src="AdminChaine"></div><div class="cap"><span>Administration · chaîne de détention d’un droit · démo</span><button type="button" class="nb expand" data-open="AdminChaine">Agrandir</button></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="nuit" id="synthese" data-face="nuit" style="background:var(--n-board)">
+  <div class="wrap">
+    <p class="eyebrow">Synthèse · le tableau des départs des gains</p>
+    <h2 style="font-size:clamp(36px,5vw,72px);margin-top:10px">Sans, avec : la différence en une page</h2>
+    <div class="table"><table>
+      <thead><tr><th>Qui</th><th>Sans NexG-TT</th><th>Avec NexG-TT</th></tr></thead>
+      <tbody>
+        <tr><td>Voyageur</td><td>Le neuf seulement, au tarif du jour</td><td>Reventes sous le prix équivalent, même vol (−550 $ dans la démo)</td></tr>
+        <tr><td>Acheteur qui attend</td><td>Surveille, revient, rate le bon prix</td><td>Alerte, budget sur le radar, ordre à cours limité ; demande visible dans le carnet</td></tr>
+        <tr><td>Détenteur empêché</td><td>700 € perdus</td><td>438 € récupérés après commission, revente jusqu’à J-1</td></tr>
+        <tr><td>Acheteur anticipé</td><td>Pari sur ses plans, nom figé</td><td>Nomme à la fin ; garde, revend (+313 $ dans le cas 2) ou cède</td></tr>
+        <tr><td>Proches</td><td>Billet impossible à céder</td><td>Transfert en trois étapes, sans vente</td></tr>
+        <tr><td>Membre du Pass</td><td>Aubaines au hasard</td><td>Drops limités, commission 10 % au lieu de 12,5 %</td></tr>
+        <tr><td>Entreprise</td><td>15 à 20 % de frais d’annulation</td><td>Revente, transfert ou rachat ; jusqu’à 200 k$ d’exposition à réduire</td></tr>
+        <tr><td>Agence</td><td>Une plateforme à bâtir</td><td>Vitrine « Vendu par », sans plateforme</td></tr>
+        <tr><td>Compagnie</td><td>Sièges vides, marché gris</td><td>Un titulaire, un passager conforme (accord requis)</td></tr>
+        <tr><td>Même vol</td><td>Bagage payé, jamais utilisé</td><td>Droit de bagage revendu sous le prix compagnie (accord requis)</td></tr>
+        <tr><td>NexG-TT</td><td>Une commission, une fois</td><td>Une commission à chaque vie du billet : 563 $ sur l’exemple, Pass en plus</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted" style="margin-top:14px">Scénarios du porteur · montants indicatifs, avant ou après commission comme indiqué · rien n’est garanti · compagnie et bagages : sous réserve d’accords.</p>
+  </div>
+</section>
+
+<section class="jour" id="realiste" data-face="jour">
+  <div class="wrap">
+    <p class="eyebrow">Réaliste · ce qui existe déjà</p>
+    <h2 style="font-size:clamp(36px,5vw,72px);margin-top:10px">Pas un concept : un produit déjà dessiné, écran par écran</h2>
+    <div class="two">
+    <div>
+    <div class="stats" style="margin-top:0">
+      <div class="stat reveal"><p class="big" data-count="52">0</p><p class="what">maquettes interactives</p><p class="how muted">50 écrans mobiles, 2 écrans web, dans le design system « Deux faces ». Ce sont elles qui tournent dans cette page.</p></div>
+      <div class="stat reveal"><p class="big" data-count="294">0</p><p class="what">tickets prêts dans le backlog</p><p class="how muted">1 201 points, 16 domaines, dépendances et vagues parallélisables.</p></div>
+      <div class="stat reveal"><p class="big">1 pile</p><p class="what">décidée et documentée</p><p class="how muted">GCP Montréal, Next.js, NestJS, TypeScript, PostgreSQL, PWA d’abord, Duffel pour le contenu aérien.</p></div>
+      <div class="stat reveal"><p class="big" data-count="13">0</p><p class="what">semaines, médiane, jusqu’au MVP</p><p class="how muted">Développement par agents avec revue humaine, en bac à sable, marge de risque non comprise.</p></div>
+    </div>
+    <div class="ticket reveal" style="margin-top:16px">
+      <div class="col sans"><h3>Ce qui ne se code pas</h3><p>Un accord transporteur pour le nommage différé et la cession.</p><p>Un avis juridique : permis d’agence, consommateur, cadrage non financier.</p><p>Un prestataire de paiement de type marketplace.</p></div>
+      <div class="col avec"><h3>Ce qui avance dès maintenant</h3><p>Le développement en bac à sable pendant les négociations.</p><p>Les phases 2 (drops, Pass, soute, agences) derrière un drapeau, activées quand les accords existent.</p><p>État au 13 octobre 2026 : cadrage et design faits, 9 % du périmètre livré.</p></div>
+    </div>
+    </div>
+    <div class="device"><div class="laptop" data-src="WebAccueil"></div><div class="cap"><span>Accueil · version web (PC) · face Jour</span><button type="button" class="nb expand" data-open="WebAccueil">Agrandir</button></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="regles" data-face="nuit">
+  <div class="wrap">
+    <p class="eyebrow">Des règles qui rassurent</p>
+    <h2 style="font-size:clamp(36px,5vw,72px);margin-top:10px">Un marché secondaire contrôlé, pas une bourse</h2>
+    <div class="rules">
+      <div class="rule reveal"><h3>Prix de revente plafonné</h3><p>On ne peut pas acheter 1 $ et revendre 5 $. Plafond provisoire : le prix équivalent neuf. Règle à valider.</p></div>
+      <div class="rule reveal"><h3>Commission si la vente a lieu</h3><p>12,5 % sans Pass, 10 % avec, affichée avant de confirmer. Pas de vente, pas de commission.</p></div>
+      <div class="rule reveal"><h3>Un seul intermédiaire</h3><p>NexG-TT reste titulaire de la réservation jusqu’au nommage. La chaîne de détention est inscrite au registre interne.</p></div>
+      <div class="rule reveal"><h3>Échéance de nommage</h3><p>J-1 visé, J-3 à l’étude. Personne de nommé : le détenteur voyage. Après l’échéance, plus aucune vente ni transfert.</p></div>
+      <div class="rule reveal"><h3>Identité quand il le faut</h3><p>Rien pour explorer ni acheter. Identité vérifiée pour revendre ou recevoir de l’argent ; passeport du voyageur pour nommer.</p></div>
+      <div class="rule reveal"><h3>Vocabulaire du voyage</h3><p>Prix équivalent, jamais gain garanti. Un droit de voyage n’est pas un placement financier. Tout ce qui est définitif est annoncé avant.</p></div>
+    </div>
+    <p class="muted" style="margin-top:18px;color:var(--signal-dark)">Confirmé par le porteur : commission 12,5 % / 10 %, détenteur nommé par défaut à l’échéance · à valider : plafond exact, J-1 ou J-3, rachat.</p>
+  </div>
+</section>
+
+<section class="nuit" id="lancer" data-face="nuit">
+  <div class="wrap">
+    <p class="eyebrow">Ce qu’il faut pour lancer</p>
+    <h2 style="font-size:clamp(36px,5vw,72px);margin-top:10px">Le produit se construit maintenant ; quatre accords décident du lancement</h2>
+    <div class="needs">
+      <div class="need reveal"><span class="eyebrow">01 · Compagnies aériennes</span><h3>Un premier accord de nommage différé et de cession</h3><p>Contrat d’inventaire ou de groupe avec droit de nommage, compagnie à changement de nom payant, ou revente organisée avec la compagnie. Levier : des sièges invendus placés en drops.</p></div>
+      <div class="need reveal"><span class="eyebrow">02 · Paiement et identité</span><h3>Un prestataire de paiement de type marketplace</h3><p>Encaissement, versements aux vendeurs, identité déléguée ; carte, wallet du téléphone, mobile money selon la région. NexG-TT ne détient jamais les fonds.</p></div>
+      <div class="need reveal"><span class="eyebrow">03 · Droit et conformité</span><h3>Un avis juridique avant tout lancement public</h3><p>Permis d’agence au Québec, protection du consommateur et prix tout compris, cadrage non financier du droit de voyage, abonnement du Pass, données.</p></div>
+      <div class="need reveal"><span class="eyebrow">04 · Financement et appuis</span><h3>Amorçage, accélérateurs, programmes publics</h3><p>Un MVP livrable en quelques mois, des crédits infonuagiques, des agences et des entreprises pilotes. Nous cherchons une compagnie pilote, un prestataire de paiement, un juriste et un tour d’amorçage.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="nuit" id="merci" data-face="nuit" style="background:var(--n-board)">
+  <div class="wrap" style="display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:48px;align-items:center">
+    <div>
+      <div class="board" id="board2" role="img" aria-label="MERCI"><b>M</b><b>E</b><b>R</b><b>C</b><b>I</b></div>
+      <h2 style="font-size:clamp(40px,6vw,96px)">Votre billet garde sa valeur.<br><span style="color:var(--signal)">Même si vous ne partez plus.</span></h2>
+      <div class="people">
+        <div class="person"><b>Lavoisier Mouoyebe, MBA, M. ing.</b><span>PDG et fondateur · NexG-TT, une société WFirstOne</span></div>
+        <div class="person"><b>Luther Kevin Kepseu, ing. informatique CIT, M. génie logiciel</b><span>Responsable technique NexG-TT · analyste informatique à Hydro-Québec</span></div>
+      </div>
+      <p class="legal">NexG-TT · Next Generation Travel Ticket · octobre 2026 · Toutes les données sont fictives (Alex T., Aérolys, Nordelle, Agence Horizon) · MODE DÉMO — aucun paiement réel · Aucun partenariat n’est acquis à ce jour · Un droit de voyage n’est pas un placement financier.</p>
+    </div>
+    <div class="device"><div class="phone" data-src="Ouverture"><div class="shell"></div></div><div class="cap"><span>Ouverture</span><button type="button" class="nb expand" data-open="Ouverture">Agrandir</button></div></div>
+  </div>
+</section>
+</div>
+
+<div class="zoom" id="zoom" role="dialog" aria-modal="true" aria-labelledby="zoomTtl" hidden>
+  <div class="zoom-bar">
+    <div class="nav" role="group" aria-label="Navigation dans la maquette agrandie">
+      <button type="button" class="nb" id="zBack" aria-label="Retour dans la maquette" title="Retour" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg><span class="lbl">Retour</span></button>
+      <button type="button" class="nb" id="zHome" aria-label="Accueil de la maquette" title="Accueil de la maquette"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 7.5 8 3l5.5 4.5M4 6.5V13h8V6.5"/></svg><span class="lbl">Accueil</span></button>
+    </div>
+    <div class="ttl" id="zoomTtl" aria-live="polite"></div>
+    <button type="button" class="nb close" id="zClose" aria-label="Fermer la vue agrandie"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 4 8 8M12 4l-8 8"/></svg>Fermer <kbd>Échap</kbd></button>
+  </div>
+  <div class="zoom-stage" id="zStage"></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const deck = document.getElementById('deck');
+
+  // --- tableau à volets : les lettres tournent puis se posent
+  function splitFlap(boardId){
+    const letters = [...document.querySelectorAll('#' + boardId + ' b')].filter(b => !b.classList.contains('sep'));
+    if (reduce || !letters.length) return;
+    const pool = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    letters.forEach((b, i) => {
+      const final = b.textContent; let n = 0; const max = 6 + i * 2;
+      const t = setInterval(() => {
+        b.classList.add('spin');
+        setTimeout(() => { b.textContent = ++n >= max ? final : pool[Math.floor(Math.random() * pool.length)]; b.classList.remove('spin'); }, 70);
+        if (n >= max) clearInterval(t);
+      }, 110);
+    });
+  }
+  splitFlap('board1');
+  const b2 = document.getElementById('board2');
+  if (b2) { const o2 = new IntersectionObserver(es => { if (es[0].isIntersecting) { splitFlap('board2'); o2.disconnect(); } }, { threshold: .5 }); o2.observe(b2); }
+
+  // --- globe WebGL : routes au départ de Montréal (YUL), billets en circulation
+  (function globe(){
+    const canvas = document.getElementById('globe');
+    if (!canvas || typeof THREE === 'undefined') return;
+    let renderer; try { renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'low-power' }); } catch (e) { canvas.remove(); return; }
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    const scene = new THREE.Scene();
+    const cam = new THREE.PerspectiveCamera(32, 1, .1, 100); cam.position.set(0, 0, 10.5);
+    const g = new THREE.Group(); scene.add(g);
+    g.add(new THREE.Mesh(new THREE.SphereGeometry(1.62, 48, 32), new THREE.MeshBasicMaterial({ color: 0x2C303A, wireframe: true, transparent: true, opacity: .7 })));
+    g.add(new THREE.Mesh(new THREE.SphereGeometry(1.6, 64, 48), new THREE.MeshBasicMaterial({ color: 0x0D0E11, transparent: true, opacity: .92 })));
+    // graticule de points
+    const pts = [];
+    for (let lat = -80; lat <= 80; lat += 8) for (let lon = -180; lon < 180; lon += 8) pts.push(ll(lat, lon, 1.63));
+    const pg = new THREE.BufferGeometry().setFromPoints(pts);
+    g.add(new THREE.Points(pg, new THREE.PointsMaterial({ color: 0x8C93A3, size: .018, transparent: true, opacity: .55 })));
+    function ll(lat, lon, r){ const p = (90 - lat) * Math.PI / 180, t = (lon + 180) * Math.PI / 180; return new THREE.Vector3(-r * Math.sin(p) * Math.cos(t), r * Math.cos(p), r * Math.sin(p) * Math.sin(t)); }
+    const YUL = [45.47, -73.74];
+    const dest = [[49.01, 2.55], [18.57, -68.36], [38.77, -9.13], [35.77, 140.39], [63.98, -22.6], [4.0, 9.7], [-17.55, -149.6], [25.25, 55.36]];
+    const movers = [];
+    const dotMat = new THREE.MeshBasicMaterial({ color: 0xFFD23F });
+    const hub = new THREE.Mesh(new THREE.SphereGeometry(.03, 12, 12), dotMat); hub.position.copy(ll(YUL[0], YUL[1], 1.63)); g.add(hub);
+    const halo = new THREE.Mesh(new THREE.RingGeometry(.045, .06, 32), new THREE.MeshBasicMaterial({ color: 0xFFD23F, transparent: true, opacity: .6, side: THREE.DoubleSide }));
+    halo.position.copy(hub.position); halo.lookAt(new THREE.Vector3(0, 0, 0)); g.add(halo);
+    dest.forEach((d, i) => {
+      const a = ll(YUL[0], YUL[1], 1.63), b = ll(d[0], d[1], 1.63);
+      const mid = a.clone().add(b).multiplyScalar(.5).normalize().multiplyScalar(1.63 + a.distanceTo(b) * .35);
+      const curve = new THREE.QuadraticBezierCurve3(a, mid, b);
+      const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(curve.getPoints(64)), new THREE.LineBasicMaterial({ color: 0xFFD23F, transparent: true, opacity: .7 }));
+      g.add(line);
+      const city = new THREE.Mesh(new THREE.SphereGeometry(.018, 10, 10), new THREE.MeshBasicMaterial({ color: 0x62C7FF })); city.position.copy(b); g.add(city);
+      const m = new THREE.Mesh(new THREE.SphereGeometry(.02, 10, 10), dotMat); g.add(m);
+      movers.push({ m, curve, t: Math.random(), v: .0016 + Math.random() * .0012 });
+    });
+    g.rotation.z = .25; g.rotation.x = .18;
+    let w = 0, h = 0, mx = 0, my = 0, visible = true, raf = 0;
+    const hero = document.getElementById('haut');
+    function size(){ w = hero.clientWidth; h = hero.clientHeight; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix();
+      const wide = w > 980; g.position.set(wide ? 1.6 : .4, wide ? .1 : 1.4, 0); g.scale.setScalar(wide ? Math.min(1.7, w / 900) : 1); }
+    size(); addEventListener('resize', size);
+    addEventListener('pointermove', e => { mx = (e.clientX / innerWidth - .5); my = (e.clientY / innerHeight - .5); }, { passive: true });
+    new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible && !raf) loop(); }).observe(hero);
+    function loop(){
+      if (!visible) { raf = 0; return; }
+      raf = requestAnimationFrame(loop);
+      if (!reduce) g.rotation.y += .0022;
+      g.rotation.x += ((.18 + my * .25) - g.rotation.x) * .04;
+      cam.position.x += ((mx * .5) - cam.position.x) * .04; cam.lookAt(g.position);
+      halo.scale.setScalar(1 + .25 * Math.sin(performance.now() / 400));
+      movers.forEach(o => { if (!reduce) o.t = (o.t + o.v) % 1; o.m.position.copy(o.curve.getPoint(o.t)); });
+      renderer.render(scene, cam);
+    }
+    loop();
+  })();
+
+  // --- billet 3D : se retourne au défilement, ou au clic
+  (function flip(){
+    const el = document.getElementById('flip'); if (!el) return;
+    let manual = null;
+    let shown = false;
+    function update(){
+      if (manual !== null) { el.style.transform = 'rotateY(' + (manual ? 180 : 0) + 'deg)'; return; }
+      const r = el.closest('section').getBoundingClientRect();
+      // la diapositive glisse depuis la droite : le billet se retourne pendant l’arrivée, puis une seconde fois après une pause
+      const p = Math.min(1, Math.max(0, 1 - Math.abs(r.left) / innerWidth));
+      const deg = reduce ? (p > .5 ? 180 : 0) : Math.round(p * 180);
+      el.style.transform = 'rotateY(' + deg + 'deg) rotateX(' + ((p - .5) * -6) + 'deg)';
+      if (p > .98 && !shown) { shown = true; setTimeout(() => { if (manual === null) { manual = false; el.style.transition = 'transform 1.4s cubic-bezier(.2,.7,.2,1)'; update(); } }, 2600); }
+    }
+    el.addEventListener('click', () => { manual = manual === null ? !(parseFloat(el.style.transform.replace(/.*rotateY\(([-\d.]+)deg.*/, '$1')) > 90) : !manual; update(); });
+    el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); } });
+    deck.addEventListener('scroll', update, { passive: true }); addEventListener('resize', update); update();
+  })();
+
+  // --- téléphones en perspective selon leur position à l’écran
+  function tilt(){
+    if (reduce) return;
+    document.querySelectorAll('.phone').forEach(p => {
+      const r = p.getBoundingClientRect(); if (r.right < 0 || r.left > innerWidth) return;
+      const cy = (r.top + r.height / 2) / innerHeight - .5, cx = (r.left + r.width / 2) / innerWidth - .5;
+      p.style.transform = 'perspective(1600px) rotateX(' + (cy * 6) + 'deg) rotateY(' + (-cx * 18) + 'deg)';
+    });
+  }
+  deck.addEventListener('scroll', tilt, { passive: true }); addEventListener('resize', tilt); tilt();
+
+  // --- plein écran (facultatif : certains appareils refusent)
+  const fsBtn = document.getElementById('fs');
+  fsBtn.addEventListener('click', () => {
+    const d = document;
+    if (d.fullscreenElement) { d.exitFullscreen && d.exitFullscreen(); return; }
+    const req = d.documentElement.requestFullscreen; if (!req) { fsBtn.textContent = 'Flèches ← →'; return; }
+    req.call(d.documentElement).catch(() => { fsBtn.textContent = 'Flèches ← →'; });
+  });
+  document.addEventListener('fullscreenchange', () => { fsBtn.textContent = document.fullscreenElement ? 'Quitter' : 'Présenter'; });
+  // --- maquettes : chargement paresseux, mise à l’échelle, navigation interne, vue agrandie
+  const MQ = 'maquettes/';
+  const MQ_PATH = new URL(MQ, location.href).pathname;
+  const SANDBOX = 'allow-scripts allow-same-origin allow-forms'; // ni nouvel onglet, ni navigation de la page hôte
+  const ICON = {
+    back: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>',
+    home: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 7.5 8 3l5.5 4.5M4 6.5V13h8V6.5"/></svg>',
+    zoom: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>'
+  };
+  const frames = document.querySelectorAll('.phone[data-src], .laptop[data-src]');
+  const toastEl = document.getElementById('toast');
+  let toastTimer = 0;
+  function toast(msg){ toastEl.textContent = msg; toastEl.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { toastEl.hidden = true; }, 3800); }
+  const isTyping = t => !!t && (['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName) || t.isContentEditable);
+  const cleanTitle = t => String(t || '').replace(/\s*[—–-]\s*NexG-TT\s*$/i, '').trim();
+  // nom de fichier d’une planche (Portefeuille.dc.html) si l’adresse en est une, sinon null
+  function fileOf(href){
+    try { const u = new URL(href, location.href); const m = /\/([A-Za-z0-9_-]+\.dc\.html)$/.exec(u.pathname);
+      return (m && u.origin === location.origin && u.pathname.startsWith(MQ_PATH)) ? m[1] : null; } catch (e) { return null; }
+  }
+  const anchorOf = t => (t && t.closest) ? t.closest('a[href]') : null;
+  // un élément défile-t-il horizontalement ? (alors le geste horizontal lui appartient)
+  function hScrollable(el){
+    for (; el && el.nodeType === 1; el = el.parentElement) {
+      let cs; try { cs = el.ownerDocument.defaultView.getComputedStyle(el); } catch (e) { return false; }
+      if (/(auto|scroll)/.test(cs.overflowX) && el.scrollWidth > el.clientWidth + 2) return true;
+    }
+    return false;
+  }
+
+  // --- gestes et touches reçus depuis un document de maquette (les iframes ont leur propre document)
+  function frameKey(e){
+    if (e.altKey || e.ctrlKey || e.metaKey || e.defaultPrevented) return;
+    if (e.key === 'Escape') { if (zoomOpen()) { e.preventDefault(); closeZoom(); } return; }
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    if (zoomOpen() || isTyping(e.target)) return;
+    e.preventDefault(); go(current() + (e.key === 'ArrowRight' ? 1 : -1));
+  }
+  let lastHX = 0, hLock = 0;
+  function frameWheel(e){
+    if (zoomOpen()) return;
+    const ax = Math.abs(e.deltaX), ay = Math.abs(e.deltaY);
+    if (ax < 4 || ax < ay * 1.8 || hScrollable(e.target)) return; // le défilement vertical reste à la maquette
+    e.preventDefault();
+    const now = performance.now(), fresh = now - lastHX > 220; lastHX = now;
+    if (fresh && now - hLock > 500) { hLock = now; go(current() + (e.deltaX > 0 ? 1 : -1)); }
+  }
+  const touch = { on: false, swipe: false, block: false, x: 0, y: 0 };
+  function frameTouchStart(e){
+    if (zoomOpen() || e.touches.length !== 1) { touch.on = false; return; }
+    touch.on = true; touch.swipe = false; touch.x = e.touches[0].screenX; touch.y = e.touches[0].screenY; touch.block = hScrollable(e.target);
+  }
+  function frameTouchMove(e){
+    if (!touch.on || touch.block || e.touches.length !== 1) return;
+    const dx = e.touches[0].screenX - touch.x, dy = e.touches[0].screenY - touch.y;
+    if (!touch.swipe && Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy) * 1.4) touch.swipe = true;
+    if (touch.swipe && e.cancelable) e.preventDefault();
+  }
+  function frameTouchEnd(e){
+    if (!touch.on) return; touch.on = false;
+    if (!touch.swipe || !e.changedTouches.length) return;
+    const dx = e.changedTouches[0].screenX - touch.x;
+    if (Math.abs(dx) > 48) go(current() + (dx < 0 ? 1 : -1));
+  }
+
+  // --- une maquette = un iframe + sa pile de navigation interne (sans toucher à l’historique de la page)
+  function makeMock(iframe, homeFile, onChange, initStack){
+    const st = { iframe, home: homeFile, stack: initStack && initStack.length ? initStack.slice() : [homeFile], title: '', ok: true, loads: 0, skip: false, wired: null, timer: 0 };
+    const peek = () => { try { const w = iframe.contentWindow, d = w.document; return { w, d, href: w.location.href }; } catch (e) { return null; } };
+    const abs = file => new URL(MQ + file, location.href).href;
+    function load(url){
+      try { iframe.contentWindow.location.replace(url); } catch (e) { iframe.src = url; }
+      watch();
+    }
+    function open(href, base){
+      const url = new URL(href, base).href;
+      if (fileOf(url)) { st.skip = false; load(url); return true; }
+      toast('Lien externe bloqué : la présentation reste ouverte.');
+      return false;
+    }
+    function wire(p){
+      const { w, d } = p;
+      d.addEventListener('keydown', frameKey, true);
+      d.addEventListener('wheel', frameWheel, { passive: false });
+      d.addEventListener('touchstart', frameTouchStart, { passive: true });
+      d.addEventListener('touchmove', frameTouchMove, { passive: false });
+      d.addEventListener('touchend', frameTouchEnd, { passive: true });
+      // lien externe, mailto:, nouvel onglet : bloqué avant tout autre gestionnaire
+      d.addEventListener('click', e => {
+        const a = anchorOf(e.target); if (!a) return;
+        const href = a.getAttribute('href'); if (!href || href.charAt(0) === '#') return;
+        if (!fileOf(new URL(href, w.location.href).href)) { e.preventDefault(); e.stopPropagation(); toast('Lien externe bloqué : la présentation reste ouverte.'); }
+      }, true);
+      // lien vers une autre planche : on charge dans le même iframe, par remplacement (pas d’entrée d’historique)
+      d.addEventListener('click', e => {
+        if (e.defaultPrevented || e.button !== 0) return;
+        const a = anchorOf(e.target); if (!a) return;
+        const href = a.getAttribute('href'); if (!href || href.charAt(0) === '#') return;
+        e.preventDefault(); open(href, w.location.href);
+      }, false);
+      d.addEventListener('auxclick', e => { if (anchorOf(e.target)) e.preventDefault(); }, true);
+      try { w.open = u => { if (u) open(String(u), w.location.href); return null; }; } catch (e) {}
+    }
+    function sync(p){
+      const file = fileOf(p.href);
+      if (!file || p.d.readyState === 'loading' || st.wired === p.d) return false;
+      st.wired = p.d; st.ok = true;
+      wire(p);
+      if (st.skip) st.skip = false; else if (st.stack[st.stack.length - 1] !== file) st.stack.push(file);
+      st.title = cleanTitle(p.d.title);
+      onChange(st); return true;
+    }
+    function watch(){ // le document est branché dès qu’il est analysé, sans attendre les polices
+      clearInterval(st.timer); let n = 0;
+      st.timer = setInterval(() => { const p = peek(); if ((p && sync(p)) || ++n > 120) clearInterval(st.timer); }, 100);
+    }
+    iframe.addEventListener('load', () => {
+      st.loads++; const p = peek();
+      if (!p) { st.ok = false; onChange(st); return; } // accès refusé : repli (titre = légende, Retour = accueil)
+      sync(p); st.title = cleanTitle(p.d.title); onChange(st);
+    });
+    st.back = () => {
+      if (st.ok && st.stack.length > 1) { st.stack.pop(); st.skip = true; load(abs(st.stack[st.stack.length - 1])); }
+      else { st.stack = [st.home]; st.skip = true; st.loads = 0; load(abs(st.home)); }
+      onChange(st);
+    };
+    st.goHome = () => { st.stack = [st.home]; st.skip = true; st.loads = 0; load(abs(st.home)); onChange(st); };
+    st.current = () => st.stack[st.stack.length - 1];
+    st.destroy = () => { clearInterval(st.timer); try { iframe.src = 'about:blank'; } catch (e) {} };
+    watch();
+    return st;
+  }
+  function mountIframe(parent, file, label){
+    const f = document.createElement('iframe');
+    f.src = MQ + file; f.title = 'Maquette ' + label; f.setAttribute('sandbox', SANDBOX);
+    parent.appendChild(f); return f;
+  }
+  function paint(ui, st, caption){
+    const canBack = st ? (st.ok ? st.stack.length > 1 : st.loads > 1) : false;
+    ui.back.disabled = !canBack;
+    const t = st && st.ok ? st.title : '';
+    ui.t.textContent = t || caption;
+    ui.o.textContent = (t && caption && st.stack.length === 1 && t !== caption) ? ' · ' + caption : '';
+  }
+  const mkBtn = (cls, icon, lbl, aria) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'nb ' + cls; b.title = aria; b.setAttribute('aria-label', aria); b.innerHTML = icon + '<span class="lbl">' + lbl + '</span>'; return b; };
+
+  function scaleAll(){
+    document.querySelectorAll('.phone iframe').forEach(f => { f.style.transform = 'scale(' + (f.parentElement.clientWidth / 390) + ')'; });
+    document.querySelectorAll('.laptop iframe').forEach(f => { f.style.transform = 'scale(' + (f.parentElement.clientWidth / 1440) + ')'; });
+  }
+  // contrôle sous chaque maquette : Retour, Accueil, Agrandir + titre courant
+  document.querySelectorAll('.device').forEach(dev => {
+    const host = dev.querySelector('.phone[data-src], .laptop[data-src]'); if (!host) return;
+    const cap = dev.querySelector('.cap'); if (!cap) return;
+    const caption = (cap.querySelector('span') || {}).textContent || '';
+    const name = host.dataset.src, file = name + '.dc.html';
+    cap.textContent = '';
+    const nav = document.createElement('div'); nav.className = 'nav'; nav.setAttribute('role', 'group'); nav.setAttribute('aria-label', 'Navigation dans la maquette ' + (caption || name));
+    const ui = { back: mkBtn('back', ICON.back, 'Retour', 'Retour dans la maquette'), home: mkBtn('home', ICON.home, 'Accueil', 'Accueil de la maquette'), zoom: mkBtn('expand', ICON.zoom, 'Agrandir', 'Agrandir la maquette') };
+    ui.back.disabled = true;
+    nav.append(ui.back, ui.home, ui.zoom);
+    const ttl = document.createElement('div'); ttl.className = 'ttl'; ttl.setAttribute('aria-live', 'polite');
+    ui.t = document.createElement('span'); ui.t.className = 't'; ui.t.textContent = caption;
+    ui.o = document.createElement('span'); ui.o.className = 'o';
+    ttl.append(ui.t, ui.o); cap.append(nav, ttl);
+    host.__dev = { file, name, caption, ui, mock: null };
+    ui.back.addEventListener('click', () => { const m = host.__dev.mock; if (m) m.back(); });
+    ui.home.addEventListener('click', () => { const m = host.__dev.mock; if (m) m.goHome(); else mount(host); });
+    ui.zoom.addEventListener('click', () => openZoom(host, ui.zoom));
+  });
+  function mount(host){
+    const dv = host.__dev; if (!dv || dv.mock) return;
+    let parent = host;
+    if (host.classList.contains('phone')) { parent = document.createElement('div'); parent.className = 'screen'; host.appendChild(parent); }
+    const f = mountIframe(parent, dv.file, dv.name);
+    dv.mock = makeMock(f, dv.file, st => paint(dv.ui, st, dv.caption));
+    scaleAll();
+  }
+  const io = new IntersectionObserver(es => {
+    es.forEach(e => { if (!e.isIntersecting) return; io.unobserve(e.target); mount(e.target); });
+  }, { rootMargin: '200px 900px' });
+  frames.forEach(f => io.observe(f));
+  new ResizeObserver(() => { scaleAll(); layoutZoom(); }).observe(document.body);
+
+  // --- vue agrandie : même page, calque modal, la maquette reste interactive
+  const zoom = document.getElementById('zoom'), zStage = document.getElementById('zStage'), zClose = document.getElementById('zClose');
+  const zUI = { back: document.getElementById('zBack'), home: document.getElementById('zHome'), t: null, o: null };
+  const zTtl = document.getElementById('zoomTtl');
+  zUI.t = document.createElement('span'); zUI.t.className = 't'; zUI.o = document.createElement('span'); zUI.o.className = 'o'; zTtl.append(zUI.t, zUI.o);
+  const outside = ['.top', '#deck', '#prev', '#next', '.aurora'];
+  let zState = null; // { dev, mock, box, kind, opener }
+  function zoomOpen(){ return !zoom.hidden; }
+  function layoutZoom(){
+    if (!zState) return;
+    const vw = innerWidth, vh = innerHeight;
+    const availW = Math.max(120, vw - 32 - (zState.kind === 'phone' ? 20 : 0));
+    const availH = Math.max(120, vh - 56 - 16 - 12 - (zState.kind === 'phone' ? 20 : 0));
+    const iw = zState.kind === 'phone' ? 390 : 1440, ih = zState.kind === 'phone' ? 844 : 900;
+    const s = Math.min(availW / iw, availH / ih, zState.kind === 'phone' ? 1.25 : 1);
+    const f = zState.mock.iframe;
+    f.style.width = iw + 'px'; f.style.height = ih + 'px'; f.style.transform = 'scale(' + s + ')';
+    const w = Math.floor(iw * s), h = Math.floor(ih * s);
+    if (zState.kind === 'phone') {
+      zState.box.style.width = (w + 20) + 'px'; zState.box.style.height = (h + 20) + 'px';
+      const sc = f.parentElement; sc.style.width = w + 'px'; sc.style.height = h + 'px';
+    } else { zState.box.style.width = w + 'px'; zState.box.style.height = h + 'px'; }
+  }
+  function openZoom(host, opener){
+    if (zoomOpen()) return;
+    const dv = host.__dev; const kind = host.classList.contains('phone') ? 'phone' : 'laptop';
+    const stack = dv.mock ? dv.mock.stack : [dv.file];
+    const box = document.createElement('div'); box.className = 'zdev ' + (kind === 'phone' ? 'zphone' : 'zlaptop');
+    let parent = box;
+    if (kind === 'phone') { const sh = document.createElement('div'); sh.className = 'shell'; parent = document.createElement('div'); parent.className = 'screen'; box.append(sh, parent); }
+    zStage.textContent = ''; zStage.appendChild(box);
+    const f = mountIframe(parent, stack[stack.length - 1], dv.name + ' (agrandie)');
+    const mock = makeMock(f, dv.file, st => paint(zUI, st, dv.caption), stack);
+    zState = { dev: dv, mock, box, kind, opener };
+    paint(zUI, mock, dv.caption);
+    outside.forEach(sel => document.querySelectorAll(sel).forEach(el => el.setAttribute('inert', '')));
+    zoom.hidden = false; layoutZoom();
+    zClose.focus();
+  }
+  function closeZoom(){
+    if (!zState) return;
+    const z = zState; zState = null;
+    z.mock.destroy(); zStage.textContent = ''; zoom.hidden = true;
+    outside.forEach(sel => document.querySelectorAll(sel).forEach(el => el.removeAttribute('inert')));
+    if (z.opener && z.opener.isConnected) z.opener.focus();
+  }
+  zClose.addEventListener('click', closeZoom);
+  zUI.back.addEventListener('click', () => { if (zState) zState.mock.back(); });
+  zUI.home.addEventListener('click', () => { if (zState) zState.mock.goHome(); });
+  zStage.addEventListener('click', e => { if (e.target === zStage) closeZoom(); });
+  zoom.addEventListener('keydown', e => { // piège du focus : Tab reste dans la fenêtre
+    if (e.key !== 'Tab') return;
+    const items = [...zoom.querySelectorAll('button:not([disabled]), iframe')];
+    if (!items.length) return;
+    const first = items[0], last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+  addEventListener('resize', layoutZoom);
+
+  // --- apparition
+  const rev = document.querySelectorAll('.reveal');
+  if (!reduce) {
+    rev.forEach(r => r.classList.add('pending'));
+    const ro = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.remove('pending'); ro.unobserve(e.target); } }), { threshold: .15 });
+    rev.forEach(r => ro.observe(r));
+  }
+
+  // --- compteurs
+  const fmt = n => n.toLocaleString('fr-CA').replace(/ | /g, ' ');
+  const cnt = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return; cnt.unobserve(e.target);
+    const el = e.target, target = +el.dataset.count, suf = el.dataset.suffix || '';
+    if (reduce || target === 0) { el.textContent = fmt(target) + suf; return; }
+    const t0 = performance.now(), dur = 1100;
+    (function step(t){ const p = Math.min(1, (t - t0) / dur), k = 1 - Math.pow(1 - p, 3);
+      el.textContent = fmt(Math.round(target * k)) + suf; if (p < 1) requestAnimationFrame(step); })(t0);
+  }), { threshold: .6 });
+  document.querySelectorAll('[data-count]').forEach(el => cnt.observe(el));
+
+  // --- calculateur
+  const $ = id => document.getElementById(id);
+  const paye = $('paye'), payeR = $('payeR'), rev2 = $('revente'), revR = $('reventeR'), pass = $('pass');
+  function money(n){ return fmt(Math.round(n)) + ' $'; }
+  function calc(){
+    const p = Math.max(0, +paye.value || 0), r = Math.max(0, +rev2.value || 0), c = pass.checked ? .10 : .125;
+    const com = r * c, net = r - com, pct = p ? Math.round(net / p * 100) : 0;
+    $('verdict').innerHTML = net > 0
+      ? 'Avec NexG-TT, vous récupérez <em>' + money(net) + '</em>, soit ' + pct + ' % du prix payé.'
+      : 'Sans revente, vous ne récupérez rien. Entrez un prix de revente.';
+    $('vSans').textContent = '−' + money(p); $('bSans').style.width = p ? '100%' : '0%';
+    $('vAvec').textContent = '+' + money(net); $('bAvec').style.width = Math.min(100, p ? net / p * 100 : 0) + '%';
+    $('dRev').textContent = money(r);
+    $('dComLab').textContent = 'Commission NexG-TT (' + (pass.checked ? '10 %' : '12,5 %') + ')';
+    $('dCom').textContent = '−' + money(com); $('dNet').textContent = money(net);
+    const ec = net - p; $('dEcart').textContent = (ec < 0 ? '−' : '+') + money(Math.abs(ec));
+    $('dPerte').textContent = '−' + money(p);
+  }
+  function link(a, b){ a.addEventListener('input', () => { b.value = a.value; calc(); }); }
+  link(paye, payeR); link(payeR, paye); link(rev2, revR); link(revR, rev2);
+  pass.addEventListener('change', calc);
+  document.querySelectorAll('[data-ex]').forEach(b => b.addEventListener('click', () => {
+    const [p, r] = b.dataset.ex.split(','); paye.value = payeR.value = p; rev2.value = revR.value = r; calc();
+  }));
+  $('calc').addEventListener('submit', e => e.preventDefault());
+  calc();
+
+  // --- vies du billet
+  document.querySelectorAll('.rate button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.rate button').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    const rate = +b.dataset.rate / 100; let total = 0;
+    document.querySelectorAll('[data-fee]').forEach((el, i) => {
+      const fee = +el.dataset.fee * rate; total += fee;
+      el.textContent = (i === 0 ? 'Commission primaire · ' : 'Commission · ') + money(fee);
+    });
+    $('totalFee').textContent = money(total);
+  }));
+
+  // --- navigation horizontale : une diapositive par écran
+  const sections = [...deck.querySelectorAll(':scope > section')];
+  const prog = $('prog'), count = $('count'), faces = $('faces'), fV = $('fV'), fM = $('fM'), prev = $('prev'), next = $('next');
+  const current = () => Math.round(deck.scrollLeft / deck.clientWidth);
+  function go(i, instant){
+    i = Math.max(0, Math.min(sections.length - 1, i));
+    deck.scrollTo({ left: i * deck.clientWidth, behavior: (instant || reduce) ? 'auto' : 'smooth' });
+  }
+  function onScroll(){
+    const max = deck.scrollWidth - deck.clientWidth;
+    prog.style.width = (max ? deck.scrollLeft / max * 100 : 0) + '%';
+    const cur = current();
+    count.textContent = (cur + 1) + ' / ' + sections.length;
+    prev.disabled = cur === 0; next.disabled = cur === sections.length - 1;
+    const jour = sections[cur].dataset.face === 'jour';
+    faces.classList.toggle('is-jour', jour);
+    if (jour) { fV.setAttribute('data-on', ''); fM.removeAttribute('data-on'); } else { fM.setAttribute('data-on', ''); fV.removeAttribute('data-on'); }
+  }
+  deck.addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', () => go(current(), true));
+  prev.addEventListener('click', () => go(current() - 1));
+  next.addEventListener('click', () => go(current() + 1));
+  // liens du menu et du logo
+  document.querySelectorAll('.top a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+    const t = document.getElementById(a.getAttribute('href').slice(1)); const i = sections.indexOf(t);
+    if (i >= 0) { e.preventDefault(); go(i); }
+  }));
+  // clavier
+  addEventListener('keydown', e => {
+    if (e.key === 'Escape' && zoomOpen()) { e.preventDefault(); closeZoom(); return; }
+    if (zoomOpen()) return;
+    const ae = document.activeElement;
+    if (['INPUT','TEXTAREA','SELECT'].includes(ae.tagName) || ae.isContentEditable) return;
+    if (e.key === ' ' && ['BUTTON','A','SUMMARY'].includes(ae.tagName)) return; // espace = activer le bouton ou le lien
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); go(current() + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current() - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(sections.length - 1); }
+  });
+  // molette : avance d’une diapositive ; si la diapositive déborde en hauteur, on la fait d’abord défiler
+  let wheelLock = 0;
+  deck.addEventListener('wheel', e => {
+    const s = sections[current()];
+    const vertical = Math.abs(e.deltaY) >= Math.abs(e.deltaX);
+    if (vertical) {
+      const canScroll = s.scrollHeight > s.clientHeight + 2;
+      const atEnd = e.deltaY > 0 ? (s.scrollTop + s.clientHeight >= s.scrollHeight - 2) : (s.scrollTop <= 2);
+      if (canScroll && !atEnd) return; // défilement interne naturel
+      e.preventDefault();
+      const now = performance.now(); if (now - wheelLock < 700) return; wheelLock = now;
+      go(current() + (e.deltaY > 0 ? 1 : -1));
+    }
+  }, { passive: false });
+  // position de départ : ancre de l’adresse si elle nomme une diapositive
+  const start = sections.indexOf(document.getElementById(location.hash.slice(1)));
+  if (start > 0) go(start, true);
+  onScroll();
+})();
+</script>
+
+</body></html>

@@ -1,0 +1,61 @@
+Chercher un bagage — NexG-TT
+Chercher un bagage — NexG-TT
+Chercher un bagage sur ce vol
+Même vol uniquement
+·
+AE 812 · 14 déc. 18:05
+YUL → CDG
+Lun. 14 déc. 2026
+Aérolys AE 812 · 18:05
+Voyageur
+Alex T.
+Nombre de bagages
+23 kg chacun · de 1 à 4 par demande
+{{countLabel}}
+Prix max par bagage
+{{prixMax}}
+{{gapToCap}}
+sous le prix compagnie d'un bagage supplémentaire (150 $)
+Au plafond : égal au prix compagnie
+50 $
+Plafond 150 $
+Plafond = prix de la compagnie pour un bagage supplémentaire sur ce vol (150 $, exemple). Meilleure demande actuelle sur ce vol : 95 $ · offre la moins chère : 90 $.
+Me prévenir dès qu'un bagage correspond
+{{alertHelp}}
+Votre demande
+Bagage attendu · aperçu
+Demande · bagage attendu
+NXG-D4K2
+CDG
+Paris
+YUL → CDG
+AE 812 · 14 DÉC
+{{countLabel}} × 23 KG
+≤ {{prixMax}} / bagage
+NXG 812 1412 D{{countLabel}}
+Budget maximal :
+{{budgetLabel}}
+({{countLabel}} × {{prixMax}}). Rien n'est prélevé tant qu'aucun bagage n'est trouvé.
+Ce qui se passe ensuite
+1
+Les passagers du vol sont notifiés
+Seuls les passagers d'AE 812 du 14 déc. qui ont un bagage inutilisé reçoivent votre demande, sans votre nom.
+2
+Dès qu'une offre ≤ {{prixMax}} apparaît
+Vous êtes prévenu, vous confirmez
+L'offre vous est réservée 15 min (hypothèse)
+Achat automatique
+La moins chère ≤ {{prixMax}} est achetée pour vous
+3
+Le bagage est ajouté à votre réservation
+À votre nom (Alex T.), sur NXG-7Q2M, après confirmation de la compagnie. Le vendeur perd ce bagage.
+Commission NexG-TT : 10 % (Pass) · 12,5 % sans Pass — hypothèse. Prix plafonné au prix compagnie, règle provisoire.
+Demande active jusqu'au
+13 déc. 18:05
+, à l'échéance de nommage (à valider). Vous pouvez la retirer à tout moment.
+Sous réserve d'accord avec la compagnie. Démo — aucun paiement réel. Données fictives.
+{{countLabel}} bagage{{plural}} · budget max
+{{budgetLabel}}
+{{modeShort}}
+Publier ma demande à
+{{prixMax}}

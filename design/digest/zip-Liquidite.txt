@@ -1,0 +1,74 @@
+Vendre ou attendre — NexG-TT
+Vendre ou attendre — NexG-TT
+Options de vente
+YUL → CDG
+lun. 14 déc. 2026 · Aérolys · vol 812
+Payé
+1 000 $
+Prix équivalent
+2 000 $
+Vendre maintenant ou attendre ?
+Glissez le curseur de patience. Plus vous laissez de temps, plus le prix estimé peut monter, et moins la vente est certaine.
+Estimation
+Rachat instantané
+Annonce au marché
+Attendre
+{{priceTxt}}
+Montant fixe de l'offre de rachat (offre hypothétique)
+Fourchette estimée :
+{{rangeTxt}}
+Délai
+{{delayTxt}}
+{{delaySub}}
+Certitude
+{{certWord}}
+Net reçu
+{{netTxt}}
+{{netSub}}
+Prix équivalent neuf · 2 000 $
+1 900
+1 700
+1 500
+1 300
+Rachat
+Annonce
+Attente
+Curseur de patience
+{{patienceTxt}}
+Maintenant
+≈ 6 jours
+J-7 · 7 déc.
+Rachat instantané par NexG-TT :
+1 280 $, versé en quelques minutes sur votre solde (offre hypothétique).
+Annonce au marché :
+votre droit est proposé aux acheteurs. Vente estimée sous {{daysTxt}}, sans garantie.
+Attendre :
+jusqu'à ~1 750 $ estimés si la demande monte, avec un risque de ne pas vendre avant l'échéance du 13 déc. (J-1).
+Comparer
+Rachat instantané
+1 280 $
+Versé en quelques minutes
+Commission
+incluse
+Net reçu
+1 280 $
+Offre hypothétique
+Choix actuel
+Choisir
+Annonce au marché
+{{annPrice}}
+Vente estimée sous {{annDays}}
+Commission*
+{{annComm}}
+Net estimé
+{{annNet}}
+Sans garantie de vente
+Choix actuel
+Choisir
+* Commission de revente NexG-TT : 10 % pour les membres Pass, 12,5 % sans Pass (hypothèse). Alex T. est membre Pass. Le rachat est un montant net, sans commission ajoutée (hypothèse). Prix de revente encadré par un plafond : règle à définir.
+Échéance le 13 déc. à 18:05 : après, plus aucune vente possible
+Estimations indicatives, aucun prix garanti.
+Un droit de voyage n'est pas un placement financier. Données fictives de démonstration.
+Accepter le rachat ·
+1 280 $
+Mettre en vente

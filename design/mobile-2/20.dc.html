@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<title>Portefeuille (web) — NexG-TT</title>
+<script src="6aef100d-9f2f-4fad-8f41-fb9d20f40c9c"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+<style>
+body{margin:0;background:#0D0E11}
+a{color:#FFD23F}a:hover{color:#FFE27A}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #FFD23F;outline-offset:2px}
+input::placeholder{color:#8C93A3}
+[data-surface="paper"] :focus-visible,[data-surface="signal"] :focus-visible{outline-color:#0D0E11}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@media (prefers-reduced-motion: reduce){[data-nx-motion]{animation:none !important}}
+</style>
+</helmet>
+<div style="min-height: 1000px; background: #0D0E11; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; color-scheme: dark; display: flex; flex-direction: column">
+
+<header style="border-bottom: 1px solid #2C303A">
+<div style="max-width: 1440px; margin: 0 auto; padding: 12px clamp(16px, 4vw, 48px); box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px">
+<a href="WebMarche.dc.html" style="display: flex; align-items: center; min-height: 44px; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: 0.06em; color: #F3F4F6; text-decoration: none">
+<span>NEXG</span><span style="color: #FFD23F">·TT</span>
+</a>
+<nav aria-label="Espaces" style="flex: 1 1 auto; min-width: 0; display: flex">
+<div role="group" aria-label="Espace de l’application" style="display: flex; gap: 2px; padding: 3px; border-radius: 999px; background: #1D2027; border: 1px solid #2C303A">
+<a href="WebAccueil.dc.html" style="display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; color: #B9BEC9; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+Voyager
+</a>
+<a href="WebPortefeuille.dc.html" aria-current="true" style="display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: #FFD23F; color: #0D0E11; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg>
+Mes actifs
+</a>
+</div>
+</nav>
+<div style="flex: 1 1 300px; max-width: 440px; display: flex; align-items: center; gap: 8px">
+<div role="search" style="position: relative; flex: 1; min-width: 0">
+<label for="top-q" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Rechercher une ville, un code d’aéroport ou une référence</label>
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 14px; top: 13px; color: #8C93A3; pointer-events: none"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+<input id="top-q" type="search" placeholder="Ville, code ou réf. NXG" autocomplete="off" style="width: 100%; height: 44px; box-sizing: border-box; padding: 0 14px 0 42px; border-radius: 12px; background: #15171C; border: 1px solid #6B7282; color: #F3F4F6; font: inherit; font-size: 15px">
+</div>
+<a href="CentreNotifications.dc.html" aria-label="Notifications, 2 non lues" style="position: relative; flex: none; width: 44px; height: 44px; box-sizing: border-box; border-radius: 999px; background: #15171C; border: 1px solid #2C303A; display: flex; align-items: center; justify-content: center; color: #F3F4F6">
+<svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16v-5a6 6 0 1 1 12 0v5l2 2H4z"></path><path d="M10 21h4"></path></svg>
+<span style="position: absolute; top: 9px; right: 10px; width: 9px; height: 9px; box-sizing: border-box; border-radius: 999px; background: #FFD23F; border: 2px solid #15171C"></span>
+</a>
+<a href="Compte.dc.html" aria-label="AT, mon compte (Alex T.)" style="flex: none; width: 44px; height: 44px; border-radius: 999px; background: #F3F4F6; color: #0D0E11; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; letter-spacing: 0.04em; text-decoration: none">AT</a>
+</div>
+</div>
+<nav aria-label="Mes actifs" style="max-width: 1440px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 8px; box-sizing: border-box">
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px">
+<li>
+<a href="WebMarche.dc.html" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; color: #B9BEC9; font-size: 15px; font-weight: 600; text-decoration: none">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 16 6-6 4 4 6-7"></path><path d="M15 7h5v5"></path></svg>
+Marché
+</a>
+</li>
+<li>
+<a href="Drop.dc.html" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; color: #B9BEC9; font-size: 15px; font-weight: 600; text-decoration: none">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"></path></svg>
+Drops
+<span data-nx-motion="1" aria-hidden="true" style="width: 7px; height: 7px; border-radius: 999px; background: #FFD23F; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+</a>
+</li>
+<li>
+<a href="WebPortefeuille.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; background: #1D2027; box-shadow: inset 0 -2px 0 #FFD23F; color: #F3F4F6; font-size: 15px; font-weight: 600; text-decoration: none">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h12v4"></path><rect x="3" y="9" width="18" height="11" rx="2"></rect><path d="M16 14.5h1.5"></path></svg>
+Portefeuille
+</a>
+</li>
+<li>
+<a href="Agence.dc.html" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; color: #B9BEC9; font-size: 15px; font-weight: 600; text-decoration: none">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9l1.5-5h13L20 9M4 9v11h16V9M4 9h16M9 20v-6h6v6"></path></svg>
+Agences
+</a>
+</li>
+</ul>
+</nav>
+</header>
+
+<main style="flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 16px clamp(16px, 4vw, 48px) 28px; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px">
+
+<section aria-labelledby="page-title" style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px">
+<div style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
+<h1 id="page-title" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 44px; line-height: 44px; text-transform: uppercase; letter-spacing: 0.01em">Portefeuille</h1>
+<p style="margin: 0; font-size: 13px; font-weight: 600; color: #B9BEC9">Alex T. · 3 droits de voyage détenus · 1 en vente</p>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<a href="Importer.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 18px; box-sizing: border-box; border-radius: 14px; background: #1D2027; color: #F3F4F6; border: 1px solid #3A3F4B; font-weight: 700; font-size: 15px; text-decoration: none">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"></path></svg>
+Importer un billet
+</a>
+<a href="WebMarche.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 18px; box-sizing: border-box; border-radius: 14px; background: #1D2027; color: #F3F4F6; border: 1px solid #3A3F4B; font-weight: 700; font-size: 15px; text-decoration: none">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 16 6-6 4 4 6-7"></path><path d="M15 7h5v5"></path></svg>
+Voir le marché
+</a>
+</div>
+</section>
+
+<div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px">
+
+<div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 18px">
+
+<a href="Finaliser.dc.html" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; min-height: 48px; padding: 10px 14px; box-sizing: border-box; border-radius: 14px; background: rgba(255,210,63,0.12); color: #FFD23F; font-size: 14px; font-weight: 600; text-decoration: none">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+<span style="flex: 1 1 260px">YUL → CDG : nommez le voyageur avant le dim. 13 déc. 2026, 18:05 (dans 62 jours). Après, plus aucune revente ni transfert.</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; font-weight: 700">Nommer le voyageur<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg></span>
+</a>
+
+<section aria-labelledby="sum-title" style="display: flex; flex-wrap: wrap; gap: 20px 32px; padding: 20px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A">
+<div style="flex: 1 1 240px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<h2 id="sum-title" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Prix équivalent aujourd’hui</h2>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 44px; line-height: 50px; font-variant-numeric: tabular-nums">4&nbsp;730&nbsp;$</span>
+</div>
+<dl style="margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding-top: 14px; border-top: 1px solid #2C303A">
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<dt style="font-size: 13px; color: #B9BEC9">Payé</dt>
+<dd style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 20px; font-variant-numeric: tabular-nums">3&nbsp;050&nbsp;$</dd>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<dt style="font-size: 13px; color: #B9BEC9">Écart</dt>
+<dd style="margin: 0; display: flex; align-items: center; gap: 4px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 20px; font-variant-numeric: tabular-nums; color: #62C7FF">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 16 6-6 4 4 6-7"></path><path d="M15 7h5v5"></path></svg>
++1&nbsp;680&nbsp;$
+</dd>
+</div>
+</dl>
+<p style="margin: 0; display: flex; gap: 8px; font-size: 12px; line-height: 17px; color: #8C93A3">
+<span style="flex: none; display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; background: #262A33; color: #B9BEC9; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase">Indicatif</span>
+<span>Prix d’un billet neuf équivalent aujourd’hui, pour les 3 droits détenus (hors billet en vente). Ni prix de revente garanti, ni gain.</span>
+</p>
+</div>
+
+<div style="flex: 999 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px">
+<p style="margin: 0; font-size: 13px; font-weight: 600; color: #B9BEC9">Depuis le premier achat · 12 janv. → 12 oct. 2026</p>
+<div aria-hidden="true" style="display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: #B9BEC9">
+<span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 18px; height: 0; border-top: 2px solid #62C7FF"></span>Prix équivalent</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 18px; height: 0; border-top: 2px dashed #8C93A3"></span>Montant payé</span>
+</div>
+</div>
+<div style="display: flex; gap: 8px">
+<div aria-hidden="true" style="position: relative; flex: none; width: 52px; height: 150px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #8C93A3; text-align: right">
+<span style="position: absolute; right: 0; top: -1px">5&nbsp;000&nbsp;$</span>
+<span style="position: absolute; right: 0; top: 27px">4&nbsp;000&nbsp;$</span>
+<span style="position: absolute; right: 0; top: 54px">3&nbsp;000&nbsp;$</span>
+<span style="position: absolute; right: 0; top: 82px">2&nbsp;000&nbsp;$</span>
+<span style="position: absolute; right: 0; top: 109px">1&nbsp;000&nbsp;$</span>
+</div>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<svg width="100%" height="150" sc-camel-view-box="0 0 1000 150" sc-camel-preserve-aspect-ratio="none" aria-hidden="true" style="display: block; overflow: visible">
+<line x1="0" y1="6" x2="1000" y2="6" stroke="#1A1D23" stroke-width="1" vector-effect="non-scaling-stroke"></line>
+<line x1="0" y1="33.6" x2="1000" y2="33.6" stroke="#1A1D23" stroke-width="1" vector-effect="non-scaling-stroke"></line>
+<line x1="0" y1="61.2" x2="1000" y2="61.2" stroke="#1A1D23" stroke-width="1" vector-effect="non-scaling-stroke"></line>
+<line x1="0" y1="88.8" x2="1000" y2="88.8" stroke="#1A1D23" stroke-width="1" vector-effect="non-scaling-stroke"></line>
+<line x1="0" y1="116.4" x2="1000" y2="116.4" stroke="#1A1D23" stroke-width="1" vector-effect="non-scaling-stroke"></line>
+<line x1="0" y1="144" x2="1000" y2="144" stroke="#2C303A" stroke-width="1" vector-effect="non-scaling-stroke"></line>
+<polygon points="0,144 0,116.4 110,115 220,113.1 330,110.9 440,108.4 549,105.9 659,103.4 740,100.9 744,49.9 806,48 853,44.9 857,19.2 916,17 960,14.8 1000,13.5 1000,144" fill="rgba(98,199,255,0.08)"></polygon>
+<polyline points="0,116.4 744,116.4 744,65.3 857,65.3 857,59.8 1000,59.8" fill="none" stroke="#8C93A3" stroke-width="2" stroke-dasharray="6 5" vector-effect="non-scaling-stroke"></polyline>
+<polyline points="0,116.4 110,115 220,113.1 330,110.9 440,108.4 549,105.9 659,103.4 740,100.9 744,49.9 806,48 853,44.9 857,19.2 916,17 960,14.8 1000,13.5" fill="none" stroke="#62C7FF" stroke-width="2.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"></polyline>
+</svg>
+<div aria-hidden="true" style="position: relative; height: 16px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #8C93A3">
+<span style="position: absolute; left: 0">janv.</span>
+<span style="position: absolute; left: 17.6%">mars</span>
+<span style="position: absolute; left: 39.9%">mai</span>
+<span style="position: absolute; left: 62.3%">juil.</span>
+<span style="position: absolute; left: 82%">sept.</span>
+<span style="position: absolute; right: 0">12 oct.</span>
+</div>
+</div>
+</div>
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #8C93A3">Paliers : achats du 12 janv. (YUL → CDG), du 3 août (YUL → PPT, revente) et du 3 sept. (YUL → PUJ, Drop). Courbe indicative, données fictives.</p>
+</div>
+</section>
+
+<section aria-labelledby="tbl-title" style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px">
+<h2 id="tbl-title" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 24px; letter-spacing: 0.04em; text-transform: uppercase">Mes droits de voyage</h2>
+<p style="margin: 0; font-size: 13px; color: #B9BEC9">Sélectionnez une ligne pour voir le billet et sa chaîne de détention.</p>
+</div>
+<div style="overflow-x: auto; border-radius: 20px; background: #15171C; border: 1px solid #2C303A">
+<sc-raw-table style="width: 100%; min-width: 940px; border-collapse: collapse; font-variant-numeric: tabular-nums">
+<sc-raw-caption style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Droits de voyage d’Alex T. : prix payé, prix équivalent aujourd’hui, écart, statut et échéance de finalisation.</sc-raw-caption>
+<sc-raw-thead>
+<sc-raw-tr style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8C93A3">
+<sc-raw-th scope="col" style="padding: 12px 8px 8px 16px; text-align: left; font-weight: 700; white-space: nowrap">Trajet</sc-raw-th>
+<sc-raw-th scope="col" style="padding: 12px 8px 8px; text-align: left; font-weight: 700; white-space: nowrap">Date</sc-raw-th>
+<sc-raw-th scope="col" style="padding: 12px 8px 8px; text-align: left; font-weight: 700; white-space: nowrap">Compagnie</sc-raw-th>
+<sc-raw-th scope="col" style="padding: 12px 8px 8px; text-align: right; font-weight: 700; white-space: nowrap">Payé</sc-raw-th>
+<sc-raw-th scope="col" style="padding: 12px 8px 8px; text-align: right; font-weight: 700">Prix équivalent</sc-raw-th>
+<sc-raw-th scope="col" style="padding: 12px 8px 8px; text-align: right; font-weight: 700; white-space: nowrap">Écart</sc-raw-th>
+<sc-raw-th scope="col" style="padding: 12px 8px 8px; text-align: left; font-weight: 700; white-space: nowrap">Statut</sc-raw-th>
+<sc-raw-th scope="col" style="padding: 12px 8px 8px; text-align: left; font-weight: 700">Échéance de finalisation</sc-raw-th>
+<sc-raw-th scope="col" style="padding: 12px 16px 8px 8px; text-align: left; font-weight: 700; white-space: nowrap">Actions</sc-raw-th>
+</sc-raw-tr>
+</sc-raw-thead>
+<sc-raw-tbody>
+
+<sc-raw-tr sc-camel-on-click="{{rows.cdg.select}}" sc-camel-on-mouse-enter="{{rows.cdg.enter}}" sc-camel-on-mouse-leave="{{rows.cdg.leave}}" style="background: {{rows.cdg.bg}}; cursor: pointer">
+<sc-raw-th scope="row" style="padding: 0; border-top: 1px solid #2C303A; text-align: left; font-weight: inherit; vertical-align: middle">
+<button type="button" aria-pressed="{{rows.cdg.pressed}}" sc-camel-on-click="{{rows.cdg.select}}" style="display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; width: 100%; min-height: 64px; padding: 8px 8px 8px 16px; background: transparent; border: 0; color: #F3F4F6; font: inherit; text-align: left; cursor: pointer">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 20px; line-height: 22px; letter-spacing: 0.04em; white-space: nowrap; color: {{rows.cdg.codeColor}}">YUL → CDG</span>
+<span style="font-size: 13px; color: #B9BEC9">Paris</span>
+</button>
+</sc-raw-th>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600">14 déc. 2026</span><span style="font-size: 12px; color: #8C93A3">lun. · 18:05</span></sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px; white-space: nowrap">Aérolys</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; font-size: 15px; white-space: nowrap">1&nbsp;000&nbsp;$</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; white-space: nowrap">2&nbsp;000&nbsp;$</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; white-space: nowrap; color: #62C7FF"><span style="display: block; font-size: 15px">+1&nbsp;000&nbsp;$</span><span style="font-size: 12px">+100&nbsp;%</span></sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(255,210,63,0.12); color: #FFD23F; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap">À nommer</span></sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600; color: #FFD23F">13 déc. · 18:05</span><span style="font-size: 12px; color: #8C93A3">dans 62 jours</span></sc-raw-td>
+<sc-raw-td style="padding: 8px 16px 8px 8px; border-top: 1px solid #2C303A; vertical-align: middle">
+<span style="display: flex; gap: 6px">
+<a href="Revendre.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 10px; background: #1D2027; border: 1px solid #3A3F4B; color: #F3F4F6; font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap">Revendre</a>
+<a href="Finaliser.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 10px; background: #FFD23F; border: 1px solid #FFD23F; color: #0D0E11; font-size: 13px; font-weight: 700; text-decoration: none; white-space: nowrap">Nommer</a>
+<button type="button" sc-camel-on-click="{{rows.cdg.transfer}}" style="display: inline-flex; align-items: center; height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 10px; background: #1D2027; border: 1px solid #3A3F4B; color: #F3F4F6; font: inherit; font-size: 13px; font-weight: 600; white-space: nowrap; cursor: pointer">Transférer</button>
+</span>
+</sc-raw-td>
+</sc-raw-tr>
+
+<sc-raw-tr sc-camel-on-click="{{rows.puj.select}}" sc-camel-on-mouse-enter="{{rows.puj.enter}}" sc-camel-on-mouse-leave="{{rows.puj.leave}}" style="background: {{rows.puj.bg}}; cursor: pointer">
+<sc-raw-th scope="row" style="padding: 0; border-top: 1px solid #2C303A; text-align: left; font-weight: inherit; vertical-align: middle">
+<button type="button" aria-pressed="{{rows.puj.pressed}}" sc-camel-on-click="{{rows.puj.select}}" style="display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; width: 100%; min-height: 64px; padding: 8px 8px 8px 16px; background: transparent; border: 0; color: #F3F4F6; font: inherit; text-align: left; cursor: pointer">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 20px; line-height: 22px; letter-spacing: 0.04em; white-space: nowrap; color: {{rows.puj.codeColor}}">YUL → PUJ</span>
+<span style="font-size: 13px; color: #B9BEC9">Punta Cana</span>
+</button>
+</sc-raw-th>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600">21 févr. 2027</span><span style="font-size: 12px; color: #8C93A3">dim. · 07:30</span></sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px; white-space: nowrap">Nordelle</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; font-size: 15px; white-space: nowrap">200&nbsp;$</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; white-space: nowrap">940&nbsp;$</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; white-space: nowrap; color: #62C7FF"><span style="display: block; font-size: 15px">+740&nbsp;$</span><span style="font-size: 12px">+370&nbsp;%</span></sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: #262A33; color: #B9BEC9; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap">Détenu</span></sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600">20 févr. · 07:30</span><span style="font-size: 12px; color: #8C93A3">dans 131 jours</span></sc-raw-td>
+<sc-raw-td style="padding: 8px 16px 8px 8px; border-top: 1px solid #2C303A; vertical-align: middle">
+<span style="display: flex; gap: 6px">
+<a href="Revendre.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 10px; background: #1D2027; border: 1px solid #3A3F4B; color: #F3F4F6; font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap">Revendre</a>
+<a href="Finaliser.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 10px; background: #1D2027; border: 1px solid #3A3F4B; color: #F3F4F6; font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap">Nommer</a>
+<button type="button" sc-camel-on-click="{{rows.puj.transfer}}" style="display: inline-flex; align-items: center; height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 10px; background: #1D2027; border: 1px solid #3A3F4B; color: #F3F4F6; font: inherit; font-size: 13px; font-weight: 600; white-space: nowrap; cursor: pointer">Transférer</button>
+</span>
+</sc-raw-td>
+</sc-raw-tr>
+
+<sc-raw-tr sc-camel-on-click="{{rows.ppt.select}}" sc-camel-on-mouse-enter="{{rows.ppt.enter}}" sc-camel-on-mouse-leave="{{rows.ppt.leave}}" style="background: {{rows.ppt.bg}}; cursor: pointer">
+<sc-raw-th scope="row" style="padding: 0; border-top: 1px solid #2C303A; text-align: left; font-weight: inherit; vertical-align: middle">
+<button type="button" aria-pressed="{{rows.ppt.pressed}}" sc-camel-on-click="{{rows.ppt.select}}" style="display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; width: 100%; min-height: 64px; padding: 8px 8px 8px 16px; background: transparent; border: 0; color: #F3F4F6; font: inherit; text-align: left; cursor: pointer">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 20px; line-height: 22px; letter-spacing: 0.04em; white-space: nowrap; color: {{rows.ppt.codeColor}}">YUL → PPT</span>
+<span style="font-size: 13px; color: #B9BEC9">Papeete · via LAX</span>
+</button>
+</sc-raw-th>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600">9 mai 2027</span><span style="font-size: 12px; color: #8C93A3">dim. · 10:20</span></sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px; white-space: nowrap">Aérolys</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; font-size: 15px; white-space: nowrap">1&nbsp;850&nbsp;$</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; white-space: nowrap">1&nbsp;790&nbsp;$</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; white-space: nowrap; color: #FF9E5E"><span style="display: block; font-size: 15px">−60&nbsp;$</span><span style="font-size: 12px">−3&nbsp;%</span></sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: #262A33; color: #B9BEC9; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap">Détenu</span></sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600">8 mai · 10:20</span><span style="font-size: 12px; color: #8C93A3">dans 208 jours</span></sc-raw-td>
+<sc-raw-td style="padding: 8px 16px 8px 8px; border-top: 1px solid #2C303A; vertical-align: middle">
+<span style="display: flex; gap: 6px">
+<a href="Revendre.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 10px; background: #1D2027; border: 1px solid #3A3F4B; color: #F3F4F6; font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap">Revendre</a>
+<a href="Finaliser.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 10px; background: #1D2027; border: 1px solid #3A3F4B; color: #F3F4F6; font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap">Nommer</a>
+<button type="button" sc-camel-on-click="{{rows.ppt.transfer}}" style="display: inline-flex; align-items: center; height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 10px; background: #1D2027; border: 1px solid #3A3F4B; color: #F3F4F6; font: inherit; font-size: 13px; font-weight: 600; white-space: nowrap; cursor: pointer">Transférer</button>
+</span>
+</sc-raw-td>
+</sc-raw-tr>
+
+<sc-raw-tr sc-camel-on-click="{{rows.hav.select}}" sc-camel-on-mouse-enter="{{rows.hav.enter}}" sc-camel-on-mouse-leave="{{rows.hav.leave}}" style="background: {{rows.hav.bg}}; cursor: pointer">
+<sc-raw-th scope="row" style="padding: 0; border-top: 1px solid #2C303A; text-align: left; font-weight: inherit; vertical-align: middle">
+<button type="button" aria-pressed="{{rows.hav.pressed}}" sc-camel-on-click="{{rows.hav.select}}" style="display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; width: 100%; min-height: 64px; padding: 8px 8px 8px 16px; background: transparent; border: 0; color: #F3F4F6; font: inherit; text-align: left; cursor: pointer">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 20px; line-height: 22px; letter-spacing: 0.04em; white-space: nowrap; color: {{rows.hav.codeColor}}">YUL → HAV</span>
+<span style="font-size: 13px; color: #B9BEC9">La Havane</span>
+</button>
+</sc-raw-th>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600">30 janv. 2027</span><span style="font-size: 12px; color: #8C93A3">sam. · 08:15</span></sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px; white-space: nowrap">Nordelle</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; font-size: 15px; white-space: nowrap">480&nbsp;$</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; white-space: nowrap">650&nbsp;$</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; white-space: nowrap; color: #62C7FF"><span style="display: block; font-size: 15px">+170&nbsp;$</span><span style="font-size: 12px">+35&nbsp;%</span></sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(98,199,255,0.12); color: #62C7FF; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap">En vente</span><span style="display: block; margin-top: 3px; font-size: 12px; color: #8C93A3; white-space: nowrap">à 620&nbsp;$</span></sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; white-space: nowrap"><span style="display: block; font-size: 14px; font-weight: 600">29 janv. · 08:15</span><span style="font-size: 12px; color: #8C93A3">dans 109 jours</span></sc-raw-td>
+<sc-raw-td style="padding: 8px 16px 8px 8px; border-top: 1px solid #2C303A; vertical-align: middle">
+<span style="display: flex; gap: 6px">
+<a href="Revendre.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 10px; background: #1D2027; border: 1px solid #3A3F4B; color: #F3F4F6; font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap">Gérer l’annonce</a>
+</span>
+</sc-raw-td>
+</sc-raw-tr>
+
+</sc-raw-tbody>
+</sc-raw-table>
+</div>
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #8C93A3">Écart = prix équivalent aujourd’hui − prix payé. Échéance de finalisation : 24&nbsp;h avant le départ ; ensuite, plus aucune transaction sur ce droit.</p>
+</section>
+</div>
+
+<aside aria-labelledby="panel-title" style="flex: 1 1 300px; min-width: 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px; padding: 18px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A">
+<div aria-live="polite" style="display: flex; flex-direction: column; gap: 4px">
+<p style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Droit sélectionné</p>
+<h2 id="panel-title" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 30px; line-height: 32px; letter-spacing: 0.04em; text-transform: uppercase">{{sel.route}}</h2>
+<p style="margin: 0; font-size: 13px; color: #B9BEC9">{{sel.cities}}</p>
+</div>
+
+<div data-surface="paper" style="position: relative; background: #FFFFFF; color: #121418; border-radius: 18px">
+<div style="padding: 16px 16px 14px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; gap: 8px">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 44px; line-height: 44px; letter-spacing: 0.02em">{{sel.from}}</span>
+<span aria-hidden="true" style="flex: 1; display: flex; align-items: center; gap: 6px; color: #555C6B">
+<span style="flex: 1; border-top: 2px dotted #C9CDD5"></span>
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h6l4 7h2l-2-7h5l2 2h2l-1-3 1-3h-2l-2 2h-5l2-7h-2l-4 7H3z"></path></svg>
+<span style="flex: 1; border-top: 2px dotted #C9CDD5"></span>
+</span>
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 44px; line-height: 44px; letter-spacing: 0.02em">{{sel.to}}</span>
+</div>
+<div style="display: flex; justify-content: space-between; gap: 8px; font-size: 13px; color: #555C6B">
+<span style="display: flex; flex-direction: column"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; color: #121418">{{sel.dep}}</span>{{sel.fromCity}}</span>
+<span style="align-self: flex-end; text-align: center">{{sel.duration}}</span>
+<span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; color: #121418">{{sel.arr}}</span>{{sel.toCity}}</span>
+</div>
+<dl style="margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; padding: 10px 12px; border-radius: 12px; background: #F1F2F4; font-size: 12px; color: #555C6B">
+<div style="min-width: 0"><dt>Date</dt><dd style="margin: 0; font-size: 14px; font-weight: 600; color: #121418">{{sel.date}}</dd></div>
+<div style="min-width: 0"><dt>Vol</dt><dd style="margin: 0; font-size: 14px; font-weight: 600; color: #121418">{{sel.flight}}</dd></div>
+<div style="min-width: 0"><dt>Détenteur</dt><dd style="margin: 0; font-size: 14px; font-weight: 600; color: #121418">Alex T. (vous)</dd></div>
+<div style="min-width: 0"><dt>Voyageur</dt><dd style="margin: 0; font-size: 14px; font-weight: 600; color: #121418">À nommer</dd></div>
+</dl>
+</div>
+<div aria-hidden="true" style="position: relative; height: 2px">
+<span style="position: absolute; left: 14px; right: 14px; top: 0; border-top: 2px dashed #E2E4E9"></span>
+<span style="position: absolute; left: -11px; top: -10px; width: 22px; height: 22px; border-radius: 999px; background: #15171C"></span>
+<span style="position: absolute; right: -11px; top: -10px; width: 22px; height: 22px; border-radius: 999px; background: #15171C"></span>
+</div>
+<div style="padding: 14px 16px 16px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px">
+<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px">
+<span style="display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 999px; background: {{sel.chipBg}}; color: {{sel.chipColor}}; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap">{{sel.status}}</span>
+<span style="font-size: 12px; color: #555C6B">Réf. <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #121418">{{sel.ref}}</span></span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px">
+<span style="font-size: 12px; color: #555C6B">Prix équivalent · payé {{sel.paid}}</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 24px; line-height: 28px; font-variant-numeric: tabular-nums">{{sel.equiv}}</span>
+</div>
+</div>
+</div>
+
+<section aria-labelledby="chain-title" style="display: flex; flex-direction: column; gap: 10px">
+<h3 id="chain-title" style="margin: 0; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5M12 7v5l3 2"></path></svg>
+Chaîne de détention
+</h3>
+<ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
+<sc-for list="{{sel.chain}}" as="c" hint-placeholder-count="3">
+<li style="display: flex; gap: 10px">
+<span aria-hidden="true" style="flex: none; width: 12px; display: flex; flex-direction: column; align-items: center; gap: 3px; padding-top: 4px">
+<span style="flex: none; width: 10px; height: 10px; box-sizing: border-box; border-radius: 999px; background: {{c.dotBg}}; border: 2px solid {{c.dotBorder}}"></span>
+<span style="flex: 1; width: 2px; background: {{c.line}}"></span>
+</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; padding-bottom: 12px">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-size: 14px; font-weight: 600"><span>{{c.label}}</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; color: #B9BEC9; white-space: nowrap">{{c.amount}}</span></span>
+<span style="font-size: 13px; color: #8C93A3">{{c.meta}}</span>
+</span>
+</li>
+</sc-for>
+</ol>
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #8C93A3">Chaque transaction est inscrite au registre interne de NexG-TT, qui reste titulaire de la réservation auprès de la compagnie jusqu’à la finalisation.</p>
+</section>
+
+<sc-if value="{{showActions}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<a href="Finaliser.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; box-sizing: border-box; border-radius: 14px; background: #FFD23F; color: #0D0E11; font-weight: 700; font-size: 16px; text-decoration: none">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><circle cx="9" cy="11" r="2"></circle><path d="M6 16c.8-1.3 1.8-2 3-2s2.2.7 3 2M14 10h4M14 13h3"></path></svg>
+Nommer le voyageur
+</a>
+<a href="Revendre.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; box-sizing: border-box; border-radius: 14px; background: #1D2027; color: #F3F4F6; border: 1px solid #3A3F4B; font-weight: 700; font-size: 16px; text-decoration: none">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg>
+Revendre
+</a>
+<button type="button" sc-camel-on-click="{{openTransfer}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; background: transparent; border: 0; color: #FFD23F; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"></path></svg>
+Transférer à un autre compte
+</button>
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #8C93A3">Revente : prix plafonné (règle à définir) et commission de 10 à 20&nbsp;% — hypothèses.</p>
+</div>
+</sc-if>
+
+<sc-if value="{{showForSale}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<p style="margin: 0; display: flex; gap: 8px; padding: 10px 12px; border-radius: 12px; background: rgba(98,199,255,0.12); border: 1px solid rgba(98,199,255,0.4); color: #62C7FF; font-size: 13px; line-height: 18px; font-weight: 600">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+<span>En vente à 620&nbsp;$ depuis le 2 oct. Retirez l’annonce pour nommer un voyageur ou transférer ce droit.</span>
+</p>
+<a href="Revendre.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; box-sizing: border-box; border-radius: 14px; background: #1D2027; color: #F3F4F6; border: 1px solid #3A3F4B; font-weight: 700; font-size: 16px; text-decoration: none">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg>
+Gérer l’annonce
+</a>
+</div>
+</sc-if>
+
+<sc-if value="{{showTransfer}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 16px; background: #1D2027; border: 1px solid #3A3F4B">
+<p style="margin: 0; font-size: 15px; font-weight: 700">Transférer {{sel.route}}</p>
+<label for="tr-dest" style="font-size: 13px; font-weight: 500; color: #B9BEC9">Compte du destinataire (courriel)</label>
+<input id="tr-dest" type="email" autocomplete="off" placeholder="nom@exemple.com" style="height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #15171C; border: 1px solid #6B7282; color: #F3F4F6; font: inherit; font-size: 16px">
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #8C93A3">Le destinataire devient détenteur et nommera le voyageur avant l’échéance. Démo — aucun envoi réel.</p>
+<div style="display: flex; gap: 8px">
+<button type="button" sc-camel-on-click="{{cancelTransfer}}" style="flex: 1; min-height: 48px; border-radius: 14px; background: transparent; color: #F3F4F6; border: 1px solid #3A3F4B; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer">Annuler</button>
+<button type="button" sc-camel-on-click="{{sendTransfer}}" style="flex: 1.4; min-height: 48px; border-radius: 14px; background: #FFD23F; color: #0D0E11; border: 0; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer">Préparer (démo)</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{showSent}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 16px; background: rgba(124,227,181,0.12); border: 1px solid rgba(124,227,181,0.4); color: #7CE3B5">
+<p style="margin: 0; display: flex; gap: 8px; font-size: 14px; line-height: 20px; font-weight: 600">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><path d="m5 12 5 5 9-10"></path></svg>
+<span>Demande de transfert préparée (démo). Le droit reste à vous tant que le destinataire n’a pas accepté.</span>
+</p>
+<button type="button" sc-camel-on-click="{{cancelTransfer}}" style="align-self: flex-start; min-height: 44px; padding: 0 4px; background: transparent; border: 0; color: #F3F4F6; font: inherit; font-size: 14px; font-weight: 600; text-decoration: underline; cursor: pointer">Fermer</button>
+</div>
+</sc-if>
+</aside>
+
+</div>
+</main>
+
+<footer style="border-top: 1px solid #2C303A">
+<div style="max-width: 1440px; margin: 0 auto; padding: 18px clamp(16px, 4vw, 48px); box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; font-size: 13px; line-height: 18px; color: #8C93A3">
+<p style="margin: 0"><span style="display: inline-flex; align-items: center; height: 22px; padding: 0 8px; margin-right: 8px; border-radius: 999px; background: rgba(98,199,255,0.12); color: #62C7FF; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase">Prototype — données fictives</span>Compagnies (Aérolys, Nordelle), détenteurs, prix et références inventés. Aucun paiement réel.</p>
+<p style="margin: 0">Un droit de voyage est une inscription au registre interne de NexG-TT, pas un placement financier.</p>
+</div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1000}}">
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const selId = s.sel ?? 'cdg';
+    const hoverId = s.hover ?? '';
+    const transferFor = s.transferFor ?? '';
+    const sentFor = s.sentFor ?? '';
+
+    const DONE = { dotBg: '#8C93A3', dotBorder: '#8C93A3' };
+    const YOU = { dotBg: '#F3F4F6', dotBorder: '#F3F4F6' };
+    const TODO = { dotBg: 'transparent', dotBorder: '#FFD23F' };
+    const chain = (items) => items.map((it, i) => ({ ...it, line: i === items.length - 1 ? 'transparent' : '#2C303A' }));
+
+    const D = {
+      cdg: {
+        route: 'YUL → CDG', cities: 'Montréal → Paris · Aérolys', from: 'YUL', to: 'CDG', fromCity: 'Montréal', toCity: 'Paris',
+        dep: '18:05', arr: '07:10 (+1)', duration: 'Direct · 7 h 05', date: 'lun. 14 déc. 2026', flight: 'Aérolys 812',
+        status: 'À nommer', chipBg: '#FFD23F', chipColor: '#0D0E11', equiv: '2 000 $', paid: '1 000 $', ref: 'NXG-7Q2M', forSale: false,
+        chain: chain([
+          { ...YOU, label: 'Achat neuf · Alex T. (vous)', amount: '1 000 $', meta: '12 janv. 2026' },
+          { ...TODO, label: 'Nommer le voyageur', amount: '', meta: 'Au plus tard le 13 déc. 2026, 18:05' }
+        ])
+      },
+      puj: {
+        route: 'YUL → PUJ', cities: 'Montréal → Punta Cana · Nordelle', from: 'YUL', to: 'PUJ', fromCity: 'Montréal', toCity: 'Punta Cana',
+        dep: '07:30', arr: '12:15', duration: 'Direct · 3 h 45', date: 'dim. 21 févr. 2027', flight: 'Nordelle 228',
+        status: 'Détenu', chipBg: '#E2E4E9', chipColor: '#121418', equiv: '940 $', paid: '200 $', ref: 'NXG-4KD8', forSale: false,
+        chain: chain([
+          { ...YOU, label: 'Drop membres · Alex T. (vous)', amount: '200 $', meta: '3 sept. 2026' },
+          { ...TODO, label: 'Nommer le voyageur', amount: '', meta: 'Au plus tard le 20 févr. 2027, 07:30' }
+        ])
+      },
+      ppt: {
+        route: 'YUL → PPT', cities: 'Montréal → Papeete (Bora Bora) · Aérolys', from: 'YUL', to: 'PPT', fromCity: 'Montréal', toCity: 'Papeete',
+        dep: '10:20', arr: '20:25', duration: '1 escale (LAX) · 16 h 05', date: 'dim. 9 mai 2027', flight: 'Aérolys 471',
+        status: 'Détenu', chipBg: '#E2E4E9', chipColor: '#121418', equiv: '1 790 $', paid: '1 850 $', ref: 'NXG-9PL3', forSale: false,
+        chain: chain([
+          { ...DONE, label: 'Achat neuf · détenteur 1', amount: '', meta: '14 févr. 2026 · identité et montant masqués' },
+          { ...DONE, label: 'Revente · détenteur 2', amount: '', meta: '29 mai 2026 · identité et montant masqués' },
+          { ...YOU, label: 'Revente · Alex T. (vous)', amount: '1 850 $', meta: '3 août 2026' },
+          { ...TODO, label: 'Nommer le voyageur', amount: '', meta: 'Au plus tard le 8 mai 2027, 10:20' }
+        ])
+      },
+      hav: {
+        route: 'YUL → HAV', cities: 'Montréal → La Havane · Nordelle', from: 'YUL', to: 'HAV', fromCity: 'Montréal', toCity: 'La Havane',
+        dep: '08:15', arr: '12:00', duration: 'Direct · 3 h 45', date: 'sam. 30 janv. 2027', flight: 'Nordelle 156',
+        status: 'En vente', chipBg: 'rgba(26,100,200,0.10)', chipColor: '#1A64C8', equiv: '650 $', paid: '480 $', ref: 'NXG-2HV6', forSale: true,
+        chain: chain([
+          { ...YOU, label: 'Achat neuf · Alex T. (vous)', amount: '480 $', meta: '22 juin 2026' },
+          { ...YOU, label: 'Mis en vente', amount: '620 $', meta: '2 oct. 2026 · en attente d’acheteur' },
+          { ...TODO, label: 'Nommer le voyageur', amount: '', meta: 'Acheteur ou vous, au plus tard le 29 janv. 2027, 08:15' }
+        ])
+      }
+    };
+
+    const rows = {};
+    Object.keys(D).forEach((id) => {
+      const isSel = id === selId;
+      const isHover = id === hoverId;
+      rows[id] = {
+        bg: isSel ? '#1D2027' : (isHover ? '#191B21' : 'transparent'),
+        codeColor: isSel ? '#FFD23F' : '#F3F4F6',
+        pressed: isSel ? 'true' : 'false',
+        select: () => this.setState({ sel: id }),
+        enter: () => this.setState({ hover: id }),
+        leave: () => this.setState({ hover: '' }),
+        transfer: () => this.setState({ sel: id, transferFor: id, sentFor: '' })
+      };
+    });
+
+    const sel = D[selId] || D.cdg;
+    const transferring = transferFor === selId && !sel.forSale;
+    const sent = sentFor === selId;
+
+    return {
+      rows,
+      sel,
+      showActions: !sel.forSale && !transferring && !sent,
+      showForSale: sel.forSale,
+      showTransfer: transferring && !sent,
+      showSent: sent,
+      openTransfer: () => this.setState({ transferFor: selId, sentFor: '' }),
+      cancelTransfer: () => this.setState({ transferFor: '', sentFor: '' }),
+      sendTransfer: () => this.setState({ sentFor: selId })
+    };
+  }
+}
+</script>
+
+
+</body></html>

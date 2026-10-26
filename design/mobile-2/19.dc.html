@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<title>Marché des billets (web) — NexG-TT</title>
+<script src="77077b66-79f5-4eb2-beee-64eb9cafe5b3"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+<style>
+body{margin:0;background:#0D0E11}
+a{color:#FFD23F}a:hover{color:#FFE27A}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #FFD23F;outline-offset:2px}
+input::placeholder{color:#8C93A3}
+[data-surface="paper"] :focus-visible,[data-surface="signal"] :focus-visible{outline-color:#0D0E11}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@media (prefers-reduced-motion: reduce){[data-nx-motion]{animation:none !important}}
+</style>
+</helmet>
+<div style="min-height: 1100px; background: #0D0E11; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; color-scheme: dark; display: flex; flex-direction: column">
+
+<header style="border-bottom: 1px solid #2C303A">
+<div style="max-width: 1440px; margin: 0 auto; padding: 12px clamp(16px, 4vw, 48px); box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px">
+<a href="WebMarche.dc.html" style="display: flex; align-items: center; min-height: 44px; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: 0.06em; color: #F3F4F6; text-decoration: none">
+<span>NEXG</span><span style="color: #FFD23F">·TT</span>
+</a>
+<nav aria-label="Espaces" style="flex: 1 1 auto; min-width: 0; display: flex">
+<div role="group" aria-label="Espace de l’application" style="display: flex; gap: 2px; padding: 3px; border-radius: 999px; background: #1D2027; border: 1px solid #2C303A">
+<a href="WebAccueil.dc.html" style="display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; color: #B9BEC9; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+Voyager
+</a>
+<a href="WebPortefeuille.dc.html" aria-current="true" style="display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: #FFD23F; color: #0D0E11; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg>
+Mes actifs
+</a>
+</div>
+</nav>
+<div style="flex: 1 1 300px; max-width: 440px; display: flex; align-items: center; gap: 8px">
+<div role="search" style="position: relative; flex: 1; min-width: 0">
+<label for="top-q" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Rechercher une ville, un code d’aéroport ou une référence</label>
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 14px; top: 13px; color: #8C93A3; pointer-events: none"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+<input id="top-q" type="search" placeholder="Ville, code ou réf. NXG" autocomplete="off" style="width: 100%; height: 44px; box-sizing: border-box; padding: 0 14px 0 42px; border-radius: 12px; background: #15171C; border: 1px solid #6B7282; color: #F3F4F6; font: inherit; font-size: 15px">
+</div>
+<a href="CentreNotifications.dc.html" aria-label="Notifications, 2 non lues" style="position: relative; flex: none; width: 44px; height: 44px; box-sizing: border-box; border-radius: 999px; background: #15171C; border: 1px solid #2C303A; display: flex; align-items: center; justify-content: center; color: #F3F4F6">
+<svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16v-5a6 6 0 1 1 12 0v5l2 2H4z"></path><path d="M10 21h4"></path></svg>
+<span style="position: absolute; top: 9px; right: 10px; width: 9px; height: 9px; box-sizing: border-box; border-radius: 999px; background: #FFD23F; border: 2px solid #15171C"></span>
+</a>
+<a href="Compte.dc.html" aria-label="AT, mon compte (Alex T.)" style="flex: none; width: 44px; height: 44px; border-radius: 999px; background: #F3F4F6; color: #0D0E11; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; letter-spacing: 0.04em; text-decoration: none">AT</a>
+</div>
+</div>
+<nav aria-label="Mes actifs" style="max-width: 1440px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 8px; box-sizing: border-box">
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px">
+<li>
+<a href="WebMarche.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; background: #1D2027; box-shadow: inset 0 -2px 0 #FFD23F; color: #F3F4F6; font-size: 15px; font-weight: 600; text-decoration: none">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 16 6-6 4 4 6-7"></path><path d="M15 7h5v5"></path></svg>
+Marché
+</a>
+</li>
+<li>
+<a href="Drop.dc.html" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; color: #B9BEC9; font-size: 15px; font-weight: 600; text-decoration: none">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"></path></svg>
+Drops
+<span data-nx-motion="1" aria-hidden="true" style="width: 7px; height: 7px; border-radius: 999px; background: #FFD23F; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+</a>
+</li>
+<li>
+<a href="WebPortefeuille.dc.html" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; color: #B9BEC9; font-size: 15px; font-weight: 600; text-decoration: none">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h12v4"></path><rect x="3" y="9" width="18" height="11" rx="2"></rect><path d="M16 14.5h1.5"></path></svg>
+Portefeuille
+</a>
+</li>
+<li>
+<a href="Agence.dc.html" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; color: #B9BEC9; font-size: 15px; font-weight: 600; text-decoration: none">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9l1.5-5h13L20 9M4 9v11h16V9M4 9h16M9 20v-6h6v6"></path></svg>
+Agences
+</a>
+</li>
+</ul>
+</nav>
+</header>
+
+<main style="flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 16px clamp(16px, 4vw, 48px) 28px; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px">
+
+<section aria-labelledby="page-title" style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 32px">
+<div style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
+<h1 id="page-title" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 44px; line-height: 44px; text-transform: uppercase; letter-spacing: 0.01em; text-wrap: balance">Marché des billets</h1>
+<p style="margin: 0; font-size: 13px; font-weight: 600; color: #B9BEC9">Mes actifs · marché secondaire contrôlé</p>
+</div>
+<p style="margin: 0; flex: 0 1 560px; font-size: 15px; line-height: 22px; color: #B9BEC9">Billets neufs, reventes entre détenteurs et offres d’agences, comparés au prix d’un billet neuf équivalent. Le nom du voyageur se donne au plus tard 24&nbsp;h avant le départ.</p>
+</section>
+
+<div role="search" aria-label="Rechercher un trajet" data-surface="paper" style="display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; border-radius: 20px; background: #FFFFFF; color: #121418; color-scheme: light">
+<div style="flex: 1 1 170px; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 2px; padding: 4px 14px; border-radius: 14px; background: #F1F2F4">
+<label for="mk-from" style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #555C6B">De</label>
+<input id="mk-from" name="from" type="text" value="{{from}}" sc-camel-on-change="{{onField}}" autocomplete="off" style="width: 100%; min-width: 0; height: 44px; box-sizing: border-box; padding: 0; border: 0; border-bottom: 1px solid #7A8597; border-radius: 4px; background: transparent; color: #121418; font: inherit; font-size: 17px; font-weight: 600">
+</div>
+<div style="flex: 1 1 170px; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 2px; padding: 4px 14px; border-radius: 14px; background: #F1F2F4">
+<label for="mk-to" style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #555C6B">À</label>
+<input id="mk-to" name="to" type="text" value="{{to}}" sc-camel-on-change="{{onField}}" autocomplete="off" style="width: 100%; min-width: 0; height: 44px; box-sizing: border-box; padding: 0; border: 0; border-bottom: 1px solid #7A8597; border-radius: 4px; background: transparent; color: #121418; font: inherit; font-size: 17px; font-weight: 600">
+</div>
+<div style="flex: 1 1 170px; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 2px; padding: 4px 14px; border-radius: 14px; background: #F1F2F4">
+<label for="mk-date" style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #555C6B">Départ</label>
+<input id="mk-date" name="date" type="text" value="{{date}}" sc-camel-on-change="{{onField}}" autocomplete="off" style="width: 100%; min-width: 0; height: 44px; box-sizing: border-box; padding: 0; border: 0; border-bottom: 1px solid #7A8597; border-radius: 4px; background: transparent; color: #121418; font: inherit; font-size: 17px; font-weight: 600">
+</div>
+<div style="flex: 1 1 140px; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 2px; padding: 4px 14px; border-radius: 14px; background: #F1F2F4">
+<label for="mk-pax" style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #555C6B">Voyageurs</label>
+<sc-raw-select id="mk-pax" name="pax" value="{{pax}}" sc-camel-on-change="{{onField}}" style="width: 100%; min-width: 0; height: 44px; box-sizing: border-box; padding: 0; border: 0; border-bottom: 1px solid #7A8597; border-radius: 4px; background: transparent; color: #121418; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">
+<option value="1">1 voyageur</option>
+<option value="2">2 voyageurs</option>
+<option value="3">3 voyageurs</option>
+<option value="4">4 voyageurs</option>
+</sc-raw-select>
+</div>
+<div style="flex: 1 1 210px; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 2px; padding: 4px 14px; border-radius: 14px; background: #F1F2F4">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #555C6B">Sources</span>
+<span style="display: block; min-height: 28px; line-height: 28px; font-size: 17px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sourcesLabel}}</span>
+</div>
+<button type="button" sc-camel-on-click="{{onSearch}}" style="flex: 1 1 140px; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 64px; padding: 0 22px; border: 0; border-radius: 14px; background: #0D0E11; color: #FFD23F; font: inherit; font-size: 16px; font-weight: 700; cursor: pointer">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+Rechercher
+</button>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px">
+
+<aside aria-labelledby="flt-title" style="flex: 1 1 220px; min-width: 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px; padding: 18px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<h2 id="flt-title" style="margin: 0; display: flex; align-items: center; gap: 8px; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg>
+Filtres
+</h2>
+<button type="button" sc-camel-on-click="{{resetFilters}}" style="min-height: 44px; padding: 0 4px; background: transparent; border: 0; color: #FFD23F; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Réinitialiser</button>
+</div>
+
+<div role="group" aria-labelledby="flt-src" style="display: flex; flex-direction: column; gap: 4px">
+<h3 id="flt-src" style="margin: 0 0 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Sources</h3>
+<button type="button" aria-pressed="{{fNeuf.pressed}}" sc-camel-on-click="{{fNeuf.toggle}}" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{fNeuf.border}}; background: {{fNeuf.bg}}; color: #F3F4F6; font: inherit; font-size: 15px; font-weight: 600; text-align: left; cursor: pointer">
+<span aria-hidden="true" style="flex: none; width: 20px; height: 20px; box-sizing: border-box; border-radius: 6px; border: 2px solid {{fNeuf.boxBorder}}; background: {{fNeuf.boxBg}}; color: {{fNeuf.check}}; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></span>
+<span style="flex: 1">Neuf</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; color: #8C93A3">2</span>
+</button>
+<button type="button" aria-pressed="{{fRevente.pressed}}" sc-camel-on-click="{{fRevente.toggle}}" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{fRevente.border}}; background: {{fRevente.bg}}; color: #F3F4F6; font: inherit; font-size: 15px; font-weight: 600; text-align: left; cursor: pointer">
+<span aria-hidden="true" style="flex: none; width: 20px; height: 20px; box-sizing: border-box; border-radius: 6px; border: 2px solid {{fRevente.boxBorder}}; background: {{fRevente.boxBg}}; color: {{fRevente.check}}; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></span>
+<span style="flex: 1">Revente</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; color: #8C93A3">3</span>
+</button>
+<button type="button" aria-pressed="{{fAgence.pressed}}" sc-camel-on-click="{{fAgence.toggle}}" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{fAgence.border}}; background: {{fAgence.bg}}; color: #F3F4F6; font: inherit; font-size: 15px; font-weight: 600; text-align: left; cursor: pointer">
+<span aria-hidden="true" style="flex: none; width: 20px; height: 20px; box-sizing: border-box; border-radius: 6px; border: 2px solid {{fAgence.boxBorder}}; background: {{fAgence.boxBg}}; color: {{fAgence.check}}; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></span>
+<span style="flex: 1">Agences partenaires</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; color: #8C93A3">1</span>
+</button>
+<button type="button" aria-pressed="{{fDrop.pressed}}" sc-camel-on-click="{{fDrop.toggle}}" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{fDrop.border}}; background: {{fDrop.bg}}; color: #F3F4F6; font: inherit; font-size: 15px; font-weight: 600; text-align: left; cursor: pointer">
+<span aria-hidden="true" style="flex: none; width: 20px; height: 20px; box-sizing: border-box; border-radius: 6px; border: 2px solid {{fDrop.boxBorder}}; background: {{fDrop.boxBg}}; color: {{fDrop.check}}; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></span>
+<span style="flex: 1">Drops membres</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; color: #8C93A3">1</span>
+</button>
+</div>
+
+<div role="group" aria-labelledby="flt-esc" style="display: flex; flex-direction: column; gap: 8px">
+<h3 id="flt-esc" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Escales</h3>
+<div style="display: flex; gap: 4px; padding: 4px; border-radius: 14px; background: #1D2027; border: 1px solid #2C303A">
+<button type="button" aria-pressed="{{escAll.pressed}}" sc-camel-on-click="{{setEscAll}}" style="flex: 1; min-height: 44px; padding: 0 8px; border: 0; border-radius: 10px; background: {{escAll.bg}}; color: {{escAll.color}}; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Toutes</button>
+<button type="button" aria-pressed="{{escDirect.pressed}}" sc-camel-on-click="{{setEscDirect}}" style="flex: 1; min-height: 44px; padding: 0 8px; border: 0; border-radius: 10px; background: {{escDirect.bg}}; color: {{escDirect.color}}; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Direct seulement</button>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h3 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Revente</h3>
+<button type="button" role="switch" aria-checked="{{rev.checked}}" sc-camel-on-click="{{toggleRev}}" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 6px 10px; box-sizing: border-box; border-radius: 12px; border: 1px solid #2C303A; background: transparent; color: #F3F4F6; font: inherit; text-align: left; cursor: pointer">
+<span style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 15px; font-weight: 600">Revendable seulement</span>
+<span style="font-size: 12px; color: #8C93A3">Masque les offres non revendables</span>
+</span>
+<span aria-hidden="true" style="position: relative; flex: none; width: 44px; height: 24px; box-sizing: border-box; border-radius: 999px; background: {{rev.track}}; border: 1px solid {{rev.trackBorder}}">
+<span style="position: absolute; top: 2px; left: {{rev.knobLeft}}; width: 18px; height: 18px; border-radius: 999px; background: {{rev.knob}}"></span>
+</span>
+</button>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px">
+<label for="mk-prix" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Prix maximum</label>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums">{{prixLabel}}</span>
+</div>
+<input id="mk-prix" type="range" min="1400" max="2200" step="10" value="{{prixMax}}" sc-camel-on-change="{{setPrix}}" aria-valuetext="{{prixLabel}}" style="width: 100%; height: 44px; margin: 0; accent-color: #FFD23F; cursor: pointer">
+<div aria-hidden="true" style="display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #8C93A3">
+<span>1&nbsp;400&nbsp;$</span><span>2&nbsp;200&nbsp;$</span>
+</div>
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #8C93A3">Les offres Drop verrouillées restent affichées : leur prix n’est visible qu’aux membres.</p>
+</div>
+</aside>
+
+<div style="flex: 999 1 560px; min-width: 0; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px">
+
+<section aria-labelledby="board-title" style="flex: 999 1 620px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px">
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<h2 id="board-title" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 24px; letter-spacing: 0.04em; text-transform: uppercase">Tableau des départs</h2>
+<p aria-live="polite" style="margin: 0; font-size: 13px; color: #B9BEC9">{{countLabel}} · YUL → CDG · ven. 18 déc. 2026<sc-if value="{{refreshed}}" hint-placeholder-val="{{ false }}"> · résultats actualisés</sc-if></p>
+</div>
+<div role="group" aria-labelledby="sort-label" style="display: flex; align-items: center; gap: 8px">
+<span id="sort-label" style="font-size: 13px; font-weight: 500; color: #B9BEC9">Trier par</span>
+<div style="display: flex; gap: 4px; padding: 4px; border-radius: 14px; background: #15171C; border: 1px solid #2C303A">
+<button type="button" aria-pressed="{{sortPrix.pressed}}" sc-camel-on-click="{{sortByPrix}}" style="display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border: 0; border-radius: 10px; background: {{sortPrix.bg}}; color: {{sortPrix.color}}; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Prix<span aria-hidden="true" style="font-family: 'IBM Plex Mono', ui-monospace, monospace">{{sortPrix.arrow}}</span><span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">{{sortPrix.dirText}}</span></button>
+<button type="button" aria-pressed="{{sortHeure.pressed}}" sc-camel-on-click="{{sortByHeure}}" style="display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border: 0; border-radius: 10px; background: {{sortHeure.bg}}; color: {{sortHeure.color}}; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Heure de départ<span aria-hidden="true" style="font-family: 'IBM Plex Mono', ui-monospace, monospace">{{sortHeure.arrow}}</span><span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">{{sortHeure.dirText}}</span></button>
+</div>
+</div>
+</div>
+
+<div style="border-radius: 20px; background: #060708; border: 1px solid #2C303A; overflow: hidden">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px; padding: 12px 16px; border-bottom: 1px solid #1A1C21">
+<span style="display: flex; align-items: center; gap: 10px; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: 0.08em; text-transform: uppercase; color: #FFD23F">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h6l4 7h2l-2-7h5l2 2h2l-1-3 1-3h-2l-2 2h-5l2-7h-2l-4 7H3z"></path></svg>
+Départs · Montréal YUL
+</span>
+<span style="font-size: 13px; color: #B9BEC9">Prix équivalent neuf : <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #F3F4F6">2&nbsp;050&nbsp;$</span> · indicatif</span>
+</div>
+<div style="overflow-x: auto">
+<sc-raw-table style="width: 100%; min-width: 720px; border-collapse: collapse; font-variant-numeric: tabular-nums">
+<sc-raw-caption style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Offres Montréal (YUL) vers Paris (CDG), vendredi 18 décembre 2026. Écart calculé par rapport au prix équivalent d’un billet neuf, 2 050 $.</sc-raw-caption>
+<sc-raw-thead>
+<sc-raw-tr>
+<sc-raw-th scope="col" aria-sort="{{sortHeure.aria}}" style="padding: 10px 8px 6px 16px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8C93A3; white-space: nowrap">
+<button type="button" sc-camel-on-click="{{sortByHeure}}" style="display: inline-flex; align-items: center; gap: 4px; min-height: 44px; min-width: 44px; padding: 0 6px; margin-left: -6px; background: transparent; border: 0; border-radius: 8px; color: {{sortHeure.hdrColor}}; font: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer">Départ<span aria-hidden="true">{{sortHeure.arrow}}</span></button>
+</sc-raw-th>
+<sc-raw-th scope="col" style="padding: 10px 8px 6px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8C93A3; white-space: nowrap">Vers</sc-raw-th>
+<sc-raw-th scope="col" style="padding: 10px 8px 6px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8C93A3; white-space: nowrap">Compagnie</sc-raw-th>
+<sc-raw-th scope="col" style="padding: 10px 8px 6px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8C93A3; white-space: nowrap">Source</sc-raw-th>
+<sc-raw-th scope="col" aria-sort="{{sortPrix.aria}}" style="padding: 10px 8px 6px; text-align: right; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8C93A3; white-space: nowrap">
+<button type="button" sc-camel-on-click="{{sortByPrix}}" style="display: inline-flex; align-items: center; gap: 4px; min-height: 44px; min-width: 44px; padding: 0 6px; margin-right: -6px; background: transparent; border: 0; border-radius: 8px; color: {{sortPrix.hdrColor}}; font: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer">Prix<span aria-hidden="true">{{sortPrix.arrow}}</span></button>
+</sc-raw-th>
+<sc-raw-th scope="col" style="padding: 10px 8px 6px; text-align: right; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8C93A3; white-space: nowrap">Écart vs neuf</sc-raw-th>
+<sc-raw-th scope="col" style="padding: 10px 16px 6px 8px; text-align: right; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8C93A3; white-space: nowrap"><span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Sélection</span></sc-raw-th>
+</sc-raw-tr>
+</sc-raw-thead>
+<sc-raw-tbody>
+
+<sc-raw-tr sc-camel-on-click="{{s0.select}}" sc-camel-on-mouse-enter="{{s0.enter}}" sc-camel-on-mouse-leave="{{s0.leave}}" style="display: {{s0.display}}; background: {{s0.bg}}; cursor: pointer">
+<sc-raw-td style="padding: 8px 8px 8px 16px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">{{s0.depSr}}</span>
+<span aria-hidden="true" style="display: flex; gap: 2px"><sc-for list="{{s0.depCells}}" as="c" hint-placeholder-count="5"><span style="width: {{c.w}}; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: {{c.bg}}; box-shadow: {{c.shadow}}; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: {{c.color}}">{{c.ch}}</span></sc-for></span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3; white-space: nowrap">{{s0.arrLabel}}</span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Paris CDG,</span>
+<span aria-hidden="true" style="display: flex; gap: 2px"><sc-for list="{{s0.codeCells}}" as="c" hint-placeholder-count="3"><span style="width: {{c.w}}; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: {{c.bg}}; box-shadow: {{c.shadow}}; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: {{c.color}}">{{c.ch}}</span></sc-for></span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3; white-space: nowrap">{{s0.via}}</span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="font-size: 15px; font-weight: 600; white-space: nowrap">{{s0.cie}}</span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3; white-space: nowrap">{{s0.vol}}</span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; background: {{s0.chipBg}}; color: {{s0.chipColor}}; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{s0.srcIcon}}"></path></svg>{{s0.srcLabel}}</span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3">{{s0.srcSub}}<sc-if value="{{s0.nonResell}}" hint-placeholder-val="{{ false }}"> · non revendable</sc-if></span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle; text-align: right">
+<sc-if value="{{s0.open}}" hint-placeholder-val="{{ true }}"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; white-space: nowrap">{{s0.price}}</span></sc-if>
+<sc-if value="{{s0.locked}}" hint-placeholder-val="{{ false }}"><span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #FFD23F; white-space: nowrap"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>Membres</span></sc-if>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle; text-align: right">
+<sc-if value="{{s0.open}}" hint-placeholder-val="{{ true }}"><span style="display: inline-flex; flex-direction: column; align-items: flex-end; gap: 2px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: {{s0.deltaColor}}; white-space: nowrap"><span style="font-size: 15px">{{s0.delta}}</span><span style="font-size: 12px">{{s0.pct}}</span></span></sc-if>
+<sc-if value="{{s0.locked}}" hint-placeholder-val="{{ false }}"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #8C93A3">—<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">non affiché</span></span></sc-if>
+</sc-raw-td>
+<sc-raw-td style="padding: 4px 12px 4px 4px; border-top: 1px solid #1A1C21; vertical-align: middle; text-align: right">
+<button type="button" aria-pressed="{{s0.pressed}}" aria-label="{{s0.selLabel}}" sc-camel-on-click="{{s0.select}}" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 0; background: transparent; border: 0; border-radius: 999px; cursor: pointer"><span style="width: 24px; height: 24px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border-radius: 999px; background: {{s0.ringBg}}; border: 2px solid {{s0.ringBorder}}; color: {{s0.ringColor}}"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></span></button>
+</sc-raw-td>
+</sc-raw-tr>
+
+<sc-raw-tr sc-camel-on-click="{{s1.select}}" sc-camel-on-mouse-enter="{{s1.enter}}" sc-camel-on-mouse-leave="{{s1.leave}}" style="display: {{s1.display}}; background: {{s1.bg}}; cursor: pointer">
+<sc-raw-td style="padding: 8px 8px 8px 16px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">{{s1.depSr}}</span>
+<span aria-hidden="true" style="display: flex; gap: 2px"><sc-for list="{{s1.depCells}}" as="c" hint-placeholder-count="5"><span style="width: {{c.w}}; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: {{c.bg}}; box-shadow: {{c.shadow}}; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: {{c.color}}">{{c.ch}}</span></sc-for></span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3; white-space: nowrap">{{s1.arrLabel}}</span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Paris CDG,</span>
+<span aria-hidden="true" style="display: flex; gap: 2px"><sc-for list="{{s1.codeCells}}" as="c" hint-placeholder-count="3"><span style="width: {{c.w}}; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: {{c.bg}}; box-shadow: {{c.shadow}}; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: {{c.color}}">{{c.ch}}</span></sc-for></span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3; white-space: nowrap">{{s1.via}}</span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="font-size: 15px; font-weight: 600; white-space: nowrap">{{s1.cie}}</span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3; white-space: nowrap">{{s1.vol}}</span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; background: {{s1.chipBg}}; color: {{s1.chipColor}}; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{s1.srcIcon}}"></path></svg>{{s1.srcLabel}}</span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3">{{s1.srcSub}}<sc-if value="{{s1.nonResell}}" hint-placeholder-val="{{ false }}"> · non revendable</sc-if></span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle; text-align: right">
+<sc-if value="{{s1.open}}" hint-placeholder-val="{{ true }}"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; white-space: nowrap">{{s1.price}}</span></sc-if>
+<sc-if value="{{s1.locked}}" hint-placeholder-val="{{ false }}"><span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #FFD23F; white-space: nowrap"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>Membres</span></sc-if>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle; text-align: right">
+<sc-if value="{{s1.open}}" hint-placeholder-val="{{ true }}"><span style="display: inline-flex; flex-direction: column; align-items: flex-end; gap: 2px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: {{s1.deltaColor}}; white-space: nowrap"><span style="font-size: 15px">{{s1.delta}}</span><span style="font-size: 12px">{{s1.pct}}</span></span></sc-if>
+<sc-if value="{{s1.locked}}" hint-placeholder-val="{{ false }}"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #8C93A3">—<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">non affiché</span></span></sc-if>
+</sc-raw-td>
+<sc-raw-td style="padding: 4px 12px 4px 4px; border-top: 1px solid #1A1C21; vertical-align: middle; text-align: right">
+<button type="button" aria-pressed="{{s1.pressed}}" aria-label="{{s1.selLabel}}" sc-camel-on-click="{{s1.select}}" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 0; background: transparent; border: 0; border-radius: 999px; cursor: pointer"><span style="width: 24px; height: 24px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border-radius: 999px; background: {{s1.ringBg}}; border: 2px solid {{s1.ringBorder}}; color: {{s1.ringColor}}"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></span></button>
+</sc-raw-td>
+</sc-raw-tr>
+
+<sc-raw-tr sc-camel-on-click="{{s2.select}}" sc-camel-on-mouse-enter="{{s2.enter}}" sc-camel-on-mouse-leave="{{s2.leave}}" style="display: {{s2.display}}; background: {{s2.bg}}; cursor: pointer">
+<sc-raw-td style="padding: 8px 8px 8px 16px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">{{s2.depSr}}</span>
+<span aria-hidden="true" style="display: flex; gap: 2px"><sc-for list="{{s2.depCells}}" as="c" hint-placeholder-count="5"><span style="width: {{c.w}}; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: {{c.bg}}; box-shadow: {{c.shadow}}; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: {{c.color}}">{{c.ch}}</span></sc-for></span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3; white-space: nowrap">{{s2.arrLabel}}</span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Paris CDG,</span>
+<span aria-hidden="true" style="display: flex; gap: 2px"><sc-for list="{{s2.codeCells}}" as="c" hint-placeholder-count="3"><span style="width: {{c.w}}; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: {{c.bg}}; box-shadow: {{c.shadow}}; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: {{c.color}}">{{c.ch}}</span></sc-for></span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3; white-space: nowrap">{{s2.via}}</span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="font-size: 15px; font-weight: 600; white-space: nowrap">{{s2.cie}}</span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3; white-space: nowrap">{{s2.vol}}</span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; background: {{s2.chipBg}}; color: {{s2.chipColor}}; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{s2.srcIcon}}"></path></svg>{{s2.srcLabel}}</span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3">{{s2.srcSub}}<sc-if value="{{s2.nonResell}}" hint-placeholder-val="{{ false }}"> · non revendable</sc-if></span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle; text-align: right">
+<sc-if value="{{s2.open}}" hint-placeholder-val="{{ true }}"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; white-space: nowrap">{{s2.price}}</span></sc-if>
+<sc-if value="{{s2.locked}}" hint-placeholder-val="{{ false }}"><span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #FFD23F; white-space: nowrap"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>Membres</span></sc-if>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle; text-align: right">
+<sc-if value="{{s2.open}}" hint-placeholder-val="{{ true }}"><span style="display: inline-flex; flex-direction: column; align-items: flex-end; gap: 2px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: {{s2.deltaColor}}; white-space: nowrap"><span style="font-size: 15px">{{s2.delta}}</span><span style="font-size: 12px">{{s2.pct}}</span></span></sc-if>
+<sc-if value="{{s2.locked}}" hint-placeholder-val="{{ false }}"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #8C93A3">—<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">non affiché</span></span></sc-if>
+</sc-raw-td>
+<sc-raw-td style="padding: 4px 12px 4px 4px; border-top: 1px solid #1A1C21; vertical-align: middle; text-align: right">
+<button type="button" aria-pressed="{{s2.pressed}}" aria-label="{{s2.selLabel}}" sc-camel-on-click="{{s2.select}}" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 0; background: transparent; border: 0; border-radius: 999px; cursor: pointer"><span style="width: 24px; height: 24px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border-radius: 999px; background: {{s2.ringBg}}; border: 2px solid {{s2.ringBorder}}; color: {{s2.ringColor}}"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></span></button>
+</sc-raw-td>
+</sc-raw-tr>
+
+<sc-raw-tr sc-camel-on-click="{{s3.select}}" sc-camel-on-mouse-enter="{{s3.enter}}" sc-camel-on-mouse-leave="{{s3.leave}}" style="display: {{s3.display}}; background: {{s3.bg}}; cursor: pointer">
+<sc-raw-td style="padding: 8px 8px 8px 16px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">{{s3.depSr}}</span>
+<span aria-hidden="true" style="display: flex; gap: 2px"><sc-for list="{{s3.depCells}}" as="c" hint-placeholder-count="5"><span style="width: {{c.w}}; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: {{c.bg}}; box-shadow: {{c.shadow}}; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: {{c.color}}">{{c.ch}}</span></sc-for></span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3; white-space: nowrap">{{s3.arrLabel}}</span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Paris CDG,</span>
+<span aria-hidden="true" style="display: flex; gap: 2px"><sc-for list="{{s3.codeCells}}" as="c" hint-placeholder-count="3"><span style="width: {{c.w}}; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: {{c.bg}}; box-shadow: {{c.shadow}}; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: {{c.color}}">{{c.ch}}</span></sc-for></span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3; white-space: nowrap">{{s3.via}}</span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="font-size: 15px; font-weight: 600; white-space: nowrap">{{s3.cie}}</span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3; white-space: nowrap">{{s3.vol}}</span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; background: {{s3.chipBg}}; color: {{s3.chipColor}}; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{s3.srcIcon}}"></path></svg>{{s3.srcLabel}}</span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3">{{s3.srcSub}}<sc-if value="{{s3.nonResell}}" hint-placeholder-val="{{ false }}"> · non revendable</sc-if></span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle; text-align: right">
+<sc-if value="{{s3.open}}" hint-placeholder-val="{{ true }}"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; white-space: nowrap">{{s3.price}}</span></sc-if>
+<sc-if value="{{s3.locked}}" hint-placeholder-val="{{ false }}"><span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #FFD23F; white-space: nowrap"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>Membres</span></sc-if>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle; text-align: right">
+<sc-if value="{{s3.open}}" hint-placeholder-val="{{ true }}"><span style="display: inline-flex; flex-direction: column; align-items: flex-end; gap: 2px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: {{s3.deltaColor}}; white-space: nowrap"><span style="font-size: 15px">{{s3.delta}}</span><span style="font-size: 12px">{{s3.pct}}</span></span></sc-if>
+<sc-if value="{{s3.locked}}" hint-placeholder-val="{{ false }}"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #8C93A3">—<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">non affiché</span></span></sc-if>
+</sc-raw-td>
+<sc-raw-td style="padding: 4px 12px 4px 4px; border-top: 1px solid #1A1C21; vertical-align: middle; text-align: right">
+<button type="button" aria-pressed="{{s3.pressed}}" aria-label="{{s3.selLabel}}" sc-camel-on-click="{{s3.select}}" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 0; background: transparent; border: 0; border-radius: 999px; cursor: pointer"><span style="width: 24px; height: 24px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border-radius: 999px; background: {{s3.ringBg}}; border: 2px solid {{s3.ringBorder}}; color: {{s3.ringColor}}"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></span></button>
+</sc-raw-td>
+</sc-raw-tr>
+
+<sc-raw-tr sc-camel-on-click="{{s4.select}}" sc-camel-on-mouse-enter="{{s4.enter}}" sc-camel-on-mouse-leave="{{s4.leave}}" style="display: {{s4.display}}; background: {{s4.bg}}; cursor: pointer">
+<sc-raw-td style="padding: 8px 8px 8px 16px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">{{s4.depSr}}</span>
+<span aria-hidden="true" style="display: flex; gap: 2px"><sc-for list="{{s4.depCells}}" as="c" hint-placeholder-count="5"><span style="width: {{c.w}}; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: {{c.bg}}; box-shadow: {{c.shadow}}; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: {{c.color}}">{{c.ch}}</span></sc-for></span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3; white-space: nowrap">{{s4.arrLabel}}</span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Paris CDG,</span>
+<span aria-hidden="true" style="display: flex; gap: 2px"><sc-for list="{{s4.codeCells}}" as="c" hint-placeholder-count="3"><span style="width: {{c.w}}; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: {{c.bg}}; box-shadow: {{c.shadow}}; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: {{c.color}}">{{c.ch}}</span></sc-for></span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3; white-space: nowrap">{{s4.via}}</span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="font-size: 15px; font-weight: 600; white-space: nowrap">{{s4.cie}}</span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3; white-space: nowrap">{{s4.vol}}</span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; background: {{s4.chipBg}}; color: {{s4.chipColor}}; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{s4.srcIcon}}"></path></svg>{{s4.srcLabel}}</span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3">{{s4.srcSub}}<sc-if value="{{s4.nonResell}}" hint-placeholder-val="{{ false }}"> · non revendable</sc-if></span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle; text-align: right">
+<sc-if value="{{s4.open}}" hint-placeholder-val="{{ true }}"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; white-space: nowrap">{{s4.price}}</span></sc-if>
+<sc-if value="{{s4.locked}}" hint-placeholder-val="{{ false }}"><span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #FFD23F; white-space: nowrap"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>Membres</span></sc-if>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle; text-align: right">
+<sc-if value="{{s4.open}}" hint-placeholder-val="{{ true }}"><span style="display: inline-flex; flex-direction: column; align-items: flex-end; gap: 2px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: {{s4.deltaColor}}; white-space: nowrap"><span style="font-size: 15px">{{s4.delta}}</span><span style="font-size: 12px">{{s4.pct}}</span></span></sc-if>
+<sc-if value="{{s4.locked}}" hint-placeholder-val="{{ false }}"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #8C93A3">—<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">non affiché</span></span></sc-if>
+</sc-raw-td>
+<sc-raw-td style="padding: 4px 12px 4px 4px; border-top: 1px solid #1A1C21; vertical-align: middle; text-align: right">
+<button type="button" aria-pressed="{{s4.pressed}}" aria-label="{{s4.selLabel}}" sc-camel-on-click="{{s4.select}}" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 0; background: transparent; border: 0; border-radius: 999px; cursor: pointer"><span style="width: 24px; height: 24px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border-radius: 999px; background: {{s4.ringBg}}; border: 2px solid {{s4.ringBorder}}; color: {{s4.ringColor}}"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></span></button>
+</sc-raw-td>
+</sc-raw-tr>
+
+<sc-raw-tr sc-camel-on-click="{{s5.select}}" sc-camel-on-mouse-enter="{{s5.enter}}" sc-camel-on-mouse-leave="{{s5.leave}}" style="display: {{s5.display}}; background: {{s5.bg}}; cursor: pointer">
+<sc-raw-td style="padding: 8px 8px 8px 16px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">{{s5.depSr}}</span>
+<span aria-hidden="true" style="display: flex; gap: 2px"><sc-for list="{{s5.depCells}}" as="c" hint-placeholder-count="5"><span style="width: {{c.w}}; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: {{c.bg}}; box-shadow: {{c.shadow}}; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: {{c.color}}">{{c.ch}}</span></sc-for></span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3; white-space: nowrap">{{s5.arrLabel}}</span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Paris CDG,</span>
+<span aria-hidden="true" style="display: flex; gap: 2px"><sc-for list="{{s5.codeCells}}" as="c" hint-placeholder-count="3"><span style="width: {{c.w}}; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: {{c.bg}}; box-shadow: {{c.shadow}}; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: {{c.color}}">{{c.ch}}</span></sc-for></span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3; white-space: nowrap">{{s5.via}}</span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="font-size: 15px; font-weight: 600; white-space: nowrap">{{s5.cie}}</span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3; white-space: nowrap">{{s5.vol}}</span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; background: {{s5.chipBg}}; color: {{s5.chipColor}}; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{s5.srcIcon}}"></path></svg>{{s5.srcLabel}}</span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3">{{s5.srcSub}}<sc-if value="{{s5.nonResell}}" hint-placeholder-val="{{ false }}"> · non revendable</sc-if></span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle; text-align: right">
+<sc-if value="{{s5.open}}" hint-placeholder-val="{{ true }}"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; white-space: nowrap">{{s5.price}}</span></sc-if>
+<sc-if value="{{s5.locked}}" hint-placeholder-val="{{ false }}"><span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #FFD23F; white-space: nowrap"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>Membres</span></sc-if>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle; text-align: right">
+<sc-if value="{{s5.open}}" hint-placeholder-val="{{ true }}"><span style="display: inline-flex; flex-direction: column; align-items: flex-end; gap: 2px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: {{s5.deltaColor}}; white-space: nowrap"><span style="font-size: 15px">{{s5.delta}}</span><span style="font-size: 12px">{{s5.pct}}</span></span></sc-if>
+<sc-if value="{{s5.locked}}" hint-placeholder-val="{{ false }}"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #8C93A3">—<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">non affiché</span></span></sc-if>
+</sc-raw-td>
+<sc-raw-td style="padding: 4px 12px 4px 4px; border-top: 1px solid #1A1C21; vertical-align: middle; text-align: right">
+<button type="button" aria-pressed="{{s5.pressed}}" aria-label="{{s5.selLabel}}" sc-camel-on-click="{{s5.select}}" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 0; background: transparent; border: 0; border-radius: 999px; cursor: pointer"><span style="width: 24px; height: 24px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border-radius: 999px; background: {{s5.ringBg}}; border: 2px solid {{s5.ringBorder}}; color: {{s5.ringColor}}"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></span></button>
+</sc-raw-td>
+</sc-raw-tr>
+
+<sc-raw-tr sc-camel-on-click="{{s6.select}}" sc-camel-on-mouse-enter="{{s6.enter}}" sc-camel-on-mouse-leave="{{s6.leave}}" style="display: {{s6.display}}; background: {{s6.bg}}; cursor: pointer">
+<sc-raw-td style="padding: 8px 8px 8px 16px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">{{s6.depSr}}</span>
+<span aria-hidden="true" style="display: flex; gap: 2px"><sc-for list="{{s6.depCells}}" as="c" hint-placeholder-count="5"><span style="width: {{c.w}}; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: {{c.bg}}; box-shadow: {{c.shadow}}; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: {{c.color}}">{{c.ch}}</span></sc-for></span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3; white-space: nowrap">{{s6.arrLabel}}</span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Paris CDG,</span>
+<span aria-hidden="true" style="display: flex; gap: 2px"><sc-for list="{{s6.codeCells}}" as="c" hint-placeholder-count="3"><span style="width: {{c.w}}; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: {{c.bg}}; box-shadow: {{c.shadow}}; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: {{c.color}}">{{c.ch}}</span></sc-for></span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3; white-space: nowrap">{{s6.via}}</span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; gap: 3px">
+<span style="font-size: 15px; font-weight: 600; white-space: nowrap">{{s6.cie}}</span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3; white-space: nowrap">{{s6.vol}}</span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle">
+<span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; background: {{s6.chipBg}}; color: {{s6.chipColor}}; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{s6.srcIcon}}"></path></svg>{{s6.srcLabel}}</span>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3">{{s6.srcSub}}<sc-if value="{{s6.nonResell}}" hint-placeholder-val="{{ false }}"> · non revendable</sc-if></span>
+</span>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle; text-align: right">
+<sc-if value="{{s6.open}}" hint-placeholder-val="{{ true }}"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; white-space: nowrap">{{s6.price}}</span></sc-if>
+<sc-if value="{{s6.locked}}" hint-placeholder-val="{{ false }}"><span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #FFD23F; white-space: nowrap"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>Membres</span></sc-if>
+</sc-raw-td>
+<sc-raw-td style="padding: 8px; border-top: 1px solid #1A1C21; vertical-align: middle; text-align: right">
+<sc-if value="{{s6.open}}" hint-placeholder-val="{{ true }}"><span style="display: inline-flex; flex-direction: column; align-items: flex-end; gap: 2px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: {{s6.deltaColor}}; white-space: nowrap"><span style="font-size: 15px">{{s6.delta}}</span><span style="font-size: 12px">{{s6.pct}}</span></span></sc-if>
+<sc-if value="{{s6.locked}}" hint-placeholder-val="{{ false }}"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #8C93A3">—<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">non affiché</span></span></sc-if>
+</sc-raw-td>
+<sc-raw-td style="padding: 4px 12px 4px 4px; border-top: 1px solid #1A1C21; vertical-align: middle; text-align: right">
+<button type="button" aria-pressed="{{s6.pressed}}" aria-label="{{s6.selLabel}}" sc-camel-on-click="{{s6.select}}" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 0; background: transparent; border: 0; border-radius: 999px; cursor: pointer"><span style="width: 24px; height: 24px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border-radius: 999px; background: {{s6.ringBg}}; border: 2px solid {{s6.ringBorder}}; color: {{s6.ringColor}}"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></span></button>
+</sc-raw-td>
+</sc-raw-tr>
+
+</sc-raw-tbody>
+</sc-raw-table>
+</div>
+<sc-if value="{{isEmpty}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 36px 20px 40px; text-align: center; border-top: 1px solid #1A1C21">
+<svg width="28" height="28" sc-camel-view-box="0 0 24 24" fill="none" stroke="#8C93A3" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg>
+<p style="margin: 0; font-size: 16px; font-weight: 600">Aucune offre ne correspond à ces filtres.</p>
+<p style="margin: 0; font-size: 13px; color: #B9BEC9">Élargissez le prix maximum ou réactivez une source.</p>
+<button type="button" sc-camel-on-click="{{resetFilters}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: 14px; background: #1D2027; color: #F3F4F6; border: 1px solid #3A3F4B; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer">Réinitialiser les filtres</button>
+</div>
+</sc-if>
+</div>
+
+<sc-if value="{{hasSel}}" hint-placeholder-val="{{ true }}">
+<div aria-live="polite" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; padding: 16px 18px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A">
+<div style="display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1 1 320px">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Offre sélectionnée</span>
+<span style="font-size: 17px; font-weight: 600">{{sel.title}} · {{sel.route}}</span>
+<span style="font-size: 13px; color: #B9BEC9">{{sel.line}} · nom du voyageur à donner au plus tard le jeu. 17 déc. à {{sel.dep}}</span>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px">
+<sc-if value="{{sel.open}}" hint-placeholder-val="{{ true }}"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 26px; font-variant-numeric: tabular-nums">{{sel.price}}</span></sc-if>
+<sc-if value="{{selStd}}" hint-placeholder-val="{{ true }}"><a href="Offre.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; padding: 0 22px; box-sizing: border-box; border-radius: 14px; background: #FFD23F; color: #0D0E11; font-weight: 700; font-size: 16px; text-decoration: none">Voir l’offre<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a></sc-if>
+<sc-if value="{{selAgency}}" hint-placeholder-val="{{ false }}"><a href="Agence.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; padding: 0 22px; box-sizing: border-box; border-radius: 14px; background: #FFD23F; color: #0D0E11; font-weight: 700; font-size: 16px; text-decoration: none">Voir l’offre de l’agence<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a></sc-if>
+<sc-if value="{{selDrop}}" hint-placeholder-val="{{ false }}"><a href="Abonnement.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; padding: 0 22px; box-sizing: border-box; border-radius: 14px; background: #FFD23F; color: #0D0E11; font-weight: 700; font-size: 16px; text-decoration: none"><svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>Débloquer avec le Pass NexG</a></sc-if>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{noSel}}" hint-placeholder-val="{{ false }}">
+<p style="margin: 0; padding: 16px 18px; border-radius: 20px; border: 1px dashed #3A3F4B; font-size: 14px; color: #B9BEC9">Sélectionnez une offre dans le tableau pour voir son détail.</p>
+</sc-if>
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #8C93A3">Écart = prix de l’offre − prix équivalent neuf (2&nbsp;050&nbsp;$). Prix indicatifs. Reventes : prix plafonné (règle à définir) et commission de 10 à 20&nbsp;% — hypothèses.</p>
+</section>
+
+<div style="flex: 1 1 280px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+
+<section aria-labelledby="drop-title" data-surface="signal" style="display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: #FFD23F; color: #0D0E11">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<h2 id="drop-title" style="margin: 0; display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase">
+<span data-nx-motion="1" aria-hidden="true" style="width: 8px; height: 8px; border-radius: 999px; background: #0D0E11; animation: nx-pulse 1.4s ease-in-out infinite"></span>
+Drop membres en direct
+</h2>
+<span role="timer" style="display: inline-flex; align-items: center; gap: 6px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+<span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Se termine dans</span>
+{{countdown}}
+</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 48px; line-height: 44px; letter-spacing: 0.02em">YUL → PUJ</span>
+<span style="font-size: 14px; font-weight: 500">Punta Cana · dim. 21 févr. 2027 · Nordelle</span>
+</div>
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding-top: 14px; border-top: 1px solid rgba(13,14,17,0.22)">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 34px; line-height: 36px; font-variant-numeric: tabular-nums">200&nbsp;$</span>
+<span style="font-size: 13px; font-weight: 500">Prix équivalent ≈ <s>1&nbsp;000&nbsp;$</s></span>
+</div>
+<span style="display: inline-flex; align-items: center; height: 28px; padding: 0 10px; border-radius: 999px; background: #0D0E11; color: #FFD23F; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">3 places</span>
+</div>
+<a href="Drop.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 48px; box-sizing: border-box; border-radius: 14px; background: #0D0E11; color: #FFD23F; font-weight: 700; font-size: 15px; text-decoration: none">
+Voir le Drop
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+</a>
+<p style="margin: 0; font-size: 13px; line-height: 18px; font-weight: 500">Réservé aux membres du Pass NexG (nom provisoire), 9,99&nbsp;$/mois, indicatif. Quantités limitées, sans garantie d’obtenir une place. <a href="Abonnement.dc.html" style="color: #0D0E11; font-weight: 700">Devenir membre</a></p>
+</section>
+
+<section aria-labelledby="wal-title" style="display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A">
+<a href="WebPortefeuille.dc.html" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; color: #B9BEC9; text-decoration: none">
+<span id="wal-title" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase">Votre portefeuille · 3 droits</span>
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg>
+</a>
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 13px; color: #B9BEC9">Prix équivalent aujourd’hui</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 30px; line-height: 34px; font-variant-numeric: tabular-nums">4&nbsp;730&nbsp;$</span>
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; font-size: 13px; color: #B9BEC9">Payé 3&nbsp;050&nbsp;$
+<span style="display: inline-flex; align-items: center; gap: 3px; color: #62C7FF; font-weight: 600; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums">
+<svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 16 6-6 4 4 6-7"></path><path d="M15 7h5v5"></path></svg>
++1&nbsp;680&nbsp;$</span>
+</span>
+</div>
+<svg width="88" height="44" sc-camel-view-box="0 0 112 48" aria-hidden="true" style="flex: none">
+<polyline points="2,42 15,40 28,41 41,33 54,35 67,25 80,21 93,14 110,6" fill="none" stroke="#62C7FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+<circle cx="110" cy="6" r="3.5" fill="#62C7FF"></circle>
+</svg>
+</div>
+<a href="Finaliser.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px 12px; box-sizing: border-box; border-radius: 12px; background: rgba(255,210,63,0.12); color: #FFD23F; font-size: 14px; font-weight: 600; text-decoration: none">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+<span style="flex: 1">1 à nommer : YUL → CDG avant le 13 déc. 18:05</span>
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="m9 5 7 7-7 7"></path></svg>
+</a>
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #8C93A3">Indicatif : prix d’un billet neuf équivalent aujourd’hui. Ce n’est ni un prix de revente garanti, ni un gain.</p>
+</section>
+
+</div>
+</div>
+</div>
+</main>
+
+<footer style="border-top: 1px solid #2C303A">
+<div style="max-width: 1440px; margin: 0 auto; padding: 18px clamp(16px, 4vw, 48px); box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; font-size: 13px; line-height: 18px; color: #8C93A3">
+<p style="margin: 0"><span style="display: inline-flex; align-items: center; height: 22px; padding: 0 8px; margin-right: 8px; border-radius: 999px; background: rgba(98,199,255,0.12); color: #62C7FF; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase">Prototype — données fictives</span>Compagnies (Aérolys, Nordelle), agence, détenteurs, prix et références inventés. Aucun paiement réel.</p>
+<p style="margin: 0">Un droit de voyage est une inscription au registre interne de NexG-TT, pas un placement financier.</p>
+</div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1100}}">
+class Component extends DCLogic {
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      const s = this.state || {};
+      const left = (s.left ?? 271) - 1;
+      this.setState({ left: left > 0 ? left : 271 });
+    }, 1000);
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+  renderVals() {
+    const s = this.state || {};
+    const left = s.left ?? 271;
+    const mm = String(Math.floor(left / 60)).padStart(2, '0');
+    const ss = String(left % 60).padStart(2, '0');
+
+    const NB = ' ';
+    const MINUS = '−';
+    const money = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, NB) + NB + '$';
+    const REF = 2050;
+
+    const sortKey = s.sortKey ?? 'prix';
+    const sortDir = s.sortDir ?? 'asc';
+    const selId = s.selId ?? 'r1';
+    const hoverId = s.hoverId ?? '';
+    const on = {
+      neuf: s.srcNeuf ?? true,
+      revente: s.srcRevente ?? true,
+      agence: s.srcAgence ?? true,
+      drop: s.srcDrop ?? true
+    };
+    const directOnly = s.directOnly ?? false;
+    const revOnly = s.revOnly ?? false;
+    const prixMax = s.prixMax ?? 2200;
+
+    const ICON = {
+      plane: 'M3 13h6l4 7h2l-2-7h5l2 2h2l-1-3 1-3h-2l-2 2h-5l2-7h-2l-4 7H3z',
+      swap: 'M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7',
+      store: 'M4 9l1.5-5h13L20 9M4 9v11h16V9M4 9h16M9 20v-6h6v6',
+      lock: 'M7 11h10a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2zM8 11V8a4 4 0 0 1 8 0v3'
+    };
+    const SRC = {
+      neuf: { label: 'Neuf', sub: 'Vendu par la compagnie', line: 'Billet neuf vendu par la compagnie', icon: ICON.plane, chipBg: '#262A33', chipColor: '#F3F4F6' },
+      revente: { label: 'Revente', sub: 'Détenteur vérifié', line: 'Revente par un détenteur vérifié, prix encadré', icon: ICON.swap, chipBg: '#262A33', chipColor: '#F3F4F6' },
+      agence: { label: 'Agence', sub: 'Agence Horizon (exemple)', line: 'Vendu par Agence Horizon (exemple), non revendable', icon: ICON.store, chipBg: '#262A33', chipColor: '#F3F4F6' },
+      drop: { label: 'Drop', sub: 'Réservé aux membres', line: 'Drop membres : prix visible avec le Pass NexG', icon: ICON.lock, chipBg: 'rgba(255,210,63,0.12)', chipColor: '#FFD23F' }
+    };
+    const offers = [
+      { id: 'r1', dep: '18:05', arr: '07:10', plus: true, dur: '7 h 05', direct: true, via: '', cie: 'Aérolys', vol: '812', src: 'revente', price: 1500, resell: true },
+      { id: 'r2', dep: '18:05', arr: '07:10', plus: true, dur: '7 h 05', direct: true, via: '', cie: 'Aérolys', vol: '812', src: 'neuf', price: 2050, resell: true },
+      { id: 'r3', dep: '21:40', arr: '10:35', plus: true, dur: '6 h 55', direct: true, via: '', cie: 'Nordelle', vol: '304', src: 'neuf', price: 2190, resell: true },
+      { id: 'r4', dep: '19:15', arr: '08:20', plus: true, dur: '7 h 05', direct: true, via: '', cie: 'Nordelle', vol: '306', src: 'agence', price: 1980, resell: false },
+      { id: 'r5', dep: '06:40', arr: '22:55', plus: false, dur: '10 h 15', direct: false, via: 'BOS', cie: 'Aérolys', vol: '640', src: 'revente', price: 1720, resell: true },
+      { id: 'r6', dep: '16:30', arr: '09:45', plus: true, dur: '11 h 15', direct: false, via: 'KEF', cie: 'Nordelle', vol: '118', src: 'revente', price: 1640, resell: true },
+      { id: 'r7', dep: '20:10', arr: '09:05', plus: true, dur: '6 h 55', direct: true, via: '', cie: 'Aérolys', vol: '818', src: 'drop', price: null, resell: true }
+    ];
+
+    const mins = (t) => Number(t.slice(0, 2)) * 60 + Number(t.slice(3, 5));
+    const list = offers.filter((o) => on[o.src]
+      && (!directOnly || o.direct)
+      && (!revOnly || o.resell)
+      && (o.price === null || o.price <= prixMax));
+    list.sort((a, b) => {
+      if (sortKey === 'prix') {
+        if (a.price === null && b.price === null) return 0;
+        if (a.price === null) return 1;
+        if (b.price === null) return -1;
+        return sortDir === 'asc' ? a.price - b.price : b.price - a.price;
+      }
+      return sortDir === 'asc' ? mins(a.dep) - mins(b.dep) : mins(b.dep) - mins(a.dep);
+    });
+
+    const flaps = (text, color) => text.split('').map((ch) => (ch === ':'
+      ? { ch, w: '8px', bg: 'transparent', shadow: 'none', color: '#8C93A3' }
+      : { ch, w: '22px', bg: '#1C1F25', shadow: 'inset 0 -15px 0 #15171B', color }));
+
+    const row = (o) => {
+      const m = SRC[o.src];
+      const locked = o.price === null;
+      const d = locked ? 0 : o.price - REF;
+      const pct = Math.round((Math.abs(d) / REF) * 100);
+      const sign = d > 0 ? '+' : MINUS;
+      const isSel = o.id === selId;
+      const isHover = o.id === hoverId;
+      return {
+        display: 'table-row',
+        bg: isSel ? '#1D2027' : (isHover ? '#14161B' : 'transparent'),
+        depSr: 'Départ ' + o.dep + ',',
+        depCells: flaps(o.dep, '#F3F4F6'),
+        arrLabel: 'arr. ' + o.arr + (o.plus ? ' (+1)' : ''),
+        codeCells: flaps('CDG', '#FFD23F'),
+        via: o.direct ? 'Direct' : '1 escale · ' + o.via,
+        cie: o.cie,
+        vol: 'Vol ' + o.vol + ' · ' + o.dur,
+        srcLabel: m.label,
+        srcSub: m.sub,
+        srcIcon: m.icon,
+        chipBg: m.chipBg,
+        chipColor: m.chipColor,
+        nonResell: !o.resell,
+        open: !locked,
+        locked,
+        price: locked ? '' : money(o.price),
+        delta: locked ? '' : (d === 0 ? '±0' + NB + '$' : sign + money(Math.abs(d))),
+        pct: locked ? '' : (d === 0 ? 'prix neuf' : sign + pct + NB + '%'),
+        deltaColor: d > 0 ? '#62C7FF' : (d < 0 ? '#FF9E5E' : '#B9BEC9'),
+        pressed: isSel ? 'true' : 'false',
+        selLabel: 'Sélectionner l’offre de ' + o.dep + ', ' + o.cie + ', ' + m.label.toLowerCase() + ', ' + (locked ? 'prix réservé aux membres' : money(o.price)),
+        ringBg: isSel ? '#FFD23F' : 'transparent',
+        ringBorder: isSel ? '#FFD23F' : (isHover ? '#F3F4F6' : '#8C93A3'),
+        ringColor: isSel ? '#0D0E11' : 'transparent',
+        select: () => this.setState({ selId: o.id }),
+        enter: () => this.setState({ hoverId: o.id }),
+        leave: () => this.setState({ hoverId: '' })
+      };
+    };
+    const blank = {
+      display: 'none', bg: 'transparent', depSr: '', depCells: [], arrLabel: '', codeCells: [], via: '',
+      cie: '', vol: '', srcLabel: '', srcSub: '', srcIcon: '', chipBg: 'transparent', chipColor: 'transparent',
+      nonResell: false, open: false, locked: false, price: '', delta: '', pct: '', deltaColor: 'transparent',
+      pressed: 'false', selLabel: '', ringBg: 'transparent', ringBorder: 'transparent', ringColor: 'transparent',
+      select: () => {}, enter: () => {}, leave: () => {}
+    };
+    const slots = {};
+    for (let i = 0; i < 7; i += 1) slots['s' + i] = list[i] ? row(list[i]) : blank;
+
+    const sortBy = (key) => () => {
+      const cur = this.state || {};
+      const k = cur.sortKey ?? 'prix';
+      const dir = cur.sortDir ?? 'asc';
+      if (k === key) this.setState({ sortDir: dir === 'asc' ? 'desc' : 'asc' });
+      else this.setState({ sortKey: key, sortDir: 'asc' });
+    };
+    const sortBtn = (key) => {
+      const active = sortKey === key;
+      return {
+        pressed: active ? 'true' : 'false',
+        bg: active ? '#F3F4F6' : 'transparent',
+        color: active ? '#0D0E11' : '#B9BEC9',
+        hdrColor: active ? '#F3F4F6' : '#8C93A3',
+        arrow: active ? (sortDir === 'asc' ? '↑' : '↓') : '',
+        dirText: active ? (sortDir === 'asc' ? ', ordre croissant' : ', ordre décroissant') : '',
+        aria: active ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none'
+      };
+    };
+
+    const flip = (key, def) => () => {
+      const cur = this.state || {};
+      this.setState({ [key]: !(cur[key] ?? def) });
+    };
+    const box = (isOn, toggle) => ({
+      pressed: isOn ? 'true' : 'false',
+      bg: isOn ? '#1D2027' : 'transparent',
+      border: isOn ? '#3A3F4B' : '#2C303A',
+      boxBg: isOn ? '#F3F4F6' : 'transparent',
+      boxBorder: isOn ? '#F3F4F6' : '#8C93A3',
+      check: isOn ? '#0D0E11' : 'transparent',
+      toggle
+    });
+    const seg = (isOn) => ({
+      pressed: isOn ? 'true' : 'false',
+      bg: isOn ? '#F3F4F6' : 'transparent',
+      color: isOn ? '#0D0E11' : '#B9BEC9'
+    });
+
+    const names = [['neuf', 'Neuf'], ['revente', 'Revente'], ['agence', 'Agences'], ['drop', 'Drops']]
+      .filter((p) => on[p[0]]).map((p) => p[1]);
+    const n = list.length;
+    const cur = list.find((o) => o.id === selId);
+
+    return {
+      ...slots,
+      countdown: '00:' + mm + ':' + ss,
+      from: s.from ?? 'Montréal (YUL)',
+      to: s.to ?? 'Paris (CDG)',
+      date: s.date ?? 'ven. 18 déc. 2026',
+      pax: s.pax ?? '1',
+      onField: (e) => {
+        const t = e.target;
+        this.setState({ [t.name]: t.value });
+      },
+      sourcesLabel: names.length ? names.join(' · ') : 'Aucune source',
+      refreshed: s.refreshed ?? false,
+      onSearch: () => this.setState({ refreshed: true }),
+      resetFilters: () => this.setState({ srcNeuf: true, srcRevente: true, srcAgence: true, srcDrop: true, directOnly: false, revOnly: false, prixMax: 2200 }),
+      fNeuf: box(on.neuf, flip('srcNeuf', true)),
+      fRevente: box(on.revente, flip('srcRevente', true)),
+      fAgence: box(on.agence, flip('srcAgence', true)),
+      fDrop: box(on.drop, flip('srcDrop', true)),
+      escAll: seg(!directOnly),
+      escDirect: seg(directOnly),
+      setEscAll: () => this.setState({ directOnly: false }),
+      setEscDirect: () => this.setState({ directOnly: true }),
+      rev: {
+        checked: revOnly ? 'true' : 'false',
+        track: revOnly ? '#F3F4F6' : '#262A33',
+        trackBorder: revOnly ? '#F3F4F6' : '#8C93A3',
+        knob: revOnly ? '#0D0E11' : '#B9BEC9',
+        knobLeft: revOnly ? '21px' : '3px'
+      },
+      toggleRev: flip('revOnly', false),
+      prixMax,
+      prixLabel: money(prixMax),
+      setPrix: (e) => this.setState({ prixMax: Number(e.target.value) }),
+      sortPrix: sortBtn('prix'),
+      sortHeure: sortBtn('heure'),
+      sortByPrix: sortBy('prix'),
+      sortByHeure: sortBy('heure'),
+      countLabel: n === 0 ? 'Aucune offre' : n + (n > 1 ? ' offres' : ' offre'),
+      isEmpty: n === 0,
+      hasSel: !!cur,
+      noSel: !cur && n > 0,
+      sel: cur ? {
+        title: cur.dep + ' → ' + cur.arr + (cur.plus ? ' (+1)' : '') + ' · ' + cur.cie + ' vol ' + cur.vol,
+        route: (cur.direct ? 'direct' : '1 escale (' + cur.via + ')') + ', ' + cur.dur,
+        line: SRC[cur.src].line,
+        dep: cur.dep,
+        price: cur.price === null ? '' : money(cur.price),
+        open: cur.price !== null
+      } : { title: '', route: '', line: '', dep: '', price: '', open: false },
+      selStd: !!cur && (cur.src === 'neuf' || cur.src === 'revente'),
+      selAgency: !!cur && cur.src === 'agence',
+      selDrop: !!cur && cur.src === 'drop'
+    };
+  }
+}
+</script>
+
+
+</body></html>

@@ -1,0 +1,48 @@
+Nommer le voyageur (J-1)
+Nommer le voyageur — NexG-TT
+Nommer le voyageur
+Échéance de finalisation
+6
+2
+J
+0
+0
+H
+Il reste 62 j 0 h · échéance 13 déc. 18:05
+Après l'échéance, plus aucune transaction n'est possible sur ce billet.
+YUL → CDG
+Lun. 14 déc. 2026 · 18:05
+Aérolys 812 · direct
+À nommer
+Qui voyage ?
+Moi (Alex T.)
+Données de votre profil, à vérifier
+AT
+Un proche enregistré
+Choisir parmi vos voyageurs
+Nouveau voyageur
+Saisir ses informations
+Tel qu'inscrit sur le passeport
+Transmis à Aérolys tel quel. Vérifiez l'orthographe et l'ordre des prénoms.
+Aucun proche enregistré pour l'instant
+Les voyageurs que vous nommez pourront être enregistrés ici pour la prochaine fois.
+Saisir un nouveau voyageur
+Nom
+Prénom(s)
+Date de naissance
+Genre (selon la compagnie)
+Choisir
+Féminin
+Masculin
+X — si accepté
+Numéro de document (si exigé)
+Selon les exigences d'Aérolys et de la destination.
+Action définitive :
+une fois le voyageur nommé, ce billet ne peut plus être revendu ni transféré.
+Toute modification ensuite relève des règles d'Aérolys.
+Je confirme que ces informations correspondent au passeport du voyageur et j'accepte que ce billet ne puisse plus être revendu ni transféré.
+Voyageur transmis
+{{travelerLine}}
+Confirmer et transmettre à Aérolys
+Confirmer et transmettre à Aérolys
+Cochez la confirmation pour continuer.

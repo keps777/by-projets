@@ -1,0 +1,22 @@
+Transférer à un proche : erreur — NexG-TT
+Transférer à un proche : erreur — NexG-TT
+Transfert
+Transfert non effectué
+{{titre}}
+{{texte1}}
+{{texte2}}
+Référence de l'incident : INC-4F9K (démo)
+État du droit
+YUL → CDG
+Lun. 14 déc. 2026
+Aérolys 812 · 18:05
+Statut
+{{statut}}
+Si l'échec persiste, contactez le support en indiquant la référence de l'incident.
+Démo
+Voir l'écran pour le cas :
+{{c.label}}
+Réessayer le transfert
+Revenir au billet
+Retour au portefeuille
+Revenir au billet

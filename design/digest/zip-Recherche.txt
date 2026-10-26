@@ -1,0 +1,40 @@
+Rechercher — NexG-TT
+Rechercher — NexG-TT
+Voyager
+Mes actifs
+Rechercher
+Départ
+{{depCode}}
+Arrivée
+{{arrCode}}
+Aller simple
+Aller-retour
+Date de départ
+±3 jours
+Date de retour
+Choisir la date de retour
+Voyageurs
+{{paxLabel}}
+Sources
+Billets neufs
+Compagnies
+Revente
+Marché NexG
+Agences
+Partenaires
+Drops
+Membres
+Seulement les billets revendables
+Revendables jusqu'à 24 h avant le départ
+Rechercher
+Recherches récentes
+{{r.code}}
+{{r.title}}
+{{r.sub}}
+Un billet revendable garde sa valeur si vos plans changent.
+Le prix obtenu à la revente dépend du marché.
+Accueil
+Rechercher
+Drops
+Portefeuille
+Compte

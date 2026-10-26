@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<title>Indices NexG — NexG-TT</title>
+<script src="28b5a753-3551-4c56-9bc4-e93396b08bf4"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+<style>
+body{margin:0;background:#0D0E11}
+a{color:#FFD23F}a:hover{color:#FFE27A}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #FFD23F;outline-offset:2px}
+@keyframes nx-ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion: reduce){[data-ticker]{animation:none!important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0D0E11; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="padding: 52px 12px 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<a href="Marche.dc.html" aria-label="Retour" style="width: 44px; height: 44px; flex: none; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: #F3F4F6; text-decoration: none">
+<svg width="24" height="24" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+</a>
+<h1 style="margin: 0; flex: 1; text-align: center; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 20px; letter-spacing: 0.04em; text-transform: uppercase">Indices NexG</h1>
+<span style="width: 44px; height: 44px; flex: none"></span>
+</header>
+
+<section aria-label="Dernières transactions du marché de revente, 24 h" style="display: flex; align-items: center; background: #060708; border-top: 1px solid #2C303A; border-bottom: 1px solid #2C303A">
+<span style="flex: none; display: flex; align-items: center; height: 44px; padding: 0 10px 0 14px; border-right: 1px solid #2C303A; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #8C93A3">24 h</span>
+<div style="flex: 1; min-width: 0; height: 44px; overflow: hidden; display: flex; align-items: center">
+<div data-ticker="1" style="display: flex; width: max-content; animation: nx-ticker 40s linear infinite; animation-play-state: {{ticker.state}}">
+<ul style="display: flex; gap: 22px; margin: 0; padding: 0 11px; list-style: none; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap">
+<sc-for list="{{ticks}}" as="k" hint-placeholder-count="8">
+<li style="display: flex; gap: 6px"><span style="color: #B9BEC9">{{k.route}}</span><span style="font-weight: 600">{{k.price}}</span><span style="font-weight: 600; color: {{k.color}}">{{k.chg}}</span></li>
+</sc-for>
+</ul>
+<ul aria-hidden="true" style="display: flex; gap: 22px; margin: 0; padding: 0 11px; list-style: none; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap">
+<sc-for list="{{ticks}}" as="k" hint-placeholder-count="8">
+<li style="display: flex; gap: 6px"><span style="color: #B9BEC9">{{k.route}}</span><span style="font-weight: 600">{{k.price}}</span><span style="font-weight: 600; color: {{k.color}}">{{k.chg}}</span></li>
+</sc-for>
+</ul>
+</div>
+</div>
+<button type="button" sc-camel-on-click="{{ togglePause }}" aria-label="{{ticker.label}}" style="flex: none; width: 44px; height: 44px; border: 0; border-left: 1px solid #2C303A; background: #060708; color: #B9BEC9; display: flex; align-items: center; justify-content: center; cursor: pointer">
+<sc-if value="{{ticker.running}}" hint-placeholder-val="{{ true }}">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5v14M15 5v14"></path></svg>
+</sc-if>
+<sc-if value="{{ticker.paused}}" hint-placeholder-val="{{ false }}">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 5v14l12-7z"></path></svg>
+</sc-if>
+</button>
+</section>
+
+<main style="flex: 1; overflow-y: auto; padding: 18px 20px 32px; display: flex; flex-direction: column; gap: 20px">
+
+<section style="display: flex; flex-direction: column; gap: 8px">
+<p style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Au départ de Montréal (YUL)</p>
+<h2 style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 34px; line-height: 34px; text-transform: uppercase; letter-spacing: 0.01em; text-wrap: balance">Le prix du voyage, région par région</h2>
+<p style="margin: 0; font-size: 14px; line-height: 20px; color: #B9BEC9">Base 100 = 1er janv. 2026. Un indice de 112,4 signifie un prix équivalent neuf 12,4 % plus élevé qu'au 1er janvier. Valeurs fictives.</p>
+</section>
+
+<div role="group" aria-label="Période de variation" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; padding: 2px; border-radius: 14px; background: #15171C; border: 1px solid #2C303A">
+<button type="button" sc-camel-on-click="{{ pick7 }}" aria-pressed="{{p7.pressed}}" style="min-height: 44px; border: 0; border-radius: 12px; cursor: pointer; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 14px; background: {{p7.bg}}; color: {{p7.fg}}">7 j</button>
+<button type="button" sc-camel-on-click="{{ pick30 }}" aria-pressed="{{p30.pressed}}" style="min-height: 44px; border: 0; border-radius: 12px; cursor: pointer; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 14px; background: {{p30.bg}}; color: {{p30.fg}}">30 j</button>
+<button type="button" sc-camel-on-click="{{ pick90 }}" aria-pressed="{{p90.pressed}}" style="min-height: 44px; border: 0; border-radius: 12px; cursor: pointer; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 14px; background: {{p90.bg}}; color: {{p90.fg}}">90 j</button>
+</div>
+
+<section aria-label="Indices régionaux" style="display: flex; flex-direction: column; gap: 12px">
+<sc-for list="{{indices}}" as="c" hint-placeholder-count="3">
+<article style="display: flex; flex-direction: column; gap: 12px; padding: 18px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A">
+<div style="display: flex; align-items: center; gap: 12px">
+<span aria-hidden="true" style="display: flex; gap: 3px">
+<sc-for list="{{c.letters}}" as="l" hint-placeholder-count="3">
+<span style="width: 22px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: #1C1F25; box-shadow: inset 0 -15px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: #FFD23F">{{l.ch}}</span>
+</sc-for>
+</span>
+<div style="flex: 1; display: flex; flex-direction: column; min-width: 0">
+<h3 style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">{{c.name}}</h3>
+<span style="font-size: 12px; color: #8C93A3">{{c.routes}}</span>
+</div>
+</div>
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 40px; line-height: 42px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">{{c.value}}</span>
+<span style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #B9BEC9">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums; color: {{c.color}}">{{c.chg}}</span>{{c.period}}</span>
+</div>
+<svg width="140" height="56" sc-camel-view-box="0 0 140 56" aria-hidden="true" style="flex: none">
+<path d="{{c.base}}" fill="none" stroke="#3A3F4B" stroke-width="1" stroke-dasharray="3 4"></path>
+<path d="{{c.spark}}" fill="none" stroke="{{c.color}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+<circle cx="{{c.endX}}" cy="{{c.endY}}" r="3.5" fill="{{c.color}}"></circle>
+</svg>
+</div>
+<p style="margin: 0; padding-top: 10px; border-top: 1px solid #2C303A; display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: #8C93A3">
+<span>Depuis le 1er janv.</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-variant-numeric: tabular-nums; color: {{c.ytdColor}}">{{c.ytd}}</span>
+</p>
+</article>
+</sc-for>
+</section>
+
+<section aria-labelledby="hm-title" style="display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<h2 id="hm-title" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Carte de chaleur des routes</h2>
+<p style="margin: 0; font-size: 13px; color: #B9BEC9">Variation {{periodLong}} · touchez une route pour voir son cours</p>
+</div>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 12px; background: #15171C; border: 1px solid #2C303A">
+<span style="font-size: 12px; color: #8C93A3">Plus forte hausse</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums"><span>{{best.code}}</span> <span style="color: {{best.color}}">{{best.chg}}</span></span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 12px; background: #15171C; border: 1px solid #2C303A">
+<span style="font-size: 12px; color: #8C93A3">Plus forte baisse</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums"><span>{{worst.code}}</span> <span style="color: {{worst.color}}">{{worst.chg}}</span></span>
+</div>
+</div>
+
+<sc-for list="{{regions}}" as="r" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h3 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">{{r.name}}</h3>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{r.tiles}}" as="t" hint-placeholder-count="4">
+<a href="Cours.dc.html" aria-label="{{t.aria}}" style="display: flex; flex-direction: column; justify-content: space-between; gap: 2px; min-height: 78px; padding: 8px; box-sizing: border-box; border-radius: 10px; text-decoration: none; overflow: hidden; background: {{t.bg}}; color: {{t.fg}}; border: 1px solid rgba(255,255,255,0.06)">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 22px; line-height: 22px; letter-spacing: 0.04em">{{t.code}}</span>
+<span style="font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{t.city}}</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap">{{t.chg}}</span>
+</a>
+</sc-for>
+</div>
+</div>
+</sc-for>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div aria-hidden="true" style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; height: 12px">
+<span style="border-radius: 3px 0 0 3px; background: #FFB585"></span>
+<span style="background: #E07A36"></span>
+<span style="background: #7A3E17"></span>
+<span style="background: #2B1F18"></span>
+<span style="background: #142430"></span>
+<span style="background: #1D5A82"></span>
+<span style="background: #3A9BD9"></span>
+<span style="border-radius: 0 3px 3px 0; background: #8FD8FF"></span>
+</div>
+<p style="margin: 0; display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #8C93A3">
+<span>Baisse ≤ −15 %</span><span>0</span><span>Hausse ≥ +15 %</span>
+</p>
+<p style="margin: 0; font-size: 12px; color: #8C93A3">Plus la tuile est claire, plus la variation est forte. Le signe indique le sens.</p>
+</div>
+</section>
+
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #8C93A3">Indices calculés sur le prix équivalent neuf. Données de démonstration. Un droit de voyage n'est pas un placement financier.</p>
+
+</main>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844}}">
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const period = s.period || '30';
+    const paused = !!s.paused;
+    const set = (patch) => this.setState({ ...(this.state || {}), ...patch });
+    const pi = { '7': 0, '30': 1, '90': 2 }[period] ?? 1;
+    const UP = '#62C7FF';
+    const DOWN = '#FF9E5E';
+    const pct = (v) => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1).replace('.', ',') + ' %';
+    const dec1 = (v) => v.toFixed(1).replace('.', ',');
+    const tone = (v) => (v < 0 ? DOWN : v > 0 ? UP : '#B9BEC9');
+    const periodLong = ['sur 7 jours', 'sur 30 jours', 'sur 90 jours'][pi];
+    const periodShort = ['sur 7 j', 'sur 30 j', 'sur 90 j'][pi];
+
+    const ticks = [
+      { route: 'YUL→PPT', price: '1 790 $', v: 2.1 },
+      { route: 'YUL→CDG', price: '1 510 $', v: -1.0 },
+      { route: 'YUL→PUJ', price: '940 $', v: 1.4 },
+      { route: 'YUL→HAV', price: '620 $', v: -0.8 },
+      { route: 'YUL→NRT', price: '1 640 $', v: 3.0 },
+      { route: 'YUL→LIS', price: '890 $', v: 0.6 },
+      { route: 'YUL→CUN', price: '710 $', v: 1.9 },
+      { route: 'YUL→ATH', price: '980 $', v: -1.7 }
+    ].map((k) => ({ route: k.route, price: k.price, chg: pct(k.v), color: tone(k.v) }));
+
+    const W = 140;
+    const H = 56;
+    const PAD = 5;
+    const spark = (end, chg, seed) => {
+      const n = 24;
+      const start = end / (1 + chg / 100);
+      const amp = Math.abs(end - start) * 0.16 + end * 0.004;
+      const pts = [];
+      for (let i = 0; i < n; i++) {
+        const t = i / (n - 1);
+        const wig = Math.sin(i * 1.3 + seed * 2.1) * 0.9 + Math.sin(i * 0.47 + seed) * 0.6;
+        pts.push(i === 0 ? start : i === n - 1 ? end : start + (end - start) * t + wig * amp * (1 - t * 0.7));
+      }
+      const mn = Math.min(...pts);
+      const mx = Math.max(...pts);
+      const x = (i) => PAD + (W - PAD * 2) * i / (n - 1);
+      const y = (v) => PAD + (mx - v) / ((mx - mn) || 1) * (H - PAD * 2);
+      return {
+        d: pts.map((v, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ',' + y(v).toFixed(1)).join(' '),
+        base: 'M' + PAD + ',' + y(start).toFixed(1) + ' H' + (W - PAD),
+        endX: x(n - 1).toFixed(1),
+        endY: y(end).toFixed(1)
+      };
+    };
+
+    const indices = [
+      { flap: 'CAR', name: 'NexG Caraïbes', routes: 'Punta Cana, Cancún, La Havane, San Juan…', value: 112.4, chg: [1.8, 9.1, 14.6], seed: 1 },
+      { flap: 'EUR', name: 'NexG Europe', routes: 'Paris, Lisbonne, Barcelone, Athènes…', value: 104.8, chg: [-0.9, 3.7, 6.2], seed: 2 },
+      { flap: 'PAC', name: 'NexG Pacifique', routes: 'Papeete, Honolulu, Tokyo, Auckland…', value: 121.6, chg: [4.3, 18.2, 21.0], seed: 3 }
+    ].map((c) => {
+      const v = c.chg[pi];
+      const sp = spark(c.value, v, c.seed + pi * 4);
+      const ytd = c.value - 100;
+      return {
+        name: c.name,
+        routes: c.routes,
+        letters: c.flap.split('').map((ch) => ({ ch })),
+        value: dec1(c.value),
+        chg: pct(v),
+        period: periodShort,
+        color: tone(v),
+        spark: sp.d,
+        base: sp.base,
+        endX: sp.endX,
+        endY: sp.endY,
+        ytd: pct(ytd),
+        ytdColor: tone(ytd)
+      };
+    });
+
+    const UPS = ['#142430', '#1D5A82', '#3A9BD9', '#8FD8FF'];
+    const DNS = ['#2B1F18', '#7A3E17', '#E07A36', '#FFB585'];
+    const INK = ['#F3F4F6', '#F3F4F6', '#0D0E11', '#0D0E11'];
+    const lvl = (v) => { const a = Math.abs(v); return a < 3 ? 0 : a < 8 ? 1 : a < 15 ? 2 : 3; };
+
+    const raw = [
+      { name: 'Caraïbes', tiles: [
+        { code: 'PUJ', city: 'Punta Cana', v: [1.2, 9.2, 16.8] },
+        { code: 'CUN', city: 'Cancún', v: [2.6, 13.8, 19.5] },
+        { code: 'HAV', city: 'La Havane', v: [-1.6, -6.1, -2.4] },
+        { code: 'SJU', city: 'San Juan', v: [3.1, 11.5, 17.2] }
+      ] },
+      { name: 'Europe', tiles: [
+        { code: 'CDG', city: 'Paris', v: [1.9, 4.1, 9.3] },
+        { code: 'LIS', city: 'Lisbonne', v: [0.4, 7.0, 11.6] },
+        { code: 'BCN', city: 'Barcelone', v: [-2.7, 2.4, 5.1] },
+        { code: 'ATH', city: 'Athènes', v: [-3.8, -3.4, -8.2] }
+      ] },
+      { name: 'Pacifique', tiles: [
+        { code: 'PPT', city: 'Papeete', v: [5.8, 18.4, 24.9] },
+        { code: 'HNL', city: 'Honolulu', v: [2.2, 14.1, 12.7] },
+        { code: 'NRT', city: 'Tokyo', v: [6.1, 22.6, 26.3] },
+        { code: 'AKL', city: 'Auckland', v: [1.4, 9.8, 15.2] }
+      ] }
+    ];
+
+    let best = null;
+    let worst = null;
+    const regions = raw.map((r) => ({
+      name: r.name,
+      tiles: r.tiles.map((t) => {
+        const v = t.v[pi];
+        if (!best || v > best.v) best = { code: t.code, v };
+        if (!worst || v < worst.v) worst = { code: t.code, v };
+        const l = lvl(v);
+        return {
+          code: t.code,
+          city: t.city,
+          chg: pct(v),
+          bg: v === 0 ? '#1D2027' : v > 0 ? UPS[l] : DNS[l],
+          fg: v === 0 ? '#F3F4F6' : INK[l],
+          aria: t.code + ', ' + t.city + ', ' + pct(v) + ' ' + periodLong + '. Voir le cours.'
+        };
+      })
+    }));
+    const extreme = (e, wantUp) => {
+      if (!e || (wantUp ? e.v <= 0 : e.v >= 0)) return { code: 'Aucune', chg: '', color: '#B9BEC9' };
+      return { code: e.code, chg: pct(e.v), color: tone(e.v) };
+    };
+
+    const pill = (key) => ({
+      pressed: period === key ? 'true' : 'false',
+      bg: period === key ? '#F3F4F6' : 'transparent',
+      fg: period === key ? '#0D0E11' : '#B9BEC9'
+    });
+
+    return {
+      ticks: ticks,
+      ticker: {
+        state: paused ? 'paused' : 'running',
+        running: !paused,
+        paused: paused,
+        label: paused ? 'Reprendre le défilement' : 'Mettre le défilement en pause'
+      },
+      togglePause: () => set({ paused: !paused }),
+      pick7: () => set({ period: '7' }),
+      pick30: () => set({ period: '30' }),
+      pick90: () => set({ period: '90' }),
+      p7: pill('7'),
+      p30: pill('30'),
+      p90: pill('90'),
+      periodLong: periodLong,
+      indices: indices,
+      regions: regions,
+      best: extreme(best, true),
+      worst: extreme(worst, false)
+    };
+  }
+}
+</script>
+
+
+</body></html>

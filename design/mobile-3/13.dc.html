@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<title>Ajouter des bagages — NexG-TT</title>
+<script src="064922d2-2f63-43bf-805b-3f79c9af8fbc"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+<style>
+body{margin:0;background:#EEF3F8}
+a{color:#1A64C8}a:hover{color:#124C9C}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #1A64C8;outline-offset:2px}
+@keyframes nx-drop{0%{transform:translateY(-14px) rotate(-6deg);opacity:0}70%{transform:translateY(2px) rotate(1deg);opacity:1}100%{transform:translateY(0) rotate(0);opacity:1}}
+@keyframes nx-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #EEF3F8; color: #0B1B2E; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="padding: 52px 12px 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<a href="SouteVol.dc.html" aria-label="Retour" style="flex: none; width: 44px; height: 44px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; border: 1px solid #D3DCE6; display: flex; align-items: center; justify-content: center; color: #0B1B2E; text-decoration: none">
+<svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+</a>
+<h1 style="margin: 0; flex: 1; text-align: center; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 20px; letter-spacing: 0.04em; text-transform: uppercase">Ajouter des bagages</h1>
+<span aria-hidden="true" style="flex: none; width: 44px; height: 44px"></span>
+</header>
+
+<div role="note" style="flex: none; margin: 0 20px 8px; display: flex; align-items: center; gap: 8px; background: rgba(26,100,200,0.10); border: 1px solid rgba(26,100,200,0.4); color: #124C9C; border-radius: 12px; padding: 10px 12px; font-size: 13px; font-weight: 600">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+MODE DÉMO — aucun paiement réel
+</div>
+
+<main style="flex: 1; overflow-y: auto; padding: 8px 20px 124px; display: flex; flex-direction: column; gap: 20px">
+
+<section aria-labelledby="vol-t" style="flex: none; display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 20px; background: #FFFFFF; border: 2px solid {{flightBorder}}">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<h2 id="vol-t" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Votre vol</h2>
+<sc-if value="{{ok}}" hint-placeholder-val="{{ true }}">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(9,106,73,0.10); color: #096A49; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">
+<svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>
+Même vol
+</span>
+</sc-if>
+<sc-if value="{{wrong}}" hint-placeholder-val="{{ false }}">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(176,44,39,0.10); color: #B02C27; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">
+<svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+Vol différent
+</span>
+</sc-if>
+</div>
+<div style="display: flex; align-items: center; gap: 12px">
+<span aria-hidden="true" style="flex: none; width: 48px; height: 48px; border-radius: 14px; background: #0B1B2E; color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h6l4 7h2l-2-7h5l2 2h2l-1-3 1-3h-2l-2 2h-5l2-7h-2l-4 7H3z"></path></svg></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 20px; font-variant-numeric: tabular-nums">AE {{flight.num}} · {{flight.date}}</span>
+<span style="font-size: 13px; color: #3E4F66">Aérolys · YUL → CDG · {{flight.time}} · Famille M., 3 passagers</span>
+</span>
+</div>
+<sc-if value="{{ok}}" hint-placeholder-val="{{ true }}">
+<button type="button" sc-camel-on-click="{{tryOther}}" style="align-self: flex-start; display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border-radius: 12px; background: #FFFFFF; border: 1px solid #B9C5D3; color: #1A64C8; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"></path></svg>
+Essayer avec un autre vol
+</button>
+</sc-if>
+</section>
+
+<sc-if value="{{wrong}}" hint-placeholder-val="{{ false }}">
+<section role="alert" aria-labelledby="err-t" style="flex: none; display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: #FFFFFF; border: 2px solid #B02C27; animation: nx-shake 420ms ease-out 1">
+<div style="display: flex; align-items: flex-start; gap: 12px">
+<span aria-hidden="true" style="flex: none; width: 48px; height: 48px; border-radius: 14px; background: rgba(176,44,39,0.10); color: #B02C27; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20z"></path><path d="M12 10v4M12 17h.01"></path></svg></span>
+<div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+<h2 id="err-t" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 28px; line-height: 30px; color: #B02C27">Vol différent</h2>
+<p style="margin: 0; font-size: 15px; line-height: 21px">Un bagage ne se transfère que sur le même vol (même numéro, même date).</p>
+</div>
+</div>
+<sc-raw-table style="width: 100%; border-collapse: collapse; font-size: 14px">
+<sc-raw-caption style="text-align: left; padding-bottom: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Comparaison</sc-raw-caption>
+<sc-raw-thead>
+<sc-raw-tr>
+<sc-raw-th scope="col" style="text-align: left; padding: 8px 0; font-size: 13px; font-weight: 600; color: #3E4F66; border-bottom: 1px solid #D3DCE6"></sc-raw-th>
+<sc-raw-th scope="col" style="text-align: left; padding: 8px 6px; font-size: 13px; font-weight: 600; color: #3E4F66; border-bottom: 1px solid #D3DCE6">Soute</sc-raw-th>
+<sc-raw-th scope="col" style="text-align: left; padding: 8px 0; font-size: 13px; font-weight: 600; color: #3E4F66; border-bottom: 1px solid #D3DCE6">Votre vol</sc-raw-th>
+</sc-raw-tr>
+</sc-raw-thead>
+<sc-raw-tbody>
+<sc-raw-tr>
+<sc-raw-th scope="row" style="text-align: left; padding: 10px 0; font-weight: 600; border-bottom: 1px solid #D3DCE6">Numéro</sc-raw-th>
+<sc-raw-td style="padding: 10px 6px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; border-bottom: 1px solid #D3DCE6">812</sc-raw-td>
+<sc-raw-td style="padding: 10px 0; border-bottom: 1px solid #D3DCE6">
+<span style="display: inline-flex; align-items: center; gap: 6px; color: {{cmp.numColor}}; font-weight: 600">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">{{flight.num}}</span>
+<sc-if value="{{cmp.numOk}}" hint-placeholder-val="{{ true }}"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>identique</sc-if>
+<sc-if value="{{cmp.numBad}}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>différent</sc-if>
+</span>
+</sc-raw-td>
+</sc-raw-tr>
+<sc-raw-tr>
+<sc-raw-th scope="row" style="text-align: left; padding: 10px 0; font-weight: 600">Date</sc-raw-th>
+<sc-raw-td style="padding: 10px 6px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600">14 déc.</sc-raw-td>
+<sc-raw-td style="padding: 10px 0">
+<span style="display: inline-flex; align-items: center; gap: 6px; color: {{cmp.dateColor}}; font-weight: 600">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">{{flight.date}}</span>
+<sc-if value="{{cmp.dateOk}}" hint-placeholder-val="{{ true }}"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>identique</sc-if>
+<sc-if value="{{cmp.dateBad}}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>différente</sc-if>
+</span>
+</sc-raw-td>
+</sc-raw-tr>
+</sc-raw-tbody>
+</sc-raw-table>
+<p style="margin: 0; font-size: 13px; line-height: 18px; color: #3E4F66">Les bagages de la soute du vol 812 du 14 déc. ne peuvent pas être ajoutés à cette réservation, même chez Aérolys.</p>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<button type="button" sc-camel-on-click="{{backToMine}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #0B1B2E; color: #FFFFFF; border: 0; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+Revenir à mon vol AE 812 · 14 déc.
+</button>
+<button type="button" sc-camel-on-click="{{tryOther}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; border-radius: 12px; background: transparent; color: #1A64C8; border: 0; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"></path></svg>
+Essayer encore un autre vol
+</button>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{ok}}" hint-placeholder-val="{{ true }}">
+
+<section aria-labelledby="qty-t" style="flex: none; display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: #FFFFFF; border: 1px solid #D3DCE6">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<h2 id="qty-t" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Bagages à ajouter</h2>
+<p style="margin: 0; font-size: 13px; color: #3E4F66">Famille M. · 2 bagages déjà inclus dans votre tarif</p>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<button type="button" aria-label="Retirer un bagage" disabled="{{minDisabled}}" sc-camel-on-click="{{dec}}" style="flex: none; width: 56px; height: 56px; border-radius: 14px; background: {{decBg}}; border: 1px solid #B9C5D3; color: {{decFg}}; display: flex; align-items: center; justify-content: center; cursor: {{decCursor}}">
+<svg width="24" height="24" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path></svg>
+</button>
+<p aria-live="polite" style="margin: 0; display: flex; flex-direction: column; align-items: center; gap: 0">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 48px; line-height: 52px; font-variant-numeric: tabular-nums">{{qty}}</span>
+<span style="font-size: 14px; font-weight: 600; color: #3E4F66">{{qtyNoun}} en plus</span>
+</p>
+<button type="button" aria-label="Ajouter un bagage" disabled="{{maxDisabled}}" sc-camel-on-click="{{inc}}" style="flex: none; width: 56px; height: 56px; border-radius: 14px; background: {{incBg}}; border: 1px solid {{incBorder}}; color: {{incFg}}; display: flex; align-items: center; justify-content: center; cursor: {{incCursor}}">
+<svg width="24" height="24" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+</button>
+</div>
+<div role="img" aria-label="{{bagsAria}}" style="display: flex; justify-content: center; align-items: flex-end; gap: 8px; min-height: 48px">
+<sc-for list="{{bagRow}}" as="b" hint-placeholder-count="4">
+<span aria-hidden="true" style="position: relative; width: 32px; height: 46px; display: flex; align-items: flex-end">
+<span style="position: absolute; left: 10px; top: 2px; width: 12px; height: 9px; box-sizing: border-box; border: 2px solid #0B1B2E; border-bottom: 0; border-radius: 4px 4px 0 0"></span>
+<span style="width: 32px; height: 36px; box-sizing: border-box; border-radius: 7px; border: 2px solid #0B1B2E; background: {{b.bg}}; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 600; color: #0B1B2E">{{b.mark}}</span>
+</span>
+</sc-for>
+</div>
+<p style="margin: 0; text-align: center; font-size: 13px; font-weight: 600; color: #3E4F66">{{bagsLabel}}</p>
+<p style="margin: 0; text-align: center; font-size: 13px; color: #5A6A80">De 1 à 3 bagages par réservation (règle de démo).</p>
+</section>
+
+<section aria-labelledby="pick-t" style="flex: none; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<h2 id="pick-t" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Les moins chères, prises pour vous</h2>
+<p style="margin: 0; font-size: 13px; line-height: 18px; color: #3E4F66">Offres de passagers du vol 812, choisies automatiquement par prix croissant.</p>
+</div>
+<ul style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{picked}}" as="p" hint-placeholder-count="2">
+<li style="position: relative; padding-top: 18px; animation: nx-drop 520ms cubic-bezier(.3,.7,.3,1) 1 both">
+<div style="filter: drop-shadow(0 8px 12px rgba(11,27,46,0.14))">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 28px 8px 12px; border-radius: 12px; background: #FFD23F; color: #0B1B2E; clip-path: polygon(24% 0, 76% 0, 100% 13%, 100% 100%, 0 100%, 0 13%)">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 36px; line-height: 0.85">CDG</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 600; line-height: 15px; text-align: center">AE 812<br>14 DÉC</span>
+<span aria-hidden="true" style="align-self: stretch; height: 16px; border-radius: 2px; background: repeating-linear-gradient(90deg, rgba(11,27,46,0.30) 0 2px, transparent 2px 4px, rgba(11,27,46,0.30) 4px 6px, transparent 6px 9px)"></span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 20px; font-variant-numeric: tabular-nums">{{p.price}}</span>
+<span style="font-size: 12px; font-weight: 600">Offre {{p.rank}} · 23 kg</span>
+</div>
+</div>
+<span aria-hidden="true" style="position: absolute; left: 50%; top: 0; width: 10px; height: 32px; margin-left: -5px; box-sizing: border-box; border: 2px solid #0B1B2E; border-bottom: 0; border-radius: 5px 5px 0 0"></span>
+<span aria-hidden="true" style="position: absolute; left: 50%; top: 26px; width: 14px; height: 14px; margin-left: -7px; box-sizing: border-box; border-radius: 999px; background: #EEF3F8; border: 3px solid #0B1B2E"></span>
+</li>
+</sc-for>
+</ul>
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 16px; background: #FFFFFF; border: 1px solid #D3DCE6">
+<p style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Soute du vol 812 · 7 offres</p>
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{ladder}}" as="l" hint-placeholder-count="7">
+<li style="display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 10px; box-sizing: border-box; border-radius: 999px; background: {{l.bg}}; color: {{l.fg}}; border: 1px solid {{l.border}}; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums">
+<sc-if value="{{l.on}}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></sc-if>
+{{l.price}}
+<sc-if value="{{l.on}}" hint-placeholder-val="{{ false }}"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">, choisie</span></sc-if>
+</li>
+</sc-for>
+</ul>
+<p style="margin: 0; font-size: 13px; color: #3E4F66">Coché = pris pour vous. Prix fixés par les passagers, plafonnés au prix compagnie (règle à valider).</p>
+<a href="BagageDemande.dc.html" style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px; align-self: flex-start; font-size: 14px; font-weight: 600; color: #1A64C8; text-decoration: none">
+Aucune offre à votre prix ? Publier une demande
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg>
+</a>
+</div>
+</section>
+
+<section aria-labelledby="tot-t" style="flex: none; position: relative; background: #FFFFFF; color: #0B1B2E; border-radius: 18px; box-shadow: 0 1px 0 #D3DCE6, 0 12px 32px rgba(11,27,46,0.10)">
+<div style="padding: 16px 18px 12px; display: flex; flex-direction: column; gap: 8px">
+<h2 id="tot-t" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Récapitulatif</h2>
+<sc-for list="{{picked}}" as="p" hint-placeholder-count="2">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-size: 14px">
+<span>Bagage {{p.rank}} · passager du vol 812 · 23 kg</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-variant-numeric: tabular-nums">{{p.price}}</span>
+</div>
+</sc-for>
+<p style="margin: 0; font-size: 13px; color: #5A6A80">Commission NexG-TT : 10 % (Pass) · 12,5 % sans Pass — hypothèse, modalités à valider.</p>
+</div>
+<div aria-hidden="true" style="position: relative; height: 22px">
+<span style="position: absolute; left: 18px; right: 18px; top: 10px; border-top: 2px dashed #D3DCE6"></span>
+<span style="position: absolute; left: -11px; top: 0; width: 22px; height: 22px; border-radius: 999px; background: #EEF3F8"></span>
+<span style="position: absolute; right: -11px; top: 0; width: 22px; height: 22px; border-radius: 999px; background: #EEF3F8"></span>
+</div>
+<div style="padding: 4px 18px 18px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px">
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; font-weight: 600; color: #3E4F66">Total</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 40px; line-height: 44px; font-variant-numeric: tabular-nums">{{total}}</span></span>
+<span style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px; text-align: right"><span style="font-size: 13px; color: #3E4F66">Prix compagnie, exemple</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums">{{airlineLabel}}</span></span>
+</div>
+<div aria-hidden="true" style="display: flex; flex-direction: column; gap: 6px">
+<span style="display: block; height: 8px; border-radius: 999px; background: #E3EAF2; overflow: hidden"><span style="display: block; height: 100%; width: 100%; border-radius: 999px; background: #5A6A80"></span></span>
+<span style="display: block; height: 8px; border-radius: 999px; background: #E3EAF2; overflow: hidden"><span style="display: block; height: 100%; width: {{totalW}}; border-radius: 999px; background: #1A64C8; transition: width 300ms ease"></span></span>
+</div>
+<p style="margin: 0; display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 6px 12px; border-radius: 10px; background: #EEF3F8; font-size: 13px; color: #3E4F66">
+<svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="#A84A0E" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="m4 8 6 6 4-4 6 7"></path><path d="M15 17h5v-5"></path></svg>
+<span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #A84A0E; font-variant-numeric: tabular-nums">{{gapLabel}}</span> vs prix compagnie, exemple. Selon le marché, aucune économie garantie.</span>
+</p>
+</div>
+</section>
+
+<section aria-labelledby="rules-t" style="flex: none; display: flex; flex-direction: column; gap: 10px">
+<h2 id="rules-t" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Contraintes</h2>
+<ul style="list-style: none; margin: 0; padding: 0 16px; border-radius: 20px; background: #FFFFFF; border: 1px solid #D3DCE6">
+<li style="display: flex; align-items: center; gap: 12px; padding: 12px 0">
+<span aria-hidden="true" style="flex: none; width: 40px; height: 40px; border-radius: 12px; background: #EEF3F8; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 600">kg</span>
+<span style="display: flex; flex-direction: column; gap: 1px"><span style="font-size: 15px; font-weight: 600">23 kg maximum par bagage</span><span style="font-size: 13px; color: #3E4F66">Selon la compagnie</span></span>
+</li>
+<li style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid #D3DCE6">
+<span aria-hidden="true" style="flex: none; width: 40px; height: 40px; border-radius: 12px; background: #EEF3F8; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="8" rx="1"></rect><path d="M7 8v3M11 8v3M15 8v3M19 8v3"></path></svg></span>
+<span style="display: flex; flex-direction: column; gap: 1px"><span style="font-size: 15px; font-weight: 600">158 cm maximum</span><span style="font-size: 13px; color: #3E4F66">Longueur + largeur + hauteur, selon la compagnie</span></span>
+</li>
+<li style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid #D3DCE6">
+<span aria-hidden="true" style="flex: none; width: 40px; height: 40px; border-radius: 12px; background: #EEF3F8; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"></path></svg></span>
+<span style="display: flex; flex-direction: column; gap: 1px"><span style="font-size: 15px; font-weight: 600">Transfert confirmé par la compagnie</span><span style="font-size: 13px; color: #3E4F66">Le vendeur perd ce bagage, vous l'ajoutez à votre réservation</span></span>
+</li>
+<li style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid #D3DCE6">
+<span aria-hidden="true" style="flex: none; width: 40px; height: 40px; border-radius: 12px; background: rgba(255,210,63,0.30); color: #5C4600; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></span>
+<span style="display: flex; flex-direction: column; gap: 1px"><span style="font-size: 15px; font-weight: 600">Jusqu'à l'échéance de nommage</span><span style="font-size: 13px; color: #3E4F66">Règle à valider</span></span>
+</li>
+</ul>
+<p role="note" style="margin: 0; display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #E3EAF2; font-size: 13px; line-height: 18px; color: #3E4F66">
+<span style="flex: none; display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border-radius: 999px; background: #0B1B2E; color: #FFFFFF; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 600">[H]</span>
+<span><span style="font-weight: 700; color: #0B1B2E">Sous réserve d'accord avec la compagnie.</span> Aucun accord n'existe à ce jour.</span>
+</p>
+</section>
+
+</sc-if>
+
+</main>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; padding: 12px 20px 28px; background: rgba(255,255,255,0.96); border-top: 1px solid #D3DCE6">
+<sc-if value="{{ok}}" hint-placeholder-val="{{ true }}">
+<a href="BagageTransfert.dc.html" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #FFD23F; color: #0B1B2E; font-weight: 700; font-size: 16px; text-decoration: none; border: 0">Acheter {{qtyLabel}} · <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums">{{total}}</span></a>
+</sc-if>
+<sc-if value="{{wrong}}" hint-placeholder-val="{{ false }}">
+<button type="button" disabled="true" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #E3EAF2; color: #3E4F66; font: inherit; font-weight: 700; font-size: 16px; border: 0; cursor: not-allowed">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+Achat impossible sur ce vol
+</button>
+</sc-if>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844}}">
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const set = (patch) => this.setState(Object.assign({}, this.state || {}, patch));
+    const qty = s.qty ?? 2;
+    const fi = s.flightIdx ?? 0;
+    // Vols de démonstration (fictifs) : 0 = vol de la Famille M. ; 1 = autre numéro ; 2 = même numéro, autre date.
+    const flights = [
+      { num: '812', date: '14 déc.', time: '18:05' },
+      { num: '814', date: '14 déc.', time: '21:40' },
+      { num: '812', date: '15 déc.', time: '18:05' }
+    ];
+    const flight = flights[fi] || flights[0];
+    const ok = fi === 0;
+    const numOk = flight.num === '812';
+    const dateOk = flight.date === '14 déc.';
+    // Soute du vol 812 : offres de passagers (fictives), triées par prix croissant.
+    const soute = [90, 95, 100, 100, 110, 125, 140];
+    const airlineUnit = 150;
+    const money = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' $';
+    const chosen = soute.slice(0, qty);
+    const total = chosen.reduce((a, b) => a + b, 0);
+    const airline = airlineUnit * qty;
+    const noun = qty === 1 ? 'bagage' : 'bagages';
+    const included = 2;
+    const bagRow = [];
+    for (let i = 0; i < included + qty; i++) {
+      const added = i >= included;
+      bagRow.push({ bg: added ? '#FFD23F' : '#E3EAF2', mark: added ? '+' : '' });
+    }
+    const minDisabled = qty <= 1;
+    const maxDisabled = qty >= 3;
+    return {
+      ok,
+      wrong: !ok,
+      flight,
+      flightBorder: ok ? '#D3DCE6' : '#B02C27',
+      cmp: {
+        numOk,
+        numBad: !numOk,
+        numColor: numOk ? '#096A49' : '#B02C27',
+        dateOk,
+        dateBad: !dateOk,
+        dateColor: dateOk ? '#096A49' : '#B02C27'
+      },
+      tryOther: () => set({ flightIdx: fi === 1 ? 2 : 1 }),
+      backToMine: () => set({ flightIdx: 0 }),
+      qty,
+      qtyNoun: noun,
+      qtyLabel: qty + ' ' + noun,
+      minDisabled,
+      maxDisabled,
+      decBg: minDisabled ? '#E3EAF2' : '#FFFFFF',
+      decFg: minDisabled ? '#5A6A80' : '#0B1B2E',
+      decCursor: minDisabled ? 'not-allowed' : 'pointer',
+      incBg: maxDisabled ? '#E3EAF2' : '#0B1B2E',
+      incBorder: maxDisabled ? '#B9C5D3' : '#0B1B2E',
+      incFg: maxDisabled ? '#5A6A80' : '#FFFFFF',
+      incCursor: maxDisabled ? 'not-allowed' : 'pointer',
+      dec: () => set({ qty: Math.max(1, qty - 1) }),
+      inc: () => set({ qty: Math.min(3, qty + 1) }),
+      bagRow,
+      bagsAria: included + ' bagages inclus et ' + qty + ' ' + noun + ' ajouté' + (qty === 1 ? '' : 's') + ', soit ' + (included + qty) + ' bagages en soute',
+      bagsLabel: included + ' inclus + ' + qty + ' ajouté' + (qty === 1 ? '' : 's') + ' = ' + (included + qty) + ' bagages en soute',
+      picked: chosen.map((p, i) => ({ rank: String(i + 1), price: money(p) })),
+      ladder: soute.map((p, i) => {
+        const on = i < qty;
+        return {
+          price: money(p),
+          on,
+          bg: on ? '#0B1B2E' : '#FFFFFF',
+          fg: on ? '#FFFFFF' : '#3E4F66',
+          border: on ? '#0B1B2E' : '#B9C5D3'
+        };
+      }),
+      total: money(total),
+      airlineLabel: qty + ' × ' + money(airlineUnit) + ' = ' + money(airline),
+      totalW: Math.round((total / airline) * 100) + '%',
+      gapLabel: '−' + money(airline - total)
+    };
+  }
+}
+</script>
+
+
+</body></html>

@@ -1,0 +1,73 @@
+Ajouter des bagages (même vol)
+Ajouter des bagages — NexG-TT
+Ajouter des bagages
+MODE DÉMO — aucun paiement réel
+Votre vol
+Même vol
+Vol différent
+AE {{flight.num}} · {{flight.date}}
+Aérolys · YUL → CDG · {{flight.time}} · Famille M., 3 passagers
+Essayer avec un autre vol
+Vol différent
+Un bagage ne se transfère que sur le même vol (même numéro, même date).
+Comparaison
+Soute
+Votre vol
+Numéro
+812
+{{flight.num}}
+identique
+différent
+Date
+14 déc.
+{{flight.date}}
+identique
+différente
+Les bagages de la soute du vol 812 du 14 déc. ne peuvent pas être ajoutés à cette réservation, même chez Aérolys.
+Revenir à mon vol AE 812 · 14 déc.
+Essayer encore un autre vol
+Bagages à ajouter
+Famille M. · 2 bagages déjà inclus dans votre tarif
+{{qty}}
+{{qtyNoun}} en plus
+{{b.mark}}
+{{bagsLabel}}
+De 1 à 3 bagages par réservation (règle de démo).
+Les moins chères, prises pour vous
+Offres de passagers du vol 812, choisies automatiquement par prix croissant.
+CDG
+AE 812
+14 DÉC
+{{p.price}}
+Offre {{p.rank}} · 23 kg
+Soute du vol 812 · 7 offres
+{{l.price}}
+, choisie
+Coché = pris pour vous. Prix fixés par les passagers, plafonnés au prix compagnie (règle à valider).
+Aucune offre à votre prix ? Publier une demande
+Récapitulatif
+Bagage {{p.rank}} · passager du vol 812 · 23 kg
+{{p.price}}
+Commission NexG-TT : 10 % (Pass) · 12,5 % sans Pass — hypothèse, modalités à valider.
+Total
+{{total}}
+Prix compagnie, exemple
+{{airlineLabel}}
+{{gapLabel}}
+vs prix compagnie, exemple. Selon le marché, aucune économie garantie.
+Contraintes
+kg
+23 kg maximum par bagage
+Selon la compagnie
+158 cm maximum
+Longueur + largeur + hauteur, selon la compagnie
+Transfert confirmé par la compagnie
+Le vendeur perd ce bagage, vous l'ajoutez à votre réservation
+Jusqu'à l'échéance de nommage
+Règle à valider
+[H]
+Sous réserve d'accord avec la compagnie.
+Aucun accord n'existe à ce jour.
+Acheter {{qtyLabel}} ·
+{{total}}
+Achat impossible sur ce vol

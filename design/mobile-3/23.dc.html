@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<title>Dites votre prix — NexG-TT</title>
+<script src="0bf00150-88b4-41d3-8bfb-69b1fb452d4d"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+<style>
+body{margin:0;background:#EEF3F8}
+a{color:#1A64C8}a:hover{color:#124C9C}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #1A64C8;outline-offset:2px}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #EEF3F8; color: #0B1B2E; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="padding: 52px 12px 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<a href="Recherche.dc.html" aria-label="Retour" style="flex: none; width: 44px; height: 44px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; border: 1px solid #D3DCE6; display: flex; align-items: center; justify-content: center; color: #0B1B2E; text-decoration: none">
+<svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+</a>
+<h1 style="margin: 0; flex: 1; text-align: center; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 20px; letter-spacing: 0.04em; text-transform: uppercase">Dites votre prix</h1>
+<span aria-hidden="true" style="flex: none; width: 44px; height: 44px"></span>
+</header>
+
+<main style="flex: 1; overflow-y: auto; padding: 8px 20px 124px; display: flex; flex-direction: column; gap: 16px">
+
+<div style="flex: none; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Intention d'achat</span>
+<p style="margin: 0; font-size: 15px; line-height: 22px; color: #3E4F66">Vous dites votre prix et réservez les fonds. Les détenteurs d'un billet compatible viennent à vous.</p>
+</div>
+
+<section aria-label="Trajet" style="position: relative; flex: none; background: #FFFFFF; color: #0B1B2E; border-radius: 18px; box-shadow: 0 1px 0 #D3DCE6, 0 12px 32px rgba(11,27,46,0.10)">
+<div style="display: flex; align-items: center; gap: 12px; padding: 14px 18px 6px">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<label for="from" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Départ</label>
+<input id="from" type="text" value="{{depCity}}" autocomplete="off" style="width: 100%; min-width: 0; height: 44px; box-sizing: border-box; padding: 0; border: 0; border-radius: 6px; background: transparent; color: #0B1B2E; font: inherit; font-size: 18px; font-weight: 600">
+</div>
+<span aria-hidden="true" style="flex: none; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 44px; line-height: 44px; letter-spacing: 0.02em">{{depCode}}</span>
+</div>
+<div style="position: relative; height: 22px">
+<span aria-hidden="true" style="position: absolute; left: 18px; right: 18px; top: 10px; border-top: 2px dashed #D3DCE6"></span>
+<span aria-hidden="true" style="position: absolute; left: -11px; top: 0; width: 22px; height: 22px; border-radius: 999px; background: #EEF3F8"></span>
+<span aria-hidden="true" style="position: absolute; right: -11px; top: 0; width: 22px; height: 22px; border-radius: 999px; background: #EEF3F8"></span>
+<button type="button" aria-label="Inverser départ et arrivée" sc-camel-on-click="{{swap}}" style="position: absolute; right: 30px; top: -11px; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 999px; background: #0B1B2E; color: #FFFFFF; box-shadow: 0 0 0 4px #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{swapDeg}}); transition: transform 0.25s ease"><path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"></path></svg>
+</button>
+</div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 6px 18px 14px">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<label for="to" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Arrivée</label>
+<input id="to" type="text" value="{{arrCity}}" autocomplete="off" style="width: 100%; min-width: 0; height: 44px; box-sizing: border-box; padding: 0; border: 0; border-radius: 6px; background: transparent; color: #0B1B2E; font: inherit; font-size: 18px; font-weight: 600">
+</div>
+<span aria-hidden="true" style="flex: none; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 44px; line-height: 44px; letter-spacing: 0.02em">{{arrCode}}</span>
+</div>
+</section>
+
+<div role="group" aria-label="Type de trajet" style="flex: none; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 14px; background: #E3EAF2">
+<button type="button" aria-pressed="{{onePressed}}" sc-camel-on-click="{{setOne}}" style="height: 44px; border: 0; border-radius: 10px; background: {{oneBg}}; color: {{oneFg}}; box-shadow: {{oneShadow}}; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Aller simple</button>
+<button type="button" aria-pressed="{{roundPressed}}" sc-camel-on-click="{{setRound}}" style="height: 44px; border: 0; border-radius: 10px; background: {{roundBg}}; color: {{roundFg}}; box-shadow: {{roundShadow}}; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Aller-retour</button>
+</div>
+
+<fieldset style="flex: none; margin: 0; padding: 0; border: 0; min-width: 0">
+<legend style="padding: 0; margin: 0 0 6px; font-size: 13px; font-weight: 500; color: #3E4F66">Fenêtre de départ</legend>
+<div style="display: flex; gap: 8px">
+<div style="position: relative; flex: 1; min-width: 0">
+<label for="date-from" style="position: absolute; left: 44px; top: 7px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #5E6E84; pointer-events: none">Du</label>
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 14px; top: 16px; color: #3E4F66; pointer-events: none"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+<input id="date-from" type="text" value="15 déc. 2026" autocomplete="off" style="width: 100%; height: 52px; box-sizing: border-box; padding: 14px 10px 0 44px; border-radius: 12px; background: #FFFFFF; border: 1px solid #B9C5D3; color: #0B1B2E; font: inherit; font-size: 15px; font-weight: 600">
+</div>
+<div style="position: relative; flex: 1; min-width: 0">
+<label for="date-to" style="position: absolute; left: 14px; top: 7px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #5E6E84; pointer-events: none">Au</label>
+<input id="date-to" type="text" value="20 déc. 2026" autocomplete="off" style="width: 100%; height: 52px; box-sizing: border-box; padding: 14px 10px 0 14px; border-radius: 12px; background: #FFFFFF; border: 1px solid #B9C5D3; color: #0B1B2E; font: inherit; font-size: 15px; font-weight: 600">
+</div>
+<label for="flex-dates" style="flex: none; display: flex; align-items: center; gap: 8px; height: 52px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; background: {{flexBg}}; border: 1px solid {{flexBorder}}; color: #0B1B2E; font-size: 14px; font-weight: 600; cursor: pointer">
+<input id="flex-dates" type="checkbox" checked="{{flex}}" sc-camel-on-click="{{toggleFlex}}" style="width: 20px; height: 20px; margin: 0; accent-color: #1A64C8; cursor: pointer">
+Flexible
+</label>
+</div>
+<p style="margin: 6px 0 0; font-size: 13px; line-height: 18px; color: #5E6E84">{{windowHelp}}</p>
+</fieldset>
+
+<sc-if value="{{isRound}}" hint-placeholder-val="{{ false }}">
+<div style="flex: none; display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 13px; font-weight: 500; color: #3E4F66">Fenêtre de retour</span>
+<button type="button" style="display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; background: #FFFFFF; border: 1px dashed #B9C5D3; color: #1A64C8; font-family: inherit; font-size: 16px; font-weight: 600; text-align: left; cursor: pointer">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+Choisir les dates de retour
+</button>
+</div>
+</sc-if>
+
+<div style="flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 4px 6px 4px 14px; box-sizing: border-box; border-radius: 12px; background: #FFFFFF; border: 1px solid #B9C5D3">
+<div style="display: flex; align-items: center; gap: 10px; min-width: 0">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: #3E4F66; flex: none"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c1-3.5 3.5-5 6.5-5s5.5 1.5 6.5 5"></path><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 15c2 .5 3.2 2 3.5 5"></path></svg>
+<div style="display: flex; flex-direction: column">
+<span id="pax-label" style="font-size: 13px; font-weight: 500; color: #3E4F66">Voyageurs</span>
+<span aria-live="polite" style="font-size: 16px; font-weight: 600">{{paxLabel}}</span>
+</div>
+</div>
+<div role="group" aria-labelledby="pax-label" style="display: flex; align-items: center; gap: 6px">
+<button type="button" aria-label="Retirer un voyageur" sc-camel-on-click="{{paxMinus}}" style="width: 44px; height: 44px; padding: 0; border-radius: 12px; background: #EEF3F8; border: 1px solid #B9C5D3; color: {{minusColor}}; display: flex; align-items: center; justify-content: center; cursor: pointer">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path></svg>
+</button>
+<button type="button" aria-label="Ajouter un voyageur" sc-camel-on-click="{{paxPlus}}" style="width: 44px; height: 44px; padding: 0; border-radius: 12px; background: #EEF3F8; border: 1px solid #B9C5D3; color: #0B1B2E; display: flex; align-items: center; justify-content: center; cursor: pointer">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+</button>
+</div>
+</div>
+
+<section aria-labelledby="prix-title" style="flex: none; display: flex; flex-direction: column; gap: 12px; padding: 18px; border-radius: 20px; background: #FFFFFF; box-shadow: 0 1px 0 #D3DCE6, 0 12px 32px rgba(11,27,46,0.10)">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<h2 id="prix-title" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Prix maximum</h2>
+<span style="font-size: 13px; color: #5E6E84">par voyageur</span>
+</div>
+<div aria-live="polite" style="display: flex; align-items: baseline; gap: 10px">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 56px; line-height: 60px; letter-spacing: -0.01em; font-variant-numeric: tabular-nums">{{prixLabel}}</span>
+<span style="font-size: 13px; font-weight: 500; color: #3E4F66">{{prixVsNew}}</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<label for="prix-range" style="font-size: 13px; font-weight: 500; color: #3E4F66">Ajuster le prix maximum (pas de 10 $)</label>
+<input id="prix-range" type="range" min="600" max="2050" step="10" value="{{price}}" aria-valuetext="{{prixLabel}}" sc-camel-on-input="{{onSlide}}" sc-camel-on-change="{{onSlide}}" style="width: 100%; height: 44px; margin: 0; accent-color: #1A64C8; cursor: pointer">
+<div aria-hidden="true" style="display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #5E6E84">
+<span>600 $</span><span>2 050 $</span>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px; padding-top: 4px">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Repères aujourd'hui</span>
+<div aria-hidden="true" style="position: relative; height: 34px">
+<span style="position: absolute; left: 0; right: 0; top: 14px; height: 6px; border-radius: 3px; background: #E3EAF2"></span>
+<span style="position: absolute; left: 0; top: 14px; height: 6px; border-radius: 3px 0 0 3px; background: #1A64C8; width: {{youPct}}"></span>
+<span style="position: absolute; top: 9px; width: 2px; height: 16px; background: #0B1B2E; left: {{resalePct}}"></span>
+<span style="position: absolute; top: 9px; width: 2px; height: 16px; background: #0B1B2E; right: 0"></span>
+<span style="position: absolute; top: 6px; width: 22px; height: 22px; box-sizing: border-box; margin-left: -11px; border-radius: 999px; background: #FFFFFF; border: 3px solid #1A64C8; left: {{youPct}}"></span>
+</div>
+<p style="margin: 0; font-size: 13px; line-height: 18px; color: #3E4F66">Vous : <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #0B1B2E; font-variant-numeric: tabular-nums">{{prixLabel}}</span> · Meilleure revente actuelle <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #0B1B2E; font-variant-numeric: tabular-nums">1 500 $</span> · Neuf <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #0B1B2E; font-variant-numeric: tabular-nums">2 050 $</span></p>
+</div>
+
+<div aria-live="polite" style="display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #EEF3F8">
+<div style="display: flex; align-items: center; gap: 10px">
+<svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; color: #3E4F66"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c1-3.5 3.5-5 6.5-5s5.5 1.5 6.5 5"></path><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 15c2 .5 3.2 2 3.5 5"></path></svg>
+<span style="font-size: 15px; font-weight: 600">{{sellersLabel}}</span>
+</div>
+<div style="display: flex; align-items: center; gap: 10px">
+<span aria-hidden="true" style="flex: none; display: flex; gap: 3px; align-items: flex-end">
+<span style="width: 8px; height: 10px; border-radius: 2px; background: {{bar1}}"></span>
+<span style="width: 8px; height: 14px; border-radius: 2px; background: {{bar2}}"></span>
+<span style="width: 8px; height: 18px; border-radius: 2px; background: {{bar3}}"></span>
+</span>
+<span style="font-size: 15px; font-weight: 600">Chances d'accord : {{chanceLabel}}</span>
+</div>
+<p style="margin: 0; font-size: 13px; line-height: 18px; color: #3E4F66">{{chanceHelp}} Estimation à partir des billets en vente aujourd'hui, pas une garantie.</p>
+</div>
+</section>
+
+<fieldset style="flex: none; margin: 0; padding: 0; border: 0; min-width: 0">
+<legend style="padding: 0; margin: 0 0 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Validité de l'intention</legend>
+<div role="group" aria-label="Durée de validité" style="display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 4px; padding: 4px; border-radius: 14px; background: #E3EAF2">
+<button type="button" aria-pressed="{{v7Pressed}}" sc-camel-on-click="{{setV7}}" style="height: 44px; border: 0; border-radius: 10px; background: {{v7Bg}}; color: {{v7Fg}}; box-shadow: {{v7Shadow}}; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">7 jours</button>
+<button type="button" aria-pressed="{{v30Pressed}}" sc-camel-on-click="{{setV30}}" style="height: 44px; border: 0; border-radius: 10px; background: {{v30Bg}}; color: {{v30Fg}}; box-shadow: {{v30Shadow}}; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">30 jours</button>
+<button type="button" aria-pressed="{{vJ3Pressed}}" sc-camel-on-click="{{setVJ3}}" style="height: 44px; border: 0; border-radius: 10px; background: {{vJ3Bg}}; color: {{vJ3Fg}}; box-shadow: {{vJ3Shadow}}; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Jusqu'à J-3</button>
+</div>
+<p style="margin: 8px 0 0; font-size: 13px; line-height: 18px; color: #5E6E84">{{validityHelp}}</p>
+</fieldset>
+
+<section aria-labelledby="opt-title" style="flex: none; display: flex; flex-direction: column; gap: 8px">
+<h2 id="opt-title" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3E4F66">Options</h2>
+<button type="button" role="switch" aria-checked="{{autoStr}}" sc-camel-on-click="{{toggleAuto}}" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 60px; padding: 8px 14px; box-sizing: border-box; border-radius: 14px; background: #FFFFFF; border: 1px solid #D3DCE6; color: #0B1B2E; font-family: inherit; text-align: left; cursor: pointer">
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 15px; font-weight: 600; line-height: 20px">Accepter automatiquement toute proposition ≤ mon prix</span>
+<span style="font-size: 13px; color: #5E6E84">{{autoHelp}}</span>
+</span>
+<span aria-hidden="true" style="position: relative; flex: none; width: 48px; height: 28px; box-sizing: border-box; border-radius: 999px; background: {{auto.trackBg}}; border: 1px solid {{auto.trackBorder}}">
+<span style="position: absolute; top: 3px; left: {{auto.thumbLeft}}; width: 20px; height: 20px; border-radius: 999px; background: {{auto.thumbBg}}; transition: left 0.2s ease"></span>
+</span>
+</button>
+<button type="button" role="switch" aria-checked="{{aboveStr}}" sc-camel-on-click="{{toggleAbove}}" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 60px; padding: 8px 14px; box-sizing: border-box; border-radius: 14px; background: #FFFFFF; border: 1px solid #D3DCE6; color: #0B1B2E; font-family: inherit; text-align: left; cursor: pointer">
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 15px; font-weight: 600; line-height: 20px">Recevoir les propositions au-dessus de mon prix</span>
+<span style="font-size: 13px; color: #5E6E84">{{aboveHelp}}</span>
+</span>
+<span aria-hidden="true" style="position: relative; flex: none; width: 48px; height: 28px; box-sizing: border-box; border-radius: 999px; background: {{above.trackBg}}; border: 1px solid {{above.trackBorder}}">
+<span style="position: absolute; top: 3px; left: {{above.thumbLeft}}; width: 20px; height: 20px; border-radius: 999px; background: {{above.thumbBg}}; transition: left 0.2s ease"></span>
+</span>
+</button>
+<button type="button" role="switch" aria-checked="{{anonStr}}" sc-camel-on-click="{{toggleAnon}}" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 60px; padding: 8px 14px; box-sizing: border-box; border-radius: 14px; background: #FFFFFF; border: 1px solid #D3DCE6; color: #0B1B2E; font-family: inherit; text-align: left; cursor: pointer">
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 15px; font-weight: 600; line-height: 20px">Rester anonyme (initiale seulement)</span>
+<span style="font-size: 13px; color: #5E6E84">{{anonHelp}}</span>
+</span>
+<span aria-hidden="true" style="position: relative; flex: none; width: 48px; height: 28px; box-sizing: border-box; border-radius: 999px; background: {{anon.trackBg}}; border: 1px solid {{anon.trackBorder}}">
+<span style="position: absolute; top: 3px; left: {{anon.thumbLeft}}; width: 20px; height: 20px; border-radius: 999px; background: {{anon.thumbBg}}; transition: left 0.2s ease"></span>
+</span>
+</button>
+</section>
+
+<section aria-labelledby="how-title" style="flex: none; display: flex; flex-direction: column; gap: 12px; padding: 18px; border-radius: 20px; background: #0B1B2E; color: #FFFFFF">
+<h2 id="how-title" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Comment ça marche</h2>
+<ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px">
+<li style="display: flex; align-items: flex-start; gap: 12px">
+<span aria-hidden="true" style="flex: none; width: 28px; height: 28px; border-radius: 999px; background: #FFD23F; color: #0B1B2E; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 14px">1</span>
+<span style="font-size: 15px; line-height: 22px"><strong style="font-weight: 600">Vous réservez les fonds, sans débit.</strong> <span style="color: #C9D3DF">Ils restent sur votre carte ou votre solde, simplement mis de côté.</span></span>
+</li>
+<li style="display: flex; align-items: flex-start; gap: 12px">
+<span aria-hidden="true" style="flex: none; width: 28px; height: 28px; border-radius: 999px; background: #FFD23F; color: #0B1B2E; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 14px">2</span>
+<span style="font-size: 15px; line-height: 22px"><strong style="font-weight: 600">Les vendeurs de ce trajet voient votre intention et proposent.</strong> <span style="color: #C9D3DF">À votre prix, ou au-dessus si vous l'autorisez.</span></span>
+</li>
+<li style="display: flex; align-items: flex-start; gap: 12px">
+<span aria-hidden="true" style="flex: none; width: 28px; height: 28px; border-radius: 999px; background: #FFD23F; color: #0B1B2E; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 14px">3</span>
+<span style="font-size: 15px; line-height: 22px"><strong style="font-weight: 600">Vous acceptez ou non.</strong> <span style="color: #C9D3DF">L'argent n'est pris qu'à l'accord. Sans accord, il est libéré à l'expiration.</span></span>
+</li>
+</ol>
+<p style="margin: 0; display: flex; align-items: center; gap: 8px; font-size: 13px; line-height: 18px; color: #C9D3DF">
+<span style="flex: none; display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; background: rgba(255,255,255,0.12); color: #FFFFFF; font-size: 12px; font-weight: 700; letter-spacing: 0.04em">Hypothèse</span>
+Modalités de réservation des fonds à valider (cadre juridique).
+</p>
+</section>
+
+</main>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 20px 28px; background: rgba(255,255,255,0.96); border-top: 1px solid #D3DCE6">
+<a href="IntentionFonds.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #FFD23F; color: #0B1B2E; font-weight: 700; font-size: 16px; text-decoration: none; border: 0">
+<svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+Réserver <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums">{{prixLabel}}</span> et publier
+</a>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844}}">
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const set = (patch) => this.setState(Object.assign({}, this.state || {}, patch));
+    const fmt = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' $';
+
+    const MIN = 600;
+    const MAX = 2050;
+    const STEP = 10;
+    const NEW_PRICE = 2050;
+    const BEST_RESALE = 1500;
+    // Billets compatibles en vente aujourd'hui (fictifs) : prix demandés par les détenteurs
+    const ASKS = [1300, 1380, 1450, 1500];
+
+    const swapped = s.swapped ?? false;
+    const trip = s.trip ?? 'oneway';
+    const flex = s.flex ?? true;
+    const pax = s.pax ?? 1;
+    const price = s.price ?? 1300;
+    const validity = s.validity ?? '30';
+    const autoAccept = s.autoAccept ?? true;
+    const above = s.above ?? true;
+    const anon = s.anon ?? true;
+
+    const yul = { city: 'Montréal (YUL)', code: 'YUL' };
+    const cdg = { city: 'Paris (CDG)', code: 'CDG' };
+    const from = swapped ? cdg : yul;
+    const to = swapped ? yul : cdg;
+
+    const isOne = trip === 'oneway';
+    const segShadow = '0 1px 2px rgba(11,27,46,0.16)';
+    const seg = (on) => ({
+      bg: on ? '#FFFFFF' : 'transparent',
+      fg: on ? '#0B1B2E' : '#3E4F66',
+      shadow: on ? segShadow : 'none',
+      pressed: String(on)
+    });
+    const sOne = seg(isOne);
+    const sRound = seg(!isOne);
+    const v7 = seg(validity === '7');
+    const v30 = seg(validity === '30');
+    const vJ3 = seg(validity === 'j3');
+
+    const pct = (v) => (((v - MIN) / (MAX - MIN)) * 100).toFixed(1) + '%';
+    const atOrBelow = ASKS.filter((a) => a <= price).length;
+    const level = atOrBelow >= 2 ? 3 : atOrBelow === 1 ? 2 : 1;
+    const chanceLabel = level === 3 ? 'bonnes' : level === 2 ? 'moyennes' : 'faibles';
+    const chanceHelp = level === 3
+      ? atOrBelow + ' billets compatibles sont déjà à votre prix ou en dessous.'
+      : level === 2
+        ? '1 billet compatible est déjà à votre prix ; les autres sont au-dessus.'
+        : 'Aucun billet compatible n’est à ce prix aujourd’hui : il faudra qu’un vendeur baisse.';
+    const bar = (n) => (level >= n ? '#0B1B2E' : '#C5CFDA');
+    const vsNew = Math.round(((price - NEW_PRICE) / NEW_PRICE) * 100);
+
+    const expiry = validity === '7' ? '29 oct. 2026' : validity === '30' ? '21 nov. 2026' : '12 déc. 2026';
+    const validityHelp = validity === 'j3'
+      ? 'Jusqu’au 12 déc. 2026, trois jours avant le premier jour de votre fenêtre. Fonds libérés automatiquement à cette date si aucun accord.'
+      : 'Expire le ' + expiry + '. Fonds libérés automatiquement à cette date si aucun accord.';
+
+    const sw = (on) => ({
+      trackBg: on ? '#1A64C8' : '#E3EAF2',
+      trackBorder: on ? '#1A64C8' : '#B9C5D3',
+      thumbBg: on ? '#FFFFFF' : '#5E6E84',
+      thumbLeft: on ? '23px' : '3px'
+    });
+
+    return {
+      depCity: from.city,
+      depCode: from.code,
+      arrCity: to.city,
+      arrCode: to.code,
+      swapDeg: swapped ? '270deg' : '90deg',
+      swap: () => set({ swapped: !swapped }),
+
+      onePressed: sOne.pressed,
+      oneBg: sOne.bg,
+      oneFg: sOne.fg,
+      oneShadow: sOne.shadow,
+      roundPressed: sRound.pressed,
+      roundBg: sRound.bg,
+      roundFg: sRound.fg,
+      roundShadow: sRound.shadow,
+      isRound: !isOne,
+      setOne: () => set({ trip: 'oneway' }),
+      setRound: () => set({ trip: 'round' }),
+
+      flex,
+      flexBg: flex ? 'rgba(26,100,200,0.10)' : '#FFFFFF',
+      flexBorder: flex ? '#1A64C8' : '#B9C5D3',
+      toggleFlex: () => set({ flex: !flex }),
+      windowHelp: flex
+        ? 'Tout départ du 15 au 20 déc. vous convient : un vendeur peut proposer n’importe quel jour de la fenêtre.'
+        : 'Seuls les billets datés exactement du 15 ou du 20 déc. seront proposés.',
+
+      paxLabel: pax + (pax > 1 ? ' voyageurs' : ' voyageur'),
+      minusColor: pax > 1 ? '#0B1B2E' : '#5E6E84',
+      paxMinus: () => set({ pax: Math.max(1, pax - 1) }),
+      paxPlus: () => set({ pax: Math.min(9, pax + 1) }),
+
+      price,
+      prixLabel: fmt(price),
+      prixVsNew: (vsNew > 0 ? '+' : '−') + Math.abs(vsNew) + ' % vs neuf',
+      onSlide: (e) => {
+        const v = Number(e && e.target ? e.target.value : NaN);
+        if (Number.isFinite(v)) set({ price: Math.min(MAX, Math.max(MIN, Math.round(v / STEP) * STEP)) });
+      },
+      youPct: pct(price),
+      resalePct: pct(BEST_RESALE),
+      sellersLabel: ASKS.length + ' vendeurs compatibles · ' + atOrBelow + (atOrBelow > 1 ? ' à votre prix ou moins' : ' à votre prix ou moins'),
+      chanceLabel,
+      chanceHelp,
+      bar1: bar(1),
+      bar2: bar(2),
+      bar3: bar(3),
+
+      v7Pressed: v7.pressed, v7Bg: v7.bg, v7Fg: v7.fg, v7Shadow: v7.shadow,
+      v30Pressed: v30.pressed, v30Bg: v30.bg, v30Fg: v30.fg, v30Shadow: v30.shadow,
+      vJ3Pressed: vJ3.pressed, vJ3Bg: vJ3.bg, vJ3Fg: vJ3.fg, vJ3Shadow: vJ3.shadow,
+      setV7: () => set({ validity: '7' }),
+      setV30: () => set({ validity: '30' }),
+      setVJ3: () => set({ validity: 'j3' }),
+      validityHelp,
+
+      autoStr: String(autoAccept),
+      auto: sw(autoAccept),
+      autoHelp: autoAccept ? 'Une proposition à ' + fmt(price) + ' ou moins conclut l’accord sans attendre.' : 'Vous validerez chaque proposition à la main.',
+      toggleAuto: () => set({ autoAccept: !autoAccept }),
+      aboveStr: String(above),
+      above: sw(above),
+      aboveHelp: above ? 'Vous pourrez accepter, refuser ou contre-proposer.' : 'Seules les propositions à votre prix ou moins vous parviendront.',
+      toggleAbove: () => set({ above: !above }),
+      anonStr: String(anon),
+      anon: sw(anon),
+      anonHelp: anon ? 'Les vendeurs voient « A. », votre trajet et votre prix max.' : 'Les vendeurs voient « Alex T. », votre trajet et votre prix max.',
+      toggleAnon: () => set({ anon: !anon })
+    };
+  }
+}
+</script>
+
+
+</body></html>

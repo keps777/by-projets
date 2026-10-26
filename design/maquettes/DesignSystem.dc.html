@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Design system — NexG-TT</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Barlow:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#0D0E11}
+a{color:#FFD23F}a:hover{color:#FFE27A}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #FFD23F;outline-offset:2px}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1800px; position: relative; overflow: hidden; box-sizing: border-box; padding: 64px; background: #0D0E11; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column; gap: 28px">
+
+<header style="display: flex; align-items: flex-end; justify-content: space-between; gap: 40px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">NexG-TT 4.0 · Fondations · proposition à valider</span>
+<h1 style="margin: 0; white-space: nowrap; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 44px; line-height: 46px; letter-spacing: 0.01em; text-transform: uppercase">Design system — Tableau des départs</h1>
+</div>
+<p style="margin: 0; max-width: 470px; font-size: 15px; line-height: 22px; color: #B9BEC9">Nuit d'aéroport, jaune signalétique réservé à l'action et à l'échéance, billet papier perforé, volets à palettes. Mobile d'abord, même grammaire sur PC.</p>
+</header>
+
+<section aria-labelledby="ds-couleurs" style="display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+<h2 id="ds-couleurs" style="margin: 0; display: flex; align-items: baseline; gap: 12px; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; line-height: 26px; letter-spacing: 0.04em; text-transform: uppercase"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; font-size: 13px; letter-spacing: 0; color: #8C93A3">01</span>Couleurs</h2>
+<span style="font-size: 13px; line-height: 18px; color: #8C93A3">Hex écrits en ligne · un seul jaune · contraste AA : 4,5:1 pour le texte, 3:1 dès 24 px</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 20px">
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h3 style="margin: 0 0 2px; font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Fonds et surfaces</h3>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: #0D0E11"></span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>ground</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#0D0E11</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">fond de l'app</span></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: #15171C"></span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>surface-1</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#15171C</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">cartes</span></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: #1D2027"></span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>surface-2</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#1D2027</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">champs, cartes imbriquées</span></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: #262A33"></span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>surface-3</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#262A33</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">puces neutres, survol</span></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: #060708"></span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>board</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#060708</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">fond tableau des départs</span></span></div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h3 style="margin: 0 0 2px; font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Filets et texte</h3>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: #2C303A"></span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>line</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#2C303A</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">filets, bordures</span></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #4A505D; background: #3A3F4B"></span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>line-strong</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#3A3F4B</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">champs, boutons secondaires</span></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: #F3F4F6"></span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>text</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#F3F4F6</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">texte principal</span></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: #B9BEC9"></span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>text-2</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#B9BEC9</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">texte secondaire</span></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: #8C93A3"></span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>text-3</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#8C93A3</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">tertiaire, jamais plus pâle</span></span></div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h3 style="margin: 0 0 2px; font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Signal et données</h3>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: #FFD23F; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #0D0E11">Aa</span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>signal</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#FFD23F</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">action, échéance</span></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: #62C7FF"></span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>up</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#62C7FF</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">hausse (+), info, argent</span></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: #FF9E5E"></span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>down</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#FF9E5E</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">baisse (−)</span></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: #7CE3B5"></span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>ready</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#7CE3B5</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">nommé — prêt, succès</span></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: #FF7B7B"></span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>danger</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#FF7B7B</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">erreur, avec icône + texte</span></span></div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h3 style="margin: 0 0 2px; font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Fonds doux (12 %)</h3>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: rgba(255,210,63,0.12); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #FFD23F">Aa</span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>signal-soft</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#FFD23F 12 %</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">puce À nommer, rappel J-1</span></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: rgba(98,199,255,0.12); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #62C7FF">Aa</span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>up-soft</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#62C7FF 12 %</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">puce En vente, bandeau démo</span></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: rgba(255,158,94,0.12); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #FF9E5E">Aa</span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>down-soft</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#FF9E5E 12 %</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">fond de baisse</span></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: rgba(124,227,181,0.12); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #7CE3B5">Aa</span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>ready-soft</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#7CE3B5 12 %</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">puce Nommé — prêt</span></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: rgba(255,123,123,0.12); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #FF7B7B">Aa</span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>danger-soft</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#FF7B7B 12 %</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">fond d'erreur</span></span></div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h3 style="margin: 0 0 2px; font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Papier</h3>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #121418">Aa</span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>paper</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#FFFFFF</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">billet, recherche principale</span></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: #F1F2F4"></span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>paper-2</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#F1F2F4</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">zones sur papier</span></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: #121418"></span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>paper-ink</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#121418</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">texte sur papier</span></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: #555C6B"></span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>paper-ink-2</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#555C6B</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">texte secondaire sur papier</span></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 40px"><span aria-hidden="true" style="width: 40px; height: 40px; flex: none; box-sizing: border-box; border-radius: 10px; border: 1px solid #3A3F4B; background: #E2E4E9"></span><span style="display: flex; flex-direction: column; min-width: 0"><span style="display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; font-size: 14px; line-height: 18px; font-weight: 700"><span>paper-line</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #B9BEC9">#E2E4E9</span></span><span style="font-size: 13px; line-height: 18px; color: #8C93A3">perforation, filets papier</span></span></div>
+</div>
+
+</div>
+</section>
+
+<div style="display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 40px">
+
+<section aria-labelledby="ds-typo" style="display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+<h2 id="ds-typo" style="margin: 0; display: flex; align-items: baseline; gap: 12px; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; line-height: 26px; letter-spacing: 0.04em; text-transform: uppercase"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; font-size: 13px; letter-spacing: 0; color: #8C93A3">02</span>Typographie</h2>
+<span style="font-size: 13px; line-height: 18px; color: #8C93A3">Barlow Condensed · Barlow · IBM Plex Mono</span>
+</div>
+<div style="display: flex; flex-direction: column; border-bottom: 1px solid #2C303A">
+<div style="display: grid; grid-template-columns: 220px minmax(0, 1fr); align-items: center; gap: 20px; padding: 8px 0; border-top: 1px solid #2C303A">
+<span style="display: flex; flex-direction: column"><span style="font-size: 14px; line-height: 18px; font-weight: 700">Display</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; line-height: 16px; color: #8C93A3">Barlow Condensed 700 · 52/48</span></span>
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 52px; line-height: 48px; letter-spacing: 0.02em">YUL → CDG</span>
+</div>
+<div style="display: grid; grid-template-columns: 220px minmax(0, 1fr); align-items: center; gap: 20px; padding: 8px 0; border-top: 1px solid #2C303A">
+<span style="display: flex; flex-direction: column"><span style="font-size: 14px; line-height: 18px; font-weight: 700">Titre d'écran</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; line-height: 16px; color: #8C93A3">Barlow Condensed 600 · 36/36</span></span>
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 36px; line-height: 36px; letter-spacing: 0.01em; text-transform: uppercase">Mon droit de voyage</span>
+</div>
+<div style="display: grid; grid-template-columns: 220px minmax(0, 1fr); align-items: center; gap: 20px; padding: 8px 0; border-top: 1px solid #2C303A">
+<span style="display: flex; flex-direction: column"><span style="font-size: 14px; line-height: 18px; font-weight: 700">Titre de section</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; line-height: 16px; color: #8C93A3">Barlow Condensed 600 · 22/26</span></span>
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; line-height: 26px; letter-spacing: 0.04em; text-transform: uppercase">Départs qui montent</span>
+</div>
+<div style="display: grid; grid-template-columns: 220px minmax(0, 1fr); align-items: center; gap: 20px; padding: 8px 0; border-top: 1px solid #2C303A">
+<span style="display: flex; flex-direction: column"><span style="font-size: 14px; line-height: 18px; font-weight: 700">Corps</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; line-height: 16px; color: #8C93A3">Barlow 400 · 15/22</span></span>
+<span style="font-size: 15px; line-height: 22px">Nommez le voyageur au plus tard 24 h avant le départ.</span>
+</div>
+<div style="display: grid; grid-template-columns: 220px minmax(0, 1fr); align-items: center; gap: 20px; padding: 8px 0; border-top: 1px solid #2C303A">
+<span style="display: flex; flex-direction: column"><span style="font-size: 14px; line-height: 18px; font-weight: 700">Secondaire</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; line-height: 16px; color: #8C93A3">Barlow 500 · 13/18</span></span>
+<span style="font-size: 13px; line-height: 18px; font-weight: 500; color: #B9BEC9">Payé 1 000 $ le 12 janv. · Aérolys · vol 812</span>
+</div>
+<div style="display: grid; grid-template-columns: 220px minmax(0, 1fr); align-items: center; gap: 20px; padding: 8px 0; border-top: 1px solid #2C303A">
+<span style="display: flex; flex-direction: column"><span style="font-size: 14px; line-height: 18px; font-weight: 700">Sur-titre</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; line-height: 16px; color: #8C93A3">Barlow 700 · 12/16 · .12em</span></span>
+<span style="font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Mon portefeuille · 3 droits de voyage</span>
+</div>
+<div style="display: grid; grid-template-columns: 220px minmax(0, 1fr); align-items: center; gap: 20px; padding: 8px 0; border-top: 1px solid #2C303A">
+<span style="display: flex; flex-direction: column"><span style="font-size: 14px; line-height: 18px; font-weight: 700">Chiffres</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; line-height: 16px; color: #8C93A3">IBM Plex Mono 600 · 34 / 15</span></span>
+<span style="display: flex; align-items: baseline; gap: 16px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-variant-numeric: tabular-nums"><span style="font-size: 34px; line-height: 36px">2 000 $</span><span style="font-size: 15px; line-height: 20px; color: #62C7FF">+100 %</span><span style="font-size: 15px; line-height: 20px; color: #B9BEC9">00:04:31</span></span>
+</div>
+</div>
+</section>
+
+<section aria-labelledby="ds-espace" style="display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+<h2 id="ds-espace" style="margin: 0; display: flex; align-items: baseline; gap: 12px; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; line-height: 26px; letter-spacing: 0.04em; text-transform: uppercase"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; font-size: 13px; letter-spacing: 0; color: #8C93A3">03</span>Espacement et rayons</h2>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h3 style="margin: 0; font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Espacement · grille 4/8</h3>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="display: grid; grid-template-columns: 32px 56px minmax(0, 1fr); align-items: center; gap: 12px; height: 22px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600; color: #F3F4F6">4</span><span aria-hidden="true" style="width: 4px; height: 12px; border-radius: 2px; background: #8C93A3"></span><span style="font-size: 13px; line-height: 18px; color: #B9BEC9">icône et texte serrés</span></div>
+<div style="display: grid; grid-template-columns: 32px 56px minmax(0, 1fr); align-items: center; gap: 12px; height: 22px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600; color: #F3F4F6">8</span><span aria-hidden="true" style="width: 8px; height: 12px; border-radius: 2px; background: #8C93A3"></span><span style="font-size: 13px; line-height: 18px; color: #B9BEC9">entre puces, entre icônes d'en-tête</span></div>
+<div style="display: grid; grid-template-columns: 32px 56px minmax(0, 1fr); align-items: center; gap: 12px; height: 22px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600; color: #F3F4F6">12</span><span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 2px; background: #8C93A3"></span><span style="font-size: 13px; line-height: 18px; color: #B9BEC9">entre éléments d'une carte</span></div>
+<div style="display: grid; grid-template-columns: 32px 56px minmax(0, 1fr); align-items: center; gap: 12px; height: 22px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600; color: #F3F4F6">16</span><span aria-hidden="true" style="width: 16px; height: 12px; border-radius: 2px; background: #8C93A3"></span><span style="font-size: 13px; line-height: 18px; color: #B9BEC9">padding de cellule et de billet</span></div>
+<div style="display: grid; grid-template-columns: 32px 56px minmax(0, 1fr); align-items: center; gap: 12px; height: 22px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600; color: #F3F4F6">20</span><span aria-hidden="true" style="width: 20px; height: 12px; border-radius: 2px; background: #8C93A3"></span><span style="font-size: 13px; line-height: 18px; color: #B9BEC9">marge d'écran mobile, écart entre blocs</span></div>
+<div style="display: grid; grid-template-columns: 32px 56px minmax(0, 1fr); align-items: center; gap: 12px; height: 22px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600; color: #F3F4F6">24</span><span aria-hidden="true" style="width: 24px; height: 12px; border-radius: 2px; background: #8C93A3"></span><span style="font-size: 13px; line-height: 18px; color: #B9BEC9">écart entre groupes</span></div>
+<div style="display: grid; grid-template-columns: 32px 56px minmax(0, 1fr); align-items: center; gap: 12px; height: 22px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600; color: #F3F4F6">32</span><span aria-hidden="true" style="width: 32px; height: 12px; border-radius: 2px; background: #8C93A3"></span><span style="font-size: 13px; line-height: 18px; color: #B9BEC9">marge de page PC (indicatif)</span></div>
+<div style="display: grid; grid-template-columns: 32px 56px minmax(0, 1fr); align-items: center; gap: 12px; height: 22px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600; color: #F3F4F6">48</span><span aria-hidden="true" style="width: 48px; height: 12px; border-radius: 2px; background: #8C93A3"></span><span style="font-size: 13px; line-height: 18px; color: #B9BEC9">écart entre sections PC (indicatif)</span></div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px; padding-top: 6px">
+<h3 style="margin: 0; font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Rayons et cible tactile</h3>
+<div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px">
+<div style="display: flex; flex-direction: column; gap: 6px"><span aria-hidden="true" style="height: 48px; box-sizing: border-box; border-radius: 12px; background: #1D2027; border: 2px solid #3A3F4B"></span><span style="font-size: 13px; line-height: 16px; color: #B9BEC9"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #F3F4F6">12</span><br>champs</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span aria-hidden="true" style="height: 48px; box-sizing: border-box; border-radius: 14px; background: #1D2027; border: 2px solid #3A3F4B"></span><span style="font-size: 13px; line-height: 16px; color: #B9BEC9"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #F3F4F6">14</span><br>boutons</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span aria-hidden="true" style="height: 48px; box-sizing: border-box; border-radius: 18px; background: #1D2027; border: 2px solid #3A3F4B"></span><span style="font-size: 13px; line-height: 16px; color: #B9BEC9"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #F3F4F6">18</span><br>billet</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span aria-hidden="true" style="height: 48px; box-sizing: border-box; border-radius: 20px; background: #1D2027; border: 2px solid #3A3F4B"></span><span style="font-size: 13px; line-height: 16px; color: #B9BEC9"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #F3F4F6">20</span><br>cartes</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span aria-hidden="true" style="height: 48px; box-sizing: border-box; border-radius: 999px; background: #1D2027; border: 2px solid #3A3F4B"></span><span style="font-size: 13px; line-height: 16px; color: #B9BEC9"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #F3F4F6">999</span><br>puces</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span aria-hidden="true" style="height: 48px; display: flex; align-items: center"><span style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 12px; border: 1px dashed #8C93A3"></span></span><span style="font-size: 13px; line-height: 16px; color: #B9BEC9"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #F3F4F6">44</span><br>cible min.</span></div>
+</div>
+</div>
+</section>
+
+</div>
+
+<section aria-labelledby="ds-composants" style="display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+<h2 id="ds-composants" style="margin: 0; display: flex; align-items: baseline; gap: 12px; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; line-height: 26px; letter-spacing: 0.04em; text-transform: uppercase"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; font-size: 13px; letter-spacing: 0; color: #8C93A3">04</span>Composants et états</h2>
+<span style="font-size: 13px; line-height: 18px; color: #8C93A3">Repris de l'écran Accueil · cibles tactiles ≥ 44 px</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px">
+
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A; min-width: 0">
+<h3 style="margin: 0; font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Boutons</h3>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<button type="button" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #FFD23F; color: #0D0E11; font: inherit; font-weight: 700; font-size: 16px; border: 0; cursor: pointer">Revendre</button>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3">Défaut</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<button type="button" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #E0B52B; color: #0D0E11; font: inherit; font-weight: 700; font-size: 16px; border: 0; box-shadow: inset 0 3px 0 rgba(13,14,17,0.28); cursor: pointer">Revendre</button>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3">Appuyé</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<button type="button" disabled style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #262A33; color: #8C93A3; font: inherit; font-weight: 700; font-size: 16px; border: 0; cursor: not-allowed">Revendre</button>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3">Désactivé</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<button type="button" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #FFD23F; color: #0D0E11; font: inherit; font-weight: 700; font-size: 16px; border: 0; outline: 2px solid #FFD23F; outline-offset: 3px; cursor: pointer">Revendre</button>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3">Focus visible</span>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding-top: 14px; border-top: 1px solid #2C303A">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<button type="button" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; box-sizing: border-box; border-radius: 14px; background: #1D2027; color: #F3F4F6; font: inherit; font-weight: 700; font-size: 16px; border: 1px solid #3A3F4B; cursor: pointer">Transférer</button>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3">Secondaire</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<button type="button" style="display: flex; align-items: center; justify-content: flex-start; height: 52px; min-height: 44px; padding: 0 4px; background: transparent; color: #FFD23F; font: inherit; font-weight: 600; font-size: 15px; border: 0; cursor: pointer">Tout voir</button>
+<span style="font-size: 12px; line-height: 16px; color: #8C93A3">Texte</span>
+</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A; min-width: 0">
+<h3 style="margin: 0; font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Champ</h3>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px"><label for="ds-champ-1" style="font-size: 13px; line-height: 18px; font-weight: 500; color: #B9BEC9">Ville de départ</label><span style="font-size: 12px; line-height: 16px; color: #8C93A3">Défaut</span></div>
+<input id="ds-champ-1" type="text" value="Montréal (YUL)" readonly style="display: block; width: 100%; height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #1D2027; border: 1px solid #6B7282; color: #F3F4F6; font: inherit; font-size: 16px">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px"><label for="ds-champ-2" style="font-size: 13px; line-height: 18px; font-weight: 500; color: #B9BEC9">Destination</label><span style="font-size: 12px; line-height: 16px; color: #8C93A3">Focus</span></div>
+<input id="ds-champ-2" type="text" value="Paris (CDG)" readonly style="display: block; width: 100%; height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #1D2027; border: 1px solid #FFD23F; box-shadow: 0 0 0 1px #FFD23F; color: #F3F4F6; font: inherit; font-size: 16px">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px"><label for="ds-champ-3" style="font-size: 13px; line-height: 18px; font-weight: 500; color: #B9BEC9">Nom de famille du voyageur</label><span style="font-size: 12px; line-height: 16px; color: #8C93A3">Erreur</span></div>
+<input id="ds-champ-3" type="text" value="" readonly aria-invalid="true" aria-describedby="ds-champ-3-erreur" style="display: block; width: 100%; height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #1D2027; border: 1px solid #FF7B7B; color: #F3F4F6; font: inherit; font-size: 16px">
+<span id="ds-champ-3-erreur" style="display: flex; align-items: flex-start; gap: 6px; font-size: 13px; line-height: 18px; color: #FF7B7B"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg><span>Requis : nom tel qu'il figure sur la pièce d'identité.</span></span>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A; min-width: 0">
+<h3 style="margin: 0; font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Billet papier perforé</h3>
+<div style="position: relative; background: #FFFFFF; color: #121418; border-radius: 18px">
+<div style="padding: 16px 16px 14px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 44px; line-height: 44px; letter-spacing: 0.02em">YUL</span>
+<span style="flex: 1; display: flex; align-items: center; gap: 6px; color: #555C6B">
+<span style="flex: 1; border-top: 2px dotted #C9CDD5"></span>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h6l4 7h2l-2-7h5l2 2h2l-1-3 1-3h-2l-2 2h-5l2-7h-2l-4 7H3z"></path></svg>
+<span style="flex: 1; border-top: 2px dotted #C9CDD5"></span>
+</span>
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 44px; line-height: 44px; letter-spacing: 0.02em">CDG</span>
+</div>
+<div style="display: flex; justify-content: space-between; gap: 8px; font-size: 13px; line-height: 18px; color: #555C6B">
+<span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #121418; font-variant-numeric: tabular-nums">18:05</span> Montréal</span>
+<span>Paris <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #121418; font-variant-numeric: tabular-nums">07:10 +1</span></span>
+</div>
+</div>
+<div style="position: relative; border-top: 2px dashed #E2E4E9">
+<span style="position: absolute; left: -11px; top: -12px; width: 22px; height: 22px; border-radius: 999px; background: #15171C"></span>
+<span style="position: absolute; right: -11px; top: -12px; width: 22px; height: 22px; border-radius: 999px; background: #15171C"></span>
+</div>
+<div style="padding: 14px 16px 16px; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px">
+<span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: #121418; color: #FFD23F; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">À nommer</span>
+<span style="font-size: 12px; line-height: 16px; color: #555C6B">avant le 13 déc. 18:05</span>
+</span>
+<span style="display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 22px; line-height: 26px; font-variant-numeric: tabular-nums">2 000 $</span>
+<span style="font-size: 12px; line-height: 16px; color: #555C6B">prix équivalent</span>
+</span>
+</div>
+</div>
+<p style="margin: 0; font-size: 12px; line-height: 16px; color: #8C93A3">Encoches de 22 px, couleur du fond porteur.</p>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A">
+<h3 style="margin: 0; font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Puces de statut</h3>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: #262A33; color: #B9BEC9; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">Détenu</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(255,210,63,0.12); color: #FFD23F; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">À nommer</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(98,199,255,0.12); color: #62C7FF; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">En vente</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(124,227,181,0.12); color: #7CE3B5; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">Nommé — prêt</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: #262A33; color: #8C93A3; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">Vendu</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: #262A33; color: #8C93A3; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">Voyagé</span>
+</div>
+</div>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A">
+<h3 style="margin: 0; font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Écart de prix</h3>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 28px">
+<span style="font-size: 15px; font-weight: 600">YUL → CDG</span>
+<span style="display: flex; align-items: center; gap: 10px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums"><span>2 000 $</span><span style="display: inline-flex; align-items: center; gap: 4px; color: #62C7FF"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 16 6-6 4 4 6-7"></path><path d="M15 7h5v5"></path></svg>+100 %</span></span>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 28px">
+<span style="font-size: 15px; font-weight: 600">YUL → PPT</span>
+<span style="display: flex; align-items: center; gap: 10px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums"><span>1 790 $</span><span style="display: inline-flex; align-items: center; gap: 4px; color: #FF9E5E"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 8 6 6 4-4 6 7"></path><path d="M15 17h5v-5"></path></svg>−3 %</span></span>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<span style="display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(98,199,255,0.12); color: #62C7FF; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 13px; font-variant-numeric: tabular-nums">+1 000 $</span>
+<span style="display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(255,158,94,0.12); color: #FF9E5E; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 13px; font-variant-numeric: tabular-nums">−60 $</span>
+</div>
+<p style="margin: 0; font-size: 12px; line-height: 16px; color: #8C93A3">Mono 600 · signe et flèche, puis couleur.</p>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A; min-width: 0">
+<h3 style="margin: 0; font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Volets à palettes</h3>
+<div style="display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; min-height: 54px; padding: 0 14px; border-radius: 12px; background: #060708; border: 1px solid #2C303A">
+<span style="display: flex; gap: 3px">
+<span style="width: 22px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: #1C1F25; box-shadow: inset 0 -15px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: #FFD23F">C</span>
+<span style="width: 22px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: #1C1F25; box-shadow: inset 0 -15px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: #FFD23F">D</span>
+<span style="width: 22px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: #1C1F25; box-shadow: inset 0 -15px 0 #15171B; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 17px; color: #FFD23F">G</span>
+</span>
+<span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 15px; font-weight: 600">Paris</span><span style="font-size: 12px; color: #8C93A3">Direct · 7 h 05</span></span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums; color: #62C7FF">+4 %</span>
+</div>
+<p style="margin: 0; font-size: 12px; line-height: 16px; color: #8C93A3">Cellule 22 × 30 · mono 600 17 · jaune</p>
+</div>
+
+<div style="grid-column: span 2; display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A; min-width: 0">
+<h3 style="margin: 0; font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Barre de navigation</h3>
+<div style="display: flex; align-items: center; gap: 20px">
+<nav aria-label="Exemple de navigation principale" style="flex: none; width: 390px; height: 84px; box-sizing: border-box; padding: 6px 8px 22px; background: #0D0E11; border: 1px solid #2C303A; border-radius: 16px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr))">
+<a href="Main.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 48px; color: #FFD23F; text-decoration: none; font-size: 12px; font-weight: 600">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"></path></svg>
+Accueil
+</a>
+<a href="Recherche.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 48px; color: #8C93A3; text-decoration: none; font-size: 12px; font-weight: 600">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+Rechercher
+</a>
+<a href="Drop.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 48px; color: #8C93A3; text-decoration: none; font-size: 12px; font-weight: 600">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"></path></svg>
+Drops
+</a>
+<a href="Portefeuille.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 48px; color: #8C93A3; text-decoration: none; font-size: 12px; font-weight: 600">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h12v4"></path><rect x="3" y="9" width="18" height="11" rx="2"></rect><path d="M16 14.5h1.5"></path></svg>
+Portefeuille
+</a>
+<a href="Compte.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 48px; color: #8C93A3; text-decoration: none; font-size: 12px; font-weight: 600">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg>
+Compte
+</a>
+</nav>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; font-size: 13px; line-height: 18px; color: #B9BEC9">
+<li>Onglet courant en jaune</li>
+<li><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px">aria-current="page"</span></li>
+<li>Cibles ≥ 48 px de haut</li>
+<li>Libellés toujours visibles</li>
+</ul>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A; min-width: 0">
+<h3 style="margin: 0; font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Bandeau démo</h3>
+<div role="note" style="display: flex; align-items: center; gap: 8px; background: rgba(98,199,255,0.12); border: 1px solid rgba(98,199,255,0.4); color: #62C7FF; border-radius: 12px; padding: 10px 12px; font-size: 13px; line-height: 18px; font-weight: 600">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+<span>MODE DÉMO — aucun paiement réel</span>
+</div>
+<p style="margin: 0; font-size: 12px; line-height: 16px; color: #8C93A3">Sur tout paiement simulé. Données fictives.</p>
+</div>
+
+</div>
+</section>
+
+<section aria-labelledby="ds-principes" style="display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+<h2 id="ds-principes" style="margin: 0; display: flex; align-items: baseline; gap: 12px; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; line-height: 26px; letter-spacing: 0.04em; text-transform: uppercase"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; font-size: 13px; letter-spacing: 0; color: #8C93A3">05</span>Principes</h2>
+</div>
+<ol style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 40px">
+<li style="display: flex; align-items: baseline; gap: 14px; padding: 8px 0; border-top: 1px solid #2C303A; font-size: 15px; line-height: 22px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 500; color: #8C93A3">01</span><span>Le jaune signale une action ou une échéance, jamais une décoration.</span></li>
+<li style="display: flex; align-items: baseline; gap: 14px; padding: 8px 0; border-top: 1px solid #2C303A; font-size: 15px; line-height: 22px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 500; color: #8C93A3">02</span><span>Un écart de prix porte toujours un signe, pas seulement une couleur.</span></li>
+<li style="display: flex; align-items: baseline; gap: 14px; padding: 8px 0; border-top: 1px solid #2C303A; font-size: 15px; line-height: 22px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 500; color: #8C93A3">03</span><span>On dit prix équivalent, jamais gain garanti.</span></li>
+<li style="display: flex; align-items: baseline; gap: 14px; padding: 8px 0; border-top: 1px solid #2C303A; font-size: 15px; line-height: 22px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 500; color: #8C93A3">04</span><span>Tout ce qui est définitif est annoncé avant.</span></li>
+<li style="display: flex; align-items: baseline; gap: 14px; padding: 8px 0; border-top: 1px solid #2C303A; font-size: 15px; line-height: 22px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 500; color: #8C93A3">05</span><span>Le passager est nommé le plus tard possible.</span></li>
+<li style="display: flex; align-items: baseline; gap: 14px; padding: 8px 0; border-top: 1px solid #2C303A; font-size: 15px; line-height: 22px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 500; color: #8C93A3">06</span><span>Chaque écran a ses états : chargement, vide, erreur.</span></li>
+</ol>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1800}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

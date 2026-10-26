@@ -1,0 +1,46 @@
+Intentions d'achat — NexG-TT
+Intentions d'achat — NexG-TT
+Intentions d'achat
+Tableau de la demande · fonds déjà réservés
+{{totalCount}}
+intentions actives, dont
+{{mineCount}}
+sur vos vols
+{{totalFunds}}
+de fonds réservés au total
+Vols au départ de Montréal (YUL). Acheteurs anonymisés : initiale seulement.
+Mes vols
+Tous
+Caraïbes
+Europe
+{{shownCount}}
+{{shownLabel}} ·
+{{shownFunds}}
+réservés
+Prix max
+Expiration
+Dest.
+Acheteur · fenêtre
+Prix max
+De YUL
+{{c.ch}}
+{{r.title}}
+{{r.window}}
+{{r.meta}}
+{{r.max}}
+{{r.expiry}}
+Fonds réservés
+{{r.mark}}
+De YUL
+{{c.ch}}
+{{r.title}}
+{{r.window}}
+{{r.meta}}
+{{r.max}}
+{{r.expiry}}
+Fonds réservés
+{{r.mark}}
+Démo : seule l'intention de l'acheteur M. (YUL → PUJ) est détaillée dans ce prototype.
+Une intention = un acheteur qui a déjà réservé les fonds.
+Si vous acceptez son prix, la vente est immédiate. Vous pouvez aussi proposer plus cher : il accepte, refuse ou contre-propose.
+Fonds réservés : non débités tant qu'aucun accord, libérés à l'expiration de l'intention. Un droit de voyage n'est pas un placement financier. Démo.

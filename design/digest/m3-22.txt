@@ -1,0 +1,83 @@
+Web — Nommer le voyageur
+Nommer le voyageur (web) — NexG-TT
+NEXG
+·TT
+Voyager
+Mes actifs
+Rechercher une ville, un code d’aéroport ou une référence
+AT
+Accueil
+Rechercher
+Mon voyage
+Agences
+Transmission à Aérolys en cours…
+Hors ligne
+Vous pouvez préparer la saisie : la transmission à Aérolys demande le réseau. Rien n’a été transmis.
+Mon voyage
+Nommer le voyageur
+Voyager · YUL → CDG · lun. 14 déc. 2026
+L’échéance du 13 déc. 18:05 est passée
+Le détenteur (Alex T.) a été nommé voyageur par défaut. Plus aucune transaction n’est possible sur ce billet : toute modification relève désormais des règles d’Aérolys.
+Voir mon voyage
+{{errTitle}}
+Rien n’a été transmis à Aérolys. Complétez les champs signalés puis confirmez à nouveau.
+Qui voyage ?
+Moi (Alex T.)
+Données de votre profil, à vérifier
+AT
+Un proche enregistré
+Choisir parmi vos voyageurs
+Nouveau voyageur
+Saisir ses informations
+Tel qu’inscrit sur le passeport
+Transmis à Aérolys tel quel. Vérifiez l’orthographe et l’ordre des prénoms.
+Aucun proche enregistré pour l’instant
+Les voyageurs que vous nommez pourront être enregistrés ici pour la prochaine fois.
+Saisir un nouveau voyageur
+Nom
+Indiquez le nom tel qu’inscrit sur le passeport.
+Prénom(s)
+Indiquez le ou les prénoms tels qu’inscrits sur le passeport.
+Date de naissance
+Indiquez la date de naissance.
+Genre (selon la compagnie)
+Choisir
+Féminin
+Masculin
+X — si accepté
+Numéro de document (si exigé)
+Selon les exigences d’Aérolys et de la destination.
+Action définitive :
+une fois le voyageur nommé, ce billet ne peut plus être revendu ni transféré.
+Toute modification ensuite relève des règles d’Aérolys.
+Je confirme que ces informations correspondent au passeport du voyageur et j’accepte que ce billet ne puisse plus être revendu ni transféré.
+Échéance de finalisation
+{{fd0}}
+{{fd1}}
+J
+{{fh0}}
+{{fh1}}
+H
+{{deadlineText}}
+Après l’échéance, plus aucune transaction n’est possible sur ce billet. À l’échéance, sans action de votre part, le détenteur est nommé voyageur par défaut.
+Récapitulatif du billet
+YUL → CDG
+Lun. 14 déc. 2026 · 18:05
+Aérolys 812 · direct
+À nommer
+Voyageur transmis
+{{travelerLine}}
+Confirmer et transmettre à Aérolys
+Confirmer et transmettre à Aérolys
+Transmission à Aérolys en cours…
+Confirmer et transmettre à Aérolys
+{{hintText}}
+Prototype — données fictives
+Compagnies (Aérolys, Nordelle), agence, détenteurs, prix et références inventés. Aucun paiement réel.
+Un droit de voyage est une inscription au registre interne de NexG-TT, pas un placement financier.
+Aperçu des états
+Normal
+Chargement
+Erreur
+Échéance passée
+Hors ligne

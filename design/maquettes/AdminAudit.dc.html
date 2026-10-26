@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Administration · Journal d’audit — NexG-TT</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Barlow:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#0D0E11}
+a{color:#FFD23F}a:hover{color:#FFE27A}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid #FFD23F;outline-offset:2px}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+</helmet>
+<div style="min-height: 1350px; background: #0D0E11; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; color-scheme: dark; display: flex; flex-direction: column">
+
+<header style="border-bottom: 1px solid #2C303A">
+<div style="max-width: 1440px; margin: 0 auto; padding: 12px clamp(16px, 4vw, 48px); box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px">
+<a href="AdminDroits.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; color: #F3F4F6; text-decoration: none">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: 0.06em"><span>NEXG</span><span style="color: #FFD23F">·TT</span></span>
+<span style="display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 6px; background: #262A33; color: #F3F4F6; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase">Administration</span>
+</a>
+<nav aria-label="Administration" style="flex: 1 1 auto; min-width: 0">
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px">
+<li><a href="AdminDroits.dc.html" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; color: #B9BEC9; font-size: 15px; font-weight: 600; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h6l4 7h2l-2-7h5l2 2h2l-1-3 1-3h-2l-2 2h-5l2-7h-2l-4 7H3z"></path></svg>Droits de voyage</a></li>
+<li><a href="AdminDrops.dc.html" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; color: #B9BEC9; font-size: 15px; font-weight: 600; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"></path></svg>Drops et agences</a></li>
+<li><a href="AdminAudit.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; background: #1D2027; box-shadow: inset 0 -2px 0 #FFD23F; color: #F3F4F6; font-size: 15px; font-weight: 600; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5M12 7v5l3 2"></path></svg>Journal d’audit</a></li>
+</ul>
+</nav>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(98,199,255,0.12); color: #62C7FF; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap">Démo · données fictives</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(124,227,181,0.12); color: #7CE3B5; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"></path></svg>MFA vérifiée</span>
+<span style="display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; font-weight: 600"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-weight: 500">adm-01</span><span style="color: #B9BEC9; font-weight: 500">(vous)</span></span>
+</div>
+</div>
+</header>
+
+<div role="group" aria-label="Maquette : état affiché" style="background: #060708; border-bottom: 1px dashed #6B7282">
+<div style="max-width: 1440px; margin: 0 auto; padding: 8px clamp(16px, 4vw, 48px); box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Maquette · état affiché</span>
+<span style="display: flex; flex-wrap: wrap; gap: 4px">
+<button id="st-normal" type="button" aria-pressed="{{st.normal.pressed}}" onClick="{{st.normal.set}}" style="min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 999px; border: 0; background: {{st.normal.bg}}; color: {{st.normal.color}}; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Normal</button>
+<button id="st-loading" type="button" aria-pressed="{{st.loading.pressed}}" onClick="{{st.loading.set}}" style="min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 999px; border: 0; background: {{st.loading.bg}}; color: {{st.loading.color}}; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Chargement</button>
+<button id="st-empty" type="button" aria-pressed="{{st.empty.pressed}}" onClick="{{st.empty.set}}" style="min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 999px; border: 0; background: {{st.empty.bg}}; color: {{st.empty.color}}; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Vide</button>
+<button id="st-error" type="button" aria-pressed="{{st.error.pressed}}" onClick="{{st.error.set}}" style="min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 999px; border: 0; background: {{st.error.bg}}; color: {{st.error.color}}; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Erreur</button>
+<button id="st-offline" type="button" aria-pressed="{{st.offline.pressed}}" onClick="{{st.offline.set}}" style="min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 999px; border: 0; background: {{st.offline.bg}}; color: {{st.offline.color}}; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Hors ligne</button>
+</span>
+<span style="font-size: 12px; color: #8C93A3">Hors produit : sert à montrer les états de l’écran.</span>
+</div>
+</div>
+
+<main style="flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 20px clamp(16px, 4vw, 48px) 32px; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px">
+<section aria-labelledby="page-title" style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px">
+<div style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
+<h1 id="page-title" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 44px; line-height: 44px; text-transform: uppercase; letter-spacing: 0.01em">Journal d’audit</h1>
+<p style="margin: 0; font-size: 13px; font-weight: 600; color: #B9BEC9">Administration · données du 12 oct. 2026, 14:02 (UTC−4) · heures de Montréal et UTC</p>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px">
+<button id="export" type="button" aria-disabled="{{exportDisabled}}" onClick="{{doExport}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 18px; box-sizing: border-box; border-radius: 14px; background: #1D2027; color: {{exportColor}}; border: 1px solid #6B7282; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"></path></svg>Exporter (CSV)</button>
+<span style="font-size: 12px; color: #8C93A3">L’export est journalisé.</span>
+</div>
+</section>
+
+<p style="margin: 0; display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #15171C; border: 1px solid #2C303A; font-size: 14px; line-height: 20px; color: #B9BEC9"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px; color: #F3F4F6"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg><span><strong style="color: #F3F4F6">Ajout seul</strong> : aucune modification ni suppression (le rôle applicatif ne peut pas écrire dans ce journal). Il ne contient aucune donnée passager et aucun secret.</span></p>
+
+<sc-if value="{{showNotice}}" hint-placeholder-val="{{ false }}">
+<p role="status" style="margin: 0; display: flex; gap: 8px; padding: 10px 12px; border-radius: 12px; background: rgba(124,227,181,0.12); color: #7CE3B5; font-size: 14px; line-height: 20px; font-weight: 600"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><path d="m5 12 5 5 9-10"></path></svg><span>{{notice}}</span></p>
+</sc-if>
+<sc-if value="{{isOffline}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 14px; background: rgba(255,210,63,0.12); color: #FFD23F; font-size: 14px; line-height: 20px; font-weight: 600">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5h.01"></path></svg>
+<span>Hors ligne. Dernières données reçues le 12 oct. 2026 à 14:02 (UTC−4). Lecture seule : le journal affiché est daté ; l’export est indisponible.</span>
+</div>
+</sc-if>
+<sc-if value="{{isEmpty}}" hint-placeholder-val="{{ false }}">
+<div style="background: #15171C; border: 1px solid #2C303A; border-radius: 20px; padding: 40px 24px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center">
+<span style="color: #8C93A3; display: flex"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg></span>
+<h2 style="margin: 0; font-size: 20px; font-weight: 700">Aucune entrée ne correspond à ces filtres</h2>
+<p style="margin: 0; font-size: 15px; line-height: 22px; color: #B9BEC9; max-width: 520px">Élargissez la période ou retirez un filtre.</p>
+<button id="reset" type="button" onClick="{{reset}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 18px; box-sizing: border-box; border-radius: 14px; background: #1D2027; color: #F3F4F6; border: 1px solid #6B7282; font: inherit; font-size: 15px; font-weight: 700; text-decoration: none; cursor: pointer">Réinitialiser les filtres</button>
+</div>
+</sc-if>
+<sc-if value="{{isError}}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="background: #15171C; border: 1px solid #2C303A; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; align-items: flex-start; gap: 12px">
+<div style="display: flex; align-items: center; gap: 10px; color: #FF7B7B">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 20h20z"></path><path d="M12 10v4M12 17h.01"></path></svg>
+<h2 style="margin: 0; font-size: 20px; font-weight: 700">Impossible de charger le journal d’audit.</h2>
+</div>
+<p style="margin: 0; font-size: 15px; line-height: 22px; color: #B9BEC9; max-width: 640px">Le serveur n’a pas répondu. Aucune donnée n’a été modifiée.</p>
+<p style="margin: 0; font-size: 13px; color: #8C93A3">Code de corrélation : <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; color: #F3F4F6">ERR-DEMO-5E17</span></p>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<button id="retry" type="button" onClick="{{retry}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 18px; box-sizing: border-box; border-radius: 14px; background: #FFD23F; color: #0D0E11; border: 0; font: inherit; font-size: 15px; font-weight: 700; text-decoration: none; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path></svg>Réessayer</button>
+
+</div>
+</div>
+</sc-if>
+<sc-if value="{{isLoading}}" hint-placeholder-val="{{ false }}">
+<div aria-busy="true" style="display: flex; flex-direction: column; gap: 14px">
+<p role="status" style="margin: 0; font-size: 14px; font-weight: 600; color: #B9BEC9">Chargement du journal d’audit…</p>
+<div style="background: #15171C; border: 1px solid #2C303A; border-radius: 20px; overflow: hidden"><div style="display: flex; gap: 16px; padding: 18px 16px; border-top: 1px solid #2C303A"><span style="flex: 0 0 14%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 10%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 18%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 18%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 28%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span></div><div style="display: flex; gap: 16px; padding: 18px 16px; border-top: 1px solid #2C303A"><span style="flex: 0 0 14%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 10%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 18%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 18%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 28%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span></div><div style="display: flex; gap: 16px; padding: 18px 16px; border-top: 1px solid #2C303A"><span style="flex: 0 0 14%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 10%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 18%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 18%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 28%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span></div><div style="display: flex; gap: 16px; padding: 18px 16px; border-top: 1px solid #2C303A"><span style="flex: 0 0 14%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 10%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 18%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 18%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 28%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span></div><div style="display: flex; gap: 16px; padding: 18px 16px; border-top: 1px solid #2C303A"><span style="flex: 0 0 14%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 10%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 18%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 18%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 28%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span></div><div style="display: flex; gap: 16px; padding: 18px 16px; border-top: 1px solid #2C303A"><span style="flex: 0 0 14%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 10%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 18%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 18%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 12%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span><span style="flex: 0 0 28%"><span aria-hidden="true" style="display: block; width: 100%; max-width: 100%; height: 14px; border-radius: 6px; background: #262A33; animation: nx-pulse 1.4s ease-in-out infinite"></span></span></div></div>
+</div>
+</sc-if>
+
+<div style="display: {{dataDisplay}}; flex-direction: column; gap: 18px">
+
+<div role="search" aria-label="Filtrer le journal d’audit" style="background: #15171C; border: 1px solid #2C303A; border-radius: 20px; padding: 16px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px 16px">
+<div style="flex: 1 1 190px; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<label for="f-periode" style="font-size: 13px; font-weight: 500; color: #B9BEC9">Période</label>
+<div style="position: relative">
+<select id="f-periode" name="periode" value="{{periode}}" onChange="{{onField}}" style="appearance: none; -webkit-appearance: none; width: 100%; height: 48px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #1D2027; border: 1px solid #6B7282; color: #F3F4F6; font: inherit; font-size: 15px; padding-right: 40px; cursor: pointer">
+<option value="7j">7 derniers jours</option>
+<option value="24h">24 dernières heures</option>
+<option value="1h">Dernière heure</option>
+</select>
+<span aria-hidden="true" style="position: absolute; right: 12px; top: 14px; display: flex; color: #B9BEC9; pointer-events: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 9 7 7 7-7"></path></svg></span>
+</div>
+</div>
+<div style="flex: 1 1 190px; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<label for="f-acteur" style="font-size: 13px; font-weight: 500; color: #B9BEC9">Acteur (adm-01, système)</label>
+<input id="f-acteur" name="acteur" type="search" value="{{acteur}}" onChange="{{onField}}" autocomplete="off" style="width: 100%; height: 48px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #1D2027; border: 1px solid #6B7282; color: #F3F4F6; font: inherit; font-size: 15px">
+</div>
+<div style="flex: 1 1 190px; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<label for="f-action" style="font-size: 13px; font-weight: 500; color: #B9BEC9">Action</label>
+<div style="position: relative">
+<select id="f-action" name="action" value="{{action}}" onChange="{{onField}}" style="appearance: none; -webkit-appearance: none; width: 100%; height: 48px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #1D2027; border: 1px solid #6B7282; color: #F3F4F6; font: inherit; font-size: 15px; padding-right: 40px; cursor: pointer">
+<option value="all">Toutes les actions</option>
+<option value="gel">Gel d’un droit</option>
+<option value="drop">Drops</option>
+<option value="agence">Agences</option>
+<option value="connexion">Connexions</option>
+<option value="export">Exports</option>
+<option value="rapprochement">Rapprochement</option>
+</select>
+<span aria-hidden="true" style="position: absolute; right: 12px; top: 14px; display: flex; color: #B9BEC9; pointer-events: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 9 7 7 7-7"></path></svg></span>
+</div>
+</div>
+<div style="flex: 1 1 190px; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<label for="f-objet" style="font-size: 13px; font-weight: 500; color: #B9BEC9">Objet (NXG-…, Drop N° …)</label>
+<input id="f-objet" name="objet" type="search" value="{{objet}}" onChange="{{onField}}" autocomplete="off" style="width: 100%; height: 48px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #1D2027; border: 1px solid #6B7282; color: #F3F4F6; font: inherit; font-size: 15px">
+</div>
+<button id="reset-filters" type="button" onClick="{{reset}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 0 8px; background: transparent; border: 0; color: #FFD23F; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 25px">Réinitialiser</button>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px">
+<p id="count" role="status" aria-live="polite" style="margin: 0; font-size: 14px; font-weight: 600">{{countLabel}}</p>
+<p style="margin: 0; font-size: 13px; color: #B9BEC9">Tri : du plus récent au plus ancien.</p>
+</div>
+
+<div style="display: {{tableDisplay}}; overflow-x: auto; border-radius: 20px; background: #15171C; border: 1px solid #2C303A">
+<table id="tbl-audit" style="width: 100%; min-width: 1100px; border-collapse: collapse; font-variant-numeric: tabular-nums">
+<caption style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Journal d’audit : horodatage en heure de Montréal et UTC, acteur, action, objet, résultat et détail.</caption>
+<thead>
+<tr>
+<th scope="col" style="padding: 12px 8px 10px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8C93A3; white-space: nowrap; padding-left: 16px">Horodatage</th><th scope="col" style="padding: 12px 8px 10px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8C93A3; white-space: nowrap">Acteur</th><th scope="col" style="padding: 12px 8px 10px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8C93A3; white-space: nowrap">Action</th><th scope="col" style="padding: 12px 8px 10px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8C93A3; white-space: nowrap">Objet</th><th scope="col" style="padding: 12px 8px 10px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8C93A3; white-space: nowrap">Résultat</th><th scope="col" style="padding: 12px 8px 10px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8C93A3; white-space: nowrap">Détail</th>
+</tr>
+</thead>
+<tbody>
+<tr style="display: {{rows.a1.display}}">
+<th scope="row" style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; padding-left: 16px; text-align: left; font-weight: inherit; white-space: nowrap"><span style="display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; font-weight: 600">14:01:00 UTC−4</span>
+<span style="display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 12px; color: #8C93A3">18:01:00 UTC</span>
+<span style="font-size: 12px; color: #8C93A3">12 oct. 2026</span></th>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; white-space: nowrap">système</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px; font-weight: 600">Injection de drop</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px">Drop N° 128</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(124,227,181,0.12); color: #7CE3B5; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>Accepté</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 13px; line-height: 18px; color: #B9BEC9">Injection 2 : 2 places · algorithme v0 (démo)</td>
+</tr>
+<tr style="display: {{rows.a2.display}}">
+<th scope="row" style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; padding-left: 16px; text-align: left; font-weight: inherit; white-space: nowrap"><span style="display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; font-weight: 600">14:00:00 UTC−4</span>
+<span style="display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 12px; color: #8C93A3">18:00:00 UTC</span>
+<span style="font-size: 12px; color: #8C93A3">12 oct. 2026</span></th>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; white-space: nowrap">système</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px; font-weight: 600">Injection de drop</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px">Drop N° 128</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(124,227,181,0.12); color: #7CE3B5; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>Accepté</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 13px; line-height: 18px; color: #B9BEC9">Injection 1 : 4 places · algorithme v0 (démo)</td>
+</tr>
+<tr style="display: {{rows.a3.display}}">
+<th scope="row" style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; padding-left: 16px; text-align: left; font-weight: inherit; white-space: nowrap"><span style="display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; font-weight: 600">13:59:58 UTC−4</span>
+<span style="display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 12px; color: #8C93A3">17:59:58 UTC</span>
+<span style="font-size: 12px; color: #8C93A3">12 oct. 2026</span></th>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; white-space: nowrap">adm-02</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px; font-weight: 600">Ouverture de drop</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px">Drop N° 128</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(124,227,181,0.12); color: #7CE3B5; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>Accepté</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 13px; line-height: 18px; color: #B9BEC9">Ouverture planifiée à 14:00</td>
+</tr>
+<tr style="display: {{rows.a4.display}}">
+<th scope="row" style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; padding-left: 16px; text-align: left; font-weight: inherit; white-space: nowrap"><span style="display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; font-weight: 600">13:58:12 UTC−4</span>
+<span style="display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 12px; color: #8C93A3">17:58:12 UTC</span>
+<span style="font-size: 12px; color: #8C93A3">12 oct. 2026</span></th>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; white-space: nowrap">adm-02</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px; font-weight: 600">Approbation de gel</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px">NXG-1DN5</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(124,227,181,0.12); color: #7CE3B5; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>Accepté</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 13px; line-height: 18px; color: #B9BEC9">Gel 2/2 · demandé par adm-01</td>
+</tr>
+<tr style="display: {{rows.a5.display}}">
+<th scope="row" style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; padding-left: 16px; text-align: left; font-weight: inherit; white-space: nowrap"><span style="display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; font-weight: 600">13:56:10 UTC−4</span>
+<span style="display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 12px; color: #8C93A3">17:56:10 UTC</span>
+<span style="font-size: 12px; color: #8C93A3">12 oct. 2026</span></th>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; white-space: nowrap">adm-01</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px; font-weight: 600">Approbation de gel</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px">NXG-1DN5</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(255,123,123,0.12); color: #FF7B7B; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>Refusé</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 13px; line-height: 18px; color: #B9BEC9">Refusée : le demandeur ne peut pas approuver sa propre demande</td>
+</tr>
+<tr style="display: {{rows.a6.display}}">
+<th scope="row" style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; padding-left: 16px; text-align: left; font-weight: inherit; white-space: nowrap"><span style="display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; font-weight: 600">13:55:40 UTC−4</span>
+<span style="display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 12px; color: #8C93A3">17:55:40 UTC</span>
+<span style="font-size: 12px; color: #8C93A3">12 oct. 2026</span></th>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; white-space: nowrap">adm-01</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px; font-weight: 600">Demande de gel</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px">NXG-1DN5</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(255,210,63,0.12); color: #FFD23F; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>En attente</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 13px; line-height: 18px; color: #B9BEC9">1/2 · motif : écart de rapprochement (démo)</td>
+</tr>
+<tr style="display: {{rows.a7.display}}">
+<th scope="row" style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; padding-left: 16px; text-align: left; font-weight: inherit; white-space: nowrap"><span style="display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; font-weight: 600">13:41:03 UTC−4</span>
+<span style="display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 12px; color: #8C93A3">17:41:03 UTC</span>
+<span style="font-size: 12px; color: #8C93A3">12 oct. 2026</span></th>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; white-space: nowrap">adm-01</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px; font-weight: 600">Connexion administrateur</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px">—</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(124,227,181,0.12); color: #7CE3B5; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>Accepté</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 13px; line-height: 18px; color: #B9BEC9">MFA vérifiée</td>
+</tr>
+<tr style="display: {{rows.a8.display}}">
+<th scope="row" style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; padding-left: 16px; text-align: left; font-weight: inherit; white-space: nowrap"><span style="display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; font-weight: 600">11:15:22 UTC−4</span>
+<span style="display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 12px; color: #8C93A3">15:15:22 UTC</span>
+<span style="font-size: 12px; color: #8C93A3">12 oct. 2026</span></th>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; white-space: nowrap">adm-02</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px; font-weight: 600">Vérification d’agence</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px">Agence Horizon (exemple)</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(124,227,181,0.12); color: #7CE3B5; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>Accepté</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 13px; line-height: 18px; color: #B9BEC9">Permis n° 000000 (exemple) vérifié</td>
+</tr>
+<tr style="display: {{rows.a9.display}}">
+<th scope="row" style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; padding-left: 16px; text-align: left; font-weight: inherit; white-space: nowrap"><span style="display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; font-weight: 600">02:00:03 UTC−4</span>
+<span style="display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 12px; color: #8C93A3">06:00:03 UTC</span>
+<span style="font-size: 12px; color: #8C93A3">12 oct. 2026</span></th>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; white-space: nowrap">système</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px; font-weight: 600">Rapprochement quotidien</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px">Registre, grand livre, PSP, fournisseur</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(124,227,181,0.12); color: #7CE3B5; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>Accepté</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 13px; line-height: 18px; color: #B9BEC9">0 écart</td>
+</tr>
+<tr style="display: {{rows.a10.display}}">
+<th scope="row" style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; padding-left: 16px; text-align: left; font-weight: inherit; white-space: nowrap"><span style="display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; font-weight: 600">17:30:12 UTC−4</span>
+<span style="display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 12px; color: #8C93A3">21:30:12 UTC</span>
+<span style="font-size: 12px; color: #8C93A3">11 oct. 2026</span></th>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; white-space: nowrap">adm-01</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px; font-weight: 600">Export du journal</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 14px">Journal d’audit</td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(124,227,181,0.12); color: #7CE3B5; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>Accepté</span></td>
+<td style="padding: 8px; border-top: 1px solid #2C303A; vertical-align: middle; font-size: 13px; line-height: 18px; color: #B9BEC9">CSV · 7 jours · journalisé</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<nav aria-label="Pagination du journal" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px">
+<p style="margin: 0; font-size: 13px; color: #B9BEC9">Page 1 sur 1 · démonstration : le journal fictif compte 10 entrées.</p>
+<span style="display: flex; gap: 8px">
+<button type="button" aria-disabled="true" style="display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; background: #1D2027; color: #8C93A3; border: 1px solid #6B7282; font: inherit; font-size: 14px; font-weight: 600; cursor: not-allowed"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>Précédent</button>
+<button type="button" aria-disabled="true" style="display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; background: #1D2027; color: #8C93A3; border: 1px solid #6B7282; font: inherit; font-size: 14px; font-weight: 600; cursor: not-allowed">Suivant<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg></button>
+</span>
+</nav>
+
+</div>
+</main>
+
+<footer style="border-top: 1px solid #2C303A">
+<div style="max-width: 1440px; margin: 0 auto; padding: 18px clamp(16px, 4vw, 48px); box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; font-size: 13px; line-height: 18px; color: #8C93A3">
+<p style="margin: 0"><span style="display: inline-flex; align-items: center; height: 22px; padding: 0 8px; margin-right: 8px; border-radius: 999px; background: rgba(98,199,255,0.12); color: #62C7FF; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase">Prototype — données fictives</span>Comptes pseudonymisés (ACC-…, adm-…), agences et références inventées. Aucun nom, courriel ni identité de voyageur.</p>
+<p style="margin: 0">Un droit de voyage est une inscription au registre interne de NexG-TT.</p>
+</div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1350}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const STATES = ['normal', 'loading', 'empty', 'error', 'offline'];
+    const view = s.view ?? 'normal';
+    const st = {};
+    STATES.forEach((k) => {
+      const on = view === k;
+      st[k] = { pressed: on ? 'true' : 'false', bg: on ? '#F3F4F6' : 'transparent', color: on ? '#0D0E11' : '#B9BEC9', set: () => this.setState(Object.assign({ view: k }, { notice: '' })) };
+    });
+    const ROWS = [{ id: 'a1', actor: 'système', cat: 'drop', object: 'Drop N° 128', age: 1 }, { id: 'a2', actor: 'système', cat: 'drop', object: 'Drop N° 128', age: 2 }, { id: 'a3', actor: 'adm-02', cat: 'drop', object: 'Drop N° 128', age: 3 }, { id: 'a4', actor: 'adm-02', cat: 'gel', object: 'NXG-1DN5', age: 4 }, { id: 'a5', actor: 'adm-01', cat: 'gel', object: 'NXG-1DN5', age: 6 }, { id: 'a6', actor: 'adm-01', cat: 'gel', object: 'NXG-1DN5', age: 6 }, { id: 'a7', actor: 'adm-01', cat: 'connexion', object: '—', age: 21 }, { id: 'a8', actor: 'adm-02', cat: 'agence', object: 'Agence Horizon (exemple)', age: 167 }, { id: 'a9', actor: 'système', cat: 'rapprochement', object: 'Registre, grand livre, PSP, fournisseur', age: 722 }, { id: 'a10', actor: 'adm-01', cat: 'export', object: 'Journal d’audit', age: 1231 }];
+    const LIMIT = { '1h': 60, '24h': 1440, '7j': 10080 };
+    const q = (v) => (v ?? '').trim().toLowerCase();
+    const periode = s.periode ?? '7j';
+    const acteur = q(s.acteur);
+    const action = s.action ?? 'all';
+    const objet = q(s.objet);
+    let count = 0;
+    const rows = {};
+    ROWS.forEach((r) => {
+      const show = r.age <= LIMIT[periode]
+        && (!acteur || r.actor.toLowerCase().includes(acteur))
+        && (action === 'all' || r.cat === action)
+        && (!objet || r.object.toLowerCase().includes(objet));
+      if (show) count += 1;
+      rows[r.id] = { display: show ? 'table-row' : 'none' };
+    });
+    const offline = view === 'offline';
+    const isEmpty = view === 'empty' || ((view === 'normal' || view === 'offline') && count === 0);
+    const shown = isEmpty ? 0 : count;
+    const notice = s.notice ?? '';
+    return {
+      st,
+      rows,
+      periode,
+      acteur: s.acteur ?? '',
+      action,
+      objet: s.objet ?? '',
+      isLoading: view === 'loading',
+      isError: view === 'error',
+      isOffline: offline,
+      isEmpty,
+      dataDisplay: view === 'loading' || view === 'error' ? 'none' : 'flex',
+      tableDisplay: isEmpty ? 'none' : 'block',
+      countLabel: shown + (shown > 1 ? ' entrées' : ' entrée') + ' sur 10',
+      onField: (e) => {
+        const t = e.target;
+        this.setState({ [t.name]: t.value });
+      },
+      reset: () => this.setState({ periode: '7j', acteur: '', action: 'all', objet: '', view: 'normal' }),
+      retry: () => this.setState({ view: 'normal' }),
+      exportDisabled: offline ? 'true' : 'false',
+      exportColor: offline ? '#8C93A3' : '#F3F4F6',
+      notice,
+      showNotice: !!notice,
+      doExport: () => { if (!offline) this.setState({ notice: 'Export CSV préparé (démo) : ' + shown + ' entrée(s). Action journalisée.' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

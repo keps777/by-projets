@@ -1,0 +1,42 @@
+Transférer à un proche : choisir — NexG-TT
+Transférer à un proche : choisir — NexG-TT
+Transférer
+YUL → CDG
+Lun. 14 déc. 2026
+Aérolys 812 · 18:05
+Statut
+Détenu
+Étape 1 sur 3 · Choisir le proche
+À qui le transférer ?
+Sans vente : votre proche reçoit ce droit sur son compte NexG-TT. Il doit déjà en avoir un.
+Vous êtes hors ligne
+Le transfert exige une connexion. Rien n'est modifié ; reprenez ici une fois reconnecté.
+Chercher un proche
+Identifiant NexG-TT ou courriel
+Chercher
+Recherche exacte. Nous ne montrons que le prénom et l'initiale du nom.
+Vous ne pouvez pas vous transférer ce droit à vous-même.
+Résultat de la recherche
+{{found.ini}}
+{{found.name}}
+{{found.ident}}
+{{foundListedLabel}}
+Aucun compte trouvé pour « {{searched}} »
+Vérifiez l'identifiant, ou invitez ce proche à créer un compte NexG-TT.
+Inviter ce proche
+Proches enregistrés
+{{row.ini}}
+{{row.name}}
+{{row.ident}}
+{{row.ini}}
+{{row.name}}
+Sans compte NexG-TT
+Aucun proche enregistré pour l'instant
+Les voyageurs que vous nommez pourront être enregistrés ici. Pour l'instant, cherchez un proche par son identifiant.
+Chargement de vos proches…
+Démo
+Voir la liste des proches dans l'état :
+{{v.label}}
+Continuer avec {{selName}}
+Continuer
+{{hint}}

@@ -1,0 +1,169 @@
+Administration · Droits de voyage — NexG-TT
+Administration · Droits de voyage — NexG-TT
+NEXG
+·TT
+Administration
+Droits de voyage
+Drops et agences
+Journal d’audit
+Démo · données fictives
+MFA vérifiée
+adm-01
+(vous)
+Maquette · état affiché
+Normal
+Chargement
+Vide
+Erreur
+Hors ligne
+Hors produit : sert à montrer les états de l’écran.
+Droits de voyage
+Administration · registre interne · 8 droits de démonstration · données du 12 oct. 2026, 14:02 (UTC−4)
+Rapprochement du 12 oct. 02:00 · aucun écart
+Hors ligne. Dernières données reçues le 12 oct. 2026 à 14:02 (UTC−4). Lecture seule : la recherche porte sur ces données et aucune action sensible n’est possible.
+Impossible de charger les droits de voyage.
+Le serveur n’a pas répondu. Aucune donnée n’a été modifiée. Réessayez ; si l’erreur persiste, communiquez le code de corrélation à l’équipe technique.
+Code de corrélation :
+ERR-DEMO-4F2A
+Réessayer
+Chargement des droits de voyage…
+Référence, PNR, compte ou vol
+Exemples : NXG-9PL3, Q7RT2M, ACC-0412, 812
+Statut
+Tous les statuts
+À nommer
+Détenu
+En vente
+Nommé — prêt
+Gelé
+Canal
+Tous les canaux
+Primaire
+Drop
+Agence
+Réinitialiser
+{{countLabel}}
+Tri : départ le plus proche. Fuseau de chaque départ indiqué (UTC−4 ou UTC−5).
+Aucun droit ne correspond à votre recherche
+Vérifiez la référence, le PNR, le compte ou le vol, ou retirez un filtre.
+Réinitialiser les filtres
+Droits de voyage du registre : référence, trajet et vol, départ, détenteur, statut, canal, échéance de nommage et dernier événement.
+Référence
+Trajet et vol
+Départ
+Détenteur
+Statut
+Canal
+Échéance de nommage
+Dernier événement
+NXG-7Q2M
+PNR Q7RT2M
+YUL → CDG
+Aérolys 812
+14 déc. 2026
+lun. · 18:05 · UTC−5
+ACC-0412
+À nommer
+Primaire
+13 déc. · 18:05
+dans 62 jours · UTC−5
+#1 Émission
+12 janv. 2026
+NXG-8WC2
+PNR H2N8DV
+YUL → CDG
+Aérolys 812
+14 déc. 2026
+lun. · 18:05 · UTC−5
+ACC-0187
+Nommé — prêt
+Primaire
+—
+Nommé le 2 oct. 2026
+#4 Nommage
+2 oct. 2026
+NXG-2HV6
+PNR R5K7TA
+YUL → HAV
+Nordelle 156
+30 janv. 2027
+sam. · 08:15 · UTC−5
+ACC-0412
+En vente
+Primaire
+29 janv. · 08:15
+dans 109 jours · UTC−5
+#2 Mise en vente
+2 oct. 2026
+NXG-4KD8
+PNR B9C3LW
+YUL → PUJ
+Nordelle 228
+21 févr. 2027
+dim. · 07:30 · UTC−5
+ACC-0412
+Détenu
+Drop N° 127
+20 févr. · 07:30
+dans 131 jours · UTC−5
+#1 Émission
+3 sept. 2026
+NXG-9PL3
+PNR K3MD8Z
+YUL → PPT
+Aérolys 471
+9 mai 2027
+dim. · 10:20 · UTC−4
+ACC-0412
+Détenu
+Primaire
+8 mai · 10:20
+dans 208 jours · UTC−4
+#5 Vente
+3 août 2026
+NXG-6TB4
+PNR T6YP2J
+YUL → KEF
+Aérolys 236
+4 mars 2027
+jeu. · 21:15 · UTC−5
+ACC-0933
+Détenu
+Agence Horizon (exemple)
+3 mars · 21:15
+dans 142 jours · UTC−5
+#1 Émission
+21 sept. 2026
+NXG-3XZ9
+PNR W8FN4C
+YUL → LIS
+Aérolys 247
+16 avr. 2027
+ven. · 18:40 · UTC−4
+ACC-0804
+Détenu
+Agence Horizon (exemple)
+15 avr. · 18:40
+dans 185 jours · UTC−4
+#1 Émission
+28 sept. 2026
+NXG-1DN5
+PNR V2QH7E
+YUL → HAV
+Nordelle 156
+30 janv. 2027
+sam. · 08:15 · UTC−5
+ACC-0275
+Détenu
+Gelé
+Primaire
+29 janv. · 08:15
+dans 109 jours · UTC−5
+#3 Vente
+8 oct. 2026
+Le statut « À nommer » est un statut d’affichage d’un droit détenu dont l’échéance approche. « Gelé » est un indicateur distinct du statut
+[H]
+. Démo : chaque référence ouvre la même fiche d’exemple (NXG-9PL3).
+Prototype — données fictives
+Comptes pseudonymisés (ACC-…, adm-…), agences et références inventées. Aucun nom, courriel ni identité de voyageur.
+Un droit de voyage est une inscription au registre interne de NexG-TT.

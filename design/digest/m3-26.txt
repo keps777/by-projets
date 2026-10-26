@@ -1,0 +1,58 @@
+Une proposition reçue
+Proposition 1 380 $ — NexG-TT
+Proposition reçue
+Proposition refusée.
+Le vendeur en est informé. Votre intention reste active avec 2 autres propositions.
+Aérolys · Vol 816
+Économie
+YUL
+CDG
+18:05
+Montréal
+7 h 05 · direct
+07:10
++1
+Paris
+Vendredi 18 décembre 2026 · dans votre fenêtre 15–20 déc.
+Proposition du vendeur
+1 380 $
++80 $ vs votre max
+Proposition valide encore
+{{timerLabel}}
+Le vendeur s'est engagé 48 h. Passé ce délai, la proposition disparaît ; votre intention reste active.
+Où se place cette proposition
+Votre prix max
+1 300 $
+Proposition
+1 380 $
+Écart
++80 $ (+6 %)
+Neuf équivalent aujourd'hui
+2 050 $
+−33 %
+Si vous acceptez au-dessus de votre prix max, la différence (
+80 $
+) est débitée en plus des fonds réservés.
+Vendeur
+Détenteur vérifié · « M. »
+2e détenteur de ce billet · identité vérifiée par NexG-TT
+Le billet est revendable et dans le plafond de revente. À l'accord, le droit passe à votre nom dans le registre ; la commission est à la charge du vendeur.
+Contre-proposer
+{{counterLabel}}
+{{counterHelp}}
+Entre votre prix max et la proposition (pas de 10 $)
+1 300 $ · votre max
+1 380 $ · proposition
+Envoyer
+{{counterLabel}}
+Le vendeur aura 48 h pour accepter ou refuser. En attendant, cette proposition à 1 380 $ reste acceptable.
+Contre-proposition de
+{{counterLabel}}
+envoyée.
+Le vendeur a 48 h pour répondre. Vous pouvez toujours accepter 1 380 $ d'ici là.
+Refuser cette proposition
+Accepter
+1 380 $
+(démo)
+{{counterBtnLabel}}
+Retour aux propositions

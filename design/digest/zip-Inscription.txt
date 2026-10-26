@@ -1,0 +1,33 @@
+Créer un compte — NexG-TT
+Créer un compte — NexG-TT
+Créer un compte
+Créez votre compte en 1 minute
+Un code suffit. Vous compléterez le reste seulement quand ce sera utile.
+Aucune carte demandée
+Explorer sans compte possible
+Identité vérifiée seulement pour revendre
+Courriel
+Téléphone
+Adresse courriel
+Nous y enverrons un code à 6 chiffres.
+Numéro de téléphone mobile
+Nous y enverrons un code à 6 chiffres par texto.
+Ce champ est vide : indiquez où recevoir le code.
+ou
+Continuer avec Apple
+Continuer avec Google
+Démo : la connexion avec {{ssoName}} n'est pas encore branchée (fournisseur à valider). Utilisez le courriel ou le téléphone.
+J'accepte les conditions d'utilisation et la politique de confidentialité
+(obligatoire)
+Lire les conditions en bref
+Créer un compte et explorer ne demande aucune carte.
+Votre identité est vérifiée seulement pour revendre, recevoir un paiement ou nommer un voyageur.
+Vous choisissez ce que vous partagez ; vous pouvez fermer votre compte.
+Texte complet en cours de rédaction avec un juriste (prototype).
+Cochez cette case pour recevoir votre code.
+M'écrire au sujet des drops et nouveautés
+Facultatif · désactivé par défaut · modifiable dans Compte
+{{errorSummary}}
+Recevoir mon code
+Explorer sans compte
+J'ai déjà un compte

@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Revendre un bagage — NexG-TT</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Barlow:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#0D0E11}
+a{color:#FFD23F}a:hover{color:#FFE27A}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #FFD23F;outline-offset:2px}
+@keyframes nx-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@media (prefers-reduced-motion: reduce){[data-pulse]{animation:none!important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0D0E11; color: #F3F4F6; font-family: 'Barlow', system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="padding: 52px 12px 8px; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 8px">
+<a href="Bagages.dc.html" aria-label="Retour" style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 999px; background: #15171C; border: 1px solid #2C303A; display: flex; align-items: center; justify-content: center; color: #F3F4F6; text-decoration: none">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+</a>
+<h1 style="margin: 0; text-align: center; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 19px; line-height: 21px; letter-spacing: 0.04em; text-transform: uppercase">Revendre mon bagage inutilisé</h1>
+<span aria-hidden="true" style="width: 44px; height: 44px"></span>
+</header>
+
+<main style="flex: 1; overflow-y: auto; padding: 16px 20px 160px; display: flex; flex-direction: column; gap: 20px">
+
+<div style="position: relative; transform: rotate(-1.5deg); margin: 4px 0 0">
+<div aria-hidden="true" style="position: absolute; left: -24px; top: calc(50% - 5px); width: 58px; height: 10px; border-radius: 0 5px 5px 0; background: #3A3F4B; z-index: 2; display: flex; align-items: center">
+<span style="flex: 1; margin: 0 6px; border-top: 1px dashed #8C93A3"></span>
+</div>
+<section aria-label="Étiquette du droit de bagage : Montréal YUL vers Paris CDG, vol AE 812 du 14 décembre, 23 kg" style="position: relative; background: #FFFFFF; color: #121418; border-radius: 0 18px 18px 0; clip-path: polygon(30px 0, 100% 0, 100% 100%, 30px 100%, 0 calc(100% - 30px), 0 30px); padding: 14px 18px 14px 64px">
+<span aria-hidden="true" style="position: absolute; left: 18px; top: calc(50% - 15px); width: 30px; height: 30px; box-sizing: border-box; border-radius: 999px; background: #0D0E11; border: 5px solid #C9CDD5"></span>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<span style="font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #555C6B">Droit de bagage · soute</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 12px; color: #555C6B">NXG-7Q2M</span>
+</div>
+<div style="display: flex; align-items: flex-end; gap: 12px; margin-top: 4px">
+<span style="font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 104px; line-height: 90px; letter-spacing: -0.01em">CDG</span>
+<span style="display: flex; flex-direction: column; gap: 2px; padding-bottom: 6px">
+<span style="font-size: 13px; font-weight: 600; color: #555C6B">Paris</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 14px; white-space: nowrap">YUL → CDG</span>
+</span>
+</div>
+<p style="margin: 6px 0 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 18px; letter-spacing: 0.04em">AE 812 · 14 DÉC</p>
+<div style="display: flex; align-items: center; gap: 8px; margin-top: 10px">
+<span style="display: inline-flex; align-items: center; height: 30px; padding: 0 10px; box-sizing: border-box; border-radius: 6px; border: 2px solid #121418; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 16px">23 KG</span>
+<span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #555C6B">1 pièce · 158 cm</span>
+</div>
+<div aria-hidden="true" style="margin: 12px -18px 10px -64px; border-top: 2px dashed #E2E4E9"></div>
+<div aria-hidden="true" style="position: relative; height: 34px; overflow: hidden">
+<sc-for list="{{bars}}" as="b" hint-placeholder-count="40">
+<span style="position: absolute; top: 0; bottom: 0; left: {{b.left}}; width: {{b.width}}; background: #121418"></span>
+</sc-for>
+</div>
+<p aria-hidden="true" style="margin: 4px 0 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.2em; color: #555C6B">NXG 812 1412 B2</p>
+</section>
+</div>
+
+<section aria-labelledby="fr-h" style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; background: #15171C; border: 1px solid #2C303A">
+<span aria-hidden="true" style="display: flex; gap: 4px; flex: none">
+<span style="width: 30px; height: 30px; box-sizing: border-box; border-radius: 6px; background: #3A3F4B; color: #B9BEC9; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2zM9 7V4h6v3M9 11v6M15 11v6"></path></svg></span>
+<span style="position: relative; width: 30px; height: 30px; box-sizing: border-box; border-radius: 6px; background: rgba(255,158,94,0.12); border: 2px solid #FF9E5E; color: #FF9E5E; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; font-weight: 600">$<span style="position: absolute; left: 3px; top: 3px; width: 5px; height: 5px; box-sizing: border-box; border-radius: 999px; border: 1px solid currentColor"></span></span>
+</span>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<h2 id="fr-h" style="margin: 0; font-size: 14px; font-weight: 700">Votre franchise : 2 bagages inclus</h2>
+<p style="margin: 0; font-size: 13px; color: #B9BEC9"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #F3F4F6">1</span> utilisé · <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #FF9E5E">1</span> inutilisé, à revendre (hypothèse démo)</p>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 8px; padding: 18px; border-radius: 20px; background: #060708; border: 1px solid #2C303A">
+<label for="prix" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">Votre prix de vente</label>
+<p style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 72px; line-height: 76px; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; white-space: nowrap">{{priceLabel}}</p>
+<sc-if value="{{belowCap}}" hint-placeholder-val="{{ true }}">
+<p style="margin: 0; font-size: 13px; color: #B9BEC9"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #F3F4F6">{{gapToCap}}</span> sous le prix compagnie d'un bagage supplémentaire (150&#160;$)</p>
+</sc-if>
+<sc-if value="{{atCap}}" hint-placeholder-val="{{ false }}">
+<p style="margin: 0; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #FFD23F">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+Au plafond : égal au prix compagnie</p>
+</sc-if>
+<input id="prix" type="range" min="50" max="150" step="5" value="{{price}}" onChange="{{ onPrice }}" aria-valuetext="{{priceLabel}}" aria-describedby="prix-regle" style="width: 100%; height: 44px; margin: 4px 0 0; accent-color: #FFD23F; cursor: pointer">
+<div aria-hidden="true" style="display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #8C93A3">
+<span>50&#160;$</span><span>Plafond 150&#160;$</span>
+</div>
+<p id="prix-regle" style="margin: 4px 0 0; padding-top: 10px; border-top: 1px solid #1A1C21; font-size: 12px; line-height: 17px; color: #8C93A3">Plafond = prix de la compagnie pour un bagage supplémentaire sur ce vol (150&#160;$, exemple). Règle provisoire, à valider.</p>
+</section>
+
+<section aria-labelledby="dem-h" style="display: flex; flex-direction: column; gap: 12px; padding: 18px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A">
+<div style="display: flex; align-items: center; gap: 8px">
+<span aria-hidden="true" data-pulse="1" style="width: 8px; height: 8px; flex: none; border-radius: 999px; background: #62C7FF; animation: nx-pulse 1.6s ease-in-out infinite"></span>
+<h2 id="dem-h" style="margin: 0; flex: 1; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #B9BEC9">En direct · demande sur ce vol</h2>
+</div>
+<p style="margin: 0; font-size: 16px; line-height: 22px; font-weight: 600"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #62C7FF">3</span> passagers cherchent un bagage · meilleure demande <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #62C7FF; white-space: nowrap">95&#160;$</span></p>
+
+<div style="border-radius: 14px; background: #060708; padding: 12px 14px 10px">
+<div role="img" aria-label="{{trackAria}}" style="position: relative; height: 60px">
+<span style="position: absolute; left: 0; right: 0; top: 29px; height: 2px; background: #2C303A"></span>
+<span style="position: absolute; right: 0; top: 0; height: 60px; border-left: 2px dashed #8C93A3"></span>
+<sc-for list="{{askDots}}" as="a" hint-placeholder-count="7">
+<span style="position: absolute; top: {{a.top}}; left: {{a.left}}; width: 10px; height: 10px; border-radius: 2px; background: #FF9E5E"></span>
+</sc-for>
+<sc-for list="{{bidDots}}" as="d" hint-placeholder-count="3">
+<span style="position: absolute; top: 38px; left: {{d.left}}; width: 10px; height: 10px; border-radius: 999px; background: #62C7FF"></span>
+</sc-for>
+<span style="position: absolute; top: 0; left: {{youBar}}; width: 2px; height: 60px; background: #FFD23F"></span>
+<span style="position: absolute; top: 21px; left: {{youKnob}}; width: 18px; height: 18px; box-sizing: border-box; border-radius: 999px; background: #FFD23F; border: 3px solid #060708"></span>
+</div>
+<div aria-hidden="true" style="display: flex; justify-content: space-between; margin-top: 6px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #8C93A3">
+<span>50&#160;$</span><span>100&#160;$</span><span>150&#160;$</span>
+</div>
+<div aria-hidden="true" style="display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 8px; font-size: 12px; color: #B9BEC9">
+<span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; border-radius: 2px; background: #FF9E5E"></span>Bagages proposés</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; border-radius: 999px; background: #62C7FF"></span>Demandes</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 2px; height: 12px; background: #FFD23F"></span>Vous</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span style="height: 12px; border-left: 2px dashed #8C93A3"></span>Plafond</span>
+</div>
+</div>
+
+<p style="margin: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 14px">
+<span style="color: #B9BEC9">Position dans le carnet</span>
+<span style="font-weight: 700; color: #FFD23F; text-align: right">{{rankLabel}}</span>
+</p>
+<sc-if value="{{isMatch}}" hint-placeholder-val="{{ false }}">
+<p style="margin: 0; display: flex; align-items: flex-start; gap: 8px; padding: 10px 12px; border-radius: 12px; background: rgba(124,227,181,0.12); color: #7CE3B5; font-size: 13px; line-height: 18px; font-weight: 600">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><path d="m5 12 5 5 9-10"></path></svg>
+<span>Une demande à 95&#160;$ correspond à votre prix : appariement possible dès la mise en vente, à confirmer par la compagnie.</span>
+</p>
+</sc-if>
+<sc-if value="{{noMatch}}" hint-placeholder-val="{{ true }}">
+<p style="margin: 0; display: flex; align-items: flex-start; gap: 8px; padding: 10px 12px; border-radius: 12px; background: #1D2027; color: #B9BEC9; font-size: 13px; line-height: 18px">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+<span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #F3F4F6">{{gapToBid}}</span> au-dessus de la meilleure demande : votre bagage attend un acheteur. Aucune vente n'est garantie.</span>
+</p>
+</sc-if>
+</section>
+
+<section aria-labelledby="calc-h" style="display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: #15171C; border: 1px solid #2C303A">
+<h2 id="calc-h" style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase">Ce que vous recevez</h2>
+<dl style="margin: 0; display: flex; flex-direction: column">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 40px; border-bottom: 1px solid #2C303A">
+<dt style="font-size: 14px; color: #B9BEC9">Prix de vente</dt>
+<dd style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums">{{priceLabel}}</dd>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; border-bottom: 1px solid #2C303A">
+<dt style="display: flex; flex-direction: column; font-size: 14px; color: #B9BEC9">Commission NexG-TT (hypothèse)<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #8C93A3">10 % (Pass) · 12,5 % sans Pass</span></dt>
+<dd style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums">{{commissionLabel}}</dd>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px">
+<dt style="font-size: 16px; font-weight: 700">Vous recevez</dt>
+<dd style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 28px; font-variant-numeric: tabular-nums">{{netLabel}}</dd>
+</div>
+</dl>
+<p style="margin: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border-radius: 12px; background: #1D2027; font-size: 13px; color: #B9BEC9">
+<span>Sans Pass (commission 12,5 %), vous recevriez</span>
+<span style="flex: none; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums; color: #F3F4F6">{{netMaxLabel}}</span>
+</p>
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #8C93A3">Taux hypothétiques, prélevés seulement si la vente a lieu. Alex T. est membre Pass : le taux membre s'applique.</p>
+</section>
+
+<p style="margin: 0; display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(255,210,63,0.12); color: #FFD23F; font-size: 13px; font-weight: 600; line-height: 18px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+<span>Transfert possible jusqu'au <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">13 déc. 18:05</span> (à valider). Même vol uniquement : AE 812 du 14 déc.</span>
+</p>
+
+<div role="note" style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 14px; background: rgba(255,158,94,0.12); border: 1px solid rgba(255,158,94,0.45); color: #FF9E5E">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5h.01"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<p style="margin: 0; font-size: 15px; line-height: 20px; font-weight: 700">Une fois vendu, ce bagage est retiré de votre réservation.</p>
+<p style="margin: 0; font-size: 13px; line-height: 18px; color: #F3F4F6">Il vous restera 1 bagage inclus (23&#160;kg) sur ce vol. L'acheteur l'ajoute à sa réservation après confirmation de la compagnie.</p>
+</div>
+</div>
+
+<p style="margin: 0; text-align: center; font-size: 12px; line-height: 17px; color: #8C93A3">Prix indicatifs. Un droit de bagage n'est pas un placement financier. Sous réserve d'accord avec la compagnie. Données de démonstration.</p>
+
+</main>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 20px 28px; background: #0D0E11; border-top: 1px solid #2C303A; display: flex; flex-direction: column; gap: 10px">
+<p style="margin: 0; display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; color: #B9BEC9">
+<span>Vous recevez <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: #F3F4F6; font-variant-numeric: tabular-nums">{{netLabel}}</span></span>
+<span>Commission 10 % (Pass) · 12,5 % sans Pass</span>
+</p>
+<a href="Portefeuille.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 14px; background: #FFD23F; color: #0D0E11; font-weight: 700; font-size: 16px; text-decoration: none; border: 0">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg>
+Mettre en vente à <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-variant-numeric: tabular-nums">{{priceLabel}}</span>
+</a>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const set = (patch) => this.setState({ ...(this.state || {}), ...patch });
+    const MIN = 50;
+    const CAP = 150;
+    const RATE = 10;
+    const RATE_MAX = 12.5;
+    const BEST_BID = 95;
+    const price = typeof s.price === 'number' ? s.price : 100;
+    const money = (n) => String(Math.abs(Math.round(n))).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' $';
+    const pct = (v) => ((v - MIN) / (CAP - MIN) * 100).toFixed(2) + '%';
+
+    const commission = Math.round(price * RATE / 100);
+    const net = price - commission;
+    const netMax = price - Math.round(price * RATE_MAX / 100);
+
+    const asks = [90, 95, 100, 100, 110, 125, 140];
+    const bids = [95, 85, 80];
+    const seen = {};
+    const askDots = asks.map((v) => {
+      const n = seen[v] || 0;
+      seen[v] = n + 1;
+      return { left: 'calc(' + pct(v) + ' - 5px)', top: (14 - n * 12) + 'px' };
+    });
+    const bidDots = bids.map((v) => ({ left: 'calc(' + pct(v) + ' - 5px)' }));
+
+    const cheaper = asks.filter((v) => v < price).length;
+    const same = asks.filter((v) => v === price).length;
+    const total = asks.length + 1;
+    const rank = cheaper + 1;
+    const rankLabel = (rank === 1 ? '1re' : rank + 'e') + ' moins chère sur ' + total
+      + (same ? ' · à égalité avec ' + same + (same > 1 ? ' autres' : ' autre') : '');
+    const isMatch = price <= BEST_BID;
+
+    const trackAria = 'Votre prix ' + money(price) + ' parmi 7 bagages proposés de 90 $ à 140 $ et 3 demandes de 80 $ à 95 $, plafond 150 $. '
+      + 'Votre offre serait la ' + rankLabel + '.';
+
+    const seed = [3, 1, 2, 1, 1, 3, 2, 1, 1, 2, 3, 1, 2, 2, 1, 1, 3, 1, 2, 1, 1, 2];
+    const bars = [];
+    let x = 0;
+    let i = 0;
+    while (x < 262) {
+      const w = seed[i % seed.length];
+      const g = seed[(i + 7) % seed.length] + 1;
+      bars.push({ left: x + 'px', width: w + 'px' });
+      x += w + g;
+      i += 1;
+    }
+
+    return {
+      price: price,
+      priceLabel: money(price),
+      belowCap: price < CAP,
+      atCap: price >= CAP,
+      gapToCap: money(CAP - price),
+      commissionLabel: commission === 0 ? '0 $' : '−' + money(commission),
+      netLabel: money(net),
+      netMaxLabel: money(netMax),
+      askDots: askDots,
+      bidDots: bidDots,
+      youBar: 'calc(' + pct(price) + ' - 1px)',
+      youKnob: 'calc(' + pct(price) + ' - 9px)',
+      rankLabel: rankLabel,
+      trackAria: trackAria,
+      isMatch: isMatch,
+      noMatch: !isMatch,
+      gapToBid: money(price - BEST_BID),
+      bars: bars,
+      onPrice: (e) => set({ price: Number(e.target.value) })
+    };
+  }
+}
+</script>
+</body>
+</html>

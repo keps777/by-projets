@@ -1,0 +1,49 @@
+Faisons connaissance (web) — NexG-TT
+Faisons connaissance (web) — NexG-TT
+NEXG
+·TT
+Hors ligne
+Vous pouvez répondre : l’enregistrement de vos réponses demande le réseau. Rien n’a été envoyé.
+Vos réponses n’ont pas été enregistrées
+Nous n’avons pas pu enregistrer vos réponses. Elles sont conservées sur cette page : réessayez, ou complétez-les plus tard.
+Réessayer
+Retour
+Plus tard
+Étape 2 sur 4
+Ensuite : vos choix de partage
+Faisons connaissance
+Trois réponses rapides, toutes facultatives. Elles servent à vous proposer les bons départs.
+Prénom
+{{greetLine}}
+Aéroport habituel
+{{airportCode}}
+Point de départ proposé par défaut. Vous pourrez toujours en choisir un autre.
+Ce qui vous intéresse
+Plusieurs choix possibles
+Voyages en famille
+Dernière minute
+Drops membres
+Revendre mes billets
+Voyages d’affaires
+Bagages en plus
+{{countLine}}
+Continuer
+Enregistrement de vos réponses…
+Continuer
+Aperçu
+{{greeting}}
+Départ proposé
+{{airport}}
+Vos intérêts
+{{c.label}}
+Aucun pour l’instant.
+Vos choix servent à vos alertes ; modifiables à tout moment.
+Le nom du voyageur se donne plus tard, billet par billet.
+Prototype — données fictives
+Compagnies (Aérolys, Nordelle), agence, détenteurs, prix et références inventés. Aucun paiement réel.
+Un droit de voyage est une inscription au registre interne de NexG-TT, pas un placement financier.
+Aperçu des états
+Normal
+Chargement
+Erreur
+Hors ligne

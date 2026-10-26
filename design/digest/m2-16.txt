@@ -1,0 +1,141 @@
+Soute du vol — NexG-TT
+Soute du vol — NexG-TT
+Soute du vol AE 812
+Même vol uniquement
+·
+AE 812 · 14 déc. 18:05
+Offre min.
+90 $
+7 proposés
+Demande max.
+95 $
+3 demandes
+Plafond
+150 $
+Prix compagnie
+Carte de la soute
+Schéma illustratif
+Chaque case est un droit de bagage de 23 kg sur ce vol. Touchez un bagage
+proposé
+pour voir l'offre.
+AE 812
+Soute avant
+Caisson d'aile
+Soute arrière
+{{o1.num}}
+{{o2.num}}
+{{o3.num}}
+{{o4.num}}
+{{o5.num}}
+{{o6.num}}
+{{o7.num}}
+Inclus, utilisé
+11
+$
+Proposé, à toucher
+7
+Acheté (revente)
+3
+Libre, compagnie
+3
+Bagage sélectionné (fond jaune)
+Bagage proposé ·
+{{fiche.code}}
+{{fiche.price}}
+{{fiche.gap}}
+sous le prix compagnie d'un bagage supplémentaire (150 $, exemple)
+Vendeur vérifié
+Anonymisé
+Franchise
+23 kg · 158 cm
+dimensions selon la compagnie
+Vendeur
+Passager
+{{fiche.seller}}
+Proposé
+{{fiche.since}}
+Transfert
+Confirmé par la compagnie
+règle à valider
+Aucun bagage sélectionné
+Touchez une case orange sur la carte ou une ligne du carnet ci-dessous.
+Carnet de la soute
+Prix · empl. · cumul
+Prix compagnie
+150 $
+= plafond
+règle provisoire
+Bagages proposés
+{{o6.priceLabel}}
+Choisi
+{{o6.code}}
+{{o6.cum}}
+{{o2.priceLabel}}
+Choisi
+{{o2.code}}
+{{o2.cum}}
+{{o4.priceLabel}}
+Choisi
+{{o4.code}}
+{{o4.cum}}
+{{o1.priceLabel}}
+Choisi
+{{o1.code}}
+{{o1.cum}}
+{{o7.priceLabel}}
+Choisi
+{{o7.code}}
+{{o7.cum}}
+{{o5.priceLabel}}
+Choisi
+{{o5.code}}
+{{o5.cum}}
+{{o3.priceLabel}}
+Meilleure
+Choisi
+{{o3.code}}
+{{o3.cum}}
+Demande
+95 $
+≥ offre
+90 $
+:
+appariement à confirmer par la compagnie
+Demandes
+3 demandes actives
+95 $
+Meilleure
+×1
+1
+85 $
+×1
+2
+80 $
+×1
+3
+Chercher un bagage · publier une demande
+Barres : cumul sur 7 bagages. Aucune offre ne peut dépasser le prix compagnie.
+Dernières transactions
+Heure
+Prix
+Empl.
+Var.
+15:12
+105 $
+AR-3
++7 $
+11:40
+98 $
+AV-5
+−12 $
+Hier
+110 $
+AR-10
+—
+Première transaction
+Transferts possibles jusqu'au
+13 déc. 18:05
+, à l'échéance de nommage (à valider).
+Sous réserve d'accord avec la compagnie. Données de démonstration.
+Vendre le mien
+Acheter un bagage

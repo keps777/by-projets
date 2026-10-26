@@ -1,0 +1,25 @@
+Carte : pas obligatoire
+Carte de paiement, facultative — NexG-TT
+Facultatif
+Ajouter une carte ?
+Pas obligatoire.
+CARTE DE TEST
+•••• •••• •••• 4242
+ALEX T.
+12/28
+Vous ne payez rien maintenant.
+Une carte n'est demandée qu'au moment d'acheter. Vous pourrez aussi l'ajouter plus tard dans Compte › Paiement.
+Ajouter une carte
+MODE DÉMO — aucun paiement réel
+Numéro de carte (carte de test)
+Expiration (MM/AA)
+Code de sécurité
+Nom sur la carte
+Paiement traité par un prestataire certifié ; NexG-TT ne conserve pas votre numéro de carte. Rien n'est débité à l'enregistrement.
+Enregistrer la carte de test
+Annuler
+Carte de test enregistrée. Aucun montant débité.
+Retirer
+Ajouter une carte maintenant
+Plus tard
+Continuer
