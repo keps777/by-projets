@@ -57,7 +57,7 @@
         </div>
       </div>
     </div>
-    <a class="etendu" href={href} onclick={(e) => va(e, href)}><span class="sr">Voir l’offre : {resume}</span></a>
+    <a class="etendu" href={href} onclick={(e) => va(e, href)}><span class="sr">Voir l’offre : {resume}</span></a>
   </article>
 {/if}
 
@@ -71,6 +71,7 @@
   .etiq { display: inline-flex; align-items: center; gap: 6px; font: 600 13px/18px 'Barlow', sans-serif; color: var(--ink2); } .etiq.verifie { color: var(--ink2); } .etiq.verifie :global(svg) { color: var(--ok); }
   .etiq.maj { font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); }
   .vendeur { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 0; margin: -10px 0; color: var(--ink2); position: relative; z-index: 1; } .vendeur :global(svg:last-child) { color: var(--ink3); }
+  .puce { white-space: normal; line-height: 14px; padding-block: 6px; }
   .puces { display: flex; flex-wrap: wrap; gap: 6px; }
   .pied { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
   .col { display: flex; flex-direction: column; } .g4 { gap: 2px; min-width: 0; }

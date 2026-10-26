@@ -41,5 +41,5 @@ export function lignesTable(courbe: number[], aujourdhui: string, pas = 14): { j
 export function resumeCourbe(courbe: number[], prixDemande: number | undefined, aujourdhui: string): string {
   if (!courbe.length) return 'Aucune donnée de prix.';
   const v = variation(courbe), mn = Math.min(...courbe), mx = Math.max(...courbe);
-  return `Prix équivalent neuf depuis ${depuisMois(courbe.length, aujourdhui)} : de ${dollars(courbe[0])} à ${dollars(courbe[courbe.length - 1])} aujourd’hui (${v.texte}), entre ${dollars(mn)} et ${dollars(mx)}.${prixDemande !== undefined ? ` Prix demandé : ${dollars(prixDemande)}.` : ''}`;
+  return `Prix équivalent neuf depuis ${depuisMois(courbe.length, aujourdhui)} : de ${dollars(courbe[0])} à ${dollars(courbe[courbe.length - 1])} aujourd’hui (${v.texte}), entre ${dollars(mn)} et ${dollars(mx)}.${prixDemande !== undefined ? ` Prix demandé : ${dollars(prixDemande)}.` : ''}`;
 }

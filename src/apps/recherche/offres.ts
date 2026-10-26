@@ -11,7 +11,7 @@ export type Onglet = 'tous' | TypeOffre;
 export const ONGLETS: { id: Onglet; libelle: string }[] = [{ id: 'tous', libelle: 'Tous' }, { id: 'revente', libelle: 'Revente' }, { id: 'neuf', libelle: 'Neuf' }, { id: 'agence', libelle: 'Agences' }, { id: 'drop', libelle: 'Drops' }];
 export type Tri = 'recommande' | 'prix' | 'ecart' | 'depart' | 'duree';
 export const TRIS: { id: Tri; libelle: string; aide: string }[] = [
-  { id: 'recommande', libelle: 'Recommandé', aide: 'Un vol après l’autre : les vols directs d’abord, puis les prix les plus bas.' },
+  { id: 'recommande', libelle: 'Recommandé', aide: 'Un vol après l’autre : les vols directs d’abord, puis les prix les plus bas.' },
   { id: 'prix', libelle: 'Prix croissant', aide: 'Du moins cher au plus cher.' },
   { id: 'ecart', libelle: 'Plus sous le prix neuf', aide: 'Les plus grosses économies par rapport au prix équivalent neuf.' },
   { id: 'depart', libelle: 'Heure de départ', aide: 'Du premier au dernier départ.' },

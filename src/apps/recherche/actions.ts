@@ -33,8 +33,8 @@ export type ResultatOffre =
   | { ok: true; offre: Offre; vol: Vol; droit?: Droit; agence?: Agence; /** Offre publiée par le compte courant lui-même. */ laMienne: boolean }
   | { ok: false; raison: RaisonIndisponible; message: string; vol?: Vol };
 /** Retrouve une offre d'après son identifiant (`revente:d-r816`, `neuf:v-ae816`, `agence:oa-1`, `drop:drop-128`). Une offre déjà vendue ou retirée renvoie une raison claire, pas une page vide. */
-export function trouverOffre(id: string, compteId: string | null | undefined): ResultatOffre {
-  const i = id.indexOf(':'), type = i < 0 ? '' : id.slice(0, i), ref = i < 0 ? '' : id.slice(i + 1), pass = aLePass(compteId);
+export function trouverOffre(idBrut: string | undefined, compteId: string | null | undefined): ResultatOffre {
+  const id = idBrut ?? '', i = id.indexOf(':'), type = i < 0 ? '' : id.slice(0, i), ref = i < 0 ? '' : id.slice(i + 1), pass = aLePass(compteId);
   const inconnue: ResultatOffre = { ok: false, raison: 'inconnue', message: 'Cette offre n’existe pas ou a changé d’adresse.' };
   let volId: string | undefined, vendue = 'Cette offre n’est plus disponible.';
   if (type === 'neuf') volId = ref, vendue = 'Ce vol n’est plus proposé en neuf.';

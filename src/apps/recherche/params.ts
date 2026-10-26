@@ -24,13 +24,13 @@ const code = (s: string | null): string => (s ?? '').trim().toUpperCase();
 /** Lit l'adresse de la page de résultats. Les valeurs inconnues sont corrigées quand c'est sans risque (voyageurs, sources) et signalées sinon (départ, destination, dates). */
 export function lireParams(recherche: string, codes: string[]): { recherche: Recherche; problemes: ProblemesAdresse } {
   const p = new URLSearchParams(recherche), problemes: ProblemesAdresse = {}, r = rechercheVide();
-  const de = code(p.get('de')); if (de) { if (codes.includes(de)) r.de = de; else { r.de = de; problemes.de = `Aéroport de départ inconnu : ${de}.`; } }
+  const de = code(p.get('de')); if (de) { if (codes.includes(de)) r.de = de; else { r.de = de; problemes.de = `Aéroport de départ inconnu : ${de}.`; } }
   const vers = (p.get('vers') ?? '').trim();
   if (!vers) problemes.vers = 'Aucune destination choisie.';
   else if (vers.toLowerCase() === PARTOUT) r.vers = PARTOUT;
   else if (codes.includes(vers.toUpperCase())) r.vers = vers.toUpperCase();
-  else { r.vers = vers.toUpperCase(); problemes.vers = `Destination inconnue : ${vers.toUpperCase()}.`; }
-  const jour = p.get('jour'); if (jour) { if (jourValide(jour)) r.jour = jour; else problemes.jour = 'Date non reconnue (format attendu : 2026-12-18).'; }
+  else { r.vers = vers.toUpperCase(); problemes.vers = `Destination inconnue : ${vers.toUpperCase()}.`; }
+  const jour = p.get('jour'); if (jour) { if (jourValide(jour)) r.jour = jour; else problemes.jour = 'Date non reconnue (format attendu : 2026-12-18).'; }
   const retour = p.get('retour'); if (retour) { if (jourValide(retour)) r.retour = retour; else problemes.retour = 'Date de retour non reconnue.'; }
   const n = Number.parseInt(p.get('n') ?? '1', 10); r.n = Number.isFinite(n) ? Math.min(VOYAGEURS_MAX, Math.max(1, n)) : 1;
   r.flex = p.get('flex') === '1' && !!r.jour;
@@ -60,7 +60,7 @@ export function validerRecherche(r: Recherche, aeroports: Pick<Aeroport, 'code'>
   if (!r.de) e.de = 'Choisissez un aéroport de départ.'; else if (!codes.includes(r.de)) e.de = 'Choisissez un aéroport dans la liste.';
   if (!r.vers) e.vers = 'Choisissez une destination, ou « Partout ».'; else if (r.vers !== PARTOUT && !codes.includes(r.vers)) e.vers = 'Choisissez un aéroport dans la liste.';
   else if (r.vers === r.de) e.vers = 'Le départ et l’arrivée sont identiques.';
-  if (r.jour && !jourValide(r.jour)) e.jour = 'Date non reconnue.'; else if (r.jour && r.jour < aujourdhui) e.jour = 'Cette date est passée : choisissez un jour à partir d’aujourd’hui.';
+  if (r.jour && !jourValide(r.jour)) e.jour = 'Date non reconnue.'; else if (r.jour && r.jour < aujourdhui) e.jour = 'Cette date est passée : choisissez un jour à partir d’aujourd’hui.';
   if (allerRetour) {
     if (!r.retour) e.retour = 'Choisissez la date de retour.';
     else if (!jourValide(r.retour)) e.retour = 'Date de retour non reconnue.';

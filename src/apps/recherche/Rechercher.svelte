@@ -43,7 +43,7 @@
   const SOURCES_UI: { id: Source; titre: string; sous: string }[] = [{ id: 'neuf', titre: 'Billets neufs', sous: 'Compagnies' }, { id: 'revente', titre: 'Revente', sous: 'Marché NexG' }, { id: 'agence', titre: 'Agences', sous: 'Partenaires' }, { id: 'drop', titre: 'Drops', sous: 'Membres' }];
   const basculerSource = (s: Source) => (sources = sources.includes(s) ? sources.filter((x) => x !== s) : [...sources, s]);
   function inverser() {
-    if (!de || !vers || vers === PARTOUT) { montrer(vers === PARTOUT ? 'Impossible d’inverser avec « Partout » : choisissez une destination.' : 'Choisissez d’abord le départ et l’arrivée.', 'wa'); return; }
+    if (!de || !vers || vers === PARTOUT) { montrer(vers === PARTOUT ? 'Impossible d’inverser avec « Partout » : choisissez une destination.' : 'Choisissez d’abord le départ et l’arrivée.', 'wa'); return; }
     [de, vers] = [vers, de]; degres = degres === 90 ? 270 : 90;
   }
   function choisirJour(cible: 'depart' | 'retour', j: string) {
@@ -68,7 +68,7 @@
       <div class="moitie haut"><ChampAeroport id="from" label="Départ" bind:valeur={de} bind:brut={brutDe} {aeroports} exclure={vers === PARTOUT ? '' : vers} erreur={erreurs.de} /></div>
       <div class="perfo" aria-hidden="true"><span class="trait"></span><span class="rond g"></span><span class="rond d"></span></div>
       <button type="button" class="inverser" aria-label="Inverser départ et arrivée" onclick={inverser}><span style="display:flex;transform:rotate({degres}deg);transition:transform 0.25s ease"><Pictos nom="echange" taille={20} trait={2} /></span></button>
-      <div class="moitie bas"><ChampAeroport id="to" label="Arrivée" bind:valeur={vers} bind:brut={brutVers} {aeroports} partout exclure={de} erreur={erreurs.vers} placeholder="Ville, aéroport ou « Partout »" /></div>
+      <div class="moitie bas"><ChampAeroport id="to" label="Arrivée" bind:valeur={vers} bind:brut={brutVers} {aeroports} partout exclure={de} erreur={erreurs.vers} placeholder="Ville ou « Partout »" /></div>
     </section>
 
     <div role="group" aria-label="Type de trajet" class="seg">
@@ -141,15 +141,15 @@
   <aside class="note"><span class="note-i" aria-hidden="true"><Pictos nom="etiquette" taille={18} /></span>
     <p><strong>Un billet revendable garde sa valeur si vos plans changent.</strong> Le prix obtenu à la revente dépend du marché.</p></aside>
 
-  {#snippet pied()}<button type="submit" form="form-recherche" class="btn go"><Pictos nom="chercher" taille={20} trait={2} />Rechercher</button>{/snippet}
-</Ecran>
+  <Feuille ouvert={calendrier !== null} titre={calendrier === 'retour' ? 'Date de retour' : 'Date de départ'} sous={calendrier === 'retour' ? 'Choisissez le jour du vol retour.' : 'Choisissez le jour du départ.'} surfermer={() => (calendrier = null)}>
+    {#if calendrier}
+      <Calendrier choisi={calendrier === 'retour' ? retour : jour} min={calendrier === 'retour' ? (jour && jour >= auj ? jour : auj) : auj} avecVols={joursAvecVol} aujourdhui={auj} onchoisir={(j) => choisirJour(calendrier!, j)} />
+    {/if}
+    {#snippet pied()}{#if calendrier === 'depart'}<button type="button" class="btn sec" onclick={effacerJour}>Toutes les dates</button>{:else}<button type="button" class="btn sec" onclick={() => { retour = ''; calendrier = null; }}>Effacer la date de retour</button>{/if}{/snippet}
+  </Feuille>
 
-<Feuille ouvert={calendrier !== null} titre={calendrier === 'retour' ? 'Date de retour' : 'Date de départ'} sous={calendrier === 'retour' ? 'Choisissez le jour du vol retour.' : 'Choisissez le jour du départ.'} surfermer={() => (calendrier = null)}>
-  {#if calendrier}
-    <Calendrier choisi={calendrier === 'retour' ? retour : jour} min={calendrier === 'retour' ? (jour && jour >= auj ? jour : auj) : auj} avecVols={joursAvecVol} aujourdhui={auj} onchoisir={(j) => choisirJour(calendrier!, j)} />
-  {/if}
-  {#snippet pied()}{#if calendrier === 'depart'}<button type="button" class="btn sec" onclick={effacerJour}>Toutes les dates</button>{:else}<button type="button" class="btn sec" onclick={() => { retour = ''; calendrier = null; }}>Effacer la date de retour</button>{/if}{/snippet}
-</Feuille>
+  <div class="barre"><button type="submit" form="form-recherche" class="btn go"><Pictos nom="chercher" taille={20} trait={2} />Rechercher</button></div>
+</Ecran>
 
 <style>
   .titre { margin: 0; font: 600 34px/38px 'Barlow Condensed', 'Arial Narrow', sans-serif; text-transform: uppercase; letter-spacing: 0.01em; }
@@ -178,6 +178,8 @@
   .piste { position: relative; flex: none; width: 48px; height: 28px; border-radius: 999px; background: var(--surface2); border: 1px solid var(--line-strong); box-sizing: border-box; } .piste.on { background: var(--accent); border-color: var(--accent); }
   .bouton { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 999px; background: var(--ink3); transition: left 0.2s ease; } .piste.on .bouton { left: 23px; background: #fff; }
   .intention { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; margin-top: -4px; padding: 0 12px; border-radius: 12px; color: var(--accent); font: 600 15px/20px 'Barlow', sans-serif; text-align: center; }
+  /* Barre d'action collée au-dessus de la barre d'onglets (56 px) : l'action principale reste visible, jamais recouverte. */
+  .barre { position: sticky; bottom: calc(56px + env(safe-area-inset-bottom)); z-index: 5; margin: 0 -20px -24px; padding: 14px 20px 12px; background: linear-gradient(180deg, transparent, var(--bg) 30%); }
   .go { gap: 8px; }
   .recentes { display: flex; flex-direction: column; gap: 10px; padding-top: 4px; } .rt { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   h2 { margin: 0; font: 600 22px/26px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; }

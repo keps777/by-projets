@@ -14,7 +14,7 @@
   import { reseau } from './reseau.svelte.ts';
 
   /** Vitrine d'une agence partenaire : identité vérifiée, message à un conseiller (démo), ses offres (billets vendus « par » l'agence) et « À propos ». */
-  let { agenceId }: { agenceId: string } = $props();
+  let { agenceId = '' }: { agenceId?: string } = $props();
   const agence = $derived(app.monde.agences.find((a) => a.id === agenceId));
   const compte = $derived(compteCourant());
   const lignes = $derived(agence ? offresDeAgence(agence.id, aLePass(compte?.id)) : []);
@@ -30,7 +30,7 @@
   function fermer() { ouvert = false; erreur = ''; }
   function envoyer() {
     if (!agence) return;
-    if (!reseau.enLigne) { erreur = 'Vous êtes hors ligne : le message partira au retour du réseau. Réessayez alors.'; return; }
+    if (!reseau.enLigne) { erreur = 'Vous êtes hors ligne : le message partira au retour du réseau. Réessayez alors.'; return; }
     const r = envoyerMessageAgence(compte?.id, agence, message);
     if (r.ok) { ouvert = false; message = ''; erreur = ''; envoye = true; }
     else { erreur = r.raison === 'vide' ? 'Écrivez votre message avant de l’envoyer.' : 'Connectez-vous pour écrire à un conseiller.'; void tick().then(() => document.getElementById('ag-msg')?.focus()); }
@@ -116,7 +116,7 @@
   .bloc { display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); }
   .id { display: flex; align-items: center; gap: 14px; } .mono-g { width: 68px; height: 68px; flex: none; border-radius: 18px; background: var(--ink); color: #fff; display: grid; place-items: center; font: 700 30px/1 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.04em; }
   h1 { margin: 0; font: 700 32px/30px 'Barlow Condensed', 'Arial Narrow', sans-serif; } .ex { font: 500 15px/20px 'Barlow', sans-serif; color: var(--ink2); }
-  .puce { align-self: flex-start; } .vendu { margin: 0; display: flex; align-items: center; gap: 8px; padding-top: 12px; border-top: 1px solid var(--line); font: 400 14px/20px 'Barlow', sans-serif; color: var(--ink2); } .vendu :global(svg) { flex: none; }
+  .puce { align-self: flex-start; white-space: normal; line-height: 14px; padding-block: 6px; height: auto; } .vendu { margin: 0; display: flex; align-items: center; gap: 8px; padding-top: 12px; border-top: 1px solid var(--line); font: 400 14px/20px 'Barlow', sans-serif; color: var(--ink2); } .vendu :global(svg) { flex: none; }
   .forfait { margin: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; font: 400 14px/20px 'Barlow', sans-serif; color: var(--ink2); } .forfait :global(svg) { flex: none; color: var(--ink); }
   .lien { min-height: 44px; padding: 0 4px; border: 0; background: none; color: var(--accent); font: 600 14px/1 'Barlow', sans-serif; cursor: pointer; }
   .compose { display: flex; flex-direction: column; gap: 8px; } .compose label { font: 500 13px/18px 'Barlow', sans-serif; color: var(--ink2); }

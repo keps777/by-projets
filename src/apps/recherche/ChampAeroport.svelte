@@ -37,13 +37,13 @@
   <div class="ligne">
     <div class="saisie">
       <label for={id}>{label}</label>
-      <input {id} type="text" role="combobox" autocomplete="off" autocapitalize="off" spellcheck="false" {placeholder} value={texte} oninput={saisie} onkeydown={touche} onfocus={(e) => { ouvert = true; saisi = false; actif = 0; e.currentTarget.select(); }} onblur={sortie}
+      <input {id} type="text" role="combobox" autocomplete="off" autocapitalize="off" spellcheck="false" {placeholder} value={texte} oninput={saisie} onkeydown={touche} onclick={(e) => { if (!ouvert) { ouvert = true; saisi = false; actif = 0; } e.currentTarget.select(); }} onblur={sortie}
         aria-expanded={ouvert} aria-controls={idListe} aria-autocomplete="list" aria-activedescendant={ouvert && liste.length ? idOption(Math.min(actif, liste.length - 1)) : undefined} aria-invalid={erreur ? 'true' : undefined} aria-describedby={erreur ? `${id}-e` : undefined} />
     </div>
     <span class="gros" aria-hidden="true">{grosCode(valeur) || '···'}</span>
   </div>
   {#if erreur}<span class="erreur" id="{id}-e" role="alert"><Pictos nom="alerte" taille={16} />{erreur}</span>{/if}
-  <ul id={idListe} role="listbox" aria-label="{label} : suggestions" class="options" hidden={!ouvert || !liste.length}>
+  <ul id={idListe} role="listbox" aria-label="{label} : suggestions" class="options" hidden={!ouvert || !liste.length}>
     {#each liste as s, i (s.valeur)}
       <li id={idOption(i)} role="option" aria-selected={i === actif} class:actif={i === actif} onpointerdown={(e) => { e.preventDefault(); choisir(s); }}>
         <span class="v">{s.valeur === PARTOUT ? s.ville : `${s.ville} (${s.code})`}</span><span class="p">{s.pays}</span>

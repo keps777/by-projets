@@ -39,6 +39,7 @@
 </script>
 
 <Ecran titre={invalide.length ? 'Recherche incomplète' : titre} etape={invalide.length ? undefined : sous} face="jour" retour={retourForm}>
+  <h1 class="sr">{invalide.length ? 'Recherche incomplète' : `Résultats ${titre}`}</h1>
   {#snippet droite()}<a class="rond" href={retourForm} aria-label="Modifier la recherche" onclick={(e) => va(e, retourForm)}><Pictos nom="reglages" taille={20} /></a>{/snippet}
 
   {#if invalide.length}
@@ -52,7 +53,7 @@
   {:else if etatForce === 'chargement'}
     <div aria-busy="true" aria-live="polite" class="squelette"><p class="sr">Chargement des offres…</p><span class="s1"></span><span class="s2"></span><span class="s2"></span></div>
   {:else}
-    {#if !reseau.enLigne}<p class="hors" role="status"><Pictos nom="horsligne" taille={18} />Vous êtes hors ligne : ces prix datent de votre dernière visite et peuvent avoir changé.</p>{/if}
+    {#if !reseau.enLigne}<p class="hors" role="status"><Pictos nom="horsligne" taille={18} />Vous êtes hors ligne : ces prix datent de votre dernière visite et peuvent avoir changé.</p>{/if}
 
     <div role="group" aria-label="Filtrer par source" class="onglets">
       {#each ONGLETS as o (o.id)}
@@ -79,13 +80,13 @@
           {/each}
         </div>
         <div class="grad" aria-hidden="true">{#each baro.echelle.graduations as g (g.pos)}<span style="left:{g.pos}%">{dollars(g.prix)}</span>{/each}</div>
-        {#if baro.masques > 0}<p class="b-pied"><Pictos nom="cadenas" taille={16} trait={2} />+ {baro.masques} drop{baro.masques > 1 ? 's' : ''} membres non affiché{baro.masques > 1 ? 's' : ''} : prix visible{baro.masques > 1 ? 's' : ''} avec le Pass NexG</p>{/if}
+        {#if baro.masques > 0}<p class="b-pied"><Pictos nom="cadenas" taille={16} trait={2} />+ {baro.masques} drop{baro.masques > 1 ? 's' : ''} membres non affiché{baro.masques > 1 ? 's' : ''} : prix visible{baro.masques > 1 ? 's' : ''} avec le Pass NexG</p>{/if}
       </section>
     {/if}
 
     {#if visibles.length}
       <div class="comptage"><p class="cpt" aria-live="polite">{comptage} · prix par voyageur</p>
-        <button type="button" class="tri" aria-haspopup="dialog" onclick={() => (triOuvert = true)}><Pictos nom="trier" taille={16} trait={2} />Trier : {triActif.libelle}</button></div>
+        <button type="button" class="tri" aria-haspopup="dialog" onclick={() => (triOuvert = true)}><Pictos nom="trier" taille={16} trait={2} />Trier : {triActif.libelle}</button></div>
       <ul class="liste-plain cartes" aria-label="Offres">
         {#each visibles as l (l.offre.id)}
           <li><CarteOffre ligne={l} miseEnAvant={meilleure && meilleure.ligne.offre.id === l.offre.id ? meilleure.critere : null} {avecDate} /></li>
@@ -99,7 +100,7 @@
           <button type="button" class="btn sec" onclick={() => (onglet = 'tous')}>Voir toutes les offres</button>
         {:else}
           <h2 id="vide-t" class="t-section">Aucun vol ne correspond à cette recherche</h2>
-          <p class="t-sec">{r.jour ? `Aucune offre pour ${titre}${r.jour ? ` le ${fmtJourCourt(r.jour)}` : ''}.` : `Aucun départ à venir pour ${titre}.`}{r.sources.length < 4 || r.revendable ? ' Vos filtres de source écartent peut-être des offres.' : ''}</p>
+          <p class="t-sec">{r.jour ? `Aucune offre pour ${titre} le ${fmtJourCourt(r.jour)}${r.flex ? ` (±${FLEX_JOURS}\u00a0jours)` : ''}${r.flex ? '.' : ''}` : `Aucun départ à venir pour ${titre}.`}{r.sources.length < 4 || r.revendable ? ' Vos filtres de source écartent peut-être des offres.' : ''}</p>
           {#if proches.length}
             <p class="t-sur">Dates proches avec des vols</p>
             <ul class="liste-plain dates">
@@ -123,26 +124,25 @@
       <span class="i-cta">Publier une intention d’achat<Pictos nom="suivant" taille={18} trait={2} /></span>
     </a>
   {/if}
+  <Feuille bind:ouvert={triOuvert} titre="Trier les offres" sous="L’ordre change, pas les offres.">
+    <div role="radiogroup" aria-label="Ordre des offres" class="radios">
+      {#each TRIS as t (t.id)}
+        <label class="radio" class:on={tri === t.id}><input type="radio" name="tri" value={t.id} checked={tri === t.id} onchange={() => { tri = t.id; triOuvert = false; }} /><span class="col g2"><span class="r1">{t.libelle}</span><span class="r2">{t.aide}</span></span></label>
+      {/each}
+    </div>
+  </Feuille>
 </Ecran>
-
-<Feuille bind:ouvert={triOuvert} titre="Trier les offres" sous="L’ordre change, pas les offres.">
-  <div role="radiogroup" aria-label="Ordre des offres" class="radios">
-    {#each TRIS as t (t.id)}
-      <label class="radio" class:on={tri === t.id}><input type="radio" name="tri" value={t.id} checked={tri === t.id} onchange={() => { tri = t.id; triOuvert = false; }} /><span class="col g2"><span class="r1">{t.libelle}</span><span class="r2">{t.aide}</span></span></label>
-    {/each}
-  </div>
-</Feuille>
 
 <style>
   .col { display: flex; flex-direction: column; } .g2 { gap: 2px; min-width: 0; } .g8 { gap: 8px; }
   .rond { width: 44px; height: 44px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); display: grid; place-items: center; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); margin: 0; }
   .hors { display: flex; gap: 8px; align-items: flex-start; padding: 10px 12px; border-radius: 12px; background: var(--signal-soft); color: var(--signal-ink); font: 600 14px/20px 'Barlow', sans-serif; }
-  .onglets { display: flex; gap: 8px; margin: 0 -20px; padding: 4px 20px 8px; overflow-x: auto; scrollbar-width: none; } .onglets::-webkit-scrollbar { display: none; }
+  .onglets { display: flex; gap: 8px; margin: 0 -20px; padding: 4px 20px 8px; overflow-x: auto; contain: inline-size; scrollbar-width: none; } .onglets::-webkit-scrollbar { display: none; }
   .onglet { flex: none; display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 16px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--ink2); font: 600 14px/1 'Barlow', sans-serif; cursor: pointer; }
   .onglet.on { background: var(--ink); border-color: var(--ink); color: #fff; } .n { font: 400 12px/1 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
   .baro { display: flex; flex-direction: column; gap: 12px; padding: 16px 16px 14px; border-radius: 20px; background: var(--ink); color: #fff; }
-  .b-ent { display: flex; align-items: center; justify-content: space-between; gap: 8px; } h2 { margin: 0; font: 700 12px/16px 'Barlow', sans-serif; letter-spacing: 0.12em; text-transform: uppercase; color: #c9d3df; } .b-sub { font: 500 12px/16px 'Barlow', sans-serif; color: #c9d3df; }
+  .b-ent { display: flex; align-items: center; justify-content: space-between; gap: 8px; } .baro h2 { margin: 0; font: 700 12px/16px 'Barlow', sans-serif; letter-spacing: 0.12em; text-transform: uppercase; color: #c9d3df; } .b-sub { font: 500 12px/16px 'Barlow', sans-serif; color: #c9d3df; }
   .b-txt { margin: 0; font: 400 15px/21px 'Barlow', sans-serif; color: #fff; } .m { font: 600 15px/21px 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
   .ech { position: relative; height: 66px; margin: 0 12px; } .ech > span { position: absolute; }
   .axe { left: 0; right: 0; top: 47px; height: 2px; background: rgba(255, 255, 255, 0.18); } .bande { top: 45px; height: 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.22); }
@@ -163,6 +163,7 @@
   .intention { display: flex; flex-direction: column; gap: 14px; margin-top: 6px; padding: 16px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); box-shadow: var(--ombre); }
   .i-ent { display: flex; align-items: center; gap: 14px; } .i-ico { flex: none; width: 44px; height: 44px; border-radius: 12px; background: var(--ink); color: var(--signal); display: grid; place-items: center; }
   .i-t { font: 600 22px/24px 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: 0.02em; } .t13 { font: 400 13px/18px 'Barlow', sans-serif; color: var(--ink2); }
+  .puce { white-space: normal; line-height: 14px; padding-block: 6px; }
   .puces { display: flex; flex-wrap: wrap; gap: 6px; } .i-cta { display: flex; align-items: center; justify-content: space-between; min-height: 44px; padding: 0 14px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); font: 600 14px/18px 'Barlow', sans-serif; }
   .squelette { display: flex; flex-direction: column; gap: 14px; } .s1, .s2 { display: block; border-radius: 20px; background: var(--surface2); animation: nx-pulse 1.4s ease-in-out infinite; } .s1 { height: 180px; } .s2 { height: 150px; }
   .radios { display: flex; flex-direction: column; gap: 6px; } .radio { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 8px 12px; border-radius: 14px; border: 1px solid var(--line); cursor: pointer; } .radio.on { border-color: var(--accent); background: var(--accent-soft); }

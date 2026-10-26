@@ -17,7 +17,7 @@
   import { versUrl, rechercheVide } from './params.ts';
 
   /** Détail d'une offre (revente, neuf, agence) : le billet, le prix et son écart signé, le graphique du prix équivalent, ce que le détenteur peut faire (droits), le vendeur et sa chaîne, les conditions, l'alerte de prix et l'achat. */
-  let { offreId }: { offreId: string } = $props();
+  let { offreId = '' }: { offreId?: string } = $props(); // vide l'espace d'un instant quand le routeur change d'écran
   const compte = $derived(compteCourant()), compteId = $derived(compte?.id);
   const res = $derived(trouverOffre(offreId, compteId));
   const etatForce = $derived(new URLSearchParams(routeur.recherche).get('etat'));
@@ -39,16 +39,17 @@
     annonce = basculerAlerte(compteId, res.vol, res.offre.prix) ? '' : 'Alerte retirée.';
     if (annonce) setTimeout(() => (annonce = ''), 3500);
   }
-  const urlTrajet = $derived(vol ? versUrl({ ...rechercheVide(vol.de), vers: vol.vers, jour: vol.jour }) : '/rechercher');
+  const urlTrajet = $derived(res.vol ? versUrl({ ...rechercheVide(res.vol.de), vers: res.vol.vers, jour: res.vol.jour }) : '/rechercher');
   const paiement = $derived(o ? `/paiement/${encodeURIComponent(o.id)}` : '#');
 </script>
 
 <Ecran {titre} face="jour" retour={vol ? undefined : '/rechercher'}>
+  <h1 class="sr">{titre}</h1>
   {#if etatForce === 'chargement'}
     <div class="squelette" aria-busy="true"><p class="sr" role="status">Chargement de l’offre…</p><span class="s1"></span><span class="s2"></span><span class="s2"></span></div>
   {:else if etatForce === 'erreur'}
     <section class="erreur-bloc"><p class="alerte" role="alert"><Pictos nom="alerte" taille={20} /><span><strong>L’offre n’a pas pu être chargée.</strong><br />Vérifiez votre connexion puis réessayez.</span></p>
-      <a class="btn" href={`/offre/${encodeURIComponent(offreId)}`} onclick={(e) => va(e, `/offre/${encodeURIComponent(offreId)}`)}>Réessayer</a></section>
+      <a class="btn" href={`/offre/${encodeURIComponent(offreId ?? '')}`} onclick={(e) => va(e, `/offre/${encodeURIComponent(offreId ?? '')}`)}>Réessayer</a></section>
   {:else if !res.ok}
     <section class="erreur-bloc" aria-labelledby="indispo">
       <p class="alerte" role="alert"><Pictos nom="alerte" taille={20} /><span><strong id="indispo">{res.raison === 'vendue' ? 'Cette offre n’existe plus' : res.raison === 'drop' ? 'Ce drop n’est pas une offre ordinaire' : 'Offre introuvable'}</strong><br />{res.message}</span></p>
@@ -83,7 +84,7 @@
 
     <a class="cours" href="/cours/{encodeURIComponent(vol.id)}" onclick={(e) => va(e, `/cours/${encodeURIComponent(vol!.id)}`)}>
       <span class="cours-i" aria-hidden="true"><Pictos nom="lune" taille={18} /></span>
-      <span class="col g1"><span class="c1">Retourner le billet : voir son cours</span><span class="c2">Historique, offres et demandes</span></span><Pictos nom="suivant" taille={18} trait={2} />
+      <span class="col g1"><span class="c1">Retourner le billet : voir son cours</span><span class="c2">Historique, offres et demandes</span></span><Pictos nom="suivant" taille={18} trait={2} />
     </a>
 
     <Courbe courbe={vol.courbe} prixDemande={o.type === 'neuf' ? undefined : o.prix} etiquetteDemande={libellePrix} aujourdhui={auj} />
@@ -95,7 +96,7 @@
         <li><span class="ic"><Pictos nom="transfert" /></span><span class="col g2"><span class="d1">Transférer à un proche</span><span class="d2">Donnez-le à un autre compte NexG-TT.</span></span></li>
         <li><span class="ic"><Pictos nom="sac" /></span><span class="col g6"><span class="d1">Bagages inclus revendables</span><span class="d2">Un bagage inclus non utilisé se revend aux passagers du même vol (même numéro, même date), sous réserve d’accord compagnie.</span><span class="puce">Hypothèse</span></span></li>
         <li><span class="ic jaune"><Pictos nom="identite" /></span><span class="col g2"><span class="d1">Nommer le voyageur avant le {fmtInstantCourt(echeance)}</span><span class="d2">Vous ou un proche. Le billet devient alors nominatif.</span></span></li>
-        <li><span class="ic"><Pictos nom="bouclier" /></span><span class="col g6"><span class="d1">Plafond de revente</span><span class="d2">Le prix de revente est encadré pour éviter la spéculation. Sur ce vol : {dollars(plafond(vol.prixNeuf))} au plus, le prix équivalent neuf.</span><span class="puce">Règle à valider</span></span></li>
+        <li><span class="ic"><Pictos nom="bouclier" /></span><span class="col g6"><span class="d1">Plafond de revente</span><span class="d2">Le prix de revente est encadré pour éviter la spéculation. Sur ce vol : {dollars(plafond(vol.prixNeuf))} au plus, le prix équivalent neuf.</span><span class="puce">Règle à valider</span></span></li>
       </ul>
     </section>
 
@@ -106,7 +107,7 @@
       {#if o.type === 'agence' && res.agence}<a class="lien-agence" href={lienAgence(res.agence.id)} onclick={(e) => va(e, lienAgence(res.agence!.id))}>Voir la vitrine de {res.agence.nom}<Pictos nom="suivant" taille={18} trait={2} /></a>{/if}
       <div class="chaine"><span class="ligne-ch" aria-hidden="true"></span>
         <ol aria-label="Historique de détention" style="grid-template-columns: repeat({chaine.etapes.length}, minmax(0, 1fr))">
-          {#each chaine.etapes as e, i (i)}<li class={e.etat}><span class="pt" aria-hidden="true"></span><span class="lb">{e.libelle}</span></li>{/each}
+          {#each chaine.etapes as e, i (i)}<li class="e-{e.etat}"><span class="pt" aria-hidden="true"></span><span class="lb">{e.libelle}</span></li>{/each}
         </ol></div>
       <p class="d3">Chaque changement de détenteur est inscrit au registre interne de NexG-TT.</p>
     </section>
@@ -123,13 +124,13 @@
   {#snippet pied()}
     {#if res.ok && !etatForce && o && vol}
       <div role="status" aria-live="polite" class="vivant">
-        {#if alerteOn}<p class="statut"><Pictos nom="cloche" taille={18} trait={2} />Alerte créée : vous serez prévenu si le prix change.</p>
+        {#if alerteOn}<p class="statut"><Pictos nom="cloche" taille={18} trait={2} />Alerte créée : vous serez prévenu si le prix change.</p>
         {:else if annonce}<p class="statut"><Pictos nom="info" taille={18} trait={2} />{annonce}</p>{/if}
       </div>
       {#if res.laMienne}
-        <p class="mienne" role="note"><Pictos nom="info" taille={18} />C’est votre annonce : gérez-la depuis votre portefeuille.</p>
+        <p class="mienne" role="note"><Pictos nom="info" taille={18} />C’est votre annonce : gérez-la depuis votre portefeuille.</p>
       {:else if !ouvert}
-        <p class="mienne err" role="alert"><Pictos nom="alerte" taille={18} />L’échéance de ce vol est passée : plus aucune transaction n’est possible.</p>
+        <p class="mienne err" role="alert"><Pictos nom="alerte" taille={18} />L’échéance de ce vol est passée : plus aucune transaction n’est possible.</p>
       {/if}
       <div class="achat">
         {#if res.laMienne || !ouvert}
@@ -171,7 +172,7 @@
   .chaine { position: relative; } .ligne-ch { position: absolute; left: 6%; right: 6%; top: 6px; border-top: 2px solid var(--line); }
   ol { list-style: none; margin: 0; padding: 0; position: relative; display: grid; } ol li { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; min-width: 0; }
   .pt { width: 14px; height: 14px; box-sizing: border-box; border-radius: 999px; background: var(--ink3); border: 3px solid var(--surface); } .lb { font: 600 12px/16px 'Barlow', sans-serif; color: var(--ink2); overflow-wrap: anywhere; }
-  li.vendeur .pt { background: var(--ok); } li.vendeur .lb { color: var(--ink); } li.vous .pt { background: var(--surface); border: 2px dashed var(--ink); } li.vous .lb { color: var(--ink); font-weight: 700; } li.suite .pt { background: var(--line-strong); }
+  li.e-vendeur .pt { background: var(--ok); } li.e-vendeur .lb { color: var(--ink); } li.e-vous .pt { background: var(--surface); border: 2px dashed var(--ink); } li.e-vous .lb { color: var(--ink); font-weight: 700; } li.e-suite .pt { background: var(--line-strong); }
   .cond { margin: 0; padding: 0 16px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); } .cond > div { display: flex; flex-direction: column; gap: 4px; padding: 14px 0; } .cond > div + div { border-top: 1px solid var(--line); }
   dt { font: 600 13px/18px 'Barlow', sans-serif; color: var(--ink2); } dd { margin: 0; display: flex; align-items: center; justify-content: space-between; gap: 8px; font: 400 15px/20px 'Barlow', sans-serif; flex-wrap: wrap; }
   .statut { margin: 0; display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: var(--ink); color: #fff; font: 500 14px/20px 'Barlow', sans-serif; box-shadow: 0 12px 32px rgba(11, 27, 46, 0.2); } .statut :global(svg) { color: var(--signal); }
