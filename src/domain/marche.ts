@@ -37,7 +37,8 @@ export type MoyenPaiement = 'carte' | 'wallet' | 'mobile' | 'solde';
 /** Total à payer pour un prix : le billet plus les frais de service (hypothèse : offerts). */
 export const totalAPayer = (prix: number): number => arrondi(prix + FRAIS_SERVICE);
 
-function ecrire(compteId: string, type: TypeEcriture, libelle: string, montant: number, extra: { sous?: string; droitId?: string; hypothese?: boolean } = {}) {
+/** Écrit une ligne au grand livre du solde NexG (montant signé) et ajuste le solde du compte. */
+export function ecrire(compteId: string, type: TypeEcriture, libelle: string, montant: number, extra: { sous?: string; droitId?: string; hypothese?: boolean } = {}) {
   const c = compteDe(compteId); if (!c) return;
   c.solde = arrondi(c.solde + montant);
   app.monde.ecritures.push({ id: nouvelId('e'), compteId, quand: maintenant(), type, libelle, montant: arrondi(montant), solde: c.solde, ...extra });
