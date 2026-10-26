@@ -19,7 +19,7 @@ export type OrigineDroit = 'neuf' | 'drop' | 'revente' | 'agence' | 'import' | '
 export type TypeMaillon = 'achat_neuf' | 'drop' | 'revente' | 'agence' | 'import' | 'transfert' | 'rachat' | 'nommage' | 'gel' | 'degel';
 /** Un maillon de la chaîne de détention (registre interne NexG-TT). `de`/`vers` : identifiant de compte, `nexgtt`, ou `agence:<id>`. */
 export interface Maillon { id: string; quand: number; type: TypeMaillon; de: string | null; vers: string; prix: number; commission?: number; note?: string }
-export interface Voyageur { prenom: string; nom: string; naissance?: string; document?: string; pourSoi: boolean; compteId?: string }
+export interface Voyageur { prenom: string; nom: string; naissance?: string; /** Genre tel que demandé par la compagnie : F, M ou X (si accepté). */ genre?: 'F' | 'M' | 'X'; document?: string; pourSoi: boolean; compteId?: string }
 export interface Droit {
   id: string; /** « NXG-7Q2M » */ ref: string; volId: string; detenteurId: string; statut: StatutDroit; prixPaye: number; origine: OrigineDroit;
   chaine: Maillon[]; /** Annonce de revente en cours. */ annonce?: { prix: number; depuis: number }; voyageur?: Voyageur;
