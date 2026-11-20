@@ -595,7 +595,7 @@ test.describe('glisser un bloc sur la journée', () => {
     await page.mouse.up();
     await expect(page.getByRole('button', { name: /Préparer la rencontre, 09:50 à 10:35/ })).toBeVisible();
 
-    // Poignée du bas : la fin passe de 10:35 à environ 11:35 (+72 px ; le défilement automatique près du bord peut ajouter quelques minutes).
+    // Poignée du bas : la fin passe de 10:35 à environ 11:35 (+72 px ; le défilement automatique près du bord du bas, plus proche depuis les en-têtes Prévu | Fait, ajoute de 10 à 50 minutes).
     const poignee = page.getByRole('slider', { name: /Changer l’heure de fin de Préparer la rencontre/ });
     await expect(poignee).toBeVisible();
     await expect(page.getByText(/Bloc placé de/)).toBeHidden({ timeout: 10_000 }); // le message ne doit pas couvrir la poignée
@@ -605,11 +605,11 @@ test.describe('glisser un bloc sur la journée', () => {
     await page.mouse.move(p.x + p.width / 2, p.y + p.height / 2 + 36, { steps: 4 });
     await page.mouse.move(p.x + p.width / 2, p.y + p.height / 2 + 72, { steps: 4 });
     await page.mouse.up();
-    await expect(page.getByRole('button', { name: /Préparer la rencontre, 09:50 à 11:\d\d/ })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Préparer la rencontre, 09:50 à 1[12]:\d\d/ })).toBeVisible();
 
     await page.waitForTimeout(600); // l'écriture locale (IndexedDB) suit l'affichage de quelques millisecondes
     await page.reload();
-    await expect(page.getByRole('button', { name: /Préparer la rencontre, 09:50 à 11:\d\d/ })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Préparer la rencontre, 09:50 à 1[12]:\d\d/ })).toBeVisible();
   });
 
   test('un simple appui ouvre toujours le bloc, un bloc fait ne bouge pas', async ({ page }) => {

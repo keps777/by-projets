@@ -46,7 +46,8 @@ const ecrire = (v: string): void => { try { localStorage.setItem(CLE, v); } catc
 export function assurerHoraireType(depuis: Jour = aujourdhui()): number {
   if (lire() !== null) return 0;
   const n = poserHoraireType(depuis);
-  ecrire('pose');
+  // Le drapeau n'est écrit qu'après quelques secondes : si l'app se ferme avant que les tâches soient enregistrées, la pose reprend à l'ouverture suivante (idempotente).
+  setTimeout(() => { if (lire() === null) ecrire('pose'); }, 3000);
   return n;
 }
 
