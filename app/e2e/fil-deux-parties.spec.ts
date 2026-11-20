@@ -86,6 +86,7 @@ test.describe('horaire type', () => {
     await page.getByRole('link', { name: 'Le Fil' }).click();
     await page.waitForSelector('.grille');
     await expect(page.locator('.bloc')).toHaveCount(0);
+    await page.waitForTimeout(3500); // des centaines d'occurrences à enregistrer dans IndexedDB : l'écriture suit l'affichage de quelques secondes
     await page.reload();
     await page.waitForSelector('.grille');
     await expect(page.locator('.bloc')).toHaveCount(0);
