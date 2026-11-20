@@ -43,5 +43,6 @@
   .textes { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
   .titre-bloc { font-size: 13px; font-weight: 600; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.9; }
   .titre-bloc.petit { font-size: 12px; }
+  .fait:has(.sous) .titre-bloc, .haut .titre-bloc { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; }
   .sous { font-size: 11px; line-height: 1.25; opacity: 0.8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 </style>

@@ -165,3 +165,5 @@ Outil de comparaison : voir la méthode dans ce journal ; relancer une passe à 
 - La retraite de 24 h existe déjà (écran Projets, « Me proposer une retraite de 24 h », §5) : rien à ajouter.
 - Un bloc marqué fait garde sa coche dans Prévu et se pose aussi dans Fait ; les vues Tableau, Semaine et Mois sont inchangées.
 - Question ouverte : poser l'horaire type des points de prière (00 h–24 h) comme tâches récurrentes dans Prévu ? Pas fait, en attente de confirmation.
+
+**Horaire type (même jour)** : Réglages › Horaire type › « Poser mon horaire type » crée 20 tâches récurrentes (points de prière : prière, Bible, méditation, repos, préparation, travail, repas, évangélisation, projets, temps libre, lecture ; jours spéciaux vendredi, mercredi, lundi, dimanche), sans projet ni rappel, dans Prévu ; idempotent ; « Retirer l'horaire type » les supprime. Données : `data/horaire-type.ts`, actions : `data/actions/horaire.ts`. Non posés faute d'heure : jeûne du lundi, dons et épargne du 1er vendredi, lessive. Les titres de blocs passent sur deux lignes dans les colonnes étroites.

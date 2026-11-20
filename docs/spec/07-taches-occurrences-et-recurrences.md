@@ -71,3 +71,11 @@ La journée du calendrier (vue Calendrier · Jour) est **partagée en deux colon
 - En-têtes **Prévu · n** et **Fait · n · durée totale**.
 - **Remplir ce qui a été fait** : toucher un espace libre de la colonne Fait ouvre « Ce que j'ai fait » (quoi, projet en cours, heure de début, durée). Le bloc créé est **déjà fait** : il n'apparaît que dans Fait (il n'était pas prévu) et alimente les sous-projets comme une saisie. Un bloc créé ainsi est reconnu à sa saisie, de source « rattrapage » (elle le reste après une correction). Il n'a aucun rappel. On peut aussi remplir un jour passé.
 - Un bloc fait ou en cours s'ouvre comme les autres (volet du bloc). Les vues Tableau, Semaine et Mois ne changent pas.
+
+## Horaire type dans Prévu (nov. 2026)
+
+**Réglages · Horaire type** : un bouton « Poser mon horaire type » crée, en une fois, les tâches récurrentes de la journée type (points de prière : communion, Bible, méditation, repos, préparation, travail, repas, évangélisation, projets personnels, temps libre, lecture), à leurs heures, chaque jour ou seulement certains jours. Elles apparaissent dans la colonne **Prévu** du Fil.
+- Tâches **sans projet** et **sans rappel** (aucune notification de plus : on en ajoute une depuis « Modifier la tâche »).
+- Les jours spéciaux remplacent le bloc habituel : le **vendredi** (nuit de prière 00 h–06 h, puis communion fraternelle et repos 06 h–12 h), le **mercredi** (FDL 21 h–00 h au lieu du temps libre et de la lecture), le **lundi** (logement propre 21 h–22 h et cuisine 21 h–23 h au lieu du temps libre), le **dimanche** (bilan des finances 21 h–22 h, temps libre 22 h–23 h). Pas de lecture le vendredi.
+- **Idempotent** : un bloc dont le titre existe déjà comme tâche active n'est pas recréé. « Retirer l'horaire type » supprime ces séries (les blocs déjà faits sont gardés).
+- Non posés (pas d'heure dans les points de prière) : jeûne du lundi, dons et épargne du 1er vendredi, lessive.

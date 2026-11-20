@@ -87,6 +87,7 @@
   .textes { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
   .titre-bloc { font-size: 14px; font-weight: 600; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .titre-bloc.petit { font-size: 12px; }
+  .haut .titre-bloc { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; }
   .bloc:has(.cercle.fait) .titre-bloc { opacity: 0.78; }
   .sous { font-size: 12px; line-height: 1.25; opacity: 0.8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .jouer { position: relative; flex: none; width: 44px; border: 0; background: transparent; display: flex; align-items: center; justify-content: center; color: var(--c-sur); }

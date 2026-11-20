@@ -18,6 +18,8 @@
   import { aujourdhui } from '../../data/temps.svelte.ts';
   import { profil } from '../../data/requetes.ts';
   import { ajouterPoint, changerDelaiDefaut, majProfil, modifierPoint, retirerPreset } from '../../data/actions/reglages.ts';
+  import { horaireTypePose, poserHoraireType, retirerHoraireType } from '../../data/actions/horaire.ts';
+  import { HORAIRE_TYPE } from '../../data/horaire-type.ts';
   import { formaterMesures } from '@core/rapport.ts';
   import { calculerPoint, preparer } from '../rapports/calcul.ts';
   import { donneesRapport } from '../rapports/donnees.ts';
@@ -65,6 +67,16 @@
     const codes = points.filter((x) => ids.includes(x.id)).map((x) => x.code);
     return codes.length && codes.length === points.length ? 'Tous les points' : codes.join(' · ') || 'Aucun point';
   }
+  const nbHoraire = $derived(horaireTypePose());
+  let retraitHoraire = $state(false);
+  function poserHoraire(): void { const n = poserHoraireType(); dire(n ? `Horaire type posé · ${n} bloc${n > 1 ? 's' : ''} dans Prévu` : 'L’horaire type est déjà posé'); }
+  function retirerHoraire(): void {
+    if (!retraitHoraire) { retraitHoraire = true; setTimeout(() => (retraitHoraire = false), 4000); return; }
+    const n = retirerHoraireType();
+    retraitHoraire = false;
+    dire(`Horaire type retiré · ${n} série${n > 1 ? 's' : ''}`);
+  }
+
   let presetARetirer = $state<string | null>(null);
   function retirer(id: string): void {
     if (presetARetirer !== id) { presetARetirer = id; setTimeout(() => { if (presetARetirer === id) presetARetirer = null; }, 4000); return; }
@@ -279,6 +291,17 @@
       {/each}
     </span>
   </div>
+
+  <section class="groupe" id="horaire-type">
+    <span class="etiquette">Horaire type</span>
+    <div class="carte liste">
+      <button type="button" class="ligne bouton" onclick={poserHoraire}><Icone nom="calendrier" taille={18} /><span class="grow">{nbHoraire >= HORAIRE_TYPE.length ? 'Mon horaire type est posé' : 'Poser mon horaire type'}</span><span class="muted petit">{nbHoraire}/{HORAIRE_TYPE.length}</span></button>
+      {#if nbHoraire}
+        <button type="button" class="ligne bouton danger" onclick={retirerHoraire}><Icone nom="poubelle" taille={18} /><span class="grow">{retraitHoraire ? 'Toucher encore pour confirmer' : 'Retirer l’horaire type'}</span></button>
+      {/if}
+    </div>
+    <p class="muted petit note">Pose dans la colonne Prévu du Fil la journée type (prière, Bible, méditation, repos, travail, repas, évangélisation, projets, temps libre, lecture), sans projet et sans rappel.</p>
+  </section>
 
   <section class="groupe">
     <span class="etiquette">Mes données</span>
