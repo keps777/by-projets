@@ -18,7 +18,7 @@
   import { aujourdhui } from '../../data/temps.svelte.ts';
   import { profil } from '../../data/requetes.ts';
   import { ajouterPoint, changerDelaiDefaut, majProfil, modifierPoint, retirerPreset } from '../../data/actions/reglages.ts';
-  import { horaireTypePose, poserHoraireType, retirerHoraireType } from '../../data/actions/horaire.ts';
+  import { horaireTypePose, poserHoraireTypeManuel, retirerHoraireTypeDefinitivement } from '../../data/actions/horaire.ts';
   import { HORAIRE_TYPE } from '../../data/horaire-type.ts';
   import { formaterMesures } from '@core/rapport.ts';
   import { calculerPoint, preparer } from '../rapports/calcul.ts';
@@ -69,10 +69,10 @@
   }
   const nbHoraire = $derived(horaireTypePose());
   let retraitHoraire = $state(false);
-  function poserHoraire(): void { const n = poserHoraireType(); dire(n ? `Horaire type posé · ${n} bloc${n > 1 ? 's' : ''} dans Prévu` : 'L’horaire type est déjà posé'); }
+  function poserHoraire(): void { const n = poserHoraireTypeManuel(); dire(n ? `Horaire type posé · ${n} bloc${n > 1 ? 's' : ''} dans Prévu` : 'L’horaire type est déjà posé'); }
   function retirerHoraire(): void {
     if (!retraitHoraire) { retraitHoraire = true; setTimeout(() => (retraitHoraire = false), 4000); return; }
-    const n = retirerHoraireType();
+    const n = retirerHoraireTypeDefinitivement();
     retraitHoraire = false;
     dire(`Horaire type retiré · ${n} série${n > 1 ? 's' : ''}`);
   }

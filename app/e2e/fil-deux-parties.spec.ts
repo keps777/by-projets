@@ -63,27 +63,39 @@ test.describe('journée en deux parties', () => {
   });
 });
 
-test('Réglages · poser l’horaire type remplit Prévu, une seule fois, et le retirer le vide', async ({ page }) => {
-  await page.goto('/reglages');
-  const poser = page.getByRole('button', { name: /Poser mon horaire type/ });
-  await poser.scrollIntoViewIfNeeded();
-  await poser.click();
-  await expect(page.getByRole('button', { name: /Mon horaire type est posé/ })).toBeVisible();
-  await page.getByRole('button', { name: /Mon horaire type est posé/ }).click(); // déjà posé : rien de plus
-  await page.getByRole('link', { name: 'Le Fil' }).click();
-  await page.waitForSelector('.grille');
-  await expect(page.locator('.bloc').first()).toBeVisible();
-  const n = await page.locator('.bloc').count();
-  expect(n).toBeGreaterThanOrEqual(8);
-  await expect(page.locator('#titre-prevu')).toContainText(`Prévu · ${n}`);
-  await page.locator('.defile-jour').evaluate((el) => { el.scrollTop = 17 * 72; });
-  await page.screenshot({ path: '/tmp/horaire-type.png' });
-  await page.goto('/reglages');
-  const retirer = page.getByRole('button', { name: /Retirer l’horaire type/ });
-  await retirer.scrollIntoViewIfNeeded();
-  await retirer.click();
-  await page.getByRole('button', { name: /confirmer/ }).click();
-  await page.getByRole('link', { name: 'Le Fil' }).click();
-  await page.waitForSelector('.grille');
-  await expect(page.locator('.bloc')).toHaveCount(0);
+test.describe('horaire type', () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  test('posé tout seul au premier démarrage, retiré pour de bon à la demande, reposé à la demande', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForSelector('.grille');
+    await expect(page.locator('.bloc').first()).toBeVisible();
+    const n = await page.locator('.bloc').count();
+    expect(n).toBeGreaterThanOrEqual(8);
+    await expect(page.locator('#titre-prevu')).toContainText(`Prévu · ${n}`);
+    await page.locator('.defile-jour').evaluate((el) => { el.scrollTop = 17 * 72; });
+    await page.screenshot({ path: '/tmp/horaire-type.png' });
+
+    // Retiré à la main : il ne revient pas tout seul.
+    await page.goto('/reglages');
+    await expect(page.getByRole('button', { name: /Mon horaire type est posé/ })).toBeVisible();
+    const retirer = page.getByRole('button', { name: /Retirer l’horaire type/ });
+    await retirer.scrollIntoViewIfNeeded();
+    await retirer.click();
+    await page.getByRole('button', { name: /confirmer/ }).click();
+    await page.getByRole('link', { name: 'Le Fil' }).click();
+    await page.waitForSelector('.grille');
+    await expect(page.locator('.bloc')).toHaveCount(0);
+    await page.reload();
+    await page.waitForSelector('.grille');
+    await expect(page.locator('.bloc')).toHaveCount(0);
+
+    // Reposé à la demande.
+    await page.goto('/reglages');
+    const poser = page.getByRole('button', { name: /Poser mon horaire type/ });
+    await poser.scrollIntoViewIfNeeded();
+    await poser.click();
+    await page.getByRole('link', { name: 'Le Fil' }).click();
+    await expect(page.locator('.bloc').first()).toBeVisible();
+  });
 });

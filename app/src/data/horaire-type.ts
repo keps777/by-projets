@@ -1,6 +1,7 @@
 // Horaire type de la journée (points de prière) : liste pure des blocs récurrents, posés dans Prévu (spec §7, nov. 2026).
 // Jours : 0 = lundi … 6 = dimanche.
-export interface BlocType { titre: string; debut: number; fin: number; jours: number[] }
+/** `mensuel` : le bloc revient un jour de rang du mois (rang 1 à 4, 5 = dernier) ; `jours` contient alors ce seul jour. */
+export interface BlocType { titre: string; debut: number; fin: number; jours: number[]; mensuel?: { rang: number } }
 
 const h = (heures: number, minutes = 0) => heures * 60 + minutes;
 const TOUS = [0, 1, 2, 3, 4, 5, 6];
@@ -27,5 +28,9 @@ export const HORAIRE_TYPE: BlocType[] = [
   { titre: 'FDL · progrès spirituel', debut: h(21), fin: h(24), jours: [MER] },
   { titre: 'Logement propre', debut: h(21), fin: h(22), jours: [LUN] },
   { titre: 'Cuisiner pour la semaine', debut: h(21), fin: h(23), jours: [LUN] },
-  { titre: 'Bilan de mes finances', debut: h(21), fin: h(22), jours: [DIM] }
+  { titre: 'Bilan de mes finances', debut: h(21), fin: h(22), jours: [DIM] },
+  { titre: 'Jeûne partiel du lundi', debut: h(0), fin: h(18), jours: [LUN] },
+  { titre: 'Dons du mois et épargne (maison, mariage)', debut: h(11), fin: h(12), jours: [VEN], mensuel: { rang: 1 } },
+  { titre: 'Lessive · laver et sécher (2ᵉ lundi)', debut: h(19), fin: h(21), jours: [LUN], mensuel: { rang: 2 } },
+  { titre: 'Lessive · laver et sécher (dernier lundi)', debut: h(19), fin: h(21), jours: [LUN], mensuel: { rang: 5 } }
 ];

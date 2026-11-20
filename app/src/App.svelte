@@ -6,6 +6,7 @@
   import { magasin } from './data/magasin.svelte.ts';
   import { reparerAbonnementSiBesoin } from './screens/accueil/push.ts';
   import { prolongerHorizon } from './data/actions/taches.ts';
+  import { assurerHoraireType } from './data/actions/horaire.ts';
   import { assurerFinancesDuMois } from './data/actions/defauts.ts';
   import { routeur, interceptionLiens } from './routeur.svelte.ts';
   import { trouverRoute } from './routes.ts';
@@ -30,7 +31,7 @@
     if (session.etat !== 'connecte' || synchroLancee) return;
     synchroLancee = true;
     synchro.demarrer();
-    synchro.apresSynchro(prolongerHorizon);
+    synchro.apresSynchro(() => { assurerHoraireType(aujourdhui()); prolongerHorizon(); });
     synchro.apresSynchro(() => assurerFinancesDuMois(aujourdhui()));
     // Notifications déjà autorisées mais appareil mal enregistré : on le répare seul, à l'ouverture et au retour dans l'app.
     synchro.apresSynchro(() => void reparerAbonnementSiBesoin(magasin.lignes.abonnements_push));

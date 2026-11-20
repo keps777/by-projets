@@ -74,8 +74,9 @@ La journée du calendrier (vue Calendrier · Jour) est **partagée en deux colon
 
 ## Horaire type dans Prévu (nov. 2026)
 
-**Réglages · Horaire type** : un bouton « Poser mon horaire type » crée, en une fois, les tâches récurrentes de la journée type (points de prière : communion, Bible, méditation, repos, préparation, travail, repas, évangélisation, projets personnels, temps libre, lecture), à leurs heures, chaque jour ou seulement certains jours. Elles apparaissent dans la colonne **Prévu** du Fil.
+**Réglages · Horaire type** : l'application (ou le bouton « Poser mon horaire type ») crée, en une fois, les tâches récurrentes de la journée type (points de prière : communion, Bible, méditation, repos, préparation, travail, repas, évangélisation, projets personnels, temps libre, lecture), à leurs heures, chaque jour ou seulement certains jours. Elles apparaissent dans la colonne **Prévu** du Fil.
 - Tâches **sans projet** et **sans rappel** (aucune notification de plus : on en ajoute une depuis « Modifier la tâche »).
 - Les jours spéciaux remplacent le bloc habituel : le **vendredi** (nuit de prière 00 h–06 h, puis communion fraternelle et repos 06 h–12 h), le **mercredi** (FDL 21 h–00 h au lieu du temps libre et de la lecture), le **lundi** (logement propre 21 h–22 h et cuisine 21 h–23 h au lieu du temps libre), le **dimanche** (bilan des finances 21 h–22 h, temps libre 22 h–23 h). Pas de lecture le vendredi.
 - **Idempotent** : un bloc dont le titre existe déjà comme tâche active n'est pas recréé. « Retirer l'horaire type » supprime ces séries (les blocs déjà faits sont gardés).
-- Non posés (pas d'heure dans les points de prière) : jeûne du lundi, dons et épargne du 1er vendredi, lessive.
+- Aussi posés, à une heure choisie faute d'heure dans les points de prière : **jeûne partiel du lundi** (00 h–18 h), **dons du mois et épargne** le 1er vendredi du mois (11 h–12 h), **lessive** le 2ᵉ et le dernier lundi du mois (19 h–21 h).
+- **Pose automatique** : à la première ouverture sur un appareil (après la synchronisation), l'horaire type se pose tout seul ; il ne revient plus après « Retirer l'horaire type » sur cet appareil. « Poser mon horaire type » le repose à la demande.
