@@ -91,7 +91,7 @@ test.describe('Le Fil : gestes', () => {
     await page.waitForSelector('.grille');
     await page.locator('.defile-jour').evaluate((el) => { el.scrollTop = 0; });
     const box = (await page.locator('.grille').boundingBox())!;
-    await page.mouse.click(260, box.y + 200 * (72 / 60)); // 03:20 → on attend 03:00 (180 min)
+    await page.mouse.click(120, box.y + 200 * (72 / 60)); // colonne Prévu, 03:20 → on attend 03:00 (180 min)
     await expect(page).toHaveURL(new RegExp(`/tache/nouvelle\\?heure=180&jour=${veille}$`));
     await expect(page.getByLabel('Titre de la tâche')).toBeVisible();
   });
@@ -190,9 +190,8 @@ test.describe('Propositions de titre', () => {
   test('reprennent les réglages d’une tâche déjà créée, et proposent des titres génériques', async ({ page }) => {
     await page.goto('/tache/nouvelle?sans-projet=1&heure=600');
     await page.getByLabel('Titre de la tâche').fill('Rencontre avec Christopher');
-    await page.getByLabel('Durée de la tâche').fill('3h45');
-    await page.getByLabel('Durée de la tâche').blur();
-    await page.getByRole('button', { name: '2 h avant', exact: true }).click();
+    await page.getByLabel('Durée de la tâche').selectOption('180');
+    await page.getByLabel('Ajouter un rappel').selectOption('120');
     await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
 
     await page.goto('/tache/nouvelle?sans-projet=1&heure=1200');
@@ -203,9 +202,8 @@ test.describe('Propositions de titre', () => {
     await expect(prop.getByRole('button', { name: /^Rencontre avec…/ })).toBeVisible();
     await prop.getByRole('button', { name: /^Rencontre avec Christopher/ }).click();
     await expect(page.getByLabel('Titre de la tâche')).toHaveValue('Rencontre avec Christopher');
-    await expect(page.locator('.debut')).toHaveText('20:00'); // l’heure choisie reste
-    await expect(page.locator('.fin').first()).toHaveText('jusqu’à 23:45'); // la durée est reprise
-    await expect(page.getByRole('button', { name: '2 h avant', exact: true })).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('.fin-heure')).toHaveText('20:00 – 23:00'); // l’heure choisie reste, la durée est reprise
+    await expect(page.getByRole('listitem').filter({ hasText: '2 h avant' })).toBeVisible();
   });
 });
 
@@ -217,8 +215,7 @@ test('modifier la durée d’une tâche agrandit son bloc sur le Fil', async ({ 
   const avant = (await page.locator('.bloc').first().boundingBox())!.height;
   await page.locator('.bloc .ouvrir').first().click();
   await page.getByRole('link', { name: /Modifier la tâche/ }).click();
-  await page.getByLabel('Durée de la tâche').fill('3h');
-  await page.getByLabel('Durée de la tâche').blur();
+  await page.getByLabel('Durée de la tâche').selectOption('180');
   await page.getByRole('button', { name: 'Enregistrer' }).click();
   await page.waitForSelector('.bloc');
   const apres = (await page.locator('.bloc').first().boundingBox())!.height;
