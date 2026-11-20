@@ -7,7 +7,7 @@ import { metriquesDe, projetsDe, rubriques, sousProjetsDe } from '../../data/req
 import { attendusDe } from '../../data/actions/blocs.ts';
 import type { NouvelleTache } from '../../data/actions/taches.ts';
 import { accepteLivres, ajouterLivre } from '../../data/actions/reglages.ts';
-import { construireRegle, prevuParDefaut, unionMesures, type MesureForm, type Recurrence, type TypeFin } from './tache.ts';
+import { construireRegle, prevuParDefaut, projetEnCours, rappelsDe, repartirRappels, reglerRepetition, repetitionDe, unionMesures, type MesureForm, type Recurrence, type Repetition, type TypeFin } from './tache.ts';
 
 export class FormulaireTache {
   titre = $state('');
@@ -33,8 +33,18 @@ export class FormulaireTache {
   /** Alarme : le rappel le plus proche du début insiste (2 min, 5 fois) tant que le bloc n'est pas lancé, fait ou reporté. */
   alarme = $state(false);
 
+  /** Menu « Répéter » : le choix qui correspond à la récurrence et aux jours. */
+  get repetition(): Repetition { return repetitionDe(this.rec, this.jours); }
+  set repetition(r: Repetition) { const { rec, jours } = reglerRepetition(r, jourSemaine(this.debut), this.jours); this.rec = rec; this.jours = jours; }
+  /** Tous les rappels (principal et plus tôt), du plus proche au plus lointain. */
+  rappels = $derived(rappelsDe(this.rappel, this.rappelsAvant));
+  ajouterRappel(delai: number): void { ({ rappel: this.rappel, rappelsAvant: this.rappelsAvant } = repartirRappels([...this.rappels, delai])); }
+  retirerRappel(delai: number): void { ({ rappel: this.rappel, rappelsAvant: this.rappelsAvant } = repartirRappels(this.rappels.filter((d) => d !== delai))); }
+
   rubriques = $derived(rubriques());
-  projets = $derived(this.rubriqueId ? projetsDe(this.rubriqueId) : []);
+  /** Projets en cours de la rubrique (le projet déjà choisi reste affiché, même s'il ne l'est plus). */
+  projets = $derived(this.rubriqueId
+    ? projetsDe(this.rubriqueId).filter((p) => p.id === this.projetId || projetEnCours(p.statut, sousProjetsDe(p.id).map((s) => s.statut))) : []);
   sousProjets = $derived(this.projetId ? sousProjetsDe(this.projetId).filter((s) => s.statut !== 'termine') : []);
   actifs = $derived(this.assoc ? this.sousProjets.filter((s) => !this.spOff.includes(s.id)) : []);
   /** Livre lu par la tâche : un livre en cours (id) ou un nouveau, saisi dans le formulaire et créé à l'ajout. */
@@ -149,7 +159,7 @@ export class FormulaireTache {
 
   choisirDebut(j: Jour): void {
     this.debut = j;
-    if (this.rec === 'hebdo') this.jours = [jourSemaine(j)];
+    if (this.rec === 'hebdo' && this.repetition === 'hebdo') this.jours = [jourSemaine(j)];
     if (this.fin === 'date' && this.finDate < j) this.finDate = dernierDuMois(j.slice(0, 7));
   }
 

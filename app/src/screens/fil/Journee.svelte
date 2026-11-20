@@ -3,9 +3,11 @@
   import type { BlocVue } from '../../data/requetes.ts';
   import { maintenantLocal } from '../../data/temps.svelte.ts';
   import BlocFil from './BlocFil.svelte';
+  import BlocFait from './BlocFait.svelte';
+  import VoletFait from './VoletFait.svelte';
   import { disposer } from './disposition.ts';
-  import { PX, pctDuBloc } from './vue-blocs.ts';
-  import { hm } from './format.ts';
+  import { PX, pctDuBloc, tempsDuBloc } from './vue-blocs.ts';
+  import { dureeMin, hm } from './format.ts';
   import { heureProposee } from './tache.ts';
   import Icone from '../../ui/Icone.svelte';
   import { routeur } from '../../routeur.svelte.ts';
@@ -19,23 +21,47 @@
   } = $props();
 
   const maintenant = $derived(maintenantLocal().minutes);
-  const places = $derived(disposer(blocs.map((b) => ({ debut: b.debutMin, fin: b.finMin }))));
+  // La journée est en deux colonnes : « Prévu » (tout ce qui est planifié, à l'heure prévue) et « Fait » (ce qui a réellement été fait, à l'heure réelle).
+  const prevus = $derived(blocs.filter((b) => !b.apresCoup));
+  const faits = $derived(blocs.filter((b) => b.fait || b.enCours || b.enPause));
+  const places = $derived(disposer(prevus.map((b) => ({ debut: b.debutMin, fin: b.finMin }))));
   const mois = $derived(aujourdhui.slice(0, 7));
-  const pcts = $derived(blocs.map((b) => pctDuBloc(b, mois, aujourdhui)));
+  const pcts = $derived(prevus.map((b) => pctDuBloc(b, mois, aujourdhui)));
+  const MIN_FAIT = 15;
+  /** Heures de la colonne Fait : début réel ; fin réelle, ou « maintenant » pour un minuteur qui tourne. */
+  const spans = $derived(faits.map((b) => {
+    const debut = b.reelDebutMin;
+    const fin = b.reelFinMin ?? (estAujourdhui ? maintenant : debut + MIN_FAIT);
+    return { debut, fin: Math.max(fin, debut + MIN_FAIT) };
+  }));
+  const placesFait = $derived(disposer(spans));
+  const nbFaits = $derived(faits.filter((b) => b.fait).length);
+  const totalFait = $derived(faits.reduce((t, b) => t + (b.fait ? tempsDuBloc(b) : 0), 0));
   const heures = Array.from({ length: 25 }, (_, h) => h);
 
   // Journée vide (aujourd'hui ou à venir) : un bloc fantôme en pointillés invite à poser le premier bloc juste après « maintenant ».
   const DUREE_FANTOME = 45;
-  const fantome = $derived(!blocs.length && jour >= aujourdhui ? heureProposee(jour, aujourdhui, maintenant, DUREE_FANTOME) : null);
+  const fantome = $derived(!prevus.length && jour >= aujourdhui ? heureProposee(jour, aujourdhui, maintenant, DUREE_FANTOME) : null);
 
-  // Toucher un espace libre de la journée : la même fenêtre que « + », à l'heure touchée (arrondie à la demi-heure inférieure).
+  // Toucher un espace libre de la journée : à gauche (Prévu), la même fenêtre que « + », à l'heure touchée (arrondie à la demi-heure inférieure) ;
+  // à droite (Fait), « Ce que j'ai fait » à cette heure.
   let grille: HTMLDivElement | undefined = $state();
   let apercu = $state<number | null>(null);
+  let apercuFait = $state<number | null>(null);
+  let faitOuvert = $state(false);
+  let faitMin = $state(9 * 60);
   const DUREE_APERCU = 30;
   function toucher(e: MouseEvent) {
-    if (ignorerClic || apercu != null || !grille || (e.target as Element).closest('.bloc, a, button')) return;
-    const y = e.clientY - grille.getBoundingClientRect().top;
+    if (ignorerClic || apercu != null || apercuFait != null || !grille || (e.target as Element).closest('.bloc, [data-fait], a, button')) return;
+    const r = grille.getBoundingClientRect();
+    const y = e.clientY - r.top;
     const min = Math.max(0, Math.min(23 * 60 + 30, Math.floor(y / PX / 30) * 30));
+    const colonne = (r.width - 66 - 6) / 2;
+    if (e.clientX - r.left > 56 + colonne + 3) {
+      apercuFait = min;
+      setTimeout(() => { faitMin = min; faitOuvert = true; apercuFait = null; }, 110);
+      return;
+    }
     apercu = min;
     setTimeout(() => {
       routeur.aller(`/tache/nouvelle?heure=${min}${estAujourdhui ? '' : `&jour=${jour}`}`);
@@ -57,7 +83,7 @@
   const APPUI_LONG_MS = 380;
   const TOLERANCE_PX = 8;
 
-  const bloc = (id: string) => blocs.find((b) => b.occ.id === id);
+  const bloc = (id: string) => prevus.find((b) => b.occ.id === id);
   const deplacable = (b: BlocVue | undefined): b is BlocVue => !!b && b.occ.etat === 'prevue';
   const accrocher = (min: number) => Math.round(min / PAS_GLISSER) * PAS_GLISSER;
 
@@ -165,7 +191,7 @@
   });
   // Le jour change, ou le bloc disparaît : plus rien n'est choisi.
   $effect(() => { void jour; selection = null; annulerGlisse(); });
-  $effect(() => { if (selection && !blocs.some((b) => b.occ.id === selection)) selection = null; });
+  $effect(() => { if (selection && !prevus.some((b) => b.occ.id === selection)) selection = null; });
 
   let defile: HTMLDivElement | undefined = $state();
   // Ouvre la journée sur « maintenant » (ou sur le bloc en cours), à chaque changement de jour : la ligne se place
@@ -203,53 +229,89 @@
   });
 </script>
 
-<div class="defile-jour" bind:this={defile}>
-  <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-  <div class="grille" bind:this={grille} onclick={toucher} onclickcapture={clicCapture} onpointerdown={appuiBloc} onpointermove={mouvementBloc} onpointerup={finBloc} onpointercancel={annulerGlisse}
-    style:height="{24 * 60 * PX}px">
-    {#each heures as h (h)}
-      <div class="heure" style:top="{h * 60 * PX - 7}px" style:opacity={estAujourdhui && Math.abs(h * 60 - maintenant) < 13 ? 0 : 1}>
-        <span class="mono">{hm(h * 60)}</span><span class="trait"></span>
-      </div>
-    {/each}
+<div class="journee">
+  <div class="entetes" aria-hidden="false">
+    <span class="vide-heures"></span>
+    <span class="col-titre" id="titre-prevu"><b>Prévu</b> · {prevus.length}</span>
+    <span class="col-titre" id="titre-fait"><b>Fait</b> · {nbFaits}{#if totalFait > 0}{' · '}<span class="mono">{dureeMin(Math.round(totalFait / 60))}</span>{/if}</span>
+  </div>
+  <div class="defile-jour" bind:this={defile}>
+    <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+    <div class="grille" bind:this={grille} onclick={toucher} onclickcapture={clicCapture} onpointerdown={appuiBloc} onpointermove={mouvementBloc} onpointerup={finBloc} onpointercancel={annulerGlisse}
+      style:height="{24 * 60 * PX}px">
+      {#each heures as h (h)}
+        <div class="heure" style:top="{h * 60 * PX - 7}px" style:opacity={estAujourdhui && Math.abs(h * 60 - maintenant) < 13 ? 0 : 1}>
+          <span class="mono">{hm(h * 60)}</span><span class="trait"></span>
+        </div>
+      {/each}
+      <span class="separateur" aria-hidden="true"></span>
 
-    {#each blocs as b, i (b.occ.id)}
-      <BlocFil {b} pct={pcts[i]} col={places[i]?.col ?? 0} cols={places[i]?.cols ?? 1} aujourdhui={estAujourdhui}
-        passe={estAujourdhui ? b.finMin <= maintenant : jour < aujourdhui}
-        selectionne={selection === b.occ.id} souleve={glisse?.id === b.occ.id && glisse.mode !== 'attente'}
-        apercu={glisse?.id === b.occ.id && glisse.mode !== 'attente' ? { debut: glisse.debut, fin: glisse.fin } : null} onouvrir={() => onouvrir(b.occ.id)} onjouer={() => onjouer(b.occ.id)} />
-    {/each}
+      {#each prevus as b, i (b.occ.id)}
+        <BlocFil {b} pct={pcts[i]} col={places[i]?.col ?? 0} cols={places[i]?.cols ?? 1} aujourdhui={estAujourdhui}
+          passe={estAujourdhui ? b.finMin <= maintenant : jour < aujourdhui}
+          selectionne={selection === b.occ.id} souleve={glisse?.id === b.occ.id && glisse.mode !== 'attente'}
+          apercu={glisse?.id === b.occ.id && glisse.mode !== 'attente' ? { debut: glisse.debut, fin: glisse.fin } : null} onouvrir={() => onouvrir(b.occ.id)} onjouer={() => onjouer(b.occ.id)} />
+      {/each}
 
-    {#if apercu != null}
-      <div class="apercu" style:top="{apercu * PX + 1}px" style:height="{DUREE_APERCU * PX - 3}px" aria-hidden="true">
-        <span class="plus-fantome"><Icone nom="plus" taille={12} trait={2.6} /></span><span class="titre-fantome">{hm(apercu)}</span>
-      </div>
-    {/if}
+      {#each faits as b, i (b.occ.id)}
+        <BlocFait {b} debut={spans[i].debut} fin={spans[i].fin} col={placesFait[i]?.col ?? 0} cols={placesFait[i]?.cols ?? 1} onouvrir={() => onouvrir(b.occ.id)} />
+      {/each}
 
-    {#if fantome != null}
-      <a class="fantome" href="/tache/nouvelle?heure={fantome}{estAujourdhui ? '' : `&jour=${jour}`}" style:top="{fantome * PX + 1}px" style:height="{DUREE_FANTOME * PX - 3}px"
-        aria-label="Ajouter un bloc à {hm(fantome)}">
-        <span class="plus-fantome"><Icone nom="plus" taille={12} trait={2.6} /></span>
-        <span class="textes-fantome">
-          <span class="titre-fantome">{estAujourdhui ? 'Ton premier bloc ?' : 'Un premier bloc ?'}</span>
-          <span class="sous-fantome">{hm(fantome)}–{hm(fantome + DUREE_FANTOME)} · touche pour le placer ici</span>
-        </span>
-      </a>
-    {/if}
+      {#if apercu != null}
+        <div class="apercu" style:top="{apercu * PX + 1}px" style:height="{DUREE_APERCU * PX - 3}px" aria-hidden="true">
+          <span class="plus-fantome"><Icone nom="plus" taille={12} trait={2.6} /></span><span class="titre-fantome">{hm(apercu)}</span>
+        </div>
+      {/if}
+      {#if apercuFait != null}
+        <div class="apercu fait-apercu" style:top="{apercuFait * PX + 1}px" style:height="{DUREE_APERCU * PX - 3}px" aria-hidden="true">
+          <span class="plus-fantome"><Icone nom="coche" taille={11} trait={3} /></span><span class="titre-fantome">{hm(apercuFait)}</span>
+        </div>
+      {/if}
 
-    {#if estAujourdhui}
-      <div class="maintenant" style:top="{maintenant * PX}px" aria-label="Maintenant, {hm(maintenant)}">
-        <span class="cote"><span class="pastille mono">{hm(maintenant)}</span></span>
-        <span class="point"></span>
-        <span class="ligne"></span>
-      </div>
-    {/if}
+      {#if fantome != null}
+        <a class="fantome" href="/tache/nouvelle?heure={fantome}{estAujourdhui ? '' : `&jour=${jour}`}" style:top="{fantome * PX + 1}px" style:height="{DUREE_FANTOME * PX - 3}px"
+          aria-label="Ajouter un bloc à {hm(fantome)}">
+          <span class="plus-fantome"><Icone nom="plus" taille={12} trait={2.6} /></span>
+          <span class="textes-fantome">
+            <span class="titre-fantome">{estAujourdhui ? 'Ton premier bloc ?' : 'Un premier bloc ?'}</span>
+            <span class="sous-fantome">{hm(fantome)}–{hm(fantome + DUREE_FANTOME)} · touche pour le placer ici</span>
+          </span>
+        </a>
+      {/if}
+
+      {#if !faits.length && jour <= aujourdhui}
+        <button type="button" class="fantome fantome-fait" style:top="{(estAujourdhui ? Math.max(0, Math.floor((maintenant - 45) / 30) * 30) : 9 * 60) * PX + 1}px" style:height="{DUREE_FANTOME * PX - 3}px"
+          aria-label="Noter ce que j’ai fait" onclick={() => { faitMin = estAujourdhui ? Math.max(0, Math.floor((maintenant - 45) / 30) * 30) : 9 * 60; faitOuvert = true; }}>
+          <span class="plus-fantome"><Icone nom="coche" taille={11} trait={3} /></span>
+          <span class="textes-fantome">
+            <span class="titre-fantome">Ce que tu as fait</span>
+            <span class="sous-fantome">touche pour le noter</span>
+          </span>
+        </button>
+      {/if}
+
+      {#if estAujourdhui}
+        <div class="maintenant" style:top="{maintenant * PX}px" aria-label="Maintenant, {hm(maintenant)}">
+          <span class="cote"><span class="pastille mono">{hm(maintenant)}</span></span>
+          <span class="point"></span>
+          <span class="ligne"></span>
+        </div>
+      {/if}
+    </div>
   </div>
 </div>
 
+<VoletFait ouvert={faitOuvert} {jour} debutMin={faitMin} onfermer={() => (faitOuvert = false)} />
+
 <style>
+  .journee { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .entetes { flex: none; display: flex; gap: 6px; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--ligne); font-size: 12px; color: var(--muted); }
+  .vide-heures { flex: none; width: 50px; }
+  .col-titre { flex: 1; min-width: 0; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-left: 2px; }
+  .col-titre b { color: var(--texte); font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; font-size: 11px; }
   .defile-jour { flex: 1; min-height: 0; overflow-y: auto; position: relative; }
-  .grille { position: relative; margin: 12px 0 28px; -webkit-touch-callout: none; }
+  .grille { --zw: calc((100% - 66px - 6px) / 2); position: relative; margin: 12px 0 28px; -webkit-touch-callout: none; }
+  .separateur { position: absolute; top: 0; bottom: 0; left: calc(56px + var(--zw) + 2px); width: 1px; background: var(--ligne); pointer-events: none; }
   .heure { position: absolute; left: 0; right: 0; display: flex; align-items: center; gap: 6px; pointer-events: none; }
   .heure .mono { width: 46px; text-align: right; font-size: 11px; color: var(--faint); }
   .heure .trait { flex: 1; height: 1px; background: var(--ligne); }
@@ -258,10 +320,12 @@
   .pastille { background: var(--maintenant-pastille); color: var(--carte-texte); font-size: 11px; padding: 3px 6px; border-radius: 9px; letter-spacing: -0.02em; }
   .point { width: 10px; height: 10px; border-radius: 5px; background: var(--maintenant); margin-left: 1px; box-shadow: 0 0 0 3px var(--halo); flex: none; }
   .ligne { flex: 1; height: 2px; background: var(--maintenant); }
-  .fantome { position: absolute; left: 56px; right: 10px; border-radius: 10px; border: 1.5px dashed color-mix(in srgb, var(--muted) 55%, transparent);
+  .fantome { position: absolute; left: 56px; width: var(--zw); border-radius: 10px; border: 1.5px dashed color-mix(in srgb, var(--muted) 55%, transparent);
     display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; color: var(--texte); background: var(--fond); animation: fantome-entre 0.5s ease both; }
-  .apercu { position: absolute; left: 56px; right: 10px; border-radius: 10px; border: 1.5px dashed var(--accent); background: var(--accent-fond); color: var(--accent-encre);
+  .apercu { position: absolute; left: 56px; width: var(--zw); border-radius: 10px; border: 1.5px dashed var(--accent); background: var(--accent-fond); color: var(--accent-encre);
     display: flex; align-items: center; gap: 8px; padding: 0 10px; animation: fantome-entre 0.11s ease both; z-index: 3; pointer-events: none; }
+  .fantome-fait { left: calc(56px + var(--zw) + 6px); font: inherit; text-align: left; }
+  .fait-apercu { left: calc(56px + var(--zw) + 6px); }
   .fantome:active { transform: scale(0.985); background: var(--surface); }
   .plus-fantome { flex: none; width: 18px; height: 18px; margin-top: 1px; border-radius: 9px; background: var(--inverse); color: var(--inverse-texte);
     display: flex; align-items: center; justify-content: center; animation: fantome-pouls 2.4s ease-in-out 0.6s infinite; }

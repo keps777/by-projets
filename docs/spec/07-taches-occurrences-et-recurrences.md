@@ -50,3 +50,24 @@ Le tout apparaît dans les vues Jour, Semaine et Mois.
 - Une tâche peut être **à l'origine** d'un projet ou d'un sous-projet : la liste des projets se termine par **« + Nouveau projet »** (nom seul, créé dans la rubrique choisie, puis sélectionné) et la liste des sous-projets par **« + Nouveau sous-projet »** (nom + **menu déroulant à choix multiples** des mesures : celles déjà utilisées dans les projets, puis toutes celles de l'app — temps, fois, nombre, montant, distance, poids, note, heure, passages, etc. ; au moins une ; démarre aujourd'hui, sans fin ni objectif).
 - Le sous-projet créé est tout de suite alimenté par la tâche ; objectif, période et autres métriques s'affinent ensuite dans Projets (formulaire complet « Nouveau sous-projet »).
 - **Valeur prévue d'une mesure de temps** (étape « Ce que cette tâche enregistre ») : deux **menus déroulants Heures (0–24) et Minutes (00–59)** remplacent le −/+ ; les autres mesures gardent − / +.
+
+## Ajout de tâche simplifié (nov. 2026)
+
+Le formulaire « Nouvelle tâche » doit rester **rapide** : peu de blocs, de vrais menus déroulants, rien qui oblige à défiler longtemps.
+
+- **Projet associé** : après la rubrique (onglets : Relation avec Dieu, Service à Dieu, etc., toujours présents), la liste ne propose que les **projets en cours** : statut « actif » et au moins un sous-projet en cours ou à valider (un projet encore sans sous-projet compte comme en cours). Les projets en pause, archivés, ou dont tous les sous-projets sont terminés ou en pause n'apparaissent pas ; en modification, le projet déjà choisi reste affiché. « Nouveau projet » reste proposé en tête de liste.
+- **Quand** (une seule carte compacte, trois menus) :
+  1. **Jour** : menu (Aujourd'hui, Demain, puis les jours de la semaine avec leur date, « Autre date… » ouvre le sélecteur du système) ;
+  2. **Heure et durée** : deux menus d'heure (heures, minutes par 5) et un menu de durée (de 5 min à 8 h, plus « Autre » si la tâche a une durée libre) ;
+  3. **Répéter** : un menu — Une seule fois · Tous les jours · Du lundi au vendredi · Le week-end · Chaque semaine (choix des jours) · Chaque mois. Seul « Chaque semaine » affiche la rangée de jours ; seule une répétition affiche « Jusqu'à quand » (menu : Sans fin · Jusqu'à une date · Après N fois).
+  La **vérification de disponibilité** (§7.3) reste, en une ligne qui propose les créneaux libres.
+- **Rappel** : **exhaustif et en menu**. Une liste de rappels (pastilles avec ✕) et un menu « Ajouter un rappel » avec **tous** les délais : À l'heure, 5, 10, 15, 30, 45 min, 1 h, 2 h, 3 h, 1 jour, 2 jours, 1 semaine avant. Plusieurs rappels possibles ; le plus proche du début est celui de l'alarme. L'interrupteur Alarme reste.
+
+## Le Fil · journée en deux parties : Prévu | Fait (nov. 2026)
+
+La journée du calendrier (vue Calendrier · Jour) est **partagée en deux colonnes** côte à côte, sur la même échelle d'heures :
+- **Prévu** (gauche) : tout ce qui est planifié, à l'heure prévue, comme avant (le glisser pour déplacer, les poignées, ▶ et la ligne « maintenant » restent ici). Un bloc fait y garde sa coche.
+- **Fait** (droite) : ce qui a **réellement** été fait, à l'heure où cela a été fait. Quand on termine un bloc, il se pose ici, du début réel du minuteur à sa fin ; un bloc dont le minuteur tourne y apparaît en direct (sa fin suit « maintenant »). Un bloc coché sans minuteur prend son créneau prévu. Chaque bloc montre son réalisé (« 3/7 ch. », « 52 min »).
+- En-têtes **Prévu · n** et **Fait · n · durée totale**.
+- **Remplir ce qui a été fait** : toucher un espace libre de la colonne Fait ouvre « Ce que j'ai fait » (quoi, projet en cours, heure de début, durée). Le bloc créé est **déjà fait** : il n'apparaît que dans Fait (il n'était pas prévu) et alimente les sous-projets comme une saisie. Un bloc créé ainsi est reconnu à sa saisie, de source « rattrapage » (elle le reste après une correction). Il n'a aucun rappel. On peut aussi remplir un jour passé.
+- Un bloc fait ou en cours s'ouvre comme les autres (volet du bloc). Les vues Tableau, Semaine et Mois ne changent pas.

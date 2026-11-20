@@ -1,154 +1,121 @@
 <script lang="ts">
-  import { ajouterJours, jourSemaine, JOURS_LONGS } from '@core/dates.ts';
+  import { ajouterJours, JOURS_LONGS } from '@core/dates.ts';
   import { disponibilite, journeeTresChargee } from '@core/disponibilite.ts';
   import { idOccurrence } from '@core/ids.ts';
   import { blocsDuJour, creneauxDuJour } from '../../data/requetes.ts';
   import type { FormulaireTache } from './formulaire-tache.svelte.ts';
   import Disponibilite from './Disponibilite.svelte';
-  import { dateCourte, dureeMin, hm, puceJour } from './format.ts';
-  import { choixMensuels, DUREE_MAX, DUREE_MIN, lireDuree, texteJours, type Recurrence, type TypeFin } from './tache.ts';
+  import { cap, dateCourte, dateLongue, dureeMin, hm } from './format.ts';
+  import { choixMensuels, optionsDuree, optionsJours, REPETITIONS, texteJours, type Repetition, type TypeFin } from './tache.ts';
 
-  /** Étape « Quand » : jour de début, récurrence, heure, durée et vérification de disponibilité (spec §7.1, §7.3). */
+  /** Étape « Quand » (spec §7, simplifié en nov. 2026) : une carte, quatre menus (jour, heure, durée, répétition) ; le reste n'apparaît que si le choix l'exige. */
   let { f, numero, aujourdhui, tacheId }: { f: FormulaireTache; numero: number; aujourdhui: string; tacheId?: string } = $props();
 
   const LETTRES = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
-  const RECS: { valeur: Recurrence; label: string }[] = [
-    { valeur: 'une_fois', label: 'Ce jour seulement' }, { valeur: 'quotidien', label: 'Tous les jours' },
-    { valeur: 'hebdo', label: 'Chaque semaine' }, { valeur: 'mensuel', label: 'Chaque mois' }
-  ];
-  const DUREES = [15, 30, 45, 60, 90, 120, 180, 240];
+  const HEURES = Array.from({ length: 24 }, (_, i) => i);
+  const MINUTES = Array.from({ length: 12 }, (_, i) => i * 5);
 
-  const debuts = $derived.by(() => {
-    const l = Array.from({ length: 9 }, (_, i) => ajouterJours(aujourdhui, i));
-    return f.debut && !l.includes(f.debut) ? [f.debut, ...l] : l;
-  });
+  const jours = $derived(optionsJours(aujourdhui, f.debut, ajouterJours));
+  const libelleJour = (j: string) => (j === aujourdhui ? 'Aujourd’hui · ' : j === ajouterJours(aujourdhui, 1) ? 'Demain · ' : '') + cap(dateLongue(j));
+  const durees = $derived(optionsDuree(f.duree));
+  const minutes = $derived(f.heure % 5 ? [...MINUTES, f.heure % 60].sort((a, b) => a - b) : MINUTES);
   const fins = $derived<{ valeur: TypeFin; label: string }[]>([
     { valeur: 'aucune', label: 'Sans fin' }, { valeur: 'date', label: `Jusqu’au ${dateCourte(f.finDate || f.debut)}` }, { valeur: 'fois', label: `Après ${f.finFois} fois` }
   ]);
 
+  let autreDate = $state(false);
   const creneaux = $derived(f.debut ? creneauxDuJour(f.debut, tacheId ? idOccurrence(tacheId, f.debut) : undefined) : []);
   const dispo = $derived(disponibilite(creneaux, f.heure, f.duree));
   const occupant = $derived(dispo.occupePar ? blocsDuJour(f.debut).find((b) => b.occ.id === dispo.occupePar!.id) : undefined);
   const chargee = $derived(journeeTresChargee([...creneaux, { debut: f.heure, fin: f.heure + f.duree, titre: f.titre }]));
 
+  const borner = (m: number) => Math.max(0, Math.min(1440 - f.duree, m));
+  const lire = (e: Event) => (e.currentTarget as HTMLSelectElement).value;
+  function choisirJour(e: Event) {
+    const v = lire(e);
+    if (v === 'autre') { autreDate = true; return; }
+    autreDate = false;
+    f.choisirDebut(v);
+  }
+  function choisirDate(e: Event) { const v = lire(e); if (v) f.choisirDebut(v); }
+  /** Change la durée ; si la tâche débordait minuit, elle commence plus tôt. */
+  function regler(d: number) { f.duree = d; f.heure = Math.min(f.heure, 1440 - f.duree); }
   function basculerJour(i: number) {
     if (f.jours.includes(i)) { if (f.jours.length > 1) f.jours = f.jours.filter((x) => x !== i); }
     else f.jours = [...f.jours, i];
   }
-  function choisirRec(r: Recurrence) {
-    f.rec = r;
-    if (r === 'hebdo' && !f.jours.length) f.jours = [jourSemaine(f.debut)];
-  }
-  const RACCOURCIS = [{ l: 'Matin', m: 8 * 60 }, { l: 'Midi', m: 12 * 60 }, { l: 'Après-midi', m: 15 * 60 }, { l: 'Soir', m: 18 * 60 }, { l: 'Nuit', m: 21 * 60 }];
-  const borner = (m: number) => Math.max(0, Math.min(1440 - f.duree, m));
-  /** Heure choisie dans le sélecteur natif (roue de l'iPhone) : « HH:MM ». */
-  function choisirHeure(e: Event) {
-    const [h, m] = (e.currentTarget as HTMLInputElement).value.split(':').map(Number);
-    if (Number.isFinite(h) && Number.isFinite(m)) f.heure = borner(h * 60 + m);
-  }
-  const valeurHeure = $derived(`${String(Math.floor(f.heure / 60)).padStart(2, '0')}:${String(f.heure % 60).padStart(2, '0')}`);
-  /** Change la durée (5 min – 24 h) ; si la tâche débordait minuit, elle commence plus tôt. */
-  function regler(d: number) {
-    f.duree = Math.max(DUREE_MIN, Math.min(DUREE_MAX, Math.round(d)));
-    f.heure = Math.min(f.heure, 1440 - f.duree);
-  }
-  let brouillonDuree = $state<string | null>(null);
-  function validerDuree() {
-    const d = lireDuree(brouillonDuree ?? '');
-    if (d != null) regler(d);
-    brouillonDuree = null;
-  }
-  const deplacer = (d: number) => { f.heure = Math.max(0, Math.min(1440 - f.duree, f.heure + d)); };
 </script>
 
 <div class="section">
   <span class="etiquette">{numero} · Quand</span>
 
-  <div class="col g6">
-    <span class="muted petit">{f.rec === 'une_fois' ? 'Quel jour ?' : 'À partir de quel jour ?'}</span>
-    <div class="defile-h">
-      {#each debuts as j (j)}
-        <button type="button" class="puce" class:couleur={j === f.debut} aria-pressed={j === f.debut} onclick={() => f.choisirDebut(j)}>{puceJour(j, aujourdhui)}</button>
-      {/each}
-    </div>
-  </div>
-
-  <div class="grille2">
-    {#each RECS as r (r.valeur)}
-      <button type="button" class="puce" class:inverse={r.valeur === f.rec} aria-pressed={r.valeur === f.rec} onclick={() => choisirRec(r.valeur)}>{r.label}</button>
-    {/each}
-  </div>
-
-  {#if f.rec === 'hebdo'}
-    <div class="carte semaine">
-      <div class="jours">
-        {#each LETTRES as l, i (i)}
-          <button type="button" class="puce" class:couleur={f.jours.includes(i)} aria-pressed={f.jours.includes(i)} aria-label={JOURS_LONGS[i]} onclick={() => basculerJour(i)}>{l}</button>
-        {/each}
-      </div>
-      <div class="raccourcis">
-        <button type="button" onclick={() => (f.jours = [0, 1, 2, 3, 4])}>Lun. – Ven.</button>
-        <button type="button" onclick={() => (f.jours = [5, 6])}>Week-end</button>
-        <button type="button" onclick={() => (f.jours = [0, 1, 2, 3, 4, 5, 6])}>Tous les jours</button>
-      </div>
-      <span class="fort">{texteJours(f.jours)}</span>
-    </div>
-  {:else if f.rec === 'mensuel'}
-    <div class="grille2">
-      {#each choixMensuels(f.debut) as m (m.valeur)}
-        <button type="button" class="puce haute" class:couleur={m.valeur === f.mensuel} aria-pressed={m.valeur === f.mensuel} onclick={() => (f.mensuel = m.valeur)}>{m.label}</button>
-      {/each}
-    </div>
-  {/if}
-
-  {#if f.rec !== 'une_fois'}
-    <div class="col g6">
-      <span class="muted petit">Jusqu’à quand ?</span>
-      <div class="grille3">
-        {#each fins as e (e.valeur)}
-          <button type="button" class="puce petite" class:inverse={e.valeur === f.fin} aria-pressed={e.valeur === f.fin} onclick={() => (f.fin = e.valeur)}>{e.label}</button>
-        {/each}
-      </div>
-      {#if f.fin === 'date'}
-        <label class="rang-fin">Dernier jour<input type="date" min={f.debut} bind:value={f.finDate} /></label>
-      {:else if f.fin === 'fois'}
-        <div class="rang-fin">Nombre de fois
-          <span class="pas"><button type="button" aria-label="Moins de fois" onclick={() => (f.finFois = Math.max(1, f.finFois - 1))}>−</button><span class="mono">{f.finFois}</span><button type="button" aria-label="Plus de fois" onclick={() => (f.finFois += 1)}>+</button></span>
-        </div>
-      {/if}
-    </div>
-  {/if}
-
-  <div class="heure">
-    <button type="button" aria-label="15 minutes plus tôt" onclick={() => deplacer(-15)}>−15</button>
-    <div class="col centre choix-heure">
-      <span class="mono debut">{hm(f.heure)}</span>
-      <span class="muted fin">jusqu’à {hm(f.heure + f.duree)}</span>
-      <span class="indice">toucher pour choisir l’heure</span>
-      <input class="natif" type="time" step="300" value={valeurHeure} onchange={choisirHeure} aria-label="Choisir l’heure de début" />
-    </div>
-    <button type="button" aria-label="15 minutes plus tard" onclick={() => deplacer(15)}>+15</button>
-  </div>
-  <div class="raccourcis" role="group" aria-label="Aller à">
-    {#each RACCOURCIS as r (r.m)}
-      <button type="button" class="puce petite" class:inverse={f.heure === borner(r.m)} aria-pressed={f.heure === borner(r.m)} onclick={() => (f.heure = borner(r.m))}>{r.l} · {hm(r.m)}</button>
-    {/each}
-  </div>
-  <div class="duree-libre">
-    <button type="button" aria-label="15 minutes de moins" disabled={f.duree <= DUREE_MIN} onclick={() => regler(f.duree - 15)}>−15</button>
-    <label class="col centre">
-      <span class="etiquette">Durée</span>
-      <input class="mono" type="text" inputmode="text" autocomplete="off" aria-label="Durée de la tâche" placeholder="3h45"
-        value={brouillonDuree ?? dureeMin(f.duree)} onfocus={(e) => { brouillonDuree = ''; e.currentTarget.select(); }}
-        oninput={(e) => (brouillonDuree = e.currentTarget.value)} onblur={validerDuree} onkeydown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }} />
-      <span class="indice">tape 3h45, 1:30 ou 90 min</span>
+  <div class="carte quand">
+    <label class="rang"><span class="nom">{f.rec === 'une_fois' ? 'Jour' : 'À partir du'}</span>
+      <select aria-label={f.rec === 'une_fois' ? 'Quel jour ?' : 'À partir de quel jour ?'} value={f.debut} onchange={choisirJour}>
+        {#each jours as j (j)}<option value={j}>{libelleJour(j)}</option>{/each}
+        <option value="autre">Autre date…</option>
+      </select>
     </label>
-    <button type="button" aria-label="15 minutes de plus" disabled={f.duree >= DUREE_MAX} onclick={() => regler(f.duree + 15)}>+15</button>
-  </div>
-  <div class="durees" role="group" aria-label="Durées courantes">
-    {#each DUREES as d (d)}
-      <button type="button" class="puce" class:inverse={d === f.duree} aria-pressed={d === f.duree} onclick={() => regler(d)}>{dureeMin(d)}</button>
-    {/each}
+    {#if autreDate}
+      <label class="rang"><span class="nom">Date</span><input type="date" value={f.debut} onchange={choisirDate} aria-label="Choisir une date" /></label>
+    {/if}
+
+    <div class="rang"><span class="nom">Heure</span>
+      <span class="paire">
+        <select aria-label="Heure de début" value={Math.floor(f.heure / 60)} onchange={(e) => (f.heure = borner(+lire(e) * 60 + (f.heure % 60)))}>
+          {#each HEURES as h (h)}<option value={h}>{String(h).padStart(2, '0')} h</option>{/each}
+        </select>
+        <select aria-label="Minutes de début" value={f.heure % 60} onchange={(e) => (f.heure = borner(Math.floor(f.heure / 60) * 60 + +lire(e)))}>
+          {#each minutes as n (n)}<option value={n}>{String(n).padStart(2, '0')}</option>{/each}
+        </select>
+      </span>
+    </div>
+
+    <label class="rang"><span class="nom">Durée</span>
+      <select aria-label="Durée de la tâche" value={f.duree} onchange={(e) => regler(+lire(e))}>
+        {#each durees as d (d)}<option value={d}>{dureeMin(d)}</option>{/each}
+      </select>
+    </label>
+    <p class="muted petit fin-heure">{hm(f.heure)} – {hm(f.heure + f.duree)}</p>
+
+    <label class="rang"><span class="nom">Répéter</span>
+      <select aria-label="Répétition" value={f.repetition} onchange={(e) => (f.repetition = lire(e) as Repetition)}>
+        {#each REPETITIONS as r (r.valeur)}<option value={r.valeur}>{r.label}</option>{/each}
+      </select>
+    </label>
+
+    {#if f.repetition === 'hebdo'}
+      <div class="semaine">
+        <div class="jours" role="group" aria-label="Jours de la semaine">
+          {#each LETTRES as l, i (i)}
+            <button type="button" class="puce" class:couleur={f.jours.includes(i)} aria-pressed={f.jours.includes(i)} aria-label={JOURS_LONGS[i]} onclick={() => basculerJour(i)}>{l}</button>
+          {/each}
+        </div>
+        <span class="fort">{texteJours(f.jours)}</span>
+      </div>
+    {:else if f.rec === 'mensuel'}
+      <label class="rang"><span class="nom">Le</span>
+        <select aria-label="Jour du mois" value={f.mensuel} onchange={(e) => (f.mensuel = lire(e) as 'jour_du_mois' | 'rang')}>
+          {#each choixMensuels(f.debut) as m (m.valeur)}<option value={m.valeur}>{m.label}</option>{/each}
+        </select>
+      </label>
+    {/if}
+
+    {#if f.rec !== 'une_fois'}
+      <label class="rang"><span class="nom">Jusqu’à</span>
+        <select aria-label="Jusqu’à quand ?" value={f.fin} onchange={(e) => (f.fin = lire(e) as TypeFin)}>
+          {#each fins as e (e.valeur)}<option value={e.valeur}>{e.label}</option>{/each}
+        </select>
+      </label>
+      {#if f.fin === 'date'}
+        <label class="rang"><span class="nom">Dernier jour</span><input type="date" min={f.debut} bind:value={f.finDate} /></label>
+      {:else if f.fin === 'fois'}
+        <label class="rang"><span class="nom">Nombre de fois</span>
+          <input class="nombre" type="number" inputmode="numeric" min="1" max="999" value={f.finFois} aria-label="Nombre de fois"
+            onchange={(e) => (f.finFois = Math.max(1, Math.min(999, Math.round(+e.currentTarget.value) || 1)))} />
+        </label>
+      {/if}
+    {/if}
   </div>
 
   <Disponibilite {dispo} duree={f.duree} {occupant} onchoisir={(m) => (f.heure = m)} />
@@ -156,50 +123,22 @@
 </div>
 
 <style>
-  .section { display: flex; flex-direction: column; gap: 10px; }
-  .col { display: flex; flex-direction: column; }
-  .g6 { gap: 6px; }
-  .centre { align-items: center; }
+  .section { display: flex; flex-direction: column; gap: 8px; }
+  .quand { border-radius: 20px; padding: 4px 14px; display: flex; flex-direction: column; }
+  .rang { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; border-bottom: 1px solid var(--ligne); }
+  .rang:last-child { border-bottom: 0; }
+  .nom { font-size: 14px; font-weight: 600; flex: none; }
+  .paire { display: flex; gap: 6px; }
+  select, input[type='date'], .nombre { height: 44px; min-width: 0; max-width: 100%; border-radius: 12px; border: 1px solid var(--ligne); background: var(--surface-2); color: var(--texte); font-size: 16px; font-weight: 600; padding: 0 10px; }
+  .rang > select { flex: 1; max-width: 230px; text-align-last: right; }
+  .nombre { width: 90px; text-align: center; }
+  select:focus-visible, input:focus-visible, .puce:focus-visible { outline: 2px solid var(--c, var(--accent)); outline-offset: 1px; }
+  .fin-heure { text-align: right; margin: -8px 0 4px; font-size: 12px; }
   .petit { font-size: 12px; }
   .fort { font-size: 13px; font-weight: 600; }
-  .defile-h { display: flex; gap: 6px; overflow-x: auto; margin: 0 -16px; padding: 0 16px; }
-  .puce { flex: none; height: 44px; padding: 0 14px; border-radius: 14px; border: 1px solid var(--ligne); background: transparent; font-size: 13px; font-weight: 600; }
-  .puce.petite { min-height: 44px; height: auto; border-radius: 12px; font-size: 12px; padding: 0 6px; }
-  .puce.haute { height: auto; min-height: 52px; padding: 6px 10px; }
-  .puce.couleur { background: var(--c); border-color: var(--c); color: var(--c-sur); }
-  .puce.inverse { background: var(--inverse); border-color: var(--inverse); color: var(--inverse-texte); }
-  .grille2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
-  .grille2 .puce { font-size: 14px; }
-  .grille3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
-  .semaine { display: flex; flex-direction: column; gap: 8px; border-radius: 18px; padding: 12px; }
+  .semaine { display: flex; flex-direction: column; gap: 8px; padding: 4px 0 12px; border-bottom: 1px solid var(--ligne); }
   .jours { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
-  .jours .puce { padding: 0; border-radius: 12px; font-size: 14px; }
-  .raccourcis { display: flex; gap: 6px; flex-wrap: wrap; }
-  .raccourcis button { position: relative; height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--ligne); background: transparent; font-size: 12px; font-weight: 600; }
-  .rang-fin { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; color: var(--muted); }
-  .rang-fin input { height: 44px; border-radius: 12px; border: 1px solid var(--ligne); background: var(--surface); padding: 0 10px; }
-  .pas { display: flex; align-items: center; gap: 8px; color: var(--texte); }
-  .pas button { width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--surface); font-size: 20px; }
-  .heure { display: flex; align-items: center; justify-content: space-between; background: var(--surface-2); border-radius: 18px; padding: 8px; }
-  .choix-heure { position: relative; flex: 1; align-self: stretch; justify-content: center; border-radius: 12px; }
-  .choix-heure .indice { font-size: 11px; color: var(--faint); margin-top: 1px; }
-  /* Sélecteur natif posé, invisible, sur toute la zone de l'heure : un toucher ouvre la roue de l'iPhone (16 px : pas de zoom). */
-  .natif { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; font-size: 16px; border: 0; padding: 0; cursor: pointer; }
-  .raccourcis { display: flex; gap: 6px; overflow-x: auto; margin: 0 -16px; padding: 0 16px; }
-  .raccourcis .puce { flex: none; }
-  .heure button { width: 52px; height: 44px; border-radius: 14px; border: 0; background: var(--surface); font-size: 13px; font-weight: 600; }
-  .debut { font-size: 26px; letter-spacing: -0.02em; }
-  .fin { font-size: 11px; }
-  .durees { display: flex; gap: 6px; overflow-x: auto; margin: 0 -16px; padding: 0 16px; }
-  .durees .puce { flex: none; padding: 0 14px; }
-  .duree-libre { display: flex; align-items: center; justify-content: space-between; background: var(--surface-2); border-radius: 18px; padding: 8px; gap: 8px; }
-  .duree-libre > button { width: 52px; height: 44px; border-radius: 14px; border: 0; background: var(--surface); font-size: 13px; font-weight: 600; flex: none; }
-  .duree-libre > button:disabled { opacity: 0.35; }
-  .duree-libre label { flex: 1; min-width: 0; gap: 2px; }
-  .duree-libre input { width: 100%; max-width: 160px; height: 44px; text-align: center; font-size: 22px; font-weight: 500; background: transparent; border: 1px solid transparent; border-radius: 12px; color: var(--texte); }
-  .duree-libre input:focus { outline: none; border-color: var(--c, var(--accent)); background: var(--surface); }
-  .duree-libre .indice { font-size: 11px; color: var(--faint); }
+  .puce { height: 44px; padding: 0; border-radius: 12px; border: 1px solid var(--ligne); background: transparent; font-size: 14px; font-weight: 600; }
+  .puce.couleur { background: var(--c); border-color: var(--c); color: var(--c-sur); }
   .chargee { font-size: 12px; color: var(--alerte); background: var(--alerte-fond); border-radius: 12px; padding: 10px 12px; }
-  /* Dessin de la maquette (40 px ou 36 px), zone d'appui portée à 44 px (spec §14). */
-  .raccourcis button::after { content: ''; position: absolute; inset: -4px 0; }
 </style>

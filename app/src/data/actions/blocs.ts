@@ -48,7 +48,7 @@ export function saisirBloc(occId: string, valeurs: ValeurEntree[], opts: { sourc
   const tache = o && magasin.trouver('taches', o.tache_id);
   if (!o || !tache) return undefined;
   const sid = idSaisie(occId);
-  const ops: Parameters<typeof magasin.ecrireLot>[0] = [['saisies', { id: sid, projet_id: tache.projet_id, occurrence_id: occId, jour: o.jour, source: opts.source ?? 'bloc', note: opts.note ?? magasin.trouver('saisies', sid)?.note ?? null, approx: opts.approx ?? magasin.trouver('saisies', sid)?.approx ?? false }]];
+  const ops: Parameters<typeof magasin.ecrireLot>[0] = [['saisies', { id: sid, projet_id: tache.projet_id, occurrence_id: occId, jour: o.jour, source: magasin.trouver('saisies', sid)?.source === 'rattrapage' ? 'rattrapage' : opts.source ?? 'bloc', note: opts.note ?? magasin.trouver('saisies', sid)?.note ?? null, approx: opts.approx ?? magasin.trouver('saisies', sid)?.approx ?? false }]];
   for (const v of valeurs) ops.push(['saisie_valeurs', { id: idSaisieValeur(sid, v.cle), saisie_id: sid, cle: v.cle, valeur_num: v.num ?? null, valeur_txt: v.txt ?? null, detail: v.detail ?? null }]);
   magasin.ecrireLot(ops);
   return magasin.trouver('saisies', sid);

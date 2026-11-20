@@ -19,7 +19,7 @@
 | **Projets** | Projets, ProjetsEdition | Progression du mois par rubrique, projets avec leurs sous-projets dépliables, **rubriques repliables par une flèche** (repli gardé sur l’appareil ; toujours dépliées en mode Modifier), mode **Modifier** (ajouter ou retirer projets, sous-projets, rubriques). |
 | **Sous-projet** | SousProjet, SousProjetNT, SousProjetFiche, SousProjetDocument, SousProjetTemps, SousProjetFinances | Onglets **Suivi** (objectif et réalisé du jour, graphique du mois, retard et rattrapage), **Fiche** (7 questions, métriques, tâches liées, statut), **Document** (aperçu vivant, PDF, signature), **Temps** (à venir, historique). Exemple en dollars : solde, entrées, sorties, catégories, mouvements. |
 | **Nouveau sous-projet** | NouveauSousProjet, NouveauSousProjetFinances | Modèles par rubrique, nom, période, **reprise du passé**, métriques éditables, calculs automatiques. |
-| **Ajouter une tâche** | AjouterTache, AjouterTacheSansProjet | Voir §7. |
+| **Ajouter une tâche** | AjouterTache, AjouterTacheSansProjet | Voir §7 (formulaire simplifié : projets en cours, menus Quand, rappels exhaustifs). |
 | **Archive** | Archive, ArchiveRapports | Onglets **Accomplis** (avec le verset 1 Samuel 7:12) et **Rapports**. |
 | **Réglages** | Reglages | Prénom, nom dans le rapport, langue du rapport, points du rapport et mesures, exports enregistrés, notifications (appareil, titres visibles), quels rappels recevoir, apparence. |
 

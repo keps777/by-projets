@@ -1,0 +1,64 @@
+import { expect, test, type Page } from '@playwright/test';
+
+// Le Fil, journée en deux parties : « Prévu » (planifié) à gauche, « Fait » (réellement fait) à droite (spec §7, nov. 2026).
+
+async function ajouter(page: Page, titre: string, heure: number) {
+  await page.goto(`/tache/nouvelle?sans-projet=1&heure=${heure}`);
+  await page.getByLabel('Titre de la tâche').fill(titre);
+  await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
+  await expect(page).toHaveURL(/\/$|\/\?/);
+}
+
+test.describe('journée en deux parties', () => {
+  test('les deux colonnes, un bloc terminé qui passe dans Fait, une activité ajoutée après coup', async ({ page }) => {
+    const erreurs: string[] = [];
+    page.on('pageerror', (e) => erreurs.push(String(e)));
+
+    await ajouter(page, 'Lecture du soir', 20 * 60);
+    await ajouter(page, 'Appel au frère', 21 * 60);
+    await expect(page.getByText('Prévu', { exact: false }).first()).toBeVisible();
+    await expect(page.locator('#titre-prevu')).toContainText('Prévu · 2');
+    await expect(page.locator('#titre-fait')).toContainText('Fait · 0');
+    await expect(page.locator('[data-fait]')).toHaveCount(0);
+
+    // Terminer un bloc : il garde sa place dans Prévu et se pose aussi dans Fait.
+    await page.locator('.bloc').filter({ hasText: 'Lecture du soir' }).locator('.ouvrir').click();
+    await page.getByRole('button', { name: /Marquer comme fait|Terminer/ }).first().click();
+    await expect(page.locator('[data-fait]').filter({ hasText: 'Lecture du soir' })).toHaveCount(1);
+    await expect(page.locator('.bloc').filter({ hasText: 'Lecture du soir' })).toHaveCount(1);
+    await expect(page.locator('#titre-fait')).toContainText('Fait · 1');
+
+    // Ce que j'ai fait, après coup : Fait seulement (pas dans Prévu).
+    await page.keyboard.press('Escape');
+    const grille = page.locator('.grille');
+    const largeur = (await grille.boundingBox())!.width;
+    await grille.click({ position: { x: largeur - 40, y: (6 * 60 + 10) * (72 / 60) } });
+    await expect(page.getByRole('dialog', { name: 'Ce que j’ai fait' })).toBeVisible();
+    await page.getByRole('textbox', { name: 'Ce que j’ai fait' }).fill('Prière du matin');
+    await page.getByLabel('Durée du fait').selectOption('60');
+    await page.getByRole('button', { name: 'Ajouter à Fait' }).click();
+    await expect(page.locator('[data-fait]').filter({ hasText: 'Prière du matin' })).toHaveCount(1);
+    await expect(page.locator('.bloc').filter({ hasText: 'Prière du matin' })).toHaveCount(0);
+    await expect(page.locator('#titre-fait')).toContainText('Fait · 2');
+    await expect(page.locator('#titre-prevu')).toContainText('Prévu · 2');
+
+    await page.locator('.defile-jour').evaluate((el) => { el.scrollTop = 19 * 72; });
+    await page.screenshot({ path: '/tmp/fil-deux-parties-soir.png' });
+    await page.locator('.defile-jour').evaluate((el) => { el.scrollTop = 5 * 72; });
+    await page.screenshot({ path: '/tmp/fil-deux-parties.png' });
+
+    // Rien ne se perd au rechargement, et le bloc de Fait s'ouvre comme les autres.
+    await page.reload();
+    await expect(page.locator('[data-fait]').filter({ hasText: 'Prière du matin' })).toHaveCount(1);
+    await page.locator('[data-fait]').filter({ hasText: 'Prière du matin' }).locator('.ouvrir').click();
+    await expect(page.getByText('Prière du matin').first()).toBeVisible();
+    expect(erreurs).toEqual([]);
+  });
+
+  test('sans débordement horizontal à 320 px', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 640 });
+    await ajouter(page, 'Étude', 9 * 60);
+    const ok = await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1);
+    expect(ok).toBe(true);
+  });
+});

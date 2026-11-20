@@ -6,7 +6,7 @@ import { session } from '../../data/auth.svelte.ts';
 import { horloge } from '../../data/temps.svelte.ts';
 import { ajouterTache } from '../../data/actions/taches.ts';
 import { blocsDuJour } from '../../data/requetes.ts';
-import { choixMensuels, construireRegle, lireDuree, prevuParDefaut, resume, texteJours, unionMesures, type MetriqueSource } from './tache.ts';
+import { choixMensuels, construireRegle, DELAIS_RAPPEL, lireDuree, optionsDuree, optionsJours, prevuParDefaut, projetEnCours, rappelsDe, repartirRappels, repetitionDe, reglerRepetition, resume, texteJours, unionMesures, type MetriqueSource } from './tache.ts';
 import { modifierOccurrence, modifierSerie, modifierSuivantes } from './edition.ts';
 import { disposer } from './disposition.ts';
 
@@ -116,5 +116,45 @@ describe('durée tapée à la main', () => {
     expect(lireDuree('30h')).toBe(1440);
     expect(lireDuree('')).toBeNull();
     expect(lireDuree('bientôt')).toBeNull();
+  });
+});
+
+describe('formulaire simplifié', () => {
+  it('ne propose que les projets en cours', () => {
+    expect(projetEnCours('actif', ['en_cours', 'termine'])).toBe(true);
+    expect(projetEnCours('actif', [])).toBe(true);
+    expect(projetEnCours('actif', ['termine', 'archive'])).toBe(false);
+    expect(projetEnCours('actif', ['brouillon'])).toBe(false);
+    expect(projetEnCours('actif', ['brouillon', 'a_valider'])).toBe(true);
+    expect(projetEnCours('pause', ['en_cours'])).toBe(false);
+    expect(projetEnCours('archive', [])).toBe(false);
+  });
+  it('un menu de répétition pour tout', () => {
+    expect(repetitionDe('hebdo', [0, 1, 2, 3, 4])).toBe('semaine');
+    expect(repetitionDe('hebdo', [6, 5])).toBe('weekend');
+    expect(repetitionDe('hebdo', [2])).toBe('hebdo');
+    expect(repetitionDe('quotidien', [])).toBe('quotidien');
+    expect(reglerRepetition('semaine', 2, [2])).toEqual({ rec: 'hebdo', jours: [0, 1, 2, 3, 4] });
+    expect(reglerRepetition('weekend', 2, [2])).toEqual({ rec: 'hebdo', jours: [5, 6] });
+    expect(reglerRepetition('hebdo', 2, [0, 1, 2, 3, 4])).toEqual({ rec: 'hebdo', jours: [2] });
+    expect(reglerRepetition('hebdo', 2, [1, 3])).toEqual({ rec: 'hebdo', jours: [1, 3] });
+    expect(reglerRepetition('mensuel', 2, [1])).toEqual({ rec: 'mensuel', jours: [1] });
+  });
+  it('rappels : tous les délais, le plus proche est le principal', () => {
+    expect(DELAIS_RAPPEL).toContain(0);
+    expect(DELAIS_RAPPEL).toContain(10080);
+    expect(rappelsDe(10, [1440, 120, 10])).toEqual([10, 120, 1440]);
+    expect(rappelsDe(null, [])).toEqual([]);
+    expect(repartirRappels([1440, 15, 120])).toEqual({ rappel: 15, rappelsAvant: [120, 1440] });
+    expect(repartirRappels([])).toEqual({ rappel: null, rappelsAvant: [] });
+    expect(repartirRappels([0])).toEqual({ rappel: 0, rappelsAvant: [] });
+  });
+  it('durées et jours des menus', () => {
+    expect(optionsDuree(45)).toHaveLength(16);
+    expect(optionsDuree(50)).toContain(50);
+    expect(optionsDuree(50).indexOf(50)).toBe(optionsDuree(50).indexOf(45) + 1);
+    const plus = (j: string, n: number) => new Date(Date.parse(j + 'T00:00:00Z') + n * 86400000).toISOString().slice(0, 10);
+    expect(optionsJours('2026-10-12', '2026-10-14', plus)).toHaveLength(8);
+    expect(optionsJours('2026-10-12', '2026-12-01', plus).at(-1)).toBe('2026-12-01');
   });
 });

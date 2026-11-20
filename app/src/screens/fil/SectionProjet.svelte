@@ -64,15 +64,15 @@
       {/each}
     </div>
     <div class="carte liste">
+      {#if f.rubriqueId}<CreationRapide libelle="Nouveau projet" exemple="Nom du projet" oncreer={nouveauProjet} />{/if}
       {#each f.projets as p (p.id)}
         <button type="button" class="projet" class:actif={p.id === f.projetId} aria-pressed={p.id === f.projetId} onclick={() => f.choisirProjet(p.id)}>
           <span class="rond-choix">{#if p.id === f.projetId}<Icone nom="coche" taille={11} trait={3.6} />{/if}</span>
           <span class="col"><span class="nom">{p.nom}</span><span class="muted petit">{nb(sousProjetsDe(p.id).length)}</span></span>
         </button>
       {:else}
-        <p class="muted vide">Aucun projet dans cette rubrique.</p>
+        <p class="muted vide">Aucun projet en cours dans cette rubrique. Crée-en un ci-dessus.</p>
       {/each}
-      {#if f.rubriqueId}<CreationRapide libelle="Nouveau projet" exemple="Nom du projet" oncreer={nouveauProjet} />{/if}
     </div>
   {/if}
 </div>

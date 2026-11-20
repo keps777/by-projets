@@ -104,6 +104,18 @@ export interface BlocVue {
   enPause: boolean;
   /** Couleur de la rubrique (gris pour un rendez-vous sans projet). */
   couleur: string;
+  /** Heure réelle de début (minutes locales) : le démarrage du minuteur, sinon l'heure prévue. */
+  reelDebutMin: number;
+  /** Heure réelle de fin d'un bloc fait (minutes locales), ou null s'il n'est pas terminé (sa fin suit alors « maintenant »). */
+  reelFinMin: number | null;
+  /** Bloc rempli après coup (« Ce que j'ai fait ») : il n'était pas prévu, il n'apparaît que dans la colonne « Fait ». */
+  apresCoup: boolean;
+}
+
+/** Minutes locales d'un instant, bornées au jour du bloc (un bloc commencé la veille ou fini le lendemain reste dans sa journée). */
+export function minutesDansLeJour(ms: number, jour: Jour, tz: string): number {
+  const l = utcVersLocal(ms, tz);
+  return l.jour < jour ? 0 : l.jour > jour ? 1440 : l.minutes;
 }
 
 export const COULEUR_SANS_PROJET = '#A3A6B1';
@@ -131,12 +143,16 @@ function blocsDe(garder: (occ: Occurrence) => boolean): BlocVue[] {
     const debutMin = utcVersLocal(Date.parse(occ.debut), tz).minutes;
     const duree = Math.max(5, Math.round((Date.parse(occ.fin) - Date.parse(occ.debut)) / 60000));
     const alimentes = new Set(tache_alimente.filter((a) => a.tache_id === tache.id).map((a) => a.sous_projet_id));
+    const saisie = saisies.find((s) => s.occurrence_id === occ.id);
     res.push({
       occ, tache, projet, rubrique, titre: tache.titre, debutMin, finMin: debutMin + duree,
       sousProjets: sous_projets.filter((s) => alimentes.has(s.id)),
-      saisie: saisies.find((s) => s.occurrence_id === occ.id),
+      saisie,
       fait: occ.etat === 'faite', enCours: occ.etat === 'en_cours', enPause: occ.etat === 'pause',
-      couleur: rubrique?.couleur ?? COULEUR_SANS_PROJET
+      couleur: rubrique?.couleur ?? COULEUR_SANS_PROJET,
+      reelDebutMin: occ.demarree_a ? minutesDansLeJour(Date.parse(occ.demarree_a), occ.jour, tz) : debutMin,
+      reelFinMin: occ.etat === 'faite' ? (occ.demarree_a && occ.terminee_a ? Math.max(minutesDansLeJour(Date.parse(occ.terminee_a), occ.jour, tz), minutesDansLeJour(Date.parse(occ.demarree_a), occ.jour, tz) + 1) : debutMin + duree) : null,
+      apresCoup: occ.etat === 'faite' && saisie?.source === 'rattrapage'
     });
   }
   return res;

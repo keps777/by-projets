@@ -110,3 +110,61 @@ export function lireDuree(texte: string): number | null {
   if (min == null || !Number.isFinite(min)) return null;
   return Math.max(DUREE_MIN, Math.min(DUREE_MAX, min));
 }
+
+// ------------------------------------------------------------------ formulaire simplifié (spec §7, nov. 2026)
+
+/** Un projet est « en cours » s'il est actif et a au moins un sous-projet en cours ou à valider (un projet encore sans sous-projet compte comme en cours). */
+export function projetEnCours(statut: 'actif' | 'pause' | 'archive', statutsSousProjets: string[]): boolean {
+  if (statut !== 'actif') return false;
+  const vivants = statutsSousProjets.filter((s) => s !== 'archive');
+  return !vivants.length || vivants.some((s) => s === 'en_cours' || s === 'a_valider');
+}
+
+/** Choix du menu « Répéter » : une seule liste au lieu de plusieurs rangées de boutons. */
+export type Repetition = 'une_fois' | 'quotidien' | 'semaine' | 'weekend' | 'hebdo' | 'mensuel';
+export const REPETITIONS: { valeur: Repetition; label: string }[] = [
+  { valeur: 'une_fois', label: 'Une seule fois' }, { valeur: 'quotidien', label: 'Tous les jours' }, { valeur: 'semaine', label: 'Du lundi au vendredi' },
+  { valeur: 'weekend', label: 'Le week-end' }, { valeur: 'hebdo', label: 'Chaque semaine (je choisis les jours)' }, { valeur: 'mensuel', label: 'Chaque mois' }
+];
+const SEMAINE = [0, 1, 2, 3, 4], WEEKEND = [5, 6];
+const memes = (a: number[], b: number[]) => a.length === b.length && [...a].sort().every((x, i) => x === [...b].sort()[i]);
+
+/** Le choix du menu qui correspond à la récurrence et aux jours du formulaire. */
+export function repetitionDe(rec: Recurrence, jours: number[]): Repetition {
+  if (rec === 'hebdo') return memes(jours, SEMAINE) ? 'semaine' : memes(jours, WEEKEND) ? 'weekend' : 'hebdo';
+  return rec;
+}
+
+/** Récurrence et jours qu'un choix du menu impose (`joursActuels` : on garde ceux déjà choisis pour « Chaque semaine »). */
+export function reglerRepetition(r: Repetition, jourDeDebut: number, joursActuels: number[]): { rec: Recurrence; jours: number[] } {
+  if (r === 'semaine') return { rec: 'hebdo', jours: SEMAINE };
+  if (r === 'weekend') return { rec: 'hebdo', jours: WEEKEND };
+  if (r === 'hebdo') return { rec: 'hebdo', jours: joursActuels.length && !memes(joursActuels, SEMAINE) && !memes(joursActuels, WEEKEND) ? joursActuels : [jourDeDebut] };
+  return { rec: r, jours: joursActuels };
+}
+
+/** Tous les délais de rappel proposés (minutes avant le début). */
+export const DELAIS_RAPPEL = [0, 5, 10, 15, 30, 45, 60, 120, 180, 1440, 2880, 10080];
+
+/** Tous les rappels d'une tâche, du plus proche au plus lointain, sans doublon. */
+export function rappelsDe(rappel: number | null, avant: number[]): number[] {
+  return [...new Set([rappel, ...avant].filter((d): d is number => typeof d === 'number' && d >= 0))].sort((a, b) => a - b);
+}
+
+/** Répartit une liste de délais : le plus proche du début devient le rappel principal (celui de l'alarme), les autres sont « plus tôt ». */
+export function repartirRappels(delais: number[]): { rappel: number | null; rappelsAvant: number[] } {
+  const l = rappelsDe(null, delais);
+  return { rappel: l.length ? l[0] : null, rappelsAvant: l.slice(1) };
+}
+
+/** Durées proposées par le menu (minutes) ; la durée courante s'y ajoute si elle n'y est pas. */
+export const DUREES_MENU = [5, 10, 15, 20, 30, 45, 60, 75, 90, 120, 150, 180, 240, 300, 360, 480];
+export function optionsDuree(courante: number): number[] {
+  return DUREES_MENU.includes(courante) ? DUREES_MENU : [...DUREES_MENU, courante].sort((a, b) => a - b);
+}
+
+/** Jours du menu « Quel jour ? » : aujourd'hui, demain, puis les jours suivants jusqu'à une semaine ; le jour choisi s'y ajoute s'il est plus loin. */
+export function optionsJours(aujourdhui: Jour, courant: Jour, ajouter: (j: Jour, n: number) => Jour, nb = 8): Jour[] {
+  const l = Array.from({ length: nb }, (_, i) => ajouter(aujourdhui, i));
+  return courant && !l.includes(courant) ? [...l, courant].sort() : l;
+}

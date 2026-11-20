@@ -153,3 +153,15 @@ Outil de comparaison : voir la méthode dans ce journal ; relancer une passe à 
 **Pièges connus**
 - iPhone : pas de boutons d'action sur les notifications d'app web ; la notification ouvre l'écran Action rapide.
 - Les notifications exigent l'app ouverte depuis l'icône de l'écran d'accueil (iOS 16.4 ou plus).
+
+## 20 nov. 2026 — Fil en deux parties, ajout de tâche simplifié
+
+**Fait** (spec §7 et §12 mises à jour d'abord)
+- **Le Fil · journée en deux colonnes** : « Prévu » (planifié, à l'heure prévue, glisser/poignées/▶ inchangés) et « Fait » (ce qui a réellement été fait, du début réel du minuteur à sa fin ; un minuteur qui tourne grandit en direct). En-têtes `Prévu · n` / `Fait · n · durée`. Toucher un espace libre de **Fait** ouvre « Ce que j'ai fait » (quoi, projet en cours, début, durée) : bloc déjà fait, sans rappel, reconnu à sa saisie de source `rattrapage` (conservée après correction), seulement dans Fait ; un jour passé peut être rempli. Fichiers : `Journee`, `BlocFait`, `VoletFait`, `data/actions/fait.ts`, `BlocVue.reelDebutMin / reelFinMin / apresCoup`.
+- **Nouvelle tâche** : seuls les **projets en cours** sont proposés (actif + au moins un sous-projet en cours ou à valider, ou aucun sous-projet), « Nouveau projet » en tête ; **Quand** en une carte de menus (jour, heure, durée, répéter ; jours de la semaine et « Jusqu'à quand » seulement si utile) ; **Rappel** exhaustif : pastilles retirables + menu avec tous les délais (à l'heure → 7 jours avant), le plus proche reste le rappel de l'alarme.
+- Tests : `fait.test.ts`, `formulaire-projets.test.ts`, ajouts à `tache.test.ts`, `e2e/fil-deux-parties.spec.ts`, e2e d'ajout de tâche réécrits pour les menus.
+
+**À savoir**
+- La retraite de 24 h existe déjà (écran Projets, « Me proposer une retraite de 24 h », §5) : rien à ajouter.
+- Un bloc marqué fait garde sa coche dans Prévu et se pose aussi dans Fait ; les vues Tableau, Semaine et Mois sont inchangées.
+- Question ouverte : poser l'horaire type des points de prière (00 h–24 h) comme tâches récurrentes dans Prévu ? Pas fait, en attente de confirmation.

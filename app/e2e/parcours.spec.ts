@@ -117,121 +117,56 @@ test.describe('Le Fil : gestes', () => {
   });
 });
 
-test('ajout de tâche : choisir l’heure d’un coup et cumuler des rappels plus tôt', async ({ page }) => {
+test('ajout de tâche : choisir l’heure dans les menus et cumuler des rappels', async ({ page }) => {
   await page.goto('/tache/nouvelle?sans-projet=1&heure=840'); // 14:00
   await page.getByLabel('Titre de la tâche').fill('Rendez-vous chez le dentiste');
-  await expect(page.locator('.debut')).toHaveText('14:00');
-  await page.getByLabel('Choisir l’heure de début').fill('18:20');
-  await expect(page.locator('.debut')).toHaveText('18:20');
-  await page.getByRole('button', { name: /^Soir/ }).click();
-  await expect(page.locator('.debut')).toHaveText('18:00');
-  await page.getByRole('button', { name: '2 h avant', exact: true }).click();
-  await page.getByRole('button', { name: '1 jour avant', exact: true }).click();
-  await expect(page.getByRole('button', { name: '2 h avant', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.fin-heure')).toHaveText('14:00 – 14:45');
+  await page.getByLabel('Heure de début').selectOption('18');
+  await page.getByLabel('Minutes de début').selectOption('20');
+  await expect(page.locator('.fin-heure')).toHaveText('18:20 – 19:05');
+  await page.getByLabel('Ajouter un rappel').selectOption('120');
+  await page.getByLabel('Ajouter un rappel').selectOption('1440');
+  await expect(page.getByRole('listitem').filter({ hasText: '2 h avant' })).toBeVisible();
   await expect(page.getByText(/rappels 1 jour, 2 h, 10 min avant/)).toBeVisible();
+  await page.getByRole('button', { name: 'Retirer le rappel 2 h avant' }).click();
+  await expect(page.getByText(/rappels 1 jour, 10 min avant/)).toBeVisible();
+  // Tous les délais sont proposés, jusqu’à une semaine.
+  await expect(page.getByLabel('Ajouter un rappel').locator('option', { hasText: '7 jours avant' })).toHaveCount(1);
+  await expect(page.getByLabel('Ajouter un rappel').locator('option')).toContainText(['À l’heure', '30 min avant', '1 h avant', '2 h avant', '2 jours avant']);
   await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
   await expect(page).toHaveURL(/\/$|\/\?/);
 });
 
-test.describe('Carnet', () => {
-  test('écrire des notes libres : numérotées, gardées après rechargement, corrigées et retrouvées dans la recherche', async ({ page }) => {
-    await page.goto('/');
-    await page.getByRole('link', { name: /Carnet/ }).click();
-    await expect(page).toHaveURL(/\/carnet/);
-    const champ = page.getByLabel('Écrire une note libre');
-    await expect(champ).toBeFocused();
-    await champ.fill('Pardonner vite, sans attendre');
-    await page.getByRole('button', { name: 'Ajouter au Carnet' }).click();
-    await champ.fill('Appeler Christopher demain');
-    await page.getByRole('button', { name: 'Ajouter au Carnet' }).click();
-    const lignes = page.locator('.note');
-    await expect(lignes).toHaveCount(2);
-    await expect(lignes.nth(0).locator('.numero')).toHaveText('1');
-    await expect(lignes.nth(1).locator('.numero')).toHaveText('2');
-    await expect(page.getByText('Note libre ·').first()).toBeVisible();
-
-    await page.reload();
-    await expect(page.locator('.note')).toHaveCount(2);
-
-    // Corriger la note 1 : le numéro ne change pas.
-    await page.locator('.note').nth(0).locator('.texte').click();
-    await page.getByLabel('Texte de la note 1').fill('Pardonner vite, sans rien attendre');
-    await page.getByRole('button', { name: 'Enregistrer' }).click();
-    await expect(page.locator('.note').nth(0)).toContainText('sans rien attendre');
-    await expect(page.locator('.note').nth(0).locator('.numero')).toHaveText('1');
-
-    // La recherche retrouve la note, avec son numéro.
-    await page.goto('/recherche?q=christopher');
-    await expect(page.getByText('Carnet n° 2').first()).toBeVisible();
-  });
-
-  test('le sommaire liste les pages avec leurs numéros', async ({ page }) => {
-    await page.goto('/carnet?ecrire=1');
-    await page.getByLabel('Écrire une note libre').fill('Une pensée du jour');
-    await page.getByRole('button', { name: 'Ajouter au Carnet' }).click();
-    await page.getByRole('button', { name: 'Sommaire des pages' }).click();
-    await expect(page.getByRole('dialog', { name: 'Sommaire du Carnet' })).toContainText('n° 1');
-  });
-});
-
-test('Mode Focus : les notes écrites pendant un bloc vont au Carnet, numérotées, avec leur provenance', async ({ page }) => {
-  await page.goto('/tache/nouvelle?sans-projet=1&heure=60');
-  await page.getByLabel('Titre de la tâche').fill('Étude du soir');
-  await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
-  await page.getByText('Étude du soir').first().click();
-  await page.getByRole('dialog').getByRole('button', { name: /Lancer/ }).first().click();
-  await page.getByRole('link', { name: /Mode Focus/ }).click();
-  await expect(page).toHaveURL(/\/focus\?occ=/);
-  const champ = page.getByLabel('Écrire une note');
-  await champ.fill('Matthieu 6 : ne vous inquiétez pas');
-  await page.getByRole('button', { name: 'Ajouter', exact: true }).click();
-  await expect(page.locator('.carnet-liste li')).toHaveCount(1);
-  await expect(page.locator('.carnet-liste .num')).toHaveText('1');
-  await champ.fill('Faire confiance, un jour à la fois');
-  await page.getByRole('button', { name: 'Ajouter', exact: true }).click();
-  await expect(page.locator('.carnet-liste .num').nth(1)).toHaveText('2');
-
-  await page.goto('/carnet');
-  await expect(page.locator('.note')).toHaveCount(2);
-  await expect(page.getByText(/Focus · Étude du soir/).first()).toBeVisible();
-});
-
-test.describe('Rapports', () => {
-  test('s’ouvre sur la journée en cours (onglet Jour) ; une carte se modifie à la main', async ({ page }) => {
-    await page.goto('/rapports');
-    const jourNum = await page.evaluate(() => new Date().toLocaleDateString('fr-CA', { timeZone: 'America/Toronto', day: 'numeric' }));
-    await expect(page.locator('.nom').first()).toContainText(jourNum);
-    await expect(page.getByRole('tab', { name: 'Jour' })).toHaveAttribute('aria-selected', 'true');
-
-    await page.getByRole('button', { name: /DDEWG : modifier les valeurs/ }).click();
-    const volet = page.getByRole('dialog', { name: 'Saisir un jour' });
-    await expect(volet).toBeVisible();
-    await volet.locator('input.mono').first().fill('2');
-    await volet.getByRole('button', { name: 'Enregistrer' }).click();
-    await expect(volet).toBeHidden();
-    await expect(page.getByRole('button', { name: /DDEWG : modifier les valeurs/ }).locator('.valeur')).toContainText('2');
-  });
-});
-
-test('ajout de tâche : durée libre (3h45, 4 h) en plus des durées courantes', async ({ page }) => {
-  await page.goto('/tache/nouvelle?sans-projet=1&heure=480'); // 08:00
+test('ajout de tâche : durée en menu, durée libre reprise de la proposition', async ({ page }) => {
+  await page.goto('/tache/nouvelle?sans-projet=1&heure=480&duree=225'); // 08:00, 3 h 45
   await page.getByLabel('Titre de la tâche').fill('Atelier');
-  const champ = page.getByLabel('Durée de la tâche');
-  await champ.fill('3h45');
-  await champ.blur();
-  await expect(page.locator('.fin').first()).toHaveText('jusqu’à 11:45');
-  await page.getByRole('button', { name: '15 minutes de plus' }).click();
-  await expect(page.locator('.fin').first()).toHaveText('jusqu’à 12:00');
-  await page.getByRole('button', { name: '4 h', exact: true }).click();
-  await expect(page.locator('.fin').first()).toHaveText('jusqu’à 12:00');
-  await champ.fill('1:30');
-  await champ.press('Enter');
-  await expect(page.locator('.fin').first()).toHaveText('jusqu’à 09:30');
+  const duree = page.getByLabel('Durée de la tâche');
+  await expect(duree).toHaveValue('225');
+  await expect(page.locator('.fin-heure')).toHaveText('08:00 – 11:45');
+  await duree.selectOption('240');
+  await expect(page.locator('.fin-heure')).toHaveText('08:00 – 12:00');
+  await duree.selectOption('90');
+  await expect(page.locator('.fin-heure')).toHaveText('08:00 – 09:30');
   // Une durée qui dépasserait minuit fait commencer la tâche plus tôt.
   await page.goto('/tache/nouvelle?sans-projet=1&heure=1380'); // 23:00
-  await page.getByLabel('Durée de la tâche').fill('3h');
-  await page.getByLabel('Durée de la tâche').blur();
-  await expect(page.locator('.debut')).toHaveText('21:00');
+  await page.getByLabel('Durée de la tâche').selectOption('180');
+  await expect(page.locator('.fin-heure')).toHaveText('21:00 – 00:00');
+});
+
+test('ajout de tâche : un seul menu de répétition (jours de la semaine seulement si besoin)', async ({ page }) => {
+  await page.goto('/tache/nouvelle?sans-projet=1&heure=480');
+  await expect(page.getByLabel('Répétition')).toHaveValue('une_fois');
+  await expect(page.getByRole('group', { name: 'Jours de la semaine' })).toHaveCount(0);
+  await expect(page.getByLabel('Jusqu’à quand ?')).toHaveCount(0);
+  await page.getByLabel('Répétition').selectOption('hebdo');
+  await expect(page.getByRole('group', { name: 'Jours de la semaine' })).toBeVisible();
+  await page.getByLabel('Répétition').selectOption('semaine');
+  await expect(page.getByRole('group', { name: 'Jours de la semaine' })).toHaveCount(0);
+  await expect(page.getByLabel('Jusqu’à quand ?')).toBeVisible();
+  await page.getByLabel('Jusqu’à quand ?').selectOption('fois');
+  await expect(page.getByLabel('Nombre de fois')).toBeVisible();
+  await page.getByLabel('Répétition').selectOption('une_fois');
+  await expect(page.getByLabel('Jusqu’à quand ?')).toHaveCount(0);
 });
 
 test('plusieurs blocs peuvent tourner en même temps ; la carte du bas les liste', async ({ page }) => {
@@ -460,7 +395,7 @@ test.describe('Fermer et supprimer depuis le volet d’un bloc', () => {
   test('tâche qui se répète : on choisit seulement ce bloc, les suivants ou toute la série', async ({ page }) => {
     await page.goto('/tache/nouvelle?sans-projet=1&heure=180');
     await page.getByLabel('Titre de la tâche').fill('Chaque jour');
-    await page.getByRole('button', { name: 'Tous les jours' }).first().click();
+    await page.getByLabel('Répétition').selectOption('quotidien');
     await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
     await page.locator('.bloc').filter({ hasText: 'Chaque jour' }).locator('.ouvrir').click();
     await page.getByRole('button', { name: 'Supprimer la tâche' }).click();

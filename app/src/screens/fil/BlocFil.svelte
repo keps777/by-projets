@@ -5,7 +5,7 @@
   import { minuteurDe } from '../../data/actions/blocs.ts';
   import { theme } from '../../ui/theme.svelte.ts';
   import Icone from '../../ui/Icone.svelte';
-  import { PX, etiquetteRealise } from './vue-blocs.ts';
+  import { PX } from './vue-blocs.ts';
   import { styleTeinte } from './teintes.ts';
   import { hm } from './format.ts';
 
@@ -33,7 +33,7 @@
 
 <div class="bloc" data-occ={b.occ.id} class:tourne class:estompe={passe && !b.fait && !tourne} class:haut class:selectionne class:souleve {style}
   style:top="{debutMin * PX + 1}px" style:height="{hauteur}px"
-  style:left="calc(56px + (100% - 66px) * {col} / {cols})" style:width="calc((100% - 66px) / {cols} - {cols > 1 ? 2 : 0}px)">
+  style:left="calc(56px + var(--zw) * {col} / {cols})" style:width="calc(var(--zw) / {cols} - {cols > 1 ? 2 : 0}px)">
   <span class="rempli" style:width="{rempli}%"></span>
   {#if tourne}<span class="bord" style:left="{rempli}%"></span>{/if}
   {#if pct != null}<span class="mois" style:width="{pct}%"></span>{/if}
@@ -55,7 +55,6 @@
       </span>
     </button>
   {/if}
-  {#if b.fait}<span class="reel mono">{etiquetteRealise(b)}</span>{/if}
   {#if selectionne}
     <span class="poignee haut-p" data-poignee="debut" aria-label="Changer l’heure de début de {b.titre}" role="slider" aria-valuenow={debutMin} aria-valuemin={0} aria-valuemax={1440} tabindex="-1"></span>
     <span class="poignee bas-p" data-poignee="fin" aria-label="Changer l’heure de fin de {b.titre}" role="slider" aria-valuenow={finMin} aria-valuemin={0} aria-valuemax={1440} tabindex="-1"></span>
@@ -92,6 +91,4 @@
   .sous { font-size: 12px; line-height: 1.25; opacity: 0.8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .jouer { position: relative; flex: none; width: 44px; border: 0; background: transparent; display: flex; align-items: center; justify-content: center; color: var(--c-sur); }
   .pastille { width: 28px; height: 28px; border-radius: 14px; background: var(--c); display: flex; align-items: center; justify-content: center; transition: transform 0.12s ease; }
-  .reel { position: relative; flex: none; align-self: center; padding: 0 10px 0 4px; font-size: 11px; opacity: 0.85; }
-  .haut .reel { align-self: flex-start; padding: 11px 10px 0 4px; }
 </style>

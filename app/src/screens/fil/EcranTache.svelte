@@ -17,7 +17,8 @@
   import SectionQuand from './SectionQuand.svelte';
   import { modifierOccurrence, modifierSerie, modifierSuivantes } from './edition.ts';
   import { jourValide } from './navigation.ts';
-  import { heureProposee, resume } from './tache.ts';
+  import { libelleDelai } from '@core/rappels.ts';
+  import { DELAIS_RAPPEL, heureProposee, resume } from './tache.ts';
   import { suggerer, type Suggestion } from './suggestions.ts';
   import { hm, puceJour } from './format.ts';
 
@@ -59,9 +60,7 @@
   const style = $derived(styleCouleur(couleurRubrique(f.couleur ?? COULEUR_SANS_PROJET, theme.mode)));
   const texteResume = $derived(resume({ titre: f.titre, heure: f.heure, duree: f.duree, regle: f.regle, nbSousProjets: f.actifs.length, avecProjet: f.assoc, rappel: f.rappel, rappelsAvant: f.rappelsAvant }));
   const recurrente = $derived(!!tache && tache.regle.frequence !== 'une_fois');
-  const PLUS_TOT = [{ v: 60, l: '1 h' }, { v: 120, l: '2 h' }, { v: 1440, l: '1 jour' }, { v: 1560, l: '1 jour et 2 h' }, { v: 2880, l: '2 jours' }];
-  const basculerPlusTot = (v: number) => { f.rappelsAvant = f.rappelsAvant.includes(v) ? f.rappelsAvant.filter((x) => x !== v) : [...f.rappelsAvant, v]; };
-  const RAPPELS = [{ v: 0, l: 'À l’heure' }, { v: 5, l: '5 min' }, { v: 10, l: '10 min' }, { v: 15, l: '15 min' }];
+  const libelleRappel = (d: number) => (d === 0 ? 'À l’heure' : `${libelleDelai(d)} avant`);
 
   let choixPortee = $state<'modifier' | 'supprimer' | null>(null);
 
@@ -151,22 +150,26 @@
       <div class="section">
         <span class="etiquette">{f.assoc ? 5 : 3} · Rappel</span>
         <div class="carte rappel">
-          <div class="rappels">
-            {#each RAPPELS as r (r.v)}
-              <button type="button" class:actif={f.rappel === r.v} aria-pressed={f.rappel === r.v} onclick={() => (f.rappel = f.rappel === r.v ? null : r.v)}>{r.l}</button>
+          <div class="pastilles" role="list" aria-label="Rappels de cette tâche">
+            {#each f.rappels as d (d)}
+              <span class="pastille" role="listitem">{libelleRappel(d)}
+                <button type="button" aria-label="Retirer le rappel {libelleRappel(d)}" onclick={() => f.retirerRappel(d)}><Icone nom="fermer" taille={12} trait={2.6} /></button>
+              </span>
+            {:else}
+              <span class="muted petit">Aucun rappel pour cette tâche.</span>
             {/each}
           </div>
-          <span class="etiquette plus-tot">Et aussi, plus tôt</span>
-          <div class="rappels plus" role="group" aria-label="Rappels plus tôt">
-            {#each PLUS_TOT as r (r.v)}
-              <button type="button" class:actif={f.rappelsAvant.includes(r.v)} aria-pressed={f.rappelsAvant.includes(r.v)} onclick={() => basculerPlusTot(r.v)}>{r.l} avant</button>
-            {/each}
-          </div>
+          <label class="ajout">Ajouter un rappel
+            <select aria-label="Ajouter un rappel" value="" onchange={(e) => { const v = e.currentTarget.value; e.currentTarget.value = ''; if (v !== '') f.ajouterRappel(+v); }}>
+              <option value="" disabled>Choisir un délai…</option>
+              {#each DELAIS_RAPPEL.filter((d) => !f.rappels.includes(d)) as d (d)}<option value={d}>{libelleRappel(d)}</option>{/each}
+            </select>
+          </label>
           <div class="rang-alarme">
             <span class="col"><span class="fort">⏰ Alarme</span><span class="muted petit">Le rappel le plus proche insiste (toutes les 2 min, 5 fois) et sonne plein écran dans l’app, tant que le bloc n’est pas lancé, fait ou reporté.</span></span>
             <Interrupteur actif={f.alarme} label="Alarme pour cette tâche" couleur="var(--c)" onchange={(v) => (f.alarme = v)} />
           </div>
-          <span class="muted petit">{f.rappel == null && !f.rappelsAvant.length ? 'Aucun rappel pour cette tâche. Touche un délai pour en ajouter un.' : 'Notification sur ton iPhone : la toucher ouvre l’écran Action rapide (Lancer, Reporter).'}</span>
+          {#if f.rappels.length}<span class="muted petit">Notification sur ton iPhone : la toucher ouvre l’écran Action rapide (Lancer, Reporter).</span>{/if}
         </div>
       </div>
     </EcranPage>
@@ -209,15 +212,15 @@
   .quoi input:focus { outline: none; border-color: var(--c); }
   .section { display: flex; flex-direction: column; gap: 8px; }
   .rappel { border-radius: 20px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
-  .rappels { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
-  .rappels button { height: 44px; border-radius: 12px; border: 1px solid var(--ligne); background: transparent; font-size: 12px; font-weight: 600; }
-  .plus-tot { margin-top: 2px; }
+  .pastilles { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-height: 30px; }
+  .pastille { display: inline-flex; align-items: center; gap: 2px; height: 38px; padding: 0 4px 0 14px; border-radius: 19px; background: var(--c); color: var(--c-sur); font-size: 13px; font-weight: 600; }
+  .pastille button { position: relative; width: 32px; height: 32px; border: 0; border-radius: 16px; background: transparent; color: inherit; display: flex; align-items: center; justify-content: center; }
+  .pastille button::after { content: ''; position: absolute; inset: -6px; }
+  .ajout { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 14px; font-weight: 600; }
+  .ajout select { flex: 1; max-width: 230px; height: 44px; border-radius: 12px; border: 1px solid var(--ligne); background: var(--surface-2); color: var(--texte); font-size: 16px; font-weight: 600; padding: 0 10px; }
   .rang-alarme { display: flex; align-items: center; gap: 12px; padding-top: 10px; border-top: 1px solid var(--ligne); }
   .rang-alarme .col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
   .fort { font-size: 14px; font-weight: 600; }
-  .rappels.plus { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .rappels.plus button { font-size: 12px; }
-  .rappels button.actif { background: var(--c); border-color: var(--c); color: var(--c-sur); }
   .petit { font-size: 12px; }
   .resume { font-size: 12px; line-height: 1.4; }
   .valider { height: 54px; border-radius: 18px; border: 0; background: var(--inverse); color: var(--inverse-texte); font-size: 16px; font-weight: 600; }
