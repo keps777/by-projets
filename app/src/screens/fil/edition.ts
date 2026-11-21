@@ -56,3 +56,20 @@ export function modifierOccurrence(occId: string, jour: Jour, heure: number, dur
   const debut = localVersUtc(jour, heure, fuseau());
   magasin.ecrire('occurrences', { id: occId, fin: new Date(debut + duree * 60000).toISOString() });
 }
+
+/** Ordre des clés neutralisé : deux règles identiques se comparent égales même si leurs champs sont rangés autrement. */
+const stable = (v: unknown): string => JSON.stringify(v, (_, x) => (x && typeof x === 'object' && !Array.isArray(x) ? Object.fromEntries(Object.entries(x).sort(([a], [b]) => a.localeCompare(b))) : x));
+
+export interface ReglagesDeSerie { titre: string; projetId: string | null; regle: unknown; alarme: boolean; rappelsAvant: number[]; sousProjetIds: string[]; attendus: { cle: string; valeur: number }[] }
+
+/**
+ * Vrai si le formulaire change ce qui est commun à toute la série (nom, projet, sous-projets, mesures, répétition, alarme, rappels plus tôt).
+ * « Cette occurrence » ne change que l'heure, la durée et le rappel : elle ne peut pas porter ces changements.
+ */
+export function changeLaSerie(avant: ReglagesDeSerie, apres: ReglagesDeSerie): boolean {
+  const tri = (l: number[]) => [...l].sort((a, b) => a - b);
+  const triS = (l: string[]) => [...l].sort();
+  const att = (l: ReglagesDeSerie['attendus']) => [...l].sort((a, b) => a.cle.localeCompare(b.cle)).map((a) => [a.cle, a.valeur]);
+  return (avant.titre.trim() || 'Sans titre') !== (apres.titre.trim() || 'Sans titre') || avant.projetId !== apres.projetId || stable(avant.regle) !== stable(apres.regle)
+    || avant.alarme !== apres.alarme || stable(tri(avant.rappelsAvant)) !== stable(tri(apres.rappelsAvant)) || stable(triS(avant.sousProjetIds)) !== stable(triS(apres.sousProjetIds)) || stable(att(avant.attendus)) !== stable(att(apres.attendus));
+}

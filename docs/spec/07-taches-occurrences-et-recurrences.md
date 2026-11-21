@@ -80,3 +80,6 @@ La journée du calendrier (vue Calendrier · Jour) est **partagée en deux colon
 - **Idempotent** : un bloc dont le titre existe déjà comme tâche active n'est pas recréé. « Retirer l'horaire type » supprime ces séries (les blocs déjà faits sont gardés).
 - Aussi posés, à une heure choisie faute d'heure dans les points de prière : **jeûne partiel du lundi** (00 h–18 h), **dons du mois et épargne** le 1er vendredi du mois (11 h–12 h), **lessive** le 2ᵉ et le dernier lundi du mois (19 h–21 h).
 - **Pose automatique** : à la première ouverture sur un appareil (après la synchronisation), l'horaire type se pose tout seul ; il ne revient plus après « Retirer l'horaire type » sur cet appareil. « Poser mon horaire type » le repose à la demande.
+
+## Modifier une tâche qui se répète : « Cette occurrence » (nov. 2026)
+« Cette occurrence » ne change que l'heure, la durée et le rappel de ce bloc. Quand le formulaire change aussi ce qui est commun à toute la série (nom, projet, sous-projets, mesures, répétition, alarme, rappels plus tôt), cette option n'est **pas proposée** et la fenêtre explique que le changement concerne toute la tâche : on choisit « Celle-ci et les suivantes » ou « Toute la série ».

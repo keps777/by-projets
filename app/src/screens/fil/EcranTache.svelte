@@ -15,7 +15,8 @@
   import Interrupteur from '../../ui/Interrupteur.svelte';
   import SectionProjet from './SectionProjet.svelte';
   import SectionQuand from './SectionQuand.svelte';
-  import { modifierOccurrence, modifierSerie, modifierSuivantes } from './edition.ts';
+  import { changeLaSerie, modifierOccurrence, modifierSerie, modifierSuivantes } from './edition.ts';
+  import { attendusDe } from '../../data/actions/blocs.ts';
   import { jourValide } from './navigation.ts';
   import { libelleDelai } from '@core/rappels.ts';
   import { DELAIS_RAPPEL, heureProposee, resume } from './tache.ts';
@@ -63,6 +64,15 @@
   const libelleRappel = (d: number) => (d === 0 ? 'À l’heure' : `${libelleDelai(d)} avant`);
 
   let choixPortee = $state<'modifier' | 'supprimer' | null>(null);
+  /** Le formulaire change le nom, le projet, la répétition… : cela concerne toute la tâche, pas une seule occurrence. */
+  const serieChange = $derived.by(() => {
+    if (!tache) return false;
+    const liens = magasin.lignes.tache_alimente.filter((a) => a.tache_id === tache.id).map((a) => a.sous_projet_id);
+    return changeLaSerie(
+      { titre: tache.titre, projetId: tache.projet_id, regle: tache.regle, alarme: !!tache.alarme, rappelsAvant: tache.rappels_avant_min ?? [], sousProjetIds: liens, attendus: attendusDe(tache.id).map((a) => ({ cle: a.cle, valeur: a.valeur_prevue })) },
+      { titre: f.titre, projetId: f.assoc ? f.projetId : null, regle: f.regle, alarme: f.alarme, rappelsAvant: f.rappelsAvant, sousProjetIds: f.actifs.map((x) => x.id), attendus: f.mesures.flatMap((m) => { const v = f.prevu(m); return v == null ? [] : [{ cle: m.cle, valeur: v }]; }) }
+    );
+  });
 
   // Propositions de titre : tâches déjà créées (elles reprennent leurs réglages) et titres génériques.
   let champTitre: HTMLInputElement | undefined = $state();
@@ -180,9 +190,13 @@
   <div class="portee">
     <h2 class="titre">{choixPortee === 'supprimer' ? 'Supprimer une tâche qui se répète' : 'Modifier une tâche qui se répète'}</h2>
     {#if occ}
-      <button type="button" onclick={() => (choixPortee === 'supprimer' ? supprimer('cette') : appliquer('cette'))}>
-        <span class="t">Cette occurrence</span><span class="muted s">{puceJour(occ.jour, aujourdhui)}{choixPortee === 'modifier' ? ' · seuls l’heure, la durée et le rappel changent' : ''}</span>
-      </button>
+      {#if choixPortee === 'modifier' && serieChange}
+        <p class="muted s note-portee">Tu changes le nom, le projet ou la répétition : cela concerne toute la tâche, pas une seule occurrence.</p>
+      {:else}
+        <button type="button" onclick={() => (choixPortee === 'supprimer' ? supprimer('cette') : appliquer('cette'))}>
+          <span class="t">Cette occurrence</span><span class="muted s">{puceJour(occ.jour, aujourdhui)}{choixPortee === 'modifier' ? ' · seuls l’heure, la durée et le rappel changent' : ''}</span>
+        </button>
+      {/if}
       <button type="button" onclick={() => (choixPortee === 'supprimer' ? supprimer('suivantes') : appliquer('suivantes'))}>
         <span class="t">Celle-ci et les suivantes</span><span class="muted s">Le passé reste tel quel</span>
       </button>
@@ -230,4 +244,5 @@
   .portee button.danger .t { color: var(--mauvais); }
   .portee .t { font-size: 15px; font-weight: 600; }
   .portee .s { font-size: 12px; }
+  .note-portee { margin: 0; padding: 0 2px 4px; font-size: 13px; line-height: 1.4; }
 </style>

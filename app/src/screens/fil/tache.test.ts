@@ -7,7 +7,7 @@ import { horloge } from '../../data/temps.svelte.ts';
 import { ajouterTache } from '../../data/actions/taches.ts';
 import { blocsDuJour } from '../../data/requetes.ts';
 import { choixMensuels, construireRegle, DELAIS_RAPPEL, lireDuree, optionsDuree, optionsJours, prevuParDefaut, projetEnCours, rappelsDe, repartirRappels, repetitionDe, reglerRepetition, resume, texteJours, unionMesures, type MetriqueSource } from './tache.ts';
-import { modifierOccurrence, modifierSerie, modifierSuivantes } from './edition.ts';
+import { changeLaSerie, modifierOccurrence, modifierSerie, modifierSuivantes } from './edition.ts';
 import { disposer } from './disposition.ts';
 
 const M = (cle: string, type: MetriqueSource['type'], nom: string, unite = '', cible: number | null = null, periode_cible: MetriqueSource['periode_cible'] = 'jour'): MetriqueSource => ({ cle, type, nom, unite, cible, periode_cible, options: null });
@@ -156,5 +156,21 @@ describe('formulaire simplifié', () => {
     const plus = (j: string, n: number) => new Date(Date.parse(j + 'T00:00:00Z') + n * 86400000).toISOString().slice(0, 10);
     expect(optionsJours('2026-10-12', '2026-10-14', plus)).toHaveLength(8);
     expect(optionsJours('2026-10-12', '2026-12-01', plus).at(-1)).toBe('2026-12-01');
+  });
+});
+
+describe('modifier une tâche : ce qui concerne toute la série', () => {
+  const avant = { titre: 'Projets personnels', projetId: null, regle: { frequence: 'quotidien', debut: '2026-11-20', fin: { type: 'aucune' } }, alarme: false, rappelsAvant: [], sousProjetIds: [], attendus: [] };
+  it('l’heure, la durée et le rappel ne changent pas la série ; le nom, le projet, la répétition, si', () => {
+    expect(changeLaSerie(avant, { ...avant })).toBe(false);
+    expect(changeLaSerie(avant, { ...avant, titre: '  Projets personnels  ' })).toBe(false);
+    expect(changeLaSerie(avant, { ...avant, regle: { fin: { type: 'aucune' }, debut: '2026-11-20', frequence: 'quotidien' } })).toBe(false); // clés rangées autrement
+    expect(changeLaSerie(avant, { ...avant, titre: 'Mes projets' })).toBe(true);
+    expect(changeLaSerie(avant, { ...avant, projetId: 'p1' })).toBe(true);
+    expect(changeLaSerie(avant, { ...avant, regle: { frequence: 'hebdo', debut: '2026-11-20', jours: [0, 1], fin: { type: 'aucune' } } })).toBe(true);
+    expect(changeLaSerie(avant, { ...avant, alarme: true })).toBe(true);
+    expect(changeLaSerie(avant, { ...avant, rappelsAvant: [120] })).toBe(true);
+    expect(changeLaSerie(avant, { ...avant, sousProjetIds: ['s1'] })).toBe(true);
+    expect(changeLaSerie(avant, { ...avant, attendus: [{ cle: 'temps', valeur: 3600 }] })).toBe(true);
   });
 });

@@ -102,6 +102,36 @@ test.describe('horaire type', () => {
   });
 });
 
+test.describe('renommer une tâche qui se répète', () => {
+  const jourToronto = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto' }).format(new Date());
+  const demain = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto' }).format(new Date(Date.now() + 86_400_000));
+  test.use({ storageState: { cookies: [], origins: [{ origin: 'http://localhost:4179', localStorage: [{ name: 'luther-life:invitation-rapport', value: JSON.stringify({ jour: jourToronto, jusqua: 'jour' }) }] }] } });
+
+  test('changer le nom : « Cette occurrence » n’est pas proposée (elle ne changerait pas le nom), « Toute la série » renomme tous les jours', async ({ page }) => {
+    await page.goto('/'); await page.waitForSelector('.grille');
+    await expect(page.locator('.bloc').first()).toBeVisible();
+    await page.locator('.bloc').filter({ hasText: 'Projets personnels' }).locator('.ouvrir').click();
+    await page.getByRole('link', { name: /Modifier la tâche/ }).click();
+    // Un changement d'heure seul : « Cette occurrence » reste proposée.
+    await page.getByLabel('Heure de début').selectOption('19');
+    await page.getByRole('button', { name: 'Enregistrer' }).click();
+    const choix = page.getByRole('dialog', { name: 'Modifier', exact: true });
+    await expect(choix.getByRole('button', { name: /Cette occurrence/ })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await page.getByLabel('Heure de début').selectOption('20');
+    // Le nom change : toute la tâche est concernée.
+    await page.getByLabel('Titre de la tâche').fill('Mes projets du soir');
+    await page.getByRole('button', { name: 'Enregistrer' }).click();
+    await expect(choix.getByText(/concerne toute la tâche/)).toBeVisible();
+    await expect(choix.getByRole('button', { name: /Cette occurrence/ })).toHaveCount(0);
+    await choix.getByRole('button', { name: /Toute la série/ }).click();
+    await expect(page.locator('.bloc').filter({ hasText: 'Mes projets du soir' })).toHaveCount(1);
+    await expect(page.locator('.bloc').filter({ hasText: 'Projets personnels' })).toHaveCount(0);
+    await page.goto(`/?jour=${demain}`); await page.waitForSelector('.grille');
+    await expect(page.locator('.bloc').filter({ hasText: 'Mes projets du soir' })).toHaveCount(1);
+  });
+});
+
 test('PDF de la journée : un vrai fichier avec créneaux, vides, recap, temps total et notes du jour', async ({ page }) => {
   await page.goto('/carnet');
   await page.getByLabel('Écrire une note libre').fill('Note du test PDF\nDeuxième ligne');
