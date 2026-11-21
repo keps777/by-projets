@@ -28,10 +28,12 @@
   const rempli = $derived(b.fait ? 100 : tourne ? remplissage(minuteurDe(b.occ), horloge.maintenant, (finMin - debutMin) * 60) * 100 : 0);
   const style = $derived(styleTeinte(b.couleur, theme.mode));
   const sous = $derived(`${b.projet?.nom ?? 'Sans projet'} · ${hm(debutMin)}–${hm(finMin)}${b.projet && pct != null ? ` · mois ${pct} %` : ''}`);
-  const montrerJouer = $derived(aujourdhui && !b.fait && hauteur >= 28);
+  /** Deux blocs ou plus se partagent la colonne : on garde la place pour le titre (le ▶ est dans le volet du bloc). */
+  const serre = $derived(cols > 1);
+  const montrerJouer = $derived(aujourdhui && !b.fait && hauteur >= 28 && !serre);
 </script>
 
-<div class="bloc" data-occ={b.occ.id} class:tourne class:estompe={passe && !b.fait && !tourne} class:haut class:selectionne class:souleve {style}
+<div class="bloc" data-occ={b.occ.id} class:tourne class:estompe={passe && !b.fait && !tourne} class:haut class:serre class:selectionne class:souleve {style}
   style:top="{debutMin * PX + 1}px" style:height="{hauteur}px"
   style:left="calc(56px + var(--zw) * {col} / {cols})" style:width="calc(var(--zw) / {cols} - {cols > 1 ? 2 : 0}px)">
   <span class="rempli" style:width="{rempli}%"></span>
@@ -83,6 +85,10 @@
   .haut .ouvrir { padding: 9px 4px 9px 10px; align-items: flex-start; }
   .cercle { flex: none; width: 18px; height: 18px; border-radius: 9px; border: 2px solid var(--c); display: flex; align-items: center; justify-content: center; color: var(--c-sur); }
   .haut .cercle { margin-top: 1px; }
+  .serre .ouvrir { padding: 0 3px 0 6px; gap: 5px; }
+  .serre.haut .ouvrir { padding: 8px 3px 8px 6px; }
+  .serre .cercle { width: 13px; height: 13px; border-width: 2px; }
+  .serre .titre-bloc { font-size: 12px; }
   .cercle.fait { background: var(--c); }
   .textes { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
   .titre-bloc { font-size: 14px; font-weight: 600; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
