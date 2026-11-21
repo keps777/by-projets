@@ -176,3 +176,61 @@ export function texteVersHtml(texte: string): string {
   const lignes = texte.replace(/\r\n?/g, '\n').split('\n');
   return lignes.map((l) => (l.trim() ? `<p>${echapper(l)}</p>` : '<p><br></p>')).join('');
 }
+
+// ------------------------------------------------------------------ structure d'une note (PDF)
+
+export interface Segment { texte: string; gras?: boolean; italique?: boolean; souligne?: boolean; barre?: boolean; lien?: string }
+export interface ItemListe { segments: Segment[]; niveau: number }
+export type BlocNote =
+  | { type: 'p' | 'h1' | 'h2' | 'h3' | 'citation'; segments: Segment[] }
+  | { type: 'liste'; ordonnee: boolean; items: ItemListe[] }
+  | { type: 'sep' }
+  | { type: 'media'; id: string; media: TypeMedia };
+
+function segmentsDe(noeud: Node, style: Omit<Segment, 'texte'> = {}): Segment[] {
+  const res: Segment[] = [];
+  for (const n of Array.from(noeud.childNodes)) {
+    if (n.nodeType === 3) { const t = n.textContent ?? ''; if (t) res.push({ texte: t, ...style }); continue; }
+    if (n.nodeType !== 1) continue;
+    const el = n as HTMLElement;
+    const t = el.tagName.toLowerCase();
+    if (t === 'br') res.push({ texte: '\n', ...style });
+    else if (t === 'strong') res.push(...segmentsDe(el, { ...style, gras: true }));
+    else if (t === 'em') res.push(...segmentsDe(el, { ...style, italique: true }));
+    else if (t === 'u') res.push(...segmentsDe(el, { ...style, souligne: true }));
+    else if (t === 's') res.push(...segmentsDe(el, { ...style, barre: true }));
+    else if (t === 'a') res.push(...segmentsDe(el, { ...style, lien: el.getAttribute('href') ?? undefined, souligne: true }));
+    else if (t !== 'ul' && t !== 'ol') res.push(...segmentsDe(el, style));
+  }
+  return res;
+}
+
+function itemsDe(liste: Element, niveau: number): ItemListe[] {
+  const res: ItemListe[] = [];
+  for (const li of Array.from(liste.children)) {
+    if (li.tagName === 'LI') {
+      const propres = Array.from(li.childNodes).filter((c) => !(c.nodeType === 1 && ['UL', 'OL'].includes(c.nodeName)));
+      const segs = segmentsDe({ childNodes: propres } as unknown as Node);
+      if (segs.some((s) => s.texte.trim())) res.push({ segments: segs, niveau });
+      for (const sous of Array.from(li.children).filter((c) => ['UL', 'OL'].includes(c.tagName))) res.push(...itemsDe(sous, niveau + 1));
+    } else if (['UL', 'OL'].includes(li.tagName)) res.push(...itemsDe(li, niveau + 1));
+  }
+  return res;
+}
+
+/** Les blocs d'une note riche (HTML nettoyé), prêts à être dessinés : paragraphes et titres en segments mis en forme, listes, séparateurs, médias. */
+export function blocsDeNote(html: string | null | undefined): BlocNote[] {
+  const res: BlocNote[] = [];
+  for (const el of Array.from(racine(nettoyer(html)).children)) {
+    const t = el.tagName.toLowerCase();
+    if (t === 'p' || t === 'h1' || t === 'h2' || t === 'h3') res.push({ type: t, segments: segmentsDe(el) });
+    else if (t === 'blockquote') res.push({ type: 'citation', segments: segmentsDe(el) });
+    else if (t === 'ul' || t === 'ol') res.push({ type: 'liste', ordonnee: t === 'ol', items: itemsDe(el, 0) });
+    else if (t === 'hr') res.push({ type: 'sep' });
+    else if (t === 'figure') {
+      const m = el.querySelector('[data-media]');
+      if (m) res.push({ type: 'media', id: m.getAttribute('data-media')!, media: m.tagName.toLowerCase() === 'video' ? 'video' : 'image' });
+    }
+  }
+  return res;
+}

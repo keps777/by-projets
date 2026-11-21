@@ -28,6 +28,8 @@
   import { cap, dateLongue, dureeMin } from './format.ts';
   import { jourValide } from './navigation.ts';
   import { documentJournee, exportable, htmlJournee } from './pdf-journee.ts';
+  import { chargerImages, genererPdf } from './pdf-journee-fichier.ts';
+  import VoletPdf from './VoletPdf.svelte';
   import { imprimer } from '../rapports/pdf.ts';
 
   let { params: _ = {} }: { params?: Record<string, string> } = $props();
@@ -151,10 +153,21 @@
     if (corriger) selId = b.occ.id;
     else dire(`« ${b.titre} » cochée · ${dureeMin(Math.round(sec / 60))}`);
   }
-  /** PDF de la journée : recap des projets en cours, puis les créneaux effectués (vides compris), dans la boîte d'impression. */
-  function exporterPdf() {
+  /** PDF de la journée : un vrai fichier (recap des projets en cours, créneaux effectués vides compris, notes du jour), proposé au partage ou au téléchargement. */
+  let pdf = $state<File | null>(null);
+  let pdfEnCours = $state(false);
+  async function exporterPdf() {
+    if (pdfEnCours) return;
     if (!exportable(jour, aujourdhui)) { dire('Rien à exporter pour un jour à venir'); return; }
-    if (!imprimer(htmlJournee(documentJournee(jour, aujourdhui)))) dire('PDF indisponible sur cet appareil');
+    pdfEnCours = true;
+    const doc = documentJournee(jour, aujourdhui);
+    try {
+      const blob = await genererPdf(doc, await chargerImages(doc));
+      pdf = new File([blob], `Ma-journee-${jour}.pdf`, { type: 'application/pdf' });
+    } catch {
+      // Secours : la boîte d'impression du navigateur.
+      if (!imprimer(htmlJournee(doc))) dire('PDF indisponible sur cet appareil');
+    } finally { pdfEnCours = false; }
   }
   function pasEncore() { if (confirmId) refuses.add(confirmId); confirmId = null; }
 </script>
@@ -199,7 +212,7 @@
       <button type="button" class:actif={vue === 'calendrier'} aria-pressed={vue === 'calendrier'} onclick={() => choisirVue('calendrier')}>Calendrier</button>
       <span class="points" aria-hidden="true"><i class:actif={vue === 'calendrier'}></i><i class:actif={vue === 'tableau'}></i></span>
       <button type="button" class:actif={vue === 'tableau'} aria-pressed={vue === 'tableau'} onclick={() => choisirVue('tableau')}>Tableau</button>
-      <button type="button" class="pdf" aria-label="Exporter la journée en PDF" onclick={exporterPdf}><Icone nom="rapports" taille={18} trait={2} /></button>
+      <button type="button" class="pdf" class:occupe={pdfEnCours} aria-busy={pdfEnCours} aria-label="Exporter la journée en PDF" onclick={exporterPdf}><Icone nom="rapports" taille={18} trait={2} /></button>
     </div>
     <BandeauJours {jour} {aujourdhui} onchoisir={choisirJour} />
   </div>
@@ -220,6 +233,8 @@
 
   <BarreOnglets filet={false} />
 </div>
+
+<VoletPdf fichier={pdf} onfermer={() => (pdf = null)} />
 
 <VoletBloc b={selBloc} {aujourdhui} onfermer={() => (selId = null)} onjouer={basculerMinuteur} onterminer={(id) => (confirmId = id)} onreporter={(id) => (reportId = id)} />
 
@@ -258,6 +273,7 @@
   .bascule button { min-height: 36px; padding: 0 10px; border: 0; background: transparent; color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
   .bascule button.actif { color: var(--texte); }
   .bascule button.pdf { position: relative; width: 36px; padding: 0; display: flex; align-items: center; justify-content: center; margin-left: 4px; }
+  .bascule button.pdf.occupe { opacity: 0.45; }
   .bascule button.pdf::after { content: ''; position: absolute; inset: -4px; }
   .points { display: inline-flex; gap: 5px; }
   .points i { width: 6px; height: 6px; border-radius: 3px; background: var(--surface-2); }

@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, expect, it } from 'vitest';
-import { estVide, mediasDe, nettoyer, texteBrut, texteVersHtml } from './riche.ts';
+import { blocsDeNote, estVide, mediasDe, nettoyer, texteBrut, texteVersHtml } from './riche.ts';
 
 const ID = '3f1c2b8e-9a47-4d65-8b1e-0c7a5d2e9f41';
 const ID2 = 'aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee';
@@ -75,4 +75,21 @@ describe('du texte brut au HTML', () => {
     expect(texteVersHtml('Un <b>texte</b> & plus\n\nDeuxième')).toBe('<p>Un &lt;b&gt;texte&lt;/b&gt; &amp; plus</p><p><br></p><p>Deuxième</p>');
     expect(nettoyer(texteVersHtml('a\nb'))).toBe('<p>a</p><p>b</p>');
   });
+});
+
+describe('structure d’une note pour le PDF', () => {
+  it('titres, paragraphes mis en forme, listes imbriquées, citation, séparateur, médias', () => {
+    const b = blocsDeNote(`<h1>Titre</h1><p>Un <strong>gras</strong> et <em>italique</em><br>ligne <a href="https://x.org">lien</a></p><ul><li>a<ul><li>b</li></ul></li></ul><ol><li>un</li></ol><blockquote>Parole</blockquote><hr><figure><img data-media="${ID}"></figure><figure><video data-media="${ID2}"></video></figure>`);
+    expect(b.map((x) => x.type)).toEqual(['h1', 'p', 'liste', 'liste', 'citation', 'sep', 'media', 'media']);
+    const p = b[1] as { segments: { texte: string; gras?: boolean; italique?: boolean; lien?: string; souligne?: boolean }[] };
+    expect(p.segments.map((s) => s.texte)).toEqual(['Un ', 'gras', ' et ', 'italique', '\n', 'ligne ', 'lien']);
+    expect(p.segments[1].gras).toBe(true);
+    expect(p.segments[3].italique).toBe(true);
+    expect(p.segments[6]).toMatchObject({ lien: 'https://x.org', souligne: true });
+    expect(b[2]).toMatchObject({ type: 'liste', ordonnee: false });
+    expect((b[2] as { items: { niveau: number }[] }).items.map((i) => i.niveau)).toEqual([0, 1]);
+    expect(b[6]).toEqual({ type: 'media', id: ID, media: 'image' });
+    expect(b[7]).toEqual({ type: 'media', id: ID2, media: 'video' });
+  });
+  it('contenu vide', () => { expect(blocsDeNote('')).toEqual([]); });
 });

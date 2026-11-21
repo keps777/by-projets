@@ -8,6 +8,9 @@ import { couleurRubrique } from '../../ui/couleurs.ts';
 import { cap, dateLongue, formatValeur } from './format.ts';
 import { abreger, mesuresDuBloc, progressionsDe, tempsDuBloc } from './vue-blocs.ts';
 import { projetEnCours } from './tache.ts';
+import { notesDuJour } from '../../data/actions/notes.ts';
+import { blocsDeNote, type BlocNote } from '../carnet/riche.ts';
+import { provenance } from '../carnet/carnet.ts';
 
 /** « 1h12 », « 14h05 », « 0h00 » : l'heure comme on la dit, sans zéro devant les heures. */
 export const hmCourt = (min: number) => `${Math.floor(min / 60)}h${String(Math.round(min) % 60).padStart(2, '0')}`;
@@ -44,7 +47,9 @@ export function construireLignes(entrees: EntreeFait[], finJournee: number): Lig
 
 export interface BarreProjet { nom: string; pct: number | null; texte?: string; sousProjets?: BarreProjet[] }
 export interface GroupeRubrique { nom: string; couleur: string; projets: BarreProjet[] }
-export interface DocumentJournee { titre: string; sousTitre: string; nom: string; moyenne: number | null; groupes: GroupeRubrique[]; lignes: LigneJournee[]; nbFaits: number; totalSecondes: number; genereLe: string }
+/** Une note du Carnet de ce jour : numéro, provenance (« Note libre · 14:03 ») et contenu en blocs. */
+export interface NotePdf { numero: number; provenance: string; blocs: BlocNote[] }
+export interface DocumentJournee { notes: NotePdf[]; titre: string; sousTitre: string; nom: string; moyenne: number | null; groupes: GroupeRubrique[]; lignes: LigneJournee[]; nbFaits: number; totalSecondes: number; genereLe: string }
 
 /** Le document d'un jour : avancement des projets en cours (à la date de ce jour) et créneaux effectués. */
 export function documentJournee(jour: Jour, aujourdhui: Jour, maintenantMin = maintenantLocal().minutes): DocumentJournee {
@@ -72,8 +77,12 @@ export function documentJournee(jour: Jour, aujourdhui: Jour, maintenantMin = ma
     }
     if (projets.length) groupes.push({ nom: r.nom, couleur: couleurRubrique(r.couleur, 'jour'), projets });
   }
+  const notes: NotePdf[] = notesDuJour(jour).map((n) => ({
+    numero: n.numero, provenance: provenance(n),
+    blocs: n.contenu ? blocsDeNote(n.contenu) : n.texte.split('\n').map((l): BlocNote => ({ type: 'p', segments: [{ texte: l }] }))
+  }));
   return {
-    titre: `Ma journée · ${cap(dateLongue(jour))}`, sousTitre: 'Créneaux effectués et avancement des projets en cours', nom: `${profil()?.prenom ?? 'Luther'} Life`,
+    notes, titre: `Ma journée · ${cap(dateLongue(jour))}`, sousTitre: 'Créneaux effectués et avancement des projets en cours', nom: `${profil()?.prenom ?? 'Luther'} Life`,
     moyenne: moyennePct(toutes), groupes, lignes: construireLignes(entrees, jour === aujourdhui ? maintenantMin : 1440),
     nbFaits: entrees.length, totalSecondes: entrees.reduce((t, e) => t + e.secondes, 0), genereLe: new Date().toLocaleString('fr-CA', { dateStyle: 'long', timeStyle: 'short' })
   };
@@ -86,6 +95,19 @@ function barre(b: BarreProjet, couleur: string, fine = false): string {
   const p = bornePct(b.pct);
   return `<div class="proj${fine ? ' sp' : ''}"><div class="ligne"><span class="nom">${echapper(b.nom)}${b.texte ? ` <small>· ${echapper(b.texte)}</small>` : ''}</span><b>${b.pct == null ? '—' : `${p} %`}</b></div>`
     + `<div class="piste"><div class="rempli" style="width:${p}%;background:${echapper(couleur)}"></div></div></div>`;
+}
+
+const texteDe = (segs: { texte: string }[]) => echapper(segs.map((x) => x.texte).join('')).replace(/\n/g, '<br>');
+function notesHtml(notes: NotePdf[]): string {
+  if (!notes.length) return '';
+  const corps = notes.map((n) => `<section class="note"><div class="ref"><b>n° ${n.numero}</b> · ${echapper(n.provenance)}</div>` + n.blocs.map((b) => {
+    if (b.type === 'sep') return '<hr>';
+    if (b.type === 'media') return `<p class="med">[${b.media === 'video' ? 'Vidéo' : 'Image'}]</p>`;
+    if (b.type === 'liste') return `<${b.ordonnee ? 'ol' : 'ul'}>${b.items.map((i) => `<li>${texteDe(i.segments)}</li>`).join('')}</${b.ordonnee ? 'ol' : 'ul'}>`;
+    const tag = b.type === 'citation' ? 'blockquote' : b.type;
+    return `<${tag}>${texteDe(b.segments)}</${tag}>`;
+  }).join('') + '</section>').join('');
+  return `<h2>Notes du jour</h2>${corps}`;
 }
 
 /** Page HTML autonome et imprimable (A4) : l'avancement des projets en cours, puis le tableau des créneaux. */
@@ -129,6 +151,12 @@ tr.vide td { color: #8a8c93; font-style: italic; background: #f7f6f3; }
 tr.vide td.c { font-style: normal; }
 tfoot td { border-top: 2px solid #16171b; border-bottom: 0; padding-top: 7pt; font-size: 11pt; font-weight: 600; }
 tfoot td b { font-size: 13pt; }
+section.note { break-inside: avoid; margin-bottom: 9pt; }
+.ref { font-size: 8.5pt; color: #5e6068; margin-bottom: 2pt; }
+section.note p, section.note ul, section.note ol, section.note blockquote { margin: 0 0 4pt; }
+section.note h1 { font-size: 14pt; } section.note h2 { font-size: 12pt; margin: 4pt 0 2pt; letter-spacing: 0; text-transform: none; color: #16171b; }
+section.note blockquote { border-left: 2pt solid #c9c7c0; padding-left: 8pt; color: #5e6068; font-style: italic; }
+.med { color: #8a8c93; font-style: italic; }
 footer { margin-top: 12pt; font-size: 8pt; color: #8a8c93; }
 </style></head><body>
 <header><div><h1>${echapper(doc.titre)}</h1><div class="sous">${echapper(doc.sousTitre)} · ${echapper(doc.nom)}</div></div>
@@ -137,6 +165,7 @@ ${recap ? `<h2>Avancement des projets en cours</h2>${moyenne}${recap}` : ''}
 <h2>Créneaux effectués</h2>
 <table><thead><tr><th>Créneau</th><th>Activité effectuée</th><th>Projets en cours impliqués</th></tr></thead><tbody>${lignes}</tbody>
 <tfoot><tr><td colspan="2">Temps total de travail investi sur 24 h</td><td><b>${doc.totalSecondes ? echapper(dureeCourte(doc.totalSecondes)) : '0 min'}</b></td></tr></tfoot></table>
+${notesHtml(doc.notes)}
 <footer>Luther Life · généré le ${echapper(doc.genereLe)}</footer>
 </body></html>`;
 }

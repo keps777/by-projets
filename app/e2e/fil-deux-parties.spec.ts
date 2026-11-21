@@ -102,23 +102,42 @@ test.describe('horaire type', () => {
   });
 });
 
-test('PDF de la journée : créneaux faits, vides, recap et temps total', async ({ page }) => {
+test('PDF de la journée : un vrai fichier avec créneaux, vides, recap, temps total et notes du jour', async ({ page }) => {
+  await page.goto('/carnet');
+  await page.getByLabel('Écrire une note libre').fill('Note du test PDF\nDeuxième ligne');
+  await page.getByRole('button', { name: 'Ajouter au Carnet' }).click();
+  await expect(page.getByText('Note du test PDF')).toBeVisible();
   await page.goto('/tache/nouvelle?sans-projet=1&heure=60');
   await page.getByLabel('Titre de la tâche').fill('Prière seule');
   await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
   await page.locator('.bloc').filter({ hasText: 'Prière seule' }).locator('.ouvrir').click();
   await page.getByRole('button', { name: /Marquer comme fait|Terminer/ }).first().click();
   await page.keyboard.press('Escape');
+
   await page.getByRole('button', { name: 'Exporter la journée en PDF' }).click();
-  const cadre = page.locator('iframe[aria-hidden="true"]');
-  await expect(cadre).toHaveCount(1);
-  const html = await page.frames().at(-1)!.content();
-  expect(html).toContain('Avancement des projets en cours');
-  expect(html).toContain('<th>Créneau</th><th>Activité effectuée</th><th>Projets en cours impliqués</th>');
-  expect(html).toContain('1h00–1h45');
-  expect(html).toContain('45 min de Prière seule');
-  // Le vide du début de journée va de 0h00 à 0h59 (ou jusqu'à « maintenant » si l'on est avant 1 h du matin).
-  expect(html).toMatch(/<tr class="vide"><td class="c">0h00–\d+h\d\d<\/td><td>vide<\/td><td>--<\/td><\/tr>/);
-  expect(html).toContain('Temps total de travail investi sur 24 h');
-  await import('node:fs').then((fs) => fs.writeFileSync('/tmp/pdf-journee.html', html));
+  const volet = page.getByRole('dialog', { name: 'Ma journée en PDF' });
+  await expect(volet).toBeVisible();
+  const [telechargement] = await Promise.all([
+    page.waitForEvent('download'),
+    volet.getByRole('button', { name: /Télécharger le PDF/ }).click()
+  ]);
+  expect(telechargement.suggestedFilename()).toMatch(/^Ma-journee-\d{4}-\d{2}-\d{2}\.pdf$/);
+  const chemin = '/tmp/ma-journee-e2e.pdf';
+  await telechargement.saveAs(chemin);
+  const fs = await import('node:fs');
+  expect(fs.readFileSync(chemin).subarray(0, 5).toString('latin1')).toBe('%PDF-');
+  // Le texte du PDF (si pdftotext est disponible) : tableau, total, notes.
+  const { execFileSync } = await import('node:child_process');
+  let texte = '';
+  try { texte = execFileSync('pdftotext', ['-layout', chemin, '-'], { encoding: 'utf8' }); } catch { /* pas d'outil : le contrôle du texte est sauté */ }
+  if (texte) {
+    expect(texte).toContain('CRÉNEAUX EFFECTUÉS');
+    expect(texte).toContain('1h00–1h45');
+    expect(texte).toContain('45 min de Prière seule');
+    expect(texte).toMatch(/0h00–\d+h\d\d\s+vide/);
+    expect(texte).toContain('Temps total de travail investi sur 24 h');
+    expect(texte).toContain('NOTES DU JOUR');
+    expect(texte).toContain('Note du test PDF');
+    expect(texte).toContain('Deuxième ligne');
+  }
 });

@@ -53,6 +53,7 @@ describe('lignes du tableau', () => {
 
 describe('page imprimable', () => {
   const doc: DocumentJournee = {
+    notes: [{ numero: 12, provenance: 'Note libre · 14:03', blocs: [{ type: 'h2', segments: [{ texte: 'Culte' }] }, { type: 'p', segments: [{ texte: 'Un <mot>', gras: true }] }, { type: 'liste', ordonnee: false, items: [{ segments: [{ texte: 'un' }], niveau: 0 }] }, { type: 'media', id: 'x', media: 'image' }] }],
     titre: 'Ma journée · Vendredi 20 novembre', sousTitre: 'Créneaux effectués', nom: 'Luther Life', moyenne: 75, nbFaits: 1, totalSecondes: 3660, genereLe: '20 novembre 2026',
     groupes: [{ nom: 'Relation avec Dieu', couleur: '#8E7CFF', projets: [{ nom: 'Prière', pct: 75, sousProjets: [{ nom: '3H de prière par jour', pct: 60, texte: '36 h sur 62 h' }] }] }],
     lignes: construireLignes([E(h(1, 12), h(2, 13), 'Prière <seule>', ['Projet "A"'])], h(3))
@@ -69,6 +70,14 @@ describe('page imprimable', () => {
     expect(html).toContain('<tr class="vide"><td class="c">2h14–3h00</td><td>vide</td><td>--</td></tr>');
     expect(html.indexOf('Temps total de travail investi sur 24 h')).toBeGreaterThan(html.indexOf('</tbody>'));
     expect(html).toContain('<b>1h01</b></td></tr></tfoot>');
+  });
+  it('notes du jour : numéro, provenance, titres, paragraphes, listes, médias signalés', () => {
+    expect(html).toContain('<h2>Notes du jour</h2>');
+    expect(html).toContain('<b>n° 12</b> · Note libre · 14:03');
+    expect(html).toContain('<h2>Culte</h2>');
+    expect(html).toContain('<p>Un &lt;mot&gt;</p>');
+    expect(html).toContain('<ul><li>un</li></ul>');
+    expect(html).toContain('[Image]');
   });
   it('échappe le contenu saisi', () => {
     expect(html).not.toContain('Prière <seule>');
