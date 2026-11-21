@@ -133,7 +133,8 @@
   .rang > select { flex: 1; max-width: 230px; text-align-last: right; }
   .nombre { width: 90px; text-align: center; }
   select:focus-visible, input:focus-visible, .puce:focus-visible { outline: 2px solid var(--c, var(--accent)); outline-offset: 1px; }
-  .fin-heure { text-align: right; margin: -8px 0 4px; font-size: 12px; }
+  .rang:has(+ .fin-heure) { border-bottom: 0; min-height: 48px; }
+  .fin-heure { text-align: right; margin: 0; padding: 0 0 10px; border-bottom: 1px solid var(--ligne); font-size: 12px; }
   .petit { font-size: 12px; }
   .fort { font-size: 13px; font-weight: 600; }
   .semaine { display: flex; flex-direction: column; gap: 8px; padding: 4px 0 12px; border-bottom: 1px solid var(--ligne); }

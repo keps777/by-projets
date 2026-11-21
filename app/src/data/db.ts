@@ -4,6 +4,8 @@ import { TABLES, type LignesParTable, type NomTable } from '@core/lignes.ts';
 
 export interface Sortie { cle: string; table: NomTable; id: string; at: number }
 export interface Meta { cle: string; valeur: unknown }
+/** Un média du Carnet (image ou vidéo) gardé sur l'appareil ; `envoye` = 1 une fois dans le bucket du serveur (toujours 0 en mode local). */
+export interface MediaLocal { id: string; type: 'image' | 'video'; mime: string; taille: number; blob: Blob; envoye: 0 | 1; cree: number }
 
 const INDEX: Record<NomTable, string> = {
   profils: 'id',
@@ -28,6 +30,7 @@ const INDEX: Record<NomTable, string> = {
 export class BaseLocale extends Dexie {
   meta!: Table<Meta, string>;
   sortie!: Table<Sortie, string>;
+  media!: Table<MediaLocal, string>;
 
   constructor(nom: string) {
     super(nom);
@@ -35,6 +38,8 @@ export class BaseLocale extends Dexie {
     const { notes, ...v1 } = INDEX;
     this.version(1).stores({ meta: 'cle', sortie: 'cle, table', ...v1 });
     this.version(2).stores({ notes });
+    // Version 3 : les médias du Carnet (images et vidéos des notes riches).
+    this.version(3).stores({ media: 'id, envoye, cree' });
   }
 
   lignes<K extends NomTable>(t: K): Table<LignesParTable[K], string> { return this.table(t) as Table<LignesParTable[K], string>; }

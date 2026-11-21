@@ -181,6 +181,8 @@ export interface Note extends Base {
   projet_id: string | null;
   /** Titre du bloc, copié pour garder la référence même si le bloc disparaît. */
   source_label: string | null;
+  /** Note riche : HTML nettoyé (paragraphes, titres, listes, liens, images et vidéos par identifiant). Absent pour une note simple ; `texte` en garde l'équivalent en texte brut. */
+  contenu?: string | null;
 }
 
 export const TABLES = [

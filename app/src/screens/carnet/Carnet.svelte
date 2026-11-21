@@ -4,7 +4,9 @@
   import { cubicOut } from 'svelte/easing';
   import { magasin } from '../../data/magasin.svelte.ts';
   import { aujourdhui as jourCourant } from '../../data/temps.svelte.ts';
-  import { ajouterNote, modifierNote, notesDuJour, pagesDuCarnet, supprimerNote, toutesLesNotes } from '../../data/actions/notes.ts';
+  import { ajouterNote, ajouterNoteRiche, modifierNote, modifierNoteRiche, notesDuJour, pagesDuCarnet, supprimerNote, toutesLesNotes } from '../../data/actions/notes.ts';
+  import { etatMedias } from '../../data/media.svelte.ts';
+  import { modeServeur } from '../../data/config.ts';
   import { routeur } from '../../routeur.svelte.ts';
   import { dire } from '../../ui/toast.svelte.ts';
   import EcranPage from '../../ui/EcranPage.svelte';
@@ -13,6 +15,10 @@
   import { cap, dateLongue } from '../fil/format.ts';
   import { jourValide } from '../fil/navigation.ts';
   import { joursDePages, numerosDePage, pageVoisine, provenance } from './carnet.ts';
+  import EditeurRiche from './EditeurRiche.svelte';
+  import { hydraterAction } from './hydrater.ts';
+  import { nettoyer, texteVersHtml } from './riche.ts';
+  import './riche.css';
 
   let { params: _ = {} }: { params?: Record<string, string> } = $props();
 
@@ -49,6 +55,28 @@
   $effect(() => {
     if (champ && untrack(() => routeur.params.get('ecrire')) === '1') { champ.focus(); routeur.definir('ecrire', null); }
   });
+
+  // Note riche : l'éditeur plein écran (nouvelle note, correction d'une note riche, ou mise en forme d'une note simple).
+  const CLE_BROUILLON = 'luther-life:brouillon-note-riche';
+  let editeurOuvert = $state(false);
+  let noteRicheId = $state<string | null>(null);
+  let htmlInitial = $state('');
+  function ouvrirEditeur(id: string | null = null, html = '') { noteRicheId = id; htmlInitial = html; editeurOuvert = true; }
+  const noteRiche = $derived(noteRicheId ? magasin.trouver('notes', noteRicheId) : undefined);
+  function enregistrerRiche(html: string) {
+    if (noteRicheId) { modifierNoteRiche(noteRicheId, html); dire('Note enregistrée'); }
+    else {
+      const n = ajouterNoteRiche(html, { origine: 'libre' });
+      if (n) { if (jour !== aujourdhui) ouvrirPage(aujourdhui); dire(`Note n° ${n.numero} ajoutée au Carnet`); }
+    }
+    editeurOuvert = false; enEdition = null;
+  }
+  function supprimerRiche() { if (noteRicheId) { supprimerNote(noteRicheId); dire('Note supprimée · son numéro reste vacant'); } editeurOuvert = false; }
+  $effect(() => {
+    if (untrack(() => routeur.params.get('riche')) === '1') { ouvrirEditeur(); routeur.definir('riche', null); }
+  });
+  /** Un toucher sur une note riche l'ouvre, sauf sur un lien ou une vidéo. */
+  function toucherRiche(e: MouseEvent, id: string, contenu: string) { if (!(e.target as Element).closest('a, video')) ouvrirEditeur(id, contenu); }
 
   // Corriger ou supprimer une note.
   let enEdition = $state<string | null>(null);
@@ -91,6 +119,7 @@
 
 {#snippet pied()}
   <div class="ecrire">
+    <button type="button" class="riche-btn" aria-label="Note riche : paragraphes, photos, vidéos" onclick={() => ouvrirEditeur()}><Icone nom="crayon" taille={19} /></button>
     <textarea bind:this={champ} bind:value={brouillon} rows="1" placeholder="Écrire une note libre…" aria-label="Écrire une note libre" oninput={grandir}></textarea>
     <button type="button" class="envoyer" disabled={!brouillon.trim()} aria-label="Ajouter au Carnet" onclick={ecrire}><Icone nom="suivant" taille={20} trait={2.4} /></button>
   </div>
@@ -101,6 +130,7 @@
     <button type="button" class="rond" aria-label="Retour" onclick={() => routeur.retour('/')}><Icone nom="retour" taille={18} trait={2.2} /></button>
     <h1 class="titre">Carnet</h1>
     <span class="compte mono muted">{total} note{total > 1 ? 's' : ''}</span>
+    {#if modeServeur && etatMedias.attente > 0}<span class="envoi mono muted" role="status" title={etatMedias.erreur ?? ''}>↑ {etatMedias.attente} média{etatMedias.attente > 1 ? 's' : ''}</span>{/if}
     <button type="button" class="rond" aria-label="Sommaire des pages" onclick={() => (sommaireOuvert = true)}><Icone nom="fil" taille={19} /></button>
   </header>
 
@@ -126,11 +156,18 @@
                     <textarea class="edition" bind:value={texteEdition} rows="4" aria-label="Texte de la note {n.numero}"></textarea>
                     <div class="actions-edition">
                       <button type="button" class="ok" onclick={enregistrer}>Enregistrer</button>
+                      <button type="button" class="neutre" onclick={() => ouvrirEditeur(n.id, texteVersHtml(texteEdition))}>Mettre en forme</button>
                       <button type="button" class="neutre" onclick={() => (enEdition = null)}>Annuler</button>
                       <button type="button" class="danger" onclick={retirer} aria-label="Supprimer la note {n.numero}"><Icone nom="poubelle" taille={17} /></button>
                     </div>
                   {:else}
-                    <button type="button" class="texte" onclick={() => editer(n.id, n.texte)} aria-label="Note {n.numero} : {n.texte}. Toucher pour modifier">{n.texte}</button>
+                    {#if n.contenu}
+                      <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+                      <div class="riche contenu" use:hydraterAction={n.contenu} onclick={(e) => toucherRiche(e, n.id, n.contenu!)}>{@html nettoyer(n.contenu)}</div>
+                      <button type="button" class="modifier-riche" aria-label="Modifier la note n° {n.numero}" onclick={() => ouvrirEditeur(n.id, n.contenu!)}><Icone nom="crayon" taille={14} /> Modifier</button>
+                    {:else}
+                      <button type="button" class="texte" onclick={() => editer(n.id, n.texte)} aria-label="Note {n.numero} : {n.texte}. Toucher pour modifier">{n.texte}</button>
+                    {/if}
                     {#if lienBloc(n.occurrence_id)}
                       <a class="ref" href={lienBloc(n.occurrence_id)}><Icone nom="focus" taille={13} />{provenance(n)}</a>
                     {:else}
@@ -151,6 +188,9 @@
     {/key}
   </div>
 </EcranPage>
+
+<EditeurRiche ouvert={editeurOuvert} html={htmlInitial} titre={noteRiche ? `Note n° ${noteRiche.numero}` : 'Nouvelle note'} brouillonCle={noteRicheId ? null : CLE_BROUILLON}
+  onenregistrer={enregistrerRiche} onfermer={() => (editeurOuvert = false)} onsupprimer={noteRicheId ? supprimerRiche : undefined} />
 
 <Volet ouvert={sommaireOuvert} onfermer={() => (sommaireOuvert = false)} label="Sommaire du Carnet">
   <h2 class="titre">Sommaire</h2>
@@ -198,6 +238,10 @@
   .blanche .muted { font-size: 14px; max-width: 28ch; }
   .ecrire { display: flex; align-items: flex-end; gap: 8px; }
   .ecrire textarea { flex: 1; min-width: 0; font: 16px/1.4 var(--police); background: var(--surface); border: 1px solid var(--ligne); border-radius: 20px; padding: 12px 16px; resize: none; max-height: 140px; }
+  .riche-btn { flex: none; width: 46px; height: 46px; border-radius: 23px; border: 1px solid var(--ligne); background: var(--surface); color: var(--texte); display: inline-flex; align-items: center; justify-content: center; }
+  .contenu { cursor: text; }
+  .modifier-riche { all: unset; box-sizing: border-box; align-self: flex-start; display: inline-flex; align-items: center; gap: 5px; min-height: 32px; font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer; }
+  .envoi { font-size: 11px; }
   .ecrire textarea:focus { outline: none; border-color: var(--accent); }
   .envoyer { flex: none; width: 46px; height: 46px; border-radius: 23px; border: 0; background: var(--accent); color: var(--accent-texte); display: inline-flex; align-items: center; justify-content: center; }
   .envoyer:disabled { opacity: 0.35; }

@@ -1,10 +1,15 @@
 // Synchronisation : on envoie d'abord les écritures locales (parents avant enfants), puis on récupère ce qui a changé.
+import { envoyerMedias } from './media.svelte.ts';
 import { TABLES, type NomTable } from '@core/lignes.ts';
 import { magasin } from './magasin.svelte.ts';
 import { supabase } from './supabase.ts';
 import { modeServeur } from './config.ts';
 
 const LOT = 200;
+const CLE_A_REPOUSSER = 'luther-life:contenu-a-repousser';
+/** Vrai quand le serveur a refusé la colonne `contenu` pendant cette session (réessayé à chaque ouverture de l'app). */
+let sansContenu = false;
+const corpsPour = (t: string, l: unknown[]): unknown[] => (t === 'notes' && sansContenu ? (l as Record<string, unknown>[]).map(({ contenu: _, ...r }) => r) : l);
 const PAGE = 500;
 /**
  * Le serveur date chaque ligne au DÉBUT de sa transaction (now()) : une transaction lente peut donc rendre visible,
@@ -35,6 +40,10 @@ class Synchro {
   demarrer(): void {
     if (!modeServeur || typeof window === 'undefined' || this.#demarre) return;
     this.#demarre = true;
+    // Des notes riches sont parties sans leur mise en forme : on les renvoie (le serveur les prend s'il a maintenant la colonne).
+    let repousser = false;
+    try { repousser = localStorage.getItem(CLE_A_REPOUSSER) === '1'; localStorage.removeItem(CLE_A_REPOUSSER); } catch { /* sans stockage */ }
+    if (repousser) for (const n of magasin.lignes.notes) if (n.contenu) magasin.ecrire('notes', { id: n.id, contenu: n.contenu });
     magasin.surChangement(() => this.programmer());
     window.addEventListener('online', () => void this.synchroniser());
     window.addEventListener('offline', () => { this.etat = 'hors_ligne'; });
@@ -63,6 +72,7 @@ class Synchro {
       this.etat = refus.length ? 'erreur' : magasin.enAttente > 0 ? 'en_attente' : 'synchronise';
       this.derniere = new Date().toISOString();
       this.message = refus.length ? `${refus.length} modification(s) refusée(s) par le serveur : ${refus[0]}` : null;
+      void envoyerMedias();
       const apres = this.#apres.splice(0);
       for (const fn of apres) fn();
     } catch (e) {
@@ -88,7 +98,13 @@ class Synchro {
         const rows = (await db.lignes(t).bulkGet(lot.map((s) => s.id))).filter(Boolean) as { id: string; updated_at: string }[];
         if (!rows.length) { await db.sortie.bulkDelete(lot.map((s) => s.cle)); continue; }
         const envoyer = async (l: typeof rows) => {
-          const { data, error } = await sb.from(t).upsert(l as never[], { onConflict: 'id' }).select('id, updated_at');
+          let { data, error } = await sb.from(t).upsert(corpsPour(t, l) as never[], { onConflict: 'id' }).select('id, updated_at');
+          // Serveur sans la colonne `contenu` (migration du Carnet riche pas encore appliquée) : les notes partent en texte brut, la mise en forme reste sur l'appareil.
+          if (error && t === 'notes' && /contenu/.test(error.message) && !sansContenu) {
+            sansContenu = true;
+            try { localStorage.setItem(CLE_A_REPOUSSER, '1'); } catch { /* sans stockage */ }
+            ({ data, error } = await sb.from(t).upsert(corpsPour(t, l) as never[], { onConflict: 'id' }).select('id, updated_at'));
+          }
           if (error && estReseau(error)) throw new Error(`${t} : ${error.message}`);
           return error ? { error } : { data: (data ?? []) as { id: string; updated_at: string }[] };
         };

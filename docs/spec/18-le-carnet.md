@@ -16,4 +16,14 @@ Le Carnet est **un seul livre** où se retrouvent toutes les notes de l'utilisat
 9. **Vie privée** : comme toutes les données, les notes sont à l'utilisateur seul (règles d'accès par ligne), jamais envoyées ailleurs ; aucun e-mail.
 
 ## Données
-Table `notes` : `jour`, `texte`, `numero`, `origine`, `heure` (minutes depuis minuit, heure locale), `occurrence_id` (facultatif), `projet_id` (facultatif), `source_label` (titre du bloc, copié).
+Table `notes` : `jour`, `texte`, `numero`, `origine`, `heure` (minutes depuis minuit, heure locale), `occurrence_id` (facultatif), `projet_id` (facultatif), `source_label` (titre du bloc, copié), `contenu` (HTML nettoyé d'une note riche, facultatif).
+
+## Notes riches : texte mis en forme, images et vidéos (nov. 2026)
+
+Une note du Carnet peut s'écrire comme dans un document : **paragraphes**, titres, gras, italique, souligné, listes à puces ou numérotées, citation, séparateur, liens, **images** et **vidéos** placées dans le texte.
+
+- **Éditeur** : le bouton « Note riche » (à droite du champ d'écriture du Carnet) ouvre un éditeur plein écran avec une barre d'outils : Titre · Sous-titre · Paragraphe, **G**ras, *I*talique, Souligné, liste à puces, liste numérotée, citation, séparateur, lien, **Image**, **Vidéo**, annuler / rétablir. Entrée crée un paragraphe ; coller du texte garde les paragraphes (la mise en forme venue d'ailleurs est nettoyée). Enregistrer ajoute la note au livre (numéro suivant) ; toucher une note riche la rouvre dans l'éditeur ; le champ d'écriture rapide reste pour une note d'une ligne.
+- **Images** : choisies dans la photothèque ou prises à l'appareil ; réduites à 1600 px au plus (JPEG) avant d'être gardées. **Vidéos** : choisies dans la photothèque, 50 Mo au plus par fichier, lues dans la note.
+- **Données** : `notes.contenu` (HTML **nettoyé** : p, titres, listes, citation, séparateur, liens http(s), gras/italique/souligné, `figure` avec `img` ou `video`) ; `notes.texte` garde le **texte brut** équivalent (recherche, export, aperçu). Les médias sont référencés par identifiant (`data-media`) et gardés sur l'appareil (IndexedDB) ; avec le serveur, ils sont envoyés dans le bucket privé **`carnet`** (dossier = identifiant de l'utilisateur) dès que le réseau le permet, et retéléchargés à la demande sur un autre appareil. Hors ligne, tout reste lisible et modifiable.
+- **Sécurité** : le HTML est nettoyé à l'écriture et à l'affichage (liste blanche de balises et d'attributs, aucun script, aucun style en ligne, liens `http(s)` seulement, `rel="noopener"`). Les médias ne sont lisibles que par leur propriétaire (règles d'accès du bucket).
+- **Hors périmètre** : tableaux, couleurs de texte, dessin, partage à d'autres personnes, transcodage des vidéos.
