@@ -27,6 +27,8 @@
   import { basculerMinuteur, occurrencesActives, statsJour } from './vue-blocs.ts';
   import { cap, dateLongue, dureeMin } from './format.ts';
   import { jourValide } from './navigation.ts';
+  import { documentJournee, exportable, htmlJournee } from './pdf-journee.ts';
+  import { imprimer } from '../rapports/pdf.ts';
 
   let { params: _ = {} }: { params?: Record<string, string> } = $props();
 
@@ -149,6 +151,11 @@
     if (corriger) selId = b.occ.id;
     else dire(`« ${b.titre} » cochée · ${dureeMin(Math.round(sec / 60))}`);
   }
+  /** PDF de la journée : recap des projets en cours, puis les créneaux effectués (vides compris), dans la boîte d'impression. */
+  function exporterPdf() {
+    if (!exportable(jour, aujourdhui)) { dire('Rien à exporter pour un jour à venir'); return; }
+    if (!imprimer(htmlJournee(documentJournee(jour, aujourdhui)))) dire('PDF indisponible sur cet appareil');
+  }
   function pasEncore() { if (confirmId) refuses.add(confirmId); confirmId = null; }
 </script>
 
@@ -192,6 +199,7 @@
       <button type="button" class:actif={vue === 'calendrier'} aria-pressed={vue === 'calendrier'} onclick={() => choisirVue('calendrier')}>Calendrier</button>
       <span class="points" aria-hidden="true"><i class:actif={vue === 'calendrier'}></i><i class:actif={vue === 'tableau'}></i></span>
       <button type="button" class:actif={vue === 'tableau'} aria-pressed={vue === 'tableau'} onclick={() => choisirVue('tableau')}>Tableau</button>
+      <button type="button" class="pdf" aria-label="Exporter la journée en PDF" onclick={exporterPdf}><Icone nom="rapports" taille={18} trait={2} /></button>
     </div>
     <BandeauJours {jour} {aujourdhui} onchoisir={choisirJour} />
   </div>
@@ -249,6 +257,8 @@
   .bascule { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 18px; }
   .bascule button { min-height: 36px; padding: 0 10px; border: 0; background: transparent; color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
   .bascule button.actif { color: var(--texte); }
+  .bascule button.pdf { position: relative; width: 36px; padding: 0; display: flex; align-items: center; justify-content: center; margin-left: 4px; }
+  .bascule button.pdf::after { content: ''; position: absolute; inset: -4px; }
   .points { display: inline-flex; gap: 5px; }
   .points i { width: 6px; height: 6px; border-radius: 3px; background: var(--surface-2); }
   .points i.actif { background: var(--texte); }
