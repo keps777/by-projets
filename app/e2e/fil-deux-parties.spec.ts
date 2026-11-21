@@ -117,7 +117,8 @@ test('PDF de la journée : créneaux faits, vides, recap et temps total', async 
   expect(html).toContain('<th>Créneau</th><th>Activité effectuée</th><th>Projets en cours impliqués</th>');
   expect(html).toContain('1h00–1h45');
   expect(html).toContain('45 min de Prière seule');
-  expect(html).toMatch(/<tr class="vide"><td class="c">0h00–0h59<\/td><td>vide<\/td><td>--<\/td><\/tr>/);
+  // Le vide du début de journée va de 0h00 à 0h59 (ou jusqu'à « maintenant » si l'on est avant 1 h du matin).
+  expect(html).toMatch(/<tr class="vide"><td class="c">0h00–\d+h\d\d<\/td><td>vide<\/td><td>--<\/td><\/tr>/);
   expect(html).toContain('Temps total de travail investi sur 24 h');
   await import('node:fs').then((fs) => fs.writeFileSync('/tmp/pdf-journee.html', html));
 });
