@@ -166,6 +166,12 @@ test('PDF de la journée : un vrai fichier avec créneaux, vides, recap, temps t
     expect(texte).toContain('45 min de Prière seule');
     expect(texte).toMatch(/0h00–\d+h\d\d\s+vide/);
     expect(texte).toContain('Temps total de travail investi sur 24 h');
+    // Le tableau de la journée d'abord, avec les métriques du jour à sa droite, puis le suivi des projets, puis les notes.
+    expect(texte).toContain('MÉTRIQUES DU JOUR');
+    expect(texte).toContain('SUIVI DES PROJETS EN COURS');
+    expect(texte.indexOf('CRÉNEAUX EFFECTUÉS')).toBeLessThan(texte.indexOf('SUIVI DES PROJETS EN COURS'));
+    expect(texte.indexOf('SUIVI DES PROJETS EN COURS')).toBeLessThan(texte.indexOf('NOTES DU JOUR'));
+    expect(texte.indexOf('MÉTRIQUES DU JOUR')).toBeLessThan(texte.indexOf('SUIVI DES PROJETS EN COURS'));
     expect(texte).toContain('NOTES DU JOUR');
     expect(texte).toContain('Note du test PDF');
     expect(texte).toContain('Deuxième ligne');

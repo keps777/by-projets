@@ -77,3 +77,13 @@ Un bouton **Exporter la journée en PDF** (icône à droite de « Calendrier · 
 - **Un vrai fichier PDF** : le bouton fabrique le PDF sur l'appareil (bibliothèque jsPDF, chargée seulement à l'export) et le propose par la **feuille de partage** du téléphone (Fichiers, Mail, WhatsApp…) ; sans partage de fichiers (ordinateur), il **se télécharge** (`Ma-journee-AAAA-MM-JJ.pdf`). La boîte d'impression n'est plus qu'un secours si la fabrication échoue : sur iPhone, imprimer depuis une app installée ne marche pas toujours.
 - **Notes du jour** : après le tableau, une section **« Notes du jour »** reprend les notes du Carnet de ce jour (n°, heure, provenance) avec leur **mise en forme** (titres, paragraphes, gras, italique, souligné, listes, citations, séparateurs, liens) et leurs **images** ; une vidéo est signalée « [Vidéo] ». Les notes simples sont mises en paragraphes.
 - Le PDF reste sur l'appareil : rien n'est envoyé ailleurs.
+
+### PDF de la journée : nouvelle mise en page (22 nov. 2026)
+
+Le PDF **commence par le tableau de la journée**, avec à sa **droite les métriques du jour** de l'onglet Rapports (RDQD, PA, etc.), puis le **suivi des projets**, puis les notes :
+1. **En-tête** : titre, date, temps total et nombre d'activités.
+2. **Tableau des créneaux** (Créneau · Activité effectuée · Projets en cours impliqués, vides compris, total « Temps total de travail investi sur 24 h » en bas du tableau), à gauche.
+3. **Métriques du jour** (colonne de droite, première page) : un encart avec « n / m points atteints », puis chaque point du rapport actif — pastille de sa rubrique, **code** (RDQD, PA…), mesure du jour (« 3h08/3h00 », « 7 ch./7 »), état (✓ Atteint · 75 % · À reprendre) et une jauge. Mêmes chiffres que l'onglet Rapports du jour. Si l'encart déborde la première page, la fin est résumée (« + n autres points »).
+4. **Suivi des projets, lisible d'un coup d'œil** (sous le tableau) : un **bandeau de synthèse** (anneau du pourcentage moyen, et le nombre de projets *dans le rythme*, *en léger retard*, *en retard*, *atteints*), puis, par rubrique, des **cartes en deux colonnes** : nom du projet, **gros pourcentage** et jauge **colorée selon l'état** (vert : dans le rythme ou atteint ; orange : léger retard ; rouge : en retard), avec un **repère** (trait) à l'endroit où l'on devrait être aujourd'hui ; dessous, ses sous-projets en cours (jauge fine, mesure « 36 h sur 62 h »). Une légende donne les couleurs et le repère.
+   - État d'un projet : *atteint* à 100 % ; sinon on compare au repère « où je devrais être » : écart de −2 points ou mieux = *dans le rythme*, jusqu'à −15 = *léger retard*, au-delà = *en retard* ; sans repère = neutre (gris).
+5. **Notes du jour** (comme avant), en dernier.

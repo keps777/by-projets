@@ -3,7 +3,7 @@
 import type { jsPDF } from 'jspdf';
 import { urlMedia } from '../../data/media.svelte.ts';
 import type { BlocNote, Segment } from '../carnet/riche.ts';
-import { dureeCourte, type BarreProjet, type DocumentJournee, type LigneJournee } from './pdf-journee.ts';
+import { dureeCourte, etatMetrique, LIBELLE_ETAT, type BarreProjet, type DocumentJournee, type EtatAvancement, type LigneJournee, type MetriqueJour } from './pdf-journee.ts';
 
 /** Une image de note, prête à être posée dans le PDF (JPEG réduit). */
 export interface ImagePdf { donnees: string; largeur: number; hauteur: number }
@@ -32,8 +32,16 @@ export function rgbDe(couleur: string): [number, number, number] {
 const LARGEUR = 210, HAUTEUR = 297, MARGE = 14, UTILE = LARGEUR - 2 * MARGE, BAS = HAUTEUR - 16;
 const ENCRE: [number, number, number] = [22, 23, 27], GRIS: [number, number, number] = [94, 96, 104], PALE: [number, number, number] = [138, 140, 147], FILET: [number, number, number] = [227, 225, 219], PISTE: [number, number, number] = [235, 233, 227];
 
+const VERT: [number, number, number] = [30, 127, 79], ORANGE: [number, number, number] = [217, 140, 20], ROUGE: [number, number, number] = [194, 54, 43];
+const COULEUR_ETAT: Record<EtatAvancement, [number, number, number]> = { atteint: VERT, rythme: VERT, leger: ORANGE, retard: ROUGE, neutre: PALE };
+const COULEUR_METRIQUE = { bon: VERT, moyen: ORANGE, mauvais: ROUGE, neutre: PALE } as const;
+/** Largeur du tableau quand l'encart des métriques est à sa droite (première page). */
+const LARGEUR_AVEC_METRIQUES = 118, ECART = 4;
+
 class Dessin {
   y = MARGE;
+  /** Largeur actuelle du tableau (réduite à côté de l'encart des métriques, pleine page ensuite). */
+  largeurTable = UTILE;
   constructor(readonly d: jsPDF) {}
 
   texteCouleur(c: [number, number, number]) { this.d.setTextColor(c[0], c[1], c[2]); }
@@ -45,95 +53,62 @@ class Dessin {
   /** Largeur du texte en mm (police et taille courantes). */
   largeur(t: string): number { return this.d.getTextWidth(versWinAnsi(t)); }
   mots(t: string, w: number): string[] { return this.d.splitTextToSize(versWinAnsi(t), w) as string[]; }
+  page(): number { return this.d.getCurrentPageInfo().pageNumber; }
 }
 
-function barre(g: Dessin, x: number, y: number, w: number, h: number, pct: number | null, couleur: [number, number, number]) {
+/** Jauge arrondie ; `repere` (%) : petit trait là où l'on devrait être aujourd'hui. */
+function barre(g: Dessin, x: number, y: number, w: number, h: number, pct: number | null, couleur: [number, number, number], repere: number | null = null) {
   g.fond(PISTE); g.d.roundedRect(x, y, w, h, h / 2, h / 2, 'F');
   const p = Math.max(0, Math.min(100, pct ?? 0));
   if (p > 0) { g.fond(couleur); g.d.roundedRect(x, y, Math.max(h, (w * p) / 100), h, h / 2, h / 2, 'F'); }
-}
-
-function ligneProjet(g: Dessin, p: BarreProjet, couleur: [number, number, number], fin: boolean) {
-  const retrait = fin ? 5 : 0;
-  g.place(fin ? 7.5 : 9.5);
-  g.police(fin ? 8.5 : 10, 'normal');
-  g.texteCouleur(fin ? GRIS : ENCRE);
-  const nom = versWinAnsi(p.nom + (p.texte ? ` · ${p.texte}` : ''));
-  const pct = p.pct == null ? '--' : `${Math.round(p.pct)} %`;
-  g.d.setFont('helvetica', fin ? 'normal' : 'bold');
-  const wPct = g.largeur(pct) + 2;
-  g.d.setFont('helvetica', 'normal');
-  g.d.text(g.mots(nom, UTILE - retrait - wPct)[0] ?? '', MARGE + retrait, g.y + 3.2);
-  g.d.setFont('helvetica', 'bold');
-  g.d.text(pct, MARGE + UTILE, g.y + 3.2, { align: 'right' });
-  barre(g, MARGE + retrait, g.y + 4.6, UTILE - retrait, fin ? 1.4 : 2.2, p.pct, couleur);
-  g.y += fin ? 7 : 9;
-}
-
-function recap(g: Dessin, doc: DocumentJournee) {
-  if (!doc.groupes.length) return;
-  g.place(30);
-  g.police(8, 'bold'); g.texteCouleur(GRIS);
-  g.d.text('AVANCEMENT DES PROJETS EN COURS', MARGE, g.y + 3);
-  g.y += 6;
-  if (doc.moyenne != null) {
-    g.police(10, 'normal'); g.texteCouleur(ENCRE);
-    g.d.text('Avancement moyen des projets en cours', MARGE, g.y + 3.5);
-    g.police(13, 'bold');
-    g.d.text(`${Math.round(doc.moyenne)} %`, MARGE + UTILE, g.y + 4, { align: 'right' });
-    barre(g, MARGE, g.y + 6, UTILE, 3.4, doc.moyenne, ENCRE);
-    g.y += 13;
-  }
-  for (const groupe of doc.groupes) {
-    const c = rgbDe(groupe.couleur);
-    g.place(16);
-    g.fond(c); g.d.circle(MARGE + 1.4, g.y + 2.4, 1.3, 'F');
-    g.police(10, 'bold'); g.texteCouleur(ENCRE);
-    g.d.text(versWinAnsi(groupe.nom), MARGE + 5, g.y + 3.2);
-    g.y += 6;
-    for (const p of groupe.projets) { ligneProjet(g, p, c, false); for (const s of p.sousProjets ?? []) ligneProjet(g, s, c, true); }
-    g.y += 1.5;
+  if (repere != null && repere > 0 && repere < 100) {
+    const rx = x + (w * repere) / 100;
+    g.trait(ENCRE, 0.45); g.d.line(rx, y - 0.9, rx, y + h + 0.9);
   }
 }
 
-const COL = { creneau: 31, activite: 82, projets: UTILE - 31 - 82 };
+
+// ------------------------------------------------------------------ tableau de la journée (à gauche) et métriques du jour (à droite)
+
+const colonnes = (w: number) => { const creneau = w < 150 ? 25 : 31; const activite = Math.round((w - creneau) * 0.55); return { creneau, activite, projets: w - creneau - activite }; };
 
 function enteteTableau(g: Dessin) {
+  const c = colonnes(g.largeurTable);
   g.police(7.5, 'bold'); g.texteCouleur(GRIS);
   g.d.text('CRÉNEAU', MARGE + 1.5, g.y + 3.6);
-  g.d.text('ACTIVITÉ EFFECTUÉE', MARGE + COL.creneau + 1.5, g.y + 3.6);
-  g.d.text('PROJETS EN COURS IMPLIQUÉS', MARGE + COL.creneau + COL.activite + 1.5, g.y + 3.6);
-  g.trait(ENCRE, 0.45); g.d.line(MARGE, g.y + 5.4, MARGE + UTILE, g.y + 5.4);
+  g.d.text('ACTIVITÉ EFFECTUÉE', MARGE + c.creneau + 1.5, g.y + 3.6);
+  g.d.text(g.largeurTable < 150 ? 'PROJETS EN COURS' : 'PROJETS EN COURS IMPLIQUÉS', MARGE + c.creneau + c.activite + 1.5, g.y + 3.6);
+  g.trait(ENCRE, 0.45); g.d.line(MARGE, g.y + 5.4, MARGE + g.largeurTable, g.y + 5.4);
   g.y += 6;
 }
 
-function ligneTableau(g: Dessin, l: LigneJournee) {
+function ligneTableau(g: Dessin, l: LigneJournee): void {
+  const c = colonnes(g.largeurTable);
   const vide = l.type === 'vide';
   g.police(9.5, vide ? 'italic' : 'bold');
-  const act = g.mots(l.activite, COL.activite - 3);
+  const act = g.mots(l.activite, c.activite - 3);
   g.police(9.5, 'normal');
-  const proj = g.mots(l.projets, COL.projets - 3);
+  const proj = g.mots(l.projets, c.projets - 3);
   g.police(8, 'normal');
-  const detail = l.detail.flatMap((d) => g.mots(d, COL.activite - 3));
+  const detail = l.detail.flatMap((d) => g.mots(d, c.activite - 3));
   const h = Math.max(act.length * 4.4 + detail.length * 3.7, proj.length * 4.4) + 3.6;
-  if (g.place(h)) enteteTableau(g);
-  if (vide) { g.fond([246, 245, 241]); g.d.rect(MARGE, g.y, UTILE, h, 'F'); }
+  if (g.place(h)) { g.largeurTable = UTILE; enteteTableau(g); return ligneTableau(g, l); } // page suivante : le tableau reprend toute la largeur
+  if (vide) { g.fond([246, 245, 241]); g.d.rect(MARGE, g.y, g.largeurTable, h, 'F'); }
   const y0 = g.y + 4.4;
-  g.police(9, 'normal'); g.texteCouleur(vide ? PALE : ENCRE);
-  g.d.setFont('courier', 'normal'); g.d.setFontSize(9);
+  g.texteCouleur(vide ? PALE : ENCRE);
+  g.d.setFont('courier', 'normal'); g.d.setFontSize(g.largeurTable < 150 ? 8.2 : 9);
   g.d.text(versWinAnsi(l.creneau), MARGE + 1.5, y0);
   g.police(9.5, vide ? 'italic' : 'bold'); g.texteCouleur(vide ? PALE : ENCRE);
-  act.forEach((t, i) => g.d.text(t, MARGE + COL.creneau + 1.5, y0 + i * 4.4));
+  act.forEach((t, i) => g.d.text(t, MARGE + c.creneau + 1.5, y0 + i * 4.4));
   g.police(8, 'normal'); g.texteCouleur(GRIS);
-  detail.forEach((t, i) => g.d.text(t, MARGE + COL.creneau + 1.5, y0 + act.length * 4.4 + i * 3.7 - 0.4));
+  detail.forEach((t, i) => g.d.text(t, MARGE + c.creneau + 1.5, y0 + act.length * 4.4 + i * 3.7 - 0.4));
   g.police(9.5, 'normal'); g.texteCouleur(vide ? PALE : ENCRE);
-  proj.forEach((t, i) => g.d.text(t, MARGE + COL.creneau + COL.activite + 1.5, y0 + i * 4.4));
-  g.trait(FILET, 0.2); g.d.line(MARGE, g.y + h, MARGE + UTILE, g.y + h);
+  proj.forEach((t, i) => g.d.text(t, MARGE + c.creneau + c.activite + 1.5, y0 + i * 4.4));
+  g.trait(FILET, 0.2); g.d.line(MARGE, g.y + h, MARGE + g.largeurTable, g.y + h);
   g.y += h;
 }
 
 function tableau(g: Dessin, doc: DocumentJournee) {
-  g.y += 2;
   g.place(30);
   g.police(8, 'bold'); g.texteCouleur(GRIS);
   g.d.text('CRÉNEAUX EFFECTUÉS', MARGE, g.y + 3);
@@ -141,12 +116,162 @@ function tableau(g: Dessin, doc: DocumentJournee) {
   enteteTableau(g);
   for (const l of doc.lignes) ligneTableau(g, l);
   g.place(11);
-  g.trait(ENCRE, 0.45); g.d.line(MARGE, g.y + 1, MARGE + UTILE, g.y + 1);
-  g.police(11, 'bold'); g.texteCouleur(ENCRE);
-  g.d.text('Temps total de travail investi sur 24 h', MARGE + 1.5, g.y + 7.5);
+  g.trait(ENCRE, 0.45); g.d.line(MARGE, g.y + 1, MARGE + g.largeurTable, g.y + 1);
+  g.police(g.largeurTable < 150 ? 9.5 : 11, 'bold'); g.texteCouleur(ENCRE);
+  g.d.text(g.mots('Temps total de travail investi sur 24 h', g.largeurTable - 30), MARGE + 1.5, g.y + 6.2);
   g.police(13, 'bold');
-  g.d.text(doc.totalSecondes ? dureeCourte(doc.totalSecondes) : '0 min', MARGE + UTILE - 1.5, g.y + 7.7, { align: 'right' });
+  g.d.text(doc.totalSecondes ? dureeCourte(doc.totalSecondes) : '0 min', MARGE + g.largeurTable - 1.5, g.y + 7.2, { align: 'right' });
   g.y += 12;
+}
+
+/** Encart « Métriques du jour » : les points du rapport (RDQD, PA…) avec leur mesure du jour, leur état et une jauge. Rend le bas de l'encart. */
+function metriques(g: Dessin, ms: MetriqueJour[], x: number, y0: number, w: number): number {
+  const interne = w - 7;
+  const mesure = (m: MetriqueJour) => { g.police(8, 'normal'); return g.mots(m.mesures, interne); };
+  const hauteurs = ms.map((m) => 5.6 + mesure(m).length * 3.5 + 4.2);
+  let dessinees = 0, total = 14;
+  for (const h of hauteurs) { if (y0 + total + h + 6 > BAS) break; total += h; dessinees++; }
+  const reste = ms.length - dessinees;
+  if (reste > 0) total += 6;
+  total += 2;
+  g.fond([247, 246, 243]); g.trait(FILET, 0.2); g.d.roundedRect(x, y0, w, total, 2.5, 2.5, 'FD');
+  const atteints = ms.filter((m) => m.ratio != null && m.ratio >= 1).length;
+  g.police(8, 'bold'); g.texteCouleur(GRIS);
+  g.d.text('MÉTRIQUES DU JOUR', x + 3.5, y0 + 5);
+  g.police(11, 'bold'); g.texteCouleur(ENCRE);
+  const score = `${atteints} / ${ms.length}`;
+  g.d.text(score, x + 3.5, y0 + 11);
+  const wScore = g.largeur(score);
+  g.police(8, 'normal'); g.texteCouleur(GRIS);
+  g.d.text('points atteints', x + 3.5 + wScore + 2, y0 + 11);
+  let y = y0 + 14;
+  for (let i = 0; i < dessinees; i++) {
+    const m = ms[i];
+    const e = etatMetrique(m.ratio);
+    const couleur = COULEUR_METRIQUE[e.classe];
+    g.fond(m.couleur ? rgbDe(m.couleur) : PALE); g.d.circle(x + 5, y + 2.5, 1.2, 'F');
+    g.police(9.5, 'bold'); g.texteCouleur(ENCRE);
+    g.d.text(versWinAnsi(m.code || m.libelle), x + 8, y + 3.2);
+    g.police(8.5, 'bold'); g.texteCouleur(couleur);
+    g.d.text(e.texte, x + w - 3.5, y + 3.2, { align: 'right' });
+    g.police(8, 'normal'); g.texteCouleur(GRIS);
+    mesure(m).forEach((t, k) => g.d.text(t, x + 8, y + 7 + k * 3.5));
+    const yb = y + 5.6 + mesure(m).length * 3.5 - 0.6;
+    barre(g, x + 3.5, yb, interne, 1.5, e.classe === 'bon' ? 100 : (m.ratio ?? 0) * 100, couleur);
+    y += hauteurs[i];
+  }
+  if (reste > 0) { g.police(8, 'italic'); g.texteCouleur(PALE); g.d.text(`+ ${reste} autre${reste > 1 ? 's' : ''} point${reste > 1 ? 's' : ''} : voir l’onglet Rapports`, x + 3.5, y + 3.5); }
+  return y0 + total;
+}
+
+// ------------------------------------------------------------------ suivi des projets, en cartes
+
+const TEXTE_ETAT = (p: BarreProjet) => (p.etat === 'atteint' ? 'Atteint' : p.trait != null && p.etat !== 'neutre' ? `${LIBELLE_ETAT[p.etat]} · repère ${Math.round(p.trait)} %` : LIBELLE_ETAT[p.etat]);
+
+/** Anneau de pourcentage (arc dessiné en petits traits à bouts ronds). */
+function anneau(g: Dessin, cx: number, cy: number, r: number, pct: number, couleur: [number, number, number]) {
+  g.trait(PISTE, 2.6); g.d.setLineCap('round'); g.d.circle(cx, cy, r, 'S');
+  const p = Math.max(0, Math.min(100, pct));
+  if (p > 0) {
+    g.trait(couleur, 2.6);
+    const fin = (p / 100) * 360, pas = 4;
+    for (let a = 0; a < fin; a += pas) {
+      const a1 = ((-90 + a) * Math.PI) / 180, a2 = ((-90 + Math.min(fin, a + pas + 0.5)) * Math.PI) / 180;
+      g.d.line(cx + r * Math.cos(a1), cy + r * Math.sin(a1), cx + r * Math.cos(a2), cy + r * Math.sin(a2));
+    }
+  }
+  g.d.setLineCap('butt');
+}
+
+function synthese(g: Dessin, doc: DocumentJournee) {
+  const h = 30;
+  g.place(h + 6);
+  g.fond([247, 246, 243]); g.trait(FILET, 0.2); g.d.roundedRect(MARGE, g.y, UTILE, h, 2.5, 2.5, 'FD');
+  const moy = doc.moyenne ?? 0;
+  anneau(g, MARGE + 15, g.y + h / 2, 8.5, moy, ENCRE);
+  g.police(13, 'bold'); g.texteCouleur(ENCRE);
+  g.d.text(doc.moyenne == null ? '--' : `${Math.round(moy)}%`, MARGE + 15, g.y + h / 2 + 1.8, { align: 'center' });
+  g.police(9, 'bold'); g.texteCouleur(ENCRE);
+  g.d.text('Avancement moyen des projets en cours', MARGE + 30, g.y + 8);
+  // Les états, en pastilles : le nombre de projets dans chaque cas.
+  const ordre: EtatAvancement[] = ['rythme', 'leger', 'retard', 'atteint', 'neutre'];
+  let x = MARGE + 30;
+  for (const e of ordre) {
+    const n = doc.etats[e];
+    if (!n) continue;
+    const c = COULEUR_ETAT[e];
+    g.fond(c); g.d.roundedRect(x, g.y + 11.5, 6.5, 6.5, 1.6, 1.6, 'F');
+    g.police(10, 'bold'); g.d.setTextColor(255, 255, 255);
+    g.d.text(String(n), x + 3.25, g.y + 16.2, { align: 'center' });
+    g.police(8.5, 'normal'); g.texteCouleur(ENCRE);
+    g.d.text(LIBELLE_ETAT[e], x + 8, g.y + 16.2);
+    x += 8 + g.largeur(LIBELLE_ETAT[e]) + 5;
+  }
+  g.police(7.5, 'normal'); g.texteCouleur(GRIS);
+  g.fond(ENCRE); g.d.rect(MARGE + 30, g.y + 22.5, 0.5, 3.6, 'F');
+  g.d.text('Repère : où l’on devrait être aujourd’hui.   Chaque carte : le projet, puis ses sous-projets en cours.', MARGE + 32, g.y + 25.3);
+  g.y += h + 5;
+}
+
+const LARGEUR_CARTE = (UTILE - 5) / 2;
+const hauteurCarte = (p: BarreProjet) => 18 + (p.sousProjets?.length ?? 0) * 6.8 + 1.5;
+
+function carte(g: Dessin, p: BarreProjet, x: number, y: number, h: number) {
+  const c = COULEUR_ETAT[p.etat];
+  g.fond([252, 251, 249]); g.trait(FILET, 0.25); g.d.roundedRect(x, y, LARGEUR_CARTE, h, 2.5, 2.5, 'FD');
+  g.fond(c); g.d.roundedRect(x, y, 1.6, h, 0.8, 0.8, 'F');
+  const pct = p.pct == null ? '--' : `${Math.round(p.pct)}%`;
+  g.police(17, 'bold'); g.texteCouleur(c);
+  g.d.text(pct, x + LARGEUR_CARTE - 3.5, y + 8, { align: 'right' });
+  const wPct = g.largeur(pct) + 4;
+  g.police(10, 'bold'); g.texteCouleur(ENCRE);
+  g.d.text(g.mots(p.nom, LARGEUR_CARTE - 8 - wPct)[0] ?? '', x + 4.5, y + 5.4);
+  g.police(8, 'bold'); g.texteCouleur(c);
+  g.d.text(versWinAnsi(TEXTE_ETAT(p)), x + 4.5, y + 10.1);
+  barre(g, x + 4.5, y + 12.6, LARGEUR_CARTE - 8, 3.4, p.pct, c, p.trait);
+  let yy = y + 18.5;
+  for (const s of p.sousProjets ?? []) {
+    const cs = COULEUR_ETAT[s.etat];
+    g.police(8, 'normal'); g.texteCouleur(GRIS);
+    const pcs = s.pct == null ? '--' : `${Math.round(s.pct)}%`;
+    g.d.setFont('helvetica', 'bold');
+    const wp = g.largeur(pcs) + 3;
+    g.d.setFont('helvetica', 'normal');
+    g.d.text(g.mots(s.nom + (s.texte ? ` · ${s.texte}` : ''), LARGEUR_CARTE - 9 - wp)[0] ?? '', x + 4.5, yy + 2.6);
+    g.d.setFont('helvetica', 'bold'); g.texteCouleur(cs);
+    g.d.text(pcs, x + LARGEUR_CARTE - 3.5, yy + 2.6, { align: 'right' });
+    barre(g, x + 4.5, yy + 3.9, LARGEUR_CARTE - 8, 1.5, s.pct, cs, s.trait);
+    yy += 6.8;
+  }
+}
+
+function suivi(g: Dessin, doc: DocumentJournee) {
+  if (!doc.groupes.length) return;
+  g.y += 3;
+  g.place(46);
+  g.police(8, 'bold'); g.texteCouleur(GRIS);
+  g.d.text('SUIVI DES PROJETS EN COURS', MARGE, g.y + 3);
+  g.trait(ENCRE, 0.45); g.d.line(MARGE, g.y + 5, MARGE + UTILE, g.y + 5);
+  g.y += 8;
+  synthese(g, doc);
+  for (const groupe of doc.groupes) {
+    const c = rgbDe(groupe.couleur);
+    g.place(12 + hauteurCarte(groupe.projets[0]));
+    g.fond(c); g.d.circle(MARGE + 1.6, g.y + 2.6, 1.5, 'F');
+    g.police(11, 'bold'); g.texteCouleur(ENCRE);
+    g.d.text(versWinAnsi(groupe.nom), MARGE + 5.5, g.y + 3.6);
+    const pcts = groupe.projets.map((p) => p.pct).filter((p): p is number => p != null);
+    if (pcts.length) { g.police(8.5, 'normal'); g.texteCouleur(GRIS); g.d.text(`moyenne ${Math.round(pcts.reduce((a, b) => a + b, 0) / pcts.length)} %`, MARGE + UTILE, g.y + 3.6, { align: 'right' }); }
+    g.y += 7;
+    for (let i = 0; i < groupe.projets.length; i += 2) {
+      const paire = groupe.projets.slice(i, i + 2);
+      const h = Math.max(...paire.map(hauteurCarte));
+      g.place(h + 3);
+      paire.forEach((p, k) => carte(g, p, MARGE + k * (LARGEUR_CARTE + 5), g.y, h));
+      g.y += h + 3;
+    }
+    g.y += 2;
+  }
 }
 
 // ------------------------------------------------------------------ notes mises en forme
@@ -289,8 +414,17 @@ export async function genererPdf(doc: DocumentJournee, images: Map<string, Image
   g.trait(ENCRE, 0.7); g.d.line(MARGE, g.y + 14.5, MARGE + UTILE, g.y + 14.5);
   g.y += 19;
 
-  recap(g, doc);
+  // Le tableau de la journée à gauche, les métriques du jour à droite (première page) ; puis le suivi des projets, puis les notes.
+  const y0 = g.y, page0 = g.page();
+  let basEncart = y0;
+  if (doc.metriques.length) {
+    g.largeurTable = LARGEUR_AVEC_METRIQUES;
+    basEncart = metriques(g, doc.metriques, MARGE + LARGEUR_AVEC_METRIQUES + ECART, y0, UTILE - LARGEUR_AVEC_METRIQUES - ECART);
+  }
   tableau(g, doc);
+  if (g.page() === page0) g.y = Math.max(g.y, basEncart + 3); // l'encart est plus haut que le tableau : on repart sous lui
+  g.largeurTable = UTILE;
+  suivi(g, doc);
   notes(g, doc, images);
 
   // Pied de page

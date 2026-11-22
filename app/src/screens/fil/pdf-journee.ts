@@ -2,7 +2,10 @@
 // La construction des lignes est pure (testée) ; `documentJournee` lit le magasin ; `htmlJournee` écrit la page A4 imprimée par `imprimer`.
 import { moyennePct } from '@core/progression.ts';
 import type { Jour } from '@core/types.ts';
-import { blocsDuJour, progressionProjet, projetsDe, rubriques, sousProjetsDe, profil } from '../../data/requetes.ts';
+import { blocsDuJour, progressionProjet, projetsDe, rubriques, sousProjetsDe, profil, traitProjet } from '../../data/requetes.ts';
+import { formaterMesures } from '@core/rapport.ts';
+import { calculerPoints, preparer } from '../rapports/calcul.ts';
+import { donneesRapport } from '../rapports/donnees.ts';
 import { maintenantLocal } from '../../data/temps.svelte.ts';
 import { couleurRubrique } from '../../ui/couleurs.ts';
 import { cap, dateLongue, formatValeur } from './format.ts';
@@ -45,11 +48,39 @@ export function construireLignes(entrees: EntreeFait[], finJournee: number): Lig
   return [...lignes, ...vides].sort((a, z) => a.debut - z.debut || (a.type === 'vide' ? -1 : 1) - (z.type === 'vide' ? -1 : 1));
 }
 
-export interface BarreProjet { nom: string; pct: number | null; texte?: string; sousProjets?: BarreProjet[] }
+/** État d'un projet : atteint, ou comparé au repère « où je devrais être » (voir spec §9). */
+export type EtatAvancement = 'atteint' | 'rythme' | 'leger' | 'retard' | 'neutre';
+export const LIBELLE_ETAT: Record<EtatAvancement, string> = { atteint: 'Atteint', rythme: 'Dans le rythme', leger: 'Léger retard', retard: 'En retard', neutre: 'Sans repère' };
+export function etatAvancement(pct: number | null, trait: number | null): EtatAvancement {
+  if (pct == null) return 'neutre';
+  if (pct >= 100) return 'atteint';
+  if (trait == null) return 'neutre';
+  const ecart = pct - trait;
+  return ecart >= -2 ? 'rythme' : ecart >= -15 ? 'leger' : 'retard';
+}
+
+export interface BarreProjet { nom: string; pct: number | null; /** Où l'on devrait être aujourd'hui (%), s'il y a un objectif. */ trait: number | null; etat: EtatAvancement; texte?: string; sousProjets?: BarreProjet[] }
 export interface GroupeRubrique { nom: string; couleur: string; projets: BarreProjet[] }
+/** Nombre de projets par état (les projets, pas leurs sous-projets). */
+export const compterEtats = (groupes: GroupeRubrique[]): Record<EtatAvancement, number> => {
+  const r: Record<EtatAvancement, number> = { atteint: 0, rythme: 0, leger: 0, retard: 0, neutre: 0 };
+  for (const g of groupes) for (const p of g.projets) r[p.etat]++;
+  return r;
+};
+
+/** Un point du rapport du jour (RDQD, PA…) : le même calcul que l'onglet Rapports. */
+export interface MetriqueJour { code: string; libelle: string; mesures: string; ratio: number | null; couleur: string | null }
+/** « ✓ Atteint », « 75 % », « À reprendre » : l'état d'un point du rapport. */
+export function etatMetrique(ratio: number | null): { texte: string; classe: 'bon' | 'moyen' | 'mauvais' | 'neutre' } {
+  if (ratio == null) return { texte: '--', classe: 'neutre' };
+  if (ratio >= 1) return { texte: 'Atteint', classe: 'bon' };
+  if (ratio > 0) return { texte: `${Math.round(ratio * 100)} %`, classe: 'moyen' };
+  return { texte: 'À reprendre', classe: 'mauvais' };
+}
+
 /** Une note du Carnet de ce jour : numéro, provenance (« Note libre · 14:03 ») et contenu en blocs. */
 export interface NotePdf { numero: number; provenance: string; blocs: BlocNote[] }
-export interface DocumentJournee { notes: NotePdf[]; titre: string; sousTitre: string; nom: string; moyenne: number | null; groupes: GroupeRubrique[]; lignes: LigneJournee[]; nbFaits: number; totalSecondes: number; genereLe: string }
+export interface DocumentJournee { metriques: MetriqueJour[]; etats: Record<EtatAvancement, number>; notes: NotePdf[]; titre: string; sousTitre: string; nom: string; moyenne: number | null; groupes: GroupeRubrique[]; lignes: LigneJournee[]; nbFaits: number; totalSecondes: number; genereLe: string }
 
 /** Le document d'un jour : avancement des projets en cours (à la date de ce jour) et créneaux effectués. */
 export function documentJournee(jour: Jour, aujourdhui: Jour, maintenantMin = maintenantLocal().minutes): DocumentJournee {
@@ -72,8 +103,9 @@ export function documentJournee(jour: Jour, aujourdhui: Jour, maintenantMin = ma
       const vivants = sps.filter((s) => s.statut === 'en_cours' || s.statut === 'a_valider');
       if (!vivants.length) continue; // rien à mesurer : un projet sans sous-projet en cours n'a pas d'avancement
       const pct = progressionProjet(p.id, mois, jour);
+      const trait = traitProjet(p.id, mois, jour);
       toutes.push(pct);
-      projets.push({ nom: p.nom, pct, sousProjets: progressionsDe(vivants, mois, jour).map((x) => ({ nom: x.sp.nom, pct: x.pct, texte: x.texte })) });
+      projets.push({ nom: p.nom, pct, trait, etat: etatAvancement(pct, trait), sousProjets: progressionsDe(vivants, mois, jour).map((x) => ({ nom: x.sp.nom, pct: x.pct, trait: x.trait, etat: etatAvancement(x.pct, x.trait), texte: x.texte })) });
     }
     if (projets.length) groupes.push({ nom: r.nom, couleur: couleurRubrique(r.couleur, 'jour'), projets });
   }
@@ -81,8 +113,10 @@ export function documentJournee(jour: Jour, aujourdhui: Jour, maintenantMin = ma
     numero: n.numero, provenance: provenance(n),
     blocs: n.contenu ? blocsDeNote(n.contenu) : n.texte.split('\n').map((l): BlocNote => ({ type: 'p', segments: [{ texte: l }] }))
   }));
+  const d = donneesRapport();
+  const metriques: MetriqueJour[] = calculerPoints(preparer(d), d, jour, jour).map((p) => ({ code: p.point.code, libelle: p.point.libelle, mesures: formaterMesures(p.mesures, 'fr') || '--', ratio: p.ratio, couleur: p.couleur }));
   return {
-    notes, titre: `Ma journée · ${cap(dateLongue(jour))}`, sousTitre: 'Créneaux effectués et avancement des projets en cours', nom: `${profil()?.prenom ?? 'Luther'} Life`,
+    metriques, etats: compterEtats(groupes), notes, titre: `Ma journée · ${cap(dateLongue(jour))}`, sousTitre: 'Créneaux effectués, métriques du jour et suivi des projets', nom: `${profil()?.prenom ?? 'Luther'} Life`,
     moyenne: moyennePct(toutes), groupes, lignes: construireLignes(entrees, jour === aujourdhui ? maintenantMin : 1440),
     nbFaits: entrees.length, totalSecondes: entrees.reduce((t, e) => t + e.secondes, 0), genereLe: new Date().toLocaleString('fr-CA', { dateStyle: 'long', timeStyle: 'short' })
   };
@@ -97,6 +131,11 @@ function barre(b: BarreProjet, couleur: string, fine = false): string {
     + `<div class="piste"><div class="rempli" style="width:${p}%;background:${echapper(couleur)}"></div></div></div>`;
 }
 
+function metriquesHtml(ms: MetriqueJour[]): string {
+  if (!ms.length) return '';
+  const lignes = ms.map((m) => { const e = etatMetrique(m.ratio); return `<tr><td><b>${echapper(m.code)}</b></td><td>${echapper(m.mesures)}</td><td class="etat ${e.classe}">${echapper(e.texte)}</td></tr>`; }).join('');
+  return `<h2>Métriques du jour</h2><table class="met"><tbody>${lignes}</tbody></table>`;
+}
 const texteDe = (segs: { texte: string }[]) => echapper(segs.map((x) => x.texte).join('')).replace(/\n/g, '<br>');
 function notesHtml(notes: NotePdf[]): string {
   if (!notes.length) return '';
@@ -149,6 +188,7 @@ tr { break-inside: avoid; }
 td.c { width: 78pt; font-family: ui-monospace, Menlo, monospace; font-size: 9.5pt; white-space: nowrap; }
 tr.vide td { color: #8a8c93; font-style: italic; background: #f7f6f3; }
 tr.vide td.c { font-style: normal; }
+table.met td { padding: 3pt 6pt; } td.etat { font-weight: 600; text-align: right; } .bon { color: #1e7f4f; } .moyen { color: #8a5300; } .mauvais { color: #c2362b; } .neutre { color: #8a8c93; }
 tfoot td { border-top: 2px solid #16171b; border-bottom: 0; padding-top: 7pt; font-size: 11pt; font-weight: 600; }
 tfoot td b { font-size: 13pt; }
 section.note { break-inside: avoid; margin-bottom: 9pt; }
@@ -161,10 +201,11 @@ footer { margin-top: 12pt; font-size: 8pt; color: #8a8c93; }
 </style></head><body>
 <header><div><h1>${echapper(doc.titre)}</h1><div class="sous">${echapper(doc.sousTitre)} · ${echapper(doc.nom)}</div></div>
 <div class="total"><b>${doc.totalSecondes ? echapper(dureeCourte(doc.totalSecondes)) : '0 min'}</b>${doc.nbFaits} activité${doc.nbFaits > 1 ? 's' : ''}</div></header>
-${recap ? `<h2>Avancement des projets en cours</h2>${moyenne}${recap}` : ''}
 <h2>Créneaux effectués</h2>
 <table><thead><tr><th>Créneau</th><th>Activité effectuée</th><th>Projets en cours impliqués</th></tr></thead><tbody>${lignes}</tbody>
 <tfoot><tr><td colspan="2">Temps total de travail investi sur 24 h</td><td><b>${doc.totalSecondes ? echapper(dureeCourte(doc.totalSecondes)) : '0 min'}</b></td></tr></tfoot></table>
+${metriquesHtml(doc.metriques)}
+${recap ? `<h2>Suivi des projets en cours</h2>${moyenne}${recap}` : ''}
 ${notesHtml(doc.notes)}
 <footer>Luther Life · généré le ${echapper(doc.genereLe)}</footer>
 </body></html>`;
