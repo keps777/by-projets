@@ -185,9 +185,9 @@ test('modifier l’heure de début et de fin d’un bloc fait', async ({ page })
   await page.locator('.bloc').filter({ hasText: 'Étude' }).locator('.ouvrir').click();
   await page.getByRole('button', { name: /Marquer comme fait/ }).click();
   const hr = page.getByRole('group', { name: 'Heures réelles' });
-  await hr.getByLabel('Fin · heure').selectOption('4'); // la fin d'abord : le début ne peut pas dépasser la fin
-  await hr.getByLabel('Fin · minutes').selectOption('30');
-  await hr.getByLabel('Début · heure').selectOption('2');
+  await hr.getByLabel('Fin réel · heure').selectOption('4'); // la fin d'abord : le début ne peut pas dépasser la fin
+  await hr.getByLabel('Fin réel · mn').selectOption('30');
+  await hr.getByLabel('Début réel · heure').selectOption('2');
   await expect(hr.getByText(/Temps passé : 2 h 30/)).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.locator('[data-fait]').filter({ hasText: 'Étude' }).locator('.ouvrir')).toHaveAttribute('aria-label', /02:00–04:30|2h00–4h30|02:00/);

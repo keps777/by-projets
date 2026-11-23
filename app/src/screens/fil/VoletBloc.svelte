@@ -163,8 +163,8 @@
           {#each [['Début', 'd'], ['Fin', 'f']] as [nom, k] (k)}
             {@const v = k === 'd' ? hd : hf}
             <div class="hr"><span>{nom}</span>
-              <select aria-label="{nom} · heure" value={Math.floor(v / 60)} onchange={(e) => { const n = +e.currentTarget.value * 60 + (v % 60); if (k === 'd') hd = Math.min(n, 1440); else hf = Math.min(n, 1440); appliquerHeures(); }}>{#each HEURES as h (h)}<option value={h}>{String(h).padStart(2, '0')} h</option>{/each}</select>
-              <select aria-label="{nom} · minutes" value={v % 60} onchange={(e) => { const n = Math.floor(v / 60) * 60 + +e.currentTarget.value; if (k === 'd') hd = n; else hf = n; appliquerHeures(); }}>{#each minutesDe(v) as m (m)}<option value={m}>{String(m).padStart(2, '0')}</option>{/each}</select>
+              <select aria-label="{nom} réel · heure" value={Math.floor(v / 60)} onchange={(e) => { const n = +e.currentTarget.value * 60 + (v % 60); if (k === 'd') hd = Math.min(n, 1440); else hf = Math.min(n, 1440); appliquerHeures(); }}>{#each HEURES as h (h)}<option value={h}>{String(h).padStart(2, '0')} h</option>{/each}</select>
+              <select aria-label="{nom} réel · mn" value={v % 60} onchange={(e) => { const n = Math.floor(v / 60) * 60 + +e.currentTarget.value; if (k === 'd') hd = n; else hf = n; appliquerHeures(); }}>{#each minutesDe(v) as m (m)}<option value={m}>{String(m).padStart(2, '0')}</option>{/each}</select>
             </div>
           {/each}
           <span class="muted pt">Temps passé : {dureeMin(Math.max(0, hf - hd))}</span>
