@@ -4,7 +4,8 @@ import { estCleTempsNomme } from '@core/metriques.ts';
 import { ecouleS, fixerEcoule, initial, lancer, pause, reprendre, terminer, type Minuteur } from '@core/minuteur.ts';
 import type { Occurrence, Saisie, SaisieValeur, SourceSaisie } from '@core/lignes.ts';
 import { magasin } from '../magasin.svelte.ts';
-import { horloge } from '../temps.svelte.ts';
+import { localVersUtc } from '@core/dates.ts';
+import { fuseau, horloge } from '../temps.svelte.ts';
 
 export const minuteurDe = (o: Occurrence): Minuteur => ({
   etat: o.etat === 'ignoree' ? 'prevue' : o.etat,
@@ -105,4 +106,15 @@ export function corrigerValeur(occId: string, cle: string, num: number): void {
   // Spec §8 : une saisie confirme le bloc. Un minuteur en cours reste maître de son état.
   const o = magasin.trouver('occurrences', occId);
   if (o && o.etat === 'prevue' && num > 0) magasin.ecrire('occurrences', { id: occId, etat: 'faite', terminee_a: new Date().toISOString() });
+}
+
+/** Corrige l'heure réelle de début et de fin d'un bloc fait (minutes locales du jour du bloc) ; le temps passé suit (fin − début). Rend faux si l'horaire est invalide. */
+export function corrigerHeuresReelles(occId: string, debutMin: number, finMin: number): boolean {
+  const o = magasin.trouver('occurrences', occId);
+  if (!o || o.etat !== 'faite' || !(finMin > debutMin) || debutMin < 0 || finMin > 1440) return false;
+  const tz = fuseau();
+  const d = localVersUtc(o.jour, debutMin, tz);
+  magasin.ecrire('occurrences', { id: occId, demarree_a: new Date(d).toISOString(), terminee_a: new Date(d + (finMin - debutMin) * 60000).toISOString(), pause_depuis: null, pause_cumulee_s: 0 });
+  saisirBloc(occId, [{ cle: 'temps', num: (finMin - debutMin) * 60 }]);
+  return true;
 }

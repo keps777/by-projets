@@ -67,3 +67,16 @@ describe('journée en deux parties : Prévu | Fait', () => {
     expect(valeurSaisie(id, 'temps')).toBe(45 * 60);
   });
 });
+
+describe('heures réelles corrigeables', () => {
+  beforeEach(async () => { await magasin.fermer(); await Dexie.delete('luther-life-00000000-0000-4000-8000-000000000001'); horloge.maintenant = NOW; await session.demarrer(); });
+  it('début et fin changent, le temps suit ; horaire invalide refusé', async () => {
+    const { corrigerHeuresReelles } = await import('./actions/blocs.ts');
+    const id = ajouterFait({ titre: 'Prière', projetId: null, jour: AUJ, debutMin: 60, dureeMin: 60 })!;
+    expect(corrigerHeuresReelles(id, 90, 200)).toBe(true);
+    const b = blocsDuJour(AUJ).find((x) => x.occ.id === id)!;
+    expect([b.reelDebutMin, b.reelFinMin]).toEqual([90, 200]);
+    expect(valeurSaisie(id, 'temps')).toBe(110 * 60);
+    expect(corrigerHeuresReelles(id, 300, 200)).toBe(false);
+  });
+});

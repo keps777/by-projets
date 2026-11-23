@@ -2,7 +2,7 @@
   import { nombre } from '@core/units.ts';
   import type { BlocVue } from '../../data/requetes.ts';
   import { horloge } from '../../data/temps.svelte.ts';
-  import { basculerFait, corrigerTempsEcoule, corrigerValeur, saisirBloc } from '../../data/actions/blocs.ts';
+  import { basculerFait, corrigerHeuresReelles, corrigerTempsEcoule, corrigerValeur, saisirBloc } from '../../data/actions/blocs.ts';
   import { theme } from '../../ui/theme.svelte.ts';
   import Volet from '../../ui/Volet.svelte';
   import ChampTemps from '../../ui/ChampTemps.svelte';
@@ -24,6 +24,12 @@
   const style = $derived(b ? styleTeinte(b.couleur, theme.mode) : '');
   const code = $derived(b ? codeDuProjet(b.projet?.id) : null);
   const totalS = $derived(b ? (b.finMin - b.debutMin) * 60 : 0);
+  // Heures réelles d'un bloc fait : début et fin corrigeables (menus heures / minutes).
+  let hd = $state(0), hf = $state(0);
+  $effect(() => { if (b?.fait) { hd = b.reelDebutMin; hf = b.reelFinMin ?? b.finMin; } });
+  const HEURES = Array.from({ length: 25 }, (_, i) => i), MIN5 = Array.from({ length: 12 }, (_, i) => i * 5);
+  const minutesDe = (v: number) => (v % 5 ? [...MIN5, v % 60].sort((a, c) => a - c) : MIN5);
+  function appliquerHeures() { if (b && !corrigerHeuresReelles(b.occ.id, hd, hf)) { hd = b.reelDebutMin; hf = b.reelFinMin ?? b.finMin; } }
   const tourne = $derived(!!b && (b.enCours || b.enPause));
   const ecoule = $derived(b ? tempsDuBloc(b, horloge.maintenant) : 0);
   const mesures = $derived(b ? mesuresDuBloc(b, horloge.maintenant) : []);
@@ -151,6 +157,19 @@
         {/each}
       </div>
 
+      {#if b.fait}
+        <div class="heures-reelles" role="group" aria-label="Heures réelles">
+          <span class="etiquette">Heures réelles · corrigeables</span>
+          {#each [['Début', 'd'], ['Fin', 'f']] as [nom, k] (k)}
+            {@const v = k === 'd' ? hd : hf}
+            <div class="hr"><span>{nom}</span>
+              <select aria-label="{nom} · heure" value={Math.floor(v / 60)} onchange={(e) => { const n = +e.currentTarget.value * 60 + (v % 60); if (k === 'd') hd = Math.min(n, 1440); else hf = Math.min(n, 1440); appliquerHeures(); }}>{#each HEURES as h (h)}<option value={h}>{String(h).padStart(2, '0')} h</option>{/each}</select>
+              <select aria-label="{nom} · minutes" value={v % 60} onchange={(e) => { const n = Math.floor(v / 60) * 60 + +e.currentTarget.value; if (k === 'd') hd = n; else hf = n; appliquerHeures(); }}>{#each minutesDe(v) as m (m)}<option value={m}>{String(m).padStart(2, '0')}</option>{/each}</select>
+            </div>
+          {/each}
+          <span class="muted pt">Temps passé : {dureeMin(Math.max(0, hf - hd))}</span>
+        </div>
+      {/if}
       <button type="button" class="fait" class:actif={b.fait} onclick={() => basculerFait(b.occ.id)}>
         <Icone nom="coche" taille={20} trait={2.8} />
         {b.fait ? 'Fait · toucher pour annuler' : 'Marquer comme fait'}
@@ -234,6 +253,7 @@
   .choix { display: flex; gap: 6px; flex-wrap: wrap; }
   .choix button { min-height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--ligne); background: transparent; font-size: 13px; font-weight: 600; }
   .choix button.actif { background: var(--c); border-color: var(--c); color: var(--c-sur); }
+  .heures-reelles { display: flex; flex-direction: column; gap: 8px; } .hr { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; } .hr span { flex: 1; } .hr select { height: 44px; border-radius: 12px; border: 1px solid var(--ligne); background: var(--surface-2); color: var(--texte); font-size: 16px; font-weight: 600; padding: 0 10px; } .pt { font-size: 12px; }
   .fait { height: 52px; border-radius: 18px; border: 0; background: var(--inverse); color: var(--inverse-texte); font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .fait.actif { background: var(--c); color: var(--c-sur); }
   .duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: -4px; }
