@@ -10,7 +10,7 @@ test.describe('notes riches du Carnet', () => {
   test('écrire des paragraphes, un titre, du gras, une liste, une image et une vidéo, puis tout retrouver après rechargement', async ({ page }) => {
     const erreurs: string[] = [];
     page.on('pageerror', (e) => erreurs.push(String(e)));
-    await page.goto('/carnet');
+    await page.goto('/carnet?vue=journal');
     await page.getByRole('button', { name: /Note riche/ }).click();
     const editeur = page.getByRole('dialog', { name: 'Nouvelle note' });
     await expect(editeur).toBeVisible();

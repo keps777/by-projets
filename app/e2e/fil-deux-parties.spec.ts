@@ -133,7 +133,7 @@ test.describe('renommer une tâche qui se répète', () => {
 });
 
 test('PDF de la journée : un vrai fichier avec créneaux, vides, recap, temps total et notes du jour', async ({ page }) => {
-  await page.goto('/carnet');
+  await page.goto('/carnet?vue=journal');
   await page.getByLabel('Écrire une note libre').fill('Note du test PDF\nDeuxième ligne');
   await page.getByRole('button', { name: 'Ajouter au Carnet' }).click();
   await expect(page.getByText('Note du test PDF')).toBeVisible();

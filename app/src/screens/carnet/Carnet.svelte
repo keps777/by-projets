@@ -5,6 +5,7 @@
   import { magasin } from '../../data/magasin.svelte.ts';
   import { aujourdhui as jourCourant } from '../../data/temps.svelte.ts';
   import { ajouterNote, ajouterNoteRiche, modifierNote, modifierNoteRiche, notesDuJour, pagesDuCarnet, supprimerNote, toutesLesNotes } from '../../data/actions/notes.ts';
+  import { estDeLivre } from '../../data/actions/livres.ts';
   import { etatMedias } from '../../data/media.svelte.ts';
   import { modeServeur } from '../../data/config.ts';
   import { routeur } from '../../routeur.svelte.ts';
@@ -24,9 +25,9 @@
 
   const aujourdhui = $derived(jourCourant());
   const jour = $derived(jourValide(routeur.params.get('jour')) ?? aujourdhui);
-  const toutes = $derived(toutesLesNotes());
+  const toutes = $derived(toutesLesNotes().filter((n) => !estDeLivre(n)));
   const jours = $derived(joursDePages(toutes, aujourdhui));
-  const notes = $derived(notesDuJour(jour));
+  const notes = $derived(notesDuJour(jour).filter((n) => !estDeLivre(n)));
   const precedente = $derived(pageVoisine(jours, jour, -1));
   const suivante = $derived(pageVoisine(jours, jour, 1));
   const sommaire = $derived(pagesDuCarnet());
