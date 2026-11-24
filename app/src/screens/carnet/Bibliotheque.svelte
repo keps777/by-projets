@@ -54,24 +54,39 @@
   }
   $effect(() => { void contenuLivre; if (lecteur) { mesurer(); setTimeout(mesurer, 300); } });
   const aller = (p: number) => lecteur?.scrollTo({ left: (Math.max(1, Math.min(nbPages, p)) - 1) * lecteur.clientWidth, behavior: 'smooth' });
+  let papier = $state((() => { try { return localStorage.getItem('luther-life:fond-livre') === 'papier'; } catch { return false; } })());
+  const basculerFond = () => { papier = !papier; try { localStorage.setItem('luther-life:fond-livre', papier ? 'papier' : 'noir'); } catch { /* ignoré */ } };
+  let depart: { x: number; y: number } | null = null;
+  function glisseDebut(e: TouchEvent) { const t = e.touches[0]; depart = e.touches.length === 1 ? { x: t.clientX, y: t.clientY } : null; }
+  function glisseFin(e: TouchEvent) {
+    const d = depart; depart = null; const t = e.changedTouches[0];
+    if (!d || !t) return;
+    const dx = t.clientX - d.x;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(t.clientY - d.y)) { ignorerClic = true; setTimeout(() => (ignorerClic = false), 350); aller(page + (dx < 0 ? 1 : -1)); }
+  }
+  let ignorerClic = false;
   function toucheLecteur(e: MouseEvent) {
+    if (ignorerClic) return;
     if ((e.target as Element).closest('a, video')) return;
     const x = e.clientX / window.innerWidth;
     aller(page + (x > 0.6 ? 1 : x < 0.4 ? -1 : 0));
   }
 </script>
 
+<svelte:window onkeydown={(e) => { if (!lecture) return; if (e.key === 'ArrowRight') aller(page + 1); if (e.key === 'ArrowLeft') aller(page - 1); }} />
+
 {#if journal}
   <Journal />
 {:else if livre && lecture}
-  <div class="liseuse" style:--c={livre.couleur}>
-    <header><button type="button" class="rond" aria-label="Fermer la lecture" onclick={() => routeur.definir('lire', null)}><Icone nom="fermer" taille={18} trait={2.2} /></button><span class="lt">{livre.titre}</span><span class="mono pg">p. {page} / {nbPages}</span></header>
+  <div class="liseuse" class:papier style:--c={livre.couleur}>
+    <header><button type="button" class="rond" aria-label="Fermer la lecture" onclick={() => routeur.definir('lire', null)}><Icone nom="fermer" taille={18} trait={2.2} /></button><span class="lt">{livre.titre}</span><button type="button" class="rond" aria-label="Fond : {papier ? 'noir' : 'papier'}" onclick={basculerFond}>{papier ? '☾' : '☀'}</button></header>
+    <span class="num-page mono" aria-live="polite">{page}</span>
     <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-    <div class="lecteur riche" bind:this={lecteur} use:hydraterAction={contenuLivre} onscroll={mesurer} onclick={toucheLecteur}>
+    <div class="lecteur riche" bind:this={lecteur} use:hydraterAction={contenuLivre} onscroll={mesurer} onclick={toucheLecteur} ontouchstart={glisseDebut} ontouchend={glisseFin}>
       <section class="titre-page"><div class="mini" style:background={couv(livre.couleur)}></div><h1 class="serif">{livre.titre}</h1><p>{livre.chapitres.length} chapitre{livre.chapitres.length > 1 ? 's' : ''} · {livre.pages} page{livre.pages > 1 ? 's' : ''}</p></section>
       {@html contenuLivre}
     </div>
-    <div class="barre-lec"><input type="range" min="1" max={nbPages} value={page} aria-label="Page" oninput={(e) => aller(+e.currentTarget.value)} /></div>
+    <div class="barre-lec"><span class="mono total">{page} / {nbPages}</span><input type="range" min="1" max={nbPages} value={page} aria-label="Page" oninput={(e) => aller(+e.currentTarget.value)} /></div>
   </div>
 {:else if livre}
   <EcranPage gap={16}>
@@ -125,7 +140,7 @@
   </div>
 </Volet>
 
-<EditeurRiche ouvert={ed !== null} html={ed?.html ?? ''} titre={ed?.id ? 'Modifier le chapitre' : 'Nouveau chapitre'} onenregistrer={enregistrer} onfermer={() => (ed = null)} onsupprimer={ed?.id ? () => { supprimerNote(ed!.id!); ed = null; } : undefined} />
+<EditeurRiche livre ouvert={ed !== null} html={ed?.html ?? ''} titre={ed?.id ? 'Modifier le chapitre' : 'Nouveau chapitre'} onenregistrer={enregistrer} onfermer={() => (ed = null)} onsupprimer={ed?.id ? () => { supprimerNote(ed!.id!); ed = null; } : undefined} />
 
 <style>
   .tete { display: flex; align-items: center; gap: 10px; } .grow { flex: 1; } h1.titre { font-size: 28px; margin: 0; }
@@ -158,12 +173,15 @@
   .form input[type='text'] { height: 52px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--surface); color: var(--texte); font-size: 18px; padding: 0 14px; }
   .palette { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; align-items: center; } .palette button { aspect-ratio: 1; border-radius: 50%; border: 3px solid transparent; box-shadow: 0 0 0 1px rgba(255,255,255,.2) inset; } .palette button.on { border-color: var(--texte); } .palette input { width: 100%; aspect-ratio: 1; border: 0; padding: 0; background: none; }
   .ok, .danger { min-height: 52px; border-radius: 16px; border: 0; font-size: 16px; font-weight: 600; } .ok { background: var(--inverse); color: var(--inverse-texte); } .danger { background: transparent; border: 1px solid var(--mauvais); color: var(--mauvais); }
-  .liseuse { position: fixed; inset: 0; z-index: 40; display: flex; flex-direction: column; background: #f6f1e7; color: #2a2620; height: 100dvh; padding-top: var(--haut-sûr, 0px); --texte: #2a2620; --muted: #7a7266; --ligne: #ddd3c0; --accent: var(--c); --accent-encre: var(--c); --surface-2: #e8dfcd; }
-  .liseuse header { display: flex; align-items: center; gap: 10px; padding: 10px 16px; } .liseuse .rond { background: #ece4d3; color: #2a2620; border-color: #ddd3c0; }
-  .lt { flex: 1; min-width: 0; font-family: Georgia, serif; font-size: 14px; color: #7a7266; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; } .pg { font-size: 12px; color: #7a7266; }
-  .lecteur { flex: 1; min-height: 0; overflow-x: auto; overflow-y: hidden; column-gap: 56px; padding: 8px 28px 16px; font-family: Georgia, 'Iowan Old Style', serif; font-size: 18px; line-height: 1.62; scrollbar-width: none; column-fill: auto; text-align: justify; hyphens: auto; }
-  .lecteur::-webkit-scrollbar { display: none; } .lecteur :global(p) { margin: 0 0 .9em; text-indent: 1.2em; } .lecteur :global(h1), .lecteur :global(h2) { font-family: Georgia, serif; text-indent: 0; text-align: left; }
-  .lecteur :global(.chap) { break-before: column; } .lecteur :global(.num) { text-indent: 0; text-transform: uppercase; letter-spacing: .25em; font-size: 11px; color: var(--c); margin-top: 18vh; } .lecteur :global(.chap p:nth-of-type(2)) { text-indent: 0; }
-  .titre-page { text-align: center; padding-top: 10vh; } .titre-page h1 { font-size: 30px; margin: 22px 0 8px; } .mini { width: 90px; aspect-ratio: 2 / 3; margin: 0 auto; border-radius: 3px 8px 8px 3px; box-shadow: 0 14px 24px -10px rgba(0,0,0,.5); } .titre-page p { text-indent: 0; color: #7a7266; font-size: 14px; }
-  .barre-lec { padding: 6px 24px calc(14px + var(--bas-sûr, 0px)); } .barre-lec input { width: 100%; accent-color: var(--c); }
+  .liseuse { position: fixed; inset: 0; z-index: 40; display: flex; flex-direction: column; background: #0b0c10; color: #e9e4d8; height: 100dvh; padding-top: var(--haut-sûr, 0px); --texte: #e9e4d8; --muted: #8d887c; --ligne: #2a2c34; --accent: var(--c); --accent-encre: color-mix(in srgb, var(--c) 60%, #fff); --surface-2: #1b1d24; }
+  .liseuse.papier { background: #f6f1e7; color: #2a2620; --texte: #2a2620; --muted: #7a7266; --ligne: #ddd3c0; --accent-encre: var(--c); --surface-2: #e8dfcd; }
+  .liseuse header { display: flex; align-items: center; gap: 10px; padding: 10px 16px 0; } .liseuse .rond { background: var(--surface-2); color: var(--texte); border-color: var(--ligne); }
+  .lt { flex: 1; min-width: 0; font-family: Georgia, serif; font-size: 14px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
+  .num-page { position: absolute; left: 28px; top: calc(var(--haut-sûr, 0px) + 66px); font-size: 12px; color: var(--muted); font-style: italic; z-index: 2; }
+  .lecteur { flex: 1; min-height: 0; overflow-x: hidden; overflow-y: hidden; column-gap: 56px; padding: 40px 28px 16px; font-family: Georgia, 'Iowan Old Style', serif; font-size: 18px; line-height: 1.66; column-fill: auto; text-align: justify; hyphens: auto; touch-action: pan-y; color: var(--texte); }
+  .lecteur :global(p) { margin: 0 0 .45em; text-indent: 1.2em; } .lecteur :global(h1), .lecteur :global(h2) { font-family: Georgia, serif; text-indent: 0; text-align: center; color: var(--texte); }
+  .lecteur :global(h1) { text-transform: uppercase; font-size: 21px; letter-spacing: .04em; margin: .2em 0 1.8em; }
+  .lecteur :global(.chap) { break-before: column; } .lecteur :global(.num) { text-indent: 0; text-align: center; text-transform: uppercase; letter-spacing: .3em; font-size: 10px; color: var(--accent-encre); margin: 10vh 0 1.2em; } .lecteur :global(.chap p) { text-indent: 1.2em; }
+  .titre-page { text-align: center; padding-top: 12vh; } .titre-page h1 { font-size: 28px !important; text-transform: none !important; margin: 22px 0 8px !important; } .mini { width: 90px; aspect-ratio: 2 / 3; margin: 0 auto; border-radius: 3px 8px 8px 3px; box-shadow: 0 14px 24px -10px rgba(0,0,0,.6); } .titre-page p { text-indent: 0 !important; color: var(--muted); font-size: 14px; }
+  .barre-lec { display: flex; align-items: center; gap: 12px; padding: 6px 24px calc(14px + var(--bas-sûr, 0px)); } .barre-lec input { flex: 1; accent-color: var(--c); } .total { font-size: 12px; color: var(--muted); }
 </style>

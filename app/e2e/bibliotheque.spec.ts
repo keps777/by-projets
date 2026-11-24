@@ -12,6 +12,10 @@ test('Bibliothèque : créer un livre coloré, écrire des chapitres (notes), le
   for (const [t, corps] of [['Au commencement', 'Premier paragraphe du premier chapitre. '.repeat(40)], ['La persévérance', 'Un autre texte. '.repeat(60)]]) {
     await page.getByRole('button', { name: 'Nouveau chapitre' }).click();
     const ed = page.getByRole('dialog', { name: 'Nouveau chapitre' });
+    await expect(ed.getByRole('toolbar')).toBeHidden(); // outils cachés tant qu'on n'a pas touché le bouton flottant
+    await ed.getByRole('button', { name: 'Outils de rédaction' }).click();
+    await expect(ed.getByRole('toolbar')).toBeVisible();
+    await ed.getByRole('button', { name: 'Masquer les outils de rédaction' }).click();
     const z = ed.getByRole('textbox', { name: 'Contenu de la note' });
     await z.click(); await page.keyboard.press('Control+A'); await page.keyboard.type(t); await page.keyboard.press('Enter'); await page.keyboard.insertText(corps);
     await ed.getByRole('button', { name: 'Enregistrer' }).click();
@@ -20,7 +24,14 @@ test('Bibliothèque : créer un livre coloré, écrire des chapitres (notes), le
   await page.screenshot({ path: '/tmp/livre.png' });
   await page.getByRole('button', { name: /Lire le livre/ }).click();
   await expect(page.locator('.lecteur')).toBeVisible();
-  await expect(page.locator('.pg')).toContainText('p. 1 /');
+  // Glisser vers la page suivante (doigt vers la gauche) et revenir.
+  const l = page.locator('.lecteur');
+  await expect(page.locator('.barre-lec .total')).toContainText('1 /');
+  await page.keyboard.press('ArrowRight');
+  await expect(page.locator('.barre-lec .total')).toContainText('2 /');
+  await page.keyboard.press('ArrowLeft');
+  await expect(page.locator('.barre-lec .total')).toContainText('1 /');
+  await page.screenshot({ path: '/tmp/lecture.png' });
   await page.getByRole('button', { name: 'Fermer la lecture' }).click();
   await page.getByRole('button', { name: 'Bibliothèque' }).click();
   await expect(page.getByRole('button', { name: /Le chemin de la prière, 2 chapitres/ })).toBeVisible();

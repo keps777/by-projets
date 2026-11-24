@@ -15,7 +15,7 @@ export const compterMots = (t: string): number => (t.match(/[\p{L}\p{N}’'-]+/g
 /** Une « page » de livre : environ 250 mots. */
 export const pagesDe = (mots: number): number => (mots ? Math.max(1, Math.ceil(mots / 250)) : 0);
 /** Titre d'un chapitre : sa première ligne (un titre de la note riche, sinon le début du texte). */
-export const titreChapitre = (n: Pick<Note, 'texte'>): string => (n.texte.split('\n').find((l) => l.trim()) ?? 'Sans titre').replace(/^[•\d.\s]+/, '').slice(0, 80);
+export const titreChapitre = (n: Pick<Note, 'texte'>): string => (n.texte.split('\n').find((l) => l.trim() && !/^\[(Image|Vidéo)\]$/.test(l.trim())) ?? 'Sans titre').replace(/^[•\d.\s]+/, '').slice(0, 80);
 
 function lireCouverture(n: Note): { titre: string; couleur: string } {
   try { const j = JSON.parse(n.texte); return { titre: String(j.titre || 'Sans titre'), couleur: COULEURS_LIVRE.includes(j.couleur) || /^#[0-9a-f]{6}$/i.test(j.couleur) ? j.couleur : COULEURS_LIVRE[0] }; } catch { return { titre: 'Sans titre', couleur: COULEURS_LIVRE[0] }; }

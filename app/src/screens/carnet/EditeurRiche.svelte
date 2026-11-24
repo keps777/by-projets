@@ -10,8 +10,9 @@
    * Éditeur de note riche, en plein écran (spec §18, nov. 2026) : paragraphes, titres, gras, italique, souligné, listes, citation, séparateur,
    * liens, images et vidéos. Le contenu est nettoyé à l'enregistrement (`nettoyer`). Une nouvelle note garde un brouillon sur l'appareil.
    */
-  let { ouvert, html = '', titre, brouillonCle = null, onenregistrer, onfermer, onsupprimer }: {
-    ouvert: boolean; html?: string; titre: string;
+  let { ouvert, html = '', titre, brouillonCle = null, livre = false, onenregistrer, onfermer, onsupprimer }: {
+    /** Mode livre : page sombre comme à la lecture, outils de rédaction sur un bouton flottant à droite. */
+    livre?: boolean; ouvert: boolean; html?: string; titre: string;
     /** Clé de stockage du brouillon (nouvelle note) ; null pour la correction d'une note existante. */
     brouillonCle?: string | null;
     onenregistrer: (html: string) => void; onfermer: () => void; onsupprimer?: () => void;
@@ -25,6 +26,7 @@
   let styleBloc = $state('p');
   let actifs = $state({ bold: false, italic: false, underline: false, ul: false, ol: false });
   let lienOuvert = $state(false);
+  let outils = $state(false);
   let lienUrl = $state('');
   let occupe = $state(0);
   let saisieImage: HTMLInputElement | undefined = $state();
@@ -182,7 +184,7 @@
 
 {#if ouvert}
   <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-  <div class="editeur" role="dialog" aria-modal="true" aria-label={titre} tabindex="-1" onkeydown={touche}>
+  <div class="editeur" class:livre class:outils role="dialog" aria-modal="true" aria-label={titre} tabindex="-1" onkeydown={touche}>
     <header>
       <button type="button" class="rond" aria-label="Fermer l’éditeur" onclick={fermer}><Icone nom="fermer" taille={18} trait={2.2} /></button>
       <h2 class="titre">{titre}</h2>
@@ -198,6 +200,7 @@
       </div>
     {/if}
 
+    {#if livre}<button type="button" class="fab" aria-label={outils ? 'Masquer les outils de rédaction' : 'Outils de rédaction'} aria-pressed={outils} onclick={() => (outils = !outils)}>{outils ? '✕' : 'Aa'}</button>{/if}
     <div class="barre" role="toolbar" aria-label="Mise en forme" tabindex="-1" onpointerdown={garder}>
       <select aria-label="Style du paragraphe" value={styleBloc} onchange={(e) => { const v = e.currentTarget.value; if (v === 'p') commande('formatBlock', 'p'); else bloc(v); }} onpointerdown={(e) => e.stopPropagation()}>
         <option value="p">Paragraphe</option><option value="h1">Titre</option><option value="h2">Sous-titre</option><option value="blockquote">Citation</option>
@@ -266,4 +269,16 @@
   .zone { min-height: 50dvh; outline: none; caret-color: var(--accent); -webkit-user-select: text; user-select: text; }
   .placeholder { position: absolute; left: 16px; right: 16px; top: 16px; color: var(--faint); font-size: 16px; pointer-events: none; }
   .occupe { position: absolute; left: 50%; bottom: calc(18px + var(--bas-sûr, 0px)); transform: translateX(-50%); margin: 0; padding: 8px 14px; border-radius: 16px; background: var(--inverse); color: var(--inverse-texte); font-size: 13px; }
+  .fab { position: fixed; right: 14px; bottom: calc(26px + var(--bas-sûr, 0px)); z-index: 70; width: 54px; height: 54px; border-radius: 27px; border: 1px solid rgba(255,255,255,.18); background: var(--accent); color: var(--accent-texte); font-size: 17px; font-weight: 700; box-shadow: 0 10px 24px rgba(0,0,0,.5); }
+  .editeur.livre .barre { display: none; }
+  .editeur.livre.outils .barre { display: flex; position: fixed; right: 12px; top: 110px; bottom: calc(96px + var(--bas-sûr, 0px)); z-index: 65; flex-direction: column; width: 64px; padding: 8px; overflow: auto; border: 1px solid var(--ligne); border-radius: 20px; background: var(--surface); box-shadow: 0 12px 30px rgba(0,0,0,.55); }
+  .editeur.livre .barre select { width: 100%; max-width: none; padding: 0 2px; font-size: 12px; }
+  .editeur.livre { background: #0b0c10; --texte: #ebe6da; }
+  .editeur.livre .feuille { padding: 28px 26px calc(90px + var(--bas-sûr, 0px)); }
+  .editeur.livre.outils .feuille { padding-right: 84px; }
+  .editeur.livre .zone { font-family: Georgia, 'Iowan Old Style', serif; font-size: 18px; line-height: 1.68; color: #ebe6da; text-align: justify; hyphens: auto; }
+  .editeur.livre .zone :global(p) { text-indent: 1.2em; margin: 0 0 .5em; }
+  .editeur.livre .zone :global(h1) { text-align: center; text-transform: uppercase; font-size: 21px; letter-spacing: .04em; margin: .3em 0 1.6em; }
+  .editeur.livre .zone :global(h2) { text-align: center; font-size: 17px; }
+  .editeur.livre .placeholder { color: #6f6a5f; font-family: Georgia, serif; }
 </style>
