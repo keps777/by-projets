@@ -22,7 +22,7 @@ export function retenir(g: Signature): void { for (const k of ['c', 'l', 'd'] as
 /** Date du jour au format 21/08/26. */
 export const dateDuJour = (): string => { const d = new Date(); return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getFullYear()).slice(2)}`; };
 
-export interface Livre { id: string; titre: string; couleur: string; note: Note; chapitres: Note[]; mots: number; pages: number }
+export interface Livre { id: string; titre: string; couleur: string; /** Thème de classement (vide : sans thème). */ theme: string; note: Note; chapitres: Note[]; mots: number; pages: number }
 export const estDeLivre = (n: Pick<Note, 'source_label'>): boolean => !!n.source_label && (n.source_label.startsWith(COUV) || n.source_label.startsWith(CHAP));
 
 export const compterMots = (t: string): number => (t.match(/[\p{L}\p{N}’'-]+/gu) ?? []).length;
@@ -31,8 +31,8 @@ export const pagesDe = (mots: number): number => (mots ? Math.max(1, Math.ceil(m
 /** Titre d'un chapitre : sa première ligne (un titre de la note riche, sinon le début du texte). */
 export const titreChapitre = (n: Pick<Note, 'texte'>): string => (n.texte.split('\n').find((l) => l.trim() && !/^\[(Image|Vidéo)\]$/.test(l.trim())) ?? 'Sans titre').replace(/^[•\d.\s]+/, '').slice(0, 80);
 
-function lireCouverture(n: Note): { titre: string; couleur: string } {
-  try { const j = JSON.parse(n.texte); return { titre: String(j.titre || 'Sans titre'), couleur: COULEURS_LIVRE.includes(j.couleur) || /^#[0-9a-f]{6}$/i.test(j.couleur) ? j.couleur : COULEURS_LIVRE[0] }; } catch { return { titre: 'Sans titre', couleur: COULEURS_LIVRE[0] }; }
+function lireCouverture(n: Note): { titre: string; couleur: string; theme: string } {
+  try { const j = JSON.parse(n.texte); return { theme: String(j.theme ?? '').trim(), titre: String(j.titre || 'Sans titre'), couleur: COULEURS_LIVRE.includes(j.couleur) || /^#[0-9a-f]{6}$/i.test(j.couleur) ? j.couleur : COULEURS_LIVRE[0] }; } catch { return { titre: 'Sans titre', couleur: COULEURS_LIVRE[0], theme: '' }; }
 }
 
 export function livres(): Livre[] {
@@ -45,14 +45,22 @@ export function livres(): Livre[] {
   });
 }
 
-export function creerLivre(titre: string, couleur: string): string | undefined {
+export function creerLivre(titre: string, couleur: string, theme = ''): string | undefined {
   const t = titre.trim();
   if (!t) return undefined;
   const id = nouvelId();
-  ajouterNote({ texte: JSON.stringify({ titre: t, couleur }), origine: 'libre', sourceLabel: COUV + id });
+  ajouterNote({ texte: JSON.stringify({ titre: t, couleur, theme: theme.trim() }), origine: 'libre', sourceLabel: COUV + id });
   return id;
 }
-export function modifierLivre(l: Livre, titre: string, couleur: string): void { if (titre.trim()) modifierNote(l.note.id, JSON.stringify({ titre: titre.trim(), couleur })); }
+export function modifierLivre(l: Livre, titre: string, couleur: string, theme = l.theme): void { if (titre.trim()) modifierNote(l.note.id, JSON.stringify({ titre: titre.trim(), couleur, theme: theme.trim() })); }
+
+/** Thèmes existants (ordre alphabétique) et livres rangés par thème (« Sans thème » en dernier). */
+export const themesDe = (ls: Livre[]): string[] => [...new Set(ls.map((l) => l.theme).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
+export function parTheme(ls: Livre[]): { theme: string; livres: Livre[] }[] {
+  const g = themesDe(ls).map((t) => ({ theme: t, livres: ls.filter((l) => l.theme === t) }));
+  const sans = ls.filter((l) => !l.theme);
+  return sans.length ? [...g, { theme: '', livres: sans }] : g;
+}
 export function supprimerLivre(l: Livre): void { for (const c of l.chapitres) supprimerNote(c.id); supprimerNote(l.note.id); }
 const etiquette = (livreId: string, g: Signature | null) => CHAP + livreId + (g ? `|${JSON.stringify(g)}` : '');
 export function ajouterChapitre(livreId: string, html: string, g: Signature | null = null): Note | undefined { return ajouterNoteRiche(html, { origine: 'libre', sourceLabel: etiquette(livreId, g) }); }

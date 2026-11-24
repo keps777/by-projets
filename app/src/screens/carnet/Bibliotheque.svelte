@@ -4,7 +4,7 @@
   import EcranPage from '../../ui/EcranPage.svelte';
   import Icone from '../../ui/Icone.svelte';
   import Volet from '../../ui/Volet.svelte';
-  import { ajouterChapitre, COULEURS_LIVRE, creerLivre, dateDuJour, dateValide, echangerChapitres, historique, livres, modifierChapitre, modifierLivre, retenir, signatureDe, texteSignature, supprimerLivre, titreChapitre, type Livre } from '../../data/actions/livres.ts';
+  import { ajouterChapitre, COULEURS_LIVRE, creerLivre, dateDuJour, dateValide, echangerChapitres, historique, livres, modifierChapitre, modifierLivre, parTheme, themesDe, retenir, signatureDe, texteSignature, supprimerLivre, titreChapitre, type Livre } from '../../data/actions/livres.ts';
   import { magasin } from '../../data/magasin.svelte.ts';
   import { urlMedia } from '../../data/media.svelte.ts';
   import { mediasCites, supprimerNote } from '../../data/actions/notes.ts';
@@ -21,18 +21,22 @@
   // Le journal s'ouvre pour ses adresses (?vue, ?ecrire, ?riche, ?jour) et le reste tant qu'on est sur cet écran (il retire lui-même ses paramètres).
   let journal = $state(['vue', 'ecrire', 'riche', 'jour'].some((k) => routeur.params.has(k)));
   $effect(() => { if (['vue', 'ecrire', 'riche', 'jour'].some((k) => routeur.params.has(k))) journal = true; });
+  let filtre = $state('tous');
+  const themes = $derived(themesDe(tous));
+  const groupes = $derived(parTheme(tous).filter((g) => filtre === 'tous' || (filtre === '' ? g.theme === '' : g.theme === filtre)));
+  let theme = $state('');
   const fonce = (c: string) => `color-mix(in srgb, ${c} 62%, #000)`;
   const couv = (c: string) => `linear-gradient(145deg, color-mix(in srgb, ${c} 88%, #fff) 0%, ${c} 38%, ${fonce(c)} 100%)`;
 
   // Nouveau livre / réglages de la couverture
   let volet = $state<'nouveau' | 'reglages' | null>(null);
   let titre = $state(''); let couleur = $state(COULEURS_LIVRE[5]);
-  function ouvrirNouveau() { titre = ''; couleur = COULEURS_LIVRE[Math.floor(Math.random() * COULEURS_LIVRE.length)]; volet = 'nouveau'; }
-  function ouvrirReglages() { if (!livre) return; titre = livre.titre; couleur = livre.couleur; volet = 'reglages'; }
+  function ouvrirNouveau() { titre = ''; theme = filtre !== 'tous' ? filtre : ''; couleur = COULEURS_LIVRE[Math.floor(Math.random() * COULEURS_LIVRE.length)]; volet = 'nouveau'; }
+  function ouvrirReglages() { if (!livre) return; titre = livre.titre; couleur = livre.couleur; theme = livre.theme; volet = 'reglages'; }
   function valider() {
     if (!titre.trim()) { dire('Donne un titre à ton livre'); return; }
-    if (volet === 'nouveau') { const id = creerLivre(titre, couleur); if (id) routeur.definir('livre', id); }
-    else if (livre) modifierLivre(livre, titre, couleur);
+    if (volet === 'nouveau') { const id = creerLivre(titre, couleur, theme); if (id) routeur.definir('livre', id); }
+    else if (livre) modifierLivre(livre, titre, couleur, theme);
     volet = null;
   }
   let confirmeSupp = $state(false);
@@ -149,15 +153,23 @@
   <EcranPage gap={18}>
     <header class="tete"><button type="button" class="rond" aria-label="Retour" onclick={() => routeur.retour('/')}><Icone nom="retour" taille={18} trait={2.2} /></button><h1 class="titre grow">Bibliothèque</h1><button type="button" class="rond" aria-label="Journal du jour" onclick={() => routeur.definir('vue', 'journal')}><Icone nom="calendrier" taille={18} /></button></header>
     <p class="muted acc">Chaque livre est fait de notes : un chapitre, une note.</p>
-    <div class="etagere">
-      {#each tous as l (l.id)}
-        <button type="button" class="livre" onclick={() => routeur.definir('livre', l.id)} aria-label="{l.titre}, {l.chapitres.length} chapitres">
-          <span class="couv" style:background={couv(l.couleur)}><span class="reliure"></span><span class="serif t">{l.titre}</span><span class="filet"></span></span>
-          <span class="meta"><b>{l.titre}</b><small class="muted">{l.chapitres.length} ch. · ≈ {l.pages} p.</small></span>
-        </button>
-      {/each}
-      <button type="button" class="livre nouveau" onclick={ouvrirNouveau} aria-label="Nouveau livre"><span class="couv vide"><Icone nom="plus" taille={30} trait={1.8} /></span><span class="meta"><b>Nouveau livre</b></span></button>
-    </div>
+    {#if themes.length}<div class="filtres" role="group" aria-label="Thèmes">
+      <button type="button" class:on={filtre === 'tous'} onclick={() => (filtre = 'tous')}>Tous · {tous.length}</button>
+      {#each themes as t (t)}<button type="button" class:on={filtre === t} onclick={() => (filtre = t)}>{t}</button>{/each}
+      {#if tous.some((l) => !l.theme)}<button type="button" class:on={filtre === ''} onclick={() => (filtre = '')}>Sans thème</button>{/if}
+    </div>{/if}
+    {#each groupes as g (g.theme)}
+      {#if themes.length}<h3 class="theme-t">{g.theme || 'Sans thème'} <small class="muted">{g.livres.length}</small></h3>{/if}
+      <div class="etagere">
+        {#each g.livres as l (l.id)}
+          <button type="button" class="livre" onclick={() => routeur.definir('livre', l.id)} aria-label="{l.titre}, {l.chapitres.length} chapitres">
+            <span class="couv" style:background={couv(l.couleur)}><span class="reliure"></span><span class="serif t">{l.titre}</span><span class="filet"></span></span>
+            <span class="meta"><b>{l.titre}</b><small class="muted">{l.chapitres.length} ch. · ≈ {l.pages} p.</small></span>
+          </button>
+        {/each}
+      </div>
+    {/each}
+    <div class="etagere"><button type="button" class="livre nouveau" onclick={ouvrirNouveau} aria-label="Nouveau livre"><span class="couv vide"><Icone nom="plus" taille={30} trait={1.8} /></span><span class="meta"><b>Nouveau livre</b></span></button></div>
     {#if !tous.length}<p class="muted acc">Crée ton premier livre : un titre, une couleur de couverture, puis écris-le chapitre par chapitre.</p>{/if}
   </EcranPage>
 {/if}
@@ -167,6 +179,8 @@
     <h2 class="titre">{volet === 'nouveau' ? 'Nouveau livre' : 'Réglages du livre'}</h2>
     <div class="apercu"><div class="couv grande" style:background={couv(couleur)}><span class="reliure"></span><h2 class="serif">{titre || 'Titre du livre'}</h2><span class="filet"></span></div></div>
     <input type="text" placeholder="Titre du livre" aria-label="Titre du livre" bind:value={titre} maxlength="80" />
+    <input type="text" placeholder="Thème (ex. Prière, Croisade, Lectures)" aria-label="Thème du livre" bind:value={theme} maxlength="40" />
+    {#if themes.length}<div class="puces">{#each themes as t (t)}<button type="button" class="puce" class:on={theme === t} onclick={() => (theme = t)}>{t}</button>{/each}</div>{/if}
     <div class="palette" role="group" aria-label="Couleur de la couverture">
       {#each COULEURS_LIVRE as c (c)}<button type="button" class:on={couleur === c} style:background={c} aria-label="Couleur {c}" aria-pressed={couleur === c} onclick={() => (couleur = c)}></button>{/each}
       <input type="color" value={couleur} aria-label="Couleur personnalisée" oninput={(e) => (couleur = e.currentTarget.value)} />
@@ -221,6 +235,8 @@
   .grille-img { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; } .grille-img button { padding: 0; border: 0; background: none; aspect-ratio: 1; } .grille-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
   .champ { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: var(--muted); } .champ input { height: 48px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--surface); color: var(--texte); font-size: 16px; padding: 0 12px; }
   .puces { display: flex; gap: 6px; overflow-x: auto; margin-top: -6px; } .puce { flex: none; min-height: 36px; padding: 0 12px; border-radius: 18px; border: 1px solid var(--ligne); background: transparent; color: var(--texte); font-size: 13px; white-space: nowrap; } .apercu-sig { font-style: italic; margin: 0; font-size: 14px; }
+  .filtres { display: flex; gap: 8px; overflow-x: auto; flex: none; margin: 0 -16px; padding: 0 16px; } .filtres button { flex: none; min-height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid var(--ligne); background: transparent; color: var(--texte); font-size: 14px; font-weight: 600; white-space: nowrap; } .filtres button.on, .puce.on { background: var(--inverse); color: var(--inverse-texte); border-color: var(--inverse); }
+  .theme-t { flex: none; margin: 6px 0 -6px; font-size: 18px; display: flex; gap: 8px; align-items: baseline; }
   .lire { min-height: 48px; border: 0; border-radius: 16px; background: var(--c); color: #fff; font-size: 16px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-top: 4px; } .lire:disabled { opacity: .35; }
   .sect { display: flex; align-items: center; justify-content: space-between; } .sect h3 { margin: 0; font-size: 18px; }
   .plus { min-height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid var(--ligne); background: var(--surface); color: var(--texte); font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }

@@ -30,3 +30,6 @@ Une note du Carnet peut s'écrire comme dans un document : **paragraphes**, titr
 
 ## Bibliothèque (23 nov. 2026)
 L'onglet Carnet s'ouvre sur une **bibliothèque** (étagère de couvertures en relief). Un **livre** a un titre et une **couleur de couverture** (12 teintes ou libre) ; chaque **chapitre ou sous-chapitre est une note riche** (éditeur du §18 riche) rangée dans le livre. Page d'un livre : couverture, nombre de chapitres, mots, pages estimées (250 mots = 1 page, objectif 100 pages), **table des matières** (réordonnable ↑↓), « Nouveau chapitre ». **Lecture** : liseuse papier à pages (colonnes), toucher les bords ou le curseur pour tourner, « p. n / N ». Stockage sans colonne nouvelle : couverture = note `source_label = livre-couv:<id>` (texte JSON), chapitre = note `source_label = livre:<id>` ; le journal du jour ne les montre pas. Le journal reste accessible par l'icône calendrier (`/carnet?vue=journal`).
+
+### Thèmes (24 nov. 2026)
+Un livre peut porter un **thème** (champ libre dans la couverture, avec suggestions des thèmes existants). La bibliothèque affiche des **pastilles de filtre** (Tous · thèmes · Sans thème) et range les livres en **étagères par thème** (ordre alphabétique, « Sans thème » en dernier). Les livres existants sont « Sans thème ». Un nouveau livre hérite du filtre actif.
