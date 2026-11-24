@@ -191,3 +191,5 @@ Outil de comparaison : voir la méthode dans ce journal ; relancer une passe à 
 **Heures réelles corrigeables (23 nov.)** : dans le volet d'un bloc fait, « Heures réelles » (début, fin) ; le temps passé suit. `corrigerHeuresReelles` (blocs.ts), testé + e2e.
 
 **Livres : lecture et rédaction en pages sombres (24 nov.)** : liseuse fond noir par défaut (bouton ☀/☾ pour le papier), numéro de page en haut à gauche, titre de chapitre en capitales centré, texte justifié à retrait ; **glisser** (ou flèches) pour tourner les pages, d'un chapitre à l'autre ; en rédaction d'un chapitre, même page sombre et **outils masqués**, affichés par le **bouton flottant « Aa »** à droite.
+
+**Correctifs livres (24 nov.)** : la table des matières n'était plus défilable (liste écrasée par la colonne flex : chapitres 8+ invisibles) ; la mise en forme (`contenu`) gardée sur l'appareil n'est plus écrasée par une ligne du serveur qui n'a pas la colonne ; le ramassage automatique des médias est supprimé (il pouvait effacer des images quand un `contenu` manquait) ; « Retrouver mes images » liste les images gardées sur l'appareil que plus aucune note ne cite.

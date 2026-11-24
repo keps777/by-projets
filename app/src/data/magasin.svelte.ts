@@ -148,6 +148,8 @@ class Magasin {
       const par = new Map((copie[t] as LignesParTable[NomTable][]).map((l) => [l.id, l]));
       for (const r of aprendre) {
         if (this.#sales.has(`${t}:${r.id}`)) continue;
+        // Serveur sans la colonne `contenu` : la mise en forme gardée sur l'appareil ne doit pas être effacée par la ligne reçue.
+        if (t === 'notes') { const loc = par.get(r.id) as { contenu?: string | null } | undefined; const n = r as { contenu?: string | null }; if (loc?.contenu && !n.contenu) { n.contenu = loc.contenu; void db.lignes('notes').update(r.id, { contenu: loc.contenu } as never); } }
         if (r.supprime_le) { par.delete(r.id); this.#tombe(t).add(r.id); } else { par.set(r.id, r); this.#tombe(t).delete(r.id); }
       }
       (copie[t] as unknown[]) = [...par.values()];

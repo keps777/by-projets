@@ -5,7 +5,6 @@ import { nouvelId, uuidDeterministe } from '@core/ids.ts';
 import { magasin } from '../magasin.svelte.ts';
 import { maintenantLocal } from '../temps.svelte.ts';
 import { estVide, mediasDe, nettoyer, texteBrut } from '../../screens/carnet/riche.ts';
-import { ramasserMedias } from '../media.svelte.ts';
 
 /** Toutes les notes, dans l'ordre du livre (numéro croissant). */
 export const toutesLesNotes = (): Note[] => [...magasin.lignes.notes].sort((a, b) => a.numero - b.numero);
@@ -62,7 +61,6 @@ export function modifierNoteRiche(id: string, html: string): void {
   const contenu = nettoyer(html);
   if (estVide(contenu)) { supprimerNote(id); return; }
   magasin.ecrire('notes', { id, contenu, texte: texteBrut(contenu) });
-  void ramasserMedias(mediasCites());
 }
 
 /** Identifiants des médias cités par au moins une note. */
@@ -78,7 +76,7 @@ export function modifierNote(id: string, texte: string): void {
 }
 
 /** Supprime une note : son numéro reste vacant, les autres ne changent pas. */
-export function supprimerNote(id: string): void { magasin.supprimer('notes', id); void ramasserMedias(mediasCites()); }
+export function supprimerNote(id: string): void { magasin.supprimer('notes', id); }
 
 /** Les pages du livre : un jour, ses notes, le premier et le dernier numéro. Du plus récent au plus ancien. */
 export function pagesDuCarnet(): { jour: Jour; notes: Note[]; de: number; a: number }[] {

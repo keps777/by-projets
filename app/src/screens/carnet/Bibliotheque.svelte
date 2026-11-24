@@ -5,7 +5,9 @@
   import Icone from '../../ui/Icone.svelte';
   import Volet from '../../ui/Volet.svelte';
   import { ajouterChapitre, COULEURS_LIVRE, creerLivre, echangerChapitres, livres, modifierLivre, supprimerLivre, titreChapitre, type Livre } from '../../data/actions/livres.ts';
-  import { modifierNoteRiche, supprimerNote } from '../../data/actions/notes.ts';
+  import { magasin } from '../../data/magasin.svelte.ts';
+  import { urlMedia } from '../../data/media.svelte.ts';
+  import { mediasCites, modifierNoteRiche, supprimerNote } from '../../data/actions/notes.ts';
   import { hydraterAction } from './hydrater.ts';
   import { nettoyer, texteVersHtml } from './riche.ts';
   import EditeurRiche from './EditeurRiche.svelte';
@@ -34,6 +36,17 @@
     volet = null;
   }
   let confirmeSupp = $state(false);
+
+  // Images gardées sur l'appareil mais citées par aucune note : on peut les retrouver (chacune devient un chapitre à classer).
+  let orphelines = $state<{ id: string; url: string }[] | null>(null);
+  async function chercherImages() {
+    const cites = mediasCites();
+    const tous = (await magasin.db?.media.toArray()) ?? [];
+    const res: { id: string; url: string }[] = [];
+    for (const m of tous) if (m.type === 'image' && !cites.has(m.id)) { const url = await urlMedia(m.id); if (url) res.push({ id: m.id, url }); }
+    orphelines = res;
+  }
+  function reprendre(id: string) { if (livre) { ajouterChapitre(livre.id, `<figure><img data-media="${id}" alt=""></figure>`); dire('Image ajoutée comme chapitre'); orphelines = orphelines?.filter((o) => o.id !== id) ?? null; } }
 
   // Éditeur de chapitre
   let ed = $state<{ id: string | null; html: string } | null>(null);
@@ -100,6 +113,7 @@
         <button type="button" class="lire" disabled={!livre.chapitres.length} onclick={() => routeur.definir('lire', '1')}><Icone nom="livre" taille={18} /> Lire le livre</button>
       </div>
     </div>
+    <button type="button" class="retrouver" onclick={chercherImages}>Retrouver mes images</button>
     <div class="sect"><h3>Table des matières</h3><button type="button" class="plus" onclick={() => (ed = { id: null, html: '<h1>Titre du chapitre</h1><p><br></p>' })}><Icone nom="plus" taille={15} trait={2.4} /> Nouveau chapitre</button></div>
     <ol class="toc">
       {#each livre.chapitres as c, i (c.id)}
@@ -140,9 +154,16 @@
   </div>
 </Volet>
 
+<Volet ouvert={orphelines !== null} onfermer={() => (orphelines = null)} label="Images retrouvées">
+  <div class="form"><h2 class="titre">Images retrouvées</h2>
+    {#if orphelines?.length}<p class="muted">Touche une image pour l’ajouter à ce livre.</p><div class="grille-img">{#each orphelines as o (o.id)}<button type="button" onclick={() => reprendre(o.id)} aria-label="Ajouter cette image"><img src={o.url} alt="" /></button>{/each}</div>
+    {:else}<p class="muted">Aucune image orpheline sur cet appareil.</p>{/if}</div>
+</Volet>
+
 <EditeurRiche livre ouvert={ed !== null} html={ed?.html ?? ''} titre={ed?.id ? 'Modifier le chapitre' : 'Nouveau chapitre'} onenregistrer={enregistrer} onfermer={() => (ed = null)} onsupprimer={ed?.id ? () => { supprimerNote(ed!.id!); ed = null; } : undefined} />
 
 <style>
+  .toc, .heros, .sect, .etagere, .tete { flex: none; }
   .tete { display: flex; align-items: center; gap: 10px; } .grow { flex: 1; } h1.titre { font-size: 28px; margin: 0; }
   .acc { font-size: 14px; margin: -6px 0 0; }
   .etagere { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 16px; padding-bottom: 12px; }
@@ -160,6 +181,8 @@
   .heros { display: flex; gap: 18px; align-items: flex-end; } .couv.grande { width: 132px; flex: none; } .couv.grande h2 { font-size: 17px; }
   .infos { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; } .infos .titre { font-size: 24px; margin: 0; line-height: 1.1; } .infos p { margin: 0; font-size: 13px; }
   .progres { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; } .progres span { display: block; height: 100%; background: var(--c); border-radius: 3px; }
+  .retrouver { flex: none; align-self: flex-start; border: 0; background: none; color: var(--muted); font-size: 13px; text-decoration: underline; min-height: 36px; }
+  .grille-img { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; } .grille-img button { padding: 0; border: 0; background: none; aspect-ratio: 1; } .grille-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
   .lire { min-height: 48px; border: 0; border-radius: 16px; background: var(--c); color: #fff; font-size: 16px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-top: 4px; } .lire:disabled { opacity: .35; }
   .sect { display: flex; align-items: center; justify-content: space-between; } .sect h3 { margin: 0; font-size: 18px; }
   .plus { min-height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid var(--ligne); background: var(--surface); color: var(--texte); font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
