@@ -19,6 +19,14 @@ test('Bibliothèque : créer un livre coloré, écrire des chapitres (notes), le
     const z = ed.getByRole('textbox', { name: 'Contenu de la note' });
     await z.click(); await page.keyboard.press('Control+A'); await page.keyboard.type(t); await page.keyboard.press('Enter'); await page.keyboard.insertText(corps);
     await ed.getByRole('button', { name: 'Enregistrer' }).click();
+    await expect(page.getByLabel('Date (au moins l’année)')).toHaveValue(/\d{2}\/\d{2}\/\d{2}/);
+    await page.getByLabel('Date (au moins l’année)').fill('abc');
+    await page.getByRole('button', { name: 'Enregistrer le chapitre' }).click();
+    await expect(page.getByLabel('Date (au moins l’année)')).toBeVisible(); // date sans année : bloqué
+    await page.getByLabel('Circonstance').fill('Durant la nuit de prière');
+    await page.getByLabel('Lieu').fill('Montréal');
+    await page.getByLabel('Date (au moins l’année)').fill('21/08/26');
+    await page.getByRole('button', { name: 'Enregistrer le chapitre' }).click();
   }
   await expect(page.locator('.toc li .ch')).toHaveCount(2);
   await page.screenshot({ path: '/tmp/livre.png' });
@@ -31,6 +39,7 @@ test('Bibliothèque : créer un livre coloré, écrire des chapitres (notes), le
   await expect(page.locator('.barre-lec .total')).toContainText('2 /');
   await page.keyboard.press('ArrowLeft');
   await expect(page.locator('.barre-lec .total')).toContainText('1 /');
+  expect(await page.locator('.lecteur .chap h1').first().evaluate((e) => getComputedStyle(e).fontWeight)).toMatch(/^(700|bold)$/);
   await page.screenshot({ path: '/tmp/lecture.png' });
   await page.getByRole('button', { name: 'Fermer la lecture' }).click();
   await page.getByRole('button', { name: 'Bibliothèque' }).click();

@@ -245,7 +245,7 @@
 {/if}
 
 <style>
-  .editeur { position: fixed; inset: 0; z-index: 60; display: flex; flex-direction: column; background: var(--fond); color: var(--texte); height: 100dvh; padding-top: var(--haut-sûr, 0px); }
+  .editeur { position: fixed; inset: 0; z-index: 45; display: flex; flex-direction: column; background: var(--fond); color: var(--texte); height: 100dvh; padding-top: var(--haut-sûr, 0px); }
   header { flex: none; display: flex; align-items: center; gap: 10px; padding: 12px 16px 8px; }
   h2 { flex: 1; min-width: 0; font-size: 19px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0; }
   .rond { flex: none; width: 44px; height: 44px; border-radius: 22px; border: 1px solid var(--ligne); background: var(--surface); color: var(--texte); display: inline-flex; align-items: center; justify-content: center; }
@@ -269,9 +269,9 @@
   .zone { min-height: 50dvh; outline: none; caret-color: var(--accent); -webkit-user-select: text; user-select: text; }
   .placeholder { position: absolute; left: 16px; right: 16px; top: 16px; color: var(--faint); font-size: 16px; pointer-events: none; }
   .occupe { position: absolute; left: 50%; bottom: calc(18px + var(--bas-sûr, 0px)); transform: translateX(-50%); margin: 0; padding: 8px 14px; border-radius: 16px; background: var(--inverse); color: var(--inverse-texte); font-size: 13px; }
-  .fab { position: fixed; right: 14px; bottom: calc(26px + var(--bas-sûr, 0px)); z-index: 70; width: 54px; height: 54px; border-radius: 27px; border: 1px solid rgba(255,255,255,.18); background: var(--accent); color: var(--accent-texte); font-size: 17px; font-weight: 700; box-shadow: 0 10px 24px rgba(0,0,0,.5); }
+  .fab { position: fixed; right: 14px; bottom: calc(26px + var(--bas-sûr, 0px)); z-index: 47; width: 54px; height: 54px; border-radius: 27px; border: 1px solid rgba(255,255,255,.18); background: var(--accent); color: var(--accent-texte); font-size: 17px; font-weight: 700; box-shadow: 0 10px 24px rgba(0,0,0,.5); }
   .editeur.livre .barre { display: none; }
-  .editeur.livre.outils .barre { display: flex; position: fixed; right: 12px; top: 110px; bottom: calc(96px + var(--bas-sûr, 0px)); z-index: 65; flex-direction: column; width: 64px; padding: 8px; overflow: auto; border: 1px solid var(--ligne); border-radius: 20px; background: var(--surface); box-shadow: 0 12px 30px rgba(0,0,0,.55); }
+  .editeur.livre.outils .barre { display: flex; position: fixed; right: 12px; top: 110px; bottom: calc(96px + var(--bas-sûr, 0px)); z-index: 46; flex-direction: column; width: 64px; padding: 8px; overflow: auto; border: 1px solid var(--ligne); border-radius: 20px; background: var(--surface); box-shadow: 0 12px 30px rgba(0,0,0,.55); }
   .editeur.livre .barre select { width: 100%; max-width: none; padding: 0 2px; font-size: 12px; }
   .editeur.livre { background: #0b0c10; --texte: #ebe6da; }
   .editeur.livre .feuille { padding: 28px 26px calc(90px + var(--bas-sûr, 0px)); }

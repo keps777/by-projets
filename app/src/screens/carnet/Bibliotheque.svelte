@@ -4,10 +4,10 @@
   import EcranPage from '../../ui/EcranPage.svelte';
   import Icone from '../../ui/Icone.svelte';
   import Volet from '../../ui/Volet.svelte';
-  import { ajouterChapitre, COULEURS_LIVRE, creerLivre, echangerChapitres, livres, modifierLivre, supprimerLivre, titreChapitre, type Livre } from '../../data/actions/livres.ts';
+  import { ajouterChapitre, COULEURS_LIVRE, creerLivre, dateDuJour, dateValide, echangerChapitres, historique, livres, modifierChapitre, modifierLivre, retenir, signatureDe, texteSignature, supprimerLivre, titreChapitre, type Livre } from '../../data/actions/livres.ts';
   import { magasin } from '../../data/magasin.svelte.ts';
   import { urlMedia } from '../../data/media.svelte.ts';
-  import { mediasCites, modifierNoteRiche, supprimerNote } from '../../data/actions/notes.ts';
+  import { mediasCites, supprimerNote } from '../../data/actions/notes.ts';
   import { hydraterAction } from './hydrater.ts';
   import { nettoyer, texteVersHtml } from './riche.ts';
   import EditeurRiche from './EditeurRiche.svelte';
@@ -50,23 +50,43 @@
 
   // Éditeur de chapitre
   let ed = $state<{ id: string | null; html: string } | null>(null);
+  // Signature du chapitre (circonstance, lieu, date) demandée à l'enregistrement.
+  let attente = $state<string | null>(null);
+  let sig = $state({ c: '', l: '', d: '' });
+  let histo = $state({ c: [] as string[], l: [] as string[], d: [] as string[] });
   const enregistrer = (html: string) => {
-    if (!livre || !ed) return;
-    if (ed.id) modifierNoteRiche(ed.id, html); else ajouterChapitre(livre.id, html);
-    ed = null; dire('Chapitre enregistré');
+    if (!ed) return;
+    const chap = ed.id ? livre?.chapitres.find((c) => c.id === ed!.id) : undefined;
+    const ex = chap ? signatureDe(chap) : null;
+    sig = ex ?? { c: '', l: histoPremier('l'), d: dateDuJour() };
+    histo = { c: historique('c'), l: historique('l'), d: [dateDuJour(), ...historique('d').filter((x) => x !== dateDuJour())] };
+    attente = html;
   };
-
-  // Lecteur : colonnes CSS, une page = une largeur d'écran
-  let lecteur: HTMLDivElement | undefined = $state();
-  let page = $state(1); let nbPages = $state(1);
-  const contenuLivre = $derived(livre ? livre.chapitres.map((c, i) => `<section class="chap"><p class="num">Chapitre ${i + 1}</p>${nettoyer(c.contenu ?? texteVersHtml(c.texte))}</section>`).join('') : '');
-  function mesurer() {
-    const el = lecteur; if (!el) return;
-    el.style.columnWidth = `${el.clientWidth - 56}px`;
-    requestAnimationFrame(() => { nbPages = Math.max(1, Math.round(el.scrollWidth / el.clientWidth)); page = Math.min(nbPages, Math.round(el.scrollLeft / el.clientWidth) + 1); });
+  const histoPremier = (k: 'c' | 'l' | 'd') => historique(k)[0] ?? '';
+  function validerSignature() {
+    if (!livre || !ed || attente === null) return;
+    if (!dateValide(sig.d)) { dire('La date doit donner au moins l’année (ex. 2026 ou 21/08/26)'); return; }
+    retenir(sig);
+    const g = { c: sig.c.trim(), l: sig.l.trim(), d: sig.d.trim() };
+    const chap = ed.id ? livre.chapitres.find((c) => c.id === ed!.id) : undefined;
+    if (chap) modifierChapitre(livre.id, chap, attente, g); else ajouterChapitre(livre.id, attente, g);
+    attente = null; ed = null; dire('Chapitre enregistré');
   }
-  $effect(() => { void contenuLivre; if (lecteur) { mesurer(); setTimeout(mesurer, 300); } });
-  const aller = (p: number) => lecteur?.scrollTo({ left: (Math.max(1, Math.min(nbPages, p)) - 1) * lecteur.clientWidth, behavior: 'smooth' });
+
+  // Lecteur : colonnes CSS déplacées par transformation (une page = une largeur d'écran), sans dépendre du défilement natif
+  let vue: HTMLDivElement | undefined = $state(); let cols: HTMLDivElement | undefined = $state();
+  let page = $state(1); let nbPages = $state(1);
+  const ECART = 56;
+  const contenuLivre = $derived(livre ? livre.chapitres.map((c, i) => `<section class="chap"><p class="num">Chapitre ${i + 1}</p>${nettoyer(c.contenu ?? texteVersHtml(c.texte))}${(() => { const g = signatureDe(c); return g && texteSignature(g) ? `<p class="sig">${texteSignature(g).replace(/&/g, '&amp;').replace(/</g, '&lt;')}</p>` : ''; })()}</section>`).join('') : '');
+  function mesurer() {
+    if (!vue || !cols) return;
+    const w = vue.clientWidth;
+    cols.style.columnWidth = `${w}px`; cols.style.columnGap = `${ECART}px`; cols.style.height = `${vue.clientHeight}px`; cols.style.width = `${w}px`;
+    requestAnimationFrame(() => { nbPages = Math.max(1, Math.round((cols!.scrollWidth + ECART) / (w + ECART))); page = Math.min(page, nbPages); });
+  }
+  $effect(() => { void contenuLivre; if (vue && cols) { mesurer(); setTimeout(mesurer, 300); } });
+  const aller = (p: number) => { page = Math.max(1, Math.min(nbPages, p)); };
+  const decalage = $derived(vue ? (page - 1) * (vue.clientWidth + ECART) : 0);
   let papier = $state((() => { try { return localStorage.getItem('luther-life:fond-livre') === 'papier'; } catch { return false; } })());
   const basculerFond = () => { papier = !papier; try { localStorage.setItem('luther-life:fond-livre', papier ? 'papier' : 'noir'); } catch { /* ignoré */ } };
   let depart: { x: number; y: number } | null = null;
@@ -95,9 +115,11 @@
     <header><button type="button" class="rond" aria-label="Fermer la lecture" onclick={() => routeur.definir('lire', null)}><Icone nom="fermer" taille={18} trait={2.2} /></button><span class="lt">{livre.titre}</span><button type="button" class="rond" aria-label="Fond : {papier ? 'noir' : 'papier'}" onclick={basculerFond}>{papier ? '☾' : '☀'}</button></header>
     <span class="num-page mono" aria-live="polite">{page}</span>
     <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-    <div class="lecteur riche" bind:this={lecteur} use:hydraterAction={contenuLivre} onscroll={mesurer} onclick={toucheLecteur} ontouchstart={glisseDebut} ontouchend={glisseFin}>
+    <div class="lecteur riche" bind:this={vue} onclick={toucheLecteur} ontouchstart={glisseDebut} ontouchend={glisseFin}>
+     <div class="cols" bind:this={cols} use:hydraterAction={contenuLivre} style:transform="translateX(-{decalage}px)">
       <section class="titre-page"><div class="mini" style:background={couv(livre.couleur)}></div><h1 class="serif">{livre.titre}</h1><p>{livre.chapitres.length} chapitre{livre.chapitres.length > 1 ? 's' : ''} · {livre.pages} page{livre.pages > 1 ? 's' : ''}</p></section>
       {@html contenuLivre}
+     </div>
     </div>
     <div class="barre-lec"><span class="mono total">{page} / {nbPages}</span><input type="range" min="1" max={nbPages} value={page} aria-label="Page" oninput={(e) => aller(+e.currentTarget.value)} /></div>
   </div>
@@ -160,6 +182,20 @@
     {:else}<p class="muted">Aucune image orpheline sur cet appareil.</p>{/if}</div>
 </Volet>
 
+<Volet ouvert={attente !== null} onfermer={() => (attente = null)} label="Signature du chapitre">
+  <form class="form" onsubmit={(e) => { e.preventDefault(); validerSignature(); }}>
+    <h2 class="titre">Signature du chapitre</h2>
+    <p class="muted apercu-sig">{texteSignature(sig) || '—'}</p>
+    {#each [['c', 'Circonstance', 'Durant la nuit de prière de CMCI PAT'], ['l', 'Lieu', 'Montréal'], ['d', 'Date (au moins l’année)', '21/08/26']] as [k, nom, ex] (k)}
+      <label class="champ">{nom}{k === 'd' ? '' : ' · facultatif'}
+        <input type="text" placeholder={ex} bind:value={sig[k as 'c' | 'l' | 'd']} autocomplete="off" aria-label={nom} />
+      </label>
+      {#if histo[k as 'c' | 'l' | 'd'].length}<div class="puces">{#each histo[k as 'c' | 'l' | 'd'].slice(0, 6) as h (h)}<button type="button" class="puce" onclick={() => (sig[k as 'c' | 'l' | 'd'] = h)}>{h}</button>{/each}</div>{/if}
+    {/each}
+    <button type="submit" class="ok">Enregistrer le chapitre</button>
+  </form>
+</Volet>
+
 <EditeurRiche livre ouvert={ed !== null} html={ed?.html ?? ''} titre={ed?.id ? 'Modifier le chapitre' : 'Nouveau chapitre'} onenregistrer={enregistrer} onfermer={() => (ed = null)} onsupprimer={ed?.id ? () => { supprimerNote(ed!.id!); ed = null; } : undefined} />
 
 <style>
@@ -183,6 +219,8 @@
   .progres { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; } .progres span { display: block; height: 100%; background: var(--c); border-radius: 3px; }
   .retrouver { flex: none; align-self: flex-start; border: 0; background: none; color: var(--muted); font-size: 13px; text-decoration: underline; min-height: 36px; }
   .grille-img { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; } .grille-img button { padding: 0; border: 0; background: none; aspect-ratio: 1; } .grille-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+  .champ { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: var(--muted); } .champ input { height: 48px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--surface); color: var(--texte); font-size: 16px; padding: 0 12px; }
+  .puces { display: flex; gap: 6px; overflow-x: auto; margin-top: -6px; } .puce { flex: none; min-height: 36px; padding: 0 12px; border-radius: 18px; border: 1px solid var(--ligne); background: transparent; color: var(--texte); font-size: 13px; white-space: nowrap; } .apercu-sig { font-style: italic; margin: 0; font-size: 14px; }
   .lire { min-height: 48px; border: 0; border-radius: 16px; background: var(--c); color: #fff; font-size: 16px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-top: 4px; } .lire:disabled { opacity: .35; }
   .sect { display: flex; align-items: center; justify-content: space-between; } .sect h3 { margin: 0; font-size: 18px; }
   .plus { min-height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid var(--ligne); background: var(--surface); color: var(--texte); font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
@@ -201,8 +239,10 @@
   .liseuse header { display: flex; align-items: center; gap: 10px; padding: 10px 16px 0; } .liseuse .rond { background: var(--surface-2); color: var(--texte); border-color: var(--ligne); }
   .lt { flex: 1; min-width: 0; font-family: Georgia, serif; font-size: 14px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
   .num-page { position: absolute; left: 28px; top: calc(var(--haut-sûr, 0px) + 66px); font-size: 12px; color: var(--muted); font-style: italic; z-index: 2; }
-  .lecteur { flex: 1; min-height: 0; overflow-x: hidden; overflow-y: hidden; column-gap: 56px; padding: 40px 28px 16px; font-family: Georgia, 'Iowan Old Style', serif; font-size: 18px; line-height: 1.66; column-fill: auto; text-align: justify; hyphens: auto; touch-action: pan-y; color: var(--texte); }
+  .lecteur { flex: 1; min-height: 0; overflow: hidden; margin: 40px 28px 16px; font-family: Georgia, 'Iowan Old Style', serif; font-size: 18px; line-height: 1.66; text-align: justify; hyphens: auto; touch-action: pan-y; color: var(--texte); }
+  .cols { column-fill: auto; transition: transform .3s cubic-bezier(.2,.8,.2,1); } .lecteur :global(.sig) { text-align: right; font-style: italic; text-indent: 0 !important; margin-top: 2em; color: var(--muted); font-size: 15px; }
   .lecteur :global(p) { margin: 0 0 .45em; text-indent: 1.2em; } .lecteur :global(h1), .lecteur :global(h2) { font-family: Georgia, serif; text-indent: 0; text-align: center; color: var(--texte); }
+  .lecteur :global(h1), .lecteur :global(h2), .lecteur :global(h3), .lecteur :global(strong) { font-weight: 700 !important; } .lecteur :global(em) { font-style: italic; }
   .lecteur :global(h1) { text-transform: uppercase; font-size: 21px; letter-spacing: .04em; margin: .2em 0 1.8em; }
   .lecteur :global(.chap) { break-before: column; } .lecteur :global(.num) { text-indent: 0; text-align: center; text-transform: uppercase; letter-spacing: .3em; font-size: 10px; color: var(--accent-encre); margin: 10vh 0 1.2em; } .lecteur :global(.chap p) { text-indent: 1.2em; }
   .titre-page { text-align: center; padding-top: 12vh; } .titre-page h1 { font-size: 28px !important; text-transform: none !important; margin: 22px 0 8px !important; } .mini { width: 90px; aspect-ratio: 2 / 3; margin: 0 auto; border-radius: 3px 8px 8px 3px; box-shadow: 0 14px 24px -10px rgba(0,0,0,.6); } .titre-page p { text-indent: 0 !important; color: var(--muted); font-size: 14px; }
