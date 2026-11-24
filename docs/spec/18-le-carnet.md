@@ -33,3 +33,6 @@ L'onglet Carnet s'ouvre sur une **bibliothèque** (étagère de couvertures en r
 
 ### Thèmes (24 nov. 2026)
 Un livre peut porter un **thème** (champ libre dans la couverture, avec suggestions des thèmes existants). La bibliothèque affiche des **pastilles de filtre** (Tous · thèmes · Sans thème) et range les livres en **étagères par thème** (ordre alphabétique, « Sans thème » en dernier). Les livres existants sont « Sans thème ». Un nouveau livre hérite du filtre actif.
+
+### Pages et arborescence (24 nov. 2026)
+Un chapitre peut avoir des **pages** (et une page, des sous-pages) : une page est un chapitre rangé sous un autre, son parent est la clé `p` de la partie JSON de `source_label` (aucune colonne de plus). La table des matières est une **arborescence** : numéros « 1 », « 1.1 », « 1.1.1 », retrait par niveau, ▾/▸ pour replier, « + » pour ajouter une page, ↑/↓ pour réordonner parmi les pages d'un même parent. La lecture suit l'ordre de l'arbre (« Chapitre 1 », « Page 1.1 »). Supprimer un chapitre fait remonter ses pages d'un niveau.

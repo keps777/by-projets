@@ -30,6 +30,20 @@ test('Bibliothèque : créer un livre coloré, écrire des chapitres (notes), le
     await page.getByRole('button', { name: 'Enregistrer le chapitre' }).click();
   }
   await expect(page.locator('.toc li .ch')).toHaveCount(2);
+  // Une page sous le chapitre 1 : arborescence 1 → 1.1, repliable.
+  await page.getByRole('button', { name: 'Ajouter une page à Au commencement' }).click();
+  const ep = page.getByRole('dialog', { name: 'Nouvelle page' });
+  const zp = ep.getByRole('textbox', { name: 'Contenu de la note' });
+  await zp.click(); await page.keyboard.press('Control+A'); await page.keyboard.type('Une première page'); await page.keyboard.press('Enter'); await page.keyboard.insertText('Texte de la page. ');
+  await ep.getByRole('button', { name: 'Enregistrer' }).click();
+  await page.getByLabel('Date (au moins l’année)').fill('2026');
+  await page.getByRole('button', { name: 'Enregistrer le chapitre' }).click();
+  await expect(page.locator('.toc li .ch')).toHaveCount(3);
+  await expect(page.locator('.toc li.page .n')).toHaveText('1.1');
+  await page.getByRole('button', { name: 'Replier Au commencement' }).click();
+  await expect(page.locator('.toc li .ch')).toHaveCount(2);
+  await page.getByRole('button', { name: 'Déplier Au commencement' }).click();
+  await expect(page.locator('.toc li .ch')).toHaveCount(3);
   await page.screenshot({ path: '/tmp/livre.png' });
   await page.getByRole('button', { name: /Lire le livre/ }).click();
   await expect(page.locator('.lecteur')).toBeVisible();

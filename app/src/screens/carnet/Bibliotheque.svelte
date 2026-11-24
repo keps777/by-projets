@@ -4,7 +4,7 @@
   import EcranPage from '../../ui/EcranPage.svelte';
   import Icone from '../../ui/Icone.svelte';
   import Volet from '../../ui/Volet.svelte';
-  import { ajouterChapitre, COULEURS_LIVRE, creerLivre, dateDuJour, dateValide, echangerChapitres, historique, livres, modifierChapitre, modifierLivre, parTheme, themesDe, retenir, signatureDe, texteSignature, supprimerLivre, titreChapitre, type Livre } from '../../data/actions/livres.ts';
+  import { ajouterChapitre, COULEURS_LIVRE, creerLivre, dateDuJour, dateValide, echangerChapitres, historique, livres, modifierChapitre, modifierLivre, parTheme, supprimerChapitre, themesDe, voisin, retenir, signatureDe, texteSignature, supprimerLivre, titreChapitre, type Livre } from '../../data/actions/livres.ts';
   import { magasin } from '../../data/magasin.svelte.ts';
   import { urlMedia } from '../../data/media.svelte.ts';
   import { mediasCites, supprimerNote } from '../../data/actions/notes.ts';
@@ -53,7 +53,11 @@
   function reprendre(id: string) { if (livre) { ajouterChapitre(livre.id, `<figure><img data-media="${id}" alt=""></figure>`); dire('Image ajoutée comme chapitre'); orphelines = orphelines?.filter((o) => o.id !== id) ?? null; } }
 
   // Éditeur de chapitre
-  let ed = $state<{ id: string | null; html: string } | null>(null);
+  let ed = $state<{ id: string | null; html: string; parent: string | null } | null>(null);
+  let replies = $state<Set<string>>(new Set());
+  const basculerPlie = (id: string) => { const s = new Set(replies); if (s.has(id)) s.delete(id); else s.add(id); replies = s; };
+  /** Nœuds visibles : une page disparaît si l'un de ses ancêtres est replié. */
+  const visibles = $derived.by(() => { if (!livre) return []; const cache = new Map(livre.arbre.map((x) => [x.note.id, x])); const masque = (x: (typeof livre.arbre)[number]): boolean => { let p = x.parent; while (p) { if (replies.has(p)) return true; p = cache.get(p)?.parent ?? null; } return false; }; return livre.arbre.map((x, i) => ({ x, i })).filter(({ x }) => !masque(x)); });
   // Signature du chapitre (circonstance, lieu, date) demandée à l'enregistrement.
   let attente = $state<string | null>(null);
   let sig = $state({ c: '', l: '', d: '' });
@@ -73,7 +77,7 @@
     retenir(sig);
     const g = { c: sig.c.trim(), l: sig.l.trim(), d: sig.d.trim() };
     const chap = ed.id ? livre.chapitres.find((c) => c.id === ed!.id) : undefined;
-    if (chap) modifierChapitre(livre.id, chap, attente, g); else ajouterChapitre(livre.id, attente, g);
+    if (chap) modifierChapitre(livre.id, chap, attente, g); else ajouterChapitre(livre.id, attente, g, ed.parent);
     attente = null; ed = null; dire('Chapitre enregistré');
   }
 
@@ -81,7 +85,7 @@
   let vue: HTMLDivElement | undefined = $state(); let cols: HTMLDivElement | undefined = $state();
   let page = $state(1); let nbPages = $state(1);
   const ECART = 56;
-  const contenuLivre = $derived(livre ? livre.chapitres.map((c, i) => `<section class="chap"><p class="num">Chapitre ${i + 1}</p>${nettoyer(c.contenu ?? texteVersHtml(c.texte))}${(() => { const g = signatureDe(c); return g && texteSignature(g) ? `<p class="sig">${texteSignature(g).replace(/&/g, '&amp;').replace(/</g, '&lt;')}</p>` : ''; })()}</section>`).join('') : '');
+  const contenuLivre = $derived(livre ? livre.arbre.map(({ note: c, niveau, numero }) => `<section class="chap"><p class="num">${niveau ? 'Page' : 'Chapitre'} ${numero}</p>${nettoyer(c.contenu ?? texteVersHtml(c.texte))}${(() => { const g = signatureDe(c); return g && texteSignature(g) ? `<p class="sig">${texteSignature(g).replace(/&/g, '&amp;').replace(/</g, '&lt;')}</p>` : ''; })()}</section>`).join('') : '');
   function mesurer() {
     if (!vue || !cols) return;
     const w = vue.clientWidth;
@@ -121,7 +125,7 @@
     <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
     <div class="lecteur riche" bind:this={vue} onclick={toucheLecteur} ontouchstart={glisseDebut} ontouchend={glisseFin}>
      <div class="cols" bind:this={cols} use:hydraterAction={contenuLivre} style:transform="translateX(-{decalage}px)">
-      <section class="titre-page"><div class="mini" style:background={couv(livre.couleur)}></div><h1 class="serif">{livre.titre}</h1><p>{livre.chapitres.length} chapitre{livre.chapitres.length > 1 ? 's' : ''} · {livre.pages} page{livre.pages > 1 ? 's' : ''}</p></section>
+      <section class="titre-page"><div class="mini" style:background={couv(livre.couleur)}></div><h1 class="serif">{livre.titre}</h1><p>{livre.nbChapitres} chapitre{livre.nbChapitres > 1 ? 's' : ''} · {livre.pages} page{livre.pages > 1 ? 's' : ''}</p></section>
       {@html contenuLivre}
      </div>
     </div>
@@ -134,19 +138,24 @@
       <div class="couv grande" style:background={couv(livre.couleur)}><span class="reliure"></span><h2 class="serif">{livre.titre}</h2><span class="filet"></span><small>Luther</small></div>
       <div class="infos">
         <h1 class="titre">{livre.titre}</h1>
-        <p class="muted">{livre.chapitres.length} chapitre{livre.chapitres.length > 1 ? 's' : ''} · {livre.mots.toLocaleString('fr-CA')} mots · ≈ {livre.pages} page{livre.pages > 1 ? 's' : ''}</p>
+        <p class="muted">{livre.nbChapitres} chapitre{livre.nbChapitres > 1 ? 's' : ''}{livre.chapitres.length > livre.nbChapitres ? ` · ${livre.chapitres.length - livre.nbChapitres} page${livre.chapitres.length - livre.nbChapitres > 1 ? 's' : ''}` : ''} · {livre.mots.toLocaleString('fr-CA')} mots · ≈ {livre.pages} page{livre.pages > 1 ? 's' : ''}</p>
         <div class="progres"><span style:width="{Math.min(100, livre.pages)}%"></span></div><small class="muted">Objectif 100 pages · {Math.min(100, livre.pages)} %</small>
         <button type="button" class="lire" disabled={!livre.chapitres.length} onclick={() => routeur.definir('lire', '1')}><Icone nom="livre" taille={18} /> Lire le livre</button>
       </div>
     </div>
     <button type="button" class="retrouver" onclick={chercherImages}>Retrouver mes images</button>
-    <div class="sect"><h3>Table des matières</h3><button type="button" class="plus" onclick={() => (ed = { id: null, html: '<h1>Titre du chapitre</h1><p><br></p>' })}><Icone nom="plus" taille={15} trait={2.4} /> Nouveau chapitre</button></div>
-    <ol class="toc">
-      {#each livre.chapitres as c, i (c.id)}
-        <li><button type="button" class="ch" onclick={() => (ed = { id: c.id, html: c.contenu ?? texteVersHtml(c.texte) })}>
-          <span class="n mono">{i + 1}</span><span class="col"><b>{titreChapitre(c)}</b><small class="muted">≈ {Math.max(1, Math.ceil(c.texte.split(/\s+/).length / 250))} p.</small></span></button>
-          <span class="ord"><button type="button" aria-label="Monter" disabled={i === 0} onclick={() => echangerChapitres(livre.chapitres[i - 1], c)}>↑</button><button type="button" aria-label="Descendre" disabled={i === livre.chapitres.length - 1} onclick={() => echangerChapitres(c, livre.chapitres[i + 1])}>↓</button></span></li>
-      {:else}<li class="vide muted">Aucun chapitre. Chaque chapitre ou sous-chapitre est une note : touche « Nouveau chapitre ».</li>{/each}
+    <div class="sect"><h3>Table des matières</h3><button type="button" class="plus" onclick={() => (ed = { id: null, parent: null, html: '<h1>Titre du chapitre</h1><p><br></p>' })}><Icone nom="plus" taille={15} trait={2.4} /> Nouveau chapitre</button></div>
+    <ol class="toc" aria-label="Arborescence du livre">
+      {#each visibles as { x, i } (x.note.id)}
+        {@const c = x.note}
+        <li class:page={x.niveau > 0} style:--niv={x.niveau}>
+          {#if x.enfants}<button type="button" class="plie" aria-label="{replies.has(c.id) ? 'Déplier' : 'Replier'} {titreChapitre(c)}" aria-expanded={!replies.has(c.id)} onclick={() => basculerPlie(c.id)}>{replies.has(c.id) ? '▸' : '▾'}</button>{:else}<span class="plie vide-p"></span>{/if}
+          <button type="button" class="ch" onclick={() => (ed = { id: c.id, parent: x.parent, html: c.contenu ?? texteVersHtml(c.texte) })}>
+            <span class="n mono">{x.numero}</span><span class="col"><b>{titreChapitre(c)}</b><small class="muted">{x.niveau ? 'Page' : 'Chapitre'}{x.enfants ? ` · ${x.enfants} page${x.enfants > 1 ? 's' : ''}` : ''} · ≈ {Math.max(1, Math.ceil(c.texte.split(/\s+/).length / 250))} p.</small></span></button>
+          <button type="button" class="ajout" aria-label="Ajouter une page à {titreChapitre(c)}" onclick={() => { replies.delete(c.id); ed = { id: null, parent: c.id, html: '<h1>Titre de la page</h1><p><br></p>' }; }}><Icone nom="plus" taille={15} trait={2.4} /></button>
+          <span class="ord"><button type="button" aria-label="Monter" disabled={!voisin(livre.arbre, i, -1)} onclick={() => echangerChapitres(voisin(livre.arbre, i, -1)!, c)}>↑</button><button type="button" aria-label="Descendre" disabled={!voisin(livre.arbre, i, 1)} onclick={() => echangerChapitres(c, voisin(livre.arbre, i, 1)!)}>↓</button></span>
+        </li>
+      {:else}<li class="vide muted">Aucun chapitre. Touche « Nouveau chapitre », puis le « + » d’un chapitre pour lui ajouter des pages.</li>{/each}
     </ol>
   </EcranPage>
 {:else}
@@ -162,9 +171,9 @@
       {#if themes.length}<h3 class="theme-t">{g.theme || 'Sans thème'} <small class="muted">{g.livres.length}</small></h3>{/if}
       <div class="etagere">
         {#each g.livres as l (l.id)}
-          <button type="button" class="livre" onclick={() => routeur.definir('livre', l.id)} aria-label="{l.titre}, {l.chapitres.length} chapitres">
+          <button type="button" class="livre" onclick={() => routeur.definir('livre', l.id)} aria-label="{l.titre}, {l.nbChapitres} chapitres">
             <span class="couv" style:background={couv(l.couleur)}><span class="reliure"></span><span class="serif t">{l.titre}</span><span class="filet"></span></span>
-            <span class="meta"><b>{l.titre}</b><small class="muted">{l.chapitres.length} ch. · ≈ {l.pages} p.</small></span>
+            <span class="meta"><b>{l.titre}</b><small class="muted">{l.nbChapitres} ch. · ≈ {l.pages} p.</small></span>
           </button>
         {/each}
       </div>
@@ -210,7 +219,7 @@
   </form>
 </Volet>
 
-<EditeurRiche livre ouvert={ed !== null} html={ed?.html ?? ''} titre={ed?.id ? 'Modifier le chapitre' : 'Nouveau chapitre'} onenregistrer={enregistrer} onfermer={() => (ed = null)} onsupprimer={ed?.id ? () => { supprimerNote(ed!.id!); ed = null; } : undefined} />
+<EditeurRiche livre ouvert={ed !== null} html={ed?.html ?? ''} titre={ed?.id ? (ed.parent ? 'Modifier la page' : 'Modifier le chapitre') : ed?.parent ? 'Nouvelle page' : 'Nouveau chapitre'} onenregistrer={enregistrer} onfermer={() => (ed = null)} onsupprimer={ed?.id && livre ? () => { const n = livre.chapitres.find((c) => c.id === ed!.id); if (n) supprimerChapitre(livre.id, n, livre.chapitres); ed = null; } : undefined} />
 
 <style>
   .toc, .heros, .sect, .etagere, .tete { flex: none; }
@@ -245,6 +254,8 @@
   .ch { all: unset; box-sizing: border-box; flex: 1; min-width: 0; display: flex; gap: 12px; align-items: center; padding: 12px 8px 12px 14px; min-height: 56px; cursor: pointer; }
   .n { flex: none; width: 30px; height: 30px; border-radius: 9px; background: var(--accent-fond); color: var(--accent-encre); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; }
   .col { display: flex; flex-direction: column; min-width: 0; } .col b { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .toc li { padding-left: calc(var(--niv, 0) * 22px); } .toc li.page { background: color-mix(in srgb, var(--surface-2) 55%, transparent); border-left: 0; } .toc li.page .n { background: transparent; border: 1px solid var(--ligne); color: var(--muted); width: auto; min-width: 30px; padding: 0 6px; }
+  .plie { all: unset; box-sizing: border-box; flex: none; width: 32px; align-self: stretch; display: inline-flex; align-items: center; justify-content: center; color: var(--muted); cursor: pointer; font-size: 14px; } .ajout { flex: none; width: 36px; height: 36px; border-radius: 12px; border: 0; background: transparent; color: var(--accent-encre); display: inline-flex; align-items: center; justify-content: center; }
   .ord { display: flex; flex-direction: column; padding-right: 8px; } .ord button { width: 36px; height: 24px; border: 0; background: transparent; color: var(--muted); font-size: 15px; } .ord button:disabled { opacity: .25; }
   .form { display: flex; flex-direction: column; gap: 14px; } .form .titre { font-size: 22px; margin: 0; } .apercu { display: flex; justify-content: center; }
   .form input[type='text'] { height: 52px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--surface); color: var(--texte); font-size: 18px; padding: 0 14px; }

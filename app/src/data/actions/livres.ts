@@ -22,7 +22,30 @@ export function retenir(g: Signature): void { for (const k of ['c', 'l', 'd'] as
 /** Date du jour au format 21/08/26. */
 export const dateDuJour = (): string => { const d = new Date(); return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getFullYear()).slice(2)}`; };
 
-export interface Livre { id: string; titre: string; couleur: string; /** Thème de classement (vide : sans thème). */ theme: string; note: Note; chapitres: Note[]; mots: number; pages: number }
+/** Page = chapitre rangé sous un autre : l'identifiant du parent est la clé `p` de la partie JSON de `source_label`. */
+export const parentDe = (n: Pick<Note, 'source_label'>): string | null => { const i = n.source_label?.indexOf('|') ?? -1; if (i < 0) return null; try { const p = JSON.parse(n.source_label!.slice(i + 1)).p; return typeof p === 'string' && p ? p : null; } catch { return null; } };
+/** Un nœud de l'arborescence d'un livre : la note, sa profondeur (0 = chapitre) et son numéro « 2.1 ». */
+export interface Noeud { note: Note; niveau: number; numero: string; parent: string | null; enfants: number }
+/** Arborescence aplatie dans l'ordre de lecture (chapitre, puis ses pages, récursivement). Un parent introuvable rend la note orpheline : elle devient un chapitre. */
+export function arbre(notes: Note[]): Noeud[] {
+  const ids = new Set(notes.map((n) => n.id));
+  const parent = (n: Note) => { const p = parentDe(n); return p && p !== n.id && ids.has(p) ? p : null; };
+  const fils = new Map<string | null, Note[]>();
+  for (const n of notes) fils.set(parent(n), [...(fils.get(parent(n)) ?? []), n]);
+  const sortie: Noeud[] = []; const vus = new Set<string>();
+  const parcourir = (pere: string | null, niveau: number, prefixe: string) => (fils.get(pere) ?? []).forEach((n, i) => {
+    if (vus.has(n.id)) return; vus.add(n.id);
+    const numero = prefixe ? `${prefixe}.${i + 1}` : String(i + 1);
+    sortie.push({ note: n, niveau, numero, parent: pere, enfants: (fils.get(n.id) ?? []).length });
+    parcourir(n.id, niveau + 1, numero);
+  });
+  parcourir(null, 0, '');
+  return sortie;
+}
+/** Voisin de même parent (pour monter / descendre une page sans quitter son chapitre). */
+export const voisin = (a: Noeud[], i: number, sens: -1 | 1): Note | undefined => { for (let k = i + sens; k >= 0 && k < a.length; k += sens) { if (a[k].niveau < a[i].niveau) return undefined; if (a[k].niveau === a[i].niveau && a[k].parent === a[i].parent) return a[k].note; } return undefined; };
+
+export interface Livre { id: string; titre: string; couleur: string; /** Thème de classement (vide : sans thème). */ theme: string; note: Note; chapitres: Note[]; /** Arborescence (chapitres et pages) dans l'ordre de lecture. */ arbre: Noeud[]; /** Nombre de chapitres de premier niveau. */ nbChapitres: number; mots: number; pages: number }
 export const estDeLivre = (n: Pick<Note, 'source_label'>): boolean => !!n.source_label && (n.source_label.startsWith(COUV) || n.source_label.startsWith(CHAP));
 
 export const compterMots = (t: string): number => (t.match(/[\p{L}\p{N}’'-]+/gu) ?? []).length;
@@ -41,7 +64,8 @@ export function livres(): Livre[] {
     const id = note.source_label!.slice(COUV.length);
     const chapitres = toutes.filter((n) => n.source_label === CHAP + id || n.source_label?.startsWith(CHAP + id + '|'));
     const mots = chapitres.reduce((t, c) => t + compterMots(c.texte), 0);
-    return { id, ...lireCouverture(note), note, chapitres, mots, pages: pagesDe(mots) };
+    const ab = arbre(chapitres);
+    return { id, ...lireCouverture(note), note, chapitres, arbre: ab, nbChapitres: ab.filter((x) => x.niveau === 0).length, mots, pages: pagesDe(mots) };
   });
 }
 
@@ -62,8 +86,15 @@ export function parTheme(ls: Livre[]): { theme: string; livres: Livre[] }[] {
   return sans.length ? [...g, { theme: '', livres: sans }] : g;
 }
 export function supprimerLivre(l: Livre): void { for (const c of l.chapitres) supprimerNote(c.id); supprimerNote(l.note.id); }
-const etiquette = (livreId: string, g: Signature | null) => CHAP + livreId + (g ? `|${JSON.stringify(g)}` : '');
-export function ajouterChapitre(livreId: string, html: string, g: Signature | null = null): Note | undefined { return ajouterNoteRiche(html, { origine: 'libre', sourceLabel: etiquette(livreId, g) }); }
-export function modifierChapitre(livreId: string, n: Note, html: string, g: Signature | null): void { modifierNoteRiche(n.id, html); magasin.ecrire('notes', { id: n.id, source_label: etiquette(livreId, g) }); }
+const etiquette = (livreId: string, g: Signature | null, parent: string | null = null) => CHAP + livreId + (g || parent ? `|${JSON.stringify({ ...(g ?? { c: '', l: '', d: '' }), ...(parent ? { p: parent } : {}) })}` : '');
+export function ajouterChapitre(livreId: string, html: string, g: Signature | null = null, parent: string | null = null): Note | undefined { return ajouterNoteRiche(html, { origine: 'libre', sourceLabel: etiquette(livreId, g, parent) }); }
+export function modifierChapitre(livreId: string, n: Note, html: string, g: Signature | null): void { modifierNoteRiche(n.id, html); magasin.ecrire('notes', { id: n.id, source_label: etiquette(livreId, g, parentDe(n)) }); }
 /** Remet les chapitres dans un autre ordre : les numéros sont échangés (le livre se lit dans l'ordre des numéros). */
 export function echangerChapitres(a: Note, b: Note): void { magasin.ecrire('notes', { id: a.id, numero: b.numero }); magasin.ecrire('notes', { id: b.id, numero: a.numero }); }
+
+/** Supprime un chapitre ou une page ; ses pages remontent d'un niveau (chez le parent du supprimé). */
+export function supprimerChapitre(livreId: string, n: Note, tout: Note[]): void {
+  const pere = parentDe(n);
+  for (const e of tout) if (parentDe(e) === n.id) magasin.ecrire('notes', { id: e.id, source_label: etiquette(livreId, signatureDe(e), pere) });
+  supprimerNote(n.id);
+}

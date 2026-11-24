@@ -197,3 +197,5 @@ Outil de comparaison : voir la méthode dans ce journal ; relancer une passe à 
 **Livres : signature et lecture (24 nov.)** : à l'enregistrement d'un chapitre, fenêtre « Signature » : circonstance (facultative), lieu (facultatif), date (au moins l'année, bloquant) avec propositions tirées des saisies passées ; affichée en bas du chapitre à la lecture (« Durant la nuit de prière de CMCI PAT, Montréal, 21/08/26 »), rangée dans `source_label` (`livre:<id>|{c,l,d}`). Lecteur par transformation (fin de la coupure à droite) ; titres et gras toujours en gras à la lecture.
 
 **Livres classés par thème (24 nov.)** : champ « Thème » (création et réglages), pastilles de filtre, étagères par thème (`themesDe`, `parTheme` dans livres.ts). Spec §18 mise à jour, e2e bibliotheque étendu.
+
+**Pages et arborescence des livres (24 nov.)** : `arbre`, `parentDe`, `voisin`, `supprimerChapitre` (livres.ts) ; TOC repliable avec « + » par chapitre ; lecteur numéroté 1 / 1.1. Test unitaire livres-arbre + e2e étendu. Spec §18 mise à jour.
