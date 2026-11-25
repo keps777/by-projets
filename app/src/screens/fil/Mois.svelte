@@ -9,7 +9,7 @@
   import Segment from '../../ui/Segment.svelte';
   import Icone from '../../ui/Icone.svelte';
   import { moisValide } from './navigation.ts';
-  import { chargeDuJour, grilleMois, hauteurCharge, partEcoulee, statsMois, teinteAccompli } from './mois.ts';
+  import { chargeDuJour, grilleMois, partEcoulee, statsMois, teinteAccompli } from './mois.ts';
   import { cap, dateCourte, dateLongue, dureeMin, nomCourtRubrique, nomDuMois } from './format.ts';
 
   /** Vue Mois : couche Charge (proportions par rubrique) ou Accompli (intensité), statistiques, progression par rubrique. */
@@ -65,12 +65,14 @@
       {@const estAuj = jour === aujourdhui}
       {@const passe = jour <= aujourdhui && charge.total > 0}
       {@const pct = charge.total ? Math.round((charge.faits / charge.total) * 100) : 0}
-      <a class="case" class:auj={estAuj} href={lien(jour)} aria-label="{dateLongue(jour)} : {charge.total} blocs, {dureeMin(charge.minutes)}"
-        style:background={couche === 'accompli' && passe ? `color-mix(in srgb, var(--bon) ${teinteAccompli(pct)}%, var(--surface))` : null}>
-        <span class="num" class:auj={estAuj}>{+jour.slice(8)}</span>
+      {@const chaleur = Math.min(34, Math.round((charge.minutes / 1080) * 34))}
+      <a class="case" class:auj={estAuj} class:futur={jour > aujourdhui} class:vide={!charge.total} href={lien(jour)} aria-label="{dateLongue(jour)} : {charge.total} blocs, {dureeMin(charge.minutes)}"
+        style:background={couche === 'accompli' && passe ? `color-mix(in srgb, var(--bon) ${teinteAccompli(pct)}%, var(--surface))` : couche === 'charge' && chaleur ? `color-mix(in srgb, var(--maintenant-doux, #7aa7ff) ${chaleur}%, var(--surface))` : null}>
+        <span class="haut"><span class="num" class:auj={estAuj}>{+jour.slice(8)}</span></span>
+        {#if couche === 'charge' && charge.minutes > 0}<span class="mono h">{Math.round(charge.minutes / 60)} h</span>{/if}
         {#if couche === 'charge'}
           {#if charge.minutes > 0}
-            <span class="barre" style:height="{hauteurCharge(charge.minutes)}px">
+            <span class="barre">
               {#each charge.segments as s (s.couleur)}<span style:flex={s.minutes} style:background={couleurRubrique(s.couleur, mode)}></span>{/each}
             </span>
           {/if}
@@ -123,19 +125,21 @@
   .calendrier { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; margin: 0 -4px; }
   .jsem { text-align: center; font-size: 11px; font-weight: 600; color: var(--muted); }
   .case { transition: transform 0.12s ease, background-color 0.25s ease; }
-  .case { height: 66px; border-radius: 10px; background: var(--surface); border: 1px solid var(--ligne); padding: 4px; display: flex; flex-direction: column; justify-content: space-between; }
-  .case.auj { border-color: var(--maintenant); }
+  .case { height: 72px; border-radius: 12px; background: var(--surface); border: 1px solid var(--ligne); padding: 5px 5px 6px; display: flex; flex-direction: column; justify-content: space-between; }
+  .case.vide { background: transparent; border-style: dashed; opacity: .75; } .case.futur:not(.vide) { border-style: dashed; }
+  .case.auj { border: 1.5px solid var(--maintenant); box-shadow: 0 0 16px -3px color-mix(in srgb, var(--maintenant) 60%, transparent); }
+  .haut { display: flex; align-items: center; justify-content: space-between; gap: 2px; } .h { font-size: 10.5px; color: var(--muted); padding-left: 4px; margin-top: -4px; font-variant-numeric: tabular-nums; }
   .num { align-self: flex-start; min-width: 22px; height: 22px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
   .num.auj { background: var(--jour-aujourdhui); color: var(--jour-aujourdhui-texte); }
-  .barre { display: flex; flex-direction: column-reverse; border-radius: 3px; overflow: hidden; gap: 1px; }
+  .barre { display: flex; flex-direction: row; height: 6px; border-radius: 3px; overflow: hidden; gap: 1.5px; } .barre span { min-width: 3px; border-radius: 2px; }
   .pct { font-size: 11px; }
   .pct.vide { color: var(--faint); }
-  .legende { display: flex; flex-wrap: wrap; gap: 10px 14px; padding: 0 2px; font-size: 11px; color: var(--muted); }
-  .legende span { display: flex; align-items: center; gap: 5px; }
-  .legende i { width: 10px; height: 10px; border-radius: 3px; }
+  .legende { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 2px; font-size: 12px; color: var(--muted); }
+  .legende span { display: flex; align-items: center; gap: 6px; padding: 5px 11px 5px 8px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--surface); }
+  .legende i { width: 9px; height: 9px; border-radius: 50%; }
   .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-  .stat { border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; }
-  .stat .titre { font-size: 20px; }
+  .stat { border-radius: 18px; padding: 12px 13px; display: flex; flex-direction: column; gap: 2px; background: linear-gradient(145deg, var(--surface), var(--surface-2)); }
+  .stat .titre { font-size: 22px; letter-spacing: -.01em; }
   .stat .muted { font-size: 11px; }
   .prog { border-radius: 22px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
   .fort { font-size: 14px; font-weight: 600; }

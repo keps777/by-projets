@@ -51,3 +51,7 @@ Chaque carte est courte : **nom coupé** (3 lignes au plus), heure, et le **chro
 ## Sous-projet · lancer un temps (12 oct. 2026)
 
 Dans un sous-projet en cours, au-dessus des onglets : **Lancer un temps** (chronomètre qui survit au rechargement, comme les chronos des points du rapport, §9). **Arrêter** ouvre « Fin de la session » : le temps est corrigeable (h · min · s) et on remplit les **métriques du sous-projet** (chapitres, pages, fois, passages…) ; **Valider** enregistre une saisie du projet (source « minuteur ») qui s'ajoute au total du jour. « Plus tard » laisse la session arrêtée, à enregistrer ; « Annuler » l'oublie. Une pastille sur l'onglet Projets signale un temps en cours ou à enregistrer (celle de Rapports reste pour les points du rapport).
+
+### Semaine et Mois : lecture d'un coup d'œil (25 nov. 2026)
+- **Semaine** : carte de bilan en tête (% fait, heures faites / prévues, barre) ; sous chaque jour, une mini-barre de complétion ; blocs **prévus** = teinte de la rubrique avec liseré à gauche, **faits** = aplat plein avec relief, **non faits** = hachures ; heures de nuit assombries, repères horaires en pointillés, colonne du jour auréolée.
+- **Mois (charge)** : chaque case a une **chaleur** (plus la journée est chargée, plus la teinte monte), le nombre d'heures et une **bande horizontale** des rubriques ; jours vides en pointillés, jours futurs planifiés en pointillés, aujourd'hui auréolé ; légende en pastilles, cartes de statistiques en dégradé.

@@ -35,7 +35,8 @@
     const blocs = blocsParJour[j];
     const places = disposer(blocs.map((b) => ({ debut: b.debutMin, fin: b.finMin })));
     return {
-      j, l: LETTRES[i], num: +j.slice(8), estAujourdhui: j === aujourdhui,
+      j, l: LETTRES[i], num: +j.slice(8), estAujourdhui: j === aujourdhui, passe: j < aujourdhui,
+      pct: (() => { const t = blocs.reduce((m, b) => m + b.finMin - b.debutMin, 0); const f = blocs.filter((b) => b.fait).reduce((m, b) => m + b.finMin - b.debutMin, 0); return t ? Math.round((f / t) * 100) : null; })(),
       blocs: blocs.map((b, k) => {
         const passe = j < aujourdhui || (j === aujourdhui && b.finMin <= maintenant);
         return { id: b.occ.id, titre: b.titre, top: y(b.debutMin), h: Math.max(3, Math.round((b.finMin - b.debutMin) * ECHELLE) - 1), couleur: couleurRubrique(b.couleur, mode), fait: b.fait, manque: passe && !b.fait, ...places[k] };
@@ -49,6 +50,10 @@
     return { prevu, fait };
   });
 
+  const pctSemaine = $derived(totaux.prevu ? Math.round((totaux.fait / totaux.prevu) * 100) : 0);
+  /** Les heures de nuit (avant 6 h, après 22 h) sont légèrement assombries dans chaque colonne. */
+  const nuitHaut = $derived(Math.max(0, Math.min(hauteur, y(360))));
+  const nuitBas = $derived(Math.max(0, Math.min(hauteur, y(1320))));
   const propositions = $derived(propositionsDeLaSemaine(jours, blocsParJour, aujourdhui, maintenant));
 
   const allerSemaine = (n: number) => { const l = ajouterJours(lundi, 7 * n); routeur.definir('semaine', l === lundiDe(aujourdhui) ? null : l); };
@@ -81,12 +86,18 @@
     ]} />
   </div>
 
+  <div class="resume" aria-label="Bilan de la semaine">
+    <div class="r-haut"><span class="r-pct">{pctSemaine}<small> %</small></span><span class="r-txt"><b>{hmin(totaux.fait)}</b> faites sur <b>{hmin(totaux.prevu)}</b> prévues</span></div>
+    <span class="r-piste"><span style:width="{pctSemaine}%"></span></span>
+  </div>
+
   <div class="grille">
     <span></span>
     {#each colonnes as c (c.j)}
       <a class="entete-col" href={c.estAujourdhui ? '/' : `/?jour=${c.j}`} aria-label="Ouvrir {dateLongue(c.j)}">
         <span class="lettre">{c.l}</span>
-        <span class="num" class:auj={c.estAujourdhui}>{c.num}</span>
+        <span class="num" class:auj={c.estAujourdhui} class:passe={c.passe}>{c.num}</span>
+        <span class="jbarre" class:vide={c.pct === null}><span style:width="{c.pct ?? 0}%"></span></span>
       </a>
     {/each}
 
@@ -95,6 +106,8 @@
     </div>
     {#each colonnes as c (c.j)}
       <a class="colonne" class:auj={c.estAujourdhui} style:height="{hauteur}px" href={c.estAujourdhui ? '/' : `/?jour=${c.j}`} aria-label="{cap(puceJour(c.j, aujourdhui))} : {c.blocs.length} blocs, {c.blocs.filter((b) => b.fait).length} faits">
+        {#if nuitHaut > 0}<span class="nuit" style:top="0" style:height="{nuitHaut}px"></span>{/if}
+        {#if nuitBas < hauteur}<span class="nuit" style:top="{nuitBas}px" style:height="{hauteur - nuitBas}px"></span>{/if}
         {#each reperes as m (m)}<span class="trait" style:top="{y(m)}px"></span>{/each}
         {#each c.blocs as b (b.id)}
           <span class="bloc" class:fait={b.fait} class:manque={b.manque} title={b.titre}
@@ -151,22 +164,28 @@
   .num { width: 30px; height: 30px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; }
   .num.auj { background: var(--jour-aujourdhui); color: var(--jour-aujourdhui-texte); }
   .heures { position: relative; }
-  .heures span { position: absolute; right: 2px; font-size: 9px; color: var(--faint); }
+  .heures span { position: absolute; right: 3px; font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
   .colonne { position: relative; display: block; border-radius: 8px; background: color-mix(in srgb, var(--surface-2) 45%, var(--fond)); overflow: hidden; }
-  .colonne.auj { background: var(--surface); }
-  .trait { position: absolute; left: 0; right: 0; height: 1px; background: var(--ligne); }
-  .bloc { position: absolute; border-radius: 4px; border: 1.5px solid var(--c); background: transparent; transition: background-color 0.3s ease; }
-  .bloc.fait { background: var(--c); }
-  .bloc.manque { border-color: var(--faint); }
+  .colonne.auj { background: var(--surface); box-shadow: 0 0 0 1px color-mix(in srgb, var(--maintenant) 55%, transparent), 0 0 18px -4px color-mix(in srgb, var(--maintenant) 45%, transparent); }
+  .trait { position: absolute; left: 0; right: 0; height: 1px; background: repeating-linear-gradient(90deg, var(--ligne) 0 4px, transparent 4px 7px); }
+  .resume { border-radius: 20px; padding: 14px 16px; background: linear-gradient(135deg, var(--surface), var(--surface-2)); border: 1px solid var(--ligne); display: flex; flex-direction: column; gap: 10px; margin: 0 2px; }
+  .r-haut { display: flex; align-items: baseline; gap: 14px; } .r-pct { font-size: 34px; font-weight: 700; letter-spacing: -.02em; line-height: 1; font-variant-numeric: tabular-nums; } .r-pct small { font-size: 16px; font-weight: 600; color: var(--muted); } .r-txt { font-size: 13px; color: var(--muted); } .r-txt b { color: var(--texte); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .r-piste { height: 8px; border-radius: 4px; background: var(--piste, rgba(255,255,255,.08)); overflow: hidden; } .r-piste span { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--bon, #4ade80), color-mix(in srgb, var(--bon, #4ade80) 55%, #fff)); }
+  .jbarre { width: 22px; height: 3px; border-radius: 2px; background: var(--piste, rgba(255,255,255,.1)); overflow: hidden; } .jbarre span { display: block; height: 100%; background: var(--bon, #4ade80); } .jbarre.vide { opacity: .35; }
+  .num.passe:not(.auj) { color: var(--muted); }
+  .nuit { position: absolute; left: 0; right: 0; background: rgba(0, 0, 0, .22); }
+  .bloc { position: absolute; border-radius: 5px; background: color-mix(in srgb, var(--c) 22%, transparent); box-shadow: inset 2.5px 0 0 var(--c); transition: background-color .3s ease; }
+  .bloc.fait { background: linear-gradient(180deg, color-mix(in srgb, var(--c) 86%, #fff), var(--c)); box-shadow: 0 2px 8px color-mix(in srgb, var(--c) 38%, transparent), inset 0 1px 0 rgba(255,255,255,.28); }
+  .bloc.manque { background: repeating-linear-gradient(135deg, rgba(255,255,255,.09) 0 3px, transparent 3px 7px); box-shadow: inset 2.5px 0 0 var(--faint); }
   .maintenant { position: absolute; left: 0; right: 0; height: 2px; background: var(--maintenant); }
   .point { position: absolute; left: -1px; width: 7px; height: 7px; border-radius: 4px; background: var(--maintenant); }
   .legende { display: flex; gap: 12px; flex-wrap: wrap; padding: 0 2px; font-size: 11px; color: var(--muted); }
   .legende span { display: flex; align-items: center; gap: 5px; }
   .legende i { width: 12px; height: 12px; border-radius: 3px; }
   .l-fait { background: var(--texte); }
-  .l-prevu { border: 1.5px solid var(--texte); }
-  .l-non { background: var(--faint); opacity: 0.4; }
-  .legende .total { margin-left: auto; }
+  .l-prevu { background: color-mix(in srgb, var(--texte) 22%, transparent); box-shadow: inset 2.5px 0 0 var(--texte); }
+  .l-non { background: repeating-linear-gradient(135deg, var(--faint) 0 2px, transparent 2px 4px); box-shadow: inset 2.5px 0 0 var(--faint); }
+  .legende .total { display: none; }
   .remplir { background: var(--carte-fond); color: var(--carte-texte); border: 1px solid var(--ligne); border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
   .fort { font-size: 16px; font-weight: 600; }
   .doux { font-size: 13px; opacity: 0.75; }
