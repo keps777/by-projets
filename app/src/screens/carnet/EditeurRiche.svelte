@@ -47,8 +47,18 @@
     vide = estVide(noeud.innerHTML);
     try { document.execCommand('defaultParagraphSeparator', false, 'p'); } catch { /* ignoré */ }
     noeud.focus();
-    const cible = curseurBloc >= 0 ? noeud.children[curseurBloc] : undefined;
-    if (cible) { const r = document.createRange(); r.selectNodeContents(cible); r.collapse(true); const sel = document.getSelection(); sel?.removeAllRanges(); sel?.addRange(r); }
+    const poser = () => {
+      if (curseurBloc < 0) return;
+      // Le nettoyage retire le paragraphe vide final : on le recrée pour pouvoir y écrire (titre seul → corps sous le titre).
+      while (noeud.children.length <= curseurBloc) noeud.insertAdjacentHTML('beforeend', '<p><br></p>');
+      const cible = noeud.children[curseurBloc];
+      noeud.focus();
+      const r = document.createRange(); r.selectNodeContents(cible); r.collapse(true);
+      const sel = document.getSelection(); sel?.removeAllRanges(); sel?.addRange(r);
+    };
+    poser();
+    // La feuille qui vient de se fermer peut reprendre le focus : on repose le curseur, tant que rien n'a été tapé.
+    if (curseurBloc >= 0) for (const d of [120, 450]) setTimeout(() => { if (!modifie && noeud.isConnected) poser(); }, d);
   }
 
   // La sélection dans la zone est gardée : les boutons, le sélecteur de fichiers et le champ du lien la rendent.

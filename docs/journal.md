@@ -219,3 +219,5 @@ Outil de comparaison : voir la méthode dans ce journal ; relancer une passe à 
 **Pages réelles + ordre des thèmes (25 nov.)** : `pages` = pages écrites (feuilles de l'arbre), fin des « ≈ p. » / mots ; `deplacerTheme` / `ordreThemes` (↑ ↓ dans le filtre). e2e themes-ordre.
 
 **PDF en deux pages (25 nov.)** : métriques sous le tableau (page 1), suivi des projets seul sur la page 2 avec resserrement automatique (pas des sous-projets, 3 colonnes, synthèse compacte).
+
+**Règle chapitre une page / à pages (25 nov.)** : choix à la création, conteneur (`k:'c'`), ouverture centrée à la lecture, `creerChapitreAPages`, curseur posé sous le titre de la première page. e2e bibliotheque réécrit.

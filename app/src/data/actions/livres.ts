@@ -29,9 +29,11 @@ export function retenir(g: Signature): void { for (const k of ['c', 'l', 'd'] as
 export const dateDuJour = (): string => { const d = new Date(); return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getFullYear()).slice(2)}`; };
 
 /** Page = chapitre rangé sous un autre : l'identifiant du parent est la clé `p` de la partie JSON de `source_label`. */
+/** Un chapitre « à pages » est un conteneur : il ne porte que son titre, ses pages portent le texte (clé `k: 'c'` de la partie JSON de `source_label`). */
+export const estConteneurNote = (n: Pick<Note, 'source_label'>): boolean => { const i = n.source_label?.indexOf('|') ?? -1; if (i < 0) return false; try { return JSON.parse(n.source_label!.slice(i + 1)).k === 'c'; } catch { return false; } };
 export const parentDe = (n: Pick<Note, 'source_label'>): string | null => { const i = n.source_label?.indexOf('|') ?? -1; if (i < 0) return null; try { const p = JSON.parse(n.source_label!.slice(i + 1)).p; return typeof p === 'string' && p ? p : null; } catch { return null; } };
 /** Un nœud de l'arborescence d'un livre : la note, sa profondeur (0 = chapitre) et son numéro « 2.1 ». */
-export interface Noeud { note: Note; niveau: number; numero: string; parent: string | null; enfants: number }
+export interface Noeud { note: Note; niveau: number; numero: string; parent: string | null; enfants: number; /** Chapitre à pages (titre seul) : déclaré à la création ou porteur de pages. */ conteneur: boolean }
 /** Arborescence aplatie dans l'ordre de lecture (chapitre, puis ses pages, récursivement). Un parent introuvable rend la note orpheline : elle devient un chapitre. */
 export function arbre(notes: Note[]): Noeud[] {
   const ids = new Set(notes.map((n) => n.id));
@@ -42,7 +44,7 @@ export function arbre(notes: Note[]): Noeud[] {
   const parcourir = (pere: string | null, niveau: number, prefixe: string) => (fils.get(pere) ?? []).forEach((n, i) => {
     if (vus.has(n.id)) return; vus.add(n.id);
     const numero = prefixe ? `${prefixe}.${i + 1}` : String(i + 1);
-    sortie.push({ note: n, niveau, numero, parent: pere, enfants: (fils.get(n.id) ?? []).length });
+    sortie.push({ note: n, niveau, numero, parent: pere, enfants: (fils.get(n.id) ?? []).length, conteneur: estConteneurNote(n) || (fils.get(n.id) ?? []).length > 0 });
     parcourir(n.id, niveau + 1, numero);
   });
   parcourir(null, 0, '');
@@ -70,7 +72,7 @@ export function livres(): Livre[] {
     const id = note.source_label!.slice(COUV.length);
     const chapitres = toutes.filter((n) => n.source_label === CHAP + id || n.source_label?.startsWith(CHAP + id + '|'));
     const ab = arbre(chapitres);
-    return { id, ...lireCouverture(note), note, chapitres, arbre: ab, nbChapitres: ab.filter((x) => x.niveau === 0).length, pages: ab.filter((x) => x.enfants === 0).length };
+    return { id, ...lireCouverture(note), note, chapitres, arbre: ab, nbChapitres: ab.filter((x) => x.niveau === 0).length, pages: ab.filter((x) => !x.conteneur).length };
   });
 }
 
@@ -109,16 +111,16 @@ export function deplacerTheme(ls: Livre[], theme: string, sens: -1 | 1): void {
   if (n) modifierNote(n.id, JSON.stringify(liste)); else ajouterNote({ texte: JSON.stringify(liste), origine: 'libre', sourceLabel: etiq });
 }
 export function supprimerLivre(l: Livre): void { for (const c of l.chapitres) supprimerNote(c.id); supprimerNote(l.note.id); }
-const etiquette = (livreId: string, g: Signature | null, parent: string | null = null) => CHAP + livreId + (g || parent ? `|${JSON.stringify({ ...(g ?? { c: '', l: '', d: '' }), ...(parent ? { p: parent } : {}) })}` : '');
+const etiquette = (livreId: string, g: Signature | null, parent: string | null = null, conteneur = false) => CHAP + livreId + (g || parent || conteneur ? `|${JSON.stringify({ ...(g ?? (conteneur ? {} : { c: '', l: '', d: '' })), ...(parent ? { p: parent } : {}), ...(conteneur ? { k: 'c' } : {}) })}` : '');
 export function ajouterChapitre(livreId: string, html: string, g: Signature | null = null, parent: string | null = null): Note | undefined { return ajouterNoteRiche(html, { origine: 'libre', sourceLabel: etiquette(livreId, g, parent) }); }
-export function modifierChapitre(livreId: string, n: Note, html: string, g: Signature | null): void { modifierNoteRiche(n.id, html); magasin.ecrire('notes', { id: n.id, source_label: etiquette(livreId, g, parentDe(n)) }); }
+export function modifierChapitre(livreId: string, n: Note, html: string, g: Signature | null): void { modifierNoteRiche(n.id, html); magasin.ecrire('notes', { id: n.id, source_label: etiquette(livreId, g, parentDe(n), estConteneurNote(n)) }); }
 /** Remet les chapitres dans un autre ordre : les numéros sont échangés (le livre se lit dans l'ordre des numéros). */
 export function echangerChapitres(a: Note, b: Note): void { magasin.ecrire('notes', { id: a.id, numero: b.numero }); magasin.ecrire('notes', { id: b.id, numero: a.numero }); }
 
 /** Supprime un chapitre ou une page ; ses pages remontent d'un niveau (chez le parent du supprimé). */
 export function supprimerChapitre(livreId: string, n: Note, tout: Note[]): void {
   const pere = parentDe(n);
-  for (const e of tout) if (parentDe(e) === n.id) magasin.ecrire('notes', { id: e.id, source_label: etiquette(livreId, signatureDe(e), pere) });
+  for (const e of tout) if (parentDe(e) === n.id) magasin.ecrire('notes', { id: e.id, source_label: etiquette(livreId, signatureDe(e), pere, estConteneurNote(e)) });
   supprimerNote(n.id);
 }
 
@@ -130,15 +132,8 @@ export function enregistrerNoteLibre(html: string, g: Signature): boolean {
 }
 
 const echapper = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-/**
- * Avant d'ajouter une page à un chapitre qui n'en a pas encore : le contenu du chapitre devient sa **première page** (même titre, même signature)
- * et le chapitre ne garde que son titre, modifiable à part. Sans effet si le chapitre a déjà des pages ou n'a rien d'écrit.
- */
-export function preparerPages(livreId: string, chap: Note, tout: Note[]): void {
-  if (tout.some((n) => parentDe(n) === chap.id) || !chap.texte.trim() || !chap.contenu) return;
-  const g = signatureDe(chap);
-  const titre = titreChapitre(chap);
-  ajouterChapitre(livreId, chap.contenu, g, chap.id);
-  const t = titre === 'Sans titre' ? '' : titre;
-  magasin.ecrire('notes', { id: chap.id, contenu: t ? `<h1>${echapper(t)}</h1>` : '<h1><br></h1>', texte: t });
+/** Crée un chapitre **à pages** : il ne porte que son titre (pas de signature), ses pages viennent ensuite. Rend sa note. */
+export function creerChapitreAPages(livreId: string, titre: string): Note | undefined {
+  const t = titre.trim();
+  return t ? ajouterNoteRiche(`<h1>${echapper(t)}</h1>`, { origine: 'libre', sourceLabel: etiquette(livreId, null, null, true) }) : undefined;
 }

@@ -4,12 +4,12 @@
   import EcranPage from '../../ui/EcranPage.svelte';
   import Icone from '../../ui/Icone.svelte';
   import Volet from '../../ui/Volet.svelte';
-  import { ajouterChapitre, COULEURS_LIVRE, creerLivre, dateDuJour, dateValide, deplacerTheme, echangerChapitres, enregistrerNoteLibre, preparerPages, TITRE_LIBRES, historique, livres, modifierChapitre, modifierLivre, parTheme, supprimerChapitre, themesDe, voisin, retenir, signatureDe, texteSignature, supprimerLivre, titreChapitre, type Livre } from '../../data/actions/livres.ts';
+  import { ajouterChapitre, COULEURS_LIVRE, creerLivre, dateDuJour, dateValide, deplacerTheme, echangerChapitres, enregistrerNoteLibre, creerChapitreAPages, TITRE_LIBRES, historique, livres, modifierChapitre, modifierLivre, parTheme, supprimerChapitre, themesDe, voisin, retenir, signatureDe, texteSignature, supprimerLivre, titreChapitre, type Livre } from '../../data/actions/livres.ts';
   import { magasin } from '../../data/magasin.svelte.ts';
   import { urlMedia } from '../../data/media.svelte.ts';
   import { mediasCites, supprimerNote } from '../../data/actions/notes.ts';
   import { hydraterAction } from './hydrater.ts';
-  import { nettoyer, texteVersHtml } from './riche.ts';
+  import { estVide, nettoyer, texteVersHtml } from './riche.ts';
   import EditeurRiche from './EditeurRiche.svelte';
   import Journal from './Carnet.svelte';
   import './riche.css';
@@ -64,7 +64,17 @@
   function reprendre(id: string) { if (livre) { ajouterChapitre(livre.id, `<figure><img data-media="${id}" alt=""></figure>`); dire('Image ajoutée comme chapitre'); orphelines = orphelines?.filter((o) => o.id !== id) ?? null; } }
 
   // Éditeur de chapitre
-  let ed = $state<{ id: string | null; html: string; parent: string | null } | null>(null);
+  let ed = $state<{ id: string | null; html: string; parent: string | null; conteneur?: boolean; curseur?: number } | null>(null);
+  // Création d'un chapitre : d'abord « une seule page » ou « avec des pages » ; un chapitre à pages ne porte que son titre.
+  let typeChap = $state<'choix' | 'titre' | null>(null);
+  let titreChap = $state('');
+  function creerAPages() {
+    if (!livre) return;
+    const n = creerChapitreAPages(livre.id, titreChap);
+    if (!n) { dire('Donne un titre au chapitre'); return; }
+    typeChap = null; dire('Chapitre créé : écris sa première page');
+    ed = { id: null, parent: n.id, curseur: 1, html: `<h1>${titreChap.trim().replace(/&/g, '&amp;').replace(/</g, '&lt;')}</h1><p><br></p>` }; // la première page reprend le titre du chapitre, modifiable
+  }
   let replies = $state<Set<string>>(new Set());
   const basculerPlie = (id: string) => { const s = new Set(replies); if (s.has(id)) s.delete(id); else s.add(id); replies = s; };
   /** Nœuds visibles : une page disparaît si l'un de ses ancêtres est replié. */
@@ -79,6 +89,7 @@
     if (libre) { sig = { c: '', l: histoPremier('l'), d: dateDuJour() }; histo = { c: historique('c'), l: historique('l'), d: [dateDuJour(), ...historique('d').filter((x) => x !== dateDuJour())] }; attente = html; return; }
     if (!ed) return;
     const chap = ed.id ? livre?.chapitres.find((c) => c.id === ed!.id) : undefined;
+    if (chap && ed.conteneur && livre) { if (estVide(html)) { dire('Un chapitre à pages garde son titre'); return; } modifierChapitre(livre.id, chap, html, null); ed = null; dire('Titre du chapitre enregistré'); return; } // chapitre à pages : titre seul, pas de signature
     const ex = chap ? signatureDe(chap) : null;
     sig = ex ?? { c: '', l: histoPremier('l'), d: dateDuJour() };
     histo = { c: historique('c'), l: historique('l'), d: [dateDuJour(), ...historique('d').filter((x) => x !== dateDuJour())] };
@@ -101,11 +112,18 @@
   let vue: HTMLDivElement | undefined = $state(); let cols: HTMLDivElement | undefined = $state();
   let page = $state(1); let nbPages = $state(1);
   const ECART = 56;
-  const contenuLivre = $derived(livre ? livre.arbre.map(({ note: c, niveau, numero, parent, enfants }, i, ab) => `<section class="chap"><p class="num">${niveau ? 'Page' : 'Chapitre'} ${numero}</p>${(() => { let h = nettoyer(c.contenu ?? texteVersHtml(c.texte)); const pere = parent && ab[i - 1]?.note.id === parent ? ab[i - 1].note : null; if (pere && titreChapitre(pere) === titreChapitre(c)) h = h.replace(/^<h1>.*?<\/h1>/, ''); return h; })()}${(() => { const g = enfants ? null : signatureDe(c); return g && texteSignature(g) ? `<p class="sig">${texteSignature(g).replace(/&/g, '&amp;').replace(/</g, '&lt;')}</p>` : ''; })()}</section>`).join('') : '');
+  const echapperTxt = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  /** Un chapitre à pages s'ouvre sur sa propre page : son titre au centre. Les autres pages portent leur texte et leur signature. */
+  const contenuLivre = $derived(livre ? livre.arbre.map(({ note: c, niveau, numero, conteneur }) => {
+    const corps = nettoyer(c.contenu ?? texteVersHtml(c.texte));
+    if (conteneur) return `<section class="chap ouverture"><p class="num">${niveau ? 'Partie' : 'Chapitre'} ${numero}</p>${corps}</section>`;
+    const g = signatureDe(c);
+    return `<section class="chap"><p class="num">${niveau ? 'Page' : 'Chapitre'} ${numero}</p>${corps}${g && texteSignature(g) ? `<p class="sig">${echapperTxt(texteSignature(g))}</p>` : ''}</section>`;
+  }).join('') : '');
   function mesurer() {
     if (!vue || !cols) return;
     const w = vue.clientWidth;
-    cols.style.columnWidth = `${w}px`; cols.style.columnGap = `${ECART}px`; cols.style.height = `${vue.clientHeight}px`; cols.style.width = `${w}px`;
+    cols.style.columnWidth = `${w}px`; cols.style.columnGap = `${ECART}px`; cols.style.height = `${vue.clientHeight}px`; cols.style.setProperty('--h', `${vue.clientHeight}px`); cols.style.width = `${w}px`;
     requestAnimationFrame(() => { nbPages = Math.max(1, Math.round((cols!.scrollWidth + ECART) / (w + ECART))); page = Math.min(page, nbPages); });
   }
   $effect(() => { void contenuLivre; if (vue && cols) { mesurer(); setTimeout(mesurer, 300); } });
@@ -160,15 +178,15 @@
       </div>
     </div>
     <button type="button" class="retrouver" onclick={chercherImages}>Retrouver mes images</button>
-    <div class="sect"><h3>Table des matières</h3><button type="button" class="plus" onclick={() => (ed = { id: null, parent: null, html: '<h1>Titre du chapitre</h1><p><br></p>' })}><Icone nom="plus" taille={15} trait={2.4} /> Nouveau chapitre</button></div>
+    <div class="sect"><h3>Table des matières</h3><button type="button" class="plus" onclick={() => { titreChap = ''; typeChap = 'choix'; }}><Icone nom="plus" taille={15} trait={2.4} /> Nouveau chapitre</button></div>
     <ol class="toc" aria-label="Arborescence du livre">
       {#each visibles as { x, i } (x.note.id)}
         {@const c = x.note}
         <li class:page={x.niveau > 0} style:--niv={x.niveau}>
           {#if x.enfants}<button type="button" class="plie" aria-label="{replies.has(c.id) ? 'Déplier' : 'Replier'} {titreChapitre(c)}" aria-expanded={!replies.has(c.id)} onclick={() => basculerPlie(c.id)}>{replies.has(c.id) ? '▸' : '▾'}</button>{:else}<span class="plie vide-p"></span>{/if}
-          <button type="button" class="ch" onclick={() => (ed = { id: c.id, parent: x.parent, html: c.contenu ?? texteVersHtml(c.texte) })}>
-            <span class="n mono">{x.numero}</span><span class="col"><b>{titreChapitre(c)}</b><small class="muted">{x.niveau ? 'Page' : 'Chapitre'}{x.enfants ? ` · ${x.enfants} page${x.enfants > 1 ? 's' : ''}` : ''}</small></span></button>
-          <button type="button" class="ajout" aria-label="Ajouter une page à {titreChapitre(c)}" onclick={() => { replies.delete(c.id); preparerPages(livre.id, c, livre.chapitres); ed = { id: null, parent: c.id, html: '<h1>Titre de la page</h1><p><br></p>' }; }}><Icone nom="plus" taille={15} trait={2.4} /></button>
+          <button type="button" class="ch" onclick={() => (ed = { id: c.id, parent: x.parent, conteneur: x.conteneur, html: c.contenu ?? texteVersHtml(c.texte) })}>
+            <span class="n mono">{x.numero}</span><span class="col"><b>{titreChapitre(c)}</b><small class="muted">{x.niveau ? 'Page' : x.conteneur ? 'Chapitre à pages' : 'Chapitre d’une page'}{x.conteneur ? ` · ${x.enfants} page${x.enfants > 1 ? 's' : ''}` : ''}</small></span></button>
+          {#if x.conteneur}<button type="button" class="ajout" aria-label="Ajouter une page à {titreChapitre(c)}" onclick={() => { replies.delete(c.id); ed = { id: null, parent: c.id, html: '<h1>Titre de la page</h1><p><br></p>' }; }}><Icone nom="plus" taille={15} trait={2.4} /></button>{:else}<span class="ajout-vide"></span>{/if}
           <span class="ord"><button type="button" aria-label="Monter" disabled={!voisin(livre.arbre, i, -1)} onclick={() => echangerChapitres(voisin(livre.arbre, i, -1)!, c)}>↑</button><button type="button" aria-label="Descendre" disabled={!voisin(livre.arbre, i, 1)} onclick={() => echangerChapitres(c, voisin(livre.arbre, i, 1)!)}>↓</button></span>
         </li>
       {:else}<li class="vide muted">Aucun chapitre. Touche « Nouveau chapitre », puis le « + » d’un chapitre pour lui ajouter des pages.</li>{/each}
@@ -229,6 +247,21 @@
   </div>
 </Volet>
 
+<Volet ouvert={typeChap !== null} onfermer={() => (typeChap = null)} label="Nouveau chapitre">
+  <div class="form">
+    <h2 class="titre">Nouveau chapitre</h2>
+    {#if typeChap === 'choix'}
+      <p class="muted">Dès le départ : ce chapitre est-il une seule page, ou fait-il plusieurs pages ?</p>
+      <button type="button" class="gros-choix" onclick={() => { typeChap = null; ed = { id: null, parent: null, html: '<h1>Titre du chapitre</h1><p><br></p>' }; }}><b>Une seule page</b><small class="muted">Le chapitre est la page : titre, texte, lieu et date.</small></button>
+      <button type="button" class="gros-choix" onclick={() => (typeChap = 'titre')}><b>Plusieurs pages</b><small class="muted">Le chapitre porte un titre et s’ouvre sur sa propre page ; tu y ajoutes ensuite des pages.</small></button>
+    {:else}
+      <p class="muted">Donne le titre du chapitre ; tu écriras ensuite sa première page.</p>
+      <input type="text" placeholder="Titre du chapitre" aria-label="Titre du chapitre" bind:value={titreChap} maxlength="120" onkeydown={(e) => { if (e.key === 'Enter') creerAPages(); }} />
+      <button type="button" class="ok" onclick={creerAPages}>Créer et écrire la première page</button>
+    {/if}
+  </div>
+</Volet>
+
 <Volet ouvert={filtreOuvert} onfermer={() => (filtreOuvert = false)} label="Filtrer par thème">
   <div class="choix-theme">
     <h2 class="titre">Thèmes</h2>
@@ -275,7 +308,7 @@
   </form>
 </Volet>
 
-<EditeurRiche livre ouvert={libre || ed !== null} curseurBloc={libre ? 1 : -1} html={libre ? '<h1><br></h1><p><br></p>' : (ed?.html ?? '')} titre={libre ? 'Note libre' : ed?.id ? (ed.parent ? 'Modifier la page' : 'Modifier le chapitre') : ed?.parent ? 'Nouvelle page' : 'Nouveau chapitre'} onenregistrer={enregistrer} onfermer={() => { ed = null; libre = false; }} onsupprimer={ed?.id && livre ? () => { const n = livre.chapitres.find((c) => c.id === ed!.id); if (n) supprimerChapitre(livre.id, n, livre.chapitres); ed = null; } : undefined} />
+<EditeurRiche livre ouvert={libre || ed !== null} curseurBloc={libre ? 1 : (ed?.curseur ?? -1)} html={libre ? '<h1><br></h1><p><br></p>' : (ed?.html ?? '')} titre={libre ? 'Note libre' : ed?.id ? (ed.parent ? 'Modifier la page' : 'Modifier le chapitre') : ed?.parent ? 'Nouvelle page' : 'Nouveau chapitre'} onenregistrer={enregistrer} onfermer={() => { ed = null; libre = false; }} onsupprimer={ed?.id && livre ? () => { const n = livre.chapitres.find((c) => c.id === ed!.id); if (n) supprimerChapitre(livre.id, n, livre.chapitres); ed = null; } : undefined} />
 
 <style>
   .toc, .heros, .sect, .etagere, .tete { flex: none; }
@@ -326,6 +359,8 @@
   .col { display: flex; flex-direction: column; min-width: 0; } .col b { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .toc li { padding-left: calc(var(--niv, 0) * 22px); } .toc li.page { background: color-mix(in srgb, var(--surface-2) 55%, transparent); border-left: 0; } .toc li.page .n { background: transparent; border: 1px solid var(--ligne); color: var(--muted); width: auto; min-width: 30px; padding: 0 6px; }
   .plie { all: unset; box-sizing: border-box; flex: none; width: 32px; align-self: stretch; display: inline-flex; align-items: center; justify-content: center; color: var(--muted); cursor: pointer; font-size: 14px; } .ajout { flex: none; width: 36px; height: 36px; border-radius: 12px; border: 0; background: transparent; color: var(--accent-encre); display: inline-flex; align-items: center; justify-content: center; }
+  .gros-choix { all: unset; box-sizing: border-box; display: flex; flex-direction: column; gap: 4px; padding: 16px; border-radius: 18px; border: 1px solid var(--ligne); background: var(--surface); cursor: pointer; } .gros-choix b { font-size: 17px; } .gros-choix small { font-size: 13px; line-height: 1.4; }
+  .ajout-vide { flex: none; width: 36px; }
   .ord { display: flex; flex-direction: column; padding-right: 8px; } .ord button { width: 36px; height: 24px; border: 0; background: transparent; color: var(--muted); font-size: 15px; } .ord button:disabled { opacity: .25; }
   .form { display: flex; flex-direction: column; gap: 14px; } .form .titre { font-size: 22px; margin: 0; } .apercu { display: flex; justify-content: center; }
   .form input[type='text'] { height: 52px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--surface); color: var(--texte); font-size: 18px; padding: 0 14px; }
@@ -341,7 +376,7 @@
   .lecteur :global(p) { margin: 0 0 .45em; text-indent: 1.2em; } .lecteur :global(h1), .lecteur :global(h2) { font-family: Georgia, serif; text-indent: 0; text-align: center; color: var(--texte); }
   .lecteur :global(h1), .lecteur :global(h2), .lecteur :global(h3), .lecteur :global(strong) { font-weight: 700 !important; } .lecteur :global(em) { font-style: italic; }
   .lecteur :global(h1) { text-transform: uppercase; font-size: 21px; letter-spacing: .04em; margin: .2em 0 1.8em; }
-  .lecteur :global(.chap) { break-before: column; } .lecteur :global(.num) { text-indent: 0; text-align: center; text-transform: uppercase; letter-spacing: .3em; font-size: 10px; color: var(--accent-encre); margin: 10vh 0 1.2em; } .lecteur :global(.chap p) { text-indent: 1.2em; }
+  .lecteur :global(.chap) { break-before: column; } .lecteur :global(.ouverture) { height: var(--h, 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; break-after: column; } .lecteur :global(.ouverture .num) { margin: 0 0 1.4em; } .lecteur :global(.ouverture h1) { margin: 0; text-align: center; } .lecteur :global(.num) { text-indent: 0; text-align: center; text-transform: uppercase; letter-spacing: .3em; font-size: 10px; color: var(--accent-encre); margin: 10vh 0 1.2em; } .lecteur :global(.chap p) { text-indent: 1.2em; }
   .titre-page { text-align: center; padding-top: 12vh; } .titre-page h1 { font-size: 28px !important; text-transform: none !important; margin: 22px 0 8px !important; } .mini { width: 90px; aspect-ratio: 2 / 3; margin: 0 auto; border-radius: 3px 8px 8px 3px; box-shadow: 0 14px 24px -10px rgba(0,0,0,.6); } .titre-page p { text-indent: 0 !important; color: var(--muted); font-size: 14px; }
   .barre-lec { display: flex; align-items: center; gap: 12px; padding: 6px 24px calc(14px + var(--bas-sûr, 0px)); } .barre-lec input { flex: 1; accent-color: var(--c); } .total { font-size: 12px; color: var(--muted); }
 </style>

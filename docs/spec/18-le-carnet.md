@@ -55,3 +55,11 @@ Quand on **ajoute une page à un chapitre qui n'en a pas**, le contenu du chapit
 
 ### Pages comptées pour ce qu'elles sont, thèmes ordonnables (25 nov. 2026)
 Plus d'équivalents « ≈ N p. » ni de nombre de mots : **une page créée est une page**. Un livre compte ses pages écrites (un chapitre sans page compte pour une ; un chapitre qui a des pages compte celles-ci, pas lui-même). L'ordre des **thèmes** (étagères) se change dans la liste déroulante des thèmes avec ↑ ↓ ; il est gardé dans une note cachée (`biblio-ordre:themes`), « Sans thème » reste en dernier.
+
+### Règle métier : chapitre d'une page ou chapitre à pages (25 nov. 2026)
+Le type d'un chapitre se choisit **dès la création** (« Nouveau chapitre ») :
+- **Une seule page** : le chapitre est la page (titre, texte, signature lieu / date). Pas de « + ».
+- **Plusieurs pages** : on ne donne que le **titre** du chapitre (clé `k: 'c'` dans `source_label`, pas de signature), puis on écrit sa **première page**, dont le titre reprend celui du chapitre (modifiable à part). Seuls ces chapitres ont le « + » pour ajouter des pages ; un chapitre qui porte déjà des pages est traité comme tel.
+- **Lecture** : un chapitre à pages **s'ouvre sur sa propre page, titre au centre** (horizontalement et verticalement) ; ses pages suivent (« Page 3.1 »…).
+- **Compte** : seules les pages écrites comptent (un chapitre à pages ne compte pas lui-même).
+Un chapitre à pages garde toujours un titre (non vide).
