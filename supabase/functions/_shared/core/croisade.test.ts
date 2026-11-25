@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { formaterCroisade, jourDeCroisade, type Croisade } from './croisade.ts';
 
-const c: Croisade = { titre: 'Croisade de 40jrs de Consolation « Bâtir la vie qui correspond à mon appel »', regle: 'un profil ZTF à écouter par jour', suivi: 'Un profil ZTF écouté', debut: '2026-11-23', jours: 40, heures: 6, codes: ['DDEWG', 'PA', 'CL'] };
+const c: Croisade = { titre: 'Croisade de 40jrs de Consolation « Bâtir la vie qui correspond à mon appel »', regle: 'un profil ZTF à écouter par jour', suivi: 'Un profil ZTF écouté', debut: '2026-11-23', jours: 40, heures: 6, codes: ['DDEWG', 'PA', 'BR', 'CL'] };
 
 describe('croisade', () => {
   it('numéro du jour', () => {

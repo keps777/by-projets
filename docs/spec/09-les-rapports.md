@@ -89,7 +89,7 @@ Le PDF **commence par le tableau de la journée**, avec à sa **droite les métr
 5. **Notes du jour** (comme avant), en dernier.
 
 ## Croisade (25 nov. 2026)
-Une **croisade** (ex. « Croisade de 40jrs de Consolation « Bâtir la vie qui correspond à mon appel » ») s'ajoute depuis l'onglet Rapports (carte « Croisade », bouton Régler) : titre, règle complémentaire, suivi oui / non du jour, jour de début, nombre de jours, heures par jour et **points dont le temps compte** (ex. DDEWG, PA, CL). Le rapport du jour commence par son bloc, juste sous l'en-tête :
+Une **croisade** (ex. « Croisade de 40jrs de Consolation « Bâtir la vie qui correspond à mon appel » ») s'ajoute depuis l'onglet Rapports (carte « Croisade », bouton Régler) : titre, règle complémentaire, suivi oui / non du jour, jour de début, nombre de jours, heures par jour et **points dont le temps compte** (par défaut RDQD = DDEWG, PA, BR, CL). Le rapport du jour commence par son bloc, juste sous l'en-tête :
 ```
 *_Croisade de 40jrs … « … »_* (40jrs, recherche de Dieu seul au moins pendant 6h par jour, un profil ZTF à écouter par jour.)
 * Day : 1/40

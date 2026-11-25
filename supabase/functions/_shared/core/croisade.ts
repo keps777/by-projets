@@ -14,7 +14,7 @@ export interface Croisade {
   jours: number;
   /** Objectif quotidien de recherche de Dieu seul, en heures. */
   heures: number;
-  /** Codes des points du rapport dont le temps compte (ex. DDEWG, PA, CL). */
+  /** Codes des points du rapport dont le temps compte (par défaut RDQD = DDEWG, PA, BR, CL). */
   codes: string[];
 }
 

@@ -10,7 +10,7 @@ const note = (label: string) => toutesLesNotes().find((n) => n.source_label === 
 
 export const croisadeParDefaut = (debut: Jour): Croisade => ({
   titre: 'Croisade de 40jrs de Consolation « Bâtir la vie qui correspond à mon appel »', regle: 'un profil ZTF à écouter par jour', suivi: 'Un profil ZTF écouté',
-  debut, jours: 40, heures: 6, codes: ['DDEWG', 'PA', 'CL']
+  debut, jours: 40, heures: 6, codes: ['DDEWG', 'PA', 'BR', 'CL']
 });
 
 export function croisadeConfiguree(): Croisade | null {
