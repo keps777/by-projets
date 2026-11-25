@@ -213,3 +213,7 @@ Outil de comparaison : voir la méthode dans ce journal ; relancer une passe à 
 **Notes libres + filtre déroulant (25 nov.)** : bouton ✎ → page dans « Notes libres à classer » (signature lieu/date) ; filtre par thème en liste déroulante ; refonte visuelle des étagères (cadre de couverture, planche, halo). e2e.
 
 **Semaine / Mois redessinés (25 nov.)** : bilan de semaine, mini-barres par jour, blocs prévu/fait/non fait distincts, nuit assombrie ; mois en chaleur + bande des rubriques + heures. Spec §12.
+
+**Pages : le chapitre devient sa première page (25 nov.)** : `preparerPages` (livres.ts) ; lecteur sans titre en double. e2e.
+
+**Pages réelles + ordre des thèmes (25 nov.)** : `pages` = pages écrites (feuilles de l'arbre), fin des « ≈ p. » / mots ; `deplacerTheme` / `ordreThemes` (↑ ↓ dans le filtre). e2e themes-ordre.

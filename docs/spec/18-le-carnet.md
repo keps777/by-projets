@@ -50,3 +50,8 @@ La bibliothèque affiche un bandeau (livres · thèmes · chapitres), les pastil
 ### Notes libres et filtre par thème (25 nov. 2026)
 - Le bouton ✎ de l'en-tête de la bibliothèque (à la place du calendrier du journal) ouvre une **note libre** : page au titre vide dans le livre par défaut **« Notes libres à classer »** (créé au besoin), avec la fenêtre circonstance / lieu / date.
 - Le filtre par thème est une **liste déroulante** (feuille : « Tous les thèmes », chaque thème avec son nombre de livres, « Sans thème ») ; il reste lisible avec beaucoup de thèmes.
+
+Quand on **ajoute une page à un chapitre qui n'en a pas**, le contenu du chapitre devient sa **première page** (même titre, même signature, numéro « 1.1 ») ; le chapitre ne garde que son **titre**, modifiable séparément ; la page ajoutée est la « 1.2 ». À la lecture, le titre du chapitre n'est pas répété sur sa première page.
+
+### Pages comptées pour ce qu'elles sont, thèmes ordonnables (25 nov. 2026)
+Plus d'équivalents « ≈ N p. » ni de nombre de mots : **une page créée est une page**. Un livre compte ses pages écrites (un chapitre sans page compte pour une ; un chapitre qui a des pages compte celles-ci, pas lui-même). L'ordre des **thèmes** (étagères) se change dans la liste déroulante des thèmes avec ↑ ↓ ; il est gardé dans une note cachée (`biblio-ordre:themes`), « Sans thème » reste en dernier.

@@ -4,7 +4,7 @@
   import EcranPage from '../../ui/EcranPage.svelte';
   import Icone from '../../ui/Icone.svelte';
   import Volet from '../../ui/Volet.svelte';
-  import { ajouterChapitre, COULEURS_LIVRE, creerLivre, dateDuJour, dateValide, echangerChapitres, enregistrerNoteLibre, TITRE_LIBRES, historique, livres, modifierChapitre, modifierLivre, parTheme, supprimerChapitre, themesDe, voisin, retenir, signatureDe, texteSignature, supprimerLivre, titreChapitre, type Livre } from '../../data/actions/livres.ts';
+  import { ajouterChapitre, COULEURS_LIVRE, creerLivre, dateDuJour, dateValide, deplacerTheme, echangerChapitres, enregistrerNoteLibre, preparerPages, TITRE_LIBRES, historique, livres, modifierChapitre, modifierLivre, parTheme, supprimerChapitre, themesDe, voisin, retenir, signatureDe, texteSignature, supprimerLivre, titreChapitre, type Livre } from '../../data/actions/livres.ts';
   import { magasin } from '../../data/magasin.svelte.ts';
   import { urlMedia } from '../../data/media.svelte.ts';
   import { mediasCites, supprimerNote } from '../../data/actions/notes.ts';
@@ -101,7 +101,7 @@
   let vue: HTMLDivElement | undefined = $state(); let cols: HTMLDivElement | undefined = $state();
   let page = $state(1); let nbPages = $state(1);
   const ECART = 56;
-  const contenuLivre = $derived(livre ? livre.arbre.map(({ note: c, niveau, numero }) => `<section class="chap"><p class="num">${niveau ? 'Page' : 'Chapitre'} ${numero}</p>${nettoyer(c.contenu ?? texteVersHtml(c.texte))}${(() => { const g = signatureDe(c); return g && texteSignature(g) ? `<p class="sig">${texteSignature(g).replace(/&/g, '&amp;').replace(/</g, '&lt;')}</p>` : ''; })()}</section>`).join('') : '');
+  const contenuLivre = $derived(livre ? livre.arbre.map(({ note: c, niveau, numero, parent, enfants }, i, ab) => `<section class="chap"><p class="num">${niveau ? 'Page' : 'Chapitre'} ${numero}</p>${(() => { let h = nettoyer(c.contenu ?? texteVersHtml(c.texte)); const pere = parent && ab[i - 1]?.note.id === parent ? ab[i - 1].note : null; if (pere && titreChapitre(pere) === titreChapitre(c)) h = h.replace(/^<h1>.*?<\/h1>/, ''); return h; })()}${(() => { const g = enfants ? null : signatureDe(c); return g && texteSignature(g) ? `<p class="sig">${texteSignature(g).replace(/&/g, '&amp;').replace(/</g, '&lt;')}</p>` : ''; })()}</section>`).join('') : '');
   function mesurer() {
     if (!vue || !cols) return;
     const w = vue.clientWidth;
@@ -154,7 +154,7 @@
       <div class="couv grande" style:background={couv(livre.couleur)}><span class="reliure"></span><h2 class="serif">{livre.titre}</h2><span class="filet"></span><small>Luther</small></div>
       <div class="infos">
         <h1 class="titre">{livre.titre}</h1>
-        <p class="muted">{livre.nbChapitres} chapitre{livre.nbChapitres > 1 ? 's' : ''}{livre.chapitres.length > livre.nbChapitres ? ` · ${livre.chapitres.length - livre.nbChapitres} page${livre.chapitres.length - livre.nbChapitres > 1 ? 's' : ''}` : ''} · {livre.mots.toLocaleString('fr-CA')} mots · ≈ {livre.pages} page{livre.pages > 1 ? 's' : ''}</p>
+        <p class="muted">{livre.nbChapitres} chapitre{livre.nbChapitres > 1 ? 's' : ''}· {livre.pages} page{livre.pages > 1 ? 's' : ''}</p>
         <div class="progres"><span style:width="{Math.min(100, livre.pages)}%"></span></div><small class="muted">Objectif 100 pages · {Math.min(100, livre.pages)} %</small>
         <button type="button" class="lire" disabled={!livre.chapitres.length} onclick={() => routeur.definir('lire', '1')}><Icone nom="livre" taille={18} /> Lire le livre</button>
       </div>
@@ -167,8 +167,8 @@
         <li class:page={x.niveau > 0} style:--niv={x.niveau}>
           {#if x.enfants}<button type="button" class="plie" aria-label="{replies.has(c.id) ? 'Déplier' : 'Replier'} {titreChapitre(c)}" aria-expanded={!replies.has(c.id)} onclick={() => basculerPlie(c.id)}>{replies.has(c.id) ? '▸' : '▾'}</button>{:else}<span class="plie vide-p"></span>{/if}
           <button type="button" class="ch" onclick={() => (ed = { id: c.id, parent: x.parent, html: c.contenu ?? texteVersHtml(c.texte) })}>
-            <span class="n mono">{x.numero}</span><span class="col"><b>{titreChapitre(c)}</b><small class="muted">{x.niveau ? 'Page' : 'Chapitre'}{x.enfants ? ` · ${x.enfants} page${x.enfants > 1 ? 's' : ''}` : ''} · ≈ {Math.max(1, Math.ceil(c.texte.split(/\s+/).length / 250))} p.</small></span></button>
-          <button type="button" class="ajout" aria-label="Ajouter une page à {titreChapitre(c)}" onclick={() => { replies.delete(c.id); ed = { id: null, parent: c.id, html: '<h1>Titre de la page</h1><p><br></p>' }; }}><Icone nom="plus" taille={15} trait={2.4} /></button>
+            <span class="n mono">{x.numero}</span><span class="col"><b>{titreChapitre(c)}</b><small class="muted">{x.niveau ? 'Page' : 'Chapitre'}{x.enfants ? ` · ${x.enfants} page${x.enfants > 1 ? 's' : ''}` : ''}</small></span></button>
+          <button type="button" class="ajout" aria-label="Ajouter une page à {titreChapitre(c)}" onclick={() => { replies.delete(c.id); preparerPages(livre.id, c, livre.chapitres); ed = { id: null, parent: c.id, html: '<h1>Titre de la page</h1><p><br></p>' }; }}><Icone nom="plus" taille={15} trait={2.4} /></button>
           <span class="ord"><button type="button" aria-label="Monter" disabled={!voisin(livre.arbre, i, -1)} onclick={() => echangerChapitres(voisin(livre.arbre, i, -1)!, c)}>↑</button><button type="button" aria-label="Descendre" disabled={!voisin(livre.arbre, i, 1)} onclick={() => echangerChapitres(c, voisin(livre.arbre, i, 1)!)}>↓</button></span>
         </li>
       {:else}<li class="vide muted">Aucun chapitre. Touche « Nouveau chapitre », puis le « + » d’un chapitre pour lui ajouter des pages.</li>{/each}
@@ -199,7 +199,7 @@
             <div class="item">
               <button type="button" class="livre" onclick={() => routeur.definir('livre', l.id)} aria-label="{l.titre}, {l.nbChapitres} chapitres">
                 <span class="couv" style:background={couv(l.couleur)}><span class="reliure"></span><span class="serif t">{l.titre}</span><span class="filet"></span></span>
-                <span class="meta"><b>{l.titre}</b><small class="muted">{l.nbChapitres} ch. · ≈ {l.pages} p.</small></span>
+                <span class="meta"><b>{l.titre}</b><small class="muted">{l.nbChapitres} ch. · {l.pages} p.</small></span>
               </button>
               <button type="button" class="etiq" class:vide={!l.theme} aria-label="Thème de {l.titre}" onclick={() => ouvrirClasse(l)}><span class="ico-tag" aria-hidden="true">⌗</span>{l.theme || 'Thème'}</button>
             </div>
@@ -232,10 +232,12 @@
 <Volet ouvert={filtreOuvert} onfermer={() => (filtreOuvert = false)} label="Filtrer par thème">
   <div class="choix-theme">
     <h2 class="titre">Thèmes</h2>
+    {#if themes.length > 1}<p class="muted">Les flèches ↑ ↓ changent l’ordre des étagères.</p>{/if}
     <ul class="liste-themes">
       <li><button type="button" class:on={filtre === 'tous'} onclick={() => { filtre = 'tous'; filtreOuvert = false; }}><span class="pt arc"></span><span class="lib">Tous les thèmes</span><small class="muted">{tous.length}</small>{#if filtre === 'tous'}<Icone nom="coche" taille={18} trait={2.6} />{/if}</button></li>
-      {#each themes as t (t)}
-        <li><button type="button" class:on={filtre === t} onclick={() => { filtre = t; filtreOuvert = false; }}><span class="pt" style:background={tous.find((l) => l.theme === t)?.couleur}></span><span class="lib">{t}</span><small class="muted">{compteDe(t)}</small>{#if filtre === t}<Icone nom="coche" taille={18} trait={2.6} />{/if}</button></li>
+      {#each themes as t, i (t)}
+        <li class="ligne-theme"><button type="button" class:on={filtre === t} onclick={() => { filtre = t; filtreOuvert = false; }}><span class="pt" style:background={tous.find((l) => l.theme === t)?.couleur}></span><span class="lib">{t}</span><small class="muted">{compteDe(t)}</small>{#if filtre === t}<Icone nom="coche" taille={18} trait={2.6} />{/if}</button>
+          <span class="ord-t"><button type="button" aria-label="Monter le thème {t}" disabled={i === 0} onclick={() => deplacerTheme(tous, t, -1)}>↑</button><button type="button" aria-label="Descendre le thème {t}" disabled={i === themes.length - 1} onclick={() => deplacerTheme(tous, t, 1)}>↓</button></span></li>
       {/each}
       {#if themes.length && tous.some((l) => !l.theme)}<li><button type="button" class:on={filtre === ''} onclick={() => { filtre = ''; filtreOuvert = false; }}><span class="pt vide-pt"></span><span class="lib">Sans thème</span><small class="muted">{tous.filter((l) => !l.theme).length}</small>{#if filtre === ''}<Icone nom="coche" taille={18} trait={2.6} />{/if}</button></li>{/if}
     </ul>
@@ -311,6 +313,7 @@
   .pt { flex: none; width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 0 0 2px rgba(255,255,255,.14) inset; } .pt.arc { background: conic-gradient(#B5452F, #C9A227, #4E8F5A, #2F6DB5, #7B4BB5, #B5452F); } .pt.vide-pt { background: transparent; border: 1.5px dashed var(--muted); box-shadow: none; }
   .effacer { border: 0; background: transparent; color: var(--accent-encre, #8fc9ff); font-size: 13px; font-weight: 600; min-height: 44px; padding: 0 4px; }
   .choix-theme { display: flex; flex-direction: column; gap: 10px; } .choix-theme .titre { margin: 0; font-size: 24px; }
+  .ligne-theme { display: flex; align-items: center; } .ligne-theme > button:first-child { flex: 1; min-width: 0; } .ord-t { display: flex; flex: none; } .ord-t button { all: unset; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; color: var(--muted); font-size: 18px; cursor: pointer; } .ord-t button:disabled { opacity: .25; }
   .liste-themes { list-style: none; margin: 0; padding: 0; } .liste-themes li + li { border-top: 1px solid var(--ligne); } .liste-themes button { all: unset; box-sizing: border-box; width: 100%; min-height: 58px; display: flex; align-items: center; gap: 14px; cursor: pointer; font-size: 17px; } .liste-themes .lib { flex: 1; min-width: 0; } .liste-themes button.on { font-weight: 700; color: var(--accent-encre, #8fc9ff); } .liste-themes small { font-size: 14px; font-variant-numeric: tabular-nums; }
   .grille-themes { display: flex; flex-wrap: wrap; gap: 8px; } .grille-themes .puce { min-height: 44px; padding: 0 18px; font-size: 15px; border-radius: 22px; }
   .lire { min-height: 48px; border: 0; border-radius: 16px; background: var(--c); color: #fff; font-size: 16px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-top: 4px; } .lire:disabled { opacity: .35; }

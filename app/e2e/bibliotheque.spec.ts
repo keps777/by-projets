@@ -38,15 +38,20 @@ test('Bibliothèque : créer un livre coloré, écrire des chapitres (notes), le
   await ep.getByRole('button', { name: 'Enregistrer' }).click();
   await page.getByLabel('Date (au moins l’année)').fill('2026');
   await page.getByRole('button', { name: 'Enregistrer le chapitre' }).click();
-  await expect(page.locator('.toc li .ch')).toHaveCount(3);
-  await expect(page.locator('.toc li.page .n')).toHaveText('1.1');
+  // Le contenu du chapitre est devenu sa première page (même titre) ; la nouvelle page est la 1.2.
+  await expect(page.locator('.toc li .ch')).toHaveCount(4);
+  await expect(page.locator('.toc li.page .n')).toHaveText(['1.1', '1.2']);
+  await expect(page.locator('.toc li:not(.page) .ch b').first()).toHaveText('Au commencement');
+  await expect(page.locator('.toc li.page .ch b').first()).toHaveText('Au commencement');
   await page.getByRole('button', { name: 'Replier Au commencement' }).click();
   await expect(page.locator('.toc li .ch')).toHaveCount(2);
   await page.getByRole('button', { name: 'Déplier Au commencement' }).click();
-  await expect(page.locator('.toc li .ch')).toHaveCount(3);
+  await expect(page.locator('.toc li .ch')).toHaveCount(4);
   await page.screenshot({ path: '/tmp/livre.png' });
   await page.getByRole('button', { name: /Lire le livre/ }).click();
   await expect(page.locator('.lecteur')).toBeVisible();
+  await expect(page.locator('.lecteur .chap h1').filter({ hasText: 'Au commencement' })).toHaveCount(1); // titre du chapitre = titre de sa première page, affiché une fois
+  await expect(page.locator('.lecteur .chap .num').nth(1)).toHaveText('Page 1.1');
   // Glisser vers la page suivante (doigt vers la gauche) et revenir.
   const l = page.locator('.lecteur');
   await expect(page.locator('.barre-lec .total')).toContainText('1 /');
