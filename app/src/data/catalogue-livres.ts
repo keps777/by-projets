@@ -20,6 +20,10 @@ const LIVRES_CONNUS: LivreCatalogue[] = [
   { titre: 'Le chemin du caractère chrétien', auteur: ZTF, total: 171 },
   { titre: 'Sois rempli du Saint-Esprit', auteur: ZTF, total: 20 },
   { titre: 'Réveil spirituel personnel', auteur: ZTF, total: 80 },
+  { titre: 'Un mariage réussi, chef d’œuvre du mari', auteur: ZTF, total: 66 },
+  { titre: 'Un mariage réussi, chef d’œuvre de l’épouse', auteur: ZTF, total: 87 },
+  { titre: 'De ses lèvres, l’autobiographie', auteur: ZTF, total: 487 },
+  { titre: 'Le brisement des liens malsains de famille et autres liens', auteur: 'Boniface Menye', total: 127 },
   { titre: 'La Repentance, clé d’une réelle conversion biblique', auteur: 'Samuel & Dorothée Hatzakortzian', total: 95 }
 ];
 

@@ -27,6 +27,9 @@
   import { magasin } from '../../data/magasin.svelte.ts';
   import CartePoint from './CartePoint.svelte';
   import PanneauExport from './PanneauExport.svelte';
+  import CarteCroisade from './CarteCroisade.svelte';
+  import { blocCroisade } from './calcul.ts';
+  import { croisadeConfiguree, suiviDuJour, totalSuivi } from '../../data/actions/croisade.ts';
 
   let { params: _ = {} }: { params?: Record<string, string> } = $props();
 
@@ -49,6 +52,7 @@
   const prep = $derived(preparer(d));
   const points = $derived(calculerPoints(prep, d, periode.debut, periode.fin));
   const jours = $derived(vue === 'jour' ? [] : calculerJours(prep, d, periode.debut, periode.fin, auj));
+  const croisade = $derived(vue === 'jour' ? blocCroisade(croisadeConfiguree(), periode.debut, points, suiviDuJour(periode.debut), totalSuivi(periode.debut)) : null);
   const nbAtteints = $derived(points.filter((x) => atteint(x.ratio)).length);
   const joursPasses = $derived(jours.filter((j) => !j.futur).length);
 
@@ -158,6 +162,8 @@
     </div>
   {/if}
 
+  {#if vue === 'jour'}<CarteCroisade jour={periode.debut} bloc={croisade} />{/if}
+
   {#each points as x, i (x.point.id)}
     <CartePoint p={x} n={i + 1} {vue} {langue} {enCours} couleur={couleur(x.couleur)} ratios={vue === 'jour' ? [] : ratiosDuPoint(jours, x.point.id)}
       lettres={vue === 'semaine' ? LETTRES : []} {sousTitre} onmodifier={vue === 'jour' ? () => modifier(x) : undefined}
@@ -179,7 +185,7 @@
 </div>
 
 <Volet ouvert={exportOuvert} onfermer={() => (exportOuvert = false)} label="Exporter le rapport">
-  <PanneauExport {periode} {points} {nom} {langue} />
+  <PanneauExport {periode} {points} {nom} {langue} {croisade} />
 </Volet>
 
 <Volet ouvert={ancienOuvert} onfermer={() => (ancienOuvert = false)} label="Texte envoyé">

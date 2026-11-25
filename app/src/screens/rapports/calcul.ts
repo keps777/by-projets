@@ -4,6 +4,7 @@ import { TYPES } from '@core/metriques.ts';
 import { avecPagesDesLivres, formaterMesures, formaterRapport, itemsDesLivres, mesuresDuPoint, type ItemRapport, type Langue, type MesureConfig, type MesureRapport, type PointRapport } from '@core/rapport.ts';
 import type { MesurePoint, MetriqueLigne, PointRapportLigne, Projet, Rubrique, Saisie, SaisieValeur, SousProjetLigne } from '@core/lignes.ts';
 import type { Jour, Metrique, TypeMetrique, ValeurSaisie } from '@core/types.ts';
+import { formaterCroisade, jourDeCroisade, type Croisade } from '@core/croisade.ts';
 import type { Periode } from './periodes.ts';
 
 export interface DonneesRapport {
@@ -109,9 +110,18 @@ export const calculerPoints = (prep: PointPrepare[], d: DonneesRapport, debut: J
 export const atteint = (r: number | null) => r != null && r >= 1;
 
 /** Texte WhatsApp du rapport (format de l'utilisateur, spec §9), pour les points choisis. */
-export function texteDuRapport(o: { periode: Periode; nom: string; langue: Langue; points: { point: PointRapportLigne; mesures: MesureRapport[]; items?: ItemRapport[] }[] }): string {
+/** Bloc « Croisade » du rapport d'un jour (null hors des jours de la croisade) : le temps compté vient des points choisis dans la croisade. */
+export function blocCroisade(c: Croisade | null, jour: Jour, points: PointCalcule[], suiviAujourdhui: boolean, suiviTotal: number): string | null {
+  const n = c ? jourDeCroisade(c, jour) : null;
+  if (!c || n == null) return null;
+  const temps = points.filter((p) => c.codes.includes(p.point.code)).flatMap((p) => p.mesures.filter((m) => m.type === 'temps' && m.fait != null));
+  return formaterCroisade(c, { jour: n, secondes: temps.reduce((t, m) => t + (m.fait ?? 0), 0), approx: temps.some((m) => m.approx), suiviAujourdhui, suiviTotal });
+}
+
+export function texteDuRapport(o: { periode: Periode; nom: string; langue: Langue; croisade?: string | null; points: { point: PointRapportLigne; mesures: MesureRapport[]; items?: ItemRapport[] }[] }): string {
   const points: PointRapport[] = o.points.map((p) => ({ code: p.point.code, mesures: p.mesures, items: p.items }));
-  return formaterRapport({ langue: o.langue, nom: o.nom, entete: { type: o.periode.vue, debut: o.periode.debut, fin: o.periode.fin }, points });
+  const texte = formaterRapport({ langue: o.langue, nom: o.nom, entete: { type: o.periode.vue, debut: o.periode.debut, fin: o.periode.fin }, points });
+  return o.croisade ? texte.replace('\n\n', `\n\n${o.croisade}\n\n`) : texte; // le bloc suit l'en-tête, avant les points
 }
 
 /** Une ligne courte pour les listes : « DDEWG 2/3 · PA ~2h15 · BR 0/7 ch ». */
@@ -120,10 +130,10 @@ export function resumeCourt(points: PointCalcule[], langue: Langue = 'fr', max =
 }
 
 /** Contenu structuré enregistré dans la table `rapports` (même forme que celui du serveur). */
-export interface ContenuRapport { version: 1; entete: { type: 'jour'; debut: Jour }; points: { point_id: string; code: string; libelle: string; mesures: MesureRapport[]; items?: ItemRapport[] }[] }
+export interface ContenuRapport { version: 1; entete: { type: 'jour'; debut: Jour }; points: { point_id: string; code: string; libelle: string; mesures: MesureRapport[]; items?: ItemRapport[] }[]; /** Bloc croisade du jour, quand il y en a une. */ croisade?: string }
 
-export function contenuDuJour(jour: Jour, points: PointCalcule[]): ContenuRapport {
-  return { version: 1, entete: { type: 'jour', debut: jour }, points: points.map((p) => ({ point_id: p.point.id, code: p.point.code, libelle: p.point.libelle, mesures: p.mesures, ...(p.items.length ? { items: p.items } : {}) })) };
+export function contenuDuJour(jour: Jour, points: PointCalcule[], croisade?: string | null): ContenuRapport {
+  return { version: 1, ...(croisade ? { croisade } : {}), entete: { type: 'jour', debut: jour }, points: points.map((p) => ({ point_id: p.point.id, code: p.point.code, libelle: p.point.libelle, mesures: p.mesures, ...(p.items.length ? { items: p.items } : {}) })) };
 }
 
 /** Vrai si le contenu enregistré diffère du calcul actuel (une saisie corrigée après l'envoi). */
@@ -138,5 +148,6 @@ export function modifieDepuis(enregistre: unknown, actuel: ContenuRapport): bool
 export function texteDuContenu(c: unknown, nom: string, langue: Langue): string | null {
   const e = c as Partial<ContenuRapport> | null;
   if (!e?.points || !e.entete) return null;
-  return formaterRapport({ langue, nom, entete: { type: 'jour', debut: e.entete.debut }, points: e.points.map((p) => ({ code: p.code, mesures: p.mesures, items: p.items })) });
+  const t = formaterRapport({ langue, nom, entete: { type: 'jour', debut: e.entete.debut }, points: e.points.map((p) => ({ code: p.code, mesures: p.mesures, items: p.items })) });
+  return e.croisade ? t.replace('\n\n', `\n\n${e.croisade}\n\n`) : t;
 }

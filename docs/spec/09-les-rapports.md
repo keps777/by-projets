@@ -87,3 +87,15 @@ Le PDF **commence par le tableau de la journée**, avec à sa **droite les métr
 4. **Suivi des projets, lisible d'un coup d'œil** (sous le tableau) : un **bandeau de synthèse** (anneau du pourcentage moyen, et le nombre de projets *dans le rythme*, *en léger retard*, *en retard*, *atteints*), puis, par rubrique, des **cartes en deux colonnes** : nom du projet, **gros pourcentage** et jauge **colorée selon l'état** (vert : dans le rythme ou atteint ; orange : léger retard ; rouge : en retard), avec un **repère** (trait) à l'endroit où l'on devrait être aujourd'hui ; dessous, ses sous-projets en cours (jauge fine, mesure « 36 h sur 62 h »). Une légende donne les couleurs et le repère.
    - État d'un projet : *atteint* à 100 % ; sinon on compare au repère « où je devrais être » : écart de −2 points ou mieux = *dans le rythme*, jusqu'à −15 = *léger retard*, au-delà = *en retard* ; sans repère = neutre (gris).
 5. **Notes du jour** (comme avant), en dernier.
+
+## Croisade (25 nov. 2026)
+Une **croisade** (ex. « Croisade de 40jrs de Consolation « Bâtir la vie qui correspond à mon appel » ») s'ajoute depuis l'onglet Rapports (carte « Croisade », bouton Régler) : titre, règle complémentaire, suivi oui / non du jour, jour de début, nombre de jours, heures par jour et **points dont le temps compte** (ex. DDEWG, PA, CL). Le rapport du jour commence par son bloc, juste sous l'en-tête :
+```
+*_Croisade de 40jrs … « … »_* (40jrs, recherche de Dieu seul au moins pendant 6h par jour, un profil ZTF à écouter par jour.)
+* Day : 1/40
+* Recherche de Dieu seul : ~6h23/6h
+* Un profil ZTF écouté : Oui, 1/40
+```
+`Day` = rang du jour depuis le début (bloc absent hors des jours de la croisade) ; le temps additionne les mesures de temps des points choisis (`~` si l'une est approximative) ; le suivi se coche sur la carte et compte les jours cochés. Noyau pur : `core/croisade.ts`. Configuration et suivi sont gardés dans des notes cachées (`croisade:cfg`, `croisade-suivi:<jour>`).
+
+**Livres de CL** : un livre saisi une fois est proposé ensuite dès les premières lettres (catalogue = livres connus + tous ceux déjà saisis) ; les livres des rapports (mariage du mari / de l'épouse, De ses lèvres, Le brisement des liens malsains) sont dans le catalogue de départ avec leurs pages.

@@ -13,7 +13,7 @@
   import { htmlImprimable, imprimer } from './pdf.ts';
   import { libellePeriode, type Periode } from './periodes.ts';
 
-  let { periode, points, nom, langue, entete = true }: { periode: Periode; points: PointCalcule[]; nom: string; langue: Langue; entete?: boolean } = $props();
+  let { periode, points, nom, langue, entete = true, croisade = null }: { periode: Periode; points: PointCalcule[]; nom: string; langue: Langue; entete?: boolean; croisade?: string | null } = $props();
 
   const CLE = 'luther-life:export-selection';
   const presets = $derived([...magasin.lignes.presets_export].sort((a, b) => a.ordre - b.ordre));
@@ -31,14 +31,14 @@
   const memeEnsemble = (a: string[]) => { const b = a.filter((x) => ids.has(x)); return b.length === choisis.length && b.every((x) => selection.includes(x)); };
   const presetActif = $derived(presets.find((p) => memeEnsemble(p.points)));
 
-  const texte = $derived(texteDuRapport({ periode, nom, langue, points: choisis }));
+  const texte = $derived(texteDuRapport({ periode, nom, langue, croisade: periode.vue === 'jour' ? croisade : null, points: choisis }));
   let copie = $state(false);
   let nomPreset = $state<string | null>(null);
 
   function basculer(id: string): void { selection = selection.includes(id) ? selection.filter((x) => x !== id) : [...selection, id]; copie = false; }
   function choisirPreset(pts: string[]): void { selection = [...pts]; copie = false; }
 
-  function noterEnvoi(): void { if (periode.vue === 'jour') marquerEnvoye(periode.debut, contenuDuJour(periode.debut, points)); }
+  function noterEnvoi(): void { if (periode.vue === 'jour') marquerEnvoye(periode.debut, contenuDuJour(periode.debut, points, croisade)); }
 
   async function copier(): Promise<void> {
     if (!choisis.length) { dire('Choisis au moins un point.'); return; }

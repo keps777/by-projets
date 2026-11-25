@@ -203,3 +203,5 @@ Outil de comparaison : voir la méthode dans ce journal ; relancer une passe à 
 **Bible intégrée (25 nov.)** : écran /bible (Darby / Martin 1744 / KJV, textes dans app/public/bible, cache SW), navigateur AT/NT → livres → chapitres, soulignement 5 couleurs, copier, note vers le cahier « Notes pendant ma lecture biblique » (titre vide, note puis verset, lieu/date via VoletSignature). ▶ d'un bloc de lecture ouvre la Bible. Titre vide conservé par `nettoyer` (premier h1). PDF du jour : les pages de livres ne sont plus listées comme notes. Spec §18/§19, e2e bible.
 
 **Mise à jour automatique de l'app (25 nov.)** : au retour au premier plan, une nouvelle version déjà téléchargée est activée et la page se recharge (avant : au prochain lancement complet).
+
+**Croisade + livres CL (25 nov.)** : core/croisade.ts (bloc Day / Recherche de Dieu seul / suivi), carte Croisade dans Rapports (réglages, suivi du jour), bloc en tête du texte du rapport et des rapports enregistrés ; 4 livres ajoutés au catalogue CL. Spec §9. Tests croisade + e2e.
