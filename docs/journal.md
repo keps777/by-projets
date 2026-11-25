@@ -205,3 +205,5 @@ Outil de comparaison : voir la méthode dans ce journal ; relancer une passe à 
 **Mise à jour automatique de l'app (25 nov.)** : au retour au premier plan, une nouvelle version déjà téléchargée est activée et la page se recharge (avant : au prochain lancement complet).
 
 **Croisade + livres CL (25 nov.)** : core/croisade.ts (bloc Day / Recherche de Dieu seul / suivi), carte Croisade dans Rapports (réglages, suivi du jour), bloc en tête du texte du rapport et des rapports enregistrés ; 4 livres ajoutés au catalogue CL. Spec §9. Tests croisade + e2e.
+
+**Modifier une occurrence seule (25 nov.)** : « Cette occurrence seulement » même pour le nom / projet / mesures (détachement en tâche d'un jour, `detacherOccurrence`). e2e. Croisade : le temps compte aussi BR.

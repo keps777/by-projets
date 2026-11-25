@@ -107,7 +107,7 @@ test.describe('renommer une tâche qui se répète', () => {
   const demain = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto' }).format(new Date(Date.now() + 86_400_000));
   test.use({ storageState: { cookies: [], origins: [{ origin: 'http://localhost:4179', localStorage: [{ name: 'luther-life:invitation-rapport', value: JSON.stringify({ jour: jourToronto, jusqua: 'jour' }) }] }] } });
 
-  test('changer le nom : « Cette occurrence » n’est pas proposée (elle ne changerait pas le nom), « Toute la série » renomme tous les jours', async ({ page }) => {
+  test('changer le nom : « Cette occurrence seulement » détache ce jour, « Toute la série » renomme tous les jours', async ({ page }) => {
     await page.goto('/'); await page.waitForSelector('.grille');
     await expect(page.locator('.bloc').first()).toBeVisible();
     await page.locator('.bloc').filter({ hasText: 'Projets personnels' }).locator('.ouvrir').click();
@@ -122,13 +122,26 @@ test.describe('renommer une tâche qui se répète', () => {
     // Le nom change : toute la tâche est concernée.
     await page.getByLabel('Titre de la tâche').fill('Mes projets du soir');
     await page.getByRole('button', { name: 'Enregistrer' }).click();
-    await expect(choix.getByText(/concerne toute la tâche/)).toBeVisible();
-    await expect(choix.getByRole('button', { name: /Cette occurrence/ })).toHaveCount(0);
+    await expect(choix.getByRole('button', { name: /Cette occurrence seulement/ })).toBeVisible(); // le nom peut changer pour ce jour seul
     await choix.getByRole('button', { name: /Toute la série/ }).click();
     await expect(page.locator('.bloc').filter({ hasText: 'Mes projets du soir' })).toHaveCount(1);
     await expect(page.locator('.bloc').filter({ hasText: 'Projets personnels' })).toHaveCount(0);
     await page.goto(`/?jour=${demain}`); await page.waitForSelector('.grille');
     await expect(page.locator('.bloc').filter({ hasText: 'Mes projets du soir' })).toHaveCount(1);
+  });
+
+  test('renommer une seule occurrence : ce jour change, les autres gardent le nom de la série', async ({ page }) => {
+    await page.goto('/'); await page.waitForSelector('.grille');
+    await page.locator('.bloc').filter({ hasText: 'Projets personnels' }).locator('.ouvrir').click();
+    await page.getByRole('link', { name: /Modifier la tâche/ }).click();
+    await page.getByLabel('Titre de la tâche').fill('Seulement ce soir');
+    await page.getByRole('button', { name: 'Enregistrer' }).click();
+    await page.getByRole('dialog', { name: 'Modifier', exact: true }).getByRole('button', { name: /Cette occurrence seulement/ }).click();
+    await expect(page.locator('.bloc').filter({ hasText: 'Seulement ce soir' })).toHaveCount(1);
+    await expect(page.locator('.bloc').filter({ hasText: 'Projets personnels' })).toHaveCount(0);
+    await page.goto(`/?jour=${demain}`); await page.waitForSelector('.grille');
+    await expect(page.locator('.bloc').filter({ hasText: 'Projets personnels' })).toHaveCount(1);
+    await expect(page.locator('.bloc').filter({ hasText: 'Seulement ce soir' })).toHaveCount(0);
   });
 });
 

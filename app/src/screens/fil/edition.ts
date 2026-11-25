@@ -4,7 +4,7 @@ import { nouvelId } from '@core/ids.ts';
 import type { Jour } from '@core/types.ts';
 import { magasin } from '../../data/magasin.svelte.ts';
 import { fuseau } from '../../data/temps.svelte.ts';
-import { ajouterTache, idsPrevus, materialiserTache, reporter, type NouvelleTache } from '../../data/actions/taches.ts';
+import { ajouterTache, idsPrevus, materialiserTache, reporter, supprimerOccurrences, type NouvelleTache } from '../../data/actions/taches.ts';
 
 /** Occurrences encore prévues d'une tâche à partir d'un jour (les faites, et par défaut les reportées, restent). */
 function prevues(tacheId: string, depuis: Jour, garderExceptions = true): Set<string> {
@@ -55,6 +55,15 @@ export function modifierOccurrence(occId: string, jour: Jour, heure: number, dur
   reporter(occId, { jour, debutMin: heure, rappelMin: rappel });
   const debut = localVersUtc(jour, heure, fuseau());
   magasin.ecrire('occurrences', { id: occId, fin: new Date(debut + duree * 60000).toISOString() });
+}
+
+/**
+ * Cette occurrence seulement, avec un autre nom, projet, mesures ou rappels : elle sort de la série et devient une tâche d'un jour
+ * (la série garde les autres jours). À réserver aux occurrences pas encore commencées.
+ */
+export function detacherOccurrence(tacheId: string, occId: string, jour: Jour, n: NouvelleTache): string {
+  supprimerOccurrences(tacheId, 'cette', occId);
+  return ajouterTache({ ...n, regle: { frequence: 'une_fois', debut: jour, fin: { type: 'aucune' } } });
 }
 
 /** Ordre des clés neutralisé : deux règles identiques se comparent égales même si leurs champs sont rangés autrement. */

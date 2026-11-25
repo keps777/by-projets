@@ -83,3 +83,6 @@ La journée du calendrier (vue Calendrier · Jour) est **partagée en deux colon
 
 ## Modifier une tâche qui se répète : « Cette occurrence » (nov. 2026)
 « Cette occurrence » ne change que l'heure, la durée et le rappel de ce bloc. Quand le formulaire change aussi ce qui est commun à toute la série (nom, projet, sous-projets, mesures, répétition, alarme, rappels plus tôt), cette option n'est **pas proposée** et la fenêtre explique que le changement concerne toute la tâche : on choisit « Celle-ci et les suivantes » ou « Toute la série ».
+
+### Modifier une seule occurrence (25 nov. 2026)
+Pour une tâche qui se répète, « **Cette occurrence** » est toujours proposée. Si seuls l'heure, la durée et le rappel changent, l'occurrence devient une exception de la série. Si le nom, le projet, les mesures, l'alarme ou les rappels plus tôt changent, « Cette occurrence seulement » **détache** le bloc : il sort de la série et devient une tâche d'un jour (les autres jours ne changent pas). Le détachement n'est pas proposé pour un bloc déjà lancé ou fait (ses saisies restent liées à la série).

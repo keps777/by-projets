@@ -15,7 +15,7 @@
   import Interrupteur from '../../ui/Interrupteur.svelte';
   import SectionProjet from './SectionProjet.svelte';
   import SectionQuand from './SectionQuand.svelte';
-  import { changeLaSerie, modifierOccurrence, modifierSerie, modifierSuivantes } from './edition.ts';
+  import { changeLaSerie, detacherOccurrence, modifierOccurrence, modifierSerie, modifierSuivantes } from './edition.ts';
   import { attendusDe } from '../../data/actions/blocs.ts';
   import { jourValide } from './navigation.ts';
   import { libelleDelai } from '@core/rappels.ts';
@@ -108,6 +108,7 @@
     if (!id) return;
     if (portee === 'toute') modifierSerie(id, f.versNouvelle(), aujourdhui);
     else if (portee === 'suivantes' && occ) modifierSuivantes(id, occ.jour, f.versNouvelle());
+    else if (portee === 'cette' && occ && serieChange) { const jour = occ.jour; detacherOccurrence(id, occ.id, jour, f.versNouvelle()); terminer('Cette occurrence est modifiée (elle devient une tâche à part)', jour); return; } // `occ` disparaît avec l'occurrence supprimée
     else if (portee === 'cette' && occ) { modifierOccurrence(occ.id, occ.jour, f.heure, f.duree, f.rappel); terminer('Cette occurrence est modifiée', occ.jour); return; }
     terminer('Tâche modifiée', occ?.jour ?? f.debut);
   }
@@ -190,8 +191,12 @@
   <div class="portee">
     <h2 class="titre">{choixPortee === 'supprimer' ? 'Supprimer une tâche qui se répète' : 'Modifier une tâche qui se répète'}</h2>
     {#if occ}
-      {#if choixPortee === 'modifier' && serieChange}
-        <p class="muted s note-portee">Tu changes le nom, le projet ou la répétition : cela concerne toute la tâche, pas une seule occurrence.</p>
+      {#if choixPortee === 'modifier' && serieChange && !['en_cours', 'pause', 'faite'].includes(occ.etat)}
+        <button type="button" onclick={() => appliquer('cette')}>
+          <span class="t">Cette occurrence seulement</span><span class="muted s">{puceJour(occ.jour, aujourdhui)} · devient une tâche à part, les autres jours ne changent pas</span>
+        </button>
+      {:else if choixPortee === 'modifier' && serieChange}
+        <p class="muted s note-portee">Tu changes le nom, le projet ou la répétition : cela concerne toute la tâche (cette occurrence est déjà commencée ou faite).</p>
       {:else}
         <button type="button" onclick={() => (choixPortee === 'supprimer' ? supprimer('cette') : appliquer('cette'))}>
           <span class="t">Cette occurrence</span><span class="muted s">{puceJour(occ.jour, aujourdhui)}{choixPortee === 'modifier' ? ' · seuls l’heure, la durée et le rappel changent' : ''}</span>
