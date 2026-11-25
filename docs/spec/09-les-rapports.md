@@ -99,3 +99,6 @@ Une **croisade** (ex. « Croisade de 40jrs de Consolation « Bâtir la vie qui c
 `Day` = rang du jour depuis le début (bloc absent hors des jours de la croisade) ; le temps additionne les mesures de temps des points choisis (`~` si l'une est approximative) ; le suivi se coche sur la carte et compte les jours cochés. Noyau pur : `core/croisade.ts`. Configuration et suivi sont gardés dans des notes cachées (`croisade:cfg`, `croisade-suivi:<jour>`).
 
 **Livres de CL** : un livre saisi une fois est proposé ensuite dès les premières lettres (catalogue = livres connus + tous ceux déjà saisis) ; les livres des rapports (mariage du mari / de l'épouse, De ses lèvres, Le brisement des liens malsains) sont dans le catalogue de départ avec leurs pages.
+
+### PDF de la journée : deux pages (25 nov. 2026)
+**Page 1** : tableau des créneaux effectués pleine largeur, puis les **métriques du jour en dessous** (grille de 3 colonnes : code, état, mesure, jauge). **Page 2** : le **suivi des projets** commence toujours sur sa page et tient sur **une seule page** : si besoin, les cartes se resserrent (sous-projets plus serrés, synthèse sur une ligne, 3 cartes par ligne). Les notes du jour suivent, sur les pages suivantes.

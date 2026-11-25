@@ -217,3 +217,5 @@ Outil de comparaison : voir la méthode dans ce journal ; relancer une passe à 
 **Pages : le chapitre devient sa première page (25 nov.)** : `preparerPages` (livres.ts) ; lecteur sans titre en double. e2e.
 
 **Pages réelles + ordre des thèmes (25 nov.)** : `pages` = pages écrites (feuilles de l'arbre), fin des « ≈ p. » / mots ; `deplacerTheme` / `ordreThemes` (↑ ↓ dans le filtre). e2e themes-ordre.
+
+**PDF en deux pages (25 nov.)** : métriques sous le tableau (page 1), suivi des projets seul sur la page 2 avec resserrement automatique (pas des sous-projets, 3 colonnes, synthèse compacte).

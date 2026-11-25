@@ -36,7 +36,6 @@ const VERT: [number, number, number] = [30, 127, 79], ORANGE: [number, number, n
 const COULEUR_ETAT: Record<EtatAvancement, [number, number, number]> = { atteint: VERT, rythme: VERT, leger: ORANGE, retard: ROUGE, neutre: PALE };
 const COULEUR_METRIQUE = { bon: VERT, moyen: ORANGE, mauvais: ROUGE, neutre: PALE } as const;
 /** Largeur du tableau quand l'encart des métriques est à sa droite (première page). */
-const LARGEUR_AVEC_METRIQUES = 118, ECART = 4;
 
 class Dessin {
   y = MARGE;
@@ -124,44 +123,48 @@ function tableau(g: Dessin, doc: DocumentJournee) {
   g.y += 12;
 }
 
-/** Encart « Métriques du jour » : les points du rapport (RDQD, PA…) avec leur mesure du jour, leur état et une jauge. Rend le bas de l'encart. */
-function metriques(g: Dessin, ms: MetriqueJour[], x: number, y0: number, w: number): number {
-  const interne = w - 7;
-  const mesure = (m: MetriqueJour) => { g.police(8, 'normal'); return g.mots(m.mesures, interne); };
-  const hauteurs = ms.map((m) => 5.6 + mesure(m).length * 3.5 + 4.2);
-  let dessinees = 0, total = 14;
-  for (const h of hauteurs) { if (y0 + total + h + 6 > BAS) break; total += h; dessinees++; }
-  const reste = ms.length - dessinees;
-  if (reste > 0) total += 6;
-  total += 2;
-  g.fond([247, 246, 243]); g.trait(FILET, 0.2); g.d.roundedRect(x, y0, w, total, 2.5, 2.5, 'FD');
+/** « Métriques du jour » sous le tableau, pleine largeur : les points du rapport en grille de 3 colonnes (code, état, mesure, jauge). */
+function metriquesEnGrille(g: Dessin, ms: MetriqueJour[]) {
+  if (!ms.length) return;
+  const COLS = 3, GOUTTIERE = 5, w = (UTILE - 7 - GOUTTIERE * (COLS - 1)) / COLS;
+  const mesure = (m: MetriqueJour) => { g.police(8, 'normal'); return g.mots(m.mesures, w - 5); };
+  const hCell = (m: MetriqueJour) => 5.6 + mesure(m).length * 3.5 + 4.2;
+  const rangs: MetriqueJour[][] = [];
+  for (let i = 0; i < ms.length; i += COLS) rangs.push(ms.slice(i, i + COLS));
+  const hRangs = rangs.map((r) => Math.max(...r.map(hCell)) + 1);
+  const total = 14 + hRangs.reduce((a, b) => a + b, 0) + 2;
+  g.place(total + 4);
+  g.y += 2;
+  const x0 = MARGE, y0 = g.y;
+  g.fond([247, 246, 243]); g.trait(FILET, 0.2); g.d.roundedRect(x0, y0, UTILE, total, 2.5, 2.5, 'FD');
   const atteints = ms.filter((m) => m.ratio != null && m.ratio >= 1).length;
   g.police(8, 'bold'); g.texteCouleur(GRIS);
-  g.d.text('MÉTRIQUES DU JOUR', x + 3.5, y0 + 5);
+  g.d.text('MÉTRIQUES DU JOUR', x0 + 3.5, y0 + 5);
   g.police(11, 'bold'); g.texteCouleur(ENCRE);
   const score = `${atteints} / ${ms.length}`;
-  g.d.text(score, x + 3.5, y0 + 11);
+  g.d.text(score, x0 + 3.5, y0 + 11);
   const wScore = g.largeur(score);
   g.police(8, 'normal'); g.texteCouleur(GRIS);
-  g.d.text('points atteints', x + 3.5 + wScore + 2, y0 + 11);
+  g.d.text('points atteints', x0 + 3.5 + wScore + 2, y0 + 11);
   let y = y0 + 14;
-  for (let i = 0; i < dessinees; i++) {
-    const m = ms[i];
-    const e = etatMetrique(m.ratio);
-    const couleur = COULEUR_METRIQUE[e.classe];
-    g.fond(m.couleur ? rgbDe(m.couleur) : PALE); g.d.circle(x + 5, y + 2.5, 1.2, 'F');
-    g.police(9.5, 'bold'); g.texteCouleur(ENCRE);
-    g.d.text(versWinAnsi(m.code || m.libelle), x + 8, y + 3.2);
-    g.police(8.5, 'bold'); g.texteCouleur(couleur);
-    g.d.text(e.texte, x + w - 3.5, y + 3.2, { align: 'right' });
-    g.police(8, 'normal'); g.texteCouleur(GRIS);
-    mesure(m).forEach((t, k) => g.d.text(t, x + 8, y + 7 + k * 3.5));
-    const yb = y + 5.6 + mesure(m).length * 3.5 - 0.6;
-    barre(g, x + 3.5, yb, interne, 1.5, e.classe === 'bon' ? 100 : (m.ratio ?? 0) * 100, couleur);
-    y += hauteurs[i];
-  }
-  if (reste > 0) { g.police(8, 'italic'); g.texteCouleur(PALE); g.d.text(`+ ${reste} autre${reste > 1 ? 's' : ''} point${reste > 1 ? 's' : ''} : voir l’onglet Rapports`, x + 3.5, y + 3.5); }
-  return y0 + total;
+  rangs.forEach((r, ri) => {
+    r.forEach((m, k) => {
+      const x = x0 + 3.5 + k * (w + GOUTTIERE);
+      const e = etatMetrique(m.ratio);
+      const couleur = COULEUR_METRIQUE[e.classe];
+      g.fond(m.couleur ? rgbDe(m.couleur) : PALE); g.d.circle(x + 1.4, y + 2.5, 1.2, 'F');
+      g.police(9.5, 'bold'); g.texteCouleur(ENCRE);
+      g.d.text(versWinAnsi(m.code || m.libelle), x + 4, y + 3.2);
+      g.police(8.5, 'bold'); g.texteCouleur(couleur);
+      g.d.text(e.texte, x + w, y + 3.2, { align: 'right' });
+      g.police(8, 'normal'); g.texteCouleur(GRIS);
+      const lignes = mesure(m);
+      lignes.forEach((t, j) => g.d.text(t, x + 4, y + 7 + j * 3.5));
+      barre(g, x, y + 5.6 + lignes.length * 3.5 - 0.6, w, 1.5, e.classe === 'bon' ? 100 : (m.ratio ?? 0) * 100, couleur);
+    });
+    y += hRangs[ri];
+  });
+  g.y = y0 + total + 3;
 }
 
 // ------------------------------------------------------------------ suivi des projets, en cartes
@@ -184,15 +187,16 @@ function anneau(g: Dessin, cx: number, cy: number, r: number, pct: number, coule
 }
 
 function synthese(g: Dessin, doc: DocumentJournee) {
-  const h = 30;
+  const serre = PAS_SP < 6; // suivi resserré : synthèse sur une ligne de moins (pas de légende)
+  const h = serre ? 21 : 30;
   g.place(h + 6);
   g.fond([247, 246, 243]); g.trait(FILET, 0.2); g.d.roundedRect(MARGE, g.y, UTILE, h, 2.5, 2.5, 'FD');
   const moy = doc.moyenne ?? 0;
-  anneau(g, MARGE + 15, g.y + h / 2, 8.5, moy, ENCRE);
-  g.police(13, 'bold'); g.texteCouleur(ENCRE);
-  g.d.text(doc.moyenne == null ? '--' : `${Math.round(moy)}%`, MARGE + 15, g.y + h / 2 + 1.8, { align: 'center' });
+  anneau(g, MARGE + 15, g.y + h / 2, serre ? 6.8 : 8.5, moy, ENCRE);
+  g.police(serre ? 10.5 : 13, 'bold'); g.texteCouleur(ENCRE);
+  g.d.text(doc.moyenne == null ? '--' : `${Math.round(moy)}%`, MARGE + 15, g.y + h / 2 + (serre ? 1.4 : 1.8), { align: 'center' });
   g.police(9, 'bold'); g.texteCouleur(ENCRE);
-  g.d.text('Avancement moyen des projets en cours', MARGE + 30, g.y + 8);
+  g.d.text('Avancement moyen des projets en cours', MARGE + 30, g.y + (serre ? 6.5 : 8));
   // Les états, en pastilles : le nombre de projets dans chaque cas.
   const ordre: EtatAvancement[] = ['rythme', 'leger', 'retard', 'atteint', 'neutre'];
   let x = MARGE + 30;
@@ -200,21 +204,27 @@ function synthese(g: Dessin, doc: DocumentJournee) {
     const n = doc.etats[e];
     if (!n) continue;
     const c = COULEUR_ETAT[e];
-    g.fond(c); g.d.roundedRect(x, g.y + 11.5, 6.5, 6.5, 1.6, 1.6, 'F');
+    g.fond(c); g.d.roundedRect(x, g.y + (serre ? 9.5 : 11.5), 6.5, 6.5, 1.6, 1.6, 'F');
     g.police(10, 'bold'); g.d.setTextColor(255, 255, 255);
-    g.d.text(String(n), x + 3.25, g.y + 16.2, { align: 'center' });
+    g.d.text(String(n), x + 3.25, g.y + (serre ? 14.2 : 16.2), { align: 'center' });
     g.police(8.5, 'normal'); g.texteCouleur(ENCRE);
-    g.d.text(LIBELLE_ETAT[e], x + 8, g.y + 16.2);
+    g.d.text(LIBELLE_ETAT[e], x + 8, g.y + (serre ? 14.2 : 16.2));
     x += 8 + g.largeur(LIBELLE_ETAT[e]) + 5;
   }
   g.police(7.5, 'normal'); g.texteCouleur(GRIS);
-  g.fond(ENCRE); g.d.rect(MARGE + 30, g.y + 22.5, 0.5, 3.6, 'F');
-  g.d.text('Repère : où l’on devrait être aujourd’hui.   Chaque carte : le projet, puis ses sous-projets en cours.', MARGE + 32, g.y + 25.3);
+  if (!serre) { g.fond(ENCRE); g.d.rect(MARGE + 30, g.y + 22.5, 0.5, 3.6, 'F'); }
+  if (!serre) g.d.text('Repère : où l’on devrait être aujourd’hui.   Chaque carte : le projet, puis ses sous-projets en cours.', MARGE + 32, g.y + 25.3);
   g.y += h + 5;
 }
 
-const LARGEUR_CARTE = (UTILE - 5) / 2;
-const hauteurCarte = (p: BarreProjet) => 18 + (p.sousProjets?.length ?? 0) * 6.8 + 1.5;
+/** Cartes de projet : 2 par ligne à l'aise, 3 par ligne quand le suivi doit tenir sur une seule page. */
+let COLS_CARTES = 2;
+let LARGEUR_CARTE = (UTILE - 5) / 2;
+/** Pas d'une ligne de sous-projet : 6,8 mm à l'aise ; resserré quand le suivi doit tenir sur une seule page. */
+let PAS_SP = 6.8;
+/** Espace entre deux lignes de cartes (resserré avec le pas). */
+const ecartCartes = () => (PAS_SP < 6 ? 2 : 3);
+const hauteurCarte = (p: BarreProjet) => 18 + (p.sousProjets?.length ?? 0) * PAS_SP + 1.5;
 
 function carte(g: Dessin, p: BarreProjet, x: number, y: number, h: number) {
   const c = COULEUR_ETAT[p.etat];
@@ -237,17 +247,37 @@ function carte(g: Dessin, p: BarreProjet, x: number, y: number, h: number) {
     g.d.setFont('helvetica', 'bold');
     const wp = g.largeur(pcs) + 3;
     g.d.setFont('helvetica', 'normal');
-    g.d.text(g.mots(s.nom + (s.texte ? ` · ${s.texte}` : ''), LARGEUR_CARTE - 9 - wp)[0] ?? '', x + 4.5, yy + 2.6);
+    g.d.text(g.mots(s.nom + (s.texte ? ` · ${s.texte}` : ''), LARGEUR_CARTE - 9 - wp)[0] ?? '', x + 4.5, yy + (PAS_SP < 6.5 ? (PAS_SP < 5.6 ? 2.2 : 2.4) : 2.6));
     g.d.setFont('helvetica', 'bold'); g.texteCouleur(cs);
-    g.d.text(pcs, x + LARGEUR_CARTE - 3.5, yy + 2.6, { align: 'right' });
-    barre(g, x + 4.5, yy + 3.9, LARGEUR_CARTE - 8, 1.5, s.pct, cs, s.trait);
-    yy += 6.8;
+    g.d.text(pcs, x + LARGEUR_CARTE - 3.5, yy + (PAS_SP < 6.5 ? (PAS_SP < 5.6 ? 2.2 : 2.4) : 2.6), { align: 'right' });
+    barre(g, x + 4.5, yy + (PAS_SP < 6.5 ? (PAS_SP < 5.6 ? 3.2 : 3.5) : 3.9), LARGEUR_CARTE - 8, 1.5, s.pct, cs, s.trait);
+    yy += PAS_SP;
   }
 }
 
+/** Hauteur du suivi complet (titre, synthèse, groupes et cartes) pour le pas courant. */
+function hauteurSuivi(doc: DocumentJournee): number {
+  let h = 8 + (PAS_SP < 6 ? 21 : 30) + 5;
+  for (const groupe of doc.groupes) {
+    h += 7;
+    for (let i = 0; i < groupe.projets.length; i += COLS_CARTES) h += Math.max(...groupe.projets.slice(i, i + COLS_CARTES).map(hauteurCarte)) + ecartCartes();
+    h += 2;
+  }
+  return h;
+}
+
+/** Le suivi commence sur sa propre page et tient sur une seule si possible : on resserre les sous-projets au besoin. */
 function suivi(g: Dessin, doc: DocumentJournee) {
   if (!doc.groupes.length) return;
-  g.y += 3;
+  g.d.addPage(); g.y = MARGE;
+  g.police(9, 'normal'); g.texteCouleur(GRIS);
+  g.d.text(versWinAnsi(`${doc.titre} · ${doc.sousTitre}`), MARGE, g.y + 3);
+  g.y += 6;
+  const dispo = BAS - g.y;
+  for (const [cols, pas] of [[2, 6.8], [2, 5.8], [3, 6.8], [3, 5.8], [3, 5.2]] as const) {
+    COLS_CARTES = cols; PAS_SP = pas; LARGEUR_CARTE = (UTILE - 5 * (cols - 1)) / cols;
+    if (hauteurSuivi(doc) <= dispo) break;
+  }
   g.place(46);
   g.police(8, 'bold'); g.texteCouleur(GRIS);
   g.d.text('SUIVI DES PROJETS EN COURS', MARGE, g.y + 3);
@@ -256,19 +286,19 @@ function suivi(g: Dessin, doc: DocumentJournee) {
   synthese(g, doc);
   for (const groupe of doc.groupes) {
     const c = rgbDe(groupe.couleur);
-    g.place(12 + hauteurCarte(groupe.projets[0]));
+    g.place(7 + hauteurCarte(groupe.projets[0]) + ecartCartes());
     g.fond(c); g.d.circle(MARGE + 1.6, g.y + 2.6, 1.5, 'F');
     g.police(11, 'bold'); g.texteCouleur(ENCRE);
     g.d.text(versWinAnsi(groupe.nom), MARGE + 5.5, g.y + 3.6);
     const pcts = groupe.projets.map((p) => p.pct).filter((p): p is number => p != null);
     if (pcts.length) { g.police(8.5, 'normal'); g.texteCouleur(GRIS); g.d.text(`moyenne ${Math.round(pcts.reduce((a, b) => a + b, 0) / pcts.length)} %`, MARGE + UTILE, g.y + 3.6, { align: 'right' }); }
     g.y += 7;
-    for (let i = 0; i < groupe.projets.length; i += 2) {
-      const paire = groupe.projets.slice(i, i + 2);
+    for (let i = 0; i < groupe.projets.length; i += COLS_CARTES) {
+      const paire = groupe.projets.slice(i, i + COLS_CARTES);
       const h = Math.max(...paire.map(hauteurCarte));
-      g.place(h + 3);
+      g.place(h + ecartCartes());
       paire.forEach((p, k) => carte(g, p, MARGE + k * (LARGEUR_CARTE + 5), g.y, h));
-      g.y += h + 3;
+      g.y += h + ecartCartes();
     }
     g.y += 2;
   }
@@ -414,16 +444,10 @@ export async function genererPdf(doc: DocumentJournee, images: Map<string, Image
   g.trait(ENCRE, 0.7); g.d.line(MARGE, g.y + 14.5, MARGE + UTILE, g.y + 14.5);
   g.y += 19;
 
-  // Le tableau de la journée à gauche, les métriques du jour à droite (première page) ; puis le suivi des projets, puis les notes.
-  const y0 = g.y, page0 = g.page();
-  let basEncart = y0;
-  if (doc.metriques.length) {
-    g.largeurTable = LARGEUR_AVEC_METRIQUES;
-    basEncart = metriques(g, doc.metriques, MARGE + LARGEUR_AVEC_METRIQUES + ECART, y0, UTILE - LARGEUR_AVEC_METRIQUES - ECART);
-  }
-  tableau(g, doc);
-  if (g.page() === page0) g.y = Math.max(g.y, basEncart + 3); // l'encart est plus haut que le tableau : on repart sous lui
+  // Page 1 : le tableau de la journée, puis les métriques du jour en dessous. Page 2 : le suivi des projets (sur une seule page). Ensuite, les notes.
   g.largeurTable = UTILE;
+  tableau(g, doc);
+  metriquesEnGrille(g, doc.metriques);
   suivi(g, doc);
   notes(g, doc, images);
 
