@@ -41,7 +41,7 @@ test('Bible : Darby par défaut, navigateur de livres, version, soulignement, no
   await expect(page.getByText(/Note enregistrée dans/)).toBeVisible();
 
   await page.goto('/carnet');
-  await page.getByRole('button', { name: /Notes pendant ma lecture biblique/ }).click();
+  await page.getByRole('button', { name: /Notes durant mes lectures bibliques, \d+ chapitres/ }).click();
   await expect(page.locator('.toc li .ch')).toHaveCount(1);
   await expect(page.locator('.toc li .ch b')).toHaveText('Sans titre'); // titre laissé vide, à remplir plus tard
   await page.getByRole('button', { name: 'Lire le livre' }).click();

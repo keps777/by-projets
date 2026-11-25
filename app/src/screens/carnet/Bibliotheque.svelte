@@ -4,7 +4,7 @@
   import EcranPage from '../../ui/EcranPage.svelte';
   import Icone from '../../ui/Icone.svelte';
   import Volet from '../../ui/Volet.svelte';
-  import { ajouterChapitre, COULEURS_LIVRE, creerLivre, dateDuJour, dateValide, echangerChapitres, historique, livres, modifierChapitre, modifierLivre, parTheme, supprimerChapitre, themesDe, voisin, retenir, signatureDe, texteSignature, supprimerLivre, titreChapitre, type Livre } from '../../data/actions/livres.ts';
+  import { ajouterChapitre, COULEURS_LIVRE, creerLivre, dateDuJour, dateValide, echangerChapitres, enregistrerNoteLibre, TITRE_LIBRES, historique, livres, modifierChapitre, modifierLivre, parTheme, supprimerChapitre, themesDe, voisin, retenir, signatureDe, texteSignature, supprimerLivre, titreChapitre, type Livre } from '../../data/actions/livres.ts';
   import { magasin } from '../../data/magasin.svelte.ts';
   import { urlMedia } from '../../data/media.svelte.ts';
   import { mediasCites, supprimerNote } from '../../data/actions/notes.ts';
@@ -25,6 +25,17 @@
   const themes = $derived(themesDe(tous));
   const groupes = $derived(parTheme(tous).filter((g) => filtre === 'tous' || (filtre === '' ? g.theme === '' : g.theme === filtre)));
   let theme = $state('');
+  let filtreOuvert = $state(false);
+  const libelleFiltre = $derived(filtre === 'tous' ? 'Tous les thèmes' : filtre === '' ? 'Sans thème' : filtre);
+  const compteVisible = $derived(groupes.reduce((t, g) => t + g.livres.length, 0));
+  const compteDe = (t: string) => tous.filter((l) => l.theme === t).length;
+  // Classement rapide d'un livre : un thème (nouveau ou déjà utilisé, ou une suggestion) depuis sa tuile.
+  let classe = $state<Livre | null>(null);
+  let themeClasse = $state('');
+  const SUGGESTIONS = ['Bible', 'Prière', 'Croisade', 'Lectures', 'Famille', 'Vie spirituelle'];
+  const choixThemes = $derived([...new Set([...themes, ...SUGGESTIONS])]);
+  function ouvrirClasse(l: Livre) { classe = l; themeClasse = l.theme; }
+  function classer(t: string) { if (classe) modifierLivre(classe, classe.titre, classe.couleur, t.trim()); classe = null; dire(t.trim() ? `Rangé dans « ${t.trim()} »` : 'Livre sans thème'); }
   const fonce = (c: string) => `color-mix(in srgb, ${c} 62%, #000)`;
   const couv = (c: string) => `linear-gradient(145deg, color-mix(in srgb, ${c} 88%, #fff) 0%, ${c} 38%, ${fonce(c)} 100%)`;
 
@@ -62,7 +73,10 @@
   let attente = $state<string | null>(null);
   let sig = $state({ c: '', l: '', d: '' });
   let histo = $state({ c: [] as string[], l: [] as string[], d: [] as string[] });
+  // Note libre (bouton de l'en-tête) : une page du livre « Notes libres à classer », avec circonstance, lieu et date.
+  let libre = $state(false);
   const enregistrer = (html: string) => {
+    if (libre) { sig = { c: '', l: histoPremier('l'), d: dateDuJour() }; histo = { c: historique('c'), l: historique('l'), d: [dateDuJour(), ...historique('d').filter((x) => x !== dateDuJour())] }; attente = html; return; }
     if (!ed) return;
     const chap = ed.id ? livre?.chapitres.find((c) => c.id === ed!.id) : undefined;
     const ex = chap ? signatureDe(chap) : null;
@@ -72,10 +86,12 @@
   };
   const histoPremier = (k: 'c' | 'l' | 'd') => historique(k)[0] ?? '';
   function validerSignature() {
-    if (!livre || !ed || attente === null) return;
+    if (attente === null || (!libre && (!livre || !ed))) return;
     if (!dateValide(sig.d)) { dire('La date doit donner au moins l’année (ex. 2026 ou 21/08/26)'); return; }
     retenir(sig);
     const g = { c: sig.c.trim(), l: sig.l.trim(), d: sig.d.trim() };
+    if (libre) { const ok = enregistrerNoteLibre(attente, g); attente = null; libre = false; dire(ok ? `Note rangée dans « ${TITRE_LIBRES} »` : 'Note vide : rien enregistré'); return; }
+    if (!livre || !ed) return;
     const chap = ed.id ? livre.chapitres.find((c) => c.id === ed!.id) : undefined;
     if (chap) modifierChapitre(livre.id, chap, attente, g); else ajouterChapitre(livre.id, attente, g, ed.parent);
     attente = null; ed = null; dire('Chapitre enregistré');
@@ -160,23 +176,37 @@
   </EcranPage>
 {:else}
   <EcranPage gap={18}>
-    <header class="tete"><button type="button" class="rond" aria-label="Retour" onclick={() => routeur.retour('/')}><Icone nom="retour" taille={18} trait={2.2} /></button><h1 class="titre grow">Bibliothèque</h1><button type="button" class="rond" aria-label="Journal du jour" onclick={() => routeur.definir('vue', 'journal')}><Icone nom="calendrier" taille={18} /></button></header>
+    <header class="tete"><button type="button" class="rond" aria-label="Retour" onclick={() => routeur.retour('/')}><Icone nom="retour" taille={18} trait={2.2} /></button><h1 class="titre grow">Bibliothèque</h1><button type="button" class="rond" aria-label="Note libre" onclick={() => (libre = true)}><Icone nom="crayon" taille={18} trait={2.2} /></button></header>
     <p class="muted acc">Chaque livre est fait de notes : un chapitre, une note.</p>
-    {#if themes.length}<div class="filtres" role="group" aria-label="Thèmes">
-      <button type="button" class:on={filtre === 'tous'} onclick={() => (filtre = 'tous')}>Tous · {tous.length}</button>
-      {#each themes as t (t)}<button type="button" class:on={filtre === t} onclick={() => (filtre = t)}>{t}</button>{/each}
-      {#if tous.some((l) => !l.theme)}<button type="button" class:on={filtre === ''} onclick={() => (filtre = '')}>Sans thème</button>{/if}
-    </div>{/if}
-    {#each groupes as g (g.theme)}
-      {#if themes.length}<h3 class="theme-t">{g.theme || 'Sans thème'} <small class="muted">{g.livres.length}</small></h3>{/if}
-      <div class="etagere">
-        {#each g.livres as l (l.id)}
-          <button type="button" class="livre" onclick={() => routeur.definir('livre', l.id)} aria-label="{l.titre}, {l.nbChapitres} chapitres">
-            <span class="couv" style:background={couv(l.couleur)}><span class="reliure"></span><span class="serif t">{l.titre}</span><span class="filet"></span></span>
-            <span class="meta"><b>{l.titre}</b><small class="muted">{l.nbChapitres} ch. · ≈ {l.pages} p.</small></span>
-          </button>
-        {/each}
+    {#if tous.length}
+      <div class="barre-filtre">
+        <button type="button" class="deroulant" class:actif={filtre !== 'tous'} aria-haspopup="dialog" aria-label="Filtrer par thème : {libelleFiltre}" onclick={() => (filtreOuvert = true)}>
+          <span class="pt" style:background={filtre === 'tous' ? 'conic-gradient(#B5452F, #C9A227, #4E8F5A, #2F6DB5, #7B4BB5, #B5452F)' : (groupes[0]?.livres[0]?.couleur ?? 'var(--muted)')}></span>
+          <span class="lib">{libelleFiltre}</span><Icone nom="bas" taille={16} trait={2.4} />
+        </button>
+        {#if filtre !== 'tous'}<button type="button" class="effacer" aria-label="Voir tous les thèmes" onclick={() => (filtre = 'tous')}>Tout voir</button>{/if}
+        <span class="grow"></span><span class="compte muted">{compteVisible} livre{compteVisible > 1 ? 's' : ''}</span>
       </div>
+    {/if}
+    {#if tous.length && !themes.length}
+      <div class="invite"><span class="serif">Range ta bibliothèque par thème</span><p class="muted">Touche « ＋ Thème » sous un livre : Bible, Prière, Croisade, Lectures… Les livres d’un même thème se retrouvent alors sur la même étagère.</p></div>
+    {/if}
+    {#each groupes as g (g.theme)}
+      <section class="rayon-bloc" style:--g={g.livres[0].couleur} aria-label={g.theme || 'Sans thème'}>
+        {#if themes.length}<h3 class="theme-t"><span class="serif">{g.theme || 'Sans thème'}</span><small>{g.livres.length}</small><span class="fil-g"></span></h3>{/if}
+        <div class={filtre === 'tous' && themes.length ? 'rayon' : 'etagere'}>
+          {#each g.livres as l (l.id)}
+            <div class="item">
+              <button type="button" class="livre" onclick={() => routeur.definir('livre', l.id)} aria-label="{l.titre}, {l.nbChapitres} chapitres">
+                <span class="couv" style:background={couv(l.couleur)}><span class="reliure"></span><span class="serif t">{l.titre}</span><span class="filet"></span></span>
+                <span class="meta"><b>{l.titre}</b><small class="muted">{l.nbChapitres} ch. · ≈ {l.pages} p.</small></span>
+              </button>
+              <button type="button" class="etiq" class:vide={!l.theme} aria-label="Thème de {l.titre}" onclick={() => ouvrirClasse(l)}><span class="ico-tag" aria-hidden="true">⌗</span>{l.theme || 'Thème'}</button>
+            </div>
+          {/each}
+        </div>
+        {#if filtre === 'tous' && themes.length}<div class="planche"></div>{/if}
+      </section>
     {/each}
     <div class="etagere"><button type="button" class="livre nouveau" onclick={ouvrirNouveau} aria-label="Nouveau livre"><span class="couv vide"><Icone nom="plus" taille={30} trait={1.8} /></span><span class="meta"><b>Nouveau livre</b></span></button></div>
     {#if !tous.length}<p class="muted acc">Crée ton premier livre : un titre, une couleur de couverture, puis écris-le chapitre par chapitre.</p>{/if}
@@ -199,6 +229,30 @@
   </div>
 </Volet>
 
+<Volet ouvert={filtreOuvert} onfermer={() => (filtreOuvert = false)} label="Filtrer par thème">
+  <div class="choix-theme">
+    <h2 class="titre">Thèmes</h2>
+    <ul class="liste-themes">
+      <li><button type="button" class:on={filtre === 'tous'} onclick={() => { filtre = 'tous'; filtreOuvert = false; }}><span class="pt arc"></span><span class="lib">Tous les thèmes</span><small class="muted">{tous.length}</small>{#if filtre === 'tous'}<Icone nom="coche" taille={18} trait={2.6} />{/if}</button></li>
+      {#each themes as t (t)}
+        <li><button type="button" class:on={filtre === t} onclick={() => { filtre = t; filtreOuvert = false; }}><span class="pt" style:background={tous.find((l) => l.theme === t)?.couleur}></span><span class="lib">{t}</span><small class="muted">{compteDe(t)}</small>{#if filtre === t}<Icone nom="coche" taille={18} trait={2.6} />{/if}</button></li>
+      {/each}
+      {#if themes.length && tous.some((l) => !l.theme)}<li><button type="button" class:on={filtre === ''} onclick={() => { filtre = ''; filtreOuvert = false; }}><span class="pt vide-pt"></span><span class="lib">Sans thème</span><small class="muted">{tous.filter((l) => !l.theme).length}</small>{#if filtre === ''}<Icone nom="coche" taille={18} trait={2.6} />{/if}</button></li>{/if}
+    </ul>
+  </div>
+</Volet>
+
+<Volet ouvert={classe !== null} onfermer={() => (classe = null)} label="Thème du livre">
+  <form class="form" onsubmit={(e) => { e.preventDefault(); classer(themeClasse); }}>
+    <h2 class="titre">Ranger « {classe?.titre} »</h2>
+    <p class="muted">Choisis une étagère ou invente un thème.</p>
+    <div class="grille-themes">{#each choixThemes as t (t)}<button type="button" class="puce" class:on={themeClasse === t} onclick={() => classer(t)}>{t}</button>{/each}</div>
+    <input type="text" placeholder="Autre thème…" aria-label="Nouveau thème" bind:value={themeClasse} maxlength="40" />
+    <button type="submit" class="ok">Ranger</button>
+    {#if classe?.theme}<button type="button" class="danger" onclick={() => classer('')}>Retirer du thème</button>{/if}
+  </form>
+</Volet>
+
 <Volet ouvert={orphelines !== null} onfermer={() => (orphelines = null)} label="Images retrouvées">
   <div class="form"><h2 class="titre">Images retrouvées</h2>
     {#if orphelines?.length}<p class="muted">Touche une image pour l’ajouter à ce livre.</p><div class="grille-img">{#each orphelines as o (o.id)}<button type="button" onclick={() => reprendre(o.id)} aria-label="Ajouter cette image"><img src={o.url} alt="" /></button>{/each}</div>
@@ -219,7 +273,7 @@
   </form>
 </Volet>
 
-<EditeurRiche livre ouvert={ed !== null} html={ed?.html ?? ''} titre={ed?.id ? (ed.parent ? 'Modifier la page' : 'Modifier le chapitre') : ed?.parent ? 'Nouvelle page' : 'Nouveau chapitre'} onenregistrer={enregistrer} onfermer={() => (ed = null)} onsupprimer={ed?.id && livre ? () => { const n = livre.chapitres.find((c) => c.id === ed!.id); if (n) supprimerChapitre(livre.id, n, livre.chapitres); ed = null; } : undefined} />
+<EditeurRiche livre ouvert={libre || ed !== null} curseurBloc={libre ? 1 : -1} html={libre ? '<h1><br></h1><p><br></p>' : (ed?.html ?? '')} titre={libre ? 'Note libre' : ed?.id ? (ed.parent ? 'Modifier la page' : 'Modifier le chapitre') : ed?.parent ? 'Nouvelle page' : 'Nouveau chapitre'} onenregistrer={enregistrer} onfermer={() => { ed = null; libre = false; }} onsupprimer={ed?.id && livre ? () => { const n = livre.chapitres.find((c) => c.id === ed!.id); if (n) supprimerChapitre(livre.id, n, livre.chapitres); ed = null; } : undefined} />
 
 <style>
   .toc, .heros, .sect, .etagere, .tete { flex: none; }
@@ -231,11 +285,12 @@
     box-shadow: 0 1px 0 rgba(255,255,255,.25) inset, 0 18px 28px -10px rgba(0,0,0,.65), 0 3px 6px rgba(0,0,0,.35); transition: transform .25s cubic-bezier(.2,.8,.2,1); transform-origin: left center; }
   .livre:active .couv { transform: perspective(700px) rotateY(-14deg) scale(.97); }
   @media (hover: hover) { .livre:hover .couv { transform: perspective(700px) rotateY(-12deg) translateY(-4px); } }
+  .couv::before { content: ''; position: absolute; inset: 9px 9px 9px 19px; border: 1px solid rgba(255,255,255,.2); border-radius: 3px; pointer-events: none; z-index: 1; }
   .couv::after { content: ''; position: absolute; inset: 0; background: radial-gradient(120% 60% at 30% 0%, rgba(255,255,255,.22), transparent 55%); pointer-events: none; }
   .reliure { position: absolute; left: 0; top: 0; bottom: 0; width: 11px; background: linear-gradient(90deg, rgba(0,0,0,.35), rgba(255,255,255,.14) 55%, rgba(0,0,0,.18)); }
-  .couv .t, .couv h2 { font-size: 20px; line-height: 1.12; font-weight: 600; text-shadow: 0 2px 8px rgba(0,0,0,.35); overflow-wrap: anywhere; margin: 0; display: -webkit-box; -webkit-line-clamp: 5; line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+  .couv .t, .couv h2 { font-size: 19px; line-height: 1.12; font-weight: 600; text-shadow: 0 2px 8px rgba(0,0,0,.35); overflow-wrap: break-word; hyphens: auto; padding-top: 22px; margin: 0; display: -webkit-box; -webkit-line-clamp: 5; line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
   .filet { width: 34px; height: 2px; background: rgba(255,255,255,.7); border-radius: 1px; } .couv small { opacity: .8; letter-spacing: .2em; text-transform: uppercase; font-size: 10px; }
-  .couv.vide { background: transparent; border: 1.5px dashed var(--ligne); box-shadow: none; color: var(--muted); } .couv.vide::after { display: none; }
+  .couv.vide { background: transparent; border: 1.5px dashed var(--ligne); box-shadow: none; color: var(--muted); } .couv.vide::after, .couv.vide::before, .couv.grande::before { display: none; }
   .meta { display: flex; flex-direction: column; gap: 2px; padding: 0 2px; } .meta b { font-size: 14px; line-height: 1.25; } .meta small { font-size: 12px; }
   .heros { display: flex; gap: 18px; align-items: flex-end; } .couv.grande { width: 132px; flex: none; } .couv.grande h2 { font-size: 17px; }
   .infos { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; } .infos .titre { font-size: 24px; margin: 0; line-height: 1.1; } .infos p { margin: 0; font-size: 13px; }
@@ -244,8 +299,20 @@
   .grille-img { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; } .grille-img button { padding: 0; border: 0; background: none; aspect-ratio: 1; } .grille-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
   .champ { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: var(--muted); } .champ input { height: 48px; border-radius: 14px; border: 1px solid var(--ligne); background: var(--surface); color: var(--texte); font-size: 16px; padding: 0 12px; }
   .puces { display: flex; gap: 6px; overflow-x: auto; margin-top: -6px; } .puce { flex: none; min-height: 36px; padding: 0 12px; border-radius: 18px; border: 1px solid var(--ligne); background: transparent; color: var(--texte); font-size: 13px; white-space: nowrap; } .apercu-sig { font-style: italic; margin: 0; font-size: 14px; }
-  .filtres { display: flex; gap: 8px; overflow-x: auto; flex: none; margin: 0 -16px; padding: 0 16px; } .filtres button { flex: none; min-height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid var(--ligne); background: transparent; color: var(--texte); font-size: 14px; font-weight: 600; white-space: nowrap; } .filtres button.on, .puce.on { background: var(--inverse); color: var(--inverse-texte); border-color: var(--inverse); }
-  .theme-t { flex: none; margin: 6px 0 -6px; font-size: 18px; display: flex; gap: 8px; align-items: baseline; }
+  .invite { flex: none; border-radius: 20px; padding: 16px 18px; border: 1px dashed color-mix(in srgb, var(--accent-encre, #8fc9ff) 55%, transparent); background: color-mix(in srgb, var(--accent-encre, #8fc9ff) 7%, transparent); display: flex; flex-direction: column; gap: 6px; } .invite .serif { font-size: 20px; font-style: italic; } .invite p { margin: 0; font-size: 14px; line-height: 1.45; }
+  .rayon-bloc { flex: none; display: flex; flex-direction: column; gap: 14px; }
+  .theme-t { flex: none; margin: 10px 0 0; display: flex; gap: 10px; align-items: baseline; } .theme-t .serif { font-size: 28px; font-style: italic; font-weight: 600; letter-spacing: -.015em; line-height: 1; } .theme-t small { font-size: 13px; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; } .fil-g { flex: 1; align-self: center; height: 1px; background: linear-gradient(90deg, color-mix(in srgb, var(--g) 70%, transparent), transparent); }
+  .rayon { display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x proximity; margin: 0 -16px; padding: 4px 16px 6px; scrollbar-width: none; } .rayon::-webkit-scrollbar { display: none; } .rayon .item { flex: none; width: 140px; scroll-snap-align: start; }
+  .rayon-bloc { position: relative; isolation: isolate; } .rayon-bloc::before { content: ''; position: absolute; left: -16px; right: -16px; top: 30px; height: 270px; background: radial-gradient(70% 90% at 25% 30%, color-mix(in srgb, var(--g) 16%, transparent), transparent 70%); pointer-events: none; z-index: -1; }
+  .planche { height: 12px; margin: -10px -16px 10px; border-radius: 2px; background: linear-gradient(180deg, #3a3d49 0%, #24262f 38%, #14151a 100%); box-shadow: 0 1px 0 rgba(255,255,255,.14) inset, 0 14px 22px -8px rgba(0,0,0,.8); }
+  .item { position: relative; display: flex; flex-direction: column; gap: 8px; min-width: 0; } .etiq { position: absolute; top: 8px; right: 8px; z-index: 2; min-height: 30px; max-width: calc(100% - 16px); padding: 0 11px 0 8px; border-radius: 15px; border: 1px solid rgba(255,255,255,.28); background: rgba(10,11,15,.55); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: #fff; font-size: 11.5px; font-weight: 600; letter-spacing: .02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-flex; align-items: center; gap: 5px; } .etiq.vide { opacity: .75; border-style: dashed; } .ico-tag { opacity: .8; font-size: 12px; }
+  .barre-filtre { display: flex; align-items: center; gap: 10px; flex: none; } .grow { flex: 1; } .compte { font-size: 13px; font-variant-numeric: tabular-nums; }
+  .deroulant { min-height: 48px; max-width: 70%; padding: 0 16px 0 12px; border-radius: 24px; border: 1px solid var(--ligne); background: var(--surface); color: var(--texte); display: inline-flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; box-shadow: 0 1px 0 rgba(255,255,255,.05) inset; } .deroulant .lib { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .deroulant.actif { border-color: color-mix(in srgb, var(--accent-encre, #8fc9ff) 70%, transparent); }
+  .pt { flex: none; width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 0 0 2px rgba(255,255,255,.14) inset; } .pt.arc { background: conic-gradient(#B5452F, #C9A227, #4E8F5A, #2F6DB5, #7B4BB5, #B5452F); } .pt.vide-pt { background: transparent; border: 1.5px dashed var(--muted); box-shadow: none; }
+  .effacer { border: 0; background: transparent; color: var(--accent-encre, #8fc9ff); font-size: 13px; font-weight: 600; min-height: 44px; padding: 0 4px; }
+  .choix-theme { display: flex; flex-direction: column; gap: 10px; } .choix-theme .titre { margin: 0; font-size: 24px; }
+  .liste-themes { list-style: none; margin: 0; padding: 0; } .liste-themes li + li { border-top: 1px solid var(--ligne); } .liste-themes button { all: unset; box-sizing: border-box; width: 100%; min-height: 58px; display: flex; align-items: center; gap: 14px; cursor: pointer; font-size: 17px; } .liste-themes .lib { flex: 1; min-width: 0; } .liste-themes button.on { font-weight: 700; color: var(--accent-encre, #8fc9ff); } .liste-themes small { font-size: 14px; font-variant-numeric: tabular-nums; }
+  .grille-themes { display: flex; flex-wrap: wrap; gap: 8px; } .grille-themes .puce { min-height: 44px; padding: 0 18px; font-size: 15px; border-radius: 22px; }
   .lire { min-height: 48px; border: 0; border-radius: 16px; background: var(--c); color: #fff; font-size: 16px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-top: 4px; } .lire:disabled { opacity: .35; }
   .sect { display: flex; align-items: center; justify-content: space-between; } .sect h3 { margin: 0; font-size: 18px; }
   .plus { min-height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid var(--ligne); background: var(--surface); color: var(--texte); font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }

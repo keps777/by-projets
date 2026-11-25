@@ -62,9 +62,11 @@ export function surligner(l: number, c: number, versets: number[], couleur: stri
 }
 
 // ---- notes de lecture : un cahier (livre de la bibliothèque), une note = une page sans titre
-export const TITRE_CAHIER = 'Notes pendant ma lecture biblique';
+export const TITRE_CAHIER = 'Notes durant mes lectures bibliques';
+/** Le cahier existe déjà sous un nom proche (« Notes durant mes lectures bibliques », « Notes pendant ma lecture biblique »…) : on le reprend. */
+const estCahier = (titre: string) => /notes?.*lectures?\s+bibliques?/i.test(titre.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
 export function cahierBiblique(): string | undefined {
-  return livres().find((x) => x.titre === TITRE_CAHIER)?.id ?? creerLivre(TITRE_CAHIER, '#7B4BB5', 'Bible');
+  return livres().find((x) => estCahier(x.titre))?.id ?? creerLivre(TITRE_CAHIER, '#7B4BB5', 'Bible');
 }
 const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 /** Page de départ : titre laissé vide, ta note d'abord, le(s) verset(s) cité(s) en dessous. */

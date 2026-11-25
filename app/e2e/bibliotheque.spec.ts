@@ -60,7 +60,13 @@ test('Bibliothèque : créer un livre coloré, écrire des chapitres (notes), le
   await page.getByRole('button', { name: 'Bibliothèque' }).click();
   await expect(page.getByRole('button', { name: /Le chemin de la prière, 2 chapitres/ })).toBeVisible();
   await expect(page.getByRole('heading', { name: /Prière/ })).toBeVisible(); // classé par thème
-  await expect(page.getByRole('group', { name: 'Thèmes' }).getByRole('button', { name: 'Prière' })).toBeVisible();
+  await page.getByRole('button', { name: /Filtrer par thème/ }).click(); // liste déroulante des thèmes
+  await page.getByRole('dialog', { name: 'Filtrer par thème' }).getByRole('button', { name: /^Prière/ }).click();
+  await expect(page.getByRole('button', { name: /Filtrer par thème : Prière/ })).toBeVisible();
+  await page.getByRole('button', { name: 'Voir tous les thèmes' }).click();
+  await page.getByRole('button', { name: /Thème de Le chemin de la prière/ }).click(); // classement rapide depuis la tuile
+  await page.getByRole('button', { name: 'Croisade', exact: true }).click();
+  await expect(page.getByRole('heading', { name: /Croisade/ })).toBeVisible();
   await page.screenshot({ path: '/tmp/biblio.png' });
   await page.goto('/carnet?vue=journal');
   await expect(page.getByText('Au commencement')).toHaveCount(0); // les chapitres ne sont pas dans le journal

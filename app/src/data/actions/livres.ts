@@ -102,3 +102,10 @@ export function supprimerChapitre(livreId: string, n: Note, tout: Note[]): void 
   for (const e of tout) if (parentDe(e) === n.id) magasin.ecrire('notes', { id: e.id, source_label: etiquette(livreId, signatureDe(e), pere) });
   supprimerNote(n.id);
 }
+
+/** Livre par défaut des notes libres : chaque note libre y devient une page (titre à remplir, à classer plus tard dans un autre livre ou un thème). */
+export const TITRE_LIBRES = 'Notes libres à classer';
+export function enregistrerNoteLibre(html: string, g: Signature): boolean {
+  const id = livres().find((x) => x.titre === TITRE_LIBRES)?.id ?? creerLivre(TITRE_LIBRES, '#6B5B4E', '');
+  return !!(id && ajouterChapitre(id, html, g));
+}

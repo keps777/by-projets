@@ -207,3 +207,7 @@ Outil de comparaison : voir la méthode dans ce journal ; relancer une passe à 
 **Croisade + livres CL (25 nov.)** : core/croisade.ts (bloc Day / Recherche de Dieu seul / suivi), carte Croisade dans Rapports (réglages, suivi du jour), bloc en tête du texte du rapport et des rapports enregistrés ; 4 livres ajoutés au catalogue CL. Spec §9. Tests croisade + e2e.
 
 **Modifier une occurrence seule (25 nov.)** : « Cette occurrence seulement » même pour le nom / projet / mesures (détachement en tâche d'un jour, `detacherOccurrence`). e2e. Croisade : le temps compte aussi BR.
+
+**Étagères par thème (25 nov.)** : bandeau, pastilles, rayons horizontaux sur planche, classement rapide depuis la tuile ; cahier biblique repris si un livre « Notes durant mes lectures bibliques » existe. e2e.
+
+**Notes libres + filtre déroulant (25 nov.)** : bouton ✎ → page dans « Notes libres à classer » (signature lieu/date) ; filtre par thème en liste déroulante ; refonte visuelle des étagères (cadre de couverture, planche, halo). e2e.
