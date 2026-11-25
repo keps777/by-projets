@@ -201,3 +201,5 @@ Outil de comparaison : voir la méthode dans ce journal ; relancer une passe à 
 **Pages et arborescence des livres (24 nov.)** : `arbre`, `parentDe`, `voisin`, `supprimerChapitre` (livres.ts) ; TOC repliable avec « + » par chapitre ; lecteur numéroté 1 / 1.1. Test unitaire livres-arbre + e2e étendu. Spec §18 mise à jour.
 
 **Bible intégrée (25 nov.)** : écran /bible (Darby / Martin 1744 / KJV, textes dans app/public/bible, cache SW), navigateur AT/NT → livres → chapitres, soulignement 5 couleurs, copier, note vers le cahier « Notes pendant ma lecture biblique » (titre vide, note puis verset, lieu/date via VoletSignature). ▶ d'un bloc de lecture ouvre la Bible. Titre vide conservé par `nettoyer` (premier h1). PDF du jour : les pages de livres ne sont plus listées comme notes. Spec §18/§19, e2e bible.
+
+**Mise à jour automatique de l'app (25 nov.)** : au retour au premier plan, une nouvelle version déjà téléchargée est activée et la page se recharge (avant : au prochain lancement complet).
