@@ -3,8 +3,8 @@
   import Volet from '../../ui/Volet.svelte';
   import Icone from '../../ui/Icone.svelte';
 
-  /** PDF de la journée prêt : le partager (Fichiers, Mail, WhatsApp…), le télécharger ou l'ouvrir. */
-  let { fichier, onfermer }: { fichier: File | null; onfermer: () => void } = $props();
+  /** PDF prêt (journée, livre) : le partager (Fichiers, Mail, WhatsApp…), le télécharger ou l'ouvrir. */
+  let { fichier, onfermer, titre = 'Ma journée en PDF' }: { fichier: File | null; onfermer: () => void; titre?: string } = $props();
 
   const peutPartager = $derived(!!fichier && typeof navigator !== 'undefined' && typeof navigator.canShare === 'function' && navigator.canShare({ files: [fichier] }));
   const taille = $derived(fichier ? (fichier.size > 1024 * 1024 ? `${(fichier.size / 1048576).toFixed(1).replace('.', ',')} Mo` : `${Math.max(1, Math.round(fichier.size / 1024))} Ko`) : '');
@@ -28,9 +28,9 @@
   function ouvrir() { if (fichier) window.open(adresse(), '_blank', 'noopener'); }
 </script>
 
-<Volet ouvert={!!fichier} {onfermer} label="Ma journée en PDF">
+<Volet ouvert={!!fichier} {onfermer} label={titre}>
   <div class="pdf">
-    <h2 class="titre">Ma journée en PDF</h2>
+    <h2 class="titre">{titre}</h2>
     {#if fichier}
       <p class="muted petit"><Icone nom="rapports" taille={14} trait={2} /> {fichier.name} · {taille}</p>
       <p class="muted petit">Le PDF reste sur ton appareil : rien n’est envoyé ailleurs.</p>

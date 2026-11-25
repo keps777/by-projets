@@ -53,7 +53,7 @@ export function arbre(notes: Note[]): Noeud[] {
 /** Voisin de même parent (pour monter / descendre une page sans quitter son chapitre). */
 export const voisin = (a: Noeud[], i: number, sens: -1 | 1): Note | undefined => { for (let k = i + sens; k >= 0 && k < a.length; k += sens) { if (a[k].niveau < a[i].niveau) return undefined; if (a[k].niveau === a[i].niveau && a[k].parent === a[i].parent) return a[k].note; } return undefined; };
 
-export interface Livre { id: string; titre: string; couleur: string; /** Thème de classement (vide : sans thème). */ theme: string; note: Note; chapitres: Note[]; /** Arborescence (chapitres et pages) dans l'ordre de lecture. */ arbre: Noeud[]; /** Nombre de chapitres de premier niveau. */ nbChapitres: number; /** Pages écrites : une page créée = une page (un chapitre sans page compte pour une, un chapitre à pages compte ses pages). */ pages: number }
+export interface Livre { id: string; titre: string; couleur: string; /** Thème de classement (vide : sans thème). */ theme: string; /** Nom sur la couverture (vide : le nom du profil). */ auteur: string; note: Note; chapitres: Note[]; /** Arborescence (chapitres et pages) dans l'ordre de lecture. */ arbre: Noeud[]; /** Nombre de chapitres de premier niveau. */ nbChapitres: number; /** Pages écrites : une page créée = une page (un chapitre sans page compte pour une, un chapitre à pages compte ses pages). */ pages: number }
 export const estDeLivre = (n: Pick<Note, 'source_label'>): boolean => !!n.source_label && (n.source_label.startsWith(COUV) || n.source_label.startsWith(CHAP) || n.source_label.startsWith(SURL) || n.source_label.startsWith(CROISADE) || n.source_label.startsWith(ORDRE));
 
 export const compterMots = (t: string): number => (t.match(/[\p{L}\p{N}’'-]+/gu) ?? []).length;
@@ -62,8 +62,8 @@ export const pagesDe = (mots: number): number => (mots ? Math.max(1, Math.ceil(m
 /** Titre d'un chapitre : sa première ligne (un titre de la note riche, sinon le début du texte). */
 export const titreChapitre = (n: Pick<Note, 'texte'> & { contenu?: string | null }): string => /^\s*<h1>(\s|<br\s*\/?>)*<\/h1>/i.test(n.contenu ?? '') ? 'Sans titre' : (n.texte.split('\n').find((l) => l.trim() && !/^\[(Image|Vidéo)\]$/.test(l.trim())) ?? 'Sans titre').replace(/^[•\d.\s]+/, '').slice(0, 80);
 
-function lireCouverture(n: Note): { titre: string; couleur: string; theme: string } {
-  try { const j = JSON.parse(n.texte); return { theme: String(j.theme ?? '').trim(), titre: String(j.titre || 'Sans titre'), couleur: COULEURS_LIVRE.includes(j.couleur) || /^#[0-9a-f]{6}$/i.test(j.couleur) ? j.couleur : COULEURS_LIVRE[0] }; } catch { return { titre: 'Sans titre', couleur: COULEURS_LIVRE[0], theme: '' }; }
+function lireCouverture(n: Note): { titre: string; couleur: string; theme: string; auteur: string } {
+  try { const j = JSON.parse(n.texte); return { theme: String(j.theme ?? '').trim(), auteur: String(j.auteur ?? '').trim(), titre: String(j.titre || 'Sans titre'), couleur: COULEURS_LIVRE.includes(j.couleur) || /^#[0-9a-f]{6}$/i.test(j.couleur) ? j.couleur : COULEURS_LIVRE[0] }; } catch { return { titre: 'Sans titre', couleur: COULEURS_LIVRE[0], theme: '', auteur: '' }; }
 }
 
 export function livres(): Livre[] {
@@ -76,14 +76,14 @@ export function livres(): Livre[] {
   });
 }
 
-export function creerLivre(titre: string, couleur: string, theme = ''): string | undefined {
+export function creerLivre(titre: string, couleur: string, theme = '', auteur = ''): string | undefined {
   const t = titre.trim();
   if (!t) return undefined;
   const id = nouvelId();
-  ajouterNote({ texte: JSON.stringify({ titre: t, couleur, theme: theme.trim() }), origine: 'libre', sourceLabel: COUV + id });
+  ajouterNote({ texte: JSON.stringify({ titre: t, couleur, theme: theme.trim(), auteur: auteur.trim() }), origine: 'libre', sourceLabel: COUV + id });
   return id;
 }
-export function modifierLivre(l: Livre, titre: string, couleur: string, theme = l.theme): void { if (titre.trim()) modifierNote(l.note.id, JSON.stringify({ titre: titre.trim(), couleur, theme: theme.trim() })); }
+export function modifierLivre(l: Livre, titre: string, couleur: string, theme = l.theme, auteur = l.auteur): void { if (titre.trim()) modifierNote(l.note.id, JSON.stringify({ titre: titre.trim(), couleur, theme: theme.trim(), auteur: auteur.trim() })); }
 
 /** Ordre des thèmes choisi par l'utilisateur (les thèmes absents de la liste suivent, par ordre alphabétique). */
 export function ordreThemes(): string[] {

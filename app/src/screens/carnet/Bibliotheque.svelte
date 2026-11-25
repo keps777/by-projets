@@ -6,12 +6,15 @@
   import Volet from '../../ui/Volet.svelte';
   import { ajouterChapitre, COULEURS_LIVRE, creerLivre, dateDuJour, dateValide, deplacerTheme, echangerChapitres, enregistrerNoteLibre, creerChapitreAPages, TITRE_LIBRES, historique, livres, modifierChapitre, modifierLivre, parTheme, supprimerChapitre, themesDe, voisin, retenir, signatureDe, texteSignature, supprimerLivre, titreChapitre, type Livre } from '../../data/actions/livres.ts';
   import { magasin } from '../../data/magasin.svelte.ts';
+  import { profil } from '../../data/requetes.ts';
   import { urlMedia } from '../../data/media.svelte.ts';
   import { mediasCites, supprimerNote } from '../../data/actions/notes.ts';
   import { hydraterAction } from './hydrater.ts';
   import { estVide, nettoyer, texteVersHtml } from './riche.ts';
   import EditeurRiche from './EditeurRiche.svelte';
   import Journal from './Carnet.svelte';
+  import VoletPdf from '../fil/VoletPdf.svelte';
+  import { documentLivre, imagesDuLivre, nomFichierLivre } from './pdf-livre.ts';
   import './riche.css';
 
   const tous = $derived(livres());
@@ -25,6 +28,10 @@
   const themes = $derived(themesDe(tous));
   const groupes = $derived(parTheme(tous).filter((g) => filtre === 'tous' || (filtre === '' ? g.theme === '' : g.theme === filtre)));
   let theme = $state('');
+  let auteurSaisi = $state('');
+  /** Nom sur la couverture quand le livre n'en a pas : celui du rapport, sinon le prénom. */
+  const nomDefaut = $derived(profil()?.nom_rapport?.trim() || profil()?.prenom?.trim() || '');
+  const auteurDe = (l: Livre) => l.auteur || nomDefaut;
   let filtreOuvert = $state(false);
   const libelleFiltre = $derived(filtre === 'tous' ? 'Tous les thèmes' : filtre === '' ? 'Sans thème' : filtre);
   const compteVisible = $derived(groupes.reduce((t, g) => t + g.livres.length, 0));
@@ -42,12 +49,12 @@
   // Nouveau livre / réglages de la couverture
   let volet = $state<'nouveau' | 'reglages' | null>(null);
   let titre = $state(''); let couleur = $state(COULEURS_LIVRE[5]);
-  function ouvrirNouveau() { titre = ''; theme = filtre !== 'tous' ? filtre : ''; couleur = COULEURS_LIVRE[Math.floor(Math.random() * COULEURS_LIVRE.length)]; volet = 'nouveau'; }
-  function ouvrirReglages() { if (!livre) return; titre = livre.titre; couleur = livre.couleur; theme = livre.theme; volet = 'reglages'; }
+  function ouvrirNouveau() { titre = ''; auteurSaisi = ''; theme = filtre !== 'tous' ? filtre : ''; couleur = COULEURS_LIVRE[Math.floor(Math.random() * COULEURS_LIVRE.length)]; volet = 'nouveau'; }
+  function ouvrirReglages() { if (!livre) return; titre = livre.titre; couleur = livre.couleur; theme = livre.theme; auteurSaisi = livre.auteur; volet = 'reglages'; }
   function valider() {
     if (!titre.trim()) { dire('Donne un titre à ton livre'); return; }
-    if (volet === 'nouveau') { const id = creerLivre(titre, couleur, theme); if (id) routeur.definir('livre', id); }
-    else if (livre) modifierLivre(livre, titre, couleur, theme);
+    if (volet === 'nouveau') { const id = creerLivre(titre, couleur, theme, auteurSaisi); if (id) routeur.definir('livre', id); }
+    else if (livre) modifierLivre(livre, titre, couleur, theme, auteurSaisi);
     volet = null;
   }
   let confirmeSupp = $state(false);
@@ -83,6 +90,21 @@
   let attente = $state<string | null>(null);
   let sig = $state({ c: '', l: '', d: '' });
   let histo = $state({ c: [] as string[], l: [] as string[], d: [] as string[] });
+  // PDF du livre : un vrai fichier (couverture, sommaire numéroté, chapitres, pages), proposé au partage, au téléchargement ou à la lecture.
+  let pdf = $state<File | null>(null);
+  let pdfEnCours = $state(false);
+  async function exporterPdf() {
+    if (!livre || pdfEnCours) return;
+    if (!livre.pages) { dire('Écris d’abord une page : le livre est vide'); return; }
+    pdfEnCours = true;
+    try {
+      const doc = documentLivre(livre, new Date().toLocaleString('fr-CA', { dateStyle: 'long', timeStyle: 'short' }), nomDefaut);
+      const [{ genererPdfLivre }, { chargerImagesParId }] = await Promise.all([import('./pdf-livre-fichier.ts'), import('../fil/pdf-journee-fichier.ts')]);
+      const blob = await genererPdfLivre(doc, await chargerImagesParId(imagesDuLivre(doc)));
+      pdf = new File([blob], nomFichierLivre(livre.titre), { type: 'application/pdf' });
+    } catch { dire('PDF indisponible sur cet appareil'); }
+    finally { pdfEnCours = false; }
+  }
   // Note libre (bouton de l'en-tête) : une page du livre « Notes libres à classer », avec circonstance, lieu et date.
   let libre = $state(false);
   const enregistrer = (html: string) => {
@@ -167,9 +189,9 @@
   </div>
 {:else if livre}
   <EcranPage gap={16}>
-    <header class="tete"><button type="button" class="rond" aria-label="Bibliothèque" onclick={() => routeur.definir('livre', null)}><Icone nom="retour" taille={18} trait={2.2} /></button><span class="grow"></span><button type="button" class="rond" aria-label="Réglages du livre" onclick={ouvrirReglages}><Icone nom="reglages" taille={18} /></button></header>
+    <header class="tete"><button type="button" class="rond" aria-label="Bibliothèque" onclick={() => routeur.definir('livre', null)}><Icone nom="retour" taille={18} trait={2.2} /></button><span class="grow"></span><button type="button" class="rond" class:occupe={pdfEnCours} aria-busy={pdfEnCours} aria-label="Exporter le livre en PDF" onclick={exporterPdf}><Icone nom="partager" taille={18} trait={2.2} /></button><button type="button" class="rond" aria-label="Réglages du livre" onclick={ouvrirReglages}><Icone nom="reglages" taille={18} /></button></header>
     <div class="heros" style:--c={livre.couleur}>
-      <div class="couv grande" style:background={couv(livre.couleur)}><span class="reliure"></span><h2 class="serif">{livre.titre}</h2><span class="filet"></span><small>Luther</small></div>
+      <div class="couv grande" style:background={couv(livre.couleur)}><span class="reliure"></span><h2 class="serif">{livre.titre}</h2><span class="filet"></span><small>{auteurDe(livre)}</small></div>
       <div class="infos">
         <h1 class="titre">{livre.titre}</h1>
         <p class="muted">{livre.nbChapitres} chapitre{livre.nbChapitres > 1 ? 's' : ''}· {livre.pages} page{livre.pages > 1 ? 's' : ''}</p>
@@ -216,7 +238,7 @@
           {#each g.livres as l (l.id)}
             <div class="item">
               <button type="button" class="livre" onclick={() => routeur.definir('livre', l.id)} aria-label="{l.titre}, {l.nbChapitres} chapitres">
-                <span class="couv" style:background={couv(l.couleur)}><span class="reliure"></span><span class="serif t">{l.titre}</span><span class="filet"></span></span>
+                <span class="couv" style:background={couv(l.couleur)}><span class="reliure"></span><span class="serif t">{l.titre}</span><span class="filet"></span>{#if auteurDe(l)}<span class="aut">{auteurDe(l)}</span>{/if}</span>
                 <span class="meta"><b>{l.titre}</b><small class="muted">{l.nbChapitres} ch. · {l.pages} p.</small></span>
               </button>
               <button type="button" class="etiq" class:vide={!l.theme} aria-label="Thème de {l.titre}" onclick={() => ouvrirClasse(l)}><span class="ico-tag" aria-hidden="true">⌗</span>{l.theme || 'Thème'}</button>
@@ -234,8 +256,9 @@
 <Volet ouvert={volet !== null} onfermer={() => (volet = null)} label="Couverture du livre">
   <div class="form">
     <h2 class="titre">{volet === 'nouveau' ? 'Nouveau livre' : 'Réglages du livre'}</h2>
-    <div class="apercu"><div class="couv grande" style:background={couv(couleur)}><span class="reliure"></span><h2 class="serif">{titre || 'Titre du livre'}</h2><span class="filet"></span></div></div>
+    <div class="apercu"><div class="couv grande" style:background={couv(couleur)}><span class="reliure"></span><h2 class="serif">{titre || 'Titre du livre'}</h2><span class="filet"></span><small>{auteurSaisi.trim() || nomDefaut}</small></div></div>
     <input type="text" placeholder="Titre du livre" aria-label="Titre du livre" bind:value={titre} maxlength="80" />
+    <input type="text" placeholder={nomDefaut ? `Nom sur la couverture (${nomDefaut})` : 'Nom sur la couverture'} aria-label="Nom sur la couverture" bind:value={auteurSaisi} maxlength="60" />
     <input type="text" placeholder="Thème (ex. Prière, Croisade, Lectures)" aria-label="Thème du livre" bind:value={theme} maxlength="40" />
     {#if themes.length}<div class="puces">{#each themes as t (t)}<button type="button" class="puce" class:on={theme === t} onclick={() => (theme = t)}>{t}</button>{/each}</div>{/if}
     <div class="palette" role="group" aria-label="Couleur de la couverture">
@@ -246,6 +269,8 @@
     {#if volet === 'reglages' && livre}<button type="button" class="danger" onclick={() => { if (!confirmeSupp) { confirmeSupp = true; return; } supprimerLivre(livre); volet = null; confirmeSupp = false; routeur.definir('livre', null); dire('Livre supprimé'); }}>{confirmeSupp ? 'Toucher encore : supprimer le livre et ses chapitres' : 'Supprimer le livre'}</button>{/if}
   </div>
 </Volet>
+
+<VoletPdf fichier={pdf} titre="Mon livre en PDF" onfermer={() => (pdf = null)} />
 
 <Volet ouvert={typeChap !== null} onfermer={() => (typeChap = null)} label="Nouveau chapitre">
   <div class="form">
@@ -324,6 +349,7 @@
   .couv::after { content: ''; position: absolute; inset: 0; background: radial-gradient(120% 60% at 30% 0%, rgba(255,255,255,.22), transparent 55%); pointer-events: none; }
   .reliure { position: absolute; left: 0; top: 0; bottom: 0; width: 11px; background: linear-gradient(90deg, rgba(0,0,0,.35), rgba(255,255,255,.14) 55%, rgba(0,0,0,.18)); }
   .couv .t, .couv h2 { font-size: 19px; line-height: 1.12; font-weight: 600; text-shadow: 0 2px 8px rgba(0,0,0,.35); overflow-wrap: break-word; hyphens: auto; padding-top: 22px; margin: 0; display: -webkit-box; -webkit-line-clamp: 5; line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+  .aut { position: absolute; left: 22px; right: 10px; bottom: 16px; text-align: center; font-size: 9.5px; letter-spacing: .16em; text-transform: uppercase; opacity: .85; text-shadow: 0 1px 4px rgba(0,0,0,.4); z-index: 2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .filet { width: 34px; height: 2px; background: rgba(255,255,255,.7); border-radius: 1px; } .couv small { opacity: .8; letter-spacing: .2em; text-transform: uppercase; font-size: 10px; }
   .couv.vide { background: transparent; border: 1.5px dashed var(--ligne); box-shadow: none; color: var(--muted); } .couv.vide::after, .couv.vide::before, .couv.grande::before { display: none; }
   .meta { display: flex; flex-direction: column; gap: 2px; padding: 0 2px; } .meta b { font-size: 14px; line-height: 1.25; } .meta small { font-size: 12px; }
@@ -360,6 +386,7 @@
   .toc li { padding-left: calc(var(--niv, 0) * 22px); } .toc li.page { background: color-mix(in srgb, var(--surface-2) 55%, transparent); border-left: 0; } .toc li.page .n { background: transparent; border: 1px solid var(--ligne); color: var(--muted); width: auto; min-width: 30px; padding: 0 6px; }
   .plie { all: unset; box-sizing: border-box; flex: none; width: 32px; align-self: stretch; display: inline-flex; align-items: center; justify-content: center; color: var(--muted); cursor: pointer; font-size: 14px; } .ajout { flex: none; width: 36px; height: 36px; border-radius: 12px; border: 0; background: transparent; color: var(--accent-encre); display: inline-flex; align-items: center; justify-content: center; }
   .gros-choix { all: unset; box-sizing: border-box; display: flex; flex-direction: column; gap: 4px; padding: 16px; border-radius: 18px; border: 1px solid var(--ligne); background: var(--surface); cursor: pointer; } .gros-choix b { font-size: 17px; } .gros-choix small { font-size: 13px; line-height: 1.4; }
+  .rond.occupe { opacity: .5; }
   .ajout-vide { flex: none; width: 36px; }
   .ord { display: flex; flex-direction: column; padding-right: 8px; } .ord button { width: 36px; height: 24px; border: 0; background: transparent; color: var(--muted); font-size: 15px; } .ord button:disabled { opacity: .25; }
   .form { display: flex; flex-direction: column; gap: 14px; } .form .titre { font-size: 22px; margin: 0; } .apercu { display: flex; justify-content: center; }

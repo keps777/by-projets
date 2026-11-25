@@ -29,15 +29,15 @@ export function rgbDe(couleur: string): [number, number, number] {
   return r ? [+r[1], +r[2], +r[3]] : [85, 87, 94];
 }
 
-const LARGEUR = 210, HAUTEUR = 297, MARGE = 14, UTILE = LARGEUR - 2 * MARGE, BAS = HAUTEUR - 16;
-const ENCRE: [number, number, number] = [22, 23, 27], GRIS: [number, number, number] = [94, 96, 104], PALE: [number, number, number] = [138, 140, 147], FILET: [number, number, number] = [227, 225, 219], PISTE: [number, number, number] = [235, 233, 227];
+export const LARGEUR = 210, HAUTEUR = 297, MARGE = 14, UTILE = LARGEUR - 2 * MARGE, BAS = HAUTEUR - 16;
+export const ENCRE: [number, number, number] = [22, 23, 27], GRIS: [number, number, number] = [94, 96, 104], PALE: [number, number, number] = [138, 140, 147], FILET: [number, number, number] = [227, 225, 219], PISTE: [number, number, number] = [235, 233, 227];
 
 const VERT: [number, number, number] = [30, 127, 79], ORANGE: [number, number, number] = [217, 140, 20], ROUGE: [number, number, number] = [194, 54, 43];
 const COULEUR_ETAT: Record<EtatAvancement, [number, number, number]> = { atteint: VERT, rythme: VERT, leger: ORANGE, retard: ROUGE, neutre: PALE };
 const COULEUR_METRIQUE = { bon: VERT, moyen: ORANGE, mauvais: ROUGE, neutre: PALE } as const;
 /** Largeur du tableau quand l'encart des métriques est à sa droite (première page). */
 
-class Dessin {
+export class Dessin {
   y = MARGE;
   /** Largeur actuelle du tableau (réduite à côté de l'encart des métriques, pleine page ensuite). */
   largeurTable = UTILE;
@@ -324,7 +324,7 @@ function motsDe(segments: Segment[], gras: boolean): (Mot | 'saut')[] {
 }
 
 /** Écrit des segments mis en forme, à la ligne selon la largeur, à partir de (x, y courant). Rend la hauteur écrite. */
-function paragraphe(g: Dessin, segments: Segment[], x: number, largeur: number, taille: number, opts: { gras?: boolean; couleur?: [number, number, number]; interligne?: number; apres?: number } = {}) {
+export function paragraphe(g: Dessin, segments: Segment[], x: number, largeur: number, taille: number, opts: { gras?: boolean; couleur?: [number, number, number]; interligne?: number; apres?: number } = {}) {
   const inter = opts.interligne ?? taille * 0.42;
   const lignes: Mot[][] = [[]];
   let w = 0;
@@ -357,7 +357,7 @@ function paragraphe(g: Dessin, segments: Segment[], x: number, largeur: number, 
   g.y += opts.apres ?? 1.6;
 }
 
-function blocNote(g: Dessin, b: BlocNote, images: Map<string, ImagePdf>) {
+export function blocNote(g: Dessin, b: BlocNote, images: Map<string, ImagePdf>) {
   switch (b.type) {
     case 'h1': g.y += 1.2; paragraphe(g, b.segments, MARGE, UTILE, 14, { gras: true, apres: 1.8 }); break;
     case 'h2': g.y += 0.8; paragraphe(g, b.segments, MARGE, UTILE, 11.5, { gras: true, apres: 1.4 }); break;
@@ -464,8 +464,13 @@ export async function genererPdf(doc: DocumentJournee, images: Map<string, Image
 
 /** Les images citées par les notes du document, réduites en JPEG (1000 px au plus) pour garder un PDF léger. Une image introuvable est ignorée. */
 export async function chargerImages(doc: DocumentJournee): Promise<Map<string, ImagePdf>> {
+  return chargerImagesParId(doc.notes.flatMap((n) => n.blocs.flatMap((b) => (b.type === 'media' && b.media === 'image' ? [b.id] : []))));
+}
+
+/** Charge et réduit les images (par identifiant de média) ; une image illisible est simplement absente de la table. */
+export async function chargerImagesParId(idsBruts: Iterable<string>): Promise<Map<string, ImagePdf>> {
   const res = new Map<string, ImagePdf>();
-  const ids = new Set(doc.notes.flatMap((n) => n.blocs.flatMap((b) => (b.type === 'media' && b.media === 'image' ? [b.id] : []))));
+  const ids = new Set(idsBruts);
   for (const id of ids) {
     try {
       const url = await urlMedia(id);

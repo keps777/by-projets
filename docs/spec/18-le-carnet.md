@@ -63,3 +63,8 @@ Le type d'un chapitre se choisit **dès la création** (« Nouveau chapitre ») 
 - **Lecture** : un chapitre à pages **s'ouvre sur sa propre page, titre au centre** (horizontalement et verticalement) ; ses pages suivent (« Page 3.1 »…).
 - **Compte** : seules les pages écrites comptent (un chapitre à pages ne compte pas lui-même).
 Un chapitre à pages garde toujours un titre (non vide).
+
+### Le livre en PDF (25 nov. 2026)
+Dans la fiche d'un livre, le bouton de partage de l'en-tête génère un **vrai PDF** (jsPDF, sur l'appareil, rien n'est envoyé) puis ouvre la même feuille que pour la journée : **Partager ou enregistrer**, **Télécharger le PDF**, **Ouvrir pour le lire**. Contenu : **couverture** à la couleur du livre (titre, thème, nombre de chapitres et de pages), **table des matières numérotée** avec numéros de page, puis les chapitres : un chapitre à pages s'ouvre sur sa **propre page, titre au centre** ; chaque page commence sur une nouvelle feuille avec son texte mis en forme, ses images et sa signature (circonstance, lieu, date). Pied de page : titre du livre et numéro de page. Un livre sans page écrite n'est pas exportable.
+
+**Nom sur la couverture** : chaque livre porte un champ « Nom sur la couverture » (réglages du livre, ou à la création) ; vide, il reprend le **nom du rapport** du profil (sinon le prénom). Il s'affiche sur la couverture dans la bibliothèque, sur la fiche du livre et sur la couverture du PDF.

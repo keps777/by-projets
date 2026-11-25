@@ -7,6 +7,7 @@ test('Bibliothèque : créer un livre coloré, écrire des chapitres (notes), le
   await page.getByRole('button', { name: 'Nouveau livre' }).click();
   await page.getByLabel('Titre du livre').fill('Le chemin de la prière');
   await page.getByLabel('Thème du livre').fill('Prière');
+  await page.getByLabel('Nom sur la couverture').fill('Kevin K.'); // nom paramétrable, imprimé sur la couverture
   await page.getByRole('button', { name: 'Couleur #1F7A6D' }).click();
   await page.getByRole('button', { name: 'Créer le livre' }).click();
   await expect(page.getByRole('heading', { name: 'Le chemin de la prière' }).first()).toBeVisible();
@@ -56,6 +57,14 @@ test('Bibliothèque : créer un livre coloré, écrire des chapitres (notes), le
   await expect(page.locator('.toc li .ch')).toHaveCount(3);
   await page.getByRole('button', { name: 'Déplier Les saisons' }).click();
   await expect(page.locator('.toc li .ch')).toHaveCount(5);
+  await expect(page.locator('.heros .couv small')).toHaveText('Kevin K.');
+  // PDF du livre : mêmes options que le PDF de la journée (partager, télécharger, ouvrir)
+  await page.getByRole('button', { name: 'Exporter le livre en PDF' }).click();
+  const vp = page.getByRole('dialog', { name: 'Mon livre en PDF' });
+  await expect(vp.getByText(/Le-chemin-de-la-priere\.pdf/)).toBeVisible({ timeout: 20000 });
+  await expect(vp.getByRole('button', { name: 'Télécharger le PDF' })).toBeVisible();
+  await expect(vp.getByRole('button', { name: 'Ouvrir pour le lire' })).toBeVisible();
+  await vp.getByRole('button', { name: 'Fermer' }).click();
   await page.screenshot({ path: '/tmp/livre.png' });
   await page.getByRole('button', { name: /Lire le livre/ }).click();
   await expect(page.locator('.lecteur')).toBeVisible();

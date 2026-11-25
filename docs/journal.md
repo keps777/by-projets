@@ -221,3 +221,7 @@ Outil de comparaison : voir la méthode dans ce journal ; relancer une passe à 
 **PDF en deux pages (25 nov.)** : métriques sous le tableau (page 1), suivi des projets seul sur la page 2 avec resserrement automatique (pas des sous-projets, 3 colonnes, synthèse compacte).
 
 **Règle chapitre une page / à pages (25 nov.)** : choix à la création, conteneur (`k:'c'`), ouverture centrée à la lecture, `creerChapitreAPages`, curseur posé sous le titre de la première page. e2e bibliotheque réécrit.
+
+**Livre en PDF (25 nov.)** : carnet/pdf-livre.ts (document), pdf-livre-fichier.ts (dessin, 2 passes pour le sommaire), bouton dans la fiche du livre, VoletPdf titrable. e2e.
+
+**Nom sur la couverture (25 nov.)** : champ `auteur` du livre (par défaut le nom du rapport), affiché sur les couvertures et dans le PDF.
