@@ -102,7 +102,7 @@ function blocs(parent: Node): string[] {
     t = COMME_TITRE[t] ?? t;
     if (t === 'br') { enAttente += '<br>'; continue; }
     if (t === 'p') { vider(); const h = enLigne(el).replace(/\s+/g, ' ').trim(); res.push(paragrapheVide(h) ? '<p><br></p>' : `<p>${h}</p>`); }
-    else if (t === 'h1' || t === 'h2' || t === 'h3') { vider(); const h = enLigne(el).replace(/\s+/g, ' ').trim(); if (!paragrapheVide(h)) res.push(`<${t}>${h}</${t}>`); }
+    else if (t === 'h1' || t === 'h2' || t === 'h3') { vider(); const h = enLigne(el).replace(/\s+/g, ' ').trim(); if (!paragrapheVide(h)) res.push(`<${t}>${h}</${t}>`); else if (t === 'h1' && !res.length) res.push('<h1><br></h1>'); /* titre de page laissé vide, à remplir plus tard */ }
     else if (t === 'ul' || t === 'ol') { vider(); const l = listes(el, t); if (l) res.push(l); }
     else if (t === 'blockquote') { vider(); const h = enLigne(el).replace(/\s+/g, ' ').trim(); if (!paragrapheVide(h)) res.push(`<blockquote>${h}</blockquote>`); }
     else if (t === 'hr') { vider(); res.push('<hr>'); }

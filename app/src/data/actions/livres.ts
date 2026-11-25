@@ -7,6 +7,8 @@ import { ajouterNote, ajouterNoteRiche, modifierNote, modifierNoteRiche, supprim
 
 export const COULEURS_LIVRE = ['#B5452F', '#C9772B', '#C9A227', '#4E8F5A', '#1F7A6D', '#2F6DB5', '#4B4FB5', '#7B4BB5', '#B54B8A', '#6B5B4E', '#3A3F4B', '#111318'];
 const COUV = 'livre-couv:', CHAP = 'livre:';
+/** Soulignements de la Bible : une note par chapitre biblique (`bible-surl:<livre>.<chapitre>`), absente du journal comme des livres. */
+export const SURL = 'bible-surl:';
 
 /** Signature d'un chapitre : circonstance (facultative), lieu (facultatif), date (au moins l'année). Rangée après `|` dans `source_label`. */
 export interface Signature { c: string; l: string; d: string }
@@ -46,13 +48,13 @@ export function arbre(notes: Note[]): Noeud[] {
 export const voisin = (a: Noeud[], i: number, sens: -1 | 1): Note | undefined => { for (let k = i + sens; k >= 0 && k < a.length; k += sens) { if (a[k].niveau < a[i].niveau) return undefined; if (a[k].niveau === a[i].niveau && a[k].parent === a[i].parent) return a[k].note; } return undefined; };
 
 export interface Livre { id: string; titre: string; couleur: string; /** Thème de classement (vide : sans thème). */ theme: string; note: Note; chapitres: Note[]; /** Arborescence (chapitres et pages) dans l'ordre de lecture. */ arbre: Noeud[]; /** Nombre de chapitres de premier niveau. */ nbChapitres: number; mots: number; pages: number }
-export const estDeLivre = (n: Pick<Note, 'source_label'>): boolean => !!n.source_label && (n.source_label.startsWith(COUV) || n.source_label.startsWith(CHAP));
+export const estDeLivre = (n: Pick<Note, 'source_label'>): boolean => !!n.source_label && (n.source_label.startsWith(COUV) || n.source_label.startsWith(CHAP) || n.source_label.startsWith(SURL));
 
 export const compterMots = (t: string): number => (t.match(/[\p{L}\p{N}’'-]+/gu) ?? []).length;
 /** Une « page » de livre : environ 250 mots. */
 export const pagesDe = (mots: number): number => (mots ? Math.max(1, Math.ceil(mots / 250)) : 0);
 /** Titre d'un chapitre : sa première ligne (un titre de la note riche, sinon le début du texte). */
-export const titreChapitre = (n: Pick<Note, 'texte'>): string => (n.texte.split('\n').find((l) => l.trim() && !/^\[(Image|Vidéo)\]$/.test(l.trim())) ?? 'Sans titre').replace(/^[•\d.\s]+/, '').slice(0, 80);
+export const titreChapitre = (n: Pick<Note, 'texte'> & { contenu?: string | null }): string => /^\s*<h1>(\s|<br\s*\/?>)*<\/h1>/i.test(n.contenu ?? '') ? 'Sans titre' : (n.texte.split('\n').find((l) => l.trim() && !/^\[(Image|Vidéo)\]$/.test(l.trim())) ?? 'Sans titre').replace(/^[•\d.\s]+/, '').slice(0, 80);
 
 function lireCouverture(n: Note): { titre: string; couleur: string; theme: string } {
   try { const j = JSON.parse(n.texte); return { theme: String(j.theme ?? '').trim(), titre: String(j.titre || 'Sans titre'), couleur: COULEURS_LIVRE.includes(j.couleur) || /^#[0-9a-f]{6}$/i.test(j.couleur) ? j.couleur : COULEURS_LIVRE[0] }; } catch { return { titre: 'Sans titre', couleur: COULEURS_LIVRE[0], theme: '' }; }

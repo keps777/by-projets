@@ -7,6 +7,15 @@ declare const self: ServiceWorkerGlobalScope;
 
 precacheAndRoute(self.__WB_MANIFEST);
 cleanupOutdatedCaches();
+// Textes de la Bible : gardés sur l'appareil à la première lecture de chaque livre (cache d'abord), puis lisibles hors ligne.
+registerRoute(({ url }) => url.pathname.startsWith('/bible/') && url.pathname.endsWith('.json'), async ({ request }) => {
+  const cache = await caches.open('bible-v1');
+  const connu = await cache.match(request);
+  if (connu) return connu;
+  const rep = await fetch(request);
+  if (rep.ok) void cache.put(request, rep.clone());
+  return rep;
+});
 // Toute navigation (SPA) retombe sur index.html, y compris hors ligne.
 registerRoute(new NavigationRoute(createHandlerBoundToURL('/index.html'), { denylist: [/^\/api\//] }));
 

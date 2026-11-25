@@ -7,6 +7,8 @@
   import type { BlocVue } from '../../data/requetes.ts';
   import { horloge, maintenantLocal } from '../../data/temps.svelte.ts';
   import { ecouleOccurrence, remettreAFaire, lancerBloc, reprendreBloc } from '../../data/actions/blocs.ts';
+  import { routeur } from '../../routeur.svelte.ts';
+  import { estLectureBible } from './vue-blocs.ts';
   import { theme } from '../../ui/theme.svelte.ts';
   import { dire } from '../../ui/toast.svelte.ts';
   import Icone from '../../ui/Icone.svelte';
@@ -24,7 +26,7 @@
 
   function faire(b: BlocVue, g: Geste) {
     if (g === 'lancer') {
-      if (b.enPause) reprendreBloc(b.occ.id); else lancerBloc(b.occ.id);
+      if (b.enPause) reprendreBloc(b.occ.id); else { lancerBloc(b.occ.id); if (estLectureBible(b.occ.id)) routeur.aller(`/bible?occ=${b.occ.id}`); }
       dire(`« ${b.titre} » lancée`);
     } else if (g === 'terminer') onterminer(b.occ.id);
     else { remettreAFaire(b.occ.id); dire(`« ${b.titre} » remise en prêt`); }

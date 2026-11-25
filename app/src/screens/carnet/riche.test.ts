@@ -93,3 +93,10 @@ describe('structure d’une note pour le PDF', () => {
   });
   it('contenu vide', () => { expect(blocsDeNote('')).toEqual([]); });
 });
+
+describe('titre laissé vide', () => {
+  it('garde un premier titre vide (page à titrer plus tard), pas ailleurs', () => {
+    expect(nettoyer('<h1><br></h1><p>Ma note</p>')).toBe('<h1><br></h1><p>Ma note</p>');
+    expect(nettoyer('<p>Ma note</p><h1><br></h1>')).toBe('<p>Ma note</p>');
+  });
+});

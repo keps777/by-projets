@@ -10,9 +10,9 @@
    * Éditeur de note riche, en plein écran (spec §18, nov. 2026) : paragraphes, titres, gras, italique, souligné, listes, citation, séparateur,
    * liens, images et vidéos. Le contenu est nettoyé à l'enregistrement (`nettoyer`). Une nouvelle note garde un brouillon sur l'appareil.
    */
-  let { ouvert, html = '', titre, brouillonCle = null, livre = false, onenregistrer, onfermer, onsupprimer }: {
+  let { ouvert, html = '', titre, brouillonCle = null, livre = false, curseurBloc = -1, onenregistrer, onfermer, onsupprimer }: {
     /** Mode livre : page sombre comme à la lecture, outils de rédaction sur un bouton flottant à droite. */
-    livre?: boolean; ouvert: boolean; html?: string; titre: string;
+    livre?: boolean; /** Numéro du bloc où poser le curseur à l'ouverture (-1 : fin de la note). */ curseurBloc?: number; ouvert: boolean; html?: string; titre: string;
     /** Clé de stockage du brouillon (nouvelle note) ; null pour la correction d'une note existante. */
     brouillonCle?: string | null;
     onenregistrer: (html: string) => void; onfermer: () => void; onsupprimer?: () => void;
@@ -47,6 +47,8 @@
     vide = estVide(noeud.innerHTML);
     try { document.execCommand('defaultParagraphSeparator', false, 'p'); } catch { /* ignoré */ }
     noeud.focus();
+    const cible = curseurBloc >= 0 ? noeud.children[curseurBloc] : undefined;
+    if (cible) { const r = document.createRange(); r.selectNodeContents(cible); r.collapse(true); const sel = document.getSelection(); sel?.removeAllRanges(); sel?.addRange(r); }
   }
 
   // La sélection dans la zone est gardée : les boutons, le sélecteur de fichiers et le champ du lien la rendent.

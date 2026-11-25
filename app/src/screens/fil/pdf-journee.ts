@@ -1,5 +1,6 @@
 // PDF de la journée (spec §9, nov. 2026) : recap de l'avancement des projets en cours, puis le tableau des créneaux effectués, vides compris.
 // La construction des lignes est pure (testée) ; `documentJournee` lit le magasin ; `htmlJournee` écrit la page A4 imprimée par `imprimer`.
+import { estDeLivre } from '../../data/actions/livres.ts';
 import { moyennePct } from '@core/progression.ts';
 import type { Jour } from '@core/types.ts';
 import { blocsDuJour, progressionProjet, projetsDe, rubriques, sousProjetsDe, profil, traitProjet } from '../../data/requetes.ts';
@@ -109,7 +110,7 @@ export function documentJournee(jour: Jour, aujourdhui: Jour, maintenantMin = ma
     }
     if (projets.length) groupes.push({ nom: r.nom, couleur: couleurRubrique(r.couleur, 'jour'), projets });
   }
-  const notes: NotePdf[] = notesDuJour(jour).map((n) => ({
+  const notes: NotePdf[] = notesDuJour(jour).filter((n) => !estDeLivre(n)).map((n) => ({
     numero: n.numero, provenance: provenance(n),
     blocs: n.contenu ? blocsDeNote(n.contenu) : n.texte.split('\n').map((l): BlocNote => ({ type: 'p', segments: [{ texte: l }] }))
   }));

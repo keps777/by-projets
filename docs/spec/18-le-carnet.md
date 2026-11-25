@@ -36,3 +36,10 @@ Un livre peut porter un **thème** (champ libre dans la couverture, avec suggest
 
 ### Pages et arborescence (24 nov. 2026)
 Un chapitre peut avoir des **pages** (et une page, des sous-pages) : une page est un chapitre rangé sous un autre, son parent est la clé `p` de la partie JSON de `source_label` (aucune colonne de plus). La table des matières est une **arborescence** : numéros « 1 », « 1.1 », « 1.1.1 », retrait par niveau, ▾/▸ pour replier, « + » pour ajouter une page, ↑/↓ pour réordonner parmi les pages d'un même parent. La lecture suit l'ordre de l'arbre (« Chapitre 1 », « Page 1.1 »). Supprimer un chapitre fait remonter ses pages d'un niveau.
+
+## La Bible (§19, 25 nov. 2026)
+Écran `/bible` : lecture sombre façon YouVersion. **Le ▶ d'un bloc de lecture de la Bible** (tâche qui attend des passages / chapitres, ou projet BR) lance le chrono **et ouvre la Bible**, version Darby par défaut ; une pastille ⏱ ramène au Mode Focus.
+- **Textes libres de droits** servis par livre (`/bible/<version>/<n>.json`, chapitres → versets) : **Darby** (français), **Martin 1744** (français), **King James** (anglais). Gardés hors ligne par le service worker après la première lecture de chaque livre. Position et version retenues sur l'appareil.
+- **En-tête** : « Jean 3 ▾ » ouvre une feuille **Ancien / Nouveau Testament → livres → chapitres** ; pastille de version (DARBY ▾) pour changer ; flèches chapitre précédent / suivant.
+- **Versets** : un appui sélectionne (plusieurs possibles) ; la barre d'actions propose **5 couleurs de soulignement** (et la gomme), **Copier** (texte + référence + version) et **Note**. Les soulignements vivent dans une note par chapitre biblique (`source_label` `bible-surl:<livre>.<chapitre>`), cachée du journal et des livres.
+- **Note** : éditeur de livre ; la page créée dans le cahier **« Notes pendant ma lecture biblique »** (créé au besoin, thème « Bible ») a le **titre laissé vide** (« Sans titre » à renommer dans le cahier), **ta note d'abord, puis le(s) verset(s)** cités avec leur référence ; puis la fenêtre **Lieu et date** (propositions déjà utilisées, date d'au moins l'année).

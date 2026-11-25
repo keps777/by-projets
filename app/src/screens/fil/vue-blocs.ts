@@ -5,7 +5,7 @@ import { nombre } from '@core/units.ts';
 import type { Jour, Mois, OptionChoix, TypeMetrique } from '@core/types.ts';
 import { CLE_LIVRE, type MetriqueLigne, type Occurrence, type SousProjetLigne } from '@core/lignes.ts';
 import { magasin } from '../../data/magasin.svelte.ts';
-import { metriquesDe, progressionProjet, progressionSousProjet, type BlocVue } from '../../data/requetes.ts';
+import { blocsDuJour, metriquesDe, progressionProjet, progressionSousProjet, type BlocVue } from '../../data/requetes.ts';
 import { attendusDe, ecouleOccurrence, lancerBloc, pauseBloc, reprendreBloc, valeurSaisie } from '../../data/actions/blocs.ts';
 import { formatValeur, libelleCle } from './format.ts';
 import { versAffichage } from './saisie.ts';
@@ -108,7 +108,19 @@ export function basculerMinuteur(occId: string): void {
   if (!o) return;
   if (o.etat === 'en_cours') pauseBloc(occId);
   else if (o.etat === 'pause') reprendreBloc(occId);
-  else lancerBloc(occId);
+  else {
+    lancerBloc(occId);
+    if (estLectureBible(occId)) void import('../../routeur.svelte.ts').then(({ routeur }) => routeur.aller(`/bible?occ=${occId}`)); // ▶ d'une lecture de la Bible : ouvre la Bible (Darby par défaut)
+  }
+}
+
+/** Le bloc est une lecture de la Bible : sa tâche attend des passages / chapitres, ou son projet est « BR » (même règle que le Mode Focus). */
+export function estLectureBible(occId: string): boolean {
+  const o = magasin.trouver('occurrences', occId);
+  const b = o ? blocsDuJour(o.jour).find((x) => x.occ.id === occId) : undefined;
+  if (!b) return false;
+  const cles = new Set([...attendusDe(b.tache.id).map((a) => a.cle), ...b.sousProjets.flatMap((s) => metriquesDe(s.id).map((m) => m.cle))]);
+  return cles.has('reference:passages') || cles.has('nombre:chapitres') || codeDuProjet(b.projet?.id) === 'BR';
 }
 
 /** Temps réalisé d'un bloc (en direct s'il tourne). */

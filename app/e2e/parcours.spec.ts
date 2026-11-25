@@ -229,7 +229,7 @@ test('Bible : choisir le livre et les chapitres dans des menus (Focus), puis les
   await page.getByRole('button', { name: 'Ajouter au Fil' }).click();
   await page.getByText('Lecture du soir').first().click();
   await page.getByRole('dialog').getByRole('button', { name: /Lancer/ }).first().click();
-  await page.getByRole('link', { name: /Mode Focus/ }).click();
+  await page.getByRole('link', { name: 'Retour au chrono' }).click(); // ▶ a ouvert la Bible ; la pastille ramène au Mode Focus
 
   // Menus déroulants : livre, du chapitre, au chapitre.
   await page.getByLabel('Livre de la Bible').selectOption('Luc');
